@@ -2566,6 +2566,96 @@
 				</a>
 				d’EUSurvey.
 			</p>
+			<h2>Comment puis-je récupérer les fichiers téléchargés par les contributeurs ?</h2>
+
+			<p>EUSurvey propose différents formats d'export : XLS, PDF, ODS et XML.
+				<br>
+				En fonction du format sélectionné, la structure et le contenu des
+				fichiers exportés pour l'élément 'File upload' sont décrits ci-dessous :</p>
+
+			<h4>Export
+				des résultats en XLS</h4>
+
+			<p>1. Un fichier Excel contenant les informations suivantes :</p>
+
+			<p>Alias : Alias de l'enquête (exemple :
+				6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+				Date d'export : Date au format 'dd-mm-yyyy hh :mm' (exemple :
+				28-09-2020 15:28)</p>
+
+			<p>Un tableau composé comme ci-dessous :</p>
+			<ul>
+				<li>Chaque colonne représente une question 'File
+					upload' différente.</li>
+
+				<li>Chaque ligne représente une contribution
+					différente.</li>
+
+				<li>Chaque cellule contient tous les noms des
+					fichiers téléchargés.</li>
+			</ul>
+
+			<p>2. Des dossiers correspondant à chaque contribution et nommés avec
+				l'ID de la contribution, contenant des sous-dossiers pour chaque question 'File
+				upload' (Upload_1, Upload_2, etc.). </p>
+
+			<p>Par exemple :</p>
+
+			<p>Dossier : 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
+
+				Sous-dossier : Upload_1 (correspondant à la première question de
+				type 'File upload') contient tous les fichiers téléchargés.<br>
+
+				Sous-dossier : Upload_2 (correspondant à la deuxième question de type
+				'File upload') contient tous les fichiers téléchargés.</p>
+
+			<h4>Export
+				des résultats au format PDF</h4>
+
+			<p>1. Dossier nommé 'PDFs' contenant toutes les contributions à
+				l'enquête sous forme de documents PDF.</p>
+
+			<p>2. Des dossiers correspondant à chaque contribution et nomméd avec
+				l'ID de la contribution.<br>
+
+				Chaque dossier contient des sous-dossiers pour chaque question de type
+				File Upload (Upload_1, Upload_2, etc.).</p>
+
+			<h4>Export des résultats au format ODS</h4>
+
+			<p>1. Un fichier Open Office contenant les informations suivantes :</p>
+
+			<p>Alias : Alias de l'enquête (exemple :
+				6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+
+				Date d'export : Date au format 'dd-mm-yyyy hh :mm' (exemple :
+				28-09-2020 15:28)</p>
+
+			<p>Un tableau composé comme ci-dessous :</p>
+
+			<ul>
+				<li>Chaque colonne représente une question 'File
+					upload' différente.</li>
+
+				<li>Chaque ligne représente une contribution
+					différente.</li>
+
+				<li>Chaque cellule contient tous les noms des
+					fichiers téléchargés.</li>
+			</ul>
+
+			<p>2. Des dossiers correspondant à chaque contribution et nommés avec
+				l'ID de la contribution.<br>
+				Chaque dossier contient des sous-dossiers pour chaque question de
+				téléchargement de fichiers (Upload_1, Upload_2, etc.).</p>
+
+			<h4>Export
+				des résultats au format XML</h4>
+
+			<p>Cet export est constitué d'un fichier XML contenant les résultats de
+				manière structurée.<br>
+
+			<b>Les fichiers téléchargés ne sont pas disponibles dans ce cas.</b></p>
 			<h1>
 				Style et mise en page
 			</h1>
