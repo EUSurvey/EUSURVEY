@@ -404,7 +404,7 @@
 												   </div>
 												</c:when>													
 												<c:otherwise>
-													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="limitedfilter" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
+													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${question.getType() == 'NumberQuestion' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
 													<div style="display: inline-block; margin: 0px; width: 5px;">
 														<a onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
@@ -629,7 +629,7 @@
     	background-color: #fff;
 	}
 	
-	
+	input[type="text"].filter,
 	input[type="text"].limitedfilter {
 		max-width: 135px;
 		font-size: 90%;
@@ -684,7 +684,7 @@ var closeOverlayDivsEnabled = false;
 				$("#resultsForm").find(".filtercell").each(function(){
 					 $(this).find(".validation-error").remove();
 					 $(this).find("input[type=text]").each(function(){
-						if ($(this).val().length > 0 && $(this).val().length < 3)
+						if ($(this).hasClass("limitedfilter") && $(this).val().length > 0 && $(this).val().length < 3)
 						{
 							var offset = $(this).parent().offset().left;
 							var scroll = $("#scrollareaheader").scrollLeft();
