@@ -2689,8 +2689,13 @@ function initModals(item)
 	}
 	
 	const CHART_LEGEND_LABEL_DIVISOR = 9;
-	
+
+	function htmlDecode(value) {
+		return $("<span/>").html(value).text();
+	}
+
 	function truncateLabel(text, canvasWidth) {
+		text = htmlDecode(text)
 		const maxLegendTextLength = Math.round(canvasWidth / CHART_LEGEND_LABEL_DIVISOR);
 		
 		if (text.length > maxLegendTextLength) {
