@@ -2957,7 +2957,7 @@ public class ManagementController extends BasicController {
 			}
 		}
 		
-		if (user.getResultAccess() != null &&  user.getResultAccess().getResultFilter() != null)
+		if (user != null && user.getResultAccess() != null &&  user.getResultAccess().getResultFilter() != null)
 		{
 			filter.getReadOnlyFilterQuestions().clear();
 			for (String questionUID : user.getResultAccess().getResultFilter().getFilterValues().keySet()) {
