@@ -1392,7 +1392,7 @@
 				Les participants à votre enquête devront connaître leur identifiant de contribution. Cet identifiant leur est fourni lors de la soumission de leur contribution sur la page de confirmation.
 			</p>
 			<p>
-				Veuillez noter que le lien 'Modifier une contribution' est accessible sur la page d'accueil d'EUSurvey: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
+				Veuillez noter que le lien «Modifier une contribution» est accessible sur la page d'accueil d'EUSurvey: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
 			</p>
 			<h1>
 				Tester une enquête
