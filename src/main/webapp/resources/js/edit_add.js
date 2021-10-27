@@ -222,8 +222,11 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");	
 	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem") || item.hasClass("agenciesitem")) {
 		item.addClass("singlechoiceitem");
+
+		// use original title for "Predefined" elements and make sure that special characters don't break anything; otherwise, use "Single Choice Question"
+		let questionTitle = $('<span>').text(item.attr("data-original-text")).html().trim() || "Single Choice Question";
 		
-		element = getBasicElement("SingleChoiceQuestion", true, "Single Choice Question", item.attr("id"), true);
+		element = getBasicElement("SingleChoiceQuestion", true, questionTitle, item.attr("id"), true);
 		element.maxChoices = 0;
 		element.minChoices = 0;
 		element.useRadioButtons = true;
@@ -284,7 +287,7 @@ function getNewElement(item)
 
 function addNewElement(item, element)
 {
-	item.empty().removeClass('toolboxitem draggable ui-draggable ui-draggable-handle').addClass('survey-element').css("height","").css("width","");
+	item.attr("data-original-text", item.text()).empty().removeClass('toolboxitem draggable ui-draggable ui-draggable-handle').addClass('survey-element').css("height","").css("width","");
 	
 	if (element == null)
 	{

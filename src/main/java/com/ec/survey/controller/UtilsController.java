@@ -374,6 +374,7 @@ public class UtilsController extends BasicController {
 		agenciesList.put("ASO", resources.getMessage("label.agency.ASO", null, locale));
 		agenciesList.put("BA", resources.getMessage("label.agency.BA", null, locale));
 		agenciesList.put("BCG", resources.getMessage("label.agency.BCG", null, locale));
+		agenciesList.put("CS", resources.getMessage("label.agency.CS", null, locale));
 		agenciesList.put("DPC", resources.getMessage("label.agency.DPC", null, locale));
 		agenciesList.put("DVT", resources.getMessage("label.agency.DVT", null, locale));
 		agenciesList.put("CA", resources.getMessage("label.agency.CA", null, locale));
@@ -394,7 +395,6 @@ public class UtilsController extends BasicController {
 		agenciesList.put("FR", resources.getMessage("label.agency.FR", null, locale));
 		agenciesList.put("LEC", resources.getMessage("label.agency.LEC", null, locale));
 		agenciesList.put("LET", resources.getMessage("label.agency.LET", null, locale));
-		agenciesList.put("NIS", resources.getMessage("label.agency.NIS", null, locale));
 		agenciesList.put("R", resources.getMessage("label.agency.R", null, locale));
 		agenciesList.put("OMIT", resources.getMessage("label.agency.OMIT", null, locale));
 		agenciesList.put("ASA", resources.getMessage("label.agency.ASA", null, locale));
