@@ -1816,6 +1816,12 @@ function resetConfirmationText(button)
 	$(button).closest("tr").find(".propertytextpreview").first().empty();
 }
 
+function removeInvisibleTags(node) {
+	var copy = $(node).clone();
+	$(copy).find(".screen-reader-only").remove();
+	return copy;
+}
+
 var originaltext;
 function edit(span)
 {
@@ -1855,7 +1861,7 @@ function edit(span)
 				$(div).append("<div class='visibilitysection'><span class='glyphicon glyphicon-chevron-down' onclick='showHideVisibilityElements(this)'></span> " + strip_tags(adaptNumbering($(this).find(".sectiontitle"))) + "</div>");
 			} else if ($(this).hasClass("singlechoiceitem") || $(this).hasClass("multiplechoiceitem"))
 			{
-				$(div).append("<div class='visibilityquestion'>" + strip_tags(adaptNumbering($(this).find(".questiontitle").first())) + "</div>");
+				$(div).append("<div class='visibilityquestion'>" + strip_tags(adaptNumbering(removeInvisibleTags($(this).find(".questiontitle").first()))) + "</div>");
 				
 				$(this).find("textarea[name^='answer']").each(function(){
 					var answerid = $(this).attr("data-id");
@@ -1875,7 +1881,7 @@ function edit(span)
 					//I am a matrix question
 				} else {				
 				
-					$(div).append("<div class='visibilityquestion'>" + strip_tags(adaptNumbering($(this).find(".questiontitle").first())) + "</div>");
+					$(div).append("<div class='visibilityquestion'>" + strip_tags(adaptNumbering(removeInvisibleTags($(this).find(".questiontitle").first()))) + "</div>");
 					
 					var answers = $(this).find(".matrixtable").find("tr").first().find(".matrix-header");
 					
