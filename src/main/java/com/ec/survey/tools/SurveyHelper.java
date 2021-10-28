@@ -487,6 +487,7 @@ public class SurveyHelper {
 						invisibleElements.add(question.getUniqueId());
 					}
 
+
 					if (!(element instanceof Matrix) && !question.getOptional() && answers.isEmpty() && found) {
 						result.put(element,
 								resources.getMessage("validation.required", null, "This field is required.", locale));
@@ -505,6 +506,9 @@ public class SurveyHelper {
 								answerSet.getAnswers().remove(answer);
 							}
 						}
+					} else if (element instanceof  Matrix && !found) {
+						Matrix matrix = (Matrix) element;
+						System.out.println(matrix);
 					}
 
 				} else {

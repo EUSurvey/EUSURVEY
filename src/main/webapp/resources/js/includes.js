@@ -873,7 +873,7 @@ function initModals(item)
 		try {
 		
 			var result = validateInput(form);
-			
+
 			if (result == false)
 			{
 				var div = document.createElement("div");
@@ -1000,7 +1000,7 @@ function initModals(item)
 		validationinfo = "";
 		//this is a workaround for a problem with placeholders in IE8
 		if (inPlaceHolderInit) return;
-				
+
 		//to switch on/off client side validation (for testing)
 		//return true;
 		
@@ -1177,6 +1177,7 @@ function initModals(item)
 				};
 			} else if ($(this).hasClass("single-choice"))
 			{
+
 				var value = $(this).find(":checked").length;
 				if (value == 0) value = $(this).find("input[type='checkbox'][checked='checked']").length;
 				if (value == 0)
@@ -1253,6 +1254,7 @@ function initModals(item)
 		});
 		
 		$(parent).find(".hp").each(function(){
+
 			if ($(this).val().length > 0)
 		 	{
 		 		validationinfo +=  "honeypot ";
@@ -1283,6 +1285,7 @@ function initModals(item)
 		});
 		
 		$(parent).find(".comparable").each(function(){
+
 			if (isElementInvisible(this)) return;
 			if ($(this).hasClass("comparable-second")) return;
 			
@@ -1502,7 +1505,7 @@ function initModals(item)
 		});
 		
 		$(parent).find(".xhtml").each(function(){
-			
+
 			var label = "";
 			if ($(this).hasClass("tinymce"))
 			{
@@ -1562,7 +1565,7 @@ function initModals(item)
 		});
 		
 		$(parent).find("#new-survey-shortname").each(function(){
-			
+
 			var value = $(this).val();
 			
 			 var reg = /^[a-zA-Z0-9-_]+$/;
@@ -1577,7 +1580,7 @@ function initModals(item)
 		});
 		
 		$(parent).find("#new-survey-shortname-restore").each(function(){
-			
+
 			var value = $(this).val();
 			
 			 var reg = /^[a-zA-Z0-9-_]+$/;
@@ -1640,7 +1643,7 @@ function initModals(item)
 		});
 		
 		$(parent).find(".htCore").each(function(){
-			
+
 			var correct = true;
 
 			if (isElementInvisible(this)) return;
@@ -1663,7 +1666,6 @@ function initModals(item)
 		});
 		
 		$(parent).find(".matrixtable").each(function(){
-
 			if (isElementInvisible(this)) return;
 			
 			var classes = $(this).attr('class').split(" ");
@@ -1869,7 +1871,7 @@ function initModals(item)
 		$(parent).find(".answer-columns").each(function(){
 
 			if (isElementInvisible(this)) return;
-			
+
 			if ($(this).find(".checkboxes").length > 0)
 			{
 				var classes = $(this).find(".checkboxes").first().attr('class').split(" ");
