@@ -161,10 +161,10 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 							})
 						}],
 						labels: graphData.map(function (g) {
-							return truncateLabel(g.label, canvasWidth);
+							return truncateLabel(normalizeLabel(g.label), canvasWidth);
 						}),
 						originalLabels: graphData.map(function (g) {
-							return g.label;
+							return normalizeLabel(g.label);
 						})
 					};
 					break;
