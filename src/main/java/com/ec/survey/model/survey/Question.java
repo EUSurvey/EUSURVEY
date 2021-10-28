@@ -134,7 +134,17 @@ public abstract class Question extends Element {
 		if (delphiQuestion && !(this instanceof FreeTextQuestion) && (delphiChartType == DelphiChartType.None)) {
 			return getDefaultDelphiChartType(); 
 		}		
-		
+
+		if (!delphiQuestion && (delphiChartType == null || delphiChartType == DelphiChartType.None)) {
+			if (this instanceof ChoiceQuestion || this instanceof Matrix || this instanceof NumberQuestion || this instanceof RatingQuestion) {
+				return DelphiChartType.Pie;
+			}
+
+			if (this instanceof FreeTextQuestion) {
+				return DelphiChartType.WordCloud;
+			}
+		}
+
 		return delphiChartType == null ? getDefaultDelphiChartType() : delphiChartType;
 	}
 
