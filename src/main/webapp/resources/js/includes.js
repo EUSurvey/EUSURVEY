@@ -787,6 +787,10 @@ function initModals(item)
 			if (!found)	$("form").submit();
 		}
 	}
+
+	function findSurveyElementAndResetValidationErrors(element) {
+		resetValidationErrors($(element).closest('.survey-element'));
+	}
 	
 	function resetValidationErrors(parent)
 	{
