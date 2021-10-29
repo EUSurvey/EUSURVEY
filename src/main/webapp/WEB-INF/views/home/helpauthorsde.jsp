@@ -2519,71 +2519,70 @@
 
 			<p>EUSurvey bietet verschiedene Exportformate an: XLS, PDF, ODS und XML. </p>
 
-			<p>Je nach ausgewähltem Format ist die Struktur und der Inhalt der exportierten Dateien
-				des 'Datei Hochladen' Elementes unterschiedlich und so wie in den folgenden Abschnitten beschrieben:</p>
+			<p>Je nach ausgewähltem Format sind Struktur und Inhalt der exportierten Dateien
+				des "Datei Hochladen" Elementes unterschiedlich und so wie in den folgenden Abschnitten beschrieben:</p>
 
-			<h4>Ergebnisse im XLS Format</h4>
+			<h4>Ergebnisexport im XLS-Format</h4>
 
-			<p>1. Eine Excel Datei, die diese Informationen beinhaltet:</p>
+			<p>1. Eine Excel-Datei, die die folgenden Informationen enthält:</p>
+			<div style="margin-left: 2em">
+			<p>Alias: Umfrage-Alias (Beispiel: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+				Export Date: Datum im Format "dd-mm-yyyy hh:mm" (Beispiel: 28-09-2020 15:28)</p>
 
-			<p>Alias: Umfrage
-				Alias (Beispiel: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
-				Export Datum: Datum in dem Format 'dd-mm-yyyy hh :mm' (Beispiel: 28-09-2020 15:28)</p>
-
-			<p>Eine Tabelle, folgendermaßen strukturiert:</p>
-
-			<ul>
-				<li>Jede Spalte ist für eine andere 'Datei hochladen' Frage.</li>
-
-				<li>Jede Zeile ist für eine eigene Teilnahme.</li>
-
-				<li>Jede Zelle beinhaltet alle Dateinamen der hochgeladenen Dateien.</li>
-			</ul>
-
-			<p>2. Einzelne Ordner für jede Teilnahme benannt nach der Teilnahme ID jeweils mit
-				Unterordnern für jede 'Datei hochladen' Frage (Upload_1, Upload_2 etc.). </p>
-
-			<p>Zum Beispiel:</p>
-
-			<p>Ordner:
-				6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
-
-				Unterordner: Upload_1 (für die erste Datei hochladen Frage) beinhaltet alle hochgeladenen Dateien.<br>
-
-				Unterordner: Upload_2 (für die zweite Datei hochladen Frage) beinhaltet alle hochgeladenen Dateien.</p>
-
-			<h4>Ergebnisse im PDF Format</h4>
-
-			<p>1. Ein Ordner namens 'PDFs', der alle Umfrage Ergebnisse als PDF Dokumente beinhaltet.</p>
-
-			<p>2. Ordner die jeweils nach der entsprechenden Teilnahme ID benannt sind.<br>
-				Sie beinhalten Unterordner für jede 'Datei hochladen' Frage (Upload_1, Upload_2 etc.).</p>
-
-			<h4>Ergebnisse im ODS Format</h4>
-
-			<p>1. Eine Open Office Datei, die diese Informationen beinhaltet:</p>
-
-			<p>Alias: Umfrage Alias (Beispiel: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
-				Export Datum: Datum in dem Format 'dd-mm-yyyy hh :mm' (Beispiel: 28-09-2020 15:28)</p>
-
-			<p>Eine Tabelle, folgendermaßen strukturiert:</p>
+			<p>Eine Tabelle mit folgendem Aufbau:</p>
 
 			<ul>
-				<li>Jede Spalte ist für eine andere 'Datei hochladen' Frage.</li>
+				<li>Jede Spalte steht für eine andere "Datei hochladen"-Frage.</li>
 
-				<li>Jede Zeile ist für eine eigene Teilnahme.</li>
+				<li>Jede Zeile steht für einen anderen Beitrag.</li>
 
-				<li>Jede Zelle beinhaltet alle Dateinamen der hochgeladenen Dateien.</li>
+				<li>Jede Zelle enthält alle Namen der hochgeladenen Dateien.</li>
 			</ul>
+			</div>
 
-			<p>2. Einzelne
-				Ordner für jede Teilnahme benannt nach der Teilnahme ID jeweils mit
-				Unterordnern für jede 'Datei hochladen' Frage (Upload_1, Upload_2 etc.). </p>
+			<p>2. Ordner, die den einzelnen Beiträgen entsprechen und nach der Kennnummer des Beitrags
+				benannt sind. Sie enthalten Unterordner für jede "Datei hochladen"-Frage (Upload_1, Upload_2 usw.).  </p>
+			<div style="margin-left: 2em">
+				<p>Zum Beispiel:</p>
 
-			<h4>Ergebnisse im XML Format</h4>
+				<p>Ordner:
+					6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
 
-			<p>Dieses Exportformat beinhaltet die Ergebnisse im strukturierten XML Format.<br>
-			<b>Hochgeladene Dateien sind hier nicht einsehbar.</b></p>
+					Unterordner: Upload_1 (für die erste "Datei hochladen"-Frage ) beinhaltet alle hochgeladenen Dateien.<br>
+
+					Unterordner: Upload_2 (für die zweite "Datei hochladen"-Frage ) beinhaltet alle hochgeladenen Dateien.</p>
+			</div>
+			<h4>Ergebnisexport im PDF-Format</h4>
+
+			<p>1. Ordner mit dem Namen "PDFs", der alle Umfragebeiträge als PDF-Dokumente enthält.</p>
+
+			<p>2. Ordner, die den einzelnen Beiträgen entsprechen und nach der Kennnummer des Beitrags
+				benannt sind. Sie enthalten Unterordner für jede "Datei hochladen"-Frage (Upload_1, Upload_2 usw.). </p>
+
+			<h4>Ergebnisexport im ODS-Format</h4>
+
+			<p>1. Eine Open-Office-Datei, die die folgenden Informationen enthält:</p>
+			<div style="margin-left: 2em">
+				<p>Alias: Umfrage-Alias (Beispiel: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+					Export Date: Datum im Format "dd-mm-yyyy hh:mm" (Beispiel: 28-09-2020 15:28)</p>
+
+				<p>Eine Tabelle mit folgendem Aufbau:</p>
+
+				<ul>
+					<li>Jede Spalte steht für eine andere "Datei hochladen"-Frage.</li>
+
+					<li>Jede Zeile steht für einen anderen Beitrag.</li>
+
+					<li>Jede Zelle enthält alle Namen der hochgeladenen Dateien.</li>
+				</ul>
+			</div>
+			<p>2. Ordner, die den einzelnen Beiträgen entsprechen und nach der Kennnummer des Beitrags
+				benannt sind. Sie enthalten Unterordner für jede "Datei hochladen"-Frage (Upload_1, Upload_2 usw.). </p>
+
+			<h4>Ergebnisexport im XML-Format</h4>
+
+			<p>Dieses Exportformat beinhaltet die Ergebnisse im strukturierten XML-Format.<br>
+			<b>Hochgeladene Dateien sind in diesem Fall nicht einsehbar.</b></p>
 			<h1>
 				Design und Layout
 			</h1>
