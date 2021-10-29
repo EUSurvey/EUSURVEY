@@ -1730,7 +1730,7 @@ public class RunnerController extends BasicController {
 			HttpServletResponse response, Locale locale, Model modelMap, Device device) {
 		boolean hibernateOptimisticLockingFailureExceptionCatched = false;
 		String email = null;
-		System.out.println("here");
+
 		try {
 
 			if (request.getParameter("redirectFromCheckPassword") != null
