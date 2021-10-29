@@ -2592,79 +2592,76 @@
 			<p>EUSurvey propose différents formats d'export : XLS, PDF, ODS et XML.
 				<br>
 				En fonction du format sélectionné, la structure et le contenu des
-				fichiers exportés pour l'élément 'File upload' sont décrits ci-dessous :</p>
+				fichiers exportés pour l'élément «Charger un fichier» sont décrits ci-dessous :</p>
 
 			<h4>Export
 				des résultats en XLS</h4>
 
 			<p>1. Un fichier Excel contenant les informations suivantes :</p>
+			<div style="margin-left: 2em">
+				<p>Alias : Alias de l'enquête (exemple :
+					6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+					Date d'export : Date au format «dd-mm-yyyy hh:mm» (exemple :
+					28-09-2020 15:28)</p>
 
-			<p>Alias : Alias de l'enquête (exemple :
-				6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
-				Date d'export : Date au format 'dd-mm-yyyy hh :mm' (exemple :
-				28-09-2020 15:28)</p>
+				<p>Un tableau composé comme ci-dessous :</p>
+				<ul>
+					<li>Chaque colonne représente une question «Charger un fichier» différente.</li>
 
-			<p>Un tableau composé comme ci-dessous :</p>
-			<ul>
-				<li>Chaque colonne représente une question 'File
-					upload' différente.</li>
+					<li>Chaque ligne représente une contribution
+						différente.</li>
 
-				<li>Chaque ligne représente une contribution
-					différente.</li>
-
-				<li>Chaque cellule contient tous les noms des
-					fichiers téléchargés.</li>
-			</ul>
-
+					<li>Chaque cellule contient tous les noms des
+						fichiers téléchargés.</li>
+				</ul>
+			</div>
 			<p>2. Des dossiers correspondant à chaque contribution et nommés avec
-				l'ID de la contribution, contenant des sous-dossiers pour chaque question 'File
-				upload' (Upload_1, Upload_2, etc.). </p>
+				l'ID de la contribution, contenant des sous-dossiers pour chaque question «Charger un fichier» (Upload_1, Upload_2, etc.). </p>
+			<div style="margin-left: 2em">
+				<p>Par exemple :</p>
 
-			<p>Par exemple :</p>
+				<p>Dossier : 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
 
-			<p>Dossier : 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
+					Sous-dossier : Upload_1 (correspondant à la première question de
+					type «Charger un fichier») contient tous les fichiers téléchargés.<br>
 
-				Sous-dossier : Upload_1 (correspondant à la première question de
-				type 'File upload') contient tous les fichiers téléchargés.<br>
-
-				Sous-dossier : Upload_2 (correspondant à la deuxième question de type
-				'File upload') contient tous les fichiers téléchargés.</p>
-
+					Sous-dossier : Upload_2 (correspondant à la deuxième question de type
+					«Charger un fichier») contient tous les fichiers téléchargés.</p>
+			</div>
 			<h4>Export
 				des résultats au format PDF</h4>
 
-			<p>1. Dossier nommé 'PDFs' contenant toutes les contributions à
+			<p>1. Dossier nommé «PDFs» contenant toutes les contributions à
 				l'enquête sous forme de documents PDF.</p>
 
 			<p>2. Des dossiers correspondant à chaque contribution et nomméd avec
 				l'ID de la contribution.<br>
 
 				Chaque dossier contient des sous-dossiers pour chaque question de type
-				File Upload (Upload_1, Upload_2, etc.).</p>
+				«Charger un fichier» (Upload_1, Upload_2, etc.).</p>
 
 			<h4>Export des résultats au format ODS</h4>
 
 			<p>1. Un fichier Open Office contenant les informations suivantes :</p>
+			<div style="margin-left: 2em">
+				<p>Alias : Alias de l'enquête (exemple :
+					6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
 
-			<p>Alias : Alias de l'enquête (exemple :
-				6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+					Date d'export : Date au format «dd-mm-yyyy hh:mm» (exemple :
+					28-09-2020 15:28)</p>
 
-				Date d'export : Date au format 'dd-mm-yyyy hh :mm' (exemple :
-				28-09-2020 15:28)</p>
+				<p>Un tableau composé comme ci-dessous :</p>
 
-			<p>Un tableau composé comme ci-dessous :</p>
+				<ul>
+					<li>Chaque colonne représente une question «Charger un fichier» différente.</li>
 
-			<ul>
-				<li>Chaque colonne représente une question 'File
-					upload' différente.</li>
+					<li>Chaque ligne représente une contribution
+						différente.</li>
 
-				<li>Chaque ligne représente une contribution
-					différente.</li>
-
-				<li>Chaque cellule contient tous les noms des
-					fichiers téléchargés.</li>
-			</ul>
-
+					<li>Chaque cellule contient tous les noms des
+						fichiers téléchargés.</li>
+				</ul>
+			</div>
 			<p>2. Des dossiers correspondant à chaque contribution et nommés avec
 				l'ID de la contribution.<br>
 				Chaque dossier contient des sous-dossiers pour chaque question de
