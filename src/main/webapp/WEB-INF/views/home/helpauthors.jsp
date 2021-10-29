@@ -2247,7 +2247,7 @@
 				How to use tokens to create a link?
 			</h2>
 			<p>
-				In order to create a list of tokens (Authentication Tokens) that can be distributed to access a secured online questionnaire, open your survey and go to the "Participants" page. Click on "Create new Guest List" to start a wizard that will guide you through the process. Choose a name for the group and select "Tokens" from the types of Guest lists.
+				In order to create a list of tokens (authentication tokens) that can be distributed to access a secured online questionnaire, open your survey and go to the 'Participants' page. Click on 'Create new guest list' to start a wizard that will guide you through the process. Choose a name for the group and select 'Token list' from the types of guest lists.
 			</p>
 			<p>
 				Use the created tokens to build up individual access links you can send per emails to the participants using the URL below:

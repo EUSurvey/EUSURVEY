@@ -3226,25 +3226,25 @@
 				Comment utiliser des jetons (tokens) pour créer un lien ?
 			</h2>
 			<p>
-				Afin de créer une liste de tokens (Tokens d'authentification) qui peuvent être distribués pour accéder à un questionnaire en ligne sécurisé, ouvrez votre enquête et allez à la page "Participants".
-				Cliquez sur "Créer une nouvelle liste d'invités" pour lancer un assistant qui vous guidera tout au long du processus.
-				Choisissez un nom pour le groupe et sélectionnez "Tokens" parmi les types de listes d'invités.
+				Afin de créer une liste de jetons (jeton d'authentification) qui peuvent être distribués pour accéder à un questionnaire en ligne sécurisé, ouvrez votre enquête et allez à la page «Participants».
+				Cliquez sur «Créer une nouvelle liste d'invités» pour lancer un assistant qui vous guidera tout au long du processus.
+				Choisissez un nom pour le groupe et sélectionnez «Tokens» parmi les types de listes d'invités.
 			</p>
 			<p>
-				Utilisez les tokens créés pour créer des liens d'accès individuels que vous pouvez envoyer par courrier électronique aux participants en utilisant l'URL ci-dessous:
+				Utilisez les jetons créés pour créer des liens d'accès individuels que vous pouvez envoyer par courrier électronique aux participants en utilisant l'URL ci-dessous :
 			</p>
 			<p>
-				https://ec.europa.eu/eusurvey/runner/<b>SurveyAlias</b>/<b>TOKEN</b>
+				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>
 			</p>
 			<p>
-				Il suffit de remplacer:
+				Il suffit de remplacer :
 			</p>
 			<ul>
 				<li>
-					<b>SurveyAlias</b> par <b>l’Alias</b> <b>de votre enquête</b>
+					<span style="color: #f00; font-weight: bold">SurveyAlias</span> par <b>l’alias</b> <b>de votre enquête</b>
 				</li>
 				<li>
-					<b>TOKEN</b> avec un des jetons de la liste
+					<span style="color: #f00; font-weight: bold">TOKEN</span> avec un des jetons de la liste
 				</li>
 			</ul>
 			<h1>

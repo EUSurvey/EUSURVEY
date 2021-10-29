@@ -3142,28 +3142,28 @@
 				Wie kann ich Token verwenden, um einen Link zu erstellen?
 			</h2>
 			<p>
-				Um eine Liste von Token (Authentifizierungs-Token) zu erstellen, die für den Zugriff auf
-				einen gesicherten Online-Fragebogen verteilt werden können, öffnen Sie Ihre Umfrage und gehen Sie auf die Seite "Teilnehmer".
-				Klicken Sie auf "Token-Liste", um einen Assistenten zu starten, der Sie durch den Prozess führen wird.
-				Wählen Sie einen Namen für die Gruppe und wählen Sie "Token" aus den Arten von Gästelisten.
+				Um eine „Token-Liste“ (Authentifizierungs-Token) zu erstellen, die für den Zugriff auf
+				einen gesicherten Online-Fragebogen verteilt werden können, öffnen Sie Ihre Umfrage und gehen Sie auf die Seite „Teilnehmer“.
+				Klicken Sie auf „Token-Liste“, um einen Assistenten zu starten, der Sie durch den Prozess führen wird.
+				Wählen Sie einen Namen für die Gruppe und wählen Sie „Token“ aus den Arten von Gästelisten.
 			</p>
 			<p>
-				Verwenden Sie die erstellten Token, um individuelle Zugangslinks zu erstellen,
+				Verwenden Sie die erstellten Token, um individuelle Einladungslinks zu erstellen,
 				die Sie per E-Mail an die Teilnehmer senden können,
 				indem Sie die folgende URL verwenden:
 			</p>
 			<p>
-				https://ec.europa.eu/eusurvey/runner/<b>SurveyAlias</b>/<b>TOKEN</b>
+				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>
 			</p>
 			<p>
 				Ersetzen Sie dabei:
 			</p>
 			<ul>
 				<li>
-					<b>SurveyAlias</b> mit dem <b>Alias Ihrer Umfrage</b>
+					<span style="color: #f00; font-weight: bold">SurveyAlias</span> mit dem <b>Alias Ihrer Umfrage</b>
 				</li>
 				<li>
-					<b>TOKEN</b> mit einem der Token aus der Tokenliste
+					<span style="color: #f00; font-weight: bold">TOKEN</span> mit einem der Token aus der „Token-Liste“
 				</li>
 			</ul>
 			<h1>
