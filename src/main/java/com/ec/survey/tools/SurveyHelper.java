@@ -506,9 +506,13 @@ public class SurveyHelper {
 								answerSet.getAnswers().remove(answer);
 							}
 						}
-					} else if (element instanceof  Matrix && !found) {
-						Matrix matrix = (Matrix) element;
-						System.out.println(matrix);
+					}
+
+					//matrix must be ignored because the dependent question was not triggered
+					if (element instanceof  Matrix && !found && !answers.isEmpty()) {
+						for(Answer answer : answers) {
+							answerSet.getAnswers().remove(answer);
+						}
 					}
 
 				} else {
