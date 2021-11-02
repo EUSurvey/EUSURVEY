@@ -509,8 +509,15 @@
 		    	if (answer.length < 25) {
 		    		return answer;
 		    	}
+
+				let el = document.createElement("span");
+				el.setAttribute("data-toggle", "tooltip");
+				el.setAttribute("title", answer);
+				el.setAttribute("aria-label", answer);
+				el.innerHTML = answer;
+				el.innerText = el.innerText.substring(0, 20) + "...";
 		    	
-				return "<span data-toggle='tooltip' title='" + answer + "' aria-label='" + answer + "'>" + answer.substring(0,20) + "...</span>";
+				return  el.outerHTML;
 			}
 		};
 		
