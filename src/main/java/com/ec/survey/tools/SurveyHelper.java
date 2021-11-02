@@ -486,7 +486,7 @@ public class SurveyHelper {
 					if (!found) {
 						invisibleElements.add(question.getUniqueId());
 					}
-
+					
 					if (!(element instanceof Matrix) && !question.getOptional() && answers.isEmpty() && found) {
 						result.put(element,
 								resources.getMessage("validation.required", null, "This field is required.", locale));
@@ -504,6 +504,13 @@ public class SurveyHelper {
 							for (Answer answer : childanswers) {
 								answerSet.getAnswers().remove(answer);
 							}
+						}
+					}
+
+					//matrix must be ignored because the dependent question was not triggered
+					if (element instanceof  Matrix && !found && !answers.isEmpty()) {
+						for(Answer answer : answers) {
+							answerSet.getAnswers().remove(answer);
 						}
 					}
 
