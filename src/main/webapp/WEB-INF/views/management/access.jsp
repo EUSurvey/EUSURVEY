@@ -49,6 +49,7 @@
 		
 		a.disabled {
 			color: #ccc;
+		}
 
 		#add-user-dialog label {
 			margin-bottom: 0;
