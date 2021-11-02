@@ -9,7 +9,7 @@
 <html>
 
 <head>
-<title>EUSurvey - Terms of Service</title>
+<title>EUSurvey - Privacy Statement</title>
 <%@ include file="../includes.jsp"%>
 	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 
