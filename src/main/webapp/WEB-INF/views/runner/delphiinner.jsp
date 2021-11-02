@@ -490,8 +490,18 @@
 		    	if (title.length < 80) {
 		    		return title;
 		    	}
+
+		    	let el = document.createElement("span");
+		    	el.setAttribute("data-toggle", "tooltip");
+		    	el.setAttribute("data-html", "true");
+		    	el.setAttribute("title", title);
+		    	el.setAttribute("aria-label", title);
+		    	el.innerHTML = title;
+		    	el.innerText = el.innerText.substring(0, 75) + "...";
+				//.substring performed like this so there is no cut within an escaped character
+				//an '&amp;' could start at char 73
 		    	
-				return "<span data-toggle='tooltip' data-html='true' title='" + title + "' aria-label='" + title + "'>" + title.substring(0,75) + "...</span>";
+				return el.outerHTML;
 			},
 			
 			niceAnswer: function(answer)
