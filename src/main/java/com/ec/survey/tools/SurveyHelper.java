@@ -4238,7 +4238,7 @@ public class SurveyHelper {
 
 		// fix for old surveys having elements without uids
 		for (Element elem : survey.getElementsRecursive(true)) {
-			if (elem.getUniqueId() == null) {
+			if (elem.getUniqueId() == null || elem.getUniqueId().trim().length() == 0) {
 				String newUniqueId = UUID.randomUUID().toString();
 				elem.setUniqueId(newUniqueId);
 			}
