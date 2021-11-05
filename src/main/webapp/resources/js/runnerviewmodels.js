@@ -1076,6 +1076,8 @@ function newNumberViewModel(element)
 		propagateChange($(input));
 	});
 	viewModel.markAsAnswered = function (data) {
+		const input = $("#answer" + viewModel.id());
+		input.val(viewModel.initialDefaultValue())
 		this.isAnswered(true);
 		tinyMCE.get('explanation' + data.id()).execCommand('mceFocus',false);
 	};
