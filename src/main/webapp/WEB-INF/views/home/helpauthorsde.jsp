@@ -1224,6 +1224,26 @@
 			<p>
 				Weitere Informationen finden Sie in unserem <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">Leitfaden für bewährte Praktiken</a>, und zögern Sie nicht, sich an das <a href="${contextpath}/home/support?assistance=1">EUSurvey-Supportteam</a> zu wenden, um bei Bedarf Unterstützung bei der Neugestaltung Ihres Formulars zu erhalten.
 			</p>
+			<h2>Randomisierungsfunktion</h2>
+			<p>
+				Wenn Sie einen <strong>Abschnitt</strong> der ersten Stufe verwenden, haben Sie die Möglichkeit, die darunter liegenden Fragen/Elemente in ihrer ursprünglichen Reihenfolge zu belassen oder ihre Position zu randomisieren. Die Zufallsanordnung kann in den Abschnittseigenschaften direkt neben "Ordnen nach" ausgewählt werden.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/randomization_DE.png" style="margin-bottom: 1em" />
+			<p>Bitte beachten Sie auch die folgenden Punkte:</p>
+			<ul>
+				<li>Alle Umfrageelemente (einschließlich Bilder und statischer Text) werden zufällig angeordnet.</li>
+				<li>Wenn eine Frage eine Sichtbarkeitsänderung auslöst oder durch eine Sichtbarkeitsänderung (nicht) sichtbar wird, wird ihre Position nicht verändert. Sie wird immer vor den anderen "randomisierten" Elementen angezeigt.</li>
+				<li>Unterabschnitte und ihre Fragen (Stufen 2 und 3) werden ebenfalls randomisiert, aber ihre Reihenfolge innerhalb des Abschnitts der Stufe 1, zu dem sie gehören, wird beibehalten. Das bedeutet, dass die Fragen eines Unterabschnitts ebenfalls randomisiert werden, wenn der Abschnitt der Stufe 1 randomisiert wird.</li>
+				<li>Die PDF-Version der Umfrage (Funktion "PDF-Version herunterladen") zeigt die Fragen immer in der ursprünglichen Reihenfolge.</li>
+				<li>PDFs von Beiträgen zeigen die Fragen immer in der ursprünglichen Reihenfolge.</li>
+				<li>Wenn die Nummerierung der Abschnitte/Fragen in Verbindung mit der Randomisierungsfunktion aktiviert ist, werden auch die Fragennummern zusammen mit den Fragen randomisiert.
+					<div><img src="${contextpath}/resources/images/documentation/randomization_sections_DE.png" style="max-width: 100%;" /></div>
+				</li>
+			</ul>
+			<p>Es gibt noch einen weiteren Punkt, der speziell für DELPHI-Umfragen gilt:</p>
+			<ul>
+				<li>Auf der DELPHI-Startseite werden die Fragen in ihrer ursprünglichen Reihenfolge angezeigt.</li>
+			</ul>
 			<h1>
 				Sicherheit der Umfrage
 			</h1>
