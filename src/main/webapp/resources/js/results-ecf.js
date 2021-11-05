@@ -238,7 +238,9 @@
 						
 						if (profileAssessmentResult.name == null) {
 							$('#ecfAvgScoreChart').hide();
+							$('#ecfAvgScoreChart2').hide();
 							$('#ecfMaxScoreChart').hide();
+							$('#ecfMaxScoreChart2').hide();
 						} else {						
 							displayECFAvgScoreChartByProfileResults(profileAssessmentResult, profileComparisonUUID);
 							displayECFMaxScoreChartByProfileResults(profileAssessmentResult, profileComparisonUUID);
@@ -362,13 +364,30 @@
 			avgScores = [];
 			competencies = [];
 			targetScores = [];
+			
+			avgScores2 = [];
+			competencies2 = [];
+			targetScores2 = [];
+			
 			profileAssessmentResult.competencyResults.forEach(competencyResult => {
-				avgScores.push(competencyResult.competencyAverageScore);
-				competencies.push(competencyResult.competencyName);
-				targetScores.push(competencyResult.competencyTargetScore);
+				//first 19 entries are for procurement specific
+				// rest is for professional competencies
+				
+				if (avgScores.length < 19)
+				{
+					avgScores.push(competencyResult.competencyAverageScore);
+					competencies.push(competencyResult.competencyName);
+					targetScores.push(competencyResult.competencyTargetScore);
+				} else {
+					avgScores2.push(competencyResult.competencyAverageScore);
+					competencies2.push(competencyResult.competencyName);
+					targetScores2.push(competencyResult.competencyTargetScore);
+				}
 			});
-			displayECFChart("Average score vs target scores for " + profileAssessmentResult.name, "#ecfAvgScoreChart", avgScores, targetScores, competencies, "Avg scores", "Target scores");
+			displayECFChart("Procurement specific competencies - Average score", "#ecfAvgScoreChart", avgScores, targetScores, competencies, "Avg scores", "Target scores");
 			$('#ecfAvgScoreChart').show();
+			displayECFChart("Professional competencies - Average score", "#ecfAvgScoreChart2", avgScores2, targetScores2, competencies2, "Avg scores", "Target scores");
+			$('#ecfAvgScoreChart2').show();
 		}
 	}
 	
@@ -377,13 +396,30 @@
 			maxScores = [];
 			competencies = [];
 			targetScores = [];
+			
+			maxScores2 = [];
+			competencies2 = [];
+			targetScores2 = [];
+			
 			profileAssessmentResult.competencyResults.forEach(competencyResult => {
-				maxScores.push(competencyResult.competencyMaxScore);
-				competencies.push(competencyResult.competencyName);
-				targetScores.push(competencyResult.competencyTargetScore);
+				//first 19 entries are for procurement specific
+				// rest is for professional competencies
+				
+				if (maxScores.length < 19)
+				{
+					maxScores.push(competencyResult.competencyMaxScore);
+					competencies.push(competencyResult.competencyName);
+					targetScores.push(competencyResult.competencyTargetScore);
+				} else {
+					maxScores2.push(competencyResult.competencyMaxScore);
+					competencies2.push(competencyResult.competencyName);
+					targetScores2.push(competencyResult.competencyTargetScore);
+				}
 			});
-			displayECFChart("Max score vs target scores for " + profileAssessmentResult.name, "#ecfMaxScoreChart", maxScores, targetScores, competencies, "Max scores", "Target scores");
+			displayECFChart("Procurement specific competencies - Maximum score", "#ecfMaxScoreChart", maxScores, targetScores, competencies, "Max scores", "Target scores");
 			$('#ecfMaxScoreChart').show();
+			displayECFChart("Professional competencies - Maximum score", "#ecfMaxScoreChart2", maxScores2, targetScores2, competencies2, "Max scores", "Target scores");
+			$('#ecfMaxScoreChart2').show();
 		}
 	}
 	

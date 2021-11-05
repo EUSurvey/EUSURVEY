@@ -1,12 +1,15 @@
 package com.ec.survey.service;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
@@ -112,10 +115,10 @@ public class ReportingService extends BasicService {
 		
 		if (filter != null) {
 			
-			if ( filter.getFilterValues() != null &&  filter.getFilterValues().size() > 3)
-			{
-				throw new TooManyFiltersException("too many result filters");
-			}			
+//			if ( filter.getFilterValues() != null &&  filter.getFilterValues().size() > 3)
+//			{
+//				throw new TooManyFiltersException("too many result filters");
+//			}			
 			
 			if (filter.getInvitation() != null && filter.getInvitation().length() > 0)
 			{
@@ -615,7 +618,7 @@ public class ReportingService extends BasicService {
 										{
 											v += answerid;
 										} else {
-											v += answer.getTitle();
+											v += answer.getStrippedTitle();
 										}
 										
 										if (showShortnames) {
@@ -638,7 +641,7 @@ public class ReportingService extends BasicService {
 										{
 											v += answerid;
 										} else {
-											v += answer.getTitle();
+											v += answer.getStrippedTitle();
 										}
 										
 										if (showShortnames) {
@@ -1742,6 +1745,28 @@ public class ReportingService extends BasicService {
 		return ConversionTools.getValue(query.uniqueResult());
 	}	
 	
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public int getAnswerSetsByQuestionUIDInternal(Survey survey, String quid, Map<Integer, Set<String>> answersByAnswerSetID) {
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		String sql = "SELECT QANSWERSETID, Q" + quid.replace("-", "") + " FROM " + getOLAPTableName(survey) + " ORDER BY QCREATED DESC";
+
+		SQLQuery query = sessionReporting.createSQLQuery(sql);
+		int length = 0;
+		for (Object row : query.list()) {
+			if (!(row instanceof Object[])) {
+				continue;
+			}
+			Object[] rowEntrys = (Object[])row;
+			int answerSetID= ConversionTools.getValue(rowEntrys[0]);
+			String answerUIDsStringly = (String)rowEntrys[1];
+			String[] answerUIDsA = answerUIDsStringly.split(";");
+			Set<String> answerUIDs = new HashSet<>(Arrays.asList(answerUIDsA));
+			answersByAnswerSetID.put(answerSetID, answerUIDs);
+			length++;
+		}
+		return length;
+	}
+
 	private String shrink(String input) {
 		if (input == null || input.length() < 5001) return input;
 		return input.substring(0, 5000);

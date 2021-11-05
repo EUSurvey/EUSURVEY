@@ -283,12 +283,21 @@ public class TranslationsHelper {
 				}
 				
 				if (element instanceof GalleryQuestion) {
+					//inx
 					GalleryQuestion gallery = (GalleryQuestion) element;
 					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						translations.getTranslations()
+								.add(new Translation(child.getUid() + GalleryQuestion.TEXT,
+										child.getComment() != null ? child.getComment() : "",
+										survey.getLanguage().getCode(), survey.getId(), translations));
 						translations.getTranslations()
 							.add(new Translation(child.getUid(),
 								child.getDescription() != null ? child.getDescription() : "",
 								survey.getLanguage().getCode(), survey.getId(), translations));
+						translations.getTranslations()
+								.add(new Translation(child.getUid() + GalleryQuestion.TITLE,
+										child.getName() != null ? child.getName() : "",
+										survey.getLanguage().getCode(), survey.getId(), translations));
 					}
 				}
 			} else {
@@ -416,11 +425,13 @@ public class TranslationsHelper {
 			if (element instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
-					result.add(new KeyValue(child.getUid(), "L"));
+					result.add(new KeyValue(child.getUid() + GalleryQuestion.TEXT, "GT"));
+					result.add(new KeyValue(child.getUid(), "GDT"));
+					result.add(new KeyValue(child.getUid() + GalleryQuestion.TITLE, "GL"));
+
 				}
 			}
 		}
-
 		return result;
 	}
 
@@ -573,16 +584,19 @@ public class TranslationsHelper {
 							resources.getMessage("label.Text", null, "Text", locale)));
 				}
 			}
-			
+
 			if (element instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
-					result.add(new KeyValue(child.getUid(), 
-							resources.getMessage("label.DescriptiveText", null, "Descriptive Text", locale)));
+					result.add(new KeyValue(child.getUid(),
+							resources.getMessage("label.AlternativeText", null, "Alternative Text", locale)));
+					result.add(new KeyValue(child.getUid() + GalleryQuestion.TEXT,
+							resources.getMessage("label.Text", null, "Text", locale)));
+					result.add(new KeyValue(child.getUid() + GalleryQuestion.TITLE,
+							resources.getMessage("label.Title", null, "Title", locale)));
 				}
 			}
 		}
-
 		return result;
 	}
 
@@ -617,14 +631,14 @@ public class TranslationsHelper {
 	}
 	
 	private static org.w3c.dom.Element getFileNode(com.ec.survey.model.survey.base.File element, Document doc,
-			HashMap<String, String> translationByKey) {
+			HashMap<String, String> translationByKey, String keySuffix) {
 		org.w3c.dom.Element fileNode = doc.createElement("File");
 		
 		Attr attr = doc.createAttribute("key");
 		attr.setValue(element.getUid());
 		fileNode.setAttributeNode(attr);
 		
-		String label = getLabel(element, "", translationByKey);
+		String label = getLabel(element, keySuffix, translationByKey);
 		org.w3c.dom.Element labelNode = doc.createElement(Constants.DESCRIPTION);
 		labelNode.appendChild(doc.createCDATASection(label));
 		fileNode.appendChild(labelNode);
@@ -797,12 +811,31 @@ public class TranslationsHelper {
 		}
 		
 		if (element instanceof GalleryQuestion) {
-
 			GalleryQuestion gallery = (GalleryQuestion) element;
 			org.w3c.dom.Element childrenElement = doc.createElement("Children");
 
 			for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
-				childrenElement.appendChild(getFileNode(child, doc, translationByKey));
+				org.w3c.dom.Element galleryImage = doc.createElement("GalleryImage");
+				attr = doc.createAttribute("key");
+				attr.setValue(child.getUid());
+				galleryImage.setAttributeNode(attr);
+
+				org.w3c.dom.Element textNode = doc.createElement("GalleryText");
+				label = getLabel(child, GalleryQuestion.TEXT, translationByKey);
+				textNode.appendChild(doc.createCDATASection(label));
+				galleryImage.appendChild(textNode);
+
+				org.w3c.dom.Element descriptiveTextNode = doc.createElement("GalleryDescriptiveText");
+				label = getLabel(child, "", translationByKey);
+				descriptiveTextNode.appendChild(doc.createCDATASection(label));
+				galleryImage.appendChild(descriptiveTextNode);
+
+				org.w3c.dom.Element titleNode = doc.createElement("GalleryTitle");
+				label = getLabel(child, GalleryQuestion.TITLE, translationByKey);
+				titleNode.appendChild(doc.createCDATASection(label));
+				galleryImage.appendChild(titleNode);
+
+				childrenElement.appendChild(galleryImage);
 			}
 			elementNode.appendChild(childrenElement);
 		}
@@ -1264,11 +1297,25 @@ public class TranslationsHelper {
 				if (element instanceof GalleryQuestion) {
 					GalleryQuestion gallery = (GalleryQuestion) element;
 					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
-						label = getLabel(child, "", translationsByKey);
+						label = getLabel(child, GalleryQuestion.TEXT, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, child.getUid());
+							addTextCell(row, 1, descriptions.get(child.getUid() + GalleryQuestion.TEXT));
+							addTextCell(row, 2, label);
+						}
+						label = getLabel(child,"", translationsByKey);
 						if (notNullOrEmpty(label)) {
 							row = sheet.createRow(rowIndex++);
 							addTextCell(row, 0, child.getUid());
 							addTextCell(row, 1, descriptions.get(child.getUid()));
+							addTextCell(row, 2, label);
+						}
+						label = getLabel(child, GalleryQuestion.TITLE, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, child.getUid());
+							addTextCell(row, 1, descriptions.get(child.getUid() + GalleryQuestion.TITLE));
 							addTextCell(row, 2, label);
 						}
 					}
@@ -1629,12 +1676,30 @@ public class TranslationsHelper {
 				if (element instanceof GalleryQuestion) {
 					GalleryQuestion gallery = (GalleryQuestion) element;
 					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						label = getLabel(child, GalleryQuestion.TEXT, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(child.getUid()) ;
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(child.getUid() + GalleryQuestion.TEXT));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(label);
+						}
 						label = getLabel(child, "", translationsByKey);
 						if (notNullOrEmpty(label)) {
 							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(child.getUid());
+							cell.setStringValue(child.getUid()) ;
 							cell = sheet.getCellByPosition(1, rowIndex);
 							cell.setStringValue(descriptions.get(child.getUid()));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(	label);
+						}
+						label = getLabel(child, GalleryQuestion.TITLE, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(child.getUid()) ;
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(child.getUid() + GalleryQuestion.TITLE));
 							cell = sheet.getCellByPosition(2, rowIndex++);
 							cell.setStringValue(label);
 						}
@@ -1677,6 +1742,9 @@ public class TranslationsHelper {
 		typeSuffixByShortType.put("CL", "CONFIRMATIONLABEL");
 		typeSuffixByShortType.put("F", "FEEDBACK");
 		typeSuffixByShortType.put("FC", "FIRSTCELL");
+		typeSuffixByShortType.put("GT", "GALLERYTEXT");
+		typeSuffixByShortType.put("GDT", "");
+		typeSuffixByShortType.put("GL", "TITLE");
 
 		return typeSuffixByShortType;
 	}
@@ -1899,12 +1967,20 @@ public class TranslationsHelper {
 					org.w3c.dom.Element children = (org.w3c.dom.Element) element.getElementsByTagName("Children")
 							.item(0);
 
-					for (int j = 0; j < children.getElementsByTagName("File").getLength(); j++) {
-						org.w3c.dom.Element child = (org.w3c.dom.Element) children.getElementsByTagName("File")
-								.item(j);
-						key = Tools.repairXML(child.getAttribute("key"));
-						label = getText(child.getElementsByTagName(Constants.DESCRIPTION), Constants.DESCRIPTION);
 
+					for (int j = 0; j < children.getElementsByTagName("GalleryImage").getLength(); j++) {
+						org.w3c.dom.Element child = (org.w3c.dom.Element) children.getElementsByTagName("GalleryImage")
+								.item(j);
+						key = Tools.repairXML(child.getAttribute("key")) + GalleryQuestion.TEXT;
+						label = getText(child.getElementsByTagName("GalleryText"), "GalleryText");
+						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
+
+						key = Tools.repairXML(child.getAttribute("key"));
+						label = getText(child.getElementsByTagName("GalleryDescriptiveText"), "GalleryDescriptiveText");
+						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
+
+						key = Tools.repairXML(child.getAttribute("key")) + GalleryQuestion.TITLE;
+						label = getText(child.getElementsByTagName("GalleryTitle"), "GalleryTitle");
 						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 					}
 				}
@@ -2424,9 +2500,17 @@ public class TranslationsHelper {
 			if (element instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+					if (translationsByKey.containsKey(child.getUid() + GalleryQuestion.TEXT)
+							&& notNullOrEmpty(translationsByKey.get(child.getUid()+ GalleryQuestion.TEXT).getLabel()))
+						child.setComment(translationsByKey.get(child.getUid() + GalleryQuestion.TEXT).getLabel());
+
 					if (translationsByKey.containsKey(child.getUid())
 							&& notNullOrEmpty(translationsByKey.get(child.getUid()).getLabel()))
 						child.setDescription(translationsByKey.get(child.getUid()).getLabel());
+
+					if (translationsByKey.containsKey(child.getUid() + GalleryQuestion.TITLE)
+							&& notNullOrEmpty(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel()))
+						child.setName(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel());
 				}
 			}
 		}

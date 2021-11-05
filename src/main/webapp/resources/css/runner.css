@@ -175,6 +175,12 @@ a.ratingitem {
 	color: #666;
 }
 
+.question-reset-answer-message {
+	margin-left: 10px;
+	font-style: italic;
+	color: #666;
+}
+
 .rankingitem-decoration {
 	color: #333;
 	font-weight: normal;
@@ -218,9 +224,17 @@ a.ratingitem {
 }
 
 .questionhelp__text {
-	display: none;
 	padding-bottom: 5px;
 	padding-top: 5px;
+}
+
+.sr-only {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
 }
 
 .limits {
@@ -314,7 +328,6 @@ a.ratingitem {
 .matrix-header .validation-error {
 	position: relative;
 }
-
 
 select,
 textarea,

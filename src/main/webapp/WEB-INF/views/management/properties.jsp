@@ -89,15 +89,17 @@
 							</div>
 							<div style="float: right">
 								<form:select path="survey.language" class="form-control required" style="width: auto;">
-									<c:forEach items="${form.survey.completeTranslations}" var="language">				
-										<c:choose>
-											<c:when test="${form.survey.language.code.equals(language)}">
-												<form:option selected="selected" value="${language}"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></form:option>
-											</c:when>
-											<c:otherwise>
-												<form:option value="${language}"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></form:option>
-											</c:otherwise>
-										</c:choose>
+									<c:forEach items="${form.survey.completeTranslations}" var="language">
+										<c:if test="${language.official}">
+											<c:choose>
+												<c:when test="${form.survey.language.code.equals(language.code)}">
+													<form:option selected="selected" value="${language.code}"><esapi:encodeForHTML>${language.code}</esapi:encodeForHTML></form:option>
+												</c:when>
+												<c:otherwise>
+													<form:option value="${language.code}"><esapi:encodeForHTML>${language.code}</esapi:encodeForHTML></form:option>
+												</c:otherwise>
+											</c:choose>
+										</c:if>
 									</c:forEach>
 								</form:select>		
 							</div>
@@ -456,7 +458,25 @@
 								<a data-bind="visible: !showBackgroundDocs(), click: addDocRow" data-toggle="tooltip" title="<spring:message code="label.AddBackgroundDocument" />" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span></a>
 							</div>
 						</td>
-					</tr>					
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
+								<spring:message code="label.DedicatedResultPrivileges" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.DedicatedResultPrivileges" /></div>
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.dedicatedResultPrivileges" class="onoffswitch-checkbox" id="myonoffswitchdedicatedResultPrivileges" />
+									<label class="onoffswitch-label" for="myonoffswitchdedicatedResultPrivileges">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+							    </div>
+							</div>
+						</td>
+					</tr>				
 				</table>
 			</div>		
 			
@@ -695,7 +715,7 @@
 							<div style="float: right">							
 								<div class="onoffswitch">
 									<form:checkbox path="survey.saveAsDraft" class="onoffswitch-checkbox" id="myonoffswitchdraft" data-bind="checked: _properties.saveAsDraft()"  />
-									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi() || _properties.timeLimit().length > 0) ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi() || _properties.timeLimit().length > 0 || _properties.preventGoingBack()) ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -721,7 +741,7 @@
 							<div style="float: right">							
 								<div class="onoffswitch">
 									<form:checkbox path="survey.changeContribution" class="onoffswitch-checkbox" data-bind="checked: _properties.changeContribution()" />
-									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.delphi() || _properties.timeLimit().length > 0) ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
+									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.delphi() || _properties.timeLimit().length > 0 || _properties.preventGoingBack()) ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -770,8 +790,8 @@
 							</div>						
 							<div style="float: right">
 								<div class="onoffswitch">
-									<input type="checkbox" data-bind="checked: multiPaging" name="survey.multiPaging" class="onoffswitch-checkbox" id="myonoffswitchmultiPaging" />
-									 <label class="onoffswitch-label" for="myonoffswitchmultiPaging">
+									<form:checkbox path="survey.multiPaging" class="onoffswitch-checkbox" id="myonoffswitchmultiPaging" data-bind="checked: _properties.multiPaging()" />
+									 <label class="onoffswitch-label" onclick="_properties.toggleMultiPaging()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -788,6 +808,22 @@
 								<div class="onoffswitch">
 									<form:checkbox path="survey.validatedPerPage" class="onoffswitch-checkbox" id="myonoffswitchvalidatedPerPage" />
 									 <label class="onoffswitch-label" for="myonoffswitchvalidatedPerPage">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>	
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: multiPaging">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.PreventGoingBack" />
+							</div>
+							<div style="float: right">							
+								<div class="onoffswitch">
+									<form:checkbox path="survey.preventGoingBack" class="onoffswitch-checkbox" id="myonoffswitchPreventGoingBack" data-bind="checked: _properties.preventGoingBack()" />
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi()) ? " disabled" : "")' onclick="_properties.togglePreventGoingBack()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -851,11 +887,13 @@
 						<td>
 							<div style="float: left">
 								<spring:message code="label.LogoAlternativeText" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 							</div>
 							<div style="float: right">
 								<form:input htmlEscape="false" path="survey.logoText" type="text" class="form-control" style="width: 500px" />
 							</div>
 							<div style="clear: both"></div>					
+							<div class="help hideme"><spring:message code="help.LogoAlternativeText" /></div>
 						</td>
 					</tr>	
 					<tr class="subelement noborder">

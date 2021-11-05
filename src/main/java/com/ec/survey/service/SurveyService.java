@@ -176,6 +176,190 @@ public class SurveyService extends BasicService {
 		}
 		return surveys;
 	}
+	
+	@Transactional(readOnly = true)
+	public List<Survey> getSurveysForDashboard(SurveyFilter filter, SqlPagination sqlPagination, User u) throws Exception {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("SELECT s.SURVEY_ID");
+		stringBuilder.append(" ,s.SURVEY_UID");
+		stringBuilder.append(" ,s.SURVEYNAME");
+		stringBuilder.append(" ,s.TITLE");
+		stringBuilder.append(" ,s.SURVEY_END_DATE");
+		stringBuilder.append(" ,s.SURVEY_START_DATE");
+		stringBuilder.append(" ,s.ISPUBLISHED");
+		stringBuilder.append(" ,s.LANGUAGE");
+		
+		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {
+			stringBuilder.append(" ,npa.PUBLISHEDANSWERS as replies");
+		}
+		
+		stringBuilder.append(" ,s.ACTIVE");
+		stringBuilder.append(" ,s.OWNER");
+		stringBuilder.append(" ,s.SURVEYSECURITY");
+		stringBuilder.append(" from SURVEYS s");
+		
+		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {
+			stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
+		}
+		
+		stringBuilder.append(
+				" where s.ISDRAFT = 1 and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)");
+
+		String sql = stringBuilder.toString();
+		HashMap<String, Object> parameters = new HashMap<>();
+		
+		sql +=  getSql(filter, parameters, false);
+
+		List<Survey> surveys = new ArrayList<>();
+		Map<Integer, Language> languageMap = getLanguageMap();
+		for (Object[] row : loadSurveysfromDatabase(sql, parameters, sqlPagination)) {
+			Survey survey = new Survey();
+			int rowIndex = 0;
+			survey.setId(ConversionTools.getValue(row[rowIndex++]));
+
+			survey.setUniqueId((String) row[rowIndex++]);
+			survey.setShortname((String) row[rowIndex++]);
+			survey.setTitle((String) row[rowIndex++]);
+			survey.setEnd((Date) row[rowIndex++]);
+			survey.setStart((Date) row[rowIndex++]);
+			survey.setIsPublished((Boolean) row[rowIndex++]);
+			survey.setLanguage(languageMap.get(ConversionTools.getValue(row[rowIndex++])));// 8
+			
+			if (this.isReportingDatabaseEnabled() && !filter.getSortKey().equalsIgnoreCase("REPLIES")) {				
+				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(false, survey.getUniqueId()));				
+			} else {
+				int mainCount = ConversionTools.getValue(row[rowIndex++]);
+				survey.setNumberOfAnswerSetsPublished(mainCount);
+			}
+			
+			survey.setIsActive((Boolean) row[rowIndex++]);
+
+			int userId = ConversionTools.getValue(row[rowIndex++]);
+			
+			User user = administrationService.getUser(userId);
+			survey.setOwner(user);
+
+			survey.setSecurity((String) row[rowIndex]);
+
+			surveys.add(survey);
+		}
+		
+		for (Survey survey : surveys) {
+			survey.setTranslations(translationService.getTranslationLanguagesForSurvey(survey.getId(), false));
+			survey.setCompleteTranslations(this.getCompletedTranslations(survey));
+		}
+		
+		generateAccessInformation(surveys, u);
+		
+		return surveys;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Survey> getSurveysForSurveySearch(SurveyFilter filter, SqlPagination sqlPagination, boolean initDrafts, boolean initReports) throws Exception {
+		StringBuilder stringBuilder = new StringBuilder(1024);
+		stringBuilder.append("SELECT s.SURVEY_ID");
+		stringBuilder.append(", s.SURVEY_UID");
+		stringBuilder.append(", s.SURVEYNAME");
+		stringBuilder.append(", s.TITLE");
+		stringBuilder.append(", s.OWNER");
+		
+		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {
+			stringBuilder.append(", npa.PUBLISHEDANSWERS as replies");// 7
+		}
+		
+		stringBuilder.append(", s.SURVEY_DELETED");
+		stringBuilder.append(", s.SURVEY_CREATED");
+		stringBuilder.append(", s.FROZEN");
+		
+		if (initReports && filter.getSortKey().equalsIgnoreCase("reported")) {
+			stringBuilder.append(", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");// 15
+		}
+		
+		stringBuilder.append(" from SURVEYS s");
+		
+		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {		
+			stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
+		}
+		
+		stringBuilder.append(" where s.ISDRAFT = 1 AND ");
+		String sql = stringBuilder.toString();
+
+		if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("ARCHIVED")) {
+			sql += "(s.ARCHIVED = 1)";
+		} else if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("DELETED")) {
+			sql += "(s.DELETED = 1)";
+		} else if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("REPORTED")) {
+			sql += "(s.SURVEY_ID > 0)";
+			// handled inside getSql
+		} else {
+			sql += "(s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)";
+		}
+
+		HashMap<String, Object> parameters = new HashMap<>();
+		sql += getSql(filter, parameters, true);
+
+		List<Survey> surveys = new ArrayList<>();
+		for (Object[] row : loadSurveysfromDatabase(sql, parameters, sqlPagination)) {
+			Survey survey = new Survey();
+			int columnNum = 0;
+			survey.setId(ConversionTools.getValue(row[columnNum++]));
+			survey.setUniqueId((String) row[columnNum++]);
+			survey.setShortname((String) row[columnNum++]);
+			survey.setTitle((String) row[columnNum++]);
+
+			int userId = ConversionTools.getValue(row[columnNum++]);			
+			User user = administrationService.getUser(userId);
+			survey.setOwner(user);
+
+			if (this.isReportingDatabaseEnabled() && !filter.getSortKey().equalsIgnoreCase("REPLIES")) {
+				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(false, survey.getUniqueId()));
+			} else {
+				survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[columnNum++]));
+			}
+			
+			survey.setDeleted((Date) row[columnNum++]);
+			survey.setCreated((Date) row[columnNum++]);
+			survey.setIsFrozen((Boolean) row[columnNum++]);
+			
+			initPublishedDates(survey);
+			
+			if (initReports) {
+				initNumberOfReports(survey);
+			}
+
+			survey.setTitle(survey.cleanTitle());
+			
+			if (initDrafts) {
+				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
+			}
+			
+			surveys.add(survey);
+		}
+				
+		return surveys;
+	}
+	
+	private void initPublishedDates(Survey survey) {
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery query = session.createSQLQuery("SELECT MIN(SURVEY_CREATED), MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = :SURVEY_UID");
+		
+		@SuppressWarnings("unchecked")
+		List<Object> datesList = query.setString("SURVEY_UID", survey.getUniqueId()).list();
+		
+		Object[] dates = (Object[]) datesList.get(0);
+		
+		survey.setFirstPublished((Date) dates[0]);
+		survey.setPublished((Date) dates[1]);
+	}
+	
+	private void initNumberOfReports(Survey survey) {
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery query = session.createSQLQuery("SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = :SURVEY_UID");
+		
+		Object count = query.setString("SURVEY_UID", survey.getUniqueId()).uniqueResult();
+		
+		survey.setNumberOfReports(ConversionTools.getValue(count));
+	}	
 
 	@Transactional(readOnly = true)
 	public List<Survey> getSurveysIncludingTranslationLanguages(SurveyFilter filter, SqlPagination sqlPagination,
@@ -186,7 +370,7 @@ public class SurveyService extends BasicService {
 			survey.setCompleteTranslations(this.getCompletedTranslations(survey));
 
 			if (addInvitedAndDrafts) {
-				survey.setNumberOfInvitations(participationService.getNumberOfInvitations(survey.getUniqueId()));
+				survey.setNumberOfInvitations(participationService.getNumberOfOpenInvitations(survey.getUniqueId()));
 				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
 			} else {
 				survey.setNumberOfInvitations(-1);
@@ -216,9 +400,9 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	private List<String> getCompletedTranslations(Survey survey) {
+	private List<Language> getCompletedTranslations(Survey survey) {
 		return translationService.getTranslationsForSurvey(survey.getId(), false).stream()
-				.filter(Translations::getActive).map(t -> t.getLanguage().getCode()).collect(toList());
+				.filter(Translations::getActive).map(t -> t.getLanguage()).collect(toList());
 	}
 
 	public List<Survey> getSurveysIncludingPublicationDates(SurveyFilter filter, SqlPagination sqlPagination)
@@ -244,8 +428,7 @@ public class SurveyService extends BasicService {
 		}
 		stringBuilder.append(", s.SURVEY_DELETED");// 13
 		stringBuilder.append(", s.SURVEY_CREATED");// 14
-		stringBuilder.append(
-				", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");// 15
+		stringBuilder.append(", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");// 15
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
 		stringBuilder.append(" where s.ISDRAFT = 1 AND ");
@@ -439,24 +622,24 @@ public class SurveyService extends BasicService {
 				// Overriding condition by sharing condition
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
 					sql.append(
-							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 					oQueryParameters.put("login", filter.getUser().getLogin());
 				} else {
 					sql.append(
-							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 				}
 			} else {
 				// Searching for the last case, assuming selector is "all"
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
 					sql.append(
-							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 					oQueryParameters.put("login", filter.getUser().getLogin());
 				} else {
 					sql.append(
-							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 				}
 			}
@@ -778,6 +961,11 @@ public class SurveyService extends BasicService {
 		Hibernate.initialize(survey.getPublication().getFilter().getExportedQuestions());
 		Hibernate.initialize(survey.getPublication().getFilter().getFilterValues());
 		Hibernate.initialize(survey.getPublication().getFilter().getLanguages());
+		
+		Hibernate.initialize(survey.getPublication().getFilter().getVisibleExplanations());
+		Hibernate.initialize(survey.getPublication().getFilter().getVisibleDiscussions());
+		Hibernate.initialize(survey.getPublication().getFilter().getExportedExplanations());
+		Hibernate.initialize(survey.getPublication().getFilter().getExportedDiscussions());
 
 		if (survey.getSkin() != null) {
 			Hibernate.initialize(survey.getSkin().getElements());
@@ -1293,7 +1481,22 @@ public class SurveyService extends BasicService {
 							} else {
 								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-							
+						} else if (draftTranslation.getKey().endsWith("GALLERYTEXT")) {
+							String draftKey = draftTranslation.getKey().replace("GALLERYTEXT", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "GALLERYTEXT");
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
+						}  else if (draftTranslation.getKey().endsWith("TITLE")) {
+							String draftKey = draftTranslation.getKey().replace("TITLE", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "TITLE");
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
 						} else if (publishedSurveyKeys.containsKey(draftTranslation.getKey())) {
 							translationCopy.setKey(publishedSurveyKeys.get(draftTranslation.getKey()));
 							translationsCopy.getTranslations().add(translationCopy);
@@ -2657,7 +2860,6 @@ public class SurveyService extends BasicService {
 
 	private String translateKey(String key, Map<Integer, Element> elementsBySourceId,
 			Map<String, String> oldToNewUniqueIds, Map<String, String> convertedFileUIDs) {
-
 		if (key == null)
 			return key;
 
@@ -2771,6 +2973,23 @@ public class SurveyService extends BasicService {
 				retVal = Integer.parseInt(uid);
 				if (elementsBySourceId.containsKey(retVal))
 					return elementsBySourceId.get(retVal).getUniqueId() + "FIRSTCELL";
+			} else if (key.endsWith(GalleryQuestion.TITLE)) {
+				uid = key.substring(0, key.indexOf(GalleryQuestion.TITLE));
+
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + GalleryQuestion.TITLE;
+				}
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal))
+					return elementsBySourceId.get(retVal).getUniqueId() + GalleryQuestion.TITLE;
+			} else if (key.endsWith(GalleryQuestion.TEXT)) {
+				uid = key.substring(0, key.indexOf(GalleryQuestion.TEXT));
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + GalleryQuestion.TEXT;
+				}
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal))
+					return elementsBySourceId.get(retVal).getUniqueId() + GalleryQuestion.TEXT;
 			} else if (oldToNewUniqueIds.containsKey(key)) {
 				return oldToNewUniqueIds.get(key);
 			} else if (convertedFileUIDs.containsKey(key)) {
@@ -2876,6 +3095,107 @@ public class SurveyService extends BasicService {
 		if (!result.isEmpty())
 			return result.get(0);
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<ResultAccess> getResultAccesses(ResultAccess resultAccess, String uid, int page, int rows, String name, String order) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		String sql = "FROM ResultAccess a WHERE a.surveyUID = :uid";
+		
+		if (name != null && name.length() > 0) {
+			sql += " AND a.user IN (SELECT u.id FROM User u WHERE concat(u.givenName, ' ', u.surName, ' ', u.login) LIKE :name)";
+		}
+		
+		if (resultAccess != null) {
+			sql += " AND a.owner = :user"; 
+		}
+		
+		sql += " ORDER BY a." + order + " DESC";
+		
+		Query query = session.createQuery(sql).setString("uid", uid);
+		
+		if (resultAccess != null) {
+			query.setInteger("user", resultAccess.getUser());
+		}
+		
+		if (name != null && name.length() > 0) {
+			query.setString("name", "%" + name + "%");
+		}
+		
+		List<ResultAccess> accesses = query.setFirstResult((page - 1) * rows).setMaxResults(rows).list();
+		
+		for (ResultAccess access : accesses) {
+			String userName = administrationService.getUser(access.getUser()).getFirstLastName();
+			access.setUserName(userName);
+			
+			if (access.getResultFilter() != null && !access.getResultFilter().getFilterValues().isEmpty()) {
+				
+				StringBuilder filter = new StringBuilder();
+				
+				Survey survey = getSurveyByUniqueId(access.getSurveyUID(), false, true);
+				Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
+				
+				for (String questionUID : access.getResultFilter().getFilterValues().keySet()) {
+					
+					Element question = elementsByUniqueId.get(questionUID);
+					String value = access.getResultFilter().getFilterValues().get(questionUID);
+					
+					filter.append("<b>").append(question.getStrippedTitleAtMost100()).append("</b><br />");
+					
+					if (question instanceof ChoiceQuestion || question instanceof Text) {
+						Element answer = elementsByUniqueId.get(value);
+						if (answer != null) {
+							filter.append(answer.getStrippedTitleAtMost100());
+						} else {
+							filter.append(value);
+						}			
+					} else {
+						filter.append(value);
+					}
+					
+					filter.append("</br>");
+				}
+				
+				access.setFilter(filter.toString());
+			}
+		}
+		
+		return accesses;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public ResultAccess getResultAccess(String surveyUID, int userId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM ResultAccess a WHERE a.surveyUID = :uid AND a.user = :id").setString("uid", surveyUID).setInteger("id", userId);
+		List<ResultAccess> accesses = query.list();
+		if (accesses.isEmpty()) {
+			return null;
+		}
+		return accesses.get(0);
+	}
+	
+	@Transactional
+	public ResultAccess getResultAccess(int id) {
+		Session session = sessionFactory.getCurrentSession();
+		return (ResultAccess) session.get(ResultAccess.class, id);
+	}
+
+	@Transactional
+	public void deleteResultAccess(ResultAccess access) {
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(access);
+	}
+	
+	@Transactional
+	public void saveResultAccess(ResultAccess access) {
+		Session session = sessionFactory.getCurrentSession();
+		if (access.getDate() == null) {
+			access.setDate(new Date());
+		}
+		session.saveOrUpdate(access);
 	}
 
 	@Transactional
@@ -3018,6 +3338,8 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			if (draftSurvey.getValidatedPerPage() != publishedSurvey.getValidatedPerPage())
 				hasPendingChanges = true;
+			if (draftSurvey.getPreventGoingBack() != publishedSurvey.getPreventGoingBack())
+				hasPendingChanges = true;
 			if (!Objects.equals(draftSurvey.getWcagCompliance(), publishedSurvey.getWcagCompliance()))
 				hasPendingChanges = true;
 			if (!Tools.isFileEqual(draftSurvey.getLogo(), publishedSurvey.getLogo()))
@@ -3093,6 +3415,9 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;	
 
 			if (draftSurvey.getSendConfirmationEmail() != publishedSurvey.getSendConfirmationEmail())
+				hasPendingChanges = true;
+			
+			if (draftSurvey.getDedicatedResultPrivileges() != publishedSurvey.getDedicatedResultPrivileges())
 				hasPendingChanges = true;
 
 			if (!hasPendingChanges)
@@ -4415,9 +4740,9 @@ public class SurveyService extends BasicService {
 		if (type != null && type.equalsIgnoreCase("my")) {
 			ownerwhere = "s.OWNER = :userid";
 		} else if (type != null && type.equalsIgnoreCase("shared")) {
-			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
+			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :userid)";
 		} else {
-			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
+			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :userid)";
 		}
 
 		return ownerwhere;

@@ -72,6 +72,11 @@ function returnTrueForSpace(event)
 	return false;
 }
 
+function preventScrollOnSpaceInput(event){
+	if(event.keyCode == 32)
+		event.preventDefault();
+}
+
 function ratingClick(link)
 {	
 	var pos = $(link).index();
@@ -138,6 +143,15 @@ function singleClick(r) {
 	propagateChange(r);
 }
 
+function singleKeyUp(event, target, isParentReadOnly) {
+	if (isParentReadOnly) {
+		return;
+	}
+	if (event.code === "Space" && $(target).is(":checked")) {
+		$(target).attr("previousValue", "checked").removeAttr("checked");
+	}
+}
+
 function checkHasValue(element) {
 	
 	if (element == null || $(element).length == 0)
@@ -146,7 +160,7 @@ function checkHasValue(element) {
 	}
 		
 	if ($(element).hasClass("rankingitem-list")) {
-		return true;
+		return ko.dataFor(element).isAnswered();
 	}
 	
 	if ($(element).hasClass("ratingitem")) {
@@ -191,8 +205,10 @@ function propagateChange(element)
 	
 	var div = $(element).parents(".survey-element").last();
 	
+	enableDelphiSaveButtons(div);
+	
 	if (!checkHasValue(element)) {
-		disableDelphiSaveButtons(div);
+		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
 		$(div).find(".explanation-file-upload-section").hide();
 		return;
@@ -205,7 +221,10 @@ function propagateChange(element)
 		viewModel.isAnswered(true);
 	}
 	
-	enableDelphiSaveButtons(div);
+	if ($(surveyElement).find("textarea.unique").length > 0) {
+		$(surveyElement).find(".validation-error-server").remove();
+	}	
+	
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();
 	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
@@ -307,7 +326,7 @@ function createUploader(instance, maxSize)
 	    		 $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + getWrongExtensionMessage(fileName) + "</div>");
 	    	}
 
-			$(".qq-uploader input[type='file']").attr("title", " ");
+			$(".qq-uploader input[type='file']").attr("title", " ");			
 		},
 		onError: function() {
 			$(this.element).parent().find(".uploadinfo").hide();
@@ -323,6 +342,10 @@ function createUploader(instance, maxSize)
 	});
 
 	$(".qq-uploader input[type='file']").attr("title", " ");
+	
+	setTimeout(function(){ 
+		$(".file-uploader[data-id='" + $(instance).attr('data-id') + "']").find(".qq-uploader input[type='file']").removeAttr("aria-label").attr("aria-labelledby", "questiontitle" + $(instance).attr('data-id')).attr("aria-describedby", "questionhelp" +  $(instance).attr('data-id'));
+	}, 3000);
 }
 
 $(function() {
@@ -669,6 +692,7 @@ function selectPage(val) {
 	}
 	
 	var validatedPerPage = $("#validatedPerPage").val().toLowerCase() == "true";
+	var preventGoingBack = $("#preventGoingBack").val().toLowerCase() == "true";
 	
 	var validate = val > page;
 		

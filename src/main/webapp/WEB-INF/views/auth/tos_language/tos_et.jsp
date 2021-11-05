@@ -134,7 +134,7 @@ töötlejaga    <a href="https://ec.europa.eu/eusurvey/home/support">kasutajatoe
 <p>
     Kasutaja tuvastamiseks süsteemis on kasutajal vaja kasutajanime/salasõna,
     mida haldab EULogini
-    <a
+    <a  aria-labelledby="ftn1"
         href="#ftn1"
     >
         [1]

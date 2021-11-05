@@ -1,6 +1,7 @@
 package com.ec.survey.model.survey;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -147,7 +148,7 @@ final public class Survey implements java.io.Serializable {
 	private String confirmationLink = "";
 	private String escapeLink = "";
 	private List<String> translations;
-	private List<String> completeTranslations;
+	private List<Language> completeTranslations;
 	private Publication publication = new Publication();
 	private Map<Integer, String[]> activitiesToLog = new HashMap<>();
 	private String audience;
@@ -157,7 +158,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isFrozen;
 	private boolean ecasSecurity;
 	private String ecasMode;
-	private Boolean logoInInfo;
+	private Boolean logoInInfo = true;
 	private Boolean isQuiz;
 	private Boolean isDelphi;
 	private Boolean isOPC;
@@ -187,6 +188,9 @@ final public class Survey implements java.io.Serializable {
 	private String logoText;
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
+	private boolean preventGoingBack = false;
+	private Boolean criticalComplexity = false;
+	private Boolean dedicatedResultPrivileges = false;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -566,6 +570,72 @@ final public class Survey implements java.io.Serializable {
 	public void setElements(List<Element> elements) {
 		this.elements = elements;
 	}
+	
+	@Transient
+	public List<Element> getElementsOrdered() {
+		List<Element> elements = new ArrayList<>();
+		
+		Section currentSection = null;
+		List<Element> currentSectionElements = new ArrayList<>();
+		for (Element element : getElements()) {
+			boolean skip = false;
+			if (element instanceof Section) {
+				Section section = (Section)element;
+				if (section.getLevel().equals(1) && section.getOrder().equals(1)) {
+					copyOrderedElements(currentSectionElements, elements);
+										
+					currentSection = section;
+					currentSectionElements = new ArrayList<>();
+					elements.add(section);
+					skip = true;
+				} else if (section.getLevel().equals(1)) {
+					copyOrderedElements(currentSectionElements, elements);
+					currentSectionElements = new ArrayList<>();
+					currentSection = null;
+				} else if (currentSection != null) {
+					// this means we have a sub-section inside a section that is randomized
+					// the structure should be the same, so we only randomize until a sub-section occurs
+					copyOrderedElements(currentSectionElements, elements);
+					currentSectionElements = new ArrayList<>();
+					elements.add(section);
+					skip = true;
+				}
+			}
+			
+			if (!skip) {
+				if (currentSection == null) {
+					elements.add(element);
+				} else {
+					currentSectionElements.add(element);
+				}
+			}			
+		}
+		
+		copyOrderedElements(currentSectionElements, elements);
+		
+		return elements;
+	}
+	
+	private void copyOrderedElements(List<Element> sectionElements, List<Element> result) {
+		List<Element> elementsToRandomize = new ArrayList<>();
+		if (!sectionElements.isEmpty()) {
+			for (Element element : sectionElements) {
+				if (element.getIsTriggerOrDependent()) {
+					result.add(element);
+				} else {
+					elementsToRandomize.add(element);
+				}
+			}
+			
+			if (!elementsToRandomize.isEmpty()) {
+				Collections.shuffle(elementsToRandomize);
+				
+				for (Element element : elementsToRandomize) {
+					result.add(element);
+				}
+			}
+		}
+	}
 
 	@Transient
 	public List<Element> getMissingElements() {
@@ -674,6 +744,29 @@ final public class Survey implements java.io.Serializable {
 			return elementsRecursive;
 		}
 	}
+	
+	@Transient
+	public Map<Element, List<Element>> getElementsForResultAccessFilter() {
+		Map<Element, List<Element>> result = new LinkedHashMap<>();
+		
+		for (Element element : elements) {
+			if (element instanceof MatrixOrTable || element instanceof Section || element instanceof Image || element instanceof Download || element instanceof Upload || element instanceof Ruler|| element instanceof Text || element instanceof RankingQuestion || element instanceof RatingQuestion || element instanceof Confirmation || element instanceof GalleryQuestion) {
+				continue;
+			}
+			
+			if (element instanceof ChoiceQuestion) {
+				List<Element> children = new ArrayList<>();
+				for (Element child : ((ChoiceQuestion) element).getPossibleAnswers()) {
+					children.add(child);
+				}
+				result.put(element, children);
+			} else if (element instanceof FreeTextQuestion || element instanceof RegExQuestion || element instanceof NumberQuestion || element instanceof DateQuestion || element instanceof TimeQuestion || element instanceof EmailQuestion) {
+				result.put(element, new ArrayList<Element>());
+			}	
+		}
+		
+		return result;
+	}	
 
 	@Column(name = "LISTFORM")
 	public boolean getListForm() {
@@ -792,6 +885,15 @@ final public class Survey implements java.io.Serializable {
 	public void setValidatedPerPage(boolean validatedPerPage) {
 		this.validatedPerPage = validatedPerPage;
 	}
+	
+	@Column(name = "PREVENTGOINGBACK")
+	public Boolean getPreventGoingBack() {
+		return preventGoingBack;
+	}
+
+	public void setPreventGoingBack(Boolean preventGoingBack) {
+		this.preventGoingBack = preventGoingBack != null ? preventGoingBack : false;
+	}	
 
 	@Column(name = "MULTIPAGING")
 	public boolean getMultiPaging() {
@@ -1481,6 +1583,7 @@ final public class Survey implements java.io.Serializable {
 			result.append(" notifyAll: ").append(notifyAll).append(";");
 			result.append(" showPDFOnUnavailabilityPage: ").append(showPDFOnUnavailabilityPage).append(";");
 			result.append(" showDocsOnUnavailabilityPage: ").append(showDocsOnUnavailabilityPage).append(";");
+			result.append(" preventGoingBack: ").append(preventGoingBack).append(";");
 
 			try {
 				if (backgroundDocuments != null)
@@ -1593,6 +1696,9 @@ final public class Survey implements java.io.Serializable {
 		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
 		copy.timeLimit = timeLimit;
 		copy.isShowCountdown = isShowCountdown;
+		copy.setPreventGoingBack(preventGoingBack);
+		copy.setDedicatedResultPrivileges(dedicatedResultPrivileges);
+		copy.criticalComplexity = criticalComplexity;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -1768,17 +1874,18 @@ final public class Survey implements java.io.Serializable {
 	}
 
 	@Transient
-	public List<String> getCompleteTranslations() {
+	public List<Language> getCompleteTranslations() {
 		return completeTranslations;
 	}
 
-	public void setCompleteTranslations(List<String> translations) {
+	public void setCompleteTranslations(List<Language> translations) {
 		this.completeTranslations = translations;
 	}
 
 	@Transient
 	public boolean containsCompleteTranslations(String code) {
-		return (completeTranslations != null && completeTranslations.contains(code));
+		return completeTranslations != null &&
+				completeTranslations.stream().map(t -> t.getCode()).anyMatch(c -> c.equals(code));
 	}
 
 	@Transient
@@ -2334,11 +2441,29 @@ final public class Survey implements java.io.Serializable {
 		this.timeLimit = timeLimit != null ? timeLimit :  "";
 	}
 	
+	@Column(name = "CRITICALCOMPLEXITY")
+	public Boolean getCriticalComplexity() {
+		return criticalComplexity != null ? criticalComplexity : false;
+	}
+
+	public void setCriticalComplexity(Boolean criticalComplexity) {
+		this.criticalComplexity = criticalComplexity != null ? criticalComplexity : false;
+	}
+	
+	@Column(name = "RESULTPRIVILEGES")
+	public Boolean getDedicatedResultPrivileges() {
+		return dedicatedResultPrivileges;
+	}
+
+	public void setDedicatedResultPrivileges(Boolean dedicatedResultPrivileges) {
+		this.dedicatedResultPrivileges = dedicatedResultPrivileges != null ? dedicatedResultPrivileges : false;
+	}
+	
 	@Transient
 	public int getTimeLimitInSeconds() {
 		if (timeLimit == null || timeLimit.length() == 0) return -1;
 		
 		String[] arr = timeLimit.split(":");
 		return Integer.parseInt(arr[0]) * 3600 + Integer.parseInt(arr[1]) * 60 + Integer.parseInt(arr[2]);		
-	}	
+	}
 }

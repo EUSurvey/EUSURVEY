@@ -147,7 +147,7 @@
 <p>
     Na to, aby systém identifikoval používateľa, potrebuje kombináciu
     prihlasovacieho mena a hesla, ktoré spravuje služba EULogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Ďalšie informácie o tom, ako služba EULogin spracúva vaše osobné údaje,

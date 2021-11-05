@@ -691,8 +691,8 @@ public class LdapService extends BasicService {
 
 			String searchString = "(& (objectClass=*)";
 						
-			if (isAttributeEligible(ldapMappingUserEcMoniker) && name != null && name.length() > 0){
-				searchString += getFilterContains(ldapMappingUserEcMoniker, name);			
+			if (name != null && name.length() > 0){
+				searchString += getFilterContains("uid", name);			
 			}
 			
 			if (isAttributeEligible(ldapMappingUserGivenName) && first != null && first.length() > 0){

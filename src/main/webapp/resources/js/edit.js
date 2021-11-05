@@ -4,16 +4,19 @@ var draggedelements = null;
 $(function() {
 	$(".sortable").sortable({
 		placeholder: "draggable-active",
-		scroll: false,
+		scroll: true,
+		scrollSensitivity: 100,
 		handle: "div",
 		start: function(e, ui) {
 			originalindex = $(ui.item).index();
 			$(".draggable-active").append("<div class='droppable-text'>" + getPropertyLabel("dropelementhere") + "</div>");
 			
-			if ($(".selectedquestion").length > 1)
+			if ($(".survey-element.selectedquestion").length > 1)
 			{
-				draggedelements = $("#content").find(".selectedquestion");
-			}			
+				draggedelements = $("#content").find(".survey-element.selectedquestion");
+			} else {
+				draggedelements = null;
+			}
 		},
 		stop: function(event, ui) {
 			
@@ -415,15 +418,15 @@ function getDeleteElementRow(element, addignorebutton)
 	if ($(element).hasClass("sectionitem")) {
 		$(td).append("<b>" + sectionTitleLabel + "</b>:");
 	} else if ($(element).hasClass("textitem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else if ($(element).hasClass("imageitem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else if ($(element).hasClass("ruleritem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else if ($(element).hasClass("uploaditem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else if ($(element).hasClass("downloaditem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else {
 		$(td).append("<b>" + questionTextLabel + "</b>:");
 	}

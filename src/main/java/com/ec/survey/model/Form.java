@@ -277,7 +277,15 @@ public class Form {
 		Integer currentPage = 0;
 		ArrayList<Element> currentList = new ArrayList<>();
 		pages.add(currentList);
-		for (Element element : survey.getElements()) {
+		
+		List<Element> elements = null;
+		if (forPDF) {
+			elements = survey.getElements();
+		} else {
+			elements = survey.getElementsOrdered();
+		}
+		
+		for (Element element : elements) {
 			if (survey.getMultiPaging() && element instanceof Section && ((Section) element).getLevel() == 1) {
 				if (currentPage == 0 && currentList.isEmpty()) {
 					// this is the very first sections -> no need to break
@@ -473,7 +481,7 @@ public class Form {
 							.append("/resources/images/checkboxchecked.png' />");
 				} else {
 					titlePrefix.append("<input type='checkbox' checked='checked' class='required check' name='answer")
-							.append(question.getId()).append("' /> ");
+							.append(question.getId()).append("' aria-labelledby='questiontitle").append(question.getId()).append("' /> ");
 				}
 			} else {
 				if (forPDF) {
@@ -481,7 +489,7 @@ public class Form {
 							.append("/resources/images/checkbox.png' />");
 				} else {
 					titlePrefix.append("<input type='checkbox' class='required check' name='answer")
-							.append(question.getId()).append("' /> ");
+							.append(question.getId()).append("' aria-labelledby='questiontitle").append(question.getId()).append("' /> ");
 				}
 			}
 		}

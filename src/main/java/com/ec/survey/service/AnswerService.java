@@ -567,9 +567,9 @@ public class AnswerService extends BasicService {
 
 		if (filter != null) {
 
-			if (filter.getFilterValues() != null && filter.getFilterValues().size() > 3) {
-				throw new TooManyFiltersException("too many result filters");
-			}
+//			if (filter.getFilterValues() != null && filter.getFilterValues().size() > 3) {
+//				throw new TooManyFiltersException("too many result filters");
+//			}
 
 			if (filter.getStatus() != null && filter.getStatus().length() > 0
 					&& !filter.getStatus().equalsIgnoreCase("All")) {
@@ -856,7 +856,7 @@ public class AnswerService extends BasicService {
 		}
 
 		Session session = sessionFactory.getCurrentSession();
-		StringBuilder sql = new StringBuilder("From AnswerSet a where a.uniqueCode in (");
+		StringBuilder sql = new StringBuilder("From AnswerSet a where a.isDraft = false and a.uniqueCode in (");
 		int counter = 0;
 		for (String uniqueCode : answerSetsUIDS) {
 			if (counter > 0) {

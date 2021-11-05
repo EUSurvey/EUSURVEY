@@ -65,9 +65,19 @@
 	</div>
 	
 	<div class="row">
-		<div class="col-lg-12">
+		<div class="col-lg-6">
 			<canvas id="ecfAvgScoreChart" style="display: none;"></canvas>
+		</div>
+		<div class="col-lg-6">	
+			<canvas id="ecfAvgScoreChart2" style="display: none;"></canvas>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-6">
 			<canvas id="ecfMaxScoreChart" style="display: none; margin-top: 20px; margin-bottom: 20px;"></canvas>			
+		</div>
+		<div class="col-lg-6">
+			<canvas id="ecfMaxScoreChart2" style="display: none; margin-top: 20px; margin-bottom: 20px;"></canvas>			
 		</div>
 	</div>
 

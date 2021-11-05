@@ -292,11 +292,7 @@ public class DashboardController extends BasicController {
 			}
 
 			SqlPagination paging = new SqlPagination(page, 10);
-			List<Survey> surveyList = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false, false);
-
-			surveyService.generateAccessInformation(surveyList, u);
-
-			return surveyList;
+			return surveyService.getSurveysForDashboard(filter, paging, u);
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			logger.error(ex.getMessage(), ex);
@@ -316,7 +312,7 @@ public class DashboardController extends BasicController {
 				for (String uid : uids) {
 					List<Integer> list = new ArrayList<>();
 					// 1: The number of invitations
-					list.add(participationService.getNumberOfInvitations(uid));
+					list.add(participationService.getNumberOfOpenInvitations(uid));
 					// 2: The number of drafts
 					list.add(answerService.getNumberOfDrafts(uid));
 					listOfList.add(list);

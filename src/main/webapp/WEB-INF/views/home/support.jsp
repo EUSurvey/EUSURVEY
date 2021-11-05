@@ -93,7 +93,7 @@
 				{
 			    	if (responseJSON.success)
 			    	{
-			    		$("#file-uploader-support-div").append("<div class='uploadedfile' data-id='" + responseJSON.uid + "'>" + responseJSON.name + "<a onclick='deleteUploadedFile(this)'><span class='glyphicon glyphicon-trash'></span></a><input type='hidden' name='uploadedfile' value='" + responseJSON.uid + "' /></div>")
+			    		$("#file-uploader-support-div").append("<div class='uploadedfile' data-id='" + responseJSON.uid + "'>" + responseJSON.name + "<a href='#' onclick='deleteUploadedFile(this); return false;'><span class='glyphicon glyphicon-trash'></span></a><input type='hidden' name='uploadedfile' value='" + responseJSON.uid + "' /></div>")
 				    	$("#file-uploader-support-div").show();
 			    		
 			    		if ($(".uploadedfile").length > 1)
@@ -185,6 +185,15 @@
 								<option><spring:message code="support.idea" /></option>
 								<option id="erroroption" selected="selected"><spring:message code="support.problem" /></option>
 								<option><spring:message code="support.GDPR" /></option>
+								<option><spring:message code="support.assistance" /></option>
+								<option><spring:message code="support.otherreason" /></option>
+							</c:when>
+							<c:when test="${needassistance != null}">
+								<option><spring:message code="support.GeneralQuestion" /></option>
+								<option><spring:message code="support.idea" /></option>
+								<option id="erroroption"><spring:message code="support.problem" /></option>
+								<option><spring:message code="support.GDPR" /></option>
+								<option selected="selected"><spring:message code="support.assistance" /></option>
 								<option><spring:message code="support.otherreason" /></option>
 							</c:when>
 							<c:otherwise>
@@ -192,6 +201,7 @@
 								<option><spring:message code="support.idea" /></option>
 								<option id="erroroption"><spring:message code="support.problem" /></option>
 								<option><spring:message code="support.GDPR" /></option>
+								<option><spring:message code="support.assistance" /></option>
 								<option><spring:message code="support.otherreason" /></option>
 							</c:otherwise>				
 						</c:choose>

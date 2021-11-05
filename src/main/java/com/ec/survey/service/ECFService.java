@@ -295,7 +295,7 @@ public class ECFService extends BasicService {
 			List<Integer> scores = competenciesToScores.get(competency);
 			Integer targetScore = competencyToTargetScore.get(competency);
 
-			if (scores.size() != 0) {
+			if (!scores.isEmpty()) {
 				Integer maxScore = 0;
 				Integer totalScore = 0;
 				for (Integer score : scores) {

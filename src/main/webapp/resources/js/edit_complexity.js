@@ -173,26 +173,30 @@ function updateComplexityScore(type)
 	}
 	
 	//console.log(complexityScore);
-	
+		
 	if(complexityScore <= complexitySettings.lowScore && oldScore > complexitySettings.lowScore)
 	{
 		$("#complexityImageLevel").attr("src", contextpath + "/resources/images/complexity-indicator-low.png").attr("title", lowLevel).attr("data-original-title", lowLevel);;
 		$("#complexity-message-box").hide();
+		$('#criticalComplexity').val("false");
 	}
 	else if((complexityScore > complexitySettings.lowScore && complexityScore <= complexitySettings.mediumScore) && (oldScore <= complexitySettings.lowScore || oldScore > complexitySettings.mediumScore))
 	{
 		$("#complexityImageLevel").attr("src", contextpath + "/resources/images/complexity-indicator-medium.png").attr("title", mediumLevel).attr("data-original-title", mediumLevel);
 		$("#complexity-message-box").hide();
+		$('#criticalComplexity').val("false");
 	}
 	else if(complexityScore > complexitySettings.mediumScore && complexityScore <= complexitySettings.highScore && (oldScore <= complexitySettings.mediumScore || oldScore > complexitySettings.highScore))
 	{
 		$("#complexityImageLevel").attr("src", contextpath + "/resources/images/complexity-indicator-high.png").attr("title", highLevel).attr("data-original-title", highLevel);;
 		$("#complexity-message-box").hide();
+		$('#criticalComplexity').val("false");
 	}
 	else if(complexityScore > complexitySettings.highScore && oldScore <= complexitySettings.highScore)
 	{
 		$("#complexityImageLevel").attr("src", contextpath + "/resources/images/complexity-indicator-critic.png").attr("title", criticLevel).attr("data-original-title", criticLevel);;
 		$("#complexity-message-box").show();
+		$('#criticalComplexity').val("true");
 		
 //		if($("#generic-info-box").css("display") == "block")
 //		{

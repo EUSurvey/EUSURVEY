@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -88,7 +87,7 @@ public class ContributionController extends BasicController {
 			Survey draftSurvey = surveyService.getSurveyByUniqueId(answerSetOrNull.getSurvey().getUniqueId(), false,
 					true);
 			
-			if (sessionService.userIsFormAdmin(draftSurvey, user, request)) {
+			if (sessionService.userCanEditResults(draftSurvey, user, request)) {
 				return answerSetOrNull;
 			}
 			
@@ -266,7 +265,8 @@ public class ContributionController extends BasicController {
 			} else {
 				if (!u.getId().equals(answerSet.getSurvey().getOwner().getId())
 						&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-						&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+						&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
+						&& (u.getResultAccess() == null || u.getResultAccess().isReadonly())) {
 					throw new ForbiddenURLException();
 				}
 			}

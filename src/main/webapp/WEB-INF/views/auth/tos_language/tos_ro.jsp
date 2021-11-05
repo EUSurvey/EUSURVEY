@@ -164,7 +164,7 @@
     Pentru a fi identificat de sistem, utilizatorul necesită un cuplu de date
     format din nume de utilizator și parolă, care sunt gestionate de serviciul
     Eulogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Pentru mai multe informații cu privire la modul în care EULogin vă

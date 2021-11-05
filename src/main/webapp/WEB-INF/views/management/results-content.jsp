@@ -10,12 +10,10 @@
 		<div id="results-table" style="margin-top: 0px;">		
 	</c:otherwise>
 </c:choose>
-	<c:if test="${publication == null || publication.isShowSearch()}">
-		<div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
-			<span class="glyphicon glyphicon-info-sign"></span>
-			<spring:message code="info.ResultFilterLimit" />
-		</div>
-	</c:if>
+	<div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
+		<span class="glyphicon glyphicon-info-sign"></span>
+		<spring:message code="info.ResultFilterLimit" />
+	</div>
 	
 	<span id="lastupdate"></span>
 
@@ -97,300 +95,53 @@
 						</th>
 					</c:if>
 				</tr>
-				<c:if test="${publication == null || publication.isShowSearch()}">
-					<tr class="table-styled-filter">
-						<c:if test="${publication == null}">
+				
+				<tr class="table-styled-filter">
+					<c:if test="${publication == null}">
+						<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
+							<th class="checkDelete"><span data-toggle="tooltip" data-trigger="hover" data-original-title="<spring:message code="label.SelectAll" />"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></span></th>
+						</c:if>
+						<th>
 							<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-								<th class="checkDelete"><span data-toggle="tooltip" data-trigger="hover" data-original-title="<spring:message code="label.SelectAll" />"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></span></th>
+								<a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" disabled="disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
 							</c:if>
-							<th>
-								<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-									<a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" disabled="disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
-								</c:if>
-							</th>
-						</c:if>
-						<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
-							<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
-								<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
-									<c:choose>
-										<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation' || question.getType() == 'Ruler'}"></c:when>
-										<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
-										<c:when test="${question.getType() == 'Matrix'}">
-											<c:forEach items="${question.questions}" var="matrixQuestion">
-												<th class="filtercell cell${matrixQuestion.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-													<div>
-														<a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
-														    <span class="caret"></span>
-														  </a>
-														  
-														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
-														  	 <c:forEach items="${question.answers}" var="possibleanswer" varStatus="status">
-																<div>
-																	<c:choose>
-																		<c:when test="${filter.contains(matrixQuestion.id, matrixQuestion.uniqueId, possibleanswer.id, possibleanswer.uniqueId) }">
-																			<input checked="checked" name="filter${matrixQuestion.id}|${matrixQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}" />${possibleanswer.title}
-																		</c:when>
-																		<c:otherwise>
-																			<input name="filter${matrixQuestion.id}|${matrixQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}" />${possibleanswer.title}
-																		</c:otherwise>
-																	</c:choose>
-																</div>
-															</c:forEach>	
-														  </div>
-														  
-														  <div style="display: inline-block; margin: 0px;">
-																<a onclick="showOverlayMenu(this)" >
-															    	<span class="glyphicon glyphicon-option-vertical"></span>
-																</a>
-																<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																	<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-	                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																	</c:if>
-															   </div>
-														   </div>
-													</div>
-												</th>
-											</c:forEach>
-										</c:when>
-										<c:when test="${question.getType() == 'Table'}">									
-											<c:forEach var="r" begin="1" end="${question.allRows-1}"> 
-												<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 																
-													<th class="filtercell cell${question.id}-${r}-${c}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" class="limitedfilter" style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
-												        <div style="display: inline-block; margin: 0px; width: 5px;">
-															<a onclick="showOverlayMenu(this)" >
-														    	<span class="glyphicon glyphicon-option-vertical"></span>
-															</a>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																</c:if>
-														   </div>
-													   </div>
-			                                        </th>										
-												</c:forEach>													
-											</c:forEach>
-										</c:when>
-										<c:when test="${question.getType() == 'RatingQuestion'}">
-											<c:forEach items="${question.questions}" var="childQuestion">
-												<th class="filtercell cell${childQuestion.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-													<div>
-														<a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
-														    <span class="caret"></span>
-														  </a>
-														  
-														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;" onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
-														  	 <c:forEach begin="1" end="${question.numIcons}" varStatus="loop">
-																<div>
-																	<c:choose>
-																		<c:when test="${filter.contains(childQuestion.id, childQuestion.uniqueId, loop.index, loop.index.toString()) }">
-																			<input checked="checked" name="filter${childQuestion.id}|${childQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${loop.index}/" />${loop.index}
-																		</c:when>
-																		<c:otherwise>
-																			<input name="filter${childQuestion.id}|${childQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${loop.index}/" />${loop.index}
-																		</c:otherwise>
-																	</c:choose>
-																</div>
-															</c:forEach>	
-														  </div>
-														  
-														 <div style="display: inline-block; margin: 0px;">
-															<a onclick="showOverlayMenu(this)" >
-														    	<span class="glyphicon glyphicon-option-vertical"></span>
-															</a>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																</c:if>
-														   </div>
-													   </div>
-													</div>
-												</th>
-											</c:forEach>
-										</c:when>
-										<c:when test="${question.getType() == 'Upload' && publication != null && !publication.getShowUploadedDocuments()}">
-										
-										</c:when>
-										<c:otherwise>
-											<th class="filtercell cell${question.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-												<c:choose>
-													<c:when test="${question.getType() == 'GalleryQuestion'}">
-														<div>
-														<a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
-														    <span class="caret"></span>
-														  </a>
-														  
-														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
-														  	 <c:forEach items="${question.files}" var="file" varStatus="status">
-														    	<div>
-															    	<c:choose>
-																		<c:when test="${filter.contains(question.id, question.uniqueId, status.index) }">
-																			<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${status.index}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></input>
-																		</c:when>
-																		<c:otherwise>
-																			<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${status.index}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></input>
-																		</c:otherwise>
-																	</c:choose>
-														    	</div>
-															</c:forEach>
-														  </div>
-														  														  
-														  <div style="display: inline-block; margin: 0px;">
-															<a onclick="showOverlayMenu(this)" >
-														    	<span class="glyphicon glyphicon-option-vertical"></span>
-															</a>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																</c:if>
-														   </div>
-														   </div>
-														</div>
-													</c:when>
-													<c:when test="${question.getType() == 'Upload'}">
-														<div style="float: right">
-															<div style="display: inline-block; margin: 0px; margin-bottom: 8px;">
-																<a onclick="showOverlayMenu(this)" >
-															    	<span class="glyphicon glyphicon-option-vertical"></span>
-																</a>
-																<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																	<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-	                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																	</c:if>
-															   </div>
-														   </div>		
-														</div>
-														
-														<c:if test="${(sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1 || (form.survey.isDraft && USER.getLocalPrivilegeValue('AccessDraft') > 0) || (publication != null && publication.getShowUploadedDocuments())) && questionswithuploadedfiles != null && questionswithuploadedfiles.contains(question.uniqueId)}">
-															<a onclick="showExportDialog('Files${question.uniqueId}${form.survey.isDraft}', 'zip');"  data-toggle="tooltip" data-placement="top" title="<spring:message code="label.DownloadAllFiles" />"><span class="glyphicon glyphicon-save"></span></a>
-														</c:if>		
-														
-														<div style="clear: both"></div>				
-													</c:when>
-													<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion'}">
-														<div>
-														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
-														    <span class="caret"></span>
-														  </a>
-														  
-														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
-														  	 <c:forEach items="${question.allPossibleAnswers}" var="possibleanswer" varStatus="status">
-														    	<div>
-															    	<c:choose>
-																		<c:when test="${filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId) }">
-																			<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.title}</input>
-																		</c:when>
-																		<c:otherwise>
-																			<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.title}</input>
-																		</c:otherwise>
-																	</c:choose>
-														    	</div>
-															</c:forEach>
-														  </div>
-														  
-														  <div style="display: inline-block; margin: 0px;">
-																<a onclick="showOverlayMenu(this)" >
-															    	<span class="glyphicon glyphicon-option-vertical"></span>
-																</a>
-																<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																	<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-	                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																	</c:if>
-															   </div>
-														   </div>
-														  
-														</div>
-													</c:when>
-													<c:when test="${question.getType() == 'RankingQuestion'}">
-														<div>
-														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
-														    <span class="caret"></span>
-														  </a>
-														  
-														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a><br />
-														  	<i><spring:message code="label.SelectFirstItem" /></i>
-														  	 <c:forEach items="${question.childElements}" var="child" varStatus="status">
-														    	<div>
-															    	<c:choose>
-																		<c:when test="${filter.contains(question.id, question.uniqueId, child.id, child.uniqueId) }">
-																			<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="radio" class="check checkFilterCell" value="${child.uniqueId}">${child.getStrippedTitle()}</input>
-																		</c:when>
-																		<c:otherwise>
-																			<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="radio" class="check checkFilterCell" value="${child.uniqueId}">${child.getStrippedTitle()}</input>
-																		</c:otherwise>
-																	</c:choose>
-														    	</div>
-															</c:forEach>
-														  </div>
-														  
-														  <div style="display: inline-block; margin: 0px;">
-																<a onclick="showOverlayMenu(this)" >
-															    	<span class="glyphicon glyphicon-option-vertical"></span>
-																</a>
-																<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																	<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-	                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																	</c:if>
-															   </div>
-														   </div>
-														  
-														</div>													
-													</c:when>
-													<c:when test="${question.getType() == 'DateQuestion'}">
-														<div class="btn-toolbar" style="margin: 0px; text-align: center; display: inline-block; vertical-align: middle;">
-															<div class="datefilter" style="float: left">
-													  		<a class="btn btn-default" onclick="showOverlayMenu(this)" >
-															     <c:choose>
-															     	<c:when test="${filter.getFromValue(question.id, question.uniqueId).length() > 0}">
-															     		<spring:eval expression="filter.getFromValue(question.id, question.uniqueId)" />
-															     	</c:when>
-															     	<c:otherwise>
-															     		<spring:message code="label.from" />
-															     	</c:otherwise>
-															     </c:choose>
-															    <span class="caret"></span>
-															  </a>
-															  <div class="overlaymenu hideme">
-															    	<input type="hidden" name="filter${question.id}|${question.uniqueId}from" class="hiddendate" value="<spring:eval expression="filter.getFromValue(question.id, question.uniqueId)" />" />
-															    	<div id="metafilter${question.id}|${question.uniqueId}fromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
-															   </div>
+						</th>
+					</c:if>
+					<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
+						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
+							<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
+								<c:choose>
+									<c:when test="${filter.getReadOnlyFilterQuestions().contains(question.uniqueId)}">
+										<th></th>
+									</c:when>
+									<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation' || question.getType() == 'Ruler'}"></c:when>
+									<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
+									<c:when test="${question.getType() == 'Matrix'}">
+										<c:forEach items="${question.questions}" var="matrixQuestion">
+											<th class="filtercell cell${matrixQuestion.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
+												<div>
+													<a class="btn btn-default" onclick="showOverlayMenu(this)" >
+													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
+													    <span class="caret"></span>
+													  </a>
+													  
+													  <div class="overlaymenu hideme maxH">
+													  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
+													  	 <c:forEach items="${question.answers}" var="possibleanswer" varStatus="status">
+															<div>
+																<c:choose>
+																	<c:when test="${filter.contains(matrixQuestion.id, matrixQuestion.uniqueId, possibleanswer.id, possibleanswer.uniqueId) }">
+																		<input checked="checked" name="filter${matrixQuestion.id}|${matrixQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}" />${possibleanswer.strippedTitle}
+																	</c:when>
+																	<c:otherwise>
+																		<input name="filter${matrixQuestion.id}|${matrixQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}" />${possibleanswer.strippedTitle}
+																	</c:otherwise>
+																</c:choose>
 															</div>
-															<div class="datefilter" style="float: left">	
-															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-															  	<c:choose>
-															     	<c:when test="${filter.getToValue(question.id, question.uniqueId).length() > 0}">
-															     		<spring:eval expression="filter.getToValue(question.id, question.uniqueId)" />
-															     	</c:when>
-															     	<c:otherwise>
-															     		<spring:message code="label.To" />
-															     	</c:otherwise>
-															     </c:choose>
-															    <span class="caret"></span>
-															  </a>
-															 <div class="overlaymenu hideme">
-															    	<input type="hidden" name="filter${question.id}|${question.uniqueId}to" class="hiddendate" value="<spring:eval expression="filter.getToValue(question.id, question.uniqueId)" />" />
-															    	<div id="metafilter${question.id}|${question.uniqueId}todiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
-															    </div>
-															</div>	
-														</div>	
-														<div style="display: inline-block; margin: 0px; vertical-align: middle;">
+														</c:forEach>	
+													  </div>
+													  
+													  <div style="display: inline-block; margin: 0px;">
 															<a onclick="showOverlayMenu(this)" >
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
 															</a>
@@ -401,193 +152,443 @@
 																</c:if>
 														   </div>
 													   </div>
-													</c:when>													
-													<c:otherwise>
-														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="limitedfilter" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
-														<div style="display: inline-block; margin: 0px; width: 5px;">
-															<a onclick="showOverlayMenu(this)" >
-														    	<span class="glyphicon glyphicon-option-vertical"></span>
-															</a>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																</c:if>
-														   </div>
-													   </div>
-                                                   	</c:otherwise>
-												</c:choose>
-											</th>
-										</c:otherwise>
-									</c:choose>		
-									
-									<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleExplanations.contains(question.id.toString()))}">
-										<th class="filtercell"></th>
-									</c:if>
-									<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleDiscussions.contains(question.id.toString()))}">
-										<th class="filtercell"></th>
-									</c:if>
-									
-								</c:if>						
-							</c:if>
-						</c:forEach>
-						<c:if test="${publication == null}">
-							<c:if test='${filter.visible("invitation") == true}'>
-								<th class="filtercell cellinvitation">
-									<c:choose>
-										<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
-											<input disabled="disabled" type="text" style="margin:0px;" />
-										</c:when>
-										<c:otherwise>
-											<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.invitation}</esapi:encodeForHTMLAttribute>' name="metafilterinvitation" />
-										</c:otherwise>
-									</c:choose>
-								</th>
-							</c:if>
-							<c:if test='${filter.visible("case") == true}'>
-								<th class="filtercell cellcase">
-									<c:choose>
-										<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
-											<input disabled="disabled" type="text" style="margin:0px;" />
-										</c:when>
-										<c:otherwise>
-											<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.caseId}</esapi:encodeForHTMLAttribute>' name="metafiltercase" />
-										</c:otherwise>
-									</c:choose>
-								</th>
-							</c:if>
-							<c:if test='${filter.visible("user") == true}'>
-								<th class="filtercell celluser">
-									<c:choose>
-										<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
-											<input disabled="disabled" type="text" style="margin:0px;" />
-										</c:when>
-										<c:otherwise>
-											<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.user}</esapi:encodeForHTMLAttribute>' name="metafilteruser" />
-										</c:otherwise>
-									</c:choose>
-								</th>
-							</c:if>
-							<c:if test='${filter.visible("created") == true}'>
-								<th class="filtercell cellcreated">
-									<div class="btn-toolbar" style="margin: 0px; text-align: center">
-										<div class="datefilter" style="float: left">
-										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-										     <c:choose>
-										     	<c:when test="${filter.generatedFrom != null}">
-										     		<spring:eval expression="filter.generatedFrom" />
-										     	</c:when>
-										     	<c:otherwise>
-										     		<spring:message code="label.from" />
-										     	</c:otherwise>
-										     </c:choose>
-										    <span class="caret"></span>
-										  </a>
-										  <div class="overlaymenu hideme">
-										  		<spring:message code="label.from" />
-										    	<input type="hidden" name="metafilterdatefrom" class="hiddendate" value="<spring:eval expression="filter.generatedFrom" />" />
-										    	<div id="metafilterdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
-										   </div>
-										</div>
-										<div class="datefilter" style="float: left">	
-										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-										  	<c:choose>
-										     	<c:when test="${filter.generatedTo != null}">
-										     		<spring:eval expression="filter.generatedTo" />
-										     	</c:when>
-										     	<c:otherwise>
-										     		<spring:message code="label.To" />
-										     	</c:otherwise>
-										     </c:choose>
-										    <span class="caret"></span>
-										  </a>
-										 <div class="overlaymenu hideme">
-										 		<spring:message code="label.To" />
-										    	<input type="hidden" name="metafilterdateto" class="hiddendate" value="<spring:eval expression="filter.generatedTo" />" />
-										    	<div id="metafilterdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
-										    </div>
-										</div>	
-									</div>	
-								</th>
-							</c:if>
-							<c:if test='${filter.visible("updated") == true}'>
-								<th class="filtercell cellupdated">
-									<div class="btn-toolbar" style="min-width: 150px; margin: 0px; text-align: center">
-										<div class="datefilter" style="float: left">
-										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-										  	<c:choose>
-										     	<c:when test="${filter.updatedFrom != null}">
-										     		<spring:eval expression="filter.updatedFrom" />
-										     	</c:when>
-										     	<c:otherwise>
-										     		<spring:message code="label.from" />
-										     	</c:otherwise>
-										     </c:choose>
-										    <span class="caret"></span>
-										  </a>
-										   <div class="overlaymenu hideme">
-										   		<spring:message code="label.from" />
-										    	<input type="hidden" name="metafilterupdatefrom" class="hiddendate" value="<spring:eval expression="filter.updatedFrom" />" />
-										    	<div id="metafilterupdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
-										    </div>
-										</div>		
-										<div class="datefilter" style="float: left">
-										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-										  	<c:choose>
-										     	<c:when test="${filter.updatedTo != null}">
-										     		<spring:eval expression="filter.updatedTo" />
-										     	</c:when>
-										     	<c:otherwise>
-										     		<spring:message code="label.To" />
-										     	</c:otherwise>
-										     </c:choose>
-										    <span class="caret"></span>
-										  </a>
-										   <div class="overlaymenu hideme">
-										   		<spring:message code="label.To" />
-										    	<input type="hidden" name="metafilterupdateto" class="hiddendate" value="<spring:eval expression="filter.updatedTo" />" />
-										    	<div id="metafilterupdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
-										   </div>
-										</div>	
-									</div>										
-								</th>
-							</c:if>
-							<c:if test='${filter.visible("languages") == true}'>
-								<th class="filtercell celllanguages">
-									<div>
-										<a class="btn btn-default" onclick="showOverlayMenu(this)" >
-										    <span class="nobreak"><spring:message code="label.AllValues" /></span>
-										    <span class="caret"></span>
-										  </a>
-										  
-										  <div class="overlaymenu hideme">
-										  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
-										  	 <c:forEach items="${form.getLanguages()}" var="lang" varStatus="status">
-												<div>													
-													<c:choose>
-														<c:when test="${filter.languages.contains(lang.value.code)}">
-															<input checked="checked" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" name="metafilterlanguage" data-code="<esapi:encodeForHTMLAttribute>${lang.value.code}</esapi:encodeForHTMLAttribute>" value="${lang.value.code}"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></input>
-														</c:when>
-														<c:otherwise>
-															<input data-stopPropagation="true" type="checkbox" class="check checkFilterCell" name="metafilterlanguage" data-code="${lang.value.code}" value="<esapi:encodeForHTMLAttribute>${lang.value.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></input>
-														</c:otherwise>
-													</c:choose>
 												</div>
-											</c:forEach>
-										  </div>
-									</div>
-								</th>
-							</c:if>
-						</c:if>
-						<c:if test="${form.getSurvey().isQuiz}">
-							<th>
-								<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-									<a href="recalculateScore?id=${form.getSurvey().getId()}" class="btn btn-default"><spring:message code="label.Recalculate" /></a>
+											</th>
+										</c:forEach>
+									</c:when>
+									<c:when test="${question.getType() == 'Table'}">									
+										<c:forEach var="r" begin="1" end="${question.allRows-1}"> 
+											<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 																
+												<th class="filtercell cell${question.id}-${r}-${c}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
+													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" class="limitedfilter" style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
+											        <div style="display: inline-block; margin: 0px; width: 5px;">
+														<a onclick="showOverlayMenu(this)" >
+													    	<span class="glyphicon glyphicon-option-vertical"></span>
+														</a>
+														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+															</c:if>
+													   </div>
+												   </div>
+		                                        </th>										
+											</c:forEach>													
+										</c:forEach>
+									</c:when>
+									<c:when test="${question.getType() == 'RatingQuestion'}">
+										<c:forEach items="${question.questions}" var="childQuestion">
+											<th class="filtercell cell${childQuestion.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
+												<div>
+													<a class="btn btn-default" onclick="showOverlayMenu(this)" >
+													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
+													    <span class="caret"></span>
+													  </a>
+													  
+													  <div class="overlaymenu hideme maxH">
+													  	<a style="margin-bottom: 5px;" onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
+													  	 <c:forEach begin="1" end="${question.numIcons}" varStatus="loop">
+															<div>
+																<c:choose>
+																	<c:when test="${filter.contains(childQuestion.id, childQuestion.uniqueId, loop.index, loop.index.toString()) }">
+																		<input checked="checked" name="filter${childQuestion.id}|${childQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${loop.index}/" />${loop.index}
+																	</c:when>
+																	<c:otherwise>
+																		<input name="filter${childQuestion.id}|${childQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${loop.index}/" />${loop.index}
+																	</c:otherwise>
+																</c:choose>
+															</div>
+														</c:forEach>	
+													  </div>
+													  
+													 <div style="display: inline-block; margin: 0px;">
+														<a onclick="showOverlayMenu(this)" >
+													    	<span class="glyphicon glyphicon-option-vertical"></span>
+														</a>
+														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+															</c:if>
+													   </div>
+												   </div>
+												</div>
+											</th>
+										</c:forEach>
+									</c:when>
+									<c:when test="${question.getType() == 'Upload' && publication != null && !publication.getShowUploadedDocuments()}">
+									
+									</c:when>
+									<c:otherwise>
+										<th class="filtercell cell${question.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
+											<c:choose>
+												<c:when test="${question.getType() == 'GalleryQuestion'}">
+													<div>
+													<a class="btn btn-default" onclick="showOverlayMenu(this)" >
+													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
+													    <span class="caret"></span>
+													  </a>
+													  
+													  <div class="overlaymenu hideme maxH">
+													  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
+													  	 <c:forEach items="${question.files}" var="file" varStatus="status">
+													    	<div>
+														    	<c:choose>
+																	<c:when test="${filter.contains(question.id, question.uniqueId, status.index) }">
+																		<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${status.index}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></input>
+																	</c:when>
+																	<c:otherwise>
+																		<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${status.index}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></input>
+																	</c:otherwise>
+																</c:choose>
+													    	</div>
+														</c:forEach>
+													  </div>
+													  														  
+													  <div style="display: inline-block; margin: 0px;">
+														<a onclick="showOverlayMenu(this)" >
+													    	<span class="glyphicon glyphicon-option-vertical"></span>
+														</a>
+														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+															</c:if>
+													   </div>
+													   </div>
+													</div>
+												</c:when>
+												<c:when test="${question.getType() == 'Upload'}">
+													<div style="float: right">
+														<div style="display: inline-block; margin: 0px; margin-bottom: 8px;">
+															<a onclick="showOverlayMenu(this)" >
+														    	<span class="glyphicon glyphicon-option-vertical"></span>
+															</a>
+															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+																</c:if>
+														   </div>
+													   </div>		
+													</div>
+													
+													<c:if test="${(sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1 || (form.survey.isDraft && USER.getLocalPrivilegeValue('AccessDraft') > 0) || (publication != null && publication.getShowUploadedDocuments())) && questionswithuploadedfiles != null && questionswithuploadedfiles.contains(question.uniqueId)}">
+														<a onclick="showExportDialog('Files${question.uniqueId}${form.survey.isDraft}', 'zip');"  data-toggle="tooltip" data-placement="top" title="<spring:message code="label.DownloadAllFiles" />"><span class="glyphicon glyphicon-save"></span></a>
+													</c:if>		
+													
+													<div style="clear: both"></div>				
+												</c:when>
+												<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion'}">
+													<div>
+													  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
+													    <span class="caret"></span>
+													  </a>
+													  
+													  <div class="overlaymenu hideme maxH">
+													  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
+													  	 <c:forEach items="${question.allPossibleAnswers}" var="possibleanswer" varStatus="status">
+													    	<div>
+														    	<c:choose>
+																	<c:when test="${filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId) }">
+																		<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.strippedTitle}</input>
+																	</c:when>
+																	<c:otherwise>
+																		<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.strippedTitle}</input>
+																	</c:otherwise>
+																</c:choose>
+													    	</div>
+														</c:forEach>
+													  </div>
+													  
+													  <div style="display: inline-block; margin: 0px;">
+															<a onclick="showOverlayMenu(this)" >
+														    	<span class="glyphicon glyphicon-option-vertical"></span>
+															</a>
+															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+																</c:if>
+														   </div>
+													   </div>
+													  
+													</div>
+												</c:when>
+												<c:when test="${question.getType() == 'RankingQuestion'}">
+													<div>
+													  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
+													    <span class="caret"></span>
+													  </a>
+													  
+													  <div class="overlaymenu hideme maxH">
+													  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a><br />
+													  	<i><spring:message code="label.SelectFirstItem" /></i>
+													  	 <c:forEach items="${question.childElements}" var="child" varStatus="status">
+													    	<div>
+														    	<c:choose>
+																	<c:when test="${filter.contains(question.id, question.uniqueId, child.id, child.uniqueId) }">
+																		<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="radio" class="check checkFilterCell" value="${child.uniqueId}">${child.getStrippedTitle()}</input>
+																	</c:when>
+																	<c:otherwise>
+																		<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="radio" class="check checkFilterCell" value="${child.uniqueId}">${child.getStrippedTitle()}</input>
+																	</c:otherwise>
+																</c:choose>
+													    	</div>
+														</c:forEach>
+													  </div>
+													  
+													  <div style="display: inline-block; margin: 0px;">
+															<a onclick="showOverlayMenu(this)" >
+														    	<span class="glyphicon glyphicon-option-vertical"></span>
+															</a>
+															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+																</c:if>
+														   </div>
+													   </div>
+													  
+													</div>													
+												</c:when>
+												<c:when test="${question.getType() == 'DateQuestion'}">
+													<div class="btn-toolbar" style="margin: 0px; text-align: center; display: inline-block; vertical-align: middle;">
+														<div class="datefilter" style="float: left">
+												  		<a class="btn btn-default" onclick="showOverlayMenu(this)" >
+														     <c:choose>
+														     	<c:when test="${filter.getFromValue(question.id, question.uniqueId).length() > 0}">
+														     		<spring:eval expression="filter.getFromValue(question.id, question.uniqueId)" />
+														     	</c:when>
+														     	<c:otherwise>
+														     		<spring:message code="label.from" />
+														     	</c:otherwise>
+														     </c:choose>
+														    <span class="caret"></span>
+														  </a>
+														  <div class="overlaymenu hideme">
+														    	<input type="hidden" name="filter${question.id}|${question.uniqueId}from" class="hiddendate" value="<spring:eval expression="filter.getFromValue(question.id, question.uniqueId)" />" />
+														    	<div id="metafilter${question.id}|${question.uniqueId}fromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
+														   </div>
+														</div>
+														<div class="datefilter" style="float: left">	
+														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+														  	<c:choose>
+														     	<c:when test="${filter.getToValue(question.id, question.uniqueId).length() > 0}">
+														     		<spring:eval expression="filter.getToValue(question.id, question.uniqueId)" />
+														     	</c:when>
+														     	<c:otherwise>
+														     		<spring:message code="label.To" />
+														     	</c:otherwise>
+														     </c:choose>
+														    <span class="caret"></span>
+														  </a>
+														 <div class="overlaymenu hideme">
+														    	<input type="hidden" name="filter${question.id}|${question.uniqueId}to" class="hiddendate" value="<spring:eval expression="filter.getToValue(question.id, question.uniqueId)" />" />
+														    	<div id="metafilter${question.id}|${question.uniqueId}todiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
+														    </div>
+														</div>	
+													</div>	
+													<div style="display: inline-block; margin: 0px; vertical-align: middle;">
+														<a onclick="showOverlayMenu(this)" >
+													    	<span class="glyphicon glyphicon-option-vertical"></span>
+														</a>
+														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+															</c:if>
+													   </div>
+												   </div>
+												</c:when>													
+												<c:otherwise>
+													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="limitedfilter" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
+													<div style="display: inline-block; margin: 0px; width: 5px;">
+														<a onclick="showOverlayMenu(this)" >
+													    	<span class="glyphicon glyphicon-option-vertical"></span>
+														</a>
+														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+															</c:if>
+													   </div>
+												   </div>
+                                                  	</c:otherwise>
+											</c:choose>
+										</th>
+									</c:otherwise>
+								</c:choose>		
+								
+								<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleExplanations.contains(question.id.toString()))}">
+									<th class="filtercell"></th>
 								</c:if>
+								<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleDiscussions.contains(question.id.toString()))}">
+									<th class="filtercell"></th>
+								</c:if>
+								
+							</c:if>						
+						</c:if>
+					</c:forEach>
+					<c:if test="${publication == null}">
+						<c:if test='${filter.visible("invitation") == true}'>
+							<th class="filtercell cellinvitation">
+								<c:choose>
+									<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
+										<input disabled="disabled" type="text" style="margin:0px;" />
+									</c:when>
+									<c:otherwise>
+										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.invitation}</esapi:encodeForHTMLAttribute>' name="metafilterinvitation" />
+									</c:otherwise>
+								</c:choose>
 							</th>
 						</c:if>
-					</tr>
-				</c:if>
+						<c:if test='${filter.visible("case") == true}'>
+							<th class="filtercell cellcase">
+								<c:choose>
+									<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
+										<input disabled="disabled" type="text" style="margin:0px;" />
+									</c:when>
+									<c:otherwise>
+										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.caseId}</esapi:encodeForHTMLAttribute>' name="metafiltercase" />
+									</c:otherwise>
+								</c:choose>
+							</th>
+						</c:if>
+						<c:if test='${filter.visible("user") == true}'>
+							<th class="filtercell celluser">
+								<c:choose>
+									<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
+										<input disabled="disabled" type="text" style="margin:0px;" />
+									</c:when>
+									<c:otherwise>
+										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.user}</esapi:encodeForHTMLAttribute>' name="metafilteruser" />
+									</c:otherwise>
+								</c:choose>
+							</th>
+						</c:if>
+						<c:if test='${filter.visible("created") == true}'>
+							<th class="filtercell cellcreated">
+								<div class="btn-toolbar" style="margin: 0px; text-align: center">
+									<div class="datefilter" style="float: left">
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									     <c:choose>
+									     	<c:when test="${filter.generatedFrom != null}">
+									     		<spring:eval expression="filter.generatedFrom" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.from" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									  <div class="overlaymenu hideme">
+									  		<spring:message code="label.from" />
+									    	<input type="hidden" name="metafilterdatefrom" class="hiddendate" value="<spring:eval expression="filter.generatedFrom" />" />
+									    	<div id="metafilterdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
+									   </div>
+									</div>
+									<div class="datefilter" style="float: left">	
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									  	<c:choose>
+									     	<c:when test="${filter.generatedTo != null}">
+									     		<spring:eval expression="filter.generatedTo" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.To" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									 <div class="overlaymenu hideme">
+									 		<spring:message code="label.To" />
+									    	<input type="hidden" name="metafilterdateto" class="hiddendate" value="<spring:eval expression="filter.generatedTo" />" />
+									    	<div id="metafilterdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
+									    </div>
+									</div>	
+								</div>	
+							</th>
+						</c:if>
+						<c:if test='${filter.visible("updated") == true}'>
+							<th class="filtercell cellupdated">
+								<div class="btn-toolbar" style="min-width: 150px; margin: 0px; text-align: center">
+									<div class="datefilter" style="float: left">
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									  	<c:choose>
+									     	<c:when test="${filter.updatedFrom != null}">
+									     		<spring:eval expression="filter.updatedFrom" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.from" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									   <div class="overlaymenu hideme">
+									   		<spring:message code="label.from" />
+									    	<input type="hidden" name="metafilterupdatefrom" class="hiddendate" value="<spring:eval expression="filter.updatedFrom" />" />
+									    	<div id="metafilterupdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
+									    </div>
+									</div>		
+									<div class="datefilter" style="float: left">
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									  	<c:choose>
+									     	<c:when test="${filter.updatedTo != null}">
+									     		<spring:eval expression="filter.updatedTo" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.To" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									   <div class="overlaymenu hideme">
+									   		<spring:message code="label.To" />
+									    	<input type="hidden" name="metafilterupdateto" class="hiddendate" value="<spring:eval expression="filter.updatedTo" />" />
+									    	<div id="metafilterupdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
+									   </div>
+									</div>	
+								</div>										
+							</th>
+						</c:if>
+						<c:if test='${filter.visible("languages") == true}'>
+							<th class="filtercell celllanguages">
+								<div>
+									<a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									    <span class="nobreak"><spring:message code="label.AllValues" /></span>
+									    <span class="caret"></span>
+									  </a>
+									  
+									  <div class="overlaymenu hideme">
+									  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
+									  	 <c:forEach items="${form.getLanguages()}" var="lang" varStatus="status">
+											<div>													
+												<c:choose>
+													<c:when test="${filter.languages.contains(lang.value.code)}">
+														<input checked="checked" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" name="metafilterlanguage" data-code="<esapi:encodeForHTMLAttribute>${lang.value.code}</esapi:encodeForHTMLAttribute>" value="${lang.value.code}"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></input>
+													</c:when>
+													<c:otherwise>
+														<input data-stopPropagation="true" type="checkbox" class="check checkFilterCell" name="metafilterlanguage" data-code="${lang.value.code}" value="<esapi:encodeForHTMLAttribute>${lang.value.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></input>
+													</c:otherwise>
+												</c:choose>
+											</div>
+										</c:forEach>
+									  </div>
+								</div>
+							</th>
+						</c:if>
+					</c:if>
+					<c:if test="${form.getSurvey().isQuiz}">
+						<th>
+							<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
+								<a href="recalculateScore?id=${form.getSurvey().getId()}" class="btn btn-default"><spring:message code="label.Recalculate" /></a>
+							</c:if>
+						</th>
+					</c:if>
+				</tr>
+				
 			</thead>
 			</table>
 		</div>
@@ -980,18 +981,13 @@ var closeOverlayDivsEnabled = false;
 			};
 			resetSliderPositions(table);
 		}
-
 		
 		function adaptScrollArea()
 		{
 			<c:choose>
-				<c:when test="${publication != null && publication.isShowSearch()}">
+				<c:when test="${publication != null}">
 				var height = $( window ).height() - 640; //530;
 				var statheight = $( window ).height() - 580;
-				</c:when>
-				<c:when test="${publication != null}">
-				var height = $( window ).height() - 420;
-				var statheight = $( window ).height() - 320;
 				</c:when>
 				<c:otherwise>
 				var height = $( window ).height() - 430;
@@ -1119,7 +1115,7 @@ var closeOverlayDivsEnabled = false;
 						 var tr = document.createElement("tr");
 						 
 						 <c:choose>
-							 <c:when test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
+							 <c:when test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1 || (USER.getResultAccess() != null && !USER.getResultAccess().isReadonly()))}">
 							 
 							 	var td = document.createElement("td");
 							 	$(td).addClass("checkDelete").css("min-width","13px");
@@ -1346,7 +1342,9 @@ var closeOverlayDivsEnabled = false;
 							$("#scrollareaheader").css("overflow-y","auto");
 						}
 					  
+					  <c:if test="${publication == null}">
 					  checkAssignedValues();
+					  </c:if>
 					  synchronizeTableSizes();
 					  
 					  $('[data-toggle="tooltip"]').tooltip({

@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 	
-	<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 		
 	<c:choose>
 		<c:when test="${forpdf == null && responsive == null}">
@@ -22,7 +22,7 @@
 			<div class="surveytitle">${form.survey.title} - <spring:message code="label.Results" /></div><br />
 			<div style="margin-bottom: 20px;">${form.survey.quizResultsMessage}</div>
 		
-			<c:if test="${forpdf == null}">
+			<c:if test="${forpdf == null && form.survey.downloadContribution}">
 				<div style="text-align: center; margin-bottom: 20px;">
 					<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 				</div>
@@ -329,7 +329,7 @@
 			
 		</div>
 		
-		<c:if test="${forpdf == null}">
+		<c:if test="${forpdf == null && form.survey.downloadContribution}">
 			<div style="text-align: center; margin-bottom: 20px;">
 				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 			</div>

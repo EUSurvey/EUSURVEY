@@ -168,6 +168,9 @@ public class HomeController extends BasicController {
 		if (request.getParameter(Constants.ERROR) != null)
 		{
 			model.put("fromerrorpage", true);
+		} else if (request.getParameter("assistance") != null)
+		{
+			model.put("needassistance", true);
 		}
 		
 		model.addAttribute("oss",super.isOss());

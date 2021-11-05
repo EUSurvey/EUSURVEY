@@ -10,13 +10,8 @@
 	
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/form.css" rel="stylesheet" type="text/css" />
-	
+		
 	<script type="text/javascript"> 
-		$(function() {					
-			$("#form-menu-tab").addClass("active");
-			$("#overview-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
-			$('[data-toggle="tooltip"]').tooltip(); 
-		});
 		
 		function showExportDialog(type, format)
 		{
@@ -199,6 +194,13 @@
 							${form.survey.owner.getFirstLastName()}
 						</td>
 						<td rowspan="5" style="vertical-align: top; text-align: right;">
+						
+							<c:if test="${form.survey.getCriticalComplexity()}">
+								<div class="alert-message">
+									<spring:message code="info.CriticalComplexity" arguments="${contextpath}/home/support?assistance=1" />
+								</div>						
+							</c:if>
+						
 							<c:choose>
 								<c:when test="${form.survey.isFrozen}">
 									<button class="btn btn-default disabled" data-toggle="tooltip" title="<esapi:encodeForHTMLAttribute><spring:message code="info.SurveyFrozen" /></esapi:encodeForHTMLAttribute>"><spring:message code="label.Publish" /></button>
@@ -355,8 +357,6 @@
     <div class="modal-content">
 	<div class="modal-header"><spring:message code="label.SurveyLinks" /></div>
 	<div class="modal-body" style="max-height: 500px; overflow: auto; word-break: break-all;">	
-		<div style="color: #777; margin-bottom: 20px;"><spring:message code="info.SurveyLinks" /></div>
-		
 		<table class="table table-bordered table-striped">
 			<tr>
 				<th><spring:message code="label.Language" /></th>
@@ -379,8 +379,7 @@
 						</td>
 					</tr>
 		 		</c:if>
-	 		</c:forEach>			
-			
+	 		</c:forEach>
 		</table>
 	</div>
 	<div class="modal-footer">

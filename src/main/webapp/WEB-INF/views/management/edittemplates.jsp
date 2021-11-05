@@ -4,19 +4,26 @@
 <script type="text/html" id="firstrow-template">
 	<tr data-bind="attr: {'data-label' : $data.Label, class:  ContentType() == 'scoring' ? (Value() != '0' ? 'firstpropertyrow quiz' : 'firstpropertyrow quiz hideme') : 'firstpropertyrow'}, visible: IsVisible">
 		<td class="propertylabel" data-bind="html: LabelTitle, attr: {'data-label' : $data.Label}"></td>
+
 		
-		<!--  ko if: ContentType() == 'html' -->							
-			<td class="propertycontent" data-bind="html: Content"></td>
-		<!-- /ko -->
-		<!--  ko if: ContentType() == 'filetype' -->							
+		<!--  ko if: ContentType() == 'html' -->
 			<td class="propertycontent">
-				<div data-bind="html: Content"></div>
-				<a class='btn btn-xs btn-default' onclick='$(this).parent().find("input[type=text]").first().val("pdf;doc;docx;odt;txt;rtf");update($(this).parent().find("input[type=text]").first())'><spring:message code="label.TextFiles" /></a>
-				<a class='btn btn-xs btn-default' onclick='$(this).parent().find("input[type=text]").first().val("png;jpg;jpeg;gif;bmp");update($(this).parent().find("input[type=text]").first())'><spring:message code="label.ImageFiles" /></a>
-				<a class='btn btn-xs btn-default' onclick='$(this).parent().find("input[type=text]").first().val("xls;xlsx;ods");update($(this).parent().find("input[type=text]").first())'><spring:message code="label.TableFiles" /></a>
+				<form autocomplete="off">
+					<div data-bind="html: Content"></div>
+				</form>
 			</td>
 		<!-- /ko -->
-		<!--  ko if: ContentType() == 'radio' -->							
+		<!--  ko if: ContentType() == 'filetype' -->
+			<td class="propertycontent">
+				<form autocomplete="off">
+					<div data-bind="html: Content"></div>
+					<a class='btn btn-xs btn-default' onclick='$(this).parent().find("input[type=text]").first().val("pdf;doc;docx;odt;txt;rtf");update($(this).parent().find("input[type=text]").first())'><spring:message code="label.TextFiles" /></a>
+					<a class='btn btn-xs btn-default' onclick='$(this).parent().find("input[type=text]").first().val("png;jpg;jpeg;gif;bmp");update($(this).parent().find("input[type=text]").first())'><spring:message code="label.ImageFiles" /></a>
+					<a class='btn btn-xs btn-default' onclick='$(this).parent().find("input[type=text]").first().val("xls;xlsx;ods");update($(this).parent().find("input[type=text]").first())'><spring:message code="label.TableFiles" /></a>
+				</form>
+			</td>
+		<!-- /ko -->
+		<!--  ko if: ContentType() == 'radio' -->
 			<td class="propertycontent" data-bind="foreach: ContentItems">
 				<label><input data-bind="checked: Selected, attr: {id: Id, name: Name, value: Value}" class='check' onclick='update(this)' type='radio' /><span data-bind="html: Label"></span></label><br />
 			</td>
@@ -65,66 +72,77 @@
 
 		<!--  ko if: ContentType() == 'number' -->
 			<td class="propertycontent">
-				<input class="spinner" type="text" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id}" />
+				<form autocomplete="off">
+					<input class="spinner" type="number" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id}" />
+				</form>
 			</td>
 		<!-- /ko -->
 
 		<!--  ko if: ContentType() == 'minmax' -->
 			<td class="propertycontent">
-				<table class="minmaxtable">
-					<tr>
-						<td><spring:message code="label.min" />&nbsp;</td>
-						<td><input class="spinner" style="min-width:60px" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
-					</tr>
-					<tr>
-						<td><spring:message code="label.max" />&nbsp;</td>
-						<td><input class="spinner" style="min-width:60px" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
-					</tr>
-				</table>
+				<form autocomplete="off">
+					<table class="minmaxtable">
+						<tr>
+							<td><spring:message code="label.min" />&nbsp;</td>
+							<td><input class="spinner" style="min-width:60px" type="number" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+						</tr>
+						<tr>
+							<td><spring:message code="label.max" />&nbsp;</td>
+							<td><input class="spinner" style="min-width:60px" type="number" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+						</tr>
+					</table>
+				</form>
 			</td>
+
 		<!-- /ko -->
 
 		<!--  ko if: ContentType() == 'minmaxnumber' -->
 			<td class="propertycontent">
-				<table class="minmaxtable">
-					<tr>
-						<td><spring:message code="label.MinValue" />&nbsp;</td>
-						<td><input class="spinner" style="min-width:60px" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
-					</tr>
-					<tr>
-						<td><spring:message code="label.MaxValue" />&nbsp;</td>
-						<td><input class="spinner" style="min-width:60px" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
-					</tr>
-				</table>
+				<form autocomplete="off">
+					<table class="minmaxtable">
+						<tr>
+							<td><spring:message code="label.MinValue" />&nbsp;</td>
+							<td><input class="spinner" style="min-width:60px" type="number" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+						</tr>
+						<tr>
+							<td><spring:message code="label.MaxValue" />&nbsp;</td>
+							<td><input class="spinner" style="min-width:60px" type="number" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+						</tr>
+					</table>
+				</form>
 			</td>
 		<!-- /ko -->
 
 		<!--  ko if: ContentType() == 'minmaxdate' -->
 			<td class="propertycontent">
-				<table class="minmaxtable">
-					<tr>
-						<td><spring:message code="label.after" />&nbsp;</td>
-						<td><input class="datepicker" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
-					</tr>
-					<tr>		
-						<td><spring:message code="label.before" />&nbsp;</td>
-						<td><input class="datepicker" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
-					</tr>
-				</table>
+				<form autocomplete="off">
+					<table class="minmaxtable">
+						<tr>
+							<td><spring:message code="label.after" />&nbsp;</td>
+							<td><input class="datepicker" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+						</tr>
+						<tr>
+							<td><spring:message code="label.before" />&nbsp;</td>
+							<td><input class="datepicker" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+						</tr>
+					</table>
+				</form>
 			</td>
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'minmaxtime' -->
 			<td class="propertycontent">
-				<table class="minmaxtable">
-					<tr>
-						<td><spring:message code="label.after" />&nbsp;</td>
-						<td><input class="" style="min-width:60px" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
-					</tr>
-					<tr>
-						<td><spring:message code="label.before" />&nbsp;</td>
-						<td><input class="" style="min-width:60px" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
-					</tr>
-				</table>
+				<form autocomplete="off">
+					<table class="minmaxtable">
+						<tr>
+							<td><spring:message code="label.after" />&nbsp;</td>
+							<td><input class="" style="min-width:60px" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+						</tr>
+						<tr>
+							<td><spring:message code="label.before" />&nbsp;</td>
+							<td><input class="" style="min-width:60px" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+						</tr>
+					</table>
+				</form>
 			</td>
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'action' -->
@@ -145,7 +163,9 @@
 				</div>
 
 				<button data-toggle="tooltip" title="<spring:message code="label.Add" />" class="btn btn-default btn-sm" data-bind="html: ContentItems()[0].Label, attr: {id: ContentItems()[0].Id, 'onclick' : ContentItems()[0].Value}"></button>
-				<button data-toggle="tooltip" title="<spring:message code="label.Remove" />" data-bind="disable: !(PreviewItems().length > MinItems()), attr: {'data-toggle': 'tooltip' },html: ContentItems()[1].Label, attr: {id: ContentItems()[1].Id, 'onclick' : ContentItems()[1].Value, 'class': 'btn btn-default btn-sm' + (PreviewItems().length > MinItems() ? '' : ' disabled')}"></button>
+				<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" title="<spring:message code="label.Remove"/>" data-bind="attr: {'onclick': ContentItems()[1].Value}">
+					<button data-bind="disable: !(PreviewItems().length > MinItems()),html: ContentItems()[1].Label, attr: {id: ContentItems()[1].Id, 'class': 'btn btn-default btn-sm' + (PreviewItems().length > MinItems() ? '' : '')}"></button>
+				</span>
 			</td>
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'quizquestion' -->
@@ -160,7 +180,9 @@
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'ecfCompetencySelection' -->
 			<td class="propertycontent">
-				<input name="competencySelection" type="text" data-bind="value: Value(), attr: {id: 'ecf0' + Label()}" readonly=true/>
+				<form autocomplete="off">
+					<input name="competencySelection" type="text" data-bind="value: Value(), attr: {id: 'ecf0' + Label()}" readonly=true/>
+				</form>
 			</td>
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'scoring' -->
@@ -192,7 +214,7 @@
 					<!-- /ko -->
 				</table>
 			</td>
-		<!-- /ko -->	
+		<!-- /ko -->
 	</tr>
 </script>
 
@@ -224,7 +246,7 @@
 <script type="text/html" id="tinymce-template">
 	<tr class="propertyrow tinymcerow hideme">
 		<td colspan='2'>
-			<textarea data-bind="html: TinyMCEContent(), attr: {id: TinyMCEId()}"></textarea>
+			<textarea data-bind="text: TinyMCEContent(), attr: {id: TinyMCEId()}"></textarea>
 			<div class='edittextbuttons'>
 				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
 				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
@@ -310,11 +332,13 @@
 			<td class="propertycontent" style="border-bottom: 0px;">			
 				<select class="ruleValueType" data-label="ruleValueType" onchange="change(this, event)" data-bind="options: $parent.availableValueTypes(), optionsText: function(item) { return $parent.Element().type == 'DateQuestion' ? getPropertyLabel(item + 'Date') : getPropertyLabel(item)}, value: scoring.typeAsOption(), attr: {'data-value': scoring.typeAsOption()}">
 				</select>
-				<span data-bind="attr: {style: scoring.type() > -1 && scoring.type() != 8 ? 'display: inline-block' : 'display: none'}">		
-					<input data-label="ruleValue" data-bind="value: scoring.value(), attr: {style: $parent.Element().type == 'FreeTextQuestion' || $parent.Element().type == 'DateQuestion' ? '' : 'width: 50px;'}" type="text" onchange="update(this)" onblur="update(this)" />
-					<span data-bind="attr: {style: scoring.type() == 5 ? '' : 'display: none'}"><spring:message code="label.and" /></span>
-					<input data-label="ruleValue2" data-bind="value: scoring.value2(), attr: {style: scoring.type() == 5 ? ($parent.Element().type == 'FreeTextQuestion' || $parent.Element().type == 'DateQuestion' ? '' : 'width: 50px;') : 'display: none'}" type="text" onchange="update(this)" onblur="update(this)" />
-				</span>		
+				<form autocomplete="off">
+					<span data-bind="attr: {style: scoring.type() > -1 && scoring.type() != 8 ? 'display: inline-block' : 'display: none'}">
+						<input data-label="ruleValue" data-bind="value: scoring.value(), attr: {style: $parent.Element().type == 'FreeTextQuestion' || $parent.Element().type == 'DateQuestion' ? '' : 'width: 50px;'}" type="text" onchange="update(this)" onblur="update(this)" />
+						<span data-bind="attr: {style: scoring.type() == 5 ? '' : 'display: none'}"><spring:message code="label.and" /></span>
+						<input data-label="ruleValue2" data-bind="value: scoring.value2(), attr: {style: scoring.type() == 5 ? ($parent.Element().type == 'FreeTextQuestion' || $parent.Element().type == 'DateQuestion' ? '' : 'width: 50px;') : 'display: none'}" type="text" onchange="update(this)" onblur="update(this)" />
+					</span>
+				</form>
 			</td>
 		</tr>
 	<!-- /ko -->

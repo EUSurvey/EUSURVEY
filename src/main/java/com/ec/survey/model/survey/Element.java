@@ -316,6 +316,25 @@ public abstract class Element implements java.io.Serializable {
 
 		return false;
 	}
+	
+	@Transient
+	public boolean getIsTriggerOrDependent() {
+		if (this instanceof ChoiceQuestion) {
+			for (PossibleAnswer p : ((ChoiceQuestion) this).getPossibleAnswers()) {
+				if (!p.getDependentElements().getDependentElements().isEmpty()) {
+					return true;
+				}
+			}
+		} else if (this instanceof Matrix) {
+			for (DependencyItem dep : ((Matrix) this).getDependentElements()) {
+				if (dep != null && !dep.getDependentElements().isEmpty()) {
+					return true;
+				}
+			}
+		}
+		
+		return getIsDependent();
+	}
 
 	@Transient
 	public String getTriggersMatrixQuestion() {
