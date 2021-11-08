@@ -59,7 +59,9 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
-			showError(data.responseText);
+			console.log(data.status + " " + data.statusText);
+			console.log(data.responseText);
+			showError("Connection Error " + data.status);
 		},
 		success: function (result, textStatus) {
 			const elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");

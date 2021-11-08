@@ -148,7 +148,9 @@
 					  });
 				  },
 				  error: function (data) {
-						showError(data.responseText);
+					console.log(data.status + " " + data.statusText);
+					console.log(data.responseText);
+					showError("Connection Error " + data.status);
 					}
 			});
 			
@@ -169,7 +171,9 @@
 					  });
 				  },
 				error: function (data) {
-					showError(data.responseText);
+					console.log(data.status + " " + data.statusText);
+					console.log(data.responseText);
+					showError("Connection Error " + data.status);
 				}
 			});
 		}

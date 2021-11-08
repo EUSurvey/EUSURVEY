@@ -932,7 +932,9 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
-			showError(data.responseText);
+			console.log(data.status + " " + data.statusText);
+			console.log(data.responseText);
+			showError("Connection Error " + data.status);
 		},
 		complete: function () {
 			viewModel.delphiTableLoading(false);
