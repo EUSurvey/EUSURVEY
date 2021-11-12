@@ -415,7 +415,7 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 							},
 					label: chart.data.datasets.length === 1
 							? function (item, data) {
-								var label = chart.type === "pie"
+								var label = (chart.type === "pie" || true)
 										? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
 										: item.value;
 								return wrapLabel(label, 30);
