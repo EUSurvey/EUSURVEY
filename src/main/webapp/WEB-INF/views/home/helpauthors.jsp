@@ -982,7 +982,7 @@
 				Randomization can be selected in the Section Properties just next to Order.
 			</p>
 			<img src="${contextpath}/resources/images/documentation/randomization.png" style="margin-bottom: 1em" />
-			<p>Please also note the followings:</p>
+			<p>Please also note the following:</p>
 			<ul>
 				<li>All survey elements (including images and static text) are randomized.</li>
 				<li>If a question triggers a visibility change or is triggered by a visibility change, it's position is not changed. It is always shown before the other 'randomized' elements.</li>
