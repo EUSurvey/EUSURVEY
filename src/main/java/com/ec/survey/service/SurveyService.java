@@ -3300,7 +3300,7 @@ public class SurveyService extends BasicService {
 	public Map<Element, Integer> getPendingChanges(Survey draftSurvey) {
 		Map<Element, Integer> result = new HashMap<>();
 
-		Survey publishedSurvey = getSurvey(draftSurvey.getShortname(), false, false, false, false, draftSurvey.getLanguage().getCode(),
+		Survey publishedSurvey = getSurvey(draftSurvey.getShortname(), false, false, false, false, null,
 				true, true);
 
 		// Compare elements
