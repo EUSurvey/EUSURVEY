@@ -42,7 +42,7 @@ function loadGraphDataInnerForRunner(div, surveyid, questionuid, languagecode, u
 	loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth);
 }
 
-let lastTimeAjaxError = new Date(0)
+var lastTimeAjaxError = new Date(0)
 
 function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth) {
 

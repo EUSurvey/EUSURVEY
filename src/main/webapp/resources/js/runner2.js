@@ -914,7 +914,7 @@ function hideCommentAndReplyForms() {
 		}
 	});
 }
-let lastTimeAjaxError = new Date(0)
+var lastTimeAjaxError = new Date(0)
 function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel) {
 	const orderBy = viewModel.delphiTableOrder();
 	const offset = viewModel.delphiTableOffset();

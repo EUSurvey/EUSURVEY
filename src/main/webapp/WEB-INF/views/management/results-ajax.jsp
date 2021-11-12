@@ -132,7 +132,7 @@
 				});
 		}
 
-		let lastTimeAjaxError = new Date(0)
+		var lastTimeAjaxError = new Date(0)
 
 		function loadDelphiStatisticsAsync() {
 			$.ajax({
