@@ -1125,6 +1125,9 @@ function updateVisibility(span, reset, ask, dialogresult, noUndo)
 	if (isSection && !ask && dialogresult) {
 		var level = parseInt($(_elementProperties.selectedelement).find(".sectiontitle").first().attr("data-level"));
    
+		var section = _elements[id];
+		var useAndLogic = section.useAndLogic();		
+		
 		$(_elementProperties.selectedelement).nextAll().each(function(){
 			if ($(this).hasClass("sectionitem"))
 			{
@@ -1134,6 +1137,10 @@ function updateVisibility(span, reset, ask, dialogresult, noUndo)
 					return false;
 				}
 			}
+			
+			var qid = $(this).attr("data-id");
+			var question = _elements[qid];
+			question.useAndLogic(useAndLogic);
 	 
 			$(this).addClass("selectedquestion");
 		});

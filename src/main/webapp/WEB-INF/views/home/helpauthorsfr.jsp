@@ -1263,6 +1263,27 @@
 			<p>
 				Pour plus d'informations, consultez notre <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">guide des meilleures pratiques</a> et n'hésitez pas à contacter <a href="${contextpath}/home/support?assistance=1">l'équipe de support EUSurvey</a> pour obtenir de l'aide afin de revoir la conception de votre formulaire si nécessaire.
 			</p>
+			<h2>Fonction de randomisation</h2>
+			<p>
+				Lorsque vous utilisez une <strong>Section</strong> de premier niveau, vous avez la possibilité de conserver les questions/éléments situés en dessous dans leur ordre d'origine ou de rendre leur position aléatoire.
+				La randomisation peut être sélectionnée dans les Propriétés de la Section, juste à côté de l'Ordre.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/randomization_FR.png" style="margin-bottom: 1em" />
+			<p>Veuillez également noter les points suivants:</p>
+			<ul>
+				<li>Tous les éléments de l'enquête (y compris les images et le texte statique) sont positionnés aléatoirement.</li>
+				<li>Si une question déclenche un changement de visibilité ou est déclenchée par un changement de visibilité, sa position n'est pas modifiée. Elle est toujours affichées avant les autres éléments aléatoires.</li>
+				<li>Les sous-sections et leurs questions (niveaux 2 et 3) sont également randomisées aléatoirement, mais l’ordre de la sous-section au sein de la section de niveau 1 à laquelle elle appartient est conservé. Cela signifie que les questions d'une sous-section sont également randomisées lorsque la section de niveau 1 est randomisée.</li>
+				<li>La version PDF de l'enquête (fonction "Télécharger la version PDF") montre toujours les questions dans l'ordre d’origine.</li>
+				<li>Les contributions PDF montrent toujours les questions dans l'ordre d’origine.</li>
+				<li>Si la numérotation des sections/questions est activée en même temps que la fonction de randomisation, les numéros des questions seront également randomisés avec les questions.
+					<div><img src="${contextpath}/resources/images/documentation/randomization_sections_FR.png" /></div>
+				</li>
+			</ul>
+			<p>Il y a un autre point spécifique aux enquêtes DELPHI:</p>
+			<ul>
+				<li>La page d'accueil de DELPHI présente les questions dans leur ordre original.</li>
+			</ul>
 			<h1>
 				Sécurité des enquêtes
 			</h1>

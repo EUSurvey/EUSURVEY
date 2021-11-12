@@ -976,6 +976,27 @@
 			<p>
 				For more information, see our <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">best practices guide</a> and do not hesitate to contact the <a href="${contextpath}/home/support?assistance=1">EUSurvey support team</a> for assistance in re-designing your form if needed.
 			</p>
+			<h2>Randomization feature</h2>
+			<p>
+				When using a first-level <strong>Section</strong>, you have the possibility to keep the questions/elements underneath as in their original order or to randomize their position.
+				Randomization can be selected in the Section Properties just next to Order.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/randomization.png" style="margin-bottom: 1em" />
+			<p>Please also note the followings:</p>
+			<ul>
+				<li>All survey elements (including images and static text) are randomized.</li>
+				<li>If a question triggers a visibility change or is triggered by a visibility change, it's position is not changed. It is always shown before the other 'randomized' elements.</li>
+				<li>Sub-sections and their questions (level 2 and 3) are also randomized, but their order within the level 1 Section they belong to is kept. This means that questions under a sub-section are also randomized when the level 1 Section is randomized.</li>
+				<li>PDF version of the survey ('Download PDF version' feature) always shows questions in the original order.</li>
+				<li>PDF contributions always show questions in the original order.</li>
+				<li>In case the Section/Question numbering is activated in conjunction with the Randomization feature, then the Question numbers will also be randomized along with the questions.
+					<div><img src="${contextpath}/resources/images/documentation/randomization_sections.png" /></div>
+				</li>
+			</ul>
+			<p>There is another point specific to DELPHI surveys:</p>
+			<ul>
+				<li>The DELPHI start page shows the questions in their original order.</li>
+			</ul>
 			<h1>
 				Survey security
 			</h1>
