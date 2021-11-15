@@ -1797,74 +1797,88 @@
 
 			<h4>Results export in XLS</h4>
 
-			<p>1. An Excel file containing the following information:</p>
+			<ol>
+				<li>
+					<p>An Excel file containing the following information:</p>
 
-			<p>Alias: Survey Alias (example: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
-				Export Date: Date in the format 'dd-mm-yyyy hh&nbsp;:mm' (example: 28-09-2020
-				15:28)</p>
+					<p>Alias: Survey Alias (example: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Export Date: Date in the format 'dd-mm-yyyy hh:mm' (example: 28-09-2020
+						15:28)</p>
 
-			<p>A table composed as below:</p>
-			<ul>
-				<li>Each column represents a different 'File Upload'
-					question.</li>
+					<p>A table composed as below:</p>
+					<ul>
+						<li>Each column represents a different 'File Upload'
+							question.</li>
 
-				<li>Each line represents a different contribution.</li>
+						<li>Each line represents a different contribution.</li>
 
-				<li>Each cell contains all names of the uploaded
-					files.</li>
-			</ul>
+						<li>Each cell contains all names of the uploaded
+							files.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Folders corresponding to each contribution and named with the
+						contribution ID. It contains sub-folders for each 'File Upload' question (Upload_1,
+						Upload_2 etc.). </p>
+					<p>For instance:</p>
 
-			<p>2. Folders corresponding to each contribution and named with the
-				contribution ID. It contains sub-folders for each 'File upload' question (Upload_1,
-				Upload_2 etc.). </p>
+					<p>Folder: 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
 
-			<p>For instance:</p>
+						Sub-folder: Upload_1 (corresponding to the first 'File Upload'
+						question) contains all files uploaded.<br>
 
-			<p>Folder: 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
-
-				Sub-folder: Upload_1 (corresponding to the first File Upload
-				question) contains all files uploaded.<br>
-
-				Sub-folder: Upload_2 (corresponding to the second File Upload
-				question) contains all files uploaded.</p>
-
+						Sub-folder: Upload_2 (corresponding to the second 'File Upload'
+						question) contains all files uploaded.</p>
+				</li>
+			</ol>
 			<h4>Results export in PDF</h4>
 
-			<p>1. Folder named 'PDFs' containing all survey contributions as PDF
-				documents.</p>
+			<ol>
+				<li>
+					<p>Folder named 'PDFs' containing all survey contributions as PDF
+						documents.</p>
+				</li>
+				<li>
+					<p>Folders corresponding to each contribution and named with the contribution
+						ID.<br>
+						It contains sub-folders for each 'File Upload' question (Upload_1,
+						Upload_2 etc.).</p>
+				</li>
+			</ol>
 
-			<p>2. Folders corresponding to each contribution and named with the contribution
-				ID.<br>
-				It contains sub-folders for each 'File upload' question (Upload_1,
-				Upload_2 etc.).</p>
 
 			<h4>Results export in ODS</h4>
 
-			<p>1. An Open Office file containing the following information:</p>
+			<ol>
+				<li>
+					<p>An Open Office file containing the following information:</p>
 
-			<p>Alias Survey Alias (example: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
-				Export Date Date in the format 'dd-mm-yyyy hh :mm' (example: 28-09-2020 15:28)</p>
+					<p>Alias: Survey Alias (example: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Export Date: Date in the format 'dd-mm-yyyy hh:mm' (example: 28-09-2020 15:28)</p>
 
-			<p>A table composed as below:</p>
+					<p>A table composed as below:</p>
 
-			<ul>
-				<li>Each column represents a different 'File Upload'
-					question.</li>
+					<ul>
+						<li>Each column represents a different 'File Upload'
+							question.</li>
 
-				<li>Each line represents a different contribution.</li>
+						<li>Each line represents a different contribution.</li>
 
-				<li>Each cell contains all names of the uploaded
-					files.</li>
-			</ul>
+						<li>Each cell contains all names of the uploaded
+							files.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Folders corresponding to each contribution and named with the
+						contribution ID.<br>
+						It contains sub-folders for each 'File Upload' question (Upload_1,
+						Upload_2 etc.).</p>
+				</li>
+			</ol>
 
-			<p>2. Folders corresponding to each contribution and named with the
-				contribution ID.<br>
-				It contains sub-folders for each 'File upload' question (Upload_1,
-				Upload_2 etc.).</p>
+			<h4>Results export in XML</h4>
 
-			<h4>Results export inXML</h4>
-
-			<p>This export is made of an XML file containing the Results in a structured way.<br>
+			<p>This export is made of an XML file containing the results in a structured way.<br>
 
 				<b>Uploaded files are not available in that case.</b></p>
 
