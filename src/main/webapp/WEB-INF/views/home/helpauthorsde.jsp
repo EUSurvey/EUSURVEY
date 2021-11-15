@@ -1233,10 +1233,10 @@
 			<ul>
 				<li>Alle Umfrageelemente (einschließlich Bilder und statischer Text) werden zufällig angeordnet.</li>
 				<li>Wenn eine Frage eine Sichtbarkeitsänderung auslöst oder durch eine Sichtbarkeitsänderung (nicht) sichtbar wird, wird ihre Position nicht verändert. Sie wird immer vor den anderen "randomisierten" Elementen angezeigt.</li>
-				<li>Unterabschnitte und ihre Fragen (Stufen 2 und 3) werden ebenfalls randomisiert, aber ihre Reihenfolge innerhalb des Abschnitts der Stufe 1, zu dem sie gehören, wird beibehalten. Das bedeutet, dass die Fragen eines Unterabschnitts ebenfalls randomisiert werden, wenn der Abschnitt der Stufe 1 randomisiert wird.</li>
+				<li>Unterabschnitte und ihre Fragen (Stufe 2 und 3) werden ebenfalls randomisiert, aber ihre Reihenfolge innerhalb des Abschnitts der Stufe 1, zu dem sie gehören, wird beibehalten. Das bedeutet, dass die Fragen eines Unterabschnitts ebenfalls randomisiert werden, wenn der Abschnitt der Stufe 1 randomisiert wird.</li>
 				<li>Die PDF-Version der Umfrage (Funktion "PDF-Version herunterladen") zeigt die Fragen immer in der ursprünglichen Reihenfolge.</li>
 				<li>PDFs von Beiträgen zeigen die Fragen immer in der ursprünglichen Reihenfolge.</li>
-				<li>Wenn die Nummerierung der Abschnitte/Fragen in Verbindung mit der Randomisierungsfunktion aktiviert ist, werden auch die Fragennummern zusammen mit den Fragen randomisiert.
+				<li>Wenn die automatische Nummerierung der Abschnitte/Fragen gleichzeitig mit der Randomisierungsfunktion aktiviert ist, werden auch die Fragennummern zusammen mit den Fragen randomisiert.
 					<div><img src="${contextpath}/resources/images/documentation/randomization_sections_DE.png" style="max-width: 100%;" /></div>
 				</li>
 			</ul>
