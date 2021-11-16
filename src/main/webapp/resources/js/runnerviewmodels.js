@@ -11,9 +11,9 @@ function toggleVisibility(span) {
 
 function addIconToHelp(help)
 {
-	return "<span onclick='toggleVisibility($(this).next())' class='glyphicon glyphicon-question-sign'></span>" +
+	return "<span onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign'></span><br />" +
 		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
-		"<br />";
+		"";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width, desc)
