@@ -477,9 +477,9 @@ public class DelphiController extends BasicController {
 			result.addEntry(entry);
 		}
 
-		if (question instanceof SingleChoiceQuestion) {
-			result.setLabel(question.getStrippedTitle());
-		}
+
+		result.setLabel(question.getStrippedTitle());
+
 		return ResponseEntity.ok(result);
 	}
 
