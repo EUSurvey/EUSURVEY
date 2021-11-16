@@ -42,7 +42,6 @@ function loadGraphDataInnerForRunner(div, surveyid, questionuid, languagecode, u
 	loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth);
 }
 
-var lastTimeAjaxError = new Date(0)
 
 function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth) {
 
@@ -61,12 +60,7 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
-			console.log(data.status + " " + data.statusText);
-			console.log(data.responseText);
-			if (new Date().getTime() - lastTimeAjaxError.getTime() > 2500) { //Prevent Spam
-				showError("Connection Error " + data.status);
-				lastTimeAjaxError = new Date()
-			}
+			showAjaxError(data.status)
 		},
 		success: function (result, textStatus) {
 			const elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");

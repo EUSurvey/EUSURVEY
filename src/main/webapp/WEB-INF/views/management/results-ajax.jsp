@@ -132,8 +132,6 @@
 				});
 		}
 
-		var lastTimeAjaxError = new Date(0)
-
 		function loadDelphiStatisticsAsync() {
 			$.ajax({
 				type:'GET',
@@ -150,12 +148,7 @@
 					  });
 				  },
 				  error: function (data) {
-					console.log(data.status + " " + data.statusText);
-					console.log(data.responseText);
-					if (new Date().getTime() - lastTimeAjaxError.getTime() > 2500) { //Prevent Spam
-					  showError("Connection Error " + data.status);
-					  lastTimeAjaxError = new Date()
-					}
+					  showAjaxError(data.status)
 				  }
 			});
 			
@@ -176,12 +169,7 @@
 					  });
 				  },
 				error: function (data) {
-					console.log(data.status + " " + data.statusText);
-					console.log(data.responseText);
-					if (new Date().getTime() - lastTimeAjaxError.getTime() > 2500) { //Prevent Spam
-						showError("Connection Error " + data.status);
-						lastTimeAjaxError = new Date()
-					}
+					showAjaxError(data.status)
 				}
 			});
 		}
