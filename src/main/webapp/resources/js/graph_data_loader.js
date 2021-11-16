@@ -42,6 +42,7 @@ function loadGraphDataInnerForRunner(div, surveyid, questionuid, languagecode, u
 	loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth);
 }
 
+
 function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth) {
 
 	var data =
@@ -59,7 +60,7 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
-			showError(data.responseText);
+			showAjaxError(data.status)
 		},
 		success: function (result, textStatus) {
 			const elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");

@@ -131,7 +131,7 @@
 					  }
 				});
 		}
-		
+
 		function loadDelphiStatisticsAsync() {
 			$.ajax({
 				type:'GET',
@@ -148,8 +148,8 @@
 					  });
 				  },
 				  error: function (data) {
-						showError(data.responseText);
-					}
+					  showAjaxError(data.status)
+				  }
 			});
 			
 			$.ajax({
@@ -169,7 +169,7 @@
 					  });
 				  },
 				error: function (data) {
-					showError(data.responseText);
+					showAjaxError(data.status)
 				}
 			});
 		}
