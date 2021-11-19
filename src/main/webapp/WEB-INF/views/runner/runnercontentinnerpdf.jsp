@@ -558,7 +558,7 @@
 													<td style="vertical-align: top">
 														<label for="${possibleanswer.id}"><div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.title}</div></label>
 													</td>				
-													<c:if test="${(element.numColumns == 0 || status.count % element.numColumns == 0) && status.count < element.possibleAnswers.size()}">
+													<c:if test="${status.count % element.numColumns == 0 && status.count < element.possibleAnswers.size()}">
 														</tr>
 														<tr>
 													</c:if>
@@ -636,7 +636,7 @@
 															<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.getTitleForDisplayMode(element.displayMode)}</div>
 														</label>
 													</td>					
-													<c:if test="${(element.numColumns == 0 || status.count % element.numColumns == 0) && status.count < element.possibleAnswers.size()}">
+													<c:if test="${status.count % element.numColumns == 0 && status.count < element.possibleAnswers.size()}">
 														</tr>
 														<tr>
 													</c:if>

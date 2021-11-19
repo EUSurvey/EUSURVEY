@@ -1509,7 +1509,7 @@ function shuffle(array) {
 function sortByColumn(answers, columns)
 {	
 	var counter = answers.length;
-	if (columns <= 1) return answers;
+	if (columns == 1) return answers;
 	var rows = Math.ceil( answers.length / columns, 10);
 	
 	var answersByColumn = [];
