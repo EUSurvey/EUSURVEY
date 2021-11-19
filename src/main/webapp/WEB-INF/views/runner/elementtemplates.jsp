@@ -1,3 +1,7 @@
+<head>
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+</head>
+
 <script type="text/javascript">
 	var surveyUniqueId = "${form.survey.uniqueId}";
 	var labelOf = " ${form.getMessage("label.of")} ";
@@ -75,10 +79,10 @@
 		<!-- /ko -->
 		
 		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
-			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
-			<span data-bind='html: title'></span>
+			<span aria-label="test" aria-live="assertive" class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span aria-label="test2" aria-live="assertive" data-bind='html: title'></span>
 		</label>
-		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
+		<span tabindex="0" class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px; padding-top: 4px;">
 		
 			<!-- ko if: likert() && !(ismobile || istablet) -->

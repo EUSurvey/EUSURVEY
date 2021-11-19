@@ -12,7 +12,7 @@ function toggleVisibility(span) {
 function addIconToHelp(help)
 {
 	return "<span onclick='toggleVisibility($(this).next())' class='glyphicon glyphicon-question-sign'></span>" +
-		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
+		"<div tabindex='0' class='questionhelp__text sr-only'>" + help + "</div>" +
 		"<br />";
 }
 
