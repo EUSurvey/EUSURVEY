@@ -1266,7 +1266,7 @@
 			<h2>Fonction de randomisation</h2>
 			<p>
 				Lorsque vous utilisez une <strong>Section</strong> de premier niveau, vous avez la possibilité de conserver les questions/éléments situés en dessous dans leur ordre d'origine ou de rendre leur position aléatoire.
-				La randomisation peut être sélectionnée dans les Propriétés de la Section, juste à côté de l'Ordre.
+				La randomisation peut être sélectionnée dans les propriétés de la section, juste à côté de l'ordre.
 			</p>
 			<img src="${contextpath}/resources/images/documentation/randomization_FR.png" style="margin-bottom: 1em" />
 			<p>Veuillez également noter les points suivants:</p>
@@ -1274,7 +1274,7 @@
 				<li>Tous les éléments de l'enquête (y compris les images et le texte statique) sont positionnés aléatoirement.</li>
 				<li>Si une question déclenche un changement de visibilité ou est déclenchée par un changement de visibilité, sa position n'est pas modifiée. Elle est toujours affichées avant les autres éléments aléatoires.</li>
 				<li>Les sous-sections et leurs questions (niveaux 2 et 3) sont également randomisées aléatoirement, mais l’ordre de la sous-section au sein de la section de niveau 1 à laquelle elle appartient est conservé. Cela signifie que les questions d'une sous-section sont également randomisées lorsque la section de niveau 1 est randomisée.</li>
-				<li>La version PDF de l'enquête (fonction "Télécharger la version PDF") montre toujours les questions dans l'ordre d’origine.</li>
+				<li>La version PDF de l'enquête (fonction «Télécharger la version PDF») montre toujours les questions dans l'ordre d’origine.</li>
 				<li>Les contributions PDF montrent toujours les questions dans l'ordre d’origine.</li>
 				<li>Si la numérotation des sections/questions est activée en même temps que la fonction de randomisation, les numéros des questions seront également randomisés avec les questions.
 					<div><img src="${contextpath}/resources/images/documentation/randomization_sections_FR.png" /></div>
@@ -2592,84 +2592,91 @@
 			<p>EUSurvey propose différents formats d'export : XLS, PDF, ODS et XML.
 				<br>
 				En fonction du format sélectionné, la structure et le contenu des
-				fichiers exportés pour l'élément 'File upload' sont décrits ci-dessous :</p>
+				fichiers exportés pour l'élément «Charger un fichier» sont décrits ci-dessous :</p>
 
 			<h4>Export
 				des résultats en XLS</h4>
 
-			<p>1. Un fichier Excel contenant les informations suivantes :</p>
+			<ol>
+				<li>
+					<p>Un fichier Excel contenant les informations suivantes :</p>
+					<p>Alias : Alias de l'enquête (exemple :
+						6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Date d'export : Date au format «dd-mm-yyyy hh:mm» (exemple :
+						28-09-2020 15:28)</p>
 
-			<p>Alias : Alias de l'enquête (exemple :
-				6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
-				Date d'export : Date au format 'dd-mm-yyyy hh :mm' (exemple :
-				28-09-2020 15:28)</p>
+					<p>Un tableau composé comme ci-dessous :</p>
+					<ul>
+						<li>Chaque colonne représente une question «Charger un fichier» différente.</li>
 
-			<p>Un tableau composé comme ci-dessous :</p>
-			<ul>
-				<li>Chaque colonne représente une question 'File
-					upload' différente.</li>
+						<li>Chaque ligne représente une contribution
+							différente.</li>
 
-				<li>Chaque ligne représente une contribution
-					différente.</li>
+						<li>Chaque cellule contient tous les noms des
+							fichiers téléchargés.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Des dossiers correspondant à chaque contribution et nommés avec
+						l'ID de la contribution, contenant des sous-dossiers pour chaque question «Charger un fichier» (Upload_1, Upload_2, etc.). </p>
 
-				<li>Chaque cellule contient tous les noms des
-					fichiers téléchargés.</li>
-			</ul>
+					<p>Par exemple :</p>
 
-			<p>2. Des dossiers correspondant à chaque contribution et nommés avec
-				l'ID de la contribution, contenant des sous-dossiers pour chaque question 'File
-				upload' (Upload_1, Upload_2, etc.). </p>
+					<p>Dossier : 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
 
-			<p>Par exemple :</p>
+						Sous-dossier : Upload_1 (correspondant à la première question de
+						type «Charger un fichier») contient tous les fichiers téléchargés.<br>
 
-			<p>Dossier : 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
-
-				Sous-dossier : Upload_1 (correspondant à la première question de
-				type 'File upload') contient tous les fichiers téléchargés.<br>
-
-				Sous-dossier : Upload_2 (correspondant à la deuxième question de type
-				'File upload') contient tous les fichiers téléchargés.</p>
-
+						Sous-dossier : Upload_2 (correspondant à la deuxième question de type
+						«Charger un fichier») contient tous les fichiers téléchargés.</p>
+				</li>
+			</ol>
 			<h4>Export
 				des résultats au format PDF</h4>
+			<ol>
+				<li>
+					<p>Dossier nommé «PDFs» contenant toutes les contributions à
+						l'enquête sous forme de documents PDF.</p>
+				</li>
+				<li>
+					<p>Des dossiers correspondant à chaque contribution et nomméd avec
+						l'ID de la contribution.<br>
 
-			<p>1. Dossier nommé 'PDFs' contenant toutes les contributions à
-				l'enquête sous forme de documents PDF.</p>
-
-			<p>2. Des dossiers correspondant à chaque contribution et nomméd avec
-				l'ID de la contribution.<br>
-
-				Chaque dossier contient des sous-dossiers pour chaque question de type
-				File Upload (Upload_1, Upload_2, etc.).</p>
+						Chaque dossier contient des sous-dossiers pour chaque question de type
+						«Charger un fichier» (Upload_1, Upload_2, etc.).</p>
+				</li>
+			</ol>
 
 			<h4>Export des résultats au format ODS</h4>
+			<ol>
+				<li>
+					<p>Un fichier Open Office contenant les informations suivantes :</p>
 
-			<p>1. Un fichier Open Office contenant les informations suivantes :</p>
+					<p>Alias : Alias de l'enquête (exemple :
+						6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
 
-			<p>Alias : Alias de l'enquête (exemple :
-				6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Date d'export : Date au format «dd-mm-yyyy hh:mm» (exemple :
+						28-09-2020 15:28)</p>
 
-				Date d'export : Date au format 'dd-mm-yyyy hh :mm' (exemple :
-				28-09-2020 15:28)</p>
+					<p>Un tableau composé comme ci-dessous :</p>
 
-			<p>Un tableau composé comme ci-dessous :</p>
+					<ul>
+						<li>Chaque colonne représente une question «Charger un fichier» différente.</li>
 
-			<ul>
-				<li>Chaque colonne représente une question 'File
-					upload' différente.</li>
+						<li>Chaque ligne représente une contribution
+							différente.</li>
 
-				<li>Chaque ligne représente une contribution
-					différente.</li>
-
-				<li>Chaque cellule contient tous les noms des
-					fichiers téléchargés.</li>
-			</ul>
-
-			<p>2. Des dossiers correspondant à chaque contribution et nommés avec
-				l'ID de la contribution.<br>
-				Chaque dossier contient des sous-dossiers pour chaque question de
-				téléchargement de fichiers (Upload_1, Upload_2, etc.).</p>
-
+						<li>Chaque cellule contient tous les noms des
+							fichiers téléchargés.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Des dossiers correspondant à chaque contribution et nommés avec
+						l'ID de la contribution.<br>
+						Chaque dossier contient des sous-dossiers pour chaque question de
+						téléchargement de fichiers (Upload_1, Upload_2, etc.).</p>
+				</li>
+			</ol>
 			<h4>Export
 				des résultats au format XML</h4>
 

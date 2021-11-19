@@ -11,9 +11,9 @@ function toggleVisibility(span) {
 
 function addIconToHelp(help)
 {
-	return "<span onclick='toggleVisibility($(this).next())' class='glyphicon glyphicon-question-sign'></span>" +
-		"<div tabindex='0' class='questionhelp__text sr-only'>" + help + "</div>" +
-		"<br />";
+	return "<span onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign'></span><br />" +
+		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
+		"";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width, desc)
@@ -764,7 +764,8 @@ function newRankingViewModel(element)
 	}
 
 	viewModel.resetOrder = function(_, event) {
-		viewModel.answervalues(viewModel.originalItemUniqueIdOrder);
+		//.slice() because originalItemUniqueIdOrder would otherwise be changed by moving the items
+		viewModel.answervalues(viewModel.originalItemUniqueIdOrder.slice());
 		viewModel.isAnswered(false);
 
 		const thatRanking = $(event.target).closest(".rankingitem");

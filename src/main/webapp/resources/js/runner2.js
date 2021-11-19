@@ -932,7 +932,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
-			showError(data.responseText);
+			showAjaxError(data.status)
 		},
 		complete: function () {
 			viewModel.delphiTableLoading(false);

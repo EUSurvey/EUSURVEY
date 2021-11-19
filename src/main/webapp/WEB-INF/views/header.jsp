@@ -190,7 +190,7 @@
 				
 			<c:if test="${serverEnv != null}">
 				<c:if test="${fn:length(serverEnv)> 0}">
-					<img src="${contextpath}/resources/images/ribbon_<c:out value="${serverEnv}"/>.png" alt="environment ribbon" style="position:absolute; pointer-events: none;" width="80px"/>
+					<img src="${contextpath}/resources/images/ribbon_<c:out value="${serverEnv}"/>.svg" alt="environment ribbon ${serverEnv}" style="position:absolute; pointer-events: none;" width="80px"/>
 				</c:if>
 			</c:if>	
 		</div>

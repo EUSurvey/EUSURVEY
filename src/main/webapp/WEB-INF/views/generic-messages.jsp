@@ -350,6 +350,14 @@
 	{
 		_messages.addErrorMessage(text);
 	}
+
+	let lastTimeAjaxError = new Date(0)
+	function showAjaxError(statuscode){
+		if (new Date().getTime() - lastTimeAjaxError.getTime() > 2500) { //Prevent Spam
+			showError("Connection Error " + statuscode);
+			lastTimeAjaxError = new Date()
+		}
+	}
 	
 	function showSystemMessage(message)
 	{
