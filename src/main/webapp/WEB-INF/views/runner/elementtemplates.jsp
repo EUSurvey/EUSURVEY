@@ -73,10 +73,11 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+
+		<label tabindex="0" class='questiontitle' data-bind="attr: {for: 'answer' + id(), id: 'questiontitle' + id()}">
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px; padding-top: 4px;">
@@ -237,9 +238,10 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 	
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
@@ -371,9 +373,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 
@@ -486,9 +489,10 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 	
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 				
@@ -617,9 +621,10 @@
 	</div>
 	
 	<div id="rating-template">
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 
@@ -704,9 +709,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
@@ -814,9 +820,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		<div class="input-group" style="margin-left: 20px;">
@@ -843,9 +850,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
@@ -907,9 +915,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
@@ -950,9 +959,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class="questionhelp" data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>	
 		<!-- ko if: extensions() != null && extensions().length > 0 -->
@@ -991,7 +1001,11 @@
 	</div>
 	
 	<div id="download-template">
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
+		</label>
 		<span class="questionhelp" data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>	
 		<div class="files" role="list" data-bind="foreach: files, attr: {'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 			<!-- ko if: $parent.foreditor -->
@@ -1021,9 +1035,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
@@ -1152,9 +1167,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
 		<span class="questionhelp" data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
@@ -1257,11 +1273,12 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
 		</label>
-		<span class="questionhelp" data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>	
+		<span class="questionhelp" data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
 		<div class="table-responsive">
 

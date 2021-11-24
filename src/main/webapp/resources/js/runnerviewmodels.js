@@ -7,11 +7,19 @@ function getNiceHelp(help)
 
 function toggleVisibility(span) {
 	$(span).toggleClass("sr-only");
+
+	//only focussable when the help is revealed
+	if(!$(span).hasClass("sr-only")){
+		$(span).attr("tabindex", "0");
+		$(span).focus();
+	} else {
+		$(span).removeAttr("tabindex");
+	}
 }
 
 function addIconToHelp(help)
 {
-	return "<span onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign'></span><br />" +
+	return "<a href='javascript:;' tabindex='0' aria-label='Help' onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign focussable'></a><br />" +
 		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
 		"";
 }
