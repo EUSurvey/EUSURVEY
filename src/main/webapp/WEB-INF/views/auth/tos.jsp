@@ -36,7 +36,9 @@ body {
 </style>
 
 <script type="text/javascript">
-		$(document).ready(function () {
+
+		$(document).ready(function () {		
+			
 			$("#switchEN").click(function () {
 				$("#tos_EN").show();
 				$("#tos_FR").hide();
@@ -110,8 +112,8 @@ body {
 	
 			<div style="margin-bottom: 20px;">
 				<div style="float: right; font-size: 125%">
-					[<a role="button" aria-label="<spring:message code="label.SwitchToEnglish" />" tabindex="0" id="switchEN">EN</a>] [<a role="button" aria-label="<spring:message code="label.SwitchToFrench" />" tabindex="0" id="switchFR">FR</a>] [<a
-						role="button" aria-label="<spring:message code="label.SwitchToGerman" />" tabindex="0" id="switchDE">DE</a>]
+					[<a href="javascript:;" role="button" aria-label="<spring:message code="label.SwitchToEnglish" />" tabindex="0" id="switchEN">EN</a>] [<a href="javascript:;" role="button" aria-label="<spring:message code="label.SwitchToFrench" />" tabindex="0" id="switchFR">FR</a>] [<a
+						href="javascript:;" role="button" aria-label="<spring:message code="label.SwitchToGerman" />" tabindex="0" id="switchDE">DE</a>]
 				</div>	
 	
 				<div id="tos_EN">
