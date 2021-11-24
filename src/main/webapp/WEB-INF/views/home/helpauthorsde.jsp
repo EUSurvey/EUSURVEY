@@ -2540,7 +2540,7 @@
 			<p>EUSurvey bietet verschiedene Exportformate an: XLS, PDF, ODS und XML. </p>
 
 			<p>Je nach ausgewähltem Format sind Struktur und Inhalt der exportierten Dateien
-				des "Datei Hochladen" Elementes unterschiedlich und so wie in den folgenden Abschnitten beschrieben:</p>
+				des "Datei hochladen"-Elementes unterschiedlich und so wie in den folgenden Abschnitten beschrieben:</p>
 
 			<h4>Ergebnisexport im XLS-Format</h4>
 			<ol>

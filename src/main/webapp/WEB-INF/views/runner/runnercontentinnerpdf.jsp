@@ -650,7 +650,7 @@
 					
 						<c:if test="${element.getType() == 'RankingQuestion'}">
 							<div class="ranking-question-initial-answer-message">
-								${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer'")}
+								${form.getMessage("label.HintOnInitialRankingOrderPDF")}
 							</div>
 							<div class="rankingitem-list-container">
 								<div class="rankingitem-list">

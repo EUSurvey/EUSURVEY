@@ -1088,7 +1088,10 @@ function newNumberViewModel(element)
 		const input = $("#answer" + viewModel.id());
 		input.val(viewModel.initialDefaultValue())
 		this.isAnswered(true);
-		tinyMCE.get('explanation' + data.id()).execCommand('mceFocus',false);
+		var explanationBox = tinyMCE.get('explanation' + data.id());
+		if (explanationBox != null) {
+			explanationBox.execCommand('mceFocus',false);
+		}
 	};
 
 	viewModel.resetToInitialPosition = function(_, event) {

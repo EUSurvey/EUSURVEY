@@ -605,6 +605,32 @@
 					</div>
 				</c:if>
 				
+				<c:if test="${element.getType() == 'RankingQuestion'}">
+					<div class="ranking-question-initial-answer-message">
+						${form.getMessage("label.HintOnInitialRankingOrderPDF")}
+					</div>
+					<div class="rankingitem-list-container">
+						<div class="rankingitem-list">
+							<c:forEach items="${form.getRankingItems(element)}" var="child">			
+								<div class="rankingitem-form-data">
+									<table>
+										<tr>
+											<td>
+												<div class="rankingitem-decoration" style="padding-top: 2px">
+													<img src="${contextpath}/resources/images/drag.png" />
+												</div>														
+											</td>
+											<td>
+												<div class="rankingitemtext">${child.title}</div>	
+											</td>
+										</tr>
+									</table>							
+								</div>
+							</c:forEach>
+						</div>
+					</div>
+				</c:if>
+				
 				</div>
 								
 								

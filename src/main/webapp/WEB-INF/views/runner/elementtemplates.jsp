@@ -716,7 +716,7 @@
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
-		<!-- ko if: display() == 'Slider' && ${form.survey.isDelphi} -->
+		<!-- ko if: display() == 'Slider' -->
 			<div tabindex="0" class="focussable" role="group" data-bind="hidden: isAnswered, attr: {'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questionhelp' + id()}">
 		
 				<div class="limits" data-bind="hidden: isAnswered, attr: {id: 'questioninfo' + id()}">
