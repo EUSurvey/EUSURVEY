@@ -19,7 +19,7 @@ function toggleVisibility(span) {
 
 function addIconToHelp(help)
 {
-	return "<span tabindex='0' aria-label='Help' onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign focussable'></span><br />" +
+	return "<a href='javascript:;' tabindex='0' aria-label='Help' onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign focussable'></a><br />" +
 		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
 		"";
 }

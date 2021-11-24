@@ -1,8 +1,6 @@
 function switchNiceHelp(a)
 {
 	var div = $(a).closest(".questionhelp");
-	var text = $(div).find(".fullcontent").html().replace("&nbsp;", " ");
-	var sign = "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;";
 	
 	if ($(a).hasClass("morebutton"))
 	{
