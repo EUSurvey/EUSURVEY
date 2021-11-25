@@ -996,6 +996,7 @@
 					<li>
 						Click on 'Settings' button
 					</li>
+					<li>
 						Tick 'Contribution ID' in both columns and press Ok
 					</li>
 					<li>

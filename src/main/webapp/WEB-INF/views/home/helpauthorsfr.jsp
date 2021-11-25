@@ -1283,6 +1283,7 @@
 					<li>
 						Cliquez sur le bouton «Paramètres»
 					</li>
+					<li>
 						Cochez «ID de contribution» dans les deux colonnes et appuyez sur OK
 					</li>
 					<li>
