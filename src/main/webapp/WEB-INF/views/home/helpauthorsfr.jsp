@@ -1263,6 +1263,36 @@
 			<p>
 				Pour plus d'informations, consultez notre <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">guide des meilleures pratiques</a> et n'hésitez pas à contacter <a href="${contextpath}/home/support?assistance=1">l'équipe de support EUSurvey</a> pour obtenir de l'aide afin de revoir la conception de votre formulaire si nécessaire.
 			</p>
+			<h2>Quel est l'identifiant de la contribution?</h2>
+			<p>
+				L'ID de contribution est un code utilisé comme identifiant unique pour une contribution effectuée.
+			</p>
+			<p>
+				Il peut être utilisé par les responsables d'enquêtes pour retrouver une contribution à partir de l'écran Résultats. Il peut également être utilisé par un participant au enquête pour soumettre sa contribution et y accéder ultérieurement.
+			</p>
+			<h2>Comment puis-je trouver une contribution à partir des Résultats à l'aide d'un identifiant de contribution?</h2>
+			<p>
+				L'ID de contribution peut être utilisé par les propriétaires d’enquête pour trouver une contribution parmi tous les résultats :
+				<ol>
+					<li>
+						Ouvrez votre enquête
+					</li>
+					<li>
+						Allez dans l'onglet Résultats
+					</li>
+					<li>
+						Cliquez sur le bouton «Paramètres»
+					</li>
+						Cochez «ID de contribution» dans les deux colonnes et appuyez sur OK
+					</li>
+					<li>
+						Aller au filtre Identifiant de contribution
+					</li>
+					<li>
+						Insérez l'ID de contribution et cliquez sur Entrer
+					</li>
+				</ol>
+			</p>
 			<h2>Fonction de randomisation</h2>
 			<p>
 				Lorsque vous utilisez une <strong>Section</strong> de premier niveau, vous avez la possibilité de conserver les questions/éléments situés en dessous dans leur ordre d'origine ou de rendre leur position aléatoire.
@@ -1414,6 +1444,51 @@
 			</p>
 			<p>
 				Veuillez noter que le lien «Modifier une contribution» est accessible sur la page d'accueil d'EUSurvey: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
+			</p>
+			<h2>
+				Comment puis-je permettre aux participants d'imprimer ou de télécharger leur contribution?
+			</h2>
+			<p>
+				Si elle est activée, cette fonctionnalité permet aux participants d'enregistrer leurs réponses au format PDF. Pour activer cette fonctionnalité, suivez les étapes ci-dessous :
+				<ol>
+					<li>
+						Ouvrez votre enquête
+					</li>
+					<li>
+						Allez dans l'onglet Propriétés
+					</li>
+					<li>
+						Allez dans l'onglet Sécurité
+					</li>
+					<li>
+						Activez l'option «Permet aux participants d'imprimer leur contribution et de la recevoir au format PDF»
+					</li>
+				</ol>
+				<img src="${contextpath}/resources/images/documentation/printdownloadFR.png" />
+			</p>
+			<h2>
+				Comment puis-je permettre aux participants de modifier (éditer) leur contribution?
+			</h2>
+			<p>
+				Si elle est activée, cette fonctionnalité permet aux participants de modifier/éditer leurs réponses après avoir été soumises.
+			</p>
+			<p>
+				Pour activer cette fonctionnalité :
+				<ol>
+					<li>
+						Ouvrez votre sondage
+					</li>
+					<li>
+						Allez dans l'onglet Propriétés
+					</li>
+					<li>
+						Allez dans l'onglet Sécurité
+					</li>
+					<li>
+						Activez l'option «Permet aux participants de modifier leur contribution»
+					</li>
+				</ol>
+				<img src="${contextpath}/resources/images/documentation/changecontributionFR.png" />
 			</p>
 			<h1>
 				Tester une enquête
