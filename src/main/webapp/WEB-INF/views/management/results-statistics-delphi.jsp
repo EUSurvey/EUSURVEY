@@ -35,14 +35,14 @@
 						<c:choose>
 							<c:when test="${element.getType() == 'Section'}">
 								<tr>
-									<td style="font-weight: bold">${element.title}</td>
+									<td style="font-weight: bold">${element.getStrippedTitleNoEscape()}</td>
 									<td class="statDelphi" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 									<td></td>
 								</tr>
 							</c:when>
 							<c:when test="${element.isDelphiElement()}">
 								<tr>
-									<td style="padding-left: 20px;">${element.title}</td>
+									<td style="padding-left: 20px;">${element.getStrippedTitleNoEscape()}</td>
 									<td class="statDelphi" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 									<td class="statDelphiMedian" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 								</tr>

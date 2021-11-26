@@ -133,7 +133,7 @@
 						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">
 							<c:if test="${element.getScoring() > 0 && (filter == null || filter.visibleQuestions.contains(element.id.toString()))}">
 								<tr>
-									<td>${element.title}</td>
+									<td>${element.getStrippedTitleNoEscape()}</td>
 									
 									<td>
 										<div class="progress" style="width: 200px; margin-bottom: 2px;">

@@ -261,7 +261,7 @@
 								<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
 								<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
 							</div>
-							<span data-bind="html: title"></span>
+							<span data-bind="text: sectionViewModel.noFormatSection(title)"></span>
 						</div>
 	
 						<div class="sectioncontent">
@@ -502,6 +502,12 @@
 				//an '&amp;' could start at char 73
 		    	
 				return el.outerHTML;
+			},
+
+			noFormatSection: function(section){
+				let el = document.createElement("span");
+				el.innerHTML = section;
+				return el.innerText
 			},
 			
 			niceAnswer: function(answer)
