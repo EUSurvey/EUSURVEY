@@ -744,3 +744,7 @@ a.accordion-toggle:hover {
     font-size: 14px;
     margin-left: 5px;
 }
+
+.survey-element[cut-item]{
+	opacity: 50%;
+}

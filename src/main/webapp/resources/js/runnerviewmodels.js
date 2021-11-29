@@ -7,13 +7,21 @@ function getNiceHelp(help)
 
 function toggleVisibility(span) {
 	$(span).toggleClass("sr-only");
+
+	//only focussable when the help is revealed
+	if(!$(span).hasClass("sr-only")){
+		$(span).attr("tabindex", "0");
+		$(span).focus();
+	} else {
+		$(span).removeAttr("tabindex");
+	}
 }
 
 function addIconToHelp(help)
 {
-	return "<span onclick='toggleVisibility($(this).next())' class='glyphicon glyphicon-question-sign'></span>" +
+	return "<a href='javascript:;' tabindex='0' aria-label='Help' onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign focussable'></a><br />" +
 		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
-		"<br />";
+		"";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width, desc)
@@ -764,7 +772,8 @@ function newRankingViewModel(element)
 	}
 
 	viewModel.resetOrder = function(_, event) {
-		viewModel.answervalues(viewModel.originalItemUniqueIdOrder);
+		//.slice() because originalItemUniqueIdOrder would otherwise be changed by moving the items
+		viewModel.answervalues(viewModel.originalItemUniqueIdOrder.slice());
 		viewModel.isAnswered(false);
 
 		const thatRanking = $(event.target).closest(".rankingitem");
@@ -1076,8 +1085,13 @@ function newNumberViewModel(element)
 		propagateChange($(input));
 	});
 	viewModel.markAsAnswered = function (data) {
+		const input = $("#answer" + viewModel.id());
+		input.val(viewModel.initialDefaultValue())
 		this.isAnswered(true);
-		tinyMCE.get('explanation' + data.id()).execCommand('mceFocus',false);
+		var explanationBox = tinyMCE.get('explanation' + data.id());
+		if (explanationBox != null) {
+			explanationBox.execCommand('mceFocus',false);
+		}
 	};
 
 	viewModel.resetToInitialPosition = function(_, event) {

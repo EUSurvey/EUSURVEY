@@ -131,7 +131,7 @@
 					  }
 				});
 		}
-		
+
 		function loadDelphiStatisticsAsync() {
 			$.ajax({
 				type:'GET',
@@ -148,8 +148,8 @@
 					  });
 				  },
 				  error: function (data) {
-						showError(data.responseText);
-					}
+					  showAjaxError(data.status)
+				  }
 			});
 			
 			$.ajax({
@@ -169,7 +169,7 @@
 					  });
 				  },
 				error: function (data) {
-					showError(data.responseText);
+					showAjaxError(data.status)
 				}
 			});
 		}
@@ -189,15 +189,11 @@
 				$(this).parent().find('[data-toggle="tooltip"]').tooltip();
 
 				const chartwrapper = $(this);
-				const initialChartType = $(chartwrapper).data("initial-chart-type");
-				if (${form.survey.isDelphi}) {
-					if (initialChartType == 'None') {
-						addChart(this, null, initialChartType, false);
-					} else {
-						loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
-					}
-				} else {
+
+				if ($(chartwrapper).data("initial-chart-type") == 'None') {
 					addChart(this, null, "None", false);
+				} else {
+					loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
 				}
 			});
 		}

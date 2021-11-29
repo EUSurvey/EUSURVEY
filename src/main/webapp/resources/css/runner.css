@@ -126,6 +126,10 @@ a.ratingitem {
 	text-indent:0px;
 }
 
+.questiontitle div {
+	display: inline-block;
+}
+
 .answertext {
 	color: #333;
 	margin-left: 5px;

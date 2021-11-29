@@ -962,7 +962,7 @@
 				Keeping your survey short and simple will ease the filling of your survey by the respondents and lead to a better user experience. Of course, sometimes you need to add branch logic using dependencies (i.e. dependent questions that are hidden/displayed depending on the previous answers given). This is fine, but please bear in mind that adding too many items or dependencies to your survey makes it too 'complex'. This can lead to the system slowing down for participants when filling out your questionnaire.
 			</p>
 			<p>
-				Therefore there is a little indicator at the top-right corner of the form editor:<br />
+				This is why there is a little indicator at the top-right corner of the form editor:<br />
 				<img src="${contextpath}/resources/images/documentation/complexity.png" />
 			</p>
 			<p>
@@ -976,6 +976,27 @@
 			<p>
 				For more information, see our <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">best practices guide</a> and do not hesitate to contact the <a href="${contextpath}/home/support?assistance=1">EUSurvey support team</a> for assistance in re-designing your form if needed.
 			</p>
+			<h2>Randomization feature</h2>
+			<p>
+				When using a first-level <strong>Section</strong>, you have the possibility to keep the questions/elements underneath as in their original order or to randomize their position.
+				Randomization can be selected in the Section Properties just next to Order.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/randomization.png" style="margin-bottom: 1em" />
+			<p>Please also note the following:</p>
+			<ul>
+				<li>All survey elements (including images and static text) are randomized.</li>
+				<li>If a question triggers a visibility change or is triggered by a visibility change, it's position is not changed. It is always shown before the other 'randomized' elements.</li>
+				<li>Sub-sections and their questions (level 2 and 3) are also randomized, but their order within the level 1 Section they belong to is kept. This means that questions under a sub-section are also randomized when the level 1 Section is randomized.</li>
+				<li>PDF version of the survey ('Download PDF version' feature) always shows questions in the original order.</li>
+				<li>PDF contributions always show questions in the original order.</li>
+				<li>In case the Section/Question numbering is activated in conjunction with the Randomization feature, then the Question numbers will also be randomized along with the questions.
+					<div><img src="${contextpath}/resources/images/documentation/randomization_sections.png" /></div>
+				</li>
+			</ul>
+			<p>There is another point specific to DELPHI surveys:</p>
+			<ul>
+				<li>The DELPHI start page shows the questions in their original order.</li>
+			</ul>
 			<h1>
 				Survey security
 			</h1>
@@ -1049,22 +1070,19 @@
 				falsify survey results.
 			</p>
 			<h2>
-				Can I enable my participants to access their contributions after submission?
+				Can I enable survey respondents to access their contribution after submission?
 			</h2>
 			<p>
-				Yes! Go to 'Security' at the 'Properties' page and enable 'Allow
-				participants to change their contribution' option. Participants need
-				to know the contribution-ID that was shown after they submitted
-				their contribution. To change contributions after submission,
-				participants should go to the EUSurvey homepage <a
-					href="https://ec.europa.eu/eusurvey" target="_blank">https://ec.europa.eu/eusurvey</a>.
-				Below the 'Register Now!' button is a link to the <a
-					href="https://ec.europa.eu/eusurvey/home/editcontribution"
-					target="_blank"> access page for individual
-					contributions </a>. On this page participants must fill in their
-				individual contribution-ID and the system will open their
-				contribution. This way they can edit their contribution after it has
-				been submitted.
+				Yes. Click on 'Security' under the 'Properties' tab, and then, enable the <b>'Allow participants to change their contribution'</b> option.
+			</p>
+			<p>
+				To edit/change their contribution after submission, participants can go to this page: <a href="https://ec.europa.eu/eusurvey/home/editcontribution" target="_blank">https://ec.europa.eu/eusurvey/home/editcontribution</a>
+			</p>
+			<p>
+				Your survey participants will need to know their contribution ID. This ID is provided to them upon submission of their contribution on the Confirmation page.
+			</p>
+			<p>
+				Please note that the 'Edit contribution' link is accessible on the EUSurvey landing page: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
 			</p>
 			<h1>
 				Testing a survey
@@ -1769,6 +1787,101 @@
 				EUSurvey&nbsp;<a href="https://ec.europa.eu/eusurvey/home/support">support
 				</a>.
 			</p>
+			<h2>How can I retrieve files uploaded
+				by contributors?</h2>
+
+			<p>EUSurvey offers different formats of export: XLS, PDF, ODS and XML. <br>
+
+				Depending on the selected format, the structure and content of the
+				exported files for the 'File Upload' element is as described below:</p>
+
+			<h4>Results export in XLS</h4>
+
+			<ol>
+				<li>
+					<p>An Excel file containing the following information:</p>
+
+					<p>Alias: Survey Alias (example: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Export Date: Date in the format 'dd-mm-yyyy hh:mm' (example: 28-09-2020
+						15:28)</p>
+
+					<p>A table composed as below:</p>
+					<ul>
+						<li>Each column represents a different 'File Upload'
+							question.</li>
+
+						<li>Each line represents a different contribution.</li>
+
+						<li>Each cell contains all names of the uploaded
+							files.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Folders corresponding to each contribution and named with the
+						contribution ID. It contains sub-folders for each 'File Upload' question (Upload_1,
+						Upload_2 etc.). </p>
+					<p>For instance:</p>
+
+					<p>Folder: 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
+
+						Sub-folder: Upload_1 (corresponding to the first 'File Upload'
+						question) contains all files uploaded.<br>
+
+						Sub-folder: Upload_2 (corresponding to the second 'File Upload'
+						question) contains all files uploaded.</p>
+				</li>
+			</ol>
+			<h4>Results export in PDF</h4>
+
+			<ol>
+				<li>
+					<p>Folder named 'PDFs' containing all survey contributions as PDF
+						documents.</p>
+				</li>
+				<li>
+					<p>Folders corresponding to each contribution and named with the contribution
+						ID.<br>
+						It contains sub-folders for each 'File Upload' question (Upload_1,
+						Upload_2 etc.).</p>
+				</li>
+			</ol>
+
+
+			<h4>Results export in ODS</h4>
+
+			<ol>
+				<li>
+					<p>An Open Office file containing the following information:</p>
+
+					<p>Alias: Survey Alias (example: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Export Date: Date in the format 'dd-mm-yyyy hh:mm' (example: 28-09-2020 15:28)</p>
+
+					<p>A table composed as below:</p>
+
+					<ul>
+						<li>Each column represents a different 'File Upload'
+							question.</li>
+
+						<li>Each line represents a different contribution.</li>
+
+						<li>Each cell contains all names of the uploaded
+							files.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Folders corresponding to each contribution and named with the
+						contribution ID.<br>
+						It contains sub-folders for each 'File Upload' question (Upload_1,
+						Upload_2 etc.).</p>
+				</li>
+			</ol>
+
+			<h4>Results export in XML</h4>
+
+			<p>This export is made of an XML file containing the results in a structured way.<br>
+
+				<b>Uploaded files are not available in that case.</b></p>
+
 			<h1>
 				Design and layout
 			</h1>
@@ -2169,10 +2282,10 @@
 				How to use tokens to create a link?
 			</h2>
 			<p>
-				To create a list of tokens (or 'Unique Codes') that can be distributed offline to access a secured online questionnaire, open your survey and go to the 'Participants' page. Click on 'Token list' to start a wizard that will guide you through the process. Choose a name for the group and select 'Tokens' from the types of Guest lists.
+				In order to create a list of tokens (authentication tokens) that can be distributed to access a secured online questionnaire, open your survey and go to the 'Participants' page. Click on 'Create new guest list' to start a wizard that will guide you through the process. Choose a name for the group and select 'Token list' from the types of guest lists.
 			</p>
 			<p>
-				Use the created tokens to build up individual access links you can send out in emails to the participants on this way:
+				Use the created tokens to build up individual access links you can send per emails to the participants using the URL below:
 			</p>
 			<p>
 				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>

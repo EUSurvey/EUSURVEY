@@ -6,7 +6,7 @@ import java.util.Comparator;
 
 public class LdapSearchResult {
 
-	public LdapSearchResult(String login, String displayName, String organisation, String group, String fname, String lname) {
+	public LdapSearchResult(String login, String displayName, String organisation, String group, String fname, String lname, String mail) {
 		super();
 		this.login = login;
 		this.displayName = displayName;
@@ -14,6 +14,7 @@ public class LdapSearchResult {
 		this.group = group;
 		this.fname = fname;
 		this.lname = lname;
+		this.mail = mail;
 	}
 	public String getLogin() {
 		return login;
@@ -51,12 +52,20 @@ public class LdapSearchResult {
 	public void setLname(String lname) {
 		this.lname = lname;
 	}
+	public String getMail() {
+		return mail;
+	}
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
 	private String login ;
 	private String displayName ;
 	private String organisation ;
 	private String group ;
 	private String fname ;
 	private String lname ;
+	private String mail;
 		
 	public static class Comparators {
         public static final Comparator<LdapSearchResult> FIRST = Comparator.comparing(o -> o.fname);
@@ -66,6 +75,7 @@ public class LdapSearchResult {
             return comp.compare(o1.group,o2.group);
         };
         public static final Comparator<LdapSearchResult> DISPLAYNAME = Comparator.comparing(o -> o.displayName);
+		public static final Comparator<LdapSearchResult> MAIL = Comparator.comparing(o -> o.mail);
     }
 	
 }

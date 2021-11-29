@@ -144,7 +144,7 @@ function markActiveProperty(input) {
 }
 
 var idcounter = 1;
-function getTextPropertiesRow(label, content, usetinymce, unit)
+function getTextPropertiesRow(label, content, usetinymce, unit, maxLength)
 {
 	var row = new PropertyRow();
 	row.Type("first");
@@ -199,8 +199,14 @@ function getTextPropertiesRow(label, content, usetinymce, unit)
 		tinyMCE.settings = myConfigSettingEditor;
 		tinymce.EditorManager.execCommand('mceToggleEditor', true, id);
 	} else {
-		var rowcontent = "<input type='text' id='" + id + "' value='" + content + "' onfocus='markActiveProperty(this)' onblur='update(this)' />"
-		
+		var rowcontent = "<input type='text' id='" + id + "' value='" + content + "' onfocus='markActiveProperty(this)' onblur='update(this)' "
+
+		if (maxLength) {
+			rowcontent += "maxlength='" + maxLength + "'";
+		}
+
+		rowcontent += "/>";
+
 		if (unit != null)
 		{
 			rowcontent += "<span style='margin-left: 5px'>" + unit + "</span>"

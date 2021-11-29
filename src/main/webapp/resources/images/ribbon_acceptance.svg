@@ -1,0 +1,13 @@
+<svg width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="linearGradient5560" x1="16.205" x2="21.166" y1=".13225" y2="5.0934" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#f00" offset="0"/>
+   <stop stop-color="#c00" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g>
+  <path d="m0.13225 16.205 16.073-16.073h9.9337c-8.6689 8.6689-17.338 17.338-26.007 26.007z" fill="url(#linearGradient5560)" stroke="#f33" stroke-width=".26458" style="mix-blend-mode:normal;paint-order:stroke markers fill"/>
+  <text transform="matrix(.70758 -.70664 .70758 .70664 0 0)" x="-0.19963396" y="24.059063" fill="#ffffff" font-family="sans-serif" font-size="3.3514px" stroke-width=".33893" text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan x="-0.19963425" y="24.059063" dy="-7.6999998" rotate="0 0 0 0 0 0 0 0 0 0 0" fill="#ffffff" font-size="3.3514px" stroke-width=".33893" text-anchor="middle">ACCEPTANCE</tspan></text>
+  <text transform="scale(.26458)" fill="#000000" font-family="sans-serif" font-size="40px" style="line-height:1.25;shape-inside:url(#rect115336);white-space:pre" xml:space="preserve"/>
+ </g>
+</svg>

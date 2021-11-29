@@ -1170,7 +1170,7 @@ public class ManagementController extends BasicController {
 
 		if (invalid(uploadedSurvey.getShortname())) {
 			String message = resources.getMessage("validation.name2", null,
-					"The name must only contain alphanumerical characters (characters of the alphabet (from A to Z), numbers (0 to 9)) and hyphens.",
+					"Alias must be composed of lowercase and uppercase letters (a-z and A-Z), numbers (0-9), hyphens and underscores only.",
 					locale);
 			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
