@@ -976,6 +976,37 @@
 			<p>
 				For more information, see our <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">best practices guide</a> and do not hesitate to contact the <a href="${contextpath}/home/support?assistance=1">EUSurvey support team</a> for assistance in re-designing your form if needed.
 			</p>
+			<h2>What is the contribution ID?</h2>
+			<p>
+				Contribution ID is a code used as unique identifier for a contribution made.
+			</p>
+			<p>
+				It can be used by survey managers to find back a contribution from the Results screen. It can also be used by a survey participant to submit his contribution and access it later.
+			</p>
+			<h2>How can I find a contribution from the Results using a contribution ID?</h2>
+			<p>
+				Contribution ID can be used by survey owners to find a contribution among all the Results:
+				<ol>
+					<li>
+						Open your survey
+					</li>
+					<li>
+						Go to Results tab
+					</li>
+					<li>
+						Click on 'Settings' button
+					</li>
+					<li>
+						Tick 'Contribution ID' in both columns and press Ok
+					</li>
+					<li>
+						Go to filter Contribution ID
+					</li>
+					<li>
+						Insert the Contribution ID and click Enter
+					</li>
+				</ol>
+			</p>
 			<h2>Randomization feature</h2>
 			<p>
 				When using a first-level <strong>Section</strong>, you have the possibility to keep the questions/elements underneath as in their original order or to randomize their position.
@@ -1083,6 +1114,54 @@
 			</p>
 			<p>
 				Please note that the 'Edit contribution' link is accessible on the EUSurvey landing page: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
+			</p>
+			<h2>
+				How can I allow participants to print or download their contribution?
+			</h2>
+			<p>
+				If activated, this feature allows participants to save their answers in PDF.
+			</p>
+			<p>
+				To activate this feature, follow the steps below:
+			<ol>
+				<li>
+					Open your survey
+				</li>
+				<li>
+					Go to Properties tab
+				</li>
+				<li>
+					Go to Security tab
+				</li>
+				<li>
+					Enable 'Allows participants to print their contribution and receive it as a PDF' option
+				</li>
+			</ol>
+			<img src="${contextpath}/resources/images/documentation/printdownload.png" />
+			</p>
+			<h2>
+				How can I allow participants to change (edit) their contribution?
+			</h2>
+			<p>
+				If activated, this feature allows participants to change/edit their answers after being submitted.
+			</p>
+			<p>
+				To activate this feature:
+				<ol>
+					<li>
+						Open your survey
+					</li>
+					<li>
+						Go to Properties tab
+					</li>
+					<li>
+						Go to Security tab
+					</li>
+					<li>
+						Enable 'Allows participants to change their contribution' option
+					</li>
+				</ol>
+				<img src="${contextpath}/resources/images/documentation/changecontribution.png" />
 			</p>
 			<h1>
 				Testing a survey

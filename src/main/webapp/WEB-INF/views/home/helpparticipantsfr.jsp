@@ -295,6 +295,41 @@
 				    ».
 				</p>
 				<h2>
+					Qu'est-ce que mon ID de contribution ?
+				</h2>
+				<p>
+					L'ID de contribution est le numéro individuel de votre réponse qui est généré automatiquement. Il s'agit d'un identifiant unique permettant au système de reconnaître votre contribution.
+				</p>
+				<p>
+					Une fois votre contribution soumise, votre ID de contribution est affiché sur la page de confirmation. Si vous enregistrez le PDF ou l'envoyez à votre adresse électronique, vous verrez l'ID de contribution dans la partie supérieure gauche du PDF de la contribution.
+				</p>
+				<p>
+					Votre identifiant de contribution est utile si vous souhaitez contacter le service d'assistance EUSurvey ou les organisateurs de l'enquête.
+				</p>
+				<h2>
+					Où puis-je trouver mon ID de contribution ?
+				</h2>
+				<p>
+					Il est affiché juste après la soumission de vos réponses.
+					<ol>
+						<li>
+							Ouvrez le lien de votre enquête et répondez à l'enquête
+						</li>
+						<li>
+							Une fois les réponses soumises, vous verrez votre ID de contribution à l'écran
+						</li>
+						<li>
+							Envoyez le PDF de la contribution à votre adresse électronique
+						</li>
+						<li>
+							Ouvrir la contribution PDF
+						</li>
+						<li>
+							L'ID de la contribution sera affiché dans la partie supérieure gauche du PDF
+						</li>
+					</ol>
+				</p>
+				<h2>
 				    Je viens de répondre à une enquête. Puis-je consulter les réponses des
 				    autres participants?
 				</h2>
@@ -315,6 +350,12 @@
 				        auteur
 				    </a>
 				    de l'enquête.
+				</p>
+				<h2>
+					Ma contribution n'a pas été soumise à temps. Que puis-je faire ?
+				</h2>
+				<p>
+					Veuillez contacter directement les organisateurs de l'enquête. Si les coordonnées des organisateurs de l'enquête ne sont pas disponibles sur la page de l'enquête, veuillez <a href="https://ec.europa.eu/eusurvey/home/support">contacter</a> l'équipe d'assistance EUSurvey
 				</p>
 				<h2>
 				    Pourquoi mon visionneur de fichiers PDF génère-t-il le message d'erreur

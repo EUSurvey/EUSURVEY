@@ -260,6 +260,41 @@
 					In case you did not save the Contribution ID, please use the '<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>' form.
 				</p>
 				<h2>
+					What is my Contribution ID?
+				</h2>
+				<p>
+					Contribution ID is the individual number of your answer that is automatically generated. It is a unique identifier allowing the system to recognize your contribution.
+				</p>
+				<p>
+					Once your contribution is submitted, your contribution ID is displayed on the confirmation page. If you save the PDF or send it to your email address, you will see the contribution ID in the upper left side of the PDF Contribution.
+				</p>
+				<p>
+					Your Contribution ID is useful in case you wish to contact the EUSurvey Support or the survey organizers.
+				</p>
+				<h2>
+					Where can I find my Contribution ID?
+				</h2>
+				<p>
+					It is displayed right after submission of your answers.
+					<ol>
+						<li>
+							Open your survey link and answer the survey
+						</li>
+						<li>
+							Once submitted you will see your contribution ID on the screen
+						</li>
+						<li>
+							Send the contribution PDF to your email
+						</li>
+						<li>
+							Open PDF Contribution
+						</li>
+						<li>
+							Contribution ID will be displayed on the left upper-side of PDF
+						</li>
+					</ol>
+				</p>
+				<h2>
 				    I just contributed to a survey. Can I see other people’s answers?
 				</h2>
 				<p>
@@ -277,6 +312,13 @@
 				    </a>
 				    .
 				</p>
+				<h2>
+					My contribution was not submitted on time. What can I do?
+				</h2>
+				<p>
+					Please contact the survey organizers directly. If the survey organizers’ contact details is not available on the survey page, then please <a href="https://ec.europa.eu/eusurvey/home/support">contact</a> the EUSurvey Support Team.
+				</p>
+
 				<h2>
 					My PDF viewer gives me an error message saying 'Insufficient Image data'
 				</h2>
