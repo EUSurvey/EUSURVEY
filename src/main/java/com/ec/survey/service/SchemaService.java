@@ -49,6 +49,18 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domaintWorker;
 	
 	@Transactional
+	public void step101() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		final String createkIndex = "CREATE INDEX IDX_RESULTFILTER_SURVEY_OWNER ON RESULTFILTER (surveyId, RESFILTER_OWNER);";
+		session.createSQLQuery(createkIndex).executeUpdate();
+		
+		status.setDbversion(101);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
 	public void step100() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

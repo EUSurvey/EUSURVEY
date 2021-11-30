@@ -1752,50 +1752,46 @@ public class SurveyService extends BasicService {
 		computeTrustScore(draftSurvey);
 
 		// copy result filters
-		List<ResultFilter> publishedSurveyFilters = sessionService.getAllResultFilter(publishedSurvey.getId());
-		if (publishedSurveyFilters != null) {
-			for (ResultFilter publishedSurveyFilter : publishedSurveyFilters) {
-				// do not copy filters of exports
-				Export export = exportService.getExportByResultFilterID(publishedSurveyFilter.getId());
-				if (export == null) {
-					ResultFilter newPublishedSurveyFilter = publishedSurveyFilter.copy();
+		List<ResultFilter> publishedSurveyFilters = sessionService.getResultFilterForApplyChanges(publishedSurvey.getId());
+		for (ResultFilter publishedSurveyFilter : publishedSurveyFilters) {			
+			ResultFilter newPublishedSurveyFilter = publishedSurveyFilter.copy();
 
-					if (publishedSurveyFilter.getDefaultQuestions() == null || !publishedSurveyFilter.getDefaultQuestions()) {
-						Map<String, String> uidsById = publishedSurvey.getUniqueIDsByID();
-						Map<String, String> idsByUid = newPublishedSurvey.getIDsByUniqueID();
-						Set<String> newids = new HashSet<>();
-						for (String sid : publishedSurveyFilter.getVisibleQuestions()) {
-							String uid = uidsById.get(sid);
-							if (uid != null) {
-								String id = idsByUid.get(uid);
-								if (id != null) {
-									newids.add(id);
-								}
-							}
+			// replace ids inside filter
+			if (publishedSurveyFilter.getDefaultQuestions() == null || !publishedSurveyFilter.getDefaultQuestions()) {
+				Map<String, String> uidsById = publishedSurvey.getUniqueIDsByID();
+				Map<String, String> idsByUid = newPublishedSurvey.getIDsByUniqueID();
+				Set<String> newids = new HashSet<>();
+				for (String sid : publishedSurveyFilter.getVisibleQuestions()) {
+					String uid = uidsById.get(sid);
+					if (uid != null) {
+						String id = idsByUid.get(uid);
+						if (id != null) {
+							newids.add(id);
 						}
-						newPublishedSurveyFilter.setVisibleQuestions(newids);
-
-						newids = new HashSet<>();
-						for (String sid : publishedSurveyFilter.getExportedQuestions()) {
-							String uid = uidsById.get(sid);
-							if (uid != null) {
-								String id = idsByUid.get(uid);
-								if (id != null) {
-									newids.add(id);
-								}
-							}
-						}
-						newPublishedSurveyFilter.setExportedQuestions(newids);
-					}
-
-					newPublishedSurveyFilter.setSurveyId(newPublishedSurvey.getId());
-					if (publishedSurveyFilter.getUserId() != null) {
-						sessionService.internalSetLastResultFilter(newPublishedSurveyFilter, publishedSurveyFilter.getUserId(),
-								newPublishedSurveyFilter.getSurveyId());
 					}
 				}
+				newPublishedSurveyFilter.setVisibleQuestions(newids);
+
+				newids = new HashSet<>();
+				for (String sid : publishedSurveyFilter.getExportedQuestions()) {
+					String uid = uidsById.get(sid);
+					if (uid != null) {
+						String id = idsByUid.get(uid);
+						if (id != null) {
+							newids.add(id);
+						}
+					}
+				}
+				newPublishedSurveyFilter.setExportedQuestions(newids);
 			}
-		}
+
+			// update result filter of users
+			newPublishedSurveyFilter.setSurveyId(newPublishedSurvey.getId());
+			if (publishedSurveyFilter.getUserId() != null) {
+				sessionService.internalSetLastResultFilter(newPublishedSurveyFilter, publishedSurveyFilter.getUserId(),
+						newPublishedSurveyFilter.getSurveyId());
+			}			
+		}		
 
 		update(draftSurvey, true);
 

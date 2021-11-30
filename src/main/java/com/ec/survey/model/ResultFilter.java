@@ -3,7 +3,6 @@ package com.ec.survey.model;
 import com.ec.survey.model.survey.ChoiceQuestion;
 import com.ec.survey.model.survey.DelphiChartType;
 import com.ec.survey.model.survey.Element;
-import com.ec.survey.model.survey.FreeTextQuestion;
 import com.ec.survey.model.survey.GalleryQuestion;
 import com.ec.survey.model.survey.Matrix;
 import com.ec.survey.model.survey.NumberQuestion;
@@ -485,23 +484,32 @@ public class ResultFilter implements java.io.Serializable {
 	
 	@Transient
 	public boolean contains(String questionId, String questionUid, String value)
-	{
-		String combined = questionId + "|" + questionUid;
-		return (filterValues.containsKey(combined) && filterValues.get(combined).contains(value));
+	{	
+		String filterValue = getFilterValueForQuestionUID(questionUid);		
+		return filterValue != null && (filterValue.contains(value));
 	}
 	
 	@Transient
 	public boolean containsQuestion(String questionId, String questionUid)
-	{
-		String combined = questionId + "|" + questionUid;
-		return (filterValues.containsKey(combined));
+	{	
+		String filterValue = getFilterValueForQuestionUID(questionUid);		
+		return filterValue != null;
 	}
 	
 	@Transient
 	public boolean contains(String questionId, String questionUid, String value, String paUid)
 	{
-		String combined = questionId + "|" + questionUid;
-		return (filterValues.containsKey(combined) && (filterValues.get(combined).contains(value + "|") || filterValues.get(combined).contains(paUid)));
+		String filterValue = getFilterValueForQuestionUID(questionUid);		
+		return filterValue != null && (filterValue.contains(value + "|") || (filterValue.contains(paUid)));
+	}
+	
+	private String getFilterValueForQuestionUID(String questionUid) {
+		for (String key : filterValues.keySet()) {
+			if (key.contains("|" + questionUid)) {
+				return filterValues.get(key);
+			}
+		}
+		return null;
 	}
 	
 	@Transient

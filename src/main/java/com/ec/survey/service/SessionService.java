@@ -544,10 +544,20 @@ public class SessionService extends BasicService {
 
 		return null;
 	}
+	
+	@Transactional
+	public List<ResultFilter> getResultFilterForApplyChanges(int surveyid) {
+		List<ResultFilter> result = getAllUserResultFilter(surveyid);
+		
+		Survey survey = surveyService.getSurvey(surveyid);
+		result.add(survey.getPublication().getFilter());
+		
+		return result;
+	}
 
-	public List<ResultFilter> getAllResultFilter(int surveyid) {
+	public List<ResultFilter> getAllUserResultFilter(int surveyid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM ResultFilter r WHERE r.surveyId = :surveyid ORDER BY r.id DESC")
+		Query query = session.createQuery("FROM ResultFilter r WHERE r.surveyId = :surveyid and r.userId is not null")
 				.setInteger("surveyid", surveyid);
 		@SuppressWarnings("unchecked")
 		List<ResultFilter> result = query.list();
