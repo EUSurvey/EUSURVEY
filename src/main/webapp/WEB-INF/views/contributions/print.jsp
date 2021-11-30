@@ -553,7 +553,7 @@
 									<td style="vertical-align: top">
 										<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.title}</div>
 									</td>						
-									<c:if test="${status.count % element.numColumns == 0}">
+									<c:if test="${element.numColumns == 0 || (status.count % element.numColumns == 0)}">
 										</tr>
 										<tr>
 									</c:if>
@@ -593,7 +593,7 @@
 											<td style="vertical-align: top">
 												<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.title}</div>
 											</td>						
-											<c:if test="${status.count % element.numColumns == 0}">
+											<c:if test="${element.numColumns == 0 || (status.count % element.numColumns == 0)}">
 												</tr>
 												<tr>
 											</c:if>
