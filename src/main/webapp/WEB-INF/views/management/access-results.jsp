@@ -78,20 +78,15 @@
 						<td>
 							<c:choose>
 								<c:when test="${!entry.getValue().isEmpty()}">
-									<select id="${entry.getKey().uniqueId}" name="${entry.getKey().uniqueId}" class="form-control" style="max-width: 400px">
-										<option vlaue=""></option>
-									
+									<div id="${entry.getKey().uniqueId}">
 										<c:forEach items="${entry.getValue()}" var="child">
-										
-											<option value="${child.uniqueId}">${child.getStrippedTitleAtMost100()}</option>
-										
+											<input name="${entry.getKey().uniqueId}" type="checkbox" style="margin: 5px; vertical-align: middle; margin-bottom: 7px;" value="${child.uniqueId}" /> ${child.getStrippedTitleAtMost100()} <br />
 										</c:forEach>
-									
-									
-									</select>
+									</div>
 								</c:when>
 								<c:otherwise>
-									<input id="${entry.getKey().uniqueId}" name="${entry.getKey().uniqueId}" type="text" class="form-control" style="width: 400px" />							
+									<input id="${entry.getKey().uniqueId}" name="${entry.getKey().uniqueId}" type="text" class="form-control" style="width: 400px" />
+									<div class="help"><spring:message code="info.separateValuesBySemikolon"/></div>							
 								</c:otherwise>
 							</c:choose>
 						</td>					

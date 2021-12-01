@@ -3141,12 +3141,19 @@ public class SurveyService extends BasicService {
 					filter.append("<b>").append(question.getStrippedTitleAtMost100()).append("</b><br />");
 					
 					if (question instanceof ChoiceQuestion || question instanceof Text) {
-						Element answer = elementsByUniqueId.get(value);
-						if (answer != null) {
-							filter.append(answer.getStrippedTitleAtMost100());
-						} else {
-							filter.append(value);
-						}			
+						boolean first = true;
+						for (String pauid : value.split(";")) {
+							Element answer = elementsByUniqueId.get(pauid);
+							if (answer != null) {
+								filter.append(answer.getStrippedTitleAtMost100());
+							} else {
+								filter.append(value);
+							}
+							if (first) {
+								filter.append("; ");
+								first = false;
+							}
+						}
 					} else {
 						filter.append(value);
 					}

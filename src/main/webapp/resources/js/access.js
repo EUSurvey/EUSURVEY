@@ -583,7 +583,7 @@
 	function showEditFilterDialog(id) {
 		$('#accessid').val(id);
 		
-		$('#edit-filter-dialog').find("select").val("");
+		$('#edit-filter-dialog').find("input[type='checboc']").removeAttr("checked");
 		$('#edit-filter-dialog').find("input[type='text']").val("");
 		
 		if (cachedAccesses != null) {
@@ -591,11 +591,31 @@
 				if (cachedAccesses[i].id == id) {
 					if (cachedAccesses[i].resultFilter != null) {
 						for (var quid in cachedAccesses[i].resultFilter.filterValues) {
-							$('#edit-filter-dialog').find("#" + quid).val(cachedAccesses[i].resultFilter.filterValues[quid]);
+							$('#edit-filter-dialog').find("#" + quid).each(function(){
+								if ($(this).is("div")) {
+									var filter = cachedAccesses[i].resultFilter.filterValues[quid];
+									// div with checkboxes
+									var boxes = $(this).find("input");
+									$(boxes).each(function(){
+										if (filter.indexOf($(this).val()) > -1) {
+											$(this).prop("checked", "checked");
+										}
+									});
+								} else {
+									//textbox
+									$(this).val(cachedAccesses[i].resultFilter.filterValues[quid]);
+									
+									if (cachedAccesses[i].readonlyFilterQuestions != null && cachedAccesses[i].readonlyFilterQuestions.indexOf(quid) > -1) {
+										$('#edit-filter-dialog').find("#" + quid).attr("disabled", "disabled");
+									}
+								}
+							});							
 							
-							if (cachedAccesses[i].readonlyFilterQuestions != null && cachedAccesses[i].readonlyFilterQuestions.indexOf(quid) > -1) {
-								$('#edit-filter-dialog').find("#" + quid).attr("disabled", "disabled");
-							}
+							//$('#edit-filter-dialog').find("#" + quid).val(cachedAccesses[i].resultFilter.filterValues[quid]);
+							
+//							if (cachedAccesses[i].readonlyFilterQuestions != null && cachedAccesses[i].readonlyFilterQuestions.indexOf(quid) > -1) {
+//								$('#edit-filter-dialog').find("#" + quid).attr("disabled", "disabled");
+//							}
 						}
 					}
 					break;
