@@ -483,12 +483,12 @@
 					  var tr = document.createElement("tr");
 					  addTableCell(tr, accesses[i].userName);
 					  addFilterTableCell(tr, accesses[i]);
-					  addReadonlyTableCell(tr, accesses[i]);
 					  
-					  if ($('#tblResultPrivileges').find("thead").find("tr").first().find("th").length == 4)
-					  {
-						  addActionTableCell(tr, accesses[i]);
+					  if (!readOnlyResultPrivileges) {
+						  addReadonlyTableCell(tr, accesses[i]);
 					  }					  
+			
+					  addActionTableCell(tr, accesses[i]);					  				  
 										  
 					  $(body).append(tr);
 				  }
@@ -596,9 +596,13 @@
 									var filter = cachedAccesses[i].resultFilter.filterValues[quid];
 									// div with checkboxes
 									var boxes = $(this).find("input");
+									var readonly = cachedAccesses[i].readonlyFilterQuestions != null && cachedAccesses[i].readonlyFilterQuestions.indexOf(quid) > -1;
 									$(boxes).each(function(){
 										if (filter.indexOf($(this).val()) > -1) {
 											$(this).prop("checked", "checked");
+										}
+										if (readonly) {
+											$(this).prop("disabled", "disabled");
 										}
 									});
 								} else {

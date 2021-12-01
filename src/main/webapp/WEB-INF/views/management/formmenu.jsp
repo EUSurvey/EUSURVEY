@@ -31,7 +31,7 @@
 			<div id="activity-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/activity"/>"><spring:message code="label.Activity" /></a></div>
 		</c:when>
 		
-		<c:when test="${USER.getResultAccess() != null && !USER.getResultAccess().isReadonly()}">
+		<c:when test="${USER.getResultAccess() != null}">
 			<div id="access-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/access"/>"><spring:message code="label.Privileges" /></a></div>
 		</c:when>
 	

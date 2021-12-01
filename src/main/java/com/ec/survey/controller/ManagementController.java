@@ -3955,7 +3955,7 @@ public class ManagementController extends BasicController {
 		form = new Form(resources);
 		form.setSurvey(survey);
 
-		if (!sessionService.userIsFormManager(form.getSurvey(), u, request) && (u.getResultAccess() == null || u.getResultAccess().isReadonly())) {
+		if (!sessionService.userIsFormManager(form.getSurvey(), u, request) && u.getResultAccess() == null) {
 			throw new ForbiddenURLException();
 		}
 
@@ -4236,7 +4236,7 @@ public class ManagementController extends BasicController {
 		
 		boolean userIsFormManager = sessionService.userIsFormAdmin(form.getSurvey(), u, request);
 		
-		if (!userIsFormManager && (!resultsPrivilege || u.getResultAccess() == null || u.getResultAccess().isReadonly())) {
+		if (!userIsFormManager && (!resultsPrivilege || u.getResultAccess() == null)) {
 			throw new ForbiddenURLException();
 		}		
 
@@ -4282,6 +4282,10 @@ public class ManagementController extends BasicController {
 				resAccess.setSurveyUID(form.getSurvey().getUniqueId());
 				resAccess.setUser(user.getId());
 				resAccess.setOwner(u.getId());
+				
+				if (u.getResultAccess().isReadonly()) {
+					resAccess.setReadonly(true);
+				}
 				
 				String readonlyQuestionUIDs = "";
 				if (!userIsFormManager && u.getResultAccess() != null && u.getResultAccess().getResultFilter() != null) {
@@ -4386,7 +4390,7 @@ public class ManagementController extends BasicController {
 		
 		boolean userIsFormAdmin = sessionService.userIsFormAdmin(form.getSurvey(), u, request);
 		
-		if (!userIsFormAdmin && (!resultsPrivilege || u.getResultAccess() == null  || u.getResultAccess().isReadonly())) {
+		if (!userIsFormAdmin && (!resultsPrivilege || u.getResultAccess() == null)) {
 			throw new ForbiddenURLException();
 		}
 		
