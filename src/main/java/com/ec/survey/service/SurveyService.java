@@ -274,7 +274,12 @@ public class SurveyService extends BasicService {
 		if (initReports && filter.getSortKey().equalsIgnoreCase("reported")) {
 			stringBuilder.append(", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");// 15
 		}
-		
+
+		stringBuilder.append(
+				", (SELECT MIN(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as firstPublished");
+		stringBuilder.append(
+				", (SELECT MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as published");
+
 		stringBuilder.append(" from SURVEYS s");
 		
 		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {		
