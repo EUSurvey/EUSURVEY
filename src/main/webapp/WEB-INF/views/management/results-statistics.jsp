@@ -31,7 +31,7 @@
 		
 			<c:if test="${form.getSurvey().isDelphi && question.getType() == 'Section' && filter.visibleSection(question.getId(), form.getSurvey())}">
 				<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
-					<div class="sectiontitle section${question.level}">${form.getSectionTitle(question)}</div>
+					<div class="sectiontitle section${question.level}">${form.getCleanSectionTitle(question)}</div>
 				</div>
 			</c:if>		
 		
@@ -43,7 +43,7 @@
 					
 						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
 					
-							<div class="questiontitle" style="font-weight: bold;">${question.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
 							
 							<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px;">
 								<thead>
@@ -134,7 +134,7 @@
 					<c:if test="${question.getType() == 'GalleryQuestion' && question.selection}">
 						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
 					
-							<div class="questiontitle" style="font-weight: bold;">${question.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
 							
 							<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px;">
 								<thead>
@@ -206,7 +206,7 @@
 							
 								<div class="statelement">
 							
-									<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${matrixQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${matrixQuestion.shortname})</span></div>
+									<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${matrixQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${matrixQuestion.shortname})</span></div>
 									
 									<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
 									
@@ -305,7 +305,7 @@
 										
 					<c:if test="${forpdf == null && question.getType() == 'FreeTextQuestion'}">				
 						<div style="width: 700px; margin-left: auto; margin-right: auto;">
-							<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
+							<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
 						</div>
 
                         <div class="statelement-wrapper">
@@ -338,7 +338,7 @@
 							
 								<div class="statelement">
 							
-									<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
+									<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
 									
 									<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
 									
@@ -438,7 +438,7 @@
 					<c:if test="${question.getType() == 'NumberQuestion' && question.showStatisticsForNumberQuestion()}">
 						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
 					
-							<div class="questiontitle" style="font-weight: bold;">${question.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
 							
 							<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px; ">
 								<thead>

@@ -418,6 +418,18 @@ public class Form {
 
 	}
 
+	public String getCleanSectionTitle(Section section) {
+		String prefix = getSectionNumbering(section);
+
+		if (prefix.length() > 0) {
+
+			return prefix + " " + ConversionTools.removeHTML(section.getTitle(), false);
+
+		} else {
+			return ConversionTools.removeHTML(section.getTitle(), false);
+		}
+	}
+
 	private String getSectionNumbering(Section section) {
 
 		if (section == null || survey.getSectionNumbering() == 0)

@@ -4954,19 +4954,19 @@ public class SurveyHelper {
 				if (question == null && answer.getPossibleAnswerId() > 0) {
 					int possibleAnswerId = Integer.parseInt(answerValue);
 					if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
-						return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitle();
+						return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitleNoEscape2();
 					}
 
 					if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0
 							&& survey.getElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
 						return survey.getElementsByUniqueId().get(answer.getPossibleAnswerUniqueId())
-								.getStrippedTitle();
+								.getStrippedTitleNoEscape2();
 					}
 
 					if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0
 							&& survey.getMissingElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
 						return survey.getMissingElementsByUniqueId().get(answer.getPossibleAnswerUniqueId())
-								.getStrippedTitle();
+								.getStrippedTitleNoEscape2();
 					}
 				}
 
@@ -4986,16 +4986,16 @@ public class SurveyHelper {
 					int possibleAnswerId = Integer.parseInt(answerValue);
 					ChoiceQuestion choicequestion = (ChoiceQuestion) question;
 					if (choicequestion.getPossibleAnswer(possibleAnswerId) != null) {
-						return choicequestion.getPossibleAnswer(possibleAnswerId).getStrippedTitle();
+						return choicequestion.getPossibleAnswer(possibleAnswerId).getStrippedTitleNoEscape2();
 					} else {
 						if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
-							return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitle();
+							return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitleNoEscape2();
 						}
 					}
 
 					if (choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null) {
 						return choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
-								.getStrippedTitle();
+								.getStrippedTitleNoEscape2();
 					}
 
 					return "";
@@ -5007,12 +5007,12 @@ public class SurveyHelper {
 							for (Element child : ((Matrix) element).getChildElements()) {
 								if (child.getId().equals(possibleAnswerId) || (child.getUniqueId() != null
 										&& child.getUniqueId().equalsIgnoreCase(answer.getPossibleAnswerUniqueId()))) {
-									return child.getStrippedTitle();
+									return child.getStrippedTitleNoEscape2();
 								}
 							}
 							for (Element child : ((Matrix) element).getMissingAnswers()) {
 								if (child.getId().equals(possibleAnswerId)) {
-									return child.getStrippedTitle();
+									return child.getStrippedTitleNoEscape2();
 								}
 							}
 						}
@@ -5021,16 +5021,16 @@ public class SurveyHelper {
 						if (element instanceof Matrix) {
 							for (Element child : ((Matrix) element).getChildElements()) {
 								if (child.getId().equals(possibleAnswerId)) {
-									return child.getStrippedTitle();
+									return child.getStrippedTitleNoEscape2();
 								}
 							}
 							for (Element child : ((Matrix) element).getMissingAnswers()) {
 								if (child.getId().equals(possibleAnswerId)) {
-									return child.getStrippedTitle();
+									return child.getStrippedTitleNoEscape2();
 								}
 							}
 						} else if (element.getId().equals(possibleAnswerId)) {
-							return element.getStrippedTitle();
+							return element.getStrippedTitleNoEscape2();
 						}
 					}
 
