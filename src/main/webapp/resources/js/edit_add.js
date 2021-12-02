@@ -463,6 +463,7 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 }
 
 var usedIDs = new Array();
+var lastIdTried = 0;
 
 function getNewShortname()
 {
@@ -482,7 +483,8 @@ function getNewShortname()
 		});
 	}
 	
-	for (var i = 1; i < 2000; i++)
+	//the 200000 are a security limit to prevent endless loops
+	for (var i = lastIdTried + 1; i < 200000; i++)
 	{
 		var s = "[ID" + i + "]";
 		var found = false;
@@ -494,6 +496,7 @@ function getNewShortname()
 		
 		if (!found)
 		{
+			lastIdTried = i;
 			usedIDs[usedIDs.length] = s;
 			return s;
 		}
