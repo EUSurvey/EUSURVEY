@@ -870,6 +870,8 @@ public class LdapService extends BasicService {
 				lstAttr.add(ldapMappingUserSn);
 			if (isAttributeEligible(ldapMappingUserGivenName))
 				lstAttr.add(ldapMappingUserGivenName);
+			if (isAttributeEligible(ldapMappingUserMail))
+				lstAttr.add(ldapMappingUserMail);
 			break;
 		case USERNAME:
 			if (isAttributeEligible(ldapMappingUserUid))
