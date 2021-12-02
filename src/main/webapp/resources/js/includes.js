@@ -933,6 +933,9 @@ function initModals(item)
 		if (sessiontimeout)
 		{
 			showSessionError();
+			window.setTimeout(() => {
+				window.location.replace(window.location);
+			}, 2000)
 		} else if (networkproblems) {
 			$("#networkproblemsdialog").modal('show');
 		} else if (errorhappened)
