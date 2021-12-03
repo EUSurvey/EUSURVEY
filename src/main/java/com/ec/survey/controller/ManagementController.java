@@ -4036,7 +4036,7 @@ public class ManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/resultAccessesJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody List<ResultAccess> resultAccessesJSON(@PathVariable String shortname, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException, InvalidURLException {
+	public @ResponseBody List<ResultAccess> resultAccessesJSON(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException, InvalidURLException {
 		User u = sessionService.getCurrentUser(request);
 		
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
@@ -4054,7 +4054,7 @@ public class ManagementController extends BasicController {
 		String name = request.getParameter("name");
 		String order = request.getParameter("order");
 		
-		List<ResultAccess> result = surveyService.getResultAccesses(u.getResultAccess(), shortname, Integer.parseInt(page), Integer.parseInt(rows), name, order);
+		List<ResultAccess> result = surveyService.getResultAccesses(u.getResultAccess(), shortname, Integer.parseInt(page), Integer.parseInt(rows), name, order, locale);
 		
 		if (sessionService.userIsFormAdmin(survey, u, request))
 		{
@@ -4283,7 +4283,7 @@ public class ManagementController extends BasicController {
 				resAccess.setUser(user.getId());
 				resAccess.setOwner(u.getId());
 				
-				if (u.getResultAccess().isReadonly()) {
+				if (u.getResultAccess() != null && u.getResultAccess().isReadonly()) {
 					resAccess.setReadonly(true);
 				}
 				
