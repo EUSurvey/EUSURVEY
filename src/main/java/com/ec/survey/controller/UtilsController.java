@@ -331,7 +331,7 @@ public class UtilsController extends BasicController {
 		dgList.put("DIGIT",resources.getMessage("label.dgnew.DIGIT",null,locale));
 		dgList.put("OIB",resources.getMessage("label.dgnew.OIB",null,locale));
 		dgList.put("OIL",resources.getMessage("label.dgnew.OIL",null,locale));
-		dgList.put("INEA",resources.getMessage("label.dgnew.INEA",null,locale));
+		dgList.put("CINEA",resources.getMessage("label.dgnew.CINEA",null,locale));
 		dgList.put("IDEA",resources.getMessage("label.dgnew.IDEA",null,locale));
 		dgList.put("IAS",resources.getMessage("label.dgnew.IAS",null,locale));
 		dgList.put("GROW",resources.getMessage("label.dgnew.GROW",null,locale));
