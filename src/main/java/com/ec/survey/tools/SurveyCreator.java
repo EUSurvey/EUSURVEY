@@ -661,14 +661,16 @@ public class SurveyCreator {
 		h1.setPosition(counter++);
 		survey.getElements().add(h1);
 		
+		int idCounter = 1;
+		
 		if (questions == null)
 		{
-			SingleChoiceQuestion question = new SingleChoiceQuestion("Your institution or agency?", Constants.SHORTNAME, UUID.randomUUID().toString());
+			SingleChoiceQuestion question = new SingleChoiceQuestion("Your institution or agency?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 			question.setUseRadioButtons(true);
 			String[] answers = {"European Parliament", "European Economic and Social Committee", "Council", "Committee of Regions", "Commission", "Other", "Court of Justice", "European Agency", "Court of Auditors"};
 			for (String answerText : answers) {
 				PossibleAnswer answer = new PossibleAnswer();
-				answer.setShortname(Constants.SHORTNAME);
+				answer.setShortname("[ID" + idCounter++ + "]");
 				answer.setUniqueId(UUID.randomUUID().toString());
 				answer.setTitle(answerText);
 				question.getPossibleAnswers().add(answer);
@@ -676,7 +678,7 @@ public class SurveyCreator {
 			question.setPosition(counter++);
 			survey.getElements().add(question);
 	
-			FreeTextQuestion question2 = new FreeTextQuestion("Lorem ipsum dolor sit amet?", Constants.SHORTNAME, UUID.randomUUID().toString());
+			FreeTextQuestion question2 = new FreeTextQuestion("Lorem ipsum dolor sit amet?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 			question2.setNumRows(5); 
 			question2.setHelp("Block of help text to describe the field above if need be.");
 			question2.setPosition(counter++);
@@ -686,11 +688,11 @@ public class SurveyCreator {
 			h2.setPosition(counter++);
 			survey.getElements().add(h2);
 	
-			MultipleChoiceQuestion question3 = new MultipleChoiceQuestion("Which of these roles apply to you?", Constants.SHORTNAME, UUID.randomUUID().toString());
+			MultipleChoiceQuestion question3 = new MultipleChoiceQuestion("Which of these roles apply to you?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 			String[] answers2 = {"Business manager", "Software developer", "Civil servant", "Bus driver", "President"};
 			for (String answerText : answers2) {
 				PossibleAnswer answer = new PossibleAnswer();
-				answer.setShortname(Constants.SHORTNAME);
+				answer.setShortname("[ID" + idCounter++ + "]");
 				answer.setUniqueId(UUID.randomUUID().toString());
 				answer.setTitle(answerText);
 				question3.getPossibleAnswers().add(answer);
@@ -698,7 +700,7 @@ public class SurveyCreator {
 			question3.setPosition(counter++);
 			survey.getElements().add(question3);
 	
-			SingleChoiceQuestion question4 = new SingleChoiceQuestion("Your favorite color?", Constants.SHORTNAME, UUID.randomUUID().toString());
+			SingleChoiceQuestion question4 = new SingleChoiceQuestion("Your favorite color?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 			String[] answers3 = {"Yellow", "Blue", "Green", "I don't know", "Purple", "Red"};
 			for (String answerText : answers3) {
 				PossibleAnswer answer = new PossibleAnswer();
@@ -710,7 +712,7 @@ public class SurveyCreator {
 			question4.setPosition(counter++);
 			survey.getElements().add(question4);
 	
-			FreeTextQuestion question5 = new FreeTextQuestion("And now another freetext question?", Constants.SHORTNAME, UUID.randomUUID().toString());
+			FreeTextQuestion question5 = new FreeTextQuestion("And now another freetext question?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 			question5.setNumRows(1); 
 			question5.setHelp("Block of help text to describe the field above if need be.");
 			question5.setPosition(counter);
@@ -721,12 +723,12 @@ public class SurveyCreator {
 			{
 				if (elementcounter % 5 == 0)
 				{
-					SingleChoiceQuestion question = new SingleChoiceQuestion("Your institution or agency?", Constants.SHORTNAME, UUID.randomUUID().toString());
+					SingleChoiceQuestion question = new SingleChoiceQuestion("Your institution or agency?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 					question.setUseRadioButtons(true);
 					String[] answers = {"European Parliament", "European Economic and Social Committee", "Council", "Committee of Regions", "Commission", "Other", "Court of Justice", "European Agency", "Court of Auditors"};
 					for (String answerText : answers) {
 						PossibleAnswer answer = new PossibleAnswer();
-						answer.setShortname(Constants.SHORTNAME);
+						answer.setShortname("[ID" + idCounter++ + "]");
 						answer.setUniqueId(UUID.randomUUID().toString());
 						answer.setTitle(answerText);
 						question.getPossibleAnswers().add(answer);
@@ -735,18 +737,18 @@ public class SurveyCreator {
 					survey.getElements().add(question);
 				} else if (elementcounter % 4 == 0)
 				{
-					FreeTextQuestion question2 = new FreeTextQuestion("Lorem ipsum dolor sit amet?", Constants.SHORTNAME, UUID.randomUUID().toString());
+					FreeTextQuestion question2 = new FreeTextQuestion("Lorem ipsum dolor sit amet?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 					question2.setNumRows(5); 
 					question2.setHelp("Block of help text to describe the field above if need be.");
 					question2.setPosition(counter++);
 					survey.getElements().add(question2);
 				} else if (elementcounter % 3 == 0)
 				{
-					MultipleChoiceQuestion question3 = new MultipleChoiceQuestion("Which of these roles apply to you?", Constants.SHORTNAME, UUID.randomUUID().toString());
+					MultipleChoiceQuestion question3 = new MultipleChoiceQuestion("Which of these roles apply to you?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 					String[] answers2 = {"Business manager", "Software developer", "Civil servant", "Bus driver", "President"};
 					for (String answerText : answers2) {
 						PossibleAnswer answer = new PossibleAnswer();
-						answer.setShortname(Constants.SHORTNAME);
+						answer.setShortname("[ID" + idCounter++ + "]");
 						answer.setUniqueId(UUID.randomUUID().toString());
 						answer.setTitle(answerText);
 						question3.getPossibleAnswers().add(answer);
@@ -755,11 +757,11 @@ public class SurveyCreator {
 					survey.getElements().add(question3);
 				} else if (elementcounter % 2 == 0)
 				{
-					SingleChoiceQuestion question4 = new SingleChoiceQuestion("Your favorite color?", Constants.SHORTNAME, UUID.randomUUID().toString());
+					SingleChoiceQuestion question4 = new SingleChoiceQuestion("Your favorite color?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 					String[] answers3 = {"Yellow", "Blue", "Green", "I don't know", "Purple", "Red"};
 					for (String answerText : answers3) {
 						PossibleAnswer answer = new PossibleAnswer();
-						answer.setShortname(Constants.SHORTNAME);
+						answer.setShortname("[ID" + idCounter++ + "]");
 						answer.setUniqueId(UUID.randomUUID().toString());
 						answer.setTitle(answerText);
 						question4.getPossibleAnswers().add(answer);
@@ -767,7 +769,7 @@ public class SurveyCreator {
 					question4.setPosition(counter++);
 					survey.getElements().add(question4);
 				} else {
-					FreeTextQuestion question5 = new FreeTextQuestion("And now another freetext question?", Constants.SHORTNAME, UUID.randomUUID().toString());
+					FreeTextQuestion question5 = new FreeTextQuestion("And now another freetext question?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
 					question5.setNumRows(1); 
 					question5.setHelp("Block of help text to describe the field above if need be.");
 					question5.setPosition(counter++);
