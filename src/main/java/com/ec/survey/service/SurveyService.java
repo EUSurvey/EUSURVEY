@@ -3100,7 +3100,7 @@ public class SurveyService extends BasicService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<ResultAccess> getResultAccesses(ResultAccess resultAccess, String uid, int page, int rows, String name, String order) {
+	public List<ResultAccess> getResultAccesses(ResultAccess resultAccess, String uid, int page, int rows, String name, String order, Locale locale) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		String sql = "FROM ResultAccess a WHERE a.surveyUID = :uid";
@@ -3141,29 +3141,35 @@ public class SurveyService extends BasicService {
 				for (String questionUID : access.getResultFilter().getFilterValues().keySet()) {
 					
 					Element question = elementsByUniqueId.get(questionUID);
-					String value = access.getResultFilter().getFilterValues().get(questionUID);
 					
-					filter.append("<b>").append(question.getStrippedTitleAtMost100()).append("</b><br />");
+					if (question != null) {
 					
-					if (question instanceof ChoiceQuestion || question instanceof Text) {
-						boolean first = true;
-						for (String pauid : value.split(";")) {
-							Element answer = elementsByUniqueId.get(pauid);
-							if (answer != null) {
-								filter.append(answer.getStrippedTitleAtMost100());
-							} else {
-								filter.append(value);
+						String value = access.getResultFilter().getFilterValues().get(questionUID);
+						
+						filter.append("<b>").append(question.getStrippedTitleAtMost100()).append("</b><br />");
+						
+						if (question instanceof ChoiceQuestion || question instanceof Text) {
+							boolean first = true;
+							for (String pauid : value.split(";")) {
+								Element answer = elementsByUniqueId.get(pauid);
+								if (answer != null) {
+									filter.append(answer.getStrippedTitleAtMost100());
+								} else {
+									filter.append(resources.getMessage("label.UnknownElement", null, "Unknown element", locale));
+								}
+								if (first) {
+									filter.append("; ");
+									first = false;
+								}
 							}
-							if (first) {
-								filter.append("; ");
-								first = false;
-							}
+						} else {
+							filter.append(value);
 						}
+						
+						filter.append("</br>");
 					} else {
-						filter.append(value);
+						filter.append("<b>").append(resources.getMessage("label.UnknownElement", null, "Unknown element", locale)).append("</b><br />");
 					}
-					
-					filter.append("</br>");
 				}
 				
 				access.setFilter(filter.toString());
