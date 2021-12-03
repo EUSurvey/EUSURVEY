@@ -326,7 +326,12 @@ a.ratingitem {
 }
 
 .validation-error, .validation-error-server {
-	color: #f00; position: absolute;
+	color: #f00;
+}
+
+#exceptionlogdiv{
+	width: fit-content;
+	margin-top: 7px;
 }
 
 .matrix-header .validation-error {
