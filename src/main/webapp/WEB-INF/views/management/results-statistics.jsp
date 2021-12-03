@@ -134,7 +134,7 @@
 					<c:if test="${question.getType() == 'GalleryQuestion' && question.selection}">
 						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
 					
-							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
 							
 							<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px;">
 								<thead>
