@@ -190,7 +190,7 @@
 					<hr style="margin-top: 15px;" />
 				</c:if>
 				
-				<c:if test="${escapemode == null && !form.survey.isQuiz}">
+				<c:if test="${escapemode == null && !form.survey.isQuiz && form.survey.allowQuestionnaireDownload}">
 					<!-- pdf download -->	
 					<div style="padding-left: 10px; margin-top: 10px;">
 						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>

@@ -701,6 +701,24 @@
 					<tr>
 						<td>
 							<div style="float: left">
+								<spring:message code="label.AllowQuestionnaireDownload" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.AllowQuestionnaireDownload" /></div>
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.allowQuestionnaireDownload" class="onoffswitch-checkbox" id="myonoffswitchquestionnairedwnld" />
+									<label class="onoffswitch-label" for="myonoffswitchquestionnairedwnld">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
 								<spring:message code="label.AllowSaveAsDraft" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								<div class="help hideme">

@@ -457,7 +457,7 @@
 							<hr style="margin-top: 15px;" />
 						</c:if>
 						
-						<c:if test="${!form.survey.isQuiz}">
+						<c:if test="${!form.survey.isQuiz && form.survey.allowQuestionnaireDownload}">
 							<div>
 								<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="link visiblelink" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
 								<span id="download-survey-pdf-dialog-running" class="hideme">${form.getMessage("info.FileCreation")}</span>

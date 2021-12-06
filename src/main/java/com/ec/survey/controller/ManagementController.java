@@ -1468,6 +1468,7 @@ public class ManagementController extends BasicController {
 
 		survey.setShowPDFOnUnavailabilityPage(uploadedSurvey.getShowPDFOnUnavailabilityPage());
 		survey.setShowDocsOnUnavailabilityPage(uploadedSurvey.getShowDocsOnUnavailabilityPage());
+		survey.setAllowQuestionnaireDownload(uploadedSurvey.getAllowQuestionnaireDownload());
 
 		User u = sessionService.getCurrentUser(request);
 
