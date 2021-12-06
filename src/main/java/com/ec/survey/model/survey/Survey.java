@@ -170,6 +170,7 @@ final public class Survey implements java.io.Serializable {
 	private String quizResultsMessage = RESULTSMESSAGETEXT;
 	private Boolean showPDFOnUnavailabilityPage;
 	private Boolean showDocsOnUnavailabilityPage;
+	private Boolean allowQuestionnaireDownload;
 	private boolean fullFormManagementRights = true;
 	private boolean formManagementRights = true;
 	private boolean accessResultsRights = true;
@@ -1479,6 +1480,14 @@ final public class Survey implements java.io.Serializable {
 		this.showDocsOnUnavailabilityPage = showDocsOnUnavailabilityPage;
 	}
 
+	@Column(name = "QUESTIONDWNLD")
+	public Boolean getAllowQuestionnaireDownload(){
+		return allowQuestionnaireDownload != null && allowQuestionnaireDownload;
+	}
+	public void setAllowQuestionnaireDownload(Boolean allowQuestionnaireDownload){
+		this.allowQuestionnaireDownload = allowQuestionnaireDownload;
+	}
+
 	@Lob
 	@Column(name = "QUIZWELCOME", length = 40000)
 	public String getQuizWelcomeMessage() {
@@ -1583,6 +1592,7 @@ final public class Survey implements java.io.Serializable {
 			result.append(" notifyAll: ").append(notifyAll).append(";");
 			result.append(" showPDFOnUnavailabilityPage: ").append(showPDFOnUnavailabilityPage).append(";");
 			result.append(" showDocsOnUnavailabilityPage: ").append(showDocsOnUnavailabilityPage).append(";");
+			result.append(" allowQuestionnaireDownload: ").append(allowQuestionnaireDownload).append(";");
 			result.append(" preventGoingBack: ").append(preventGoingBack).append(";");
 
 			try {
@@ -1681,6 +1691,7 @@ final public class Survey implements java.io.Serializable {
 		copy.showTotalScore = showTotalScore;
 		copy.scoresByQuestion = scoresByQuestion;
 		copy.showPDFOnUnavailabilityPage = showPDFOnUnavailabilityPage;
+		copy.allowQuestionnaireDownload = allowQuestionnaireDownload;
 		copy.showDocsOnUnavailabilityPage = showDocsOnUnavailabilityPage;
 		copy.isOPC = isOPC;
 		copy.isECF = isECF;
