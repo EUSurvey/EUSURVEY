@@ -327,10 +327,12 @@ a.ratingitem {
 
 .validation-error, .validation-error-server {
 	color: #f00;
+	width: fit-content;
+	height: fit-content;
+	margin: 3px;
 }
 
 #exceptionlogdiv{
-	width: fit-content;
 	margin-top: 7px;
 }
 
