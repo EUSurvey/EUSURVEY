@@ -35,6 +35,8 @@ import javax.xml.parsers.DocumentBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -711,12 +713,14 @@ public class SurveyService extends BasicService {
 		if (loadpublicationdates) {
 			sql.append(" GROUP BY s.SURVEY_UID");
 
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
 			boolean having = false;
 			if (filter.getPublishedFrom() != null) {
 				sql.append(
-						" HAVING STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),-19), '%Y-%m-%d') >= :publishedFrom");
+						" MAX(s.survey_created) >= :publishedFrom");
 				having = true;
-				oQueryParameters.put("publishedFrom", filter.getPublishedFrom());
+				oQueryParameters.put("publishedFrom", df.format(filter.getPublishedFrom()));
 			}
 
 			if (filter.getPublishedTo() != null) {
@@ -726,8 +730,8 @@ public class SurveyService extends BasicService {
 					sql.append(" HAVING ");
 					having = true;
 				}
-				sql.append("STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),-19), '%Y-%m-%d') <= :publishedTo");
-				oQueryParameters.put("publishedTo", filter.getPublishedTo());
+				sql.append("MAX(s.survey_created) <= :publishedTo");
+				oQueryParameters.put("publishedTo", df.format(filter.getPublishedTo()));
 			}
 
 			if (filter.getFirstPublishedFrom() != null) {
@@ -738,8 +742,8 @@ public class SurveyService extends BasicService {
 					having = true;
 				}
 				sql.append(
-						"STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), '%Y-%m-%d') >= :firstPublishedFrom");
-				oQueryParameters.put("firstPublishedFrom", filter.getFirstPublishedFrom());
+						"MIN(s.survey_created) >= :firstPublishedFrom");
+				oQueryParameters.put("firstPublishedFrom", df.format(filter.getFirstPublishedFrom()));
 			}
 
 			if (filter.getFirstPublishedTo() != null) {
@@ -749,8 +753,8 @@ public class SurveyService extends BasicService {
 					sql.append(" HAVING ");
 				}
 				sql.append(
-						"STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), '%Y-%m-%d') <= :firstPublishedTo");
-				oQueryParameters.put("firstPublishedTo", filter.getFirstPublishedTo());
+						"MIN(s.survey_created) <= :firstPublishedTo");
+				oQueryParameters.put("firstPublishedTo", df.format(filter.getFirstPublishedTo()));
 			}
 		}
 
