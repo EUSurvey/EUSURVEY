@@ -15,12 +15,67 @@
 			$(".g-recaptcha.unset").removeClass("unset");
 		}
 		
+		function getLocaleString() {
+			switch (globalLanguage) {
+				case 'bg':
+					return 'bg-BG';
+				case 'hr':
+					return 'hr-HR';
+				case 'cs':
+					return 'cs-CZ';
+				case 'da':
+					return 'da-DK';
+				case 'nl':
+					return 'nl-NL';
+				case 'en':
+					return 'en-GB';
+				case 'et':
+					return 'et-EE';
+				case 'fi':
+					return 'fi-FI';
+				case 'fr':
+					return 'fr-FR';
+				case 'de':
+					return 'de-DE';
+				case 'el':
+					return 'el-GR';
+				case 'hu':
+					return 'hu-HU';
+				case 'ga':
+					return 'ga-IE';
+				case 'it':
+					return 'it-IT';
+				case 'lv':
+					return 'lv-LV';
+				case 'lt':
+					return 'lt-LT';
+				case 'mt':
+					return 'mt-MT';
+				case 'pl':
+					return 'pl-PL';
+				case 'pt':
+					return 'pt-PT';
+				case 'ro':
+					return 'ro-RO';
+				case 'sk':
+					return 'sk-SK';
+				case 'sl':
+					return 'sl-SI';
+				case 'es':
+					return 'es-ES';
+				case 'sv':
+					return 'sv-SE';					
+			}
+			
+			return 'en-EN';
+		}
+		
 		function createCaptcha() {
 			<c:choose>
 				<c:when test='${captcha == "eucaptcha"}'>
 					const getCaptchaUrl = $.ajax({
 			            type: "GET",
-			            url: serverprefix + 'captchaImg',
+			            url: serverprefix + 'captchaImg?locale=' + getLocaleString(),
 			            beforeSend: function (xhr) {
 			                xhr.withCredentials = true;
 			                xhr.crossDomain = true;
