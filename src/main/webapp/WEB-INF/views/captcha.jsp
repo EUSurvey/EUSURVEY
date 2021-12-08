@@ -21,8 +21,12 @@
 					const getCaptchaUrl = $.ajax({
 			            type: "GET",
 			            url: serverprefix + 'captchaImg',
+			            beforeSend: function (xhr) {
+			                xhr.withCredentials = true;
+			                xhr.crossDomain = true;
+			            },
 			            success: function (data, textStatus, request) {
-			                EuCaptchaToken = getCaptchaUrl.getResponseHeader("token");
+			                EuCaptchaToken = getCaptchaUrl.getResponseHeader("x-jwtString");  //"token");
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
 			                $("#captchaImg").attr("captchaId", jsonData.captchaId);
@@ -53,10 +57,11 @@
 			            beforeSend: function (xhr) {
 			                xhr.setRequestHeader("Accept", "application/json");
 			                xhr.setRequestHeader("Content-Type", "application/json");
-			                xhr.setRequestHeader("jwtString", EuCaptchaToken);
+			                xhr.setRequestHeader("x-jwtString", EuCaptchaToken);
+			                xhr.withCredentials = true;
 			            },
 			            success: function (data) {
-			                EuCaptchaToken = reloadCaptchaUrl.getResponseHeader("token"); 
+			                EuCaptchaToken = reloadCaptchaUrl.getResponseHeader("x-jwtString"); 
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
 			                $("#captchaImg").attr("captchaId", jsonData.captchaId);
