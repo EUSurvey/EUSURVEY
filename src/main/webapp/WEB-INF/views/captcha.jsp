@@ -86,7 +86,7 @@
 				<c:when test='${captcha == "eucaptcha"}'>
 					const getCaptchaUrl = $.ajax({
 			            type: "GET",
-			            url: serverprefix + 'captchaImg?locale=' + getLocaleString(),
+			            url: serverprefix + 'captchaImg?capitalized=false&locale=' + getLocaleString(),
 			            beforeSend: function (xhr) {
 			                xhr.withCredentials = true;
 			                xhr.crossDomain = true;
