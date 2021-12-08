@@ -969,10 +969,14 @@ function initModals(item)
 			},
 			andFocusWhen : function(element, text, isFocusChanging) {
 				const self = addValidationError;
-				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+				}
+				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' role='alert'>" + text + "</div>");
 				self.commonImpl(element);
 				if (isFocusChanging) {
-					$(element).next(".validation-error").first().focus();
+					//$(element).next(".validation-error").first().focus();
 				}
 			},
 			andFocus : function(element, text) {
@@ -981,15 +985,23 @@ function initModals(item)
 			},
 			toElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+				}
+				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' role='alert'>" + text + "</div>");
 				self.commonImpl(element);
-				$(target).find(".validation-error").first().focus();
+				//$(target).find(".validation-error").first().focus();
 			},
 			afterElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+				}
+				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' role='alert'>" + text + "</div>");
 				self.commonImpl(element);
-				$(target).next(".validation-error").first().focus();
+				//$(target).next(".validation-error").first().focus();
 			}
 	}
 	
