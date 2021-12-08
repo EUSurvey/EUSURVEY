@@ -16,7 +16,18 @@
 		}
 		
 		function getLocaleString() {
-			switch (globalLanguage) {
+			
+			<c:choose>
+				<c:when test="${form != null}">
+					let lang = '${form.language.code.toLowerCase()}';
+				</c:when>
+				<c:otherwise>
+					let lang = globalLanguage;						
+				</c:otherwise>
+			</c:choose>	
+			
+			
+			switch (lang) {
 				case 'bg':
 					return 'bg-BG';
 				case 'hr':
