@@ -178,10 +178,10 @@
 					
 					 	<c:choose>
 					 		<c:when test="${rowCounter.index == 0}">
-								<div class="single-page" tabindex="-1" id="page${rowCounter.index}">
+								<div class="single-page" tabindex="-1" id="page${rowCounter.index}" onmouseleave="validateLastContainer()">
 							</c:when>
 							<c:otherwise>
-								<div class="single-page" tabindex="-1" id="page${rowCounter.index}" style="display: none">
+								<div class="single-page" tabindex="-1" id="page${rowCounter.index}" style="display: none" onmouseleave="validateLastContainer()">
 							</c:otherwise>
 						</c:choose>						
 							
