@@ -86,7 +86,7 @@
 				<c:when test='${captcha == "eucaptcha"}'>
 					const getCaptchaUrl = $.ajax({
 			            type: "GET",
-			            url: serverprefix + 'captchaImg?capitalized=false&locale=' + getLocaleString(),
+			            url: serverprefix + 'captchaImg?locale=' + getLocaleString() + "&capitalized=false",
 			            beforeSend: function (xhr) {
 			                xhr.withCredentials = true;
 			                xhr.crossDomain = true;
@@ -118,7 +118,7 @@
 				<c:when test='${captcha == "eucaptcha"}'>
 				 const reloadCaptchaUrl = $.ajax({
 			            type: "GET",
-			            url: serverprefix + 'reloadCaptchaImg/' + $("#captchaImg").attr("captchaId"),
+			            url: serverprefix + 'reloadCaptchaImg/' + $("#captchaImg").attr("captchaId") + '?locale=' + getLocaleString() + "&capitalized=false",
 			            crossDomain: true,
 			            beforeSend: function (xhr) {
 			                xhr.setRequestHeader("Accept", "application/json");

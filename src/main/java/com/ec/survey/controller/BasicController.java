@@ -565,7 +565,7 @@ public class BasicController implements BeanFactoryAware {
 					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 					conn.setRequestMethod("POST");
 					conn.setRequestProperty("x-jwtString", token);
-					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 										
 					String postData = "captchaAnswer="  + str + "&useAudio=" + ("true".equalsIgnoreCase(useaudio));
 					byte[] postDataBytes = postData.getBytes("UTF-8");
