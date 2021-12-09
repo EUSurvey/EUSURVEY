@@ -539,82 +539,70 @@
 									</c:choose>												
 								</div>
 							</td>
+						</tr>						
+						<tr class="subelement" data-bind="visible: secured, attr:{class: ecasSecurity() ? 'nobottomborder subelement' : 'subelement'}">
+							<td>
+								<div style="float: left">
+									<spring:message code="label.SecureWithEULogin" />
+								</div>
+								<div style="float: right">
+									<div class="onoffswitch">
+										<c:choose>
+											<c:when test='${form.survey.isOPC}'>	
+												<input disabled="disabled" checked="checked" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
+												<label class="onoffswitch-label disabled" for="myonoffswitchecas">
+											        <span class="onoffswitch-inner"></span>
+											        <span class="onoffswitch-switch"></span>
+											    </label>
+											</c:when>
+											<c:otherwise>
+												<input data-bind="checked: ecasSecurity" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
+												<label class="onoffswitch-label" for="myonoffswitchecas">
+											        <span class="onoffswitch-inner"></span>
+											        <span class="onoffswitch-switch"></span>
+											    </label>
+											</c:otherwise>
+										</c:choose>
+										 
+									</div>
+								</div>
+							</td>
 						</tr>
-						<c:choose>
-							<c:when test="${USER.getGlobalPrivilegeValue('ECAccess') > 0}">
-								<tr class="subelement" data-bind="visible: secured, attr:{class: ecasSecurity() ? 'nobottomborder subelement' : 'subelement'}">
-									<td>
-										<div style="float: left">
-											<spring:message code="label.SecureWithEULogin" />
-										</div>
-										<div style="float: right">
-											<div class="onoffswitch">
-												<c:choose>
-													<c:when test='${form.survey.isOPC}'>	
-														<input disabled="disabled" checked="checked" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
-														<label class="onoffswitch-label disabled" for="myonoffswitchecas">
-													        <span class="onoffswitch-inner"></span>
-													        <span class="onoffswitch-switch"></span>
-													    </label>
-													</c:when>
-													<c:otherwise>
-														<input data-bind="checked: ecasSecurity" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
-														<label class="onoffswitch-label" for="myonoffswitchecas">
-													        <span class="onoffswitch-inner"></span>
-													        <span class="onoffswitch-switch"></span>
-													    </label>
-													</c:otherwise>
-												</c:choose>
-												 
-											</div>
-										</div>
-									</td>
-								</tr>
-								<tr class="subsubelement noborder" data-bind="visible: secured() && ecasSecurity()">
-									<td>
-										<div style="float: left">
-											<spring:message code="label.Users" />
-										</div>
-										<div style="float: right">
-											<c:choose>
-												<c:when test='${form.survey.isOPC}'>
-													<input type="radio" disabled="disabled" checked="checked" name="ecas-mode" class="check" /><spring:message code="label.everybody" /><br />
-													<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" />
-													<form:hidden path="survey.ecasMode" name="ecas-mode" />
-												</c:when>
-												<c:otherwise>
-													<form:radiobutton path="survey.ecasMode" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.everybody" /><br />
-													<form:radiobutton path="survey.ecasMode" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
-												</c:otherwise>
-											</c:choose>													
-										</div>
-									</td>
-								</tr>
-								<c:if test='${!form.survey.isOPC}'>
-									<tr class="subsubelement noborder" data-bind="visible: secured() && ecasSecurity()">
-										<td>
-											<div style="float: left">
-												<spring:message code="label.ContributionsPerUser" />
-												<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-												<div class="help hideme"><spring:message code="info.ContributionsPerUser" /></div>
-											</div>
-											<div style="float: right">
-												<form:input htmlEscape="false" path="survey.allowedContributionsPerUser" type="text" class="form-control spinner required number min1 integer" maxlength="10" style="width: 50px" />
-											</div>
-											<div style="clear: both"></div>																						
-										</td>
-									</tr>
-								</c:if>
-							</c:when>
-							<c:otherwise>
-								<tr style="display: none">
-									<td>
-										<form:hidden path="survey.ecasSecurity" id="enableecas" name="enableecas"  />						
-										<form:hidden path="survey.ecasMode" name="ecas-mode" />
-									</td>
-								</tr>
-							</c:otherwise>
-					</c:choose>
+						<tr class="subsubelement noborder" data-bind="visible: secured() && ecasSecurity()">
+							<td>
+								<div style="float: left">
+									<spring:message code="label.Users" />
+								</div>
+								<div style="float: right">
+									<c:choose>
+										<c:when test='${form.survey.isOPC}'>
+											<input type="radio" disabled="disabled" checked="checked" name="ecas-mode" class="check" /><spring:message code="label.everybody" /><br />
+											<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" />
+											<form:hidden path="survey.ecasMode" name="ecas-mode" />
+										</c:when>
+										<c:otherwise>
+											<form:radiobutton path="survey.ecasMode" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.everybody" /><br />
+											<form:radiobutton path="survey.ecasMode" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
+										</c:otherwise>
+									</c:choose>													
+								</div>
+							</td>
+						</tr>
+						<c:if test='${!form.survey.isOPC}'>
+							<tr class="subsubelement noborder" data-bind="visible: secured() && ecasSecurity()">
+								<td>
+									<div style="float: left">
+										<spring:message code="label.ContributionsPerUser" />
+										<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<div class="help hideme"><spring:message code="info.ContributionsPerUser" /></div>
+									</div>
+									<div style="float: right">
+										<form:input htmlEscape="false" path="survey.allowedContributionsPerUser" type="text" class="form-control spinner required number min1 integer" maxlength="10" style="width: 50px" />
+									</div>
+									<div style="clear: both"></div>																						
+								</td>
+							</tr>
+						</c:if>							
 					<tr>
 						<td>
 							<div style="float: left">
