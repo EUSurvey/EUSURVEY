@@ -35,8 +35,6 @@ import javax.xml.parsers.DocumentBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -124,7 +122,7 @@ public class SurveyService extends BasicService {
 
 		String sql = stringBuilder.toString();
 		HashMap<String, Object> parameters = new HashMap<>();
-		sql += getSql(filter, parameters, false);
+		sql += getSql(filter, parameters);
 
 		List<Survey> surveys = new ArrayList<>();
 		Map<Integer, Language> languageMap = getLanguageMap();
@@ -210,7 +208,7 @@ public class SurveyService extends BasicService {
 		String sql = stringBuilder.toString();
 		HashMap<String, Object> parameters = new HashMap<>();
 		
-		sql +=  getSql(filter, parameters, false);
+		sql +=  getSql(filter, parameters);
 
 		List<Survey> surveys = new ArrayList<>();
 		Map<Integer, Language> languageMap = getLanguageMap();
@@ -303,7 +301,7 @@ public class SurveyService extends BasicService {
 		}
 
 		HashMap<String, Object> parameters = new HashMap<>();
-		sql += getSql(filter, parameters, true);
+		sql += getSql(filter, parameters);
 
 		List<Survey> surveys = new ArrayList<>();
 		for (Object[] row : loadSurveysfromDatabase(sql, parameters, sqlPagination)) {
@@ -453,7 +451,7 @@ public class SurveyService extends BasicService {
 		}
 
 		HashMap<String, Object> parameters = new HashMap<>();
-		sql += getSql(filter, parameters, true);
+		sql += getSql(filter, parameters);
 
 		List<Survey> surveys = new ArrayList<>();
 		for (Object[] row : loadSurveysfromDatabase(sql, parameters, sqlPagination)) {
@@ -503,7 +501,7 @@ public class SurveyService extends BasicService {
 		return getSurveys(filter, sqlPagination);
 	}
 
-	private String getSql(SurveyFilter filter, HashMap<String, Object> oQueryParameters, boolean loadpublicationdates) {
+	private String getSql(SurveyFilter filter, HashMap<String, Object> oQueryParameters) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -534,18 +532,18 @@ public class SurveyService extends BasicService {
 		if (filter.getType() != null && filter.getType().length() > 0 && !filter.getType().equalsIgnoreCase("all")) {
 
 			switch (filter.getType()) {
-			case "quiz":
-				sql.append(" AND s.QUIZ = 1");
-				break;
-			case "standard":
-				sql.append(" AND s.QUIZ = 0 AND s.OPC = 0");
-				break;
-			case "brp":
-				sql.append(" AND s.OPC = 1");
-				break;
-			case "delphi":
-				sql.append(" AND s.DELPHI = 1");
-				break;
+				case "quiz":
+					sql.append(" AND s.QUIZ = 1");
+					break;
+				case "standard":
+					sql.append(" AND s.QUIZ = 0 AND s.OPC = 0");
+					break;
+				case "brp":
+					sql.append(" AND s.OPC = 1");
+					break;
+				case "delphi":
+					sql.append(" AND s.DELPHI = 1");
+					break;
 			}
 		}
 
@@ -710,52 +708,44 @@ public class SurveyService extends BasicService {
 			oQueryParameters.put("replies", filter.getMinContributions());
 		}
 
-		if (loadpublicationdates) {
-			sql.append(" GROUP BY s.SURVEY_UID");
+		boolean having = false;
+		if (filter.getPublishedFrom() != null) {
+			sql.append(
+					" HAVING published >= :publishedFrom");
+			having = true;
+			oQueryParameters.put("publishedFrom", filter.getPublishedFrom());
+		}
 
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
-			boolean having = false;
-			if (filter.getPublishedFrom() != null) {
-				sql.append(
-						" MAX(s.survey_created) >= :publishedFrom");
+		if (filter.getPublishedTo() != null) {
+			if (having) {
+				sql.append(" AND ");
+			} else {
+				sql.append(" HAVING ");
 				having = true;
-				oQueryParameters.put("publishedFrom", df.format(filter.getPublishedFrom()));
 			}
+			sql.append("published < :publishedTo");
+			oQueryParameters.put("publishedTo", Tools.getFollowingDay(filter.getPublishedTo()));
+		}
 
-			if (filter.getPublishedTo() != null) {
-				if (having) {
-					sql.append(" AND ");
-				} else {
-					sql.append(" HAVING ");
-					having = true;
-				}
-				sql.append("MAX(s.survey_created) <= :publishedTo");
-				oQueryParameters.put("publishedTo", df.format(filter.getPublishedTo()));
+		if (filter.getFirstPublishedFrom() != null) {
+			if (having) {
+				sql.append(" AND ");
+			} else {
+				sql.append(" HAVING ");
+				having = true;
 			}
+			sql.append("firstPublished >= :firstPublishedFrom");
+			oQueryParameters.put("firstPublishedFrom", filter.getFirstPublishedFrom());
+		}
 
-			if (filter.getFirstPublishedFrom() != null) {
-				if (having) {
-					sql.append(" AND ");
-				} else {
-					sql.append(" HAVING ");
-					having = true;
-				}
-				sql.append(
-						"MIN(s.survey_created) >= :firstPublishedFrom");
-				oQueryParameters.put("firstPublishedFrom", df.format(filter.getFirstPublishedFrom()));
+		if (filter.getFirstPublishedTo() != null) {
+			if (having) {
+				sql.append(" AND ");
+			} else {
+				sql.append(" HAVING ");
 			}
-
-			if (filter.getFirstPublishedTo() != null) {
-				if (having) {
-					sql.append(" AND ");
-				} else {
-					sql.append(" HAVING ");
-				}
-				sql.append(
-						"MIN(s.survey_created) <= :firstPublishedTo");
-				oQueryParameters.put("firstPublishedTo", df.format(filter.getFirstPublishedTo()));
-			}
+			sql.append("firstPublished < :firstPublishedTo");
+			oQueryParameters.put("firstPublishedTo", Tools.getFollowingDay(filter.getFirstPublishedTo()));
 		}
 
 		if (filter.getSortKey() != null && filter.getSortKey().length() > 0) {
@@ -5390,6 +5380,12 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" , s.SURVEYNAME");
 		stringBuilder.append(" , s.TITLE");
 		stringBuilder.append(" , s.OWNER");
+		
+		stringBuilder.append(
+				", (SELECT MIN(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as firstPublished");
+		stringBuilder.append(
+				", (SELECT MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as published");
+				
 		stringBuilder.append(" FROM SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID ");
 
@@ -5412,7 +5408,7 @@ public class SurveyService extends BasicService {
 		String sql = stringBuilder.toString();
 
 		HashMap<String, Object> parameters = new HashMap<>();
-		sql += getSql(filter, parameters, true);
+		sql += getSql(filter, parameters);
 
 		List<Survey> surveys = new ArrayList<>();
 		for (Object[] row : loadSurveysfromDatabase(sql, parameters, pagination)) {
