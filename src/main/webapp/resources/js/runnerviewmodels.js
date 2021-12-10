@@ -986,13 +986,6 @@ function newFreeTextViewModel(element)
 		}
 	};
 
-	viewModel.values.checkAnyChangesOnValidation = function() {
-		const hasChanged = viewModel.values.first.hasChangedOnValidation() || viewModel.values.second.hasChangedOnValidation();
-		viewModel.values.first.hasChangedOnValidation(false);
-		viewModel.values.second.hasChangedOnValidation(false);
-		return hasChanged;
-	};
-
 	return viewModel;
 }
 
