@@ -193,7 +193,7 @@
 				<c:if test="${escapemode == null && !form.survey.isQuiz && form.survey.allowQuestionnaireDownload}">
 					<!-- pdf download -->	
 					<div style="padding-left: 10px; margin-top: 10px;">
-						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
+						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
 						<span id="download-survey-pdf-dialog-running" style="display: none">${form.getMessage("info.FileCreation")}</span>
 						<div id="download-survey-pdf-dialog-ready" style="display: none;">${form.getMessage("info.FileCreated")}</div>
 						<div id="download-survey-pdf-dialog-spinner" style="display: none; padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>
