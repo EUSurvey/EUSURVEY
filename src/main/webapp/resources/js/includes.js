@@ -967,29 +967,36 @@ function initModals(item)
 				$(element).attr("aria-invalid", "true");
 				$(element).attr("aria-describedby", "validationError" + self.validationErrorCounter++);
 			},
-			andFocusWhen : function(element, text, isFocusChanging) {
+			andFocusWhen : function(element, text) {
 				const self = addValidationError;
-				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
-				self.commonImpl(element);
-				if (isFocusChanging) {
-					$(element).next(".validation-error").first().focus();
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
 				}
+				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
+				self.commonImpl(element);
 			},
 			andFocus : function(element, text) {
 				const self = addValidationError;
-				self.andFocusWhen(element, text, true);
+				self.andFocusWhen(element, text);
 			},
 			toElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+				}
+				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
 				self.commonImpl(element);
-				$(target).find(".validation-error").first().focus();
 			},
 			afterElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+				}
+				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
 				self.commonImpl(element);
-				$(target).next(".validation-error").first().focus();
 			}
 	}
 	
@@ -1306,8 +1313,7 @@ function initModals(item)
 				if (value != second)
 				{
 					validationinfo += $(this).attr("name") + " (COMP) ";
-					const useFocusChange = typeof viewModel != 'undefined' ? viewModel.values.checkAnyChangesOnValidation() : false;
-					addValidationError.andFocusWhen($(this).parent().find(".comparable-second"), nomatchText, useFocusChange);
+					addValidationError.andFocusWhen($(this).parent().find(".comparable-second"), nomatchText);
 					result = false;
 				};
 			}
@@ -1925,8 +1931,7 @@ function initModals(item)
 				otherId = otherId.substring(0, otherId.length - 1);
 				var other = $("textarea[data-id='" + otherId + "']");
 				if ($(other).val().trim().length > 0) {
-					const useFocusChange = viewModel.values.checkAnyChangesOnValidation();
-					addValidationError.andFocusWhen($(element), nomatchText, useFocusChange);
+					addValidationError.andFocusWhen($(element), nomatchText);
 				}
 			} else {
 				const div = $(element).closest(".survey-element");

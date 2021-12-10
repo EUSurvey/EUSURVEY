@@ -74,7 +74,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 
-		<label tabindex="0" class='questiontitle' data-bind="attr: {for: 'answer' + id(), id: 'questiontitle' + id()}">
+		<label class='questiontitle' data-bind="attr: {for: 'answer' + id(), id: 'questiontitle' + id()}">
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -238,7 +238,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 	
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -373,7 +373,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -489,7 +489,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 	
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -621,7 +621,7 @@
 	</div>
 	
 	<div id="rating-template">
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -709,7 +709,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -820,7 +820,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -850,7 +850,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -915,7 +915,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -959,7 +959,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -1001,7 +1001,7 @@
 	</div>
 	
 	<div id="download-template">
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -1035,7 +1035,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -1167,7 +1167,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
@@ -1273,7 +1273,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label tabindex="0" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
 			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
