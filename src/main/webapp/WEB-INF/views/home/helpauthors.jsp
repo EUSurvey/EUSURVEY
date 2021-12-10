@@ -981,29 +981,29 @@
 				Contribution ID is a code used as unique identifier for a contribution made.
 			</p>
 			<p>
-				It can be used by survey managers to find back a contribution from the Results screen. It can also be used by a survey participant to submit his contribution and access it later.
+				It can be used by survey managers to find back a contribution from the 'Results' screen. It can also be used by a survey participant to submit his contribution and access it later.
 			</p>
-			<h2>How can I find a contribution from the Results using a contribution ID?</h2>
+			<h2>How can I find a contribution from the results using a contribution ID?</h2>
 			<p>
-				Contribution ID can be used by survey owners to find a contribution among all the Results:
+				Contribution ID can be used by survey owners to find a contribution among all the results:
 				<ol>
 					<li>
 						Open your survey
 					</li>
 					<li>
-						Go to Results tab
+						Go to 'Results' tab
 					</li>
 					<li>
 						Click on 'Settings' button
 					</li>
 					<li>
-						Tick 'Contribution ID' in both columns and press Ok
+						Tick 'Contribution ID' in both columns and press 'OK'
 					</li>
 					<li>
-						Go to filter Contribution ID
+						Go to filter 'Contribution ID'
 					</li>
 					<li>
-						Insert the Contribution ID and click Enter
+						Insert the 'Contribution ID' and click Enter
 					</li>
 				</ol>
 			</p>
@@ -1119,7 +1119,7 @@
 				How can I allow participants to print or download their contribution?
 			</h2>
 			<p>
-				If activated, this feature allows participants to save their answers in PDF.
+				If activated, this feature allows participants to save their answers in PDF format.
 			</p>
 			<p>
 				To activate this feature, follow the steps below:
@@ -1128,10 +1128,10 @@
 					Open your survey
 				</li>
 				<li>
-					Go to Properties tab
+					Go to 'Properties' tab
 				</li>
 				<li>
-					Go to Security tab
+					Go to 'Security' tab
 				</li>
 				<li>
 					Enable 'Allows participants to print their contribution and receive it as a PDF' option
@@ -1152,10 +1152,10 @@
 						Open your survey
 					</li>
 					<li>
-						Go to Properties tab
+						Go to 'Properties' tab
 					</li>
 					<li>
-						Go to Security tab
+						Go to 'Security' tab
 					</li>
 					<li>
 						Enable 'Allows participants to change their contribution' option

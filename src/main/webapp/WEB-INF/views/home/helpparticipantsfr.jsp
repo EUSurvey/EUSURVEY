@@ -295,19 +295,19 @@
 				    ».
 				</p>
 				<h2>
-					Qu'est-ce que mon ID de contribution ?
+					Qu'est-ce que mon «Numéro d'identification de la contribution» ?
 				</h2>
 				<p>
-					L'ID de contribution est le numéro individuel de votre réponse qui est généré automatiquement. Il s'agit d'un identifiant unique permettant au système de reconnaître votre contribution.
+					«Numéro d'identification de la contribution» est le numéro individuel de votre réponse qui est généré automatiquement. Il s'agit d'un identifiant unique permettant au système de reconnaître votre contribution.
 				</p>
 				<p>
-					Une fois votre contribution soumise, votre ID de contribution est affiché sur la page de confirmation. Si vous enregistrez le PDF ou l'envoyez à votre adresse électronique, vous verrez l'ID de contribution dans la partie supérieure gauche du PDF de la contribution.
+					Une fois votre contribution soumise, votre «Numéro d'identification de la contribution» est affiché sur la page de confirmation. Si vous enregistrez le PDF ou l'envoyez à votre adresse électronique, vous verrez «Numéro d'identification de la contribution» dans la partie supérieure gauche du PDF de la contribution.
 				</p>
 				<p>
 					Votre identifiant de contribution est utile si vous souhaitez contacter le service d'assistance EUSurvey ou les organisateurs de l'enquête.
 				</p>
 				<h2>
-					Où puis-je trouver mon ID de contribution ?
+					Où puis-je trouver mon «Numéro d'identification de la contribution» ?
 				</h2>
 				<p>
 					Il est affiché juste après la soumission de vos réponses.
@@ -316,7 +316,7 @@
 							Ouvrez le lien de votre enquête et répondez à l'enquête
 						</li>
 						<li>
-							Une fois les réponses soumises, vous verrez votre ID de contribution à l'écran
+							Une fois les réponses soumises, vous verrez votre «Numéro d'identification de la contribution» à l'écran
 						</li>
 						<li>
 							Envoyez le PDF de la contribution à votre adresse électronique
@@ -325,7 +325,7 @@
 							Ouvrir la contribution PDF
 						</li>
 						<li>
-							L'ID de la contribution sera affiché dans la partie supérieure gauche du PDF
+							«Numéro d'identification de la contribution» sera affiché dans la partie supérieure gauche du PDF
 						</li>
 					</ol>
 				</p>

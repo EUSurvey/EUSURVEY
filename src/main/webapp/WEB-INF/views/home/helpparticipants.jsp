@@ -260,19 +260,19 @@
 					In case you did not save the Contribution ID, please use the '<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>' form.
 				</p>
 				<h2>
-					What is my Contribution ID?
+					What is my contribution ID?
 				</h2>
 				<p>
 					Contribution ID is the individual number of your answer that is automatically generated. It is a unique identifier allowing the system to recognize your contribution.
 				</p>
 				<p>
-					Once your contribution is submitted, your contribution ID is displayed on the confirmation page. If you save the PDF or send it to your email address, you will see the contribution ID in the upper left side of the PDF Contribution.
+					Once your contribution is submitted, your contribution ID is displayed on the confirmation page. If you save the PDF or send it to your email address, you will see the contribution ID in the upper left side of the PDF contribution.
 				</p>
 				<p>
-					Your Contribution ID is useful in case you wish to contact the EUSurvey Support or the survey organizers.
+					Your contribution ID is useful in case you wish to contact the EUSurvey support or the survey organizers.
 				</p>
 				<h2>
-					Where can I find my Contribution ID?
+					Where can I find my contribution ID?
 				</h2>
 				<p>
 					It is displayed right after submission of your answers.
@@ -287,7 +287,7 @@
 							Send the contribution PDF to your email
 						</li>
 						<li>
-							Open PDF Contribution
+							Open PDF contribution
 						</li>
 						<li>
 							Contribution ID will be displayed on the left upper-side of PDF
@@ -316,7 +316,7 @@
 					My contribution was not submitted on time. What can I do?
 				</h2>
 				<p>
-					Please contact the survey organizers directly. If the survey organizers’ contact details is not available on the survey page, then please <a href="https://ec.europa.eu/eusurvey/home/support">contact</a> the EUSurvey Support Team.
+					Please contact the survey organizers directly. If the survey organizers’ contact details is not available on the survey page, then please <a href="https://ec.europa.eu/eusurvey/home/support">contact</a> the EUSurvey support team.
 				</p>
 
 				<h2>
