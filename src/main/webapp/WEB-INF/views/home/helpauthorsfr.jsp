@@ -1263,31 +1263,31 @@
 			<p>
 				Pour plus d'informations, consultez notre <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">guide des meilleures pratiques</a> et n'hésitez pas à contacter <a href="${contextpath}/home/support?assistance=1">l'équipe de support EUSurvey</a> pour obtenir de l'aide afin de revoir la conception de votre formulaire si nécessaire.
 			</p>
-			<h2>Quel est l'identifiant de la contribution?</h2>
+			<h2>Quel est «Numéro d'identification de la contribution»?</h2>
 			<p>
-				L'ID de contribution est un code utilisé comme identifiant unique pour une contribution effectuée.
+				«Numéro d'identification de la contribution» est un code utilisé comme identifiant unique pour une contribution effectuée.
 			</p>
 			<p>
-				Il peut être utilisé par les responsables d'enquêtes pour retrouver une contribution à partir de l'écran Résultats. Il peut également être utilisé par un participant au enquête pour soumettre sa contribution et y accéder ultérieurement.
+				Il peut être utilisé par les responsables d'enquêtes pour retrouver une contribution à partir de l'écran «Résultats». Il peut également être utilisé par un participant au enquête pour soumettre sa contribution et y accéder ultérieurement.
 			</p>
-			<h2>Comment puis-je trouver une contribution à partir des Résultats à l'aide d'un identifiant de contribution?</h2>
+			<h2>Comment puis-je trouver une contribution à partir des résultats à l'aide d'un «Numéro d'identification de la contribution»?</h2>
 			<p>
-				L'ID de contribution peut être utilisé par les propriétaires d’enquête pour trouver une contribution parmi tous les résultats :
+				«Numéro d'identification de la contribution» peut être utilisé par les propriétaires d’enquête pour trouver une contribution parmi tous les résultats :
 				<ol>
 					<li>
 						Ouvrez votre enquête
 					</li>
 					<li>
-						Allez dans l'onglet Résultats
+						Allez dans l'onglet «Résultats»
 					</li>
 					<li>
 						Cliquez sur le bouton «Paramètres»
 					</li>
 					<li>
-						Cochez «ID de contribution» dans les deux colonnes et appuyez sur OK
+						Cochez «Numéro d'identification de la contribution» dans les deux colonnes et appuyez sur «OK»
 					</li>
 					<li>
-						Aller au filtre Identifiant de contribution
+						Aller au filtre  «Numéro d'identification de la contribution»
 					</li>
 					<li>
 						Insérez l'ID de contribution et cliquez sur Entrer
@@ -1456,10 +1456,10 @@
 						Ouvrez votre enquête
 					</li>
 					<li>
-						Allez dans l'onglet Propriétés
+						Allez dans l'onglet «Propriétés»
 					</li>
 					<li>
-						Allez dans l'onglet Sécurité
+						Allez dans l'onglet «Sécurité»
 					</li>
 					<li>
 						Activez l'option «Permet aux participants d'imprimer leur contribution et de la recevoir au format PDF»
@@ -1480,13 +1480,13 @@
 						Ouvrez votre sondage
 					</li>
 					<li>
-						Allez dans l'onglet Propriétés
+						Allez dans l'onglet «Propriétés»
 					</li>
 					<li>
-						Allez dans l'onglet Sécurité
+						Allez dans l'onglet «Sécurité»
 					</li>
 					<li>
-						Activez l'option «Permet aux participants de modifier leur contribution»
+						Activez l'option «Permettre aux participants de modifier leur contribution»
 					</li>
 				</ol>
 				<img src="${contextpath}/resources/images/documentation/changecontributionFR.png" />

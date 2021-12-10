@@ -1225,19 +1225,19 @@
 				Weitere Informationen finden Sie in unserem <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">Leitfaden für bewährte Praktiken</a>, und zögern Sie nicht, sich an das <a href="${contextpath}/home/support?assistance=1">EUSurvey-Supportteam</a> zu wenden, um bei Bedarf Unterstützung bei der Neugestaltung Ihres Formulars zu erhalten.
 			</p>
 			<h2>
-				Was ist die Beitrags-ID?
+				Was ist die „Kennnummer des Beitrags“?
 			</h2>
 			<p>
-				Die Beitrags-ID ist ein Code, der als eindeutiger Bezeichner für einen Beitrag verwendet wird.
+				Die  „Kennnummer des Beitrags“ (Beitrags-ID) ist ein Code, der als eindeutiger Bezeichner für einen Beitrag verwendet wird.
 			</p>
 			<p>
-				Sie kann von Umfragemanagern verwendet werden, um einen Beitrag auf dem Ergebnisbildschirm wiederzufinden. Sie kann auch von einem Umfrageteilnehmer verwendet werden, um seinen Beitrag einzureichen und ihn später abzurufen.
+				Sie kann von Umfragemanagern verwendet werden, um einen Beitrag auf der Ergebnisseite wiederzufinden. Sie kann auch von einem Umfrageteilnehmer verwendet werden, um seinen Beitrag einzureichen und ihn später abzurufen.
 			</p>
 			<h2>
-				Wie kann ich einen Beitrag in den Ergebnissen anhand einer Beitrags-ID finden?
+				Wie kann ich einen Beitrag in den Ergebnissen mit Hilfe einer „Kennnummer des Beitrags“ finden?
 			</h2>
 			<p>
-				Die Beitrags-ID kann von den Eigentümern der Umfrage verwendet werden, um einen Beitrag unter allen Ergebnissen zu finden:
+				Die „Kennnummer des Beitrags“ (Beitrags-ID) kann von den Eigentümern der Umfrage verwendet werden, um einen Beitrag unter allen Ergebnissen zu finden:
 				<ol>
 					<li>
 						Öffnen Sie Ihre Umfrage
@@ -1249,13 +1249,13 @@
 						Klicken Sie auf die Schaltfläche „Einstellungen“
 					</li>
 					<li>
-						Kreuzen Sie „Kennnummer des Beitrags“ in beiden Spalten an und klicken Sie auf „OK“
+						Wählen Sie „Kennnummer des Beitrags“ in beiden Spalten aus
 					</li>
 					<li>
-						Gehen Sie zum Filter Kennnummer des Beitrags
+						Gehen Sie zum Filter „Kennnummer des Beitrags“
 					</li>
 					<li>
-						Geben Sie die Beitrags-ID ein und klicken Sie auf Enter
+						Geben Sie die Kennnummer ein und klicken Sie auf Enter
 					</li>
 				</ol>
 			</p>
@@ -1426,7 +1426,7 @@
 						Gehen Sie auf die Registerkarte „Sicherheit“
 					</li>
 					<li>
-						Aktivieren Sie die Option „Ermöglicht den Teilnehmern, ihren Beitrag zu drucken und als PDF zu erhalten“.
+						Aktivieren Sie die Option „Ermöglicht Teilnehmern, ihren Beitrag auszudrucken und als PDF-Datei zu erhalten“.
 					</li>
 				</ol>
 				<img src="${contextpath}/resources/images/documentation/printDE.png" />
@@ -1450,7 +1450,7 @@
 						Gehen Sie auf die Registerkarte „Sicherheit“
 					</li>
 					<li>
-						Aktivieren Sie die Option „Erlaubt Teilnehmern, ihren Beitrag zu ändern“
+						Aktivieren Sie die Option „Ermöglicht Teilnehmern, ihren Beitrag zu ändern“
 					</li>
 				</ol>
 			<img src="${contextpath}/resources/images/documentation/changecontributionDE.png" />

@@ -294,19 +294,19 @@
 				    .
 				</p>
 				<h2>
-					Was ist meine Beitrags-ID?
+					Was ist meine „Kennnummer des Beitrags“?
 				</h2>
 				<p>
-					Die Beitrags-ID ist die individuelle Nummer Ihrer Antwort, die automatisch generiert wird. Sie ist eine eindeutige Kennung, die es dem System ermöglicht, Ihren Beitrag zu erkennen.
+					Die „Kennnummer des Beitrags“ ist die individuelle Nummer Ihrer Antwort, die automatisch generiert wird. Sie ist eine eindeutige Kennung, die es dem System ermöglicht, Ihren Beitrag zu erkennen.
 				</p>
 				<p>
-					Sobald Ihr Beitrag übermittelt wurde, wird Ihre Beitrags-ID auf der Bestätigungsseite angezeigt. Wenn Sie die PDF-Datei speichern oder an Ihre E-Mail-Adresse senden, sehen Sie die Beitrags-ID oben links in der PDF-Datei.
+					Sobald Ihr Beitrag übermittelt wurde, wird Ihre Kennnummer auf der Bestätigungsseite angezeigt. Wenn Sie die PDF-Datei speichern oder an Ihre E-Mail-Adresse senden, sehen Sie die Kennnummer oben links in der PDF-Datei.
 				</p>
 				<p>
-					Ihre Beitrags-ID ist nützlich, falls Sie den EUSurvey-Support oder die Organisatoren der Umfrage kontaktieren möchten.
+					Ihre Kennnummer ist nützlich, falls Sie den EUSurvey-Support oder die Organisatoren der Umfrage kontaktieren möchten.
 				</p>
 				<h2>
-					Wo kann ich meine Beitrags-ID finden?
+					Wo kann ich meine „Kennnummer des Beitrags“ finden?
 				</h2>
 				<p>
 					Sie wird direkt nach dem Absenden Ihrer Antworten angezeigt.
@@ -315,16 +315,16 @@
 							Öffnen Sie Ihren Umfragelink und beantworten Sie die Umfrage
 						</li>
 						<li>
-							Nach der Beantwortung sehen Sie Ihre Beitrags-ID auf dem Bildschirm
+							Nach dem Absenden Ihres Beitrags wird die Kennnummer auf der Bestätigungsseite angezeigt.
 						</li>
 						<li>
 							Senden Sie die Beitrags-PDF-Datei an Ihre E-Mail
 						</li>
 						<li>
-							PDF-Beitrag öffnen
+							Öffnen Sie den PDF-Beitrag
 						</li>
 						<li>
-							Die Beitrags-ID wird auf der linken oberen Seite des PDFs angezeigt
+							Die Kennnummer wird auf der linken oberen Seite des PDF-Dokuments angezeigt
 						</li>
 					</ol>
 				</p>
@@ -351,10 +351,10 @@
 				    der Umfrage.
 				</p>
 				<h2>
-					Mein Beitrag wurde nicht innerhalb der angegeben Zeit eingereicht. Was kann ich tun?
+					Mein Beitrag wurde nicht fristgerecht eingereicht. Was kann ich tun?
 				</h2>
 				<p>
-					Bitte wenden Sie sich direkt an die Organisatoren der Umfrage. Wenn die Kontaktdaten der Umfrageorganisatoren nicht auf der Umfrageseite verfügbar sind, wenden Sie sich bitte an das  <a href="https://ec.europa.eu/eusurvey/home/support">EUSurvey Support Team</a>.
+					Bitte wenden Sie sich direkt an die Organisatoren der Umfrage. Wenn die Kontaktdaten der Umfrageorganisatoren nicht auf der Umfrageseite verfügbar sind, wenden Sie sich bitte an das  <a href="https://ec.europa.eu/eusurvey/home/support">EUSurvey Support-Team</a>.
 				</p>
 				<h2>
 				    Warum erscheint beim Öffnen der PDF Version meines Beitrags die
