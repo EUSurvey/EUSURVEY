@@ -996,7 +996,12 @@ function initModals(item)
 					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
 				}
 				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
-				self.commonImpl(element);
+				
+				if ($(element).hasClass("gallery")) {				
+					self.commonImpl(target);
+				} else {
+					self.commonImpl(element);
+				}
 			}
 	}
 	
@@ -1432,7 +1437,6 @@ function initModals(item)
 								{
 									addValidationError.afterElementAndFocus(this, $(this).parent().find(".ui-datepicker-trigger").first(), valuetoosmall);
 								} else {
-									$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");			
 									addValidationError.afterElementAndFocus(this, $(this).parent(), valuetoosmall);
 								}
 					 			result = false;
