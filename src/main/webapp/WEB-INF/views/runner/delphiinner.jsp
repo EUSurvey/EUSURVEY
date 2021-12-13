@@ -519,7 +519,7 @@
 
 				el.innerText = answer;
 
-				if (el.innerText > 25) {
+				if (el.innerText.length > 25) {
 
 					el.setAttribute("data-toggle", "tooltip");
 					el.setAttribute("title", answer);
