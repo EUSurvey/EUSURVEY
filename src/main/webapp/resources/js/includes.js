@@ -837,12 +837,23 @@ function initModals(item)
 			$("#page" + page).show();
 			checkPages();
 		}
-		
+
+		let validError = $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first()
+
 		$('html, body').animate({
-	         scrollTop: $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().parent().offset().top - 200
+	         scrollTop: validError.parent().offset().top - 200
 	     }, 2000);
 
-		 $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().focus();
+		let focusElement = $(`[aria-describedby='${validError.attr("id")}']`)
+		if (focusElement.length <= 0){
+			let dataId = validError.closest("[data-id]")
+			focusElement = validError.closest("#answer" + dataId.attr("data-id"))
+		}
+		if (focusElement.length <= 0){
+			focusElement = validError.closest(":focusable")
+		}
+
+		focusElement.focus()
 	}
 	
 	var validationinfo = "";
