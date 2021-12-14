@@ -251,8 +251,28 @@ public class DelphiController extends BasicController {
 			Statistics statistics = new Statistics();
 			statistics.setSurveyId(survey.getId());
 
+			ResultFilter filter = null;
+			
+			if (resultsview) {
+				if (user != null) {
+					filter = sessionService.getLastResultFilter(request, user.getId(), survey.getId());
+				}				
+				
+				if (survey.getDedicatedResultPrivileges()) {
+					ResultAccess resultAccess = surveyService.getResultAccess(survey.getUniqueId(), user.getId());
+					if (resultAccess != null && resultAccess.getResultFilter() != null) {
+						
+						if (filter == null) {
+							filter = new ResultFilter();
+						}
+						
+						filter.mergeResultAccess(resultAccess, survey);										
+					}
+				}
+			}
+			
 			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
-			creator.init(survey, null, false);
+			creator.init(survey, filter, false);
 
 			if (question instanceof NumberQuestion) {
 				NumberQuestion numq = (NumberQuestion) question;
