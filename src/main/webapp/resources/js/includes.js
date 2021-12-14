@@ -845,6 +845,11 @@ function initModals(item)
 	     }, 2000);
 
 		let focusElement = $(`[aria-describedby='${validError.attr("id")}']`)
+		
+		if (focusElement.length > 0 && focusElement.is("div,table")) {
+			focusElement = focusElement.find('input, textarea, select').first();
+		}
+		
 		if (focusElement.length <= 0){
 			let dataId = validError.closest("[data-id]")
 			focusElement = validError.closest("#answer" + dataId.attr("data-id"))
