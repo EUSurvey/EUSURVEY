@@ -7,7 +7,7 @@ public class DelphiTableAnswer {
     private final String value;
 
     public DelphiTableAnswer(String question, String value) {
-        this.question = question;
+        this.question = ConversionTools.removeHTML(question);
         this.value = ConversionTools.removeHTML(value);
     }
 

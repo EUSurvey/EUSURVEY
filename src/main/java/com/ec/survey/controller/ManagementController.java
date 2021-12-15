@@ -3748,7 +3748,7 @@ public class ManagementController extends BasicController {
 					for (String uid : median.getMedianUids()) {
 						PossibleAnswer pa = singleChoiceQuestion.getPossibleAnswerByUniqueId(uid);
 						if (pa != null) {
-							values.add(pa.getTitle());
+							values.add(pa.getStrippedTitle());
 						}
 					}
 					if (!values.isEmpty()) {
