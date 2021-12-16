@@ -3432,6 +3432,10 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			}
 			
+			if (draftSurvey.getRegistrationForm() != publishedSurvey.getRegistrationForm()) {
+				hasPendingChanges = true;
+			}
+			
 			if (!hasPendingChanges)
 				for (String key : draftSurvey.getUsefulLinks().keySet()) {
 					if (!publishedSurvey.getUsefulLinks().containsKey(key)
