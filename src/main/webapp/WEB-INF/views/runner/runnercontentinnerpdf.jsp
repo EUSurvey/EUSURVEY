@@ -568,7 +568,7 @@
 									</c:when>
 									<c:otherwise>
 										<div class="answer-column">													
-											<ul class="${element.css} multiple-choice" <c:if test="${forpdf != null}">style="max-height: none"</c:if>>
+											<ul class="${element.css} multiple-choice" style="max-height: none;">
 												<c:forEach items="${element.orderedPossibleAnswers}" var="possibleanswer">															
 													<c:choose>
 														<c:when test="${form.getValues(element).contains(possibleanswer.id.toString()) || form.getValues(element).contains(possibleanswer.uniqueId)}">
@@ -591,6 +591,7 @@
 												</c:forEach>	
 											</ul>			
 										</div>
+										<div style="clear: both"></div>
 									</c:otherwise>
 								</c:choose>
 							</div>
@@ -610,6 +611,7 @@
 											</c:forEach>			
 										</div>
 									</div>
+									<div style="clear: both"></div>
 								</c:when>
 								<c:otherwise>
 									<div class="answer-columns">
