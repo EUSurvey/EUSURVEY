@@ -2086,7 +2086,8 @@ public class ManagementController extends BasicController {
 				publishedSurvey.setNotificationUnit(survey.getNotificationUnit());
 				publishedSurvey.setNotifyAll(survey.getNotifyAll());
 				publishedSurvey.setRegistrationForm(survey.getRegistrationForm());
-
+				publishedSurvey.setAllowQuestionnaireDownload(survey.getAllowQuestionnaireDownload());
+				
 				publishedSurvey.getPublication().setPassword(survey.getPublication().getPassword());
 
 				publishedSurvey.getPublication().setShowContent(survey.getPublication().isShowContent());
@@ -2097,7 +2098,7 @@ public class ManagementController extends BasicController {
 				publishedSurvey.getPublication().setAllContributions(survey.getPublication().isAllContributions());
 				publishedSurvey.getPublication()
 						.setShowUploadedDocuments(survey.getPublication().getShowUploadedDocuments());
-
+				
 				publishedSurvey.getPublication().getFilter().getVisibleQuestions().clear();
 				publishedSurvey.getPublication().getFilter().getFilterValues().clear();
 

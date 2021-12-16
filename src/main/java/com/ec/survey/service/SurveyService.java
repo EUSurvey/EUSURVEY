@@ -3428,6 +3428,10 @@ public class SurveyService extends BasicService {
 			if (draftSurvey.getDedicatedResultPrivileges() != publishedSurvey.getDedicatedResultPrivileges())
 				hasPendingChanges = true;
 
+			if (draftSurvey.getAllowQuestionnaireDownload() != publishedSurvey.getAllowQuestionnaireDownload()) {
+				hasPendingChanges = true;
+			}
+			
 			if (!hasPendingChanges)
 				for (String key : draftSurvey.getUsefulLinks().keySet()) {
 					if (!publishedSurvey.getUsefulLinks().containsKey(key)
