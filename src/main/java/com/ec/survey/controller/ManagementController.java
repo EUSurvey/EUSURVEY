@@ -2067,6 +2067,7 @@ public class ManagementController extends BasicController {
 				publishedSurvey.setSaveAsDraft(survey.getSaveAsDraft());
 				publishedSurvey.setDownloadContribution(survey.getDownloadContribution());
 				publishedSurvey.setPassword(survey.getPassword());
+				publishedSurvey.setDedicatedResultPrivileges(survey.getDedicatedResultPrivileges());
 
 				publishedSurvey.setMaxNumberContribution(survey.getMaxNumberContribution());
 				publishedSurvey.setMaxNumberContributionLink(survey.getMaxNumberContributionLink());
@@ -2960,25 +2961,8 @@ public class ManagementController extends BasicController {
 		
 		if (user != null && user.getResultAccess() != null &&  user.getResultAccess().getResultFilter() != null)
 		{
-			filter.getReadOnlyFilterQuestions().clear();
-			for (String questionUID : user.getResultAccess().getResultFilter().getFilterValues().keySet()) {
-				Element question = survey.getQuestionMapByUniqueId().get(questionUID);
-				if (question != null) {
-					String key = question.getId() + "|" + questionUID;
-					
-					String value = user.getResultAccess().getResultFilter().getFilterValues().get(questionUID);
-					
-					if (question instanceof ChoiceQuestion) {
-						PossibleAnswer answer = ((ChoiceQuestion)question).getPossibleAnswerByUniqueId(value);
-						if (answer != null) {
-							value = answer.getId() + "|" + value;
-						}
-					}
-					
-					filter.getFilterValues().put(key, value);
-					filter.getReadOnlyFilterQuestions().add(questionUID);
-				}
-			}
+			filter.getReadOnlyFilterQuestions().clear();			
+			filter.mergeResultAccess(user.getResultAccess(), survey);
 		}
 
 		if (request != null) {
