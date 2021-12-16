@@ -98,7 +98,7 @@ public class FileExportCreator implements Runnable {
 					java.io.File source = new java.io.File(path);
 					if (source.exists()) {
 						FileResult fileresult = fileService.getFileResult(source.toPath(), null,
-								new java.io.File(archiveDir).toPath());
+								new java.io.File(archiveDir).toPath(), null);
 
 						os.putArchiveEntry(new ZipArchiveEntry(getFileName(source, fileresult)));
 						IOUtils.copy(new FileInputStream(source), os);

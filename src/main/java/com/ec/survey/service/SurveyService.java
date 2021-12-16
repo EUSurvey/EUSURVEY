@@ -4364,8 +4364,9 @@ public class SurveyService extends BasicService {
 			}
 		} else {
 			sqlquery = session.createSQLQuery(
-					"SELECT e.type, s.SURVEY_UID, s.SURVEYNAME FROM ELEMENTS e JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e.ID JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE URL = :url");
+					"SELECT e.type, s.SURVEY_UID, s.SURVEYNAME FROM ELEMENTS e JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e.ID JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE s.SURVEY_UID = :uid AND URL = :url");
 			sqlquery.setString("url", contextpath + "/files/" + surveyuid + Constants.PATH_DELIMITER + file.getUid());
+			sqlquery.setString("uid", surveyuid);
 			data = sqlquery.setMaxResults(1).list();
 			if (!data.isEmpty()) {
 				Object[] values = (Object[]) data.get(0);
@@ -4386,14 +4387,11 @@ public class SurveyService extends BasicService {
 		data = sqlquery.setMaxResults(1).list();
 		if (!data.isEmpty()) {
 			Object[] values = (Object[]) data.get(0);
-			if (values[0].toString().equalsIgnoreCase("IMAGE"))
-			{
-				String[] result = new String[3];
-				result[0] = values[0].toString();
-				result[1] = values[1].toString();
-				result[2] = "background document";
-				return result;
-			}
+			String[] result = new String[3];
+			result[0] = values[0].toString();
+			result[1] = values[1].toString();
+			result[2] = "background document";
+			return result;
 		}
 
 		return null;
