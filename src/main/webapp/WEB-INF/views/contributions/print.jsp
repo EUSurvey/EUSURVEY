@@ -603,6 +603,7 @@
 							</c:otherwise>
 						</c:choose>
 					</div>
+					<div style="clear: both"></div>
 				</c:if>
 				
 				<c:if test="${element.getType() == 'RankingQuestion'}">
