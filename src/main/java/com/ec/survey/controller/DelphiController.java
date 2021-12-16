@@ -230,7 +230,7 @@ public class DelphiController extends BasicController {
 
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
-			if (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
+			if (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -243,7 +243,7 @@ public class DelphiController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly()
+			if (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly()
 					&& !answerSetContainsAnswerForQuestion(answerSet, question)) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
