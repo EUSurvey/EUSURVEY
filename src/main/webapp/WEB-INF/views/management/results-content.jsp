@@ -1277,6 +1277,8 @@ var closeOverlayDivsEnabled = false;
 													var div = document.createElement("div");
 													$(div).addClass("answercell");															
 													$(div).append(list[i++]);
+													$(div).find(".hideme").remove();
+						  							div.innerText = div.innerText + " "
 													$(td).append(div);
 													$(tr).append(td);
 												

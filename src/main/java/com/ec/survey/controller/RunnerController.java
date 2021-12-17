@@ -1746,7 +1746,8 @@ public class RunnerController extends BasicController {
 					if (survey.getPassword() != null && survey.getPassword().trim().length() > 0
 							&& survey.getPassword().equals(password)) {
 						// authenticated
-						return loadSurvey(survey, request, locale, uidorshortname, true, false);
+						loadSurvey(survey, request, locale, uidorshortname, true, false);
+						return new ModelAndView("redirect:/runner/" + uidorshortname + "?" + request.getQueryString());
 					}
 
 					// check for token

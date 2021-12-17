@@ -1600,6 +1600,11 @@ function addColumn(noundo)
 		{
 			element.dependentElementsStrings.splice(i,0,ko.observable(""));
 		}  
+		
+		if(element.isInterdependent())
+		{
+			checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+		}
 	}
 	
 	if (!noundo)
@@ -1627,7 +1632,12 @@ function removeColumn(noundo)
 		for (var i = element.questionsOrdered().length * (element.answers().length + 1)  - 1; i >= 0; i-=(element.answers().length+1))
 		{
 			element.dependentElementsStrings.splice(i,1);
-		}  
+		} 
+		
+		if(element.isInterdependent())
+		{
+			checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+		}
 	}
 	
 	if (!noundo)
@@ -1653,6 +1663,11 @@ function addRow(noundo)
 				allmandatory = false;
 				break;
 			}
+		}
+		
+		if(element.isInterdependent())
+		{
+			checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
 		}
 	} else if (element.type == "RatingQuestion")
 	{
@@ -1721,6 +1736,11 @@ function removeRow(noundo)
 			{
 				element.dependentElementsStrings.splice(i,1);
 			}  
+			
+			if(element.isInterdependent())
+			{
+				checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+			}
 		}
 	} else if (element.type == "RatingQuestion")
 	{

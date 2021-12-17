@@ -837,12 +837,28 @@ function initModals(item)
 			$("#page" + page).show();
 			checkPages();
 		}
-		
+
+		let validError = $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first()
+
 		$('html, body').animate({
-	         scrollTop: $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().parent().offset().top - 200
+	         scrollTop: validError.parent().offset().top - 200
 	     }, 2000);
 
-		 $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().focus();
+		let focusElement = $(`[aria-describedby='${validError.attr("id")}']`)
+		
+		if (focusElement.length > 0 && focusElement.is("div,table")) {
+			focusElement = focusElement.find('input, textarea, select').first();
+		}
+		
+		if (focusElement.length <= 0){
+			let dataId = validError.closest("[data-id]")
+			focusElement = validError.closest("#answer" + dataId.attr("data-id"))
+		}
+		if (focusElement.length <= 0){
+			focusElement = validError.closest(":focusable")
+		}
+
+		focusElement.focus()
 	}
 	
 	var validationinfo = "";
@@ -933,6 +949,9 @@ function initModals(item)
 		if (sessiontimeout)
 		{
 			showSessionError();
+			window.setTimeout(() => {
+				window.location.replace(window.location);
+			}, 2000)
 		} else if (networkproblems) {
 			$("#networkproblemsdialog").modal('show');
 		} else if (errorhappened)
@@ -964,29 +983,41 @@ function initModals(item)
 				$(element).attr("aria-invalid", "true");
 				$(element).attr("aria-describedby", "validationError" + self.validationErrorCounter++);
 			},
-			andFocusWhen : function(element, text, isFocusChanging) {
+			andFocusWhen : function(element, text) {
 				const self = addValidationError;
-				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
-				self.commonImpl(element);
-				if (isFocusChanging) {
-					$(element).next(".validation-error").first().focus();
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
 				}
+				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
+				self.commonImpl(element);
 			},
 			andFocus : function(element, text) {
 				const self = addValidationError;
-				self.andFocusWhen(element, text, true);
+				self.andFocusWhen(element, text);
 			},
 			toElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+				}
+				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
 				self.commonImpl(element);
-				$(target).find(".validation-error").first().focus();
 			},
 			afterElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
-				self.commonImpl(element);
-				$(target).next(".validation-error").first().focus();
+				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
+				if (label.length){
+					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+				}
+				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
+				
+				if ($(element).hasClass("gallery")) {				
+					self.commonImpl(target);
+				} else {
+					self.commonImpl(element);
+				}
 			}
 	}
 	
@@ -1303,8 +1334,7 @@ function initModals(item)
 				if (value != second)
 				{
 					validationinfo += $(this).attr("name") + " (COMP) ";
-					const useFocusChange = typeof viewModel != 'undefined' ? viewModel.values.checkAnyChangesOnValidation() : false;
-					addValidationError.andFocusWhen($(this).parent().find(".comparable-second"), nomatchText, useFocusChange);
+					addValidationError.andFocusWhen($(this).parent().find(".comparable-second"), nomatchText);
 					result = false;
 				};
 			}
@@ -1423,7 +1453,6 @@ function initModals(item)
 								{
 									addValidationError.afterElementAndFocus(this, $(this).parent().find(".ui-datepicker-trigger").first(), valuetoosmall);
 								} else {
-									$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");			
 									addValidationError.afterElementAndFocus(this, $(this).parent(), valuetoosmall);
 								}
 					 			result = false;
@@ -1922,8 +1951,7 @@ function initModals(item)
 				otherId = otherId.substring(0, otherId.length - 1);
 				var other = $("textarea[data-id='" + otherId + "']");
 				if ($(other).val().trim().length > 0) {
-					const useFocusChange = viewModel.values.checkAnyChangesOnValidation();
-					addValidationError.andFocusWhen($(element), nomatchText, useFocusChange);
+					addValidationError.andFocusWhen($(element), nomatchText);
 				}
 			} else {
 				const div = $(element).closest(".survey-element");

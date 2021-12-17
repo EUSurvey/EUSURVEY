@@ -35,15 +35,19 @@
 					    <c:choose>
 							<c:when test="${form != null}">
 								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="${form.getMessage("info.entertext")}" style="width: 260px">								 
+						
+								<a title='${form.getMessage("label.ReloadCaptcha")}' data-toggle="tooltip" href="javascript:;" class="btn btn-primary btn-sm" id="captchaReload"><span class="glyphicon glyphicon-refresh"></span></a>
+						
 							</c:when>
 							<c:otherwise>
 								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="<spring:message code="info.entertext" />" style="width: 260px">								
+							
+								<a title='<spring:message code="label.ReloadCaptcha" />' href="javascript:;" class="btn btn-primary btn-sm" id="captchaReload"><span class="glyphicon glyphicon-refresh"></span></a>
+							
 							</c:otherwise>
 						</c:choose>					
 					    
-					    <a class="btn btn-primary btn-sm" id="captchaReload"><span class="glyphicon glyphicon-refresh"></span></a>
-					
-					    <!-- <a class="btn btn-primary btn-lg " id="captchaSubmit"> Check </a> -->
+			
 					
 					</div>
 				</c:when>

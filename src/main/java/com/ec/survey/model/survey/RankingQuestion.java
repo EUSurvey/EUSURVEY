@@ -20,6 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.owasp.esapi.errors.ValidationException;
+import static org.springframework.web.util.HtmlUtils.htmlUnescape;
 
 import com.ec.survey.tools.Tools;
 
@@ -138,7 +139,7 @@ public class RankingQuestion extends Question {
 			RankingItem child = children.get(uniqueId);
 
 			if (null != child) {
-				rankingAnswerList.add(child.getStrippedTitleNoEscape());
+				rankingAnswerList.add(htmlUnescape(child.getStrippedTitleNoEscape()));
 			}
 		}
 		return rankingAnswerList;

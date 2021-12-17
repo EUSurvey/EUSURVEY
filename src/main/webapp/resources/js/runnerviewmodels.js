@@ -986,13 +986,6 @@ function newFreeTextViewModel(element)
 		}
 	};
 
-	viewModel.values.checkAnyChangesOnValidation = function() {
-		const hasChanged = viewModel.values.first.hasChangedOnValidation() || viewModel.values.second.hasChangedOnValidation();
-		viewModel.values.first.hasChangedOnValidation(false);
-		viewModel.values.second.hasChangedOnValidation(false);
-		return hasChanged;
-	};
-
 	return viewModel;
 }
 
@@ -1520,7 +1513,7 @@ function shuffle(array) {
 function sortByColumn(answers, columns)
 {	
 	var counter = answers.length;
-	if (columns == 1) return answers;
+	if (columns <= 1) return answers;
 	var rows = Math.ceil( answers.length / columns, 10);
 	
 	var answersByColumn = [];

@@ -2,11 +2,9 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-	<c:if test="${!readOnlyResultPrivileges}">
-		<div style="text-align: center; margin-top: 20px;">
-			<a class="btn btn-default" onclick="showAddUserDialog(true)"><spring:message code="label.AddUser" /></a>
-		</div>
-	</c:if>
+	<div style="text-align: center; margin-top: 20px;">
+		<a class="btn btn-default" onclick="showAddUserDialog(true)"><spring:message code="label.AddUser" /></a>
+	</div>
 	
 	<table id="tblResultPrivileges" class="table table-bordered table-striped table-styled" style="margin-left: auto; margin-right: auto; margin-top: 20px; width: 700px;">
 	
@@ -14,18 +12,18 @@
 			<tr style="text-align: center;">
 				<th style="vertical-align: middle;"><spring:message code="label.User" /></th>
 				<th style="vertical-align: middle;"><spring:message code="label.ResultFilter" /></th>
-				<th style="vertical-align: middle;"><spring:message code="label.Access" /></th>
-				<c:if test="${!readOnlyResultPrivileges}">						
-					<th style="width: 10%"><spring:message code="label.Actions" /></th>
-				</c:if>
+				<c:if test="${!readOnlyResultPrivileges}">
+					<th style="vertical-align: middle;"><spring:message code="label.Access" /></th>
+				</c:if>	
+				<th style="width: 10%"><spring:message code="label.Actions" /></th>
 			</tr>
 			<tr>
 				<th><input placeholder="<spring:message code="label.Filter" />" class="form-control" id="resacc-user-name" /></th>
 				<th></th>
-				<th></th>
 				<c:if test="${!readOnlyResultPrivileges}">
 					<th></th>
 				</c:if>
+				<th></th>
 			</tr>
 		</thead>
 		
@@ -78,20 +76,15 @@
 						<td>
 							<c:choose>
 								<c:when test="${!entry.getValue().isEmpty()}">
-									<select id="${entry.getKey().uniqueId}" name="${entry.getKey().uniqueId}" class="form-control" style="max-width: 400px">
-										<option vlaue=""></option>
-									
+									<div id="${entry.getKey().uniqueId}">
 										<c:forEach items="${entry.getValue()}" var="child">
-										
-											<option value="${child.uniqueId}">${child.getStrippedTitleAtMost100()}</option>
-										
+											<input name="${entry.getKey().uniqueId}" type="checkbox" style="margin: 5px; vertical-align: middle; margin-bottom: 7px;" value="${child.uniqueId}" /> ${child.getStrippedTitleAtMost100()} <br />
 										</c:forEach>
-									
-									
-									</select>
+									</div>
 								</c:when>
 								<c:otherwise>
-									<input id="${entry.getKey().uniqueId}" name="${entry.getKey().uniqueId}" type="text" class="form-control" style="width: 400px" />							
+									<input id="${entry.getKey().uniqueId}" name="${entry.getKey().uniqueId}" type="text" class="form-control" style="width: 400px" />
+									<div class="help"><spring:message code="info.separateValuesBySemikolon"/></div>							
 								</c:otherwise>
 							</c:choose>
 						</td>					
@@ -111,3 +104,14 @@
 		</div>
 		</div>
 	</div>
+	
+	<script>
+		<c:choose>
+			<c:when test="${readOnlyResultPrivileges}">
+				var readOnlyResultPrivileges = true;
+			</c:when>
+			<c:otherwise>
+				var readOnlyResultPrivileges = false;
+			</c:otherwise>
+		</c:choose>
+	</script>

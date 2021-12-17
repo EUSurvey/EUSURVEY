@@ -1224,6 +1224,41 @@
 			<p>
 				Weitere Informationen finden Sie in unserem <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">Leitfaden für bewährte Praktiken</a>, und zögern Sie nicht, sich an das <a href="${contextpath}/home/support?assistance=1">EUSurvey-Supportteam</a> zu wenden, um bei Bedarf Unterstützung bei der Neugestaltung Ihres Formulars zu erhalten.
 			</p>
+			<h2>
+				Was ist die „Kennnummer des Beitrags“?
+			</h2>
+			<p>
+				Die  „Kennnummer des Beitrags“ (Beitrags-ID) ist ein Code, der als eindeutiger Bezeichner für einen Beitrag verwendet wird.
+			</p>
+			<p>
+				Sie kann von Umfragemanagern verwendet werden, um einen Beitrag auf der Ergebnisseite wiederzufinden. Sie kann auch von einem Umfrageteilnehmer verwendet werden, um seinen Beitrag einzureichen und ihn später abzurufen.
+			</p>
+			<h2>
+				Wie kann ich einen Beitrag in den Ergebnissen mit Hilfe einer „Kennnummer des Beitrags“ finden?
+			</h2>
+			<p>
+				Die „Kennnummer des Beitrags“ (Beitrags-ID) kann von den Eigentümern der Umfrage verwendet werden, um einen Beitrag unter allen Ergebnissen zu finden:
+				<ol>
+					<li>
+						Öffnen Sie Ihre Umfrage
+					</li>
+					<li>
+						Gehen Sie zur Registerkarte „Ergebnisse“
+					</li>
+					<li>
+						Klicken Sie auf die Schaltfläche „Einstellungen“
+					</li>
+					<li>
+						Wählen Sie „Kennnummer des Beitrags“ in beiden Spalten aus
+					</li>
+					<li>
+						Gehen Sie zum Filter „Kennnummer des Beitrags“
+					</li>
+					<li>
+						Geben Sie die Kennnummer ein und klicken Sie auf Enter
+					</li>
+				</ol>
+			</p>
 			<h2>Randomisierungsfunktion</h2>
 			<p>
 				Wenn Sie einen <strong>Abschnitt</strong> der ersten Stufe verwenden, haben Sie die Möglichkeit, die darunter liegenden Fragen/Elemente in ihrer ursprünglichen Reihenfolge zu belassen oder ihre Position zu randomisieren. Die Zufallsanordnung kann in den Abschnittseigenschaften direkt neben "Ordnen nach" ausgewählt werden.
@@ -1371,6 +1406,54 @@
 			</p>
 			<p>
 				Bitte beachten Sie, dass der Link "Beitrag bearbeiten" auf der EUSurvey-Startseite zu finden ist: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
+			</p>
+			<h2>
+				Wie kann ich den Teilnehmern erlauben, ihren Beitrag auszudrucken oder herunterzuladen?
+			</h2>
+			<p>
+				Wenn diese Funktion aktiviert ist, können die Teilnehmer ihre Antworten im PDF-Format speichern.
+			</p>
+			<p>
+				Um diese Funktion zu aktivieren, folgen Sie den nachstehenden Schritten:
+				<ol>
+					<li>
+						Öffnen Sie Ihre Umfrage
+					</li>
+					<li>
+						Gehen Sie auf die Registerkarte „Eigenschaften“
+					</li>
+					<li>
+						Gehen Sie auf die Registerkarte „Sicherheit“
+					</li>
+					<li>
+						Aktivieren Sie die Option „Ermöglicht Teilnehmern, ihren Beitrag auszudrucken und als PDF-Datei zu erhalten“.
+					</li>
+				</ol>
+				<img src="${contextpath}/resources/images/documentation/printDE.png" />
+			</p>
+			<h2>
+				Wie kann ich den Teilnehmern erlauben, ihren Beitrag zu ändern (zu bearbeiten)?
+			</h2>
+			<p>
+				Wenn diese Funktion aktiviert ist, können die Teilnehmer ihre Antworten nach dem Absenden ändern/bearbeiten.
+			</p>
+			<p>
+				So aktivieren Sie diese Funktion:
+				<ol>
+					<li>
+						Öffnen Sie Ihre Umfrage
+					</li>
+					<li>
+						Gehen Sie auf die Registerkarte „Eigenschaften“
+					</li>
+					<li>
+						Gehen Sie auf die Registerkarte „Sicherheit“
+					</li>
+					<li>
+						Aktivieren Sie die Option „Ermöglicht Teilnehmern, ihren Beitrag zu ändern“
+					</li>
+				</ol>
+			<img src="${contextpath}/resources/images/documentation/changecontributionDE.png" />
 			</p>
 			<h1>
 				Umfrage testen

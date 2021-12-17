@@ -102,6 +102,10 @@ public class PDFController extends BasicController {
 				throw new InvalidURLException();
 			}
 
+			if (!survey.getShowPDFOnUnavailabilityPage() && !survey.getAllowQuestionnaireDownload()){
+				throw new ForbiddenURLException();
+			}
+
 			if (!survey.getIsDraft()) {
 				// check if survey is published and user has access
 				Survey draft = surveyService.getSurveyByUniqueId(survey.getUniqueId(), false, true);

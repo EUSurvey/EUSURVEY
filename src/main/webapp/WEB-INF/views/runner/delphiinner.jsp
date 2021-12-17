@@ -179,7 +179,7 @@
 						
 						<c:choose>
 							<c:when test="${form.survey.contact.startsWith('form:')}">
-								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" aria-label="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.ContactForm")}</a>
+								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.ContactForm")}</a>
 							</c:when>
 							<c:when test="${form.survey.contact.contains('@')}">
 								<i class="icon icon-envelope" style="vertical-align: middle"></i>
@@ -261,7 +261,7 @@
 								<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
 								<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
 							</div>
-							<span data-bind="html: title"></span>
+							<span data-bind="text: sectionViewModel.noFormatSection(title)"></span>
 						</div>
 	
 						<div class="sectioncontent">
@@ -487,35 +487,46 @@
 		    
 		    niceTitle: function(title)
 			{
-		    	if (title.length < 80) {
-		    		return title;
-		    	}
 
 		    	let el = document.createElement("span");
-		    	el.setAttribute("data-toggle", "tooltip");
-		    	el.setAttribute("data-html", "true");
-		    	el.setAttribute("title", title);
-		    	el.setAttribute("aria-label", title);
-		    	el.innerHTML = title;
-		    	el.innerText = el.innerText.substring(0, 75) + "...";
-				//.substring performed like this so there is no cut within an escaped character
-				//an '&amp;' could start at char 73
+				el.innerHTML = title;
+
+				if (el.innerText.length >= 80) {
+					el.setAttribute("data-toggle", "tooltip");
+					el.setAttribute("title", el.innerText);
+					el.setAttribute("aria-label", el.innerText);
+
+					el.innerText = el.innerText.substring(0, 75) + "...";
+					//.substring performed like this so there is no cut within an escaped character
+					//an '&amp;' could start at char 73
+				} else {
+					el.innerText = el.innerText + " " //This removes formatting
+				}
 		    	
 				return el.outerHTML;
+			},
+
+			noFormatSection: function(section){
+				let el = document.createElement("span");
+				el.innerHTML = section;
+				return el.innerText
 			},
 			
 			niceAnswer: function(answer)
 			{
-		    	if (answer.length < 25) {
-		    		return answer;
-		    	}
 
 				let el = document.createElement("span");
-				el.setAttribute("data-toggle", "tooltip");
-				el.setAttribute("title", answer);
-				el.setAttribute("aria-label", answer);
-				el.innerHTML = answer;
-				el.innerText = el.innerText.substring(0, 20) + "...";
+
+				el.innerText = answer;
+
+				if (el.innerText.length > 25) {
+
+					el.setAttribute("data-toggle", "tooltip");
+					el.setAttribute("title", answer);
+					el.setAttribute("aria-label", answer);
+
+					el.innerText = el.innerText.substring(0, 20) + "...";
+				}
 		    	
 				return  el.outerHTML;
 			}

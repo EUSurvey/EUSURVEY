@@ -449,6 +449,7 @@ td.table-header {
 	color: #333;
 	width: 100px;
 	max-width: 100px;
+	word-break: break-word;
 }
 
 .rightaligned {

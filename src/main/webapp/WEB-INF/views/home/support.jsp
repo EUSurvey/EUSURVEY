@@ -229,26 +229,29 @@
 						<c:choose>
 							<c:when test="${fromerrorpage != null}">
 								<option><spring:message code="support.GeneralQuestion" /></option>
+								<option id="erroroption" selected="selected"><spring:message code="support.TechnicalProblem" /></option>
 								<option><spring:message code="support.idea" /></option>
-								<option id="erroroption" selected="selected"><spring:message code="support.problem" /></option>
-								<option><spring:message code="support.GDPR" /></option>
 								<option><spring:message code="support.assistance" /></option>
+								<option><spring:message code="support.Accessibility" /></option>
+								<option><spring:message code="support.DataProtection" /></option>
 								<option><spring:message code="support.otherreason" /></option>
 							</c:when>
 							<c:when test="${needassistance != null}">
 								<option><spring:message code="support.GeneralQuestion" /></option>
+								<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
 								<option><spring:message code="support.idea" /></option>
-								<option id="erroroption"><spring:message code="support.problem" /></option>
-								<option><spring:message code="support.GDPR" /></option>
 								<option selected="selected"><spring:message code="support.assistance" /></option>
+								<option><spring:message code="support.Accessibility" /></option>
+								<option><spring:message code="support.DataProtection" /></option>
 								<option><spring:message code="support.otherreason" /></option>
 							</c:when>
 							<c:otherwise>
 								<option selected="selected"><spring:message code="support.GeneralQuestion" /></option>
+								<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
 								<option><spring:message code="support.idea" /></option>
-								<option id="erroroption"><spring:message code="support.problem" /></option>
-								<option><spring:message code="support.GDPR" /></option>
 								<option><spring:message code="support.assistance" /></option>
+								<option><spring:message code="support.Accessibility" /></option>
+								<option><spring:message code="support.DataProtection" /></option>
 								<option><spring:message code="support.otherreason" /></option>
 							</c:otherwise>				
 						</c:choose>
