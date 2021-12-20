@@ -2193,7 +2193,11 @@ public class AnswerService extends BasicService {
 		} else if (mode.equalsIgnoreCase("test")) {
 			url = serverPrefix + survey.getShortname() + "/management/test?draftid=" + draftid;
 		} else if (mode.equalsIgnoreCase("runner")) {
-			url = serverPrefix + "runner/" + survey.getUniqueId() + "?draftid=" + draftid;
+			if (survey.getEcasSecurity() && user != null) {
+				url = serverPrefix + "runner/" + survey.getUniqueId();
+			} else {
+				url = serverPrefix + "runner/" + survey.getUniqueId() + "?draftid=" + draftid;
+			}
 		}
 		return url;
 	}

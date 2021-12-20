@@ -1730,7 +1730,6 @@ public class RunnerController extends BasicController {
 			HttpServletResponse response, Locale locale, Model modelMap, Device device) {
 		boolean hibernateOptimisticLockingFailureExceptionCatched = false;
 		String email = null;
-		String draftid = request.getParameter("draftid");
 
 		try {
 
@@ -1747,18 +1746,8 @@ public class RunnerController extends BasicController {
 					if (survey.getPassword() != null && survey.getPassword().trim().length() > 0
 							&& survey.getPassword().equals(password)) {
 						// authenticated
-						// do not remove the following line
 						loadSurvey(survey, request, locale, uidorshortname, true, false);
-												
-						String parameters = request.getQueryString();
-						if (draftid != null && draftid.length() > 0) {
-							if (parameters != null && parameters.length() > 0 && !parameters.contains("draftid")) {
-								parameters += "&draftid=" + draftid;
-							} else {
-								parameters = "draftid=" + draftid;
-							}
-						}
-						return new ModelAndView("redirect:/runner/" + uidorshortname + "?" + parameters);
+						return new ModelAndView("redirect:/runner/" + uidorshortname + "?" + request.getQueryString());
 					}
 
 					// check for token
@@ -1773,6 +1762,8 @@ public class RunnerController extends BasicController {
 									"redirect:/runner/invited/" + participationGroup.getId() + Constants.PATH_DELIMITER + password);
 						}
 					}
+
+					String draftid = request.getParameter("draftid");
 
 					ModelAndView model = new ModelAndView("runner/surveyLogin");
 					if (survey.getEcasSecurity()) {
