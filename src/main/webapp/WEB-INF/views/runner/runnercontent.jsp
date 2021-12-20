@@ -33,7 +33,7 @@
 				<input type="hidden" id="mode" name="mode" value="<esapi:encodeForHTMLAttribute>${mode}</esapi:encodeForHTMLAttribute>" />
 				
 				<c:choose>
-					<c:when test="${passwordauthenticated != null }">
+					<c:when test="${passwordauthenticated != null}">
 						<input type="hidden" name="passwordauthenticated" value="true" />				
 					</c:when>
 					<c:when test='${pageContext.request.getParameter("pw") != null || pw != null}'>
@@ -41,7 +41,7 @@
 					</c:when>
 				</c:choose>
 				
-				<c:if test="${dialogmode != null }">
+				<c:if test="${dialogmode != null}">
 					<input type="hidden" name="dialogmode" value="true" />
 				</c:if>
 				

@@ -93,7 +93,7 @@
 			
 			<c:if test="${hidepassword == null}">
 				<div class="authenticationdiv">
-				 	<form:form action="${shortname}?surveylanguage=${lang}" method="post" >
+				 	<form:form action="${shortname}?surveylanguage=${lang}&draftid=${draftid}" method="post" >
 				 		<fieldset>			 				 	
 				 			<input type="hidden" name="redirectFromCheckPassword" value="true" />
 							<input type="hidden" name="shortname" value="<esapi:encodeForHTMLAttribute>${shortname}</esapi:encodeForHTMLAttribute>" />
