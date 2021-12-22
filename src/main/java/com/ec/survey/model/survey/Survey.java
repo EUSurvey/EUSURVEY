@@ -185,7 +185,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean sendConfirmationEmail = false;
 	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
 	private Boolean isDelphiShowAnswers = false;
-	private Integer minNumberDelphiStatistics = 5;
+	private Integer minNumberDelphiStatistics = 1;
 	private String logoText;
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
