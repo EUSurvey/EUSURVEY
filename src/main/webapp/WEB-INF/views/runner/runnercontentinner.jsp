@@ -85,7 +85,7 @@
 					<c:if test="${form.survey.containsMandatoryQuestion()}">
 						<div class="info-box" style="width: 400px; max-width: 100%;">
 							<div style="float: right; margin-top: -5px; margin-right: -5px;">
-								<a href="javascript:;" style="cursor: pointer" onclick="$(this).closest('.info-box').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+								<a href="javascript:;" style="cursor: pointer" onclick="$(this).closest('.info-box').hide();" aria-label="${form.getMessage("label.CloseInfoMessage")}"><span class="glyphicon glyphicon-remove"></span></a>
 							</div>		
 						
 							${form.getMessage("message.StarMandatory")}
@@ -103,7 +103,7 @@
 									</div>
 									<div style="float: right; margin-top: -15px; margin-right: -15px;">
 										<input type="hidden" id="disclaimerMinimized" name="disclaimerMinimized" value="${disclaimerMinimized}" />
-										<a href="javascript:;" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+										<a href="javascript:;" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.CloseDisclaimer")}"><span class="glyphicon glyphicon-remove"></span></a>
 									</div>								
 									<div style="clear: both"></div>
 								</div>
