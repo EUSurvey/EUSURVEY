@@ -1658,7 +1658,8 @@ public class RunnerController extends BasicController {
 				}
 			}
 
-			return new ModelAndView("redirect:" + "/runner/draftinfo/" + uid);
+			boolean passwordauthenticated = request.getParameter("passwordauthenticated") != null && request.getParameter("passwordauthenticated").equalsIgnoreCase("true");
+			return new ModelAndView("redirect:" + "/runner/draftinfo/" + uid + (passwordauthenticated ? "?passwordauthenticated=true" : ""));
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -1682,8 +1683,10 @@ public class RunnerController extends BasicController {
 		String invitationId = draft.getAnswerSet().getInvitationId();
 		String uniqueCode = draft.getAnswerSet().getUniqueCode();
 		String lang = draft.getAnswerSet().getLanguageCode();
-		String url = answerService.getDraftURL(draft.getAnswerSet(), draftid,
-				sessionService.getCurrentUser(request, false, false));
+		
+		boolean passwordauthenticated = request.getParameter("passwordauthenticated") != null && request.getParameter("passwordauthenticated").equalsIgnoreCase("true");
+		
+		String url = answerService.getDraftURL(draft.getAnswerSet(), draftid, passwordauthenticated ? null : sessionService.getCurrentUser(request, false, false));
 
 		ModelAndView result = new ModelAndView("thanksdraftrunner", "url", url);
 
@@ -1747,7 +1750,7 @@ public class RunnerController extends BasicController {
 							&& survey.getPassword().equals(password)) {
 						// authenticated
 						loadSurvey(survey, request, locale, uidorshortname, true, false);
-						return new ModelAndView("redirect:/runner/" + uidorshortname + "?" + request.getQueryString());
+						return new ModelAndView("redirect:/runner/" + uidorshortname + "?" + request.getQueryString() + "&pw=true");
 					}
 
 					// check for token
