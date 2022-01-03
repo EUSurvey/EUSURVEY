@@ -83,13 +83,19 @@
 					<div class="surveytitle">${form.survey.title}</div><br />
 
 					<c:if test="${form.survey.containsMandatoryQuestion()}">
-						<div class="info-box" style="width: 400px; max-width: 100%">${form.getMessage("message.StarMandatory")}</div>
+						<div class="info-box" style="width: 400px; max-width: 100%;">
+							<div style="float: right; margin-top: -5px; margin-right: -5px;">
+								<a href="javascript:;" style="cursor: pointer" onclick="$(this).closest('.info-box').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+							</div>		
+						
+							${form.getMessage("message.StarMandatory")}
+						</div>
 					</c:if>
 					<c:if test="${(form.answerSets.size() == 0 || !form.answerSets[0].disclaimerMinimized)}">
 						<c:if test="${!oss}">
 							<c:if test="${(form.survey.owner.type == 'ECAS' && form.survey.owner.getGlobalPrivilegeValue('ECAccess') == 0) || form.survey.owner.type == 'SYSTEM'  }">
-								<div id="ecDisclaimer" class="surveyrunnerinfo focusborder">
-									<div tabindex="0" style="float: left">
+								<div id="ecDisclaimer" class="surveyrunnerinfo">
+									<div style="float: left">
 										<b>${form.getMessage("label.Disclaimer")}</b>
 										<p>
 											${form.getMessage("info.Disclaimer")}
