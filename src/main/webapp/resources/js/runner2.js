@@ -1122,6 +1122,16 @@ let currentDelphiUpdateType;
 let currentDelphiUpdateContainer;
 
 function delphiUpdate(div) {
+
+	// check sessiontimeout
+	if(checkSessionTimeout()) {
+		showSessionError();
+		window.setTimeout(() => {
+			window.location.replace(window.location);
+		}, 2000)
+		return;
+	}
+
 	const message = $(div).find(".delphiupdatemessage").first();
 	$(message).attr("class", "delphiupdatemessage");
 
@@ -1155,6 +1165,40 @@ function confirmExplanationDeletion() {
 }
 
 const HAS_SHOWN_SURVEY_LINK = "hasShownSurveyLink";
+
+function checkSessionTimeout(){
+	var sessiontimeout = false;
+
+	try{
+
+		saveCookies();
+
+		$.ajax({type: "POST",
+			url: contextpath + "/runner/checksession",
+			async: false,
+			beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+			error: function(result)
+			{
+				var s = result.statusText.toLowerCase();
+				if (strStartsWith(s,"forbidden") || result.status == 403)
+				{
+					sessiontimeout = true;
+				}
+			},
+			success: function(result)
+			{
+				//everything is ok
+			}
+		});
+
+	} catch (err)
+	{
+		var stacktrace = err.stack || err.stacktrace || err;
+		$("#btnSubmit").parent().append("<div id='exceptionlogdiv' class='validation-error'>" + varExceptionDuringSave + "&nbsp;" + stacktrace + "</div>");
+	}
+
+	return sessiontimeout;
+}
 
 function delphiUpdateContinued(div, successCallback) {
 
@@ -1461,6 +1505,15 @@ function deleteDelphiComment(button, viewModel, isReply, errorCallback, successC
 
 function checkGoToDelphiStart(link)
 {
+	// check sessiontimeout
+	if(checkSessionTimeout()) {
+		showSessionError();
+		window.setTimeout(() => {
+			window.location.replace(window.location);
+		}, 2000)
+		return;
+	}
+
 	var button = $("a[data-type='delphisavebutton']:visible").not(".disabled").first();
 
 	var ansSetId = $('#IdAnswerSet').val();
