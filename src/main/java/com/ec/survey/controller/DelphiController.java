@@ -290,6 +290,7 @@ public class DelphiController extends BasicController {
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
 			Map<String, Integer> numberOfAnswersMapNumberQuestion = new HashMap<>();
+			Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion = new HashMap<>();
 
 			creator.getAnswers4Statistics(
 					survey,
@@ -299,7 +300,8 @@ public class DelphiController extends BasicController {
 					numberOfAnswersMapGallery,
 					multipleChoiceSelectionsByAnswerset,
 					numberOfAnswersMapRatingQuestion,
-					numberOfAnswersMapNumberQuestion);
+					numberOfAnswersMapNumberQuestion,
+					numberOfAnswersMapRankingQuestion);
 
 			if (question instanceof ChoiceQuestion) {
 				return handleDelphiGraphChoiceQuestion(survey, (ChoiceQuestion) question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
@@ -311,6 +313,10 @@ public class DelphiController extends BasicController {
 
 			if (question instanceof RatingQuestion) {
 				return handleDelphiGraphRatingQuestion(survey, (RatingQuestion) question, statistics, creator, numberOfAnswersMapRatingQuestion);
+			}
+			
+			if (question instanceof RankingQuestion) {
+				return handleDelphiGraphRankingQuestion(survey, (RankingQuestion) question, statistics, creator, numberOfAnswersMapRankingQuestion);
 			}
 
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -354,6 +360,10 @@ public class DelphiController extends BasicController {
 		}
 
 		return ResponseEntity.ok(result);
+	}
+	
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRankingQuestion(Survey survey, RankingQuestion question, Statistics statistics, StatisticsCreator creator, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) {
+		return null;	
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {

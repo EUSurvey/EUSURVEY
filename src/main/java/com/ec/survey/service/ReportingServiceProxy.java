@@ -92,6 +92,11 @@ public class ReportingServiceProxy {
 		if (!isReportingDatabaseEnabled()) return -1;
 		return reportingService.getAnswerSetsByQuestionUIDInternal(survey, quid, answersByAnswerSetID);
 	}
+	
+	public List<String> getAnswersByQuestionUID(Survey survey, String quid, String where, Map<String, Object> values) {
+		if (!isReportingDatabaseEnabled()) return null;
+		return reportingService.getAnswersByQuestionUIDInternal(survey, quid, where, values);
+	}
 
 	public void addToDo(ToDo todo, String uid, String code, boolean executeTodoSync) {
 		if (!isReportingDatabaseEnabled()) return;

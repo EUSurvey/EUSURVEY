@@ -2196,7 +2196,7 @@ final public class Survey implements java.io.Serializable {
 		for (Element question : elements) {
 			if (question instanceof Matrix || question instanceof ChoiceQuestion
 					|| (question instanceof GalleryQuestion && ((GalleryQuestion) question).getSelection())
-					|| question instanceof RatingQuestion) {
+					|| question instanceof RatingQuestion || question instanceof RankingQuestion) {
 				return false;
 			}
 			

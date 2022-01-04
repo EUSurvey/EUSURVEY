@@ -80,6 +80,25 @@
 								 }
 							  });
 						  
+						  $(".statRequestedRecordsRankingScore").each(function(){
+								 var id = $(this).attr("data-id");
+								 var parentId = $(this).attr("data-parent-id");
+							
+								 if (statistics.requestedRecordsRankingScore[id] != null)
+								 {
+									var value = parseInt(statistics.requestedRecordsRankingScore[id]);
+									var total = parseInt(statistics.requestedRecordsRankingScore[parentId]);
+									 
+									if (id.indexOf("-") < 0) {
+										// the score column
+										$(this).html("<b><span>" + statistics.requestedRecordsRankingPercentScore[id] + "</span></b><br />" + total);
+									} else {
+									 	// other column
+									 	$(this).html("<b>" + statistics.requestedRecordsRankingPercentScore[id] + "%</b><br /><span>" + value + "</span>");
+									}
+								 }
+							  });
+						  
 						  $(".statRequestedRecordsPercentScore").each(function(){
 								 var id = $(this).attr("data-id");
 								 if (statistics.requestedRecordsScore[id] != null)
@@ -382,6 +401,31 @@
 				$(elementWrapper).find(".chart-controls").hide();
 			}
         }
+		
+		function sortRankingStatistics(button, descending) {
+ 			var index = $(button).closest("th").index();
+ 			var table = $(button).closest("table")[0];
+
+			var rows, switching, i, x, y, shouldSwitch;
+			switching = true;
+			while (switching) {
+			    switching = false;
+			    rows = table.rows;
+			    for (i = 1; i < (rows.length - 1); i++) {
+			      shouldSwitch = false;
+			      x = rows[i].getElementsByTagName("TD")[index].getElementsByTagName("SPAN")[0];
+			      y = rows[i + 1].getElementsByTagName("TD")[index].getElementsByTagName("SPAN")[0];
+			      if ((descending && parseFloat(x.innerText) < parseFloat(y.innerText)) || (!descending && parseFloat(x.innerText) > parseFloat(y.innerText))) {
+			        shouldSwitch = true;
+			        break;
+			      }
+			    }
+			    if (shouldSwitch) {
+			      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+			      switching = true;
+			    }
+			}
+		}
 
 	</script>
 </c:if>
