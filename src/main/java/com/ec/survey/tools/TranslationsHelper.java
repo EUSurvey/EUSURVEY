@@ -629,22 +629,6 @@ public class TranslationsHelper {
 			return "";
 		}
 	}
-	
-	private static org.w3c.dom.Element getFileNode(com.ec.survey.model.survey.base.File element, Document doc,
-			HashMap<String, String> translationByKey, String keySuffix) {
-		org.w3c.dom.Element fileNode = doc.createElement("File");
-		
-		Attr attr = doc.createAttribute("key");
-		attr.setValue(element.getUid());
-		fileNode.setAttributeNode(attr);
-		
-		String label = getLabel(element, keySuffix, translationByKey);
-		org.w3c.dom.Element labelNode = doc.createElement(Constants.DESCRIPTION);
-		labelNode.appendChild(doc.createCDATASection(label));
-		fileNode.appendChild(labelNode);
-	
-		return fileNode;
-	}
 
 	private static org.w3c.dom.Element getElementNode(Element element, Document doc,
 			HashMap<String, String> translationByKey) {

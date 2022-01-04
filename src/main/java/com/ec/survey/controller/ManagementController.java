@@ -1011,7 +1011,7 @@ public class ManagementController extends BasicController {
 	/** when a particular Survey type has some conditions on properties, they are set here
 	 * @throws ValidationException 
 	*/
-	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation) throws ValidationException {
+	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation, Map<String, Translations> translationsToCreate) throws ValidationException {
 		if (survey.getIsDelphi()) {
 			survey.setChangeContribution(true); // should always be activated for delphi surveys
 			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
@@ -1039,11 +1039,67 @@ public class ManagementController extends BasicController {
 				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
 					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
 					template.copyElements(survey, surveyService, true);
+					
+					List<Translations> translations = translationService.getActiveTranslationsForSurvey(template.getId());
+					Map<String, Map<String, Translation>> oldTranslations = new HashMap<>();
+					
+					// copy published translations
+					for (Translations trans : translations) {
+						if (trans.getComplete() && !trans.getLanguage().getCode().equals(survey.getLanguage().getCode())) {
+							oldTranslations.put(trans.getLanguage().getCode(), trans.getTranslationsByKey());
+							Translations trans2 = new Translations();
+							trans2.setLanguage(trans.getLanguage());
+							translationsToCreate.put(trans2.getLanguage().getCode(), trans2);							
+							
+							String confirmation = resources.getMessage("message.confirmation", null, Survey.CONFIRMATIONTEXT,
+									new Locale(trans.getLanguage().getCode()));
+							trans2.getTranslations().add(new Translation(Survey.CONFIRMATIONPAGE, confirmation,
+									trans.getLanguage().getCode(), null, trans2));
+						
+							String escape = resources.getMessage("message.escape", null, Survey.ESCAPETEXT,
+									new Locale(trans.getLanguage().getCode()));
+							trans2.getTranslations().add(new Translation(Survey.ESCAPEPAGE, escape, trans.getLanguage().getCode(),
+									null, trans2));							
+						}
+					}
 
 					// recreate unique ids
 					for (Element elem : survey.getElementsRecursive(true)) {
 						String newUniqueId = UUID.randomUUID().toString();
+						String oldUniqueId = elem.getUniqueId();
+						
 						elem.setUniqueId(newUniqueId);
+						
+						Map<String, String> possibleKeys = new HashMap<>();
+						possibleKeys.put(oldUniqueId, newUniqueId);
+						possibleKeys.put(oldUniqueId + "help", newUniqueId + "help");
+						possibleKeys.put(oldUniqueId + Question.FEEDBACK, newUniqueId + Question.FEEDBACK);
+						possibleKeys.put(oldUniqueId + Section.TABTITLE, newUniqueId + Section.TABTITLE);
+						possibleKeys.put(oldUniqueId + NumberQuestion.UNIT, newUniqueId + NumberQuestion.UNIT);
+						possibleKeys.put(oldUniqueId + NumberQuestion.MINLABEL, newUniqueId + NumberQuestion.MINLABEL);
+						possibleKeys.put(oldUniqueId + NumberQuestion.MAXLABEL, newUniqueId + NumberQuestion.MAXLABEL);
+						possibleKeys.put(oldUniqueId + Confirmation.TEXT, newUniqueId + Confirmation.TEXT);
+						possibleKeys.put(oldUniqueId + Confirmation.LABEL, newUniqueId + Confirmation.LABEL);
+						possibleKeys.put(oldUniqueId + MatrixOrTable.FIRSTCELL, newUniqueId + MatrixOrTable.FIRSTCELL);
+						possibleKeys.put(oldUniqueId + GalleryQuestion.TEXT, newUniqueId + GalleryQuestion.TEXT);
+						possibleKeys.put(oldUniqueId + GalleryQuestion.TITLE, newUniqueId + GalleryQuestion.TITLE);
+						
+						for (String languageCode : oldTranslations.keySet()) {
+							Map<String, Translation> translationsByKey = oldTranslations.get(languageCode);
+							Translations trans2 = translationsToCreate.get(languageCode);
+							
+							for (String possibleOldKey : possibleKeys.keySet()) {							
+								if (translationsByKey.containsKey(possibleOldKey)) {
+									Translation value = translationsByKey.get(possibleOldKey);
+									Translation value2 = new Translation();
+									value2.setKey(possibleKeys.get(possibleOldKey));
+									value2.setLabel(value.getLabel());
+									value2.setLanguage(value.getLanguage());
+									value2.setTranslations(trans2);
+									trans2.getTranslations().add(value2);
+								}							
+							}
+						}						
 					}
 				}
 			}		
@@ -1964,13 +2020,26 @@ public class ManagementController extends BasicController {
 		
 		}
 
-		ensurePropertiesDependingOnSurveyType(survey, creation);
+		Map<String, Translations> translationToCreate = new HashMap<>();
+		ensurePropertiesDependingOnSurveyType(survey, creation, translationToCreate);
 		
 		form.setSurvey(survey);
 		form.setLanguage(survey.getLanguage());
 
 		if (creation) {
 			surveyService.add(survey, u.getId());
+			if (!translationToCreate.isEmpty()) {
+				for (Translations trans : translationToCreate.values()) {
+					trans.setSurveyId(survey.getId());
+					trans.setSurveyUid(survey.getUniqueId());
+					
+					for (Translation t : trans.getTranslations()) {
+						t.setSurveyId(survey.getId());	
+					}
+					
+					translationService.add(trans);
+				}				
+			}
 			sessionService.updateSessionInfo(survey, u, request);
 			activityService.log(101, null, form.getSurvey().getId().toString(), u.getId(), survey.getUniqueId());
 
