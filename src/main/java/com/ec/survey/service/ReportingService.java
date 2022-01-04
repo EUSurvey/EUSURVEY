@@ -1766,6 +1766,40 @@ public class ReportingService extends BasicService {
 		}
 		return length;
 	}
+	
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public List<String> getAnswersByQuestionUIDInternal(Survey survey, String quid, String where, Map<String, Object> values) {
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		String sql = "SELECT Q" + quid.replace("-", "") + " FROM " + getOLAPTableName(survey);
+		
+		if (where != null) {
+			sql += where;
+		}
+
+		SQLQuery query = sessionReporting.createSQLQuery(sql);
+
+		if (where != null && values != null && !values.isEmpty()) {
+			for (String attrib : values.keySet()) {
+				Object value = values.get(attrib);
+				if (value instanceof String) {
+					query.setString(attrib, (String) values.get(attrib));
+				} else if (value instanceof Integer) {
+					query.setInteger(attrib, (Integer) values.get(attrib));
+				} else if (value instanceof Date) {
+					query.setTimestamp(attrib, (Date) values.get(attrib));
+				}
+			}
+		}
+		
+		List<String> result = new ArrayList<>();
+
+		for (Object answer : query.list()) {	
+			if (answer != null) {
+				result.add(answer.toString());
+			}
+		}
+		return result;
+	}
 
 	private String shrink(String input) {
 		if (input == null || input.length() < 5001) return input;

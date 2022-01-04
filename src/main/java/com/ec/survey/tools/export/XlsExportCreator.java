@@ -1374,8 +1374,53 @@ public class XlsExportCreator extends ExportCreator {
 						rowIndex++;
 						row = sheet.createRow(rowIndex++);
 					}
-				} else if (question instanceof NumberQuestion) {
+				} else if (question instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) question;
+					int size = ranking.getChildElements().size();
+					
+					Cell cell = row.createCell(0);
+					cell.setCellStyle(boldstyle);
+					cell.setCellValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
+				
+					row = sheet.createRow(rowIndex++);
+					
+					for (int i = 1; i <= size; i++) {
+						cell = row.createCell(i+1);
+						cell.setCellValue(i);
+					}
+					cell = row.createCell(size+2);
+					cell.setCellValue("Score");
+					row = sheet.createRow(rowIndex++);
+					
+					int total = statistics.getRequestedRecordsRankingScore().get(ranking.getId().toString());
 
+					for (Element childQuestion : ranking.getChildElements()) {
+						cellValue = childQuestion.getTitle();
+						if (export.getShowShortnames()) {
+							cellValue += " (" + childQuestion.getShortname() + ")";
+						}
+						cell = row.createCell(0);
+						cell.setCellValue(cellValue);
+						
+						for (int i = 0; i < size; i++) {
+							double percent = statistics.getRequestedRecordsRankingPercentScore().get(childQuestion.getId() + "-" + i);
+							cell = row.createCell(i+2);				
+							cell.setCellStyle(percentStyle);
+							cell.setCellValue(percent / 100);
+						}
+						double score = statistics.getRequestedRecordsRankingPercentScore().get(childQuestion.getId().toString());
+						row.createCell(size+2).setCellValue(score);
+
+						row = sheet.createRow(rowIndex++);
+						
+						for (int i = 0; i < size; i++) {
+							int value = statistics.getRequestedRecordsRankingScore().get(childQuestion.getId() + "-" + i);	
+							row.createCell(i+2).setCellValue(value);
+						}
+						row.createCell(size+2).setCellValue(total);
+						row = sheet.createRow(rowIndex++);
+					}
+				} else if (question instanceof NumberQuestion) {
 					NumberQuestion number = (NumberQuestion) question;
 					if (number.showStatisticsForNumberQuestion()) {
 					
@@ -1464,7 +1509,7 @@ public class XlsExportCreator extends ExportCreator {
 	void exportStatisticsQuiz() throws Exception {}
 	
 	private void CreateTableForAnswer(String title, CellStyle boldstyle) {	
-		Cell cell = row.createCell(0); //TODO: bold
+		Cell cell = row.createCell(0);
 		cell.setCellStyle(boldstyle);
 		cell.setCellValue(ConversionTools.removeHTMLNoEscape(title));
 

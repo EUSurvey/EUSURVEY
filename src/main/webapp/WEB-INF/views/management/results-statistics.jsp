@@ -524,6 +524,102 @@
                                <div style="clear: both"></div>
                         </div>
 					</c:if>
+					
+					<c:if test="${question.getType() == 'RankingQuestion'}">
+					
+						<div class="cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">	
+						
+							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+									
+							<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
+							
+								<thead>
+									<tr>								
+										<th style="width: 300px">&#160;</th>
+										
+										<c:forEach items="${question.childElements}" var="child" varStatus="status">
+											<th>
+												<div style="float: right">
+													<a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></a>
+													<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></a>
+												</div>
+												${status.index+1}
+											</th>
+										</c:forEach>
+										
+										<th style="min-width: 100px">
+											<div style="float: right">
+												<a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></a>
+												<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></a>
+											</div>
+											${form.getMessage("label.Score")}											
+										</th>									
+																
+									</tr>
+								</thead>
+												
+								<tbody>
+						
+								 <c:forEach items="${question.childElements}" var="child" varStatus="loop">
+								
+									<tr data-position="${loop.index}">
+										<td>${child.getStrippedTitleNoEscape()}</td>
+										<c:forEach items="${question.childElements}" varStatus="status">
+										
+											<c:choose>
+												<c:when test="${statistics != null}">						
+													<td class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}-${status.index}">
+														<b>${statistics.requestedRecordsRankingPercentScore[child.id.toString().concat("-").concat(status.index)]}%</b><br />														
+														${statistics.requestedRecordsRankingScore[child.id.toString().concat("-").concat(status.index)]}
+													</td>			
+												</c:when>
+												<c:otherwise>
+													<td id="awaitingResult" class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+												</c:otherwise>
+											</c:choose>											
+											
+										</c:forEach>
+										
+										<c:choose>
+											<c:when test="${statistics != null}">						
+												<td class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}">
+													<b>${statistics.requestedRecordsRankingPercentScore[child.id.toString()]}</b><br />
+													${statistics.requestedRecordsRankingScore[question.id.toString()]}
+												</td>			
+											</c:when>
+											<c:otherwise>
+												<td id="awaitingResult" class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+											</c:otherwise>
+										</c:choose>							
+									</tr>
+								
+								</c:forEach>
+								
+								</tbody>
+							</table>
+						</div>
+
+                        <div class="statelement-wrapper">
+                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+                                       <tr>
+                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+											<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+										</th>
+                                       </tr>
+                                       <tr>
+                                           <td style='padding-top:10px; padding-bottom:10px'>
+                                               <div class="delphi-chart-div"></div>
+                                           </td>
+                                       </tr>
+                                   </table>
+                                   <div style="clear: both"></div>
+                               </div>
+                               <div class="chart-controls"></div>
+                               <div style="clear: both"></div>
+                        </div>
+
+					</c:if>	
 		
 				</c:if>
 			</c:if>		

@@ -28,6 +28,8 @@ public class Statistics {
 	private Map<String, Double> meanSectionScore = new HashMap<>();	
 	private Map<String, Double> bestSectionScore = new HashMap<>();	
 	private Boolean invalid;
+	private Map<String, Integer> requestedRecordsRankingScore = new HashMap<>();
+	private Map<String, Double> requestedRecordsRankingPercentScore = new HashMap<>();	
 	
 	@Id
 	@Column(name = "ACCESS_ID")
@@ -69,6 +71,22 @@ public class Statistics {
 	}
 	public void setRequestedRecordsScore(Map<String, Integer> requestedRecordsScore) {
 		this.requestedRecordsScore = requestedRecordsScore;
+	}
+	
+	@ElementCollection
+	public Map<String, Integer> getRequestedRecordsRankingScore() {
+		return requestedRecordsRankingScore;
+	}
+	public void setRequestedRecordsRankingScore(Map<String, Integer> requestedRecordsRankingScore) {
+		this.requestedRecordsRankingScore = requestedRecordsRankingScore;
+	}
+	
+	@ElementCollection
+	public Map<String, Double> getRequestedRecordsRankingPercentScore() {
+		return requestedRecordsRankingPercentScore;
+	}
+	public void setRequestedRecordsRankingPercentScore(Map<String, Double> requestedRecordsRankingPercentScore) {
+		this.requestedRecordsRankingPercentScore = requestedRecordsRankingPercentScore;
 	}
 	
 	@ElementCollection

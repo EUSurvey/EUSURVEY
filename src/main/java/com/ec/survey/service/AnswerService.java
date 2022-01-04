@@ -1468,6 +1468,8 @@ public class AnswerService extends BasicService {
 			Hibernate.initialize(result.getMeanSectionScore());
 			Hibernate.initialize(result.getBestSectionScore());
 			Hibernate.initialize(result.getMaxSectionScore());
+			Hibernate.initialize(result.getRequestedRecordsRankingScore());
+			Hibernate.initialize(result.getRequestedRecordsRankingPercentScore());
 		}
 
 		return result;

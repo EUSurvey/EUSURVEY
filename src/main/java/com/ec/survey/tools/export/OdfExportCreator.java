@@ -1369,6 +1369,69 @@ public class OdfExportCreator extends ExportCreator {
 						cell.removeContent();
 						rowIndex++;
 					}
+				} else if (question instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) question;
+					int size = ranking.getChildElements().size();
+					
+					Cell cell = sheet.getCellByPosition(0, rowIndex);
+					cell.setStringValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
+					cell.setDisplayText(ConversionTools.removeHTMLNoEscape(question.getTitle()));
+					cell.setValueType(Constants.STRING);
+					Font font = cell.getFont();
+					font.setSize(10);
+					font.setFontStyle(FontStyle.BOLD);
+					cell.setFont(font);
+				
+					rowIndex++;
+										
+					for (int i = 1; i <= size; i++) {
+						cell = sheet.getCellByPosition(i+1, rowIndex);
+						cell.setDoubleValue((double)i);
+					}
+					cell = sheet.getCellByPosition(size+2, rowIndex);
+					cell.setStringValue("Score");
+					cell.setDisplayText("Score");
+					cell.setValueType(Constants.STRING);
+					rowIndex++;
+					
+					int total = statistics.getRequestedRecordsRankingScore().get(ranking.getId().toString());
+
+					for (Element childQuestion : ranking.getChildElements()) {
+
+						cellValue = childQuestion.getTitle();
+						if (export.getShowShortnames()) {
+							cellValue += " (" + childQuestion.getShortname() + ")";
+						}
+						cell = sheet.getCellByPosition(0, rowIndex);
+						cell.setStringValue(cellValue);
+						cell.setDisplayText(cellValue);
+						cell.setValueType(Constants.STRING);
+						
+						for (int i = 0; i < size; i++) {
+							double percent = statistics.getRequestedRecordsRankingPercentScore().get(childQuestion.getId() + "-" + i);
+							cell = sheet.getCellByPosition(i+2, rowIndex);				
+							cell.setPercentageValue(percent);
+							cell.setDisplayText(df.format(percent) + "%");
+						}
+						double score = statistics.getRequestedRecordsRankingPercentScore().get(childQuestion.getId().toString());
+						
+						cell = sheet.getCellByPosition(size+2, rowIndex);
+						cell.setDoubleValue(score);
+
+						rowIndex++;
+						
+						for (int i = 0; i < size; i++) {
+							int value = statistics.getRequestedRecordsRankingScore().get(childQuestion.getId() + "-" + i);	
+							cell = sheet.getCellByPosition(i+2, rowIndex);
+							cell.setDoubleValue((double)value);
+							cell.setValueType("float");
+							cell.setFormatString("0");
+						}
+						cell = sheet.getCellByPosition(size+2, rowIndex);
+						cell.setDoubleValue((double)total);
+						
+						rowIndex++;
+					}
 				} else if (question instanceof NumberQuestion) {
 					NumberQuestion numberQuestion = (NumberQuestion) question;
 					if (numberQuestion.showStatisticsForNumberQuestion()) {
@@ -1717,6 +1780,50 @@ public class OdfExportCreator extends ExportCreator {
 
 						document.addParagraph("");
 					}
+				} else if (question instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) question;
+					int size = ranking.getChildElements().size();
+					
+					cellValue = ConversionTools
+							.removeHTMLNoEscape(ranking.getTitle());
+					if (export != null && export.getShowShortnames()) {
+						cellValue += " (" + ranking.getShortname() + ")";
+					}
+					
+					org.odftoolkit.simple.table.Table table = CreateTableForRankingQuestion(document, cellValue, size);
+					
+					Row row;
+					
+					int total = statistics.getRequestedRecordsRankingScore().get(ranking.getId().toString());
+
+					for (Element childQuestion : ranking.getChildElements()) {
+						row = table.appendRow();
+						cellValue = childQuestion.getTitle();
+						if (export.getShowShortnames()) {
+							cellValue += " (" + childQuestion.getShortname() + ")";
+						}
+						row.getCellByIndex(0).setStringValue(cellValue);
+											
+						for (int i = 0; i < size; i++) {
+							double percent = statistics.getRequestedRecordsRankingPercentScore().get(childQuestion.getId() + "-" + i);
+							row.getCellByIndex(i+1).setPercentageValue(percent);
+							row.getCellByIndex(i+1).setStringValue(df.format(percent) + "%");
+						}
+						double score = statistics.getRequestedRecordsRankingPercentScore().get(childQuestion.getId().toString());
+						row.getCellByIndex(size+1).setDoubleValue(score);
+
+						row = table.appendRow();
+						
+						for (int i = 0; i < size; i++) {
+							int value = statistics.getRequestedRecordsRankingScore().get(childQuestion.getId() + "-" + i);	
+							row.getCellByIndex(i+1).setDoubleValue((double)value);
+							row.getCellByIndex(i+1).setValueType("float");
+							row.getCellByIndex(i+1).setFormatString("0");
+						}
+						row.getCellByIndex(size+1).setDoubleValue((double)total);
+						row.getCellByIndex(size+1).setValueType("float");
+						row.getCellByIndex(size+1).setFormatString("0");
+					}
 				} else if (question instanceof NumberQuestion) {
 					NumberQuestion numberQuestion = (NumberQuestion) question;
 					
@@ -1802,6 +1909,30 @@ public class OdfExportCreator extends ExportCreator {
 		cell = table.getCellByPosition(3, 0);
 		cell.setStringValue("Ratio");
 		cell.setFont(font);
+		return table;
+	}
+	
+	private org.odftoolkit.simple.table.Table CreateTableForRankingQuestion(TextDocument document, String title, int children) {
+		Paragraph paragraph = document.addParagraph(ConversionTools.removeHTMLNoEscape(title));
+		paragraph.getOdfElement().setProperty(OdfParagraphProperties.KeepWithNext, "always");
+
+		Font font = paragraph.getFont();
+		font.setFontStyle(FontStyle.BOLD);
+		paragraph.setFont(font);
+
+		org.odftoolkit.simple.table.Table table = document.addTable(1, children+2);
+		table.getOdfElement().setProperty(OdfTableProperties.MayBreakBetweenRows, "false");
+		
+		Cell cell;
+		for (int i = 1; i <= children; i++) {
+			cell = table.getCellByPosition(i, 0);
+			cell.setFont(font);
+			cell.setStringValue(String.valueOf(i));
+		}
+		
+		cell = table.getCellByPosition(children+1, 0);
+		cell.setFont(font);
+		cell.setStringValue("Score");
 		return table;
 	}
 

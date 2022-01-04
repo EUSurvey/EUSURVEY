@@ -2539,3 +2539,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 .noHover {
 	pointer-events: none;
 }
+
+.statRequestedRecordsRankingScore {
+	white-space: nowrap;
+}
