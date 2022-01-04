@@ -397,7 +397,7 @@
 			</div>
 		<!-- /ko -->
 		
-		<div tabindex="0" class="focussable" role="group"  data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
+		<div role="group" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
 
 			<!-- ko ifnot: foreditor -->
 		
@@ -418,10 +418,10 @@
 					<!-- /ko -->
 
 					<!-- ko foreach: orderedRankingItems() -->
-					<div tabindex="0" role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
+					<div role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
 						<div class="rankingitem-decoration">&#x283F;</div>
-						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" aria-label="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }"><span class="glyphicon glyphicon-arrow-up"></span></a>
-						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" aria-label="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }"><span class="glyphicon glyphicon-arrow-down"></span></a>
+						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }, attr: {'aria-label' : title()}"><span class="screen-reader-only"></span><span class="glyphicon glyphicon-arrow-up"></span></a>
+						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }, attr: {'aria-label' : title()}"><span class="glyphicon glyphicon-arrow-down"></span></a>
 						<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
 						<!-- ko if: $parent.foreditor -->
 						<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />

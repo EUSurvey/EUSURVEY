@@ -411,7 +411,7 @@ public class XmlExportCreator extends ExportCreator {
 		}
 
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
-				true, true, true, true, false);
+				true, true, false, true, false);
 
 		Map<String, List<File>> uploadedFilesByQuestionUID = new HashMap<>();
 
@@ -879,7 +879,12 @@ public class XmlExportCreator extends ExportCreator {
 												? answer.getPossibleAnswerUniqueId()
 												: "");
 							} else if (question instanceof RankingQuestion) {
-								writer.writeCharacters(answer.getValue());
+								String[] answerSplit = answer.getValue().split(";");
+								Map<String, RankingItem> children = ((RankingQuestion) question).getChildElementsByUniqueId();
+								for (int i = 0; i < answerSplit.length; i++) {
+									answerSplit[i] = children.get(answerSplit[i]).getTitle();
+								}
+								writer.writeCharacters(String.join(";", answerSplit));
 							} else if (question instanceof Upload) {
 								StringBuilder text = new StringBuilder();
 								if (filesByAnswer.containsKey(answer.getId())) {
