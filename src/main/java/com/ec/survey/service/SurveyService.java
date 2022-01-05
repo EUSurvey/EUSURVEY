@@ -600,23 +600,17 @@ public class SurveyService extends BasicService {
 			oQueryParameters.put("endTo", Tools.getFollowingDay(filter.getEndTo()));
 		}
 
-		
-		if (filter.getOwner() != null && filter.getOwner().length() > 0 && filter.getUser() != null
-				&& (filter.getUser().getLogin().equals(filter.getOwner())
-						|| filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)) {
-			// Searching by owner, checking if current user is owner or has global priviledge
-			sql.append(
-					" AND (s.OWNER in (SELECT USER_ID FROM USERS WHERE USER_LOGIN = :ownername OR USER_DISPLAYNAME = :ownername))");
-			oQueryParameters.put("ownername", filter.getOwner());
-		
-		} else if (filter.getUser() == null) {
+		if (filter.getUser() == null) {
 			// Searching public surveys
-			sql.append(
-					" AND s.LISTFORM = 1 AND s.LISTFORMVALIDATED = 1 AND s.ISPUBLISHED = true AND s.ACTIVE = true AND (s.SURVEYSECURITY = 'open' or s.SURVEYSECURITY = 'openanonymous') AND (s.SURVEY_END_DATE IS NULL OR s.SURVEY_END_DATE > :now)");
+			sql.append(" AND s.LISTFORM = 1 AND s.LISTFORMVALIDATED = 1 AND s.ISPUBLISHED = true AND s.ACTIVE = true AND (s.SURVEYSECURITY = 'open' or s.SURVEYSECURITY = 'openanonymous') AND (s.SURVEY_END_DATE IS NULL OR s.SURVEY_END_DATE > :now)");
 			oQueryParameters.put("now", new Date());
-		} 
-		
-		if (filter.getUser() != null) {
+		} else {
+			if (filter.getOwner() != null && filter.getOwner().length() > 0) {
+				sql.append(" AND (s.OWNER in (SELECT USER_ID FROM USERS WHERE USER_LOGIN LIKE :ownername OR USER_DISPLAYNAME LIKE :ownername))");
+				String ownerName = "%" + filter.getOwner().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
+				oQueryParameters.put("ownername", ownerName);
+			}
+
 			if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("any") && filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) > 1) {
 				// form administrators can see all surveys
 			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("my")) {
