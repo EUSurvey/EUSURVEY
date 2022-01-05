@@ -606,7 +606,6 @@ public class SurveyService extends BasicService {
 			oQueryParameters.put("now", new Date());
 		} else {
 			if (filter.getOwner() != null && filter.getOwner().length() > 0) {
-				// Searching by owner, checking if current user is owner or has global priviledge
 				sql.append(" AND (s.OWNER in (SELECT USER_ID FROM USERS WHERE USER_LOGIN LIKE :ownername OR USER_DISPLAYNAME LIKE :ownername))");
 				String ownerName = "%" + filter.getOwner().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
 				oQueryParameters.put("ownername", ownerName);
