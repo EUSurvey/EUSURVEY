@@ -222,6 +222,10 @@ public class DelphiController extends BasicController {
 
 			User user = sessionService.getCurrentUser(request);
 			
+			if (user != null) {
+				sessionService.upgradePrivileges(survey, user, request);
+			}
+			
 			boolean resultsview = request.getParameter("resultsview") != null && request.getParameter("resultsview").equalsIgnoreCase("true"); 
 			
 			boolean privileged = resultsview && (survey.getOwner().getId().equals(user.getId()) ||
