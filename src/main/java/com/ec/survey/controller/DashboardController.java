@@ -562,11 +562,19 @@ public class DashboardController extends BasicController {
 				answer[5] = answerSet.getSurvey().getAutomaticPublishing() ? answerSet.getSurvey().getEndString() : "";
 
 				Invitation invitation = attendeeService.getInvitationByUniqueId(answerSet.getInvitationId());
-				String link = invitation == null ? ""
-						: host + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
-								+ invitation.getUniqueId();
-
-				answer[6] = link;
+				
+				if (invitation != null) {
+					answer[6] = host + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
+							+ invitation.getUniqueId();
+				} else {
+					Draft draft = answerService.getDraftByAnswerUID(answerSet.getUniqueCode());
+					
+					if (answerSet.getSurvey().getIsDraft()) {
+						answer[6] = draft == null ? "" : host + answerSet.getSurvey().getUniqueId() + "/management/test?draftid=" + draft.getUniqueId();
+					} else {
+						answer[6] = draft == null ? "" : host + "runner/" + answerSet.getSurvey().getUniqueId();
+					}
+				}
 
 				drafts.add(answer);
 			}
