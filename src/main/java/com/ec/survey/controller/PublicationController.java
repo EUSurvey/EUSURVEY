@@ -90,6 +90,8 @@ public class PublicationController extends BasicController {
 				if (!survey.getPublication().isAllContributions()) {
 					for (String key : publicationFilter.getFilterValues().keySet()) {
 						userFilter.getFilterValues().put(key, publicationFilter.getFilterValues().get(key));
+						String uid = key.substring(key.indexOf('|') + 1);
+						userFilter.getReadOnlyFilterQuestions().add(uid);
 					}
 				}
 
@@ -105,17 +107,14 @@ public class PublicationController extends BasicController {
 							String uid = questionId.substring(questionId.indexOf('|') + 1);
 							
 							boolean found = false;
-							String oldKey = "";
 							for (String key : userFilter.getFilterValues().keySet()) {
 								if (key.endsWith(uid)) {
-									oldKey = key;
 									found = true;
 									break;
 								}								
 							}
 							if (found) {
-								userFilter.getFilterValues().put(oldKey,
-										userFilter.getFilterValues().get(oldKey) + ";" + value);
+								// don't override existing filter from publication
 							} else {
 								userFilter.getFilterValues().put(questionId, value);
 							}
