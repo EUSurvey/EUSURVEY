@@ -2696,6 +2696,31 @@
 
 			<p>Dieses Exportformat beinhaltet die Ergebnisse im strukturierten XML-Format.<br>
 			<b>Hochgeladene Dateien sind in diesem Fall nicht einsehbar.</b></p>
+
+			<h2>Wie wird die Bewertung der Sortieren-Fragen berechnet?</h2>
+			<p>
+				Sortieren-Fragen werden verwendet, um Ihren Umfrageteilnehmern die Möglichkeit zu geben, eine Reihe von Elementen nach ihrer Wichtigkeit zu ordnen.
+				Es wird empfohlen, die Anzahl der zu bewertenden Elemente auf 5 zu begrenzen.
+				Wenn Sie mehr Fragen stellen, kann es für die Teilnehmer schwierig sein, alle Elemente richtig zu bewerten.
+			</p>
+			<p>
+				Die von den Umfrageteilnehmern am meisten bevorzugte Wahl (die sie an die erste Stelle setzen) erhält die höchste Gewichtung, und die am wenigsten bevorzugte Wahl (die sie an die letzte Stelle setzen) erhält eine Gewichtung von 1.
+				Die Gewichtung wird also umgekehrt proportional zur Rangfolge des Elements.
+			</p>
+			<p>
+				Wenn eine Sortieren-Frage beispielsweise aus 5 Elementen besteht, werden die Gewichte wie folgt zugewiesen:
+			</p>
+			<ul>
+				<li>Das am höchsten eingestufte Element hat eine Gewichtung von 5</li>
+				<li>Das zweite Element hat eine Gewichtung von 4</li>
+				<li>Das dritte Element hat eine Gewichtung von 3</li>
+				<li>Das vierte Item hat eine Gewichtung von 2</li>
+				<li>Das fünfte Element hat eine Gewichtung von 1</li>
+			</ul>
+			<p>
+				Die Punktzahl errechnet sich aus der durchschnittlichen Gewichtung durch die Umfrageteilnehmer.
+			</p>
+
 			<h1>
 				Design und Layout
 			</h1>

@@ -2760,6 +2760,29 @@
 				manière structurée.<br>
 
 			<b>Les fichiers téléchargés ne sont pas disponibles dans ce cas.</b></p>
+
+			<h2>Comment le score des questions de classement est-il calculé ?</h2>
+			<p>
+				Les questions de classement sont utilisées pour offrir aux participants à votre enquête la possibilité de classer un ensemble d'éléments par ordre d'importance.
+				Il est recommandé de limiter le nombre d'éléments à classer à 5, car si vous en demandez davantage aux participants à l'enquête, il pourrait leur être difficile de classer correctement tous les éléments.
+			</p>
+			<p>
+				Le choix le plus préféré des répondants (qu'ils classent en premier) obtient le poids le plus élevé, et le choix le moins préféré (qu'ils classent en dernier) obtient un poids de 1.
+				Le poids est donc inversé proportionnellement par rapport au classement de l'élément.
+			</p>
+			<p>
+				Par exemple, si une question de classement est composée de 5 éléments, les poids sont attribués comme suit :
+			</p>
+			<ul>
+				<li>L'élément le mieux classé a un poids de 5</li>
+				<li>Le deuxième élément a un poids de 4</li>
+				<li>Le troisième élément a un poids de 3</li>
+				<li>Le quatrième élément a un poids de 2</li>
+				<li>Le cinquième élément a un poids de 1</li>
+			</ul>
+			<p>
+				Le score est calculé comme étant le poids moyen donné par les répondants à l'enquête.
+			</p>
 			<h1>
 				Style et mise en page
 			</h1>
