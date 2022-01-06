@@ -77,12 +77,20 @@ public class PublicationController extends BasicController {
 
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 
-				for (String questionId : publicationFilter.getVisibleQuestions()) {
-					userFilter.getVisibleQuestions().add(questionId);
+				if (survey.getPublication().isAllQuestions()) {
+					for (Element question : survey.getQuestionsAndSections()) {
+						userFilter.getVisibleQuestions().add(question.getId().toString());
+					}
+				} else {
+					for (String questionId : publicationFilter.getVisibleQuestions()) {
+						userFilter.getVisibleQuestions().add(questionId);
+					}
 				}
 
-				for (String key : publicationFilter.getFilterValues().keySet()) {
-					userFilter.getFilterValues().put(key, publicationFilter.getFilterValues().get(key));
+				if (!survey.getPublication().isAllContributions()) {
+					for (String key : publicationFilter.getFilterValues().keySet()) {
+						userFilter.getFilterValues().put(key, publicationFilter.getFilterValues().get(key));
+					}
 				}
 
 				userFilter.setSurveyId(survey.getId());
@@ -94,13 +102,24 @@ public class PublicationController extends BasicController {
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 
 						if (value.replace(";", "").trim().length() > 0) {
-							if (userFilter.getFilterValues().containsKey(questionId)) {
-								userFilter.getFilterValues().put(questionId,
-										userFilter.getFilterValues().get(questionId) + ";" + value);
+							String uid = questionId.substring(questionId.indexOf('|') + 1);
+							
+							boolean found = false;
+							String oldKey = "";
+							for (String key : userFilter.getFilterValues().keySet()) {
+								if (key.endsWith(uid)) {
+									oldKey = key;
+									found = true;
+									break;
+								}								
+							}
+							if (found) {
+								userFilter.getFilterValues().put(oldKey,
+										userFilter.getFilterValues().get(oldKey) + ";" + value);
 							} else {
 								userFilter.getFilterValues().put(questionId, value);
 							}
-
+					
 							filtered = true;
 						}
 					}
