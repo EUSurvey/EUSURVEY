@@ -411,7 +411,7 @@ public class XmlExportCreator extends ExportCreator {
 		}
 
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
-				true, true, false, true, false);
+				true, true, true, true, false);
 
 		Map<String, List<File>> uploadedFilesByQuestionUID = new HashMap<>();
 
@@ -695,13 +695,16 @@ public class XmlExportCreator extends ExportCreator {
 			exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
 		}
 
-		if (meta || filter == null || filter.exported("created"))
-			writer.writeAttribute("create", answerSet == null ? row.get(row.size() - 4)
-					: Tools.formatDate(answerSet.getDate(), "yyyy-MM-dd_HH-mm-ss"));
+		if (answerSet != null) {
+			if (meta || filter == null || filter.exported("created"))
+				writer.writeAttribute("create", Tools.formatDate(answerSet.getDate(), "yyyy-MM-dd_HH-mm-ss"));
+
+			if (meta || filter == null || filter.exported("updated"))
+				writer.writeAttribute("last", Tools.formatDate(answerSet.getUpdateDate(), "yyyy-MM-dd_HH-mm-ss"));
+		}
+
 		writer.writeAttribute("list", list);
-		if (meta || filter == null || filter.exported("updated"))
-			writer.writeAttribute("last", answerSet == null ? row.get(row.size() - 3)
-					: Tools.formatDate(answerSet.getUpdateDate(), "yyyy-MM-dd_HH-mm-ss"));
+
 		if (meta || filter == null || filter.exported("languages"))
 			writer.writeAttribute("lang", answerSet == null ? row.get(row.size() - 2) : answerSet.getLanguageCode());
 
@@ -879,12 +882,7 @@ public class XmlExportCreator extends ExportCreator {
 												? answer.getPossibleAnswerUniqueId()
 												: "");
 							} else if (question instanceof RankingQuestion) {
-								String[] answerSplit = answer.getValue().split(";");
-								Map<String, RankingItem> children = ((RankingQuestion) question).getChildElementsByUniqueId();
-								for (int i = 0; i < answerSplit.length; i++) {
-									answerSplit[i] = children.get(answerSplit[i]).getTitle();
-								}
-								writer.writeCharacters(String.join(";", answerSplit));
+								writer.writeCharacters(answer.getValue());
 							} else if (question instanceof Upload) {
 								StringBuilder text = new StringBuilder();
 								if (filesByAnswer.containsKey(answer.getId())) {
