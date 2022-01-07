@@ -482,10 +482,10 @@
 															<c:if test="${element.selection}">																			
 																<c:choose>
 																	<c:when test="${form.getValues(element).contains(counter.index.toString())}">
-																		<input <c:if test="${element.readonly}">readonly="readonly" onclick="return false;"</c:if> checked="checked" class="${element.css}" type="checkbox" value="${counter.index}" data-id="${element.id}${counter.index}" name="answer${element.id}" />
+																		<img align="middle" src="${contextpath}/resources/images/checkboxchecked.png" />
 																	</c:when>
 																	<c:otherwise>
-																		<input <c:if test="${element.readonly}">readonly="readonly" onclick="return false;"</c:if> class="${element.css}" type="checkbox" value="${counter.index}" data-id="${element.id}${counter.index}" name="answer${element.id}" />
+																		<img align="middle" src="${contextpath}/resources/images/checkbox.png" />
 																	</c:otherwise>		
 																</c:choose>																				
 															</c:if>
