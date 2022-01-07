@@ -178,9 +178,9 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(container).append(s);
 	} else if (viewModel.type == 'FreeTextQuestion' || viewModel.type == 'RegExQuestion') {
 		if (viewModel.type == 'RegExQuestion') {
-			$(container).addClass("regexitem");
+			$(container).addClass("regexitem forprogress unanswered");
 		} else {
-			$(container).addClass("freetextitem");
+			$(container).addClass("freetextitem forprogress unanswered");
 		}
 
 		if (viewModel.isPassword()) {
@@ -191,43 +191,43 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			$(container).append(s);
 		}
 	} else if (viewModel.type == 'NumberQuestion') {
-		$(container).addClass("numberitem");
+		$(container).addClass("numberitem forprogress unanswered");
 		var s = $("#number-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
-		$(container).addClass("singlechoiceitem");
+		$(container).addClass("singlechoiceitem forprogress unanswered");
 		var s = $("#single-choice-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'MultipleChoiceQuestion') {
-		$(container).addClass("multiplechoiceitem");
+		$(container).addClass("multiplechoiceitem forprogress unanswered");
 		var s = $("#multiple-choice-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'RankingQuestion') {
-		$(container).addClass("rankingitem");
+		$(container).addClass("rankingitem forprogress unanswered");
 		var s = $("#ranking-question-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'DateQuestion') {
-		$(container).addClass("dateitem");
+		$(container).addClass("dateitem forprogress unanswered");
 		var s = $("#date-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'TimeQuestion') {
-		$(container).addClass("timeitem");
+		$(container).addClass("timeitem forprogress unanswered");
 		var s = $("#time-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'EmailQuestion') {
-		$(container).addClass("emailitem");
+		$(container).addClass("emailitem forprogress unanswered");
 		var s = $("#email-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Matrix') {
-		$(container).addClass("matrixitem");
+		$(container).addClass("matrixitem forprogress unanswered");
 		var s = $("#matrix-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Table') {
-		$(container).addClass("mytableitem");
+		$(container).addClass("mytableitem forprogress unanswered");
 		var s = $("#table-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Upload') {
-		$(container).addClass("uploaditem");
+		$(container).addClass("uploaditem forprogress unanswered");
 		var s = $("#upload-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Download') {
@@ -239,11 +239,11 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		var s = $("#gallery-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Confirmation') {
-		$(container).addClass("confirmationitem");
+		$(container).addClass("confirmationitem forprogress unanswered");
 		var s = $("#confirmation-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'RatingQuestion') {
-		$(container).addClass("ratingitem");
+		$(container).addClass("ratingitem forprogress unanswered");
 		var s = $("#rating-template").clone().attr("id", "");
 		$(container.append(s));
 	}

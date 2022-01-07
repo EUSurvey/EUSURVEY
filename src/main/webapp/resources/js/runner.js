@@ -209,6 +209,8 @@ function propagateChange(element)
 		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
 		$(div).find(".explanation-file-upload-section").hide();
+		$(element).closest(".forprogress").addClass("unanswered");
+		updateProgress();
 		return;
 	}
 
@@ -226,6 +228,21 @@ function propagateChange(element)
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();
 	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
+	
+	$(element).closest(".unanswered").removeClass("unanswered");
+	updateProgress();
+}
+
+var totalForProgress = -1;
+function updateProgress() {
+	if ($('#progressBar').length == 0) return;
+	if (totalForProgress < 0) {
+		totalForProgress = $('.forprogress').length;
+	}
+	var unanswered = $('.forprogress.unanswered').length;
+	var percent = Math.round((totalForProgress - unanswered) / totalForProgress * 100);
+	
+	$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent).html(percent + '%')
 }
 
 var downloadsurveypdflang;

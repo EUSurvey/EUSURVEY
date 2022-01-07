@@ -3338,6 +3338,10 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			if (draftSurvey.getMultiPaging() != publishedSurvey.getMultiPaging())
 				hasPendingChanges = true;
+			if (!Tools.isEqual(draftSurvey.getProgressBar(), publishedSurvey.getProgressBar()))
+				hasPendingChanges = true;
+			if (!Tools.isEqual(draftSurvey.getProgressDisplay(), publishedSurvey.getProgressDisplay()))
+				hasPendingChanges = true;
 			if (draftSurvey.getValidatedPerPage() != publishedSurvey.getValidatedPerPage())
 				hasPendingChanges = true;
 			if (draftSurvey.getPreventGoingBack() != publishedSurvey.getPreventGoingBack())

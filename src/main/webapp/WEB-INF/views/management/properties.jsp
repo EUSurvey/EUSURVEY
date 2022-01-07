@@ -840,6 +840,36 @@
 					<tr>
 						<td>
 							<div style="float: left">
+								<spring:message code="label.ProgressBar" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.ProgressBar" /></div>	
+							</div>						
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.progressBar" class="onoffswitch-checkbox" id="myonoffswitchprogressBar" data-bind="checked: _properties.progressBar()" />
+									 <label class="onoffswitch-label" onclick="_properties.toggleProgressBar()">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: progressBar">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.DisplayProgress" />
+							</div>
+							<div style="float: right">							
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="0"/><spring:message code="label.percentage" />&#160;
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="1"/><spring:message code="label.ratio" />&#160;
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="2"/><spring:message code="label.both" />	
+							</div>	
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
 								<spring:message code="label.AccessibilityMode" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								<div class="help hideme"><spring:message code="help.AccessibilityMode" /></div>

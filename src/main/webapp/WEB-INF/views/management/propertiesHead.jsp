@@ -45,6 +45,8 @@
 			this.timeLimit = ko.observable("${form.survey.timeLimit}");
 			this.showCountdown = ko.observable(${form.survey.showCountdown});
 			this.preventGoingBack = ko.observable(${form.survey.preventGoingBack});
+			this.progressBar = ko.observable(${form.survey.progressBar});
+			this.progressDisplay = ko.observable(${form.survey.progressDisplay});
 			
 			this.addLinksRow = function()
 			{
@@ -200,6 +202,11 @@
 						this.self.saveAsDraft(false);
 					}
 				}
+			}
+			
+			this.toggleProgressBar = function()
+			{
+				this.self.progressBar(!this.self.progressBar());
 			}
 			
 			this.toggleQuiz = function()

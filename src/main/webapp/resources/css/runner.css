@@ -564,3 +564,15 @@ legend {
 	background-color: #ccc !important;
 	background-image: none !important;
 }
+
+.progressBarPlaceholder {
+	height: 20px;
+}
+
+.progressBar {
+	z-index: 1000;
+	position: fixed;
+	width: 920px;
+	top: 40px;
+	left: 50px;
+}

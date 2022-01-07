@@ -60,6 +60,17 @@
 			</c:choose>						
 				
 				<div class="left-area">
+					<c:if test="${form.survey.progressBar}">
+						<div class="progressBar">
+							<div class="progress">
+							  <div id="progressBar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+							    0%
+							  </div>
+							</div>
+						</div>
+						<div class="progressBarPlaceholder"></div>
+					</c:if>
+				
 					<c:if test="${!(form.survey.isDelphi)}">
 						<div id="nolocalstorage" class="hideme" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
 							<span class="alert-danger" style="padding: 10px;">${form.getMessage("info.LocalStorageDisabled")}</span>
