@@ -572,7 +572,15 @@ legend {
 .progressBar {
 	z-index: 1000;
 	position: fixed;
-	width: 920px;
 	top: 40px;
-	left: 50px;
+	botto: 60px;
+	left: 0px;
+	right: 0px;
+	padding-right: 300px;
+}
+
+.progressBar .progress {
+	width: 920px;
+	margin-left: auto;
+	margin-right: auto;
 }

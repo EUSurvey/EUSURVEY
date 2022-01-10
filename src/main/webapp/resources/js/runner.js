@@ -1558,6 +1558,8 @@ function readCookiesForParent(parent)
 						checkDependencies(this);
 					}
 				}
+				
+				$(this).closest(".unanswered").removeClass("unanswered");
 			}					
 		});
 		

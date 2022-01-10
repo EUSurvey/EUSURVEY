@@ -254,6 +254,10 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	}
 	
 	ko.applyBindings(viewModel, $(container)[0]);
+	
+	if (getValueByQuestion(viewModel.uniqueId()).length > 0) {
+		$(container).removeClass("unanswered");
+	}
 
 	if ((viewModel.type == 'Upload') || (viewModel.isDelphiQuestion())) {
 		const maxFileSizeBytes = (viewModel.isDelphiQuestion()) ? (1*1024*1024) : (viewModel.maxFileSize());
