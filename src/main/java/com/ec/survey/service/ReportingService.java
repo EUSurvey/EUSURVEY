@@ -529,8 +529,9 @@ public class ReportingService extends BasicService {
 	    {
 	    	visibleQuestions.put("SCORE", null);
 	    }
-	        
-	    String sql = "SELECT QCONTRIBUTIONID, QANSWERSETID";
+	    
+	    // QANSWERSETID is used in all tables (after 1000 columns a new table is created)
+	    String sql = "SELECT QCONTRIBUTIONID, " + getOLAPTableName(survey) + ".QANSWERSETID";
 	    for (String question : visibleQuestions.keySet())
 	    {
 	    	if (question.equals("CONTRIBUTIONID"))
