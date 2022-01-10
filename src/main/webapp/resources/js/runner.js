@@ -239,7 +239,10 @@ function updateProgress() {
 	var answered = $('.forprogress.answered').length;
 	var percent = Math.round(answered / totalForProgress * 100);
 	
-	$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent).html(percent + '%')
+	$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);
+	
+	$('#progressBarPercentage').html(percent + '%');
+	$('#progressBarRatio').html(answered + '/' + totalForProgress);		
 }
 
 var downloadsurveypdflang;

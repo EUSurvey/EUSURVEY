@@ -144,7 +144,7 @@ html, body {
 	margin-bottom: -198px; 
 	padding-bottom: 75px;
 	max-width: 100%;
-	overflow-x: auto;
+	/*overflow-x: auto;*/
 }
 
 .page-wrap:after {

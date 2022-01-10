@@ -63,9 +63,16 @@
 					<c:if test="${form.survey.progressBar}">
 						<div class="progressBar">
 							<div class="progress">
-							  <div id="progressBar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-							    0%
+							  <div id="progressBar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">							    
 							  </div>
+							  <div class="progressBarLabel">
+							    <c:if test="${form.survey.progressDisplay != 1}">
+							    	<span id="progressBarPercentage"></span>
+							    </c:if>
+							    <c:if test="${form.survey.progressDisplay == 2}"> (</c:if>
+							    <c:if test="${form.survey.progressDisplay != 0}"><span id="progressBarRatio"></span></c:if>
+							    <c:if test="${form.survey.progressDisplay == 2}">)</c:if>
+						       </div>
 							</div>
 						</div>
 						<div class="progressBarPlaceholder"></div>
