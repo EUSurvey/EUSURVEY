@@ -573,10 +573,11 @@ legend {
 	z-index: 1000;
 	position: fixed;
 	top: 40px;
-	botto: 60px;
+	bottom: 60px;
 	left: 0px;
 	right: 0px;
 	padding-right: 300px;
+	height: 20px;
 }
 
 .progressBar .progress {
