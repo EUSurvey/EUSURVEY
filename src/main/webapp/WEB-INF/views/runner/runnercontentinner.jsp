@@ -61,7 +61,7 @@
 				
 				<div class="left-area">
 					<c:if test="${form.survey.progressBar}">
-						<div class="progressBar">
+						<div id="progressBarContainer" class="progressBar" style="display: none">
 							<div class="progress">
 							  <div id="progressBar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">							    
 							  </div>
