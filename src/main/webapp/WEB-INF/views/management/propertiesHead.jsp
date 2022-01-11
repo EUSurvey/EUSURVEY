@@ -295,7 +295,31 @@
 					$("#edit-survey-title").parent().append("<div class='validation-error'>" + texttoolongText + "</div>");
 					return;
 				}
-			
+
+				if (_properties.useConfLink()){
+					if (isPropEmpty("[name='survey.confirmationLink']")){
+						$("#confLink").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+				} else {
+					if (isPropEmpty("[name='survey.confirmationPage']")){
+						$("#tinymceconfpage").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+				}
+
+				if (_properties.useEscapeLink()){
+					if (isPropEmpty("[name='survey.escapeLink']")){
+						$("#escapeLink").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+				} else {
+					if (isPropEmpty("[name='survey.escapePage']")){
+						$("#tinymceescapepage").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+				}
+
 				if ($("#survey\\.start").val().length > 0 && $("#survey\\.end").val().length > 0)
 				{
 					var startdate = parseDateTime($("#survey\\.start").val(),$("#startHour").val());
@@ -496,6 +520,11 @@
 				$("#clearpublicationpassword").hide();
 				$("#survey\\.publication\\.password").show();
 			}
+		}
+
+		function isPropEmpty(select){
+			let elem = $(select)
+			return elem.text().trim().length <= 0 && elem.val().trim().length <= 0
 		}
 		
 	</script>
