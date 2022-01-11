@@ -41,6 +41,7 @@ function getNewElement(item)
 			getBasicElement("RankingItem", false, "Ranking Item 3", null, false),
 			];
 		element.isDelphiQuestion = isDelphi;
+		element.order = 0;
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
