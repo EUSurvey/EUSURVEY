@@ -81,6 +81,9 @@
 			{
 				$("#additionalinfodiv").show();
 				$("#additionalsurveyinfodiv").show();
+			} else if ($("#highaudienceoption").is(":selected")){
+				$("#additionalinfodiv").hide();
+				$("#additionalsurveyinfodiv").show();
 			} else {
 				$("#additionalinfodiv").hide();
 				$("#additionalsurveyinfodiv").hide();
@@ -226,39 +229,31 @@
 				<form:form id="supportForm" method="POST" action="${contextpath}/home/support?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
 					<label><span class="mandatory">*</span><spring:message code="support.ContactReason" /></label><br />
 					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 400px" name="contactreason" id="contactreason">
-						<c:choose>
-							<c:when test="${fromerrorpage != null}">
-								<option><spring:message code="support.GeneralQuestion" /></option>
-								<option id="erroroption" selected="selected"><spring:message code="support.TechnicalProblem" /></option>
-								<option><spring:message code="support.idea" /></option>
-								<option><spring:message code="support.assistance" /></option>
-								<option><spring:message code="support.Accessibility" /></option>
-								<option><spring:message code="support.DataProtection" /></option>
-								<option><spring:message code="support.otherreason" /></option>
-							</c:when>
-							<c:when test="${needassistance != null}">
-								<option><spring:message code="support.GeneralQuestion" /></option>
-								<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
-								<option><spring:message code="support.idea" /></option>
-								<option selected="selected"><spring:message code="support.assistance" /></option>
-								<option><spring:message code="support.Accessibility" /></option>
-								<option><spring:message code="support.DataProtection" /></option>
-								<option><spring:message code="support.otherreason" /></option>
-							</c:when>
-							<c:otherwise>
-								<option selected="selected"><spring:message code="support.GeneralQuestion" /></option>
-								<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
-								<option><spring:message code="support.idea" /></option>
-								<option><spring:message code="support.assistance" /></option>
-								<option><spring:message code="support.Accessibility" /></option>
-								<option><spring:message code="support.DataProtection" /></option>
-								<option><spring:message code="support.otherreason" /></option>
-							</c:otherwise>				
-						</c:choose>
+
+						<option id="generaloption"><spring:message code="support.GeneralQuestion" /></option>
+						<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
+						<option><spring:message code="support.idea" /></option>
+						<option id="assistanceoption"><spring:message code="support.assistance" /></option>
+						<option><spring:message code="support.Accessibility" /></option>
+						<option><spring:message code="support.DataProtection" /></option>
+						<option id="highaudienceoption"><spring:message code="support.HighAudience" /></option>
+						<option><spring:message code="support.otherreason" /></option>
+						
 					</select><br /><br />
+					<script>
+						if (window.location.search.toLowerCase().includes("error")){
+							document.getElementById("erroroption").setAttribute("selected", "selected")
+						} else if (window.location.search.toLowerCase().includes("assistance")){
+							document.getElementById("assistanceoption").setAttribute("selected", "selected")
+						} else if (window.location.search.toLowerCase().includes("highaudience")){
+							document.getElementById("highaudienceoption").setAttribute("selected", "selected")
+						} else {
+							document.getElementById("generaloption").setAttribute("selected", "selected")
+						}
+					</script>
 					
 					<div id="additionalsurveyinfodiv">
-						<p><spring:message code="support.additionalsurveyinfo" />:</p>
+						<p><spring:message code="support.additionalsurveyinfonew" />:</p>
 						<label><spring:message code="skin.SurveyTitle" /></label><br />
 						<textarea class="form-control" rows="3" style="width: 400px" name="additionalsurveyinfotitle" id="additionalsurveyinfotitle" ></textarea><br />
 						<label><spring:message code="label.SurveyAlias" /></label><br />
