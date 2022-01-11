@@ -3381,6 +3381,13 @@ public class SurveyHelper {
 		}
 		rankingQuestion.setShortname(shortname);
 
+		Integer order = getInteger(parameterMap, "order", id);
+		if (log220 && !order.equals(rankingQuestion.getOrder())) {
+			oldValues += " order: " + rankingQuestion.getOrder();
+			newValues += " order: " + order;
+		}
+		rankingQuestion.setOrder(order);
+
 		StringBuilder oldRankingItemTitles = new StringBuilder();
 		StringBuilder newRankingItemTitles = new StringBuilder();
 		if (log220) {
