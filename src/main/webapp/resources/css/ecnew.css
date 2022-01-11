@@ -463,3 +463,10 @@ body {
 .check {
     margin-bottom: 6px !important;
 }
+
+.progressBar {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 10px;
+	bottom: 30px;
+}

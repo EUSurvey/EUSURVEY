@@ -135,6 +135,7 @@
 						});
 				} else {
 					readCookies();
+					updateProgress();
 					$("#btnSubmit").removeClass("hidden");
 					$("#btnSaveDraft").removeClass("hidden");
 					$("#btnSaveDraftMobile").removeClass("hidden");

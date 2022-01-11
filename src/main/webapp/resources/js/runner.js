@@ -209,6 +209,8 @@ function propagateChange(element)
 		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
 		$(div).find(".explanation-file-upload-section").hide();
+		$(element).closest(".forprogress").removeClass("answered");
+		updateProgress();
 		return;
 	}
 
@@ -226,6 +228,21 @@ function propagateChange(element)
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();
 	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
+	
+	$(element).closest(".forprogress").addClass("answered");
+	updateProgress();
+}
+
+function updateProgress() {
+	if ($('#progressBar').length == 0) return;
+	var totalForProgress = $('.forprogress').length;
+	var answered = $('.forprogress.answered').length;
+	var percent = Math.round(answered / totalForProgress * 100);
+	
+	$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);	
+	$('#progressBarPercentage').html(percent + '%');
+	$('#progressBarRatio').html(answered + '/' + totalForProgress);	
+	$('#progressBarContainer').show();
 }
 
 var downloadsurveypdflang;
@@ -318,6 +335,8 @@ function createUploader(instance, maxSize)
 			$(this.element).parent().find(".uploadinfo").hide();
 			updateFileList($(this.element), responseJSON);
 			enableDelphiSaveButtons($(this.element).closest(".survey-element"));
+			$(this.element).closest(".forprogress").addClass("answered");
+			updateProgress();
 	    	
 	    	if (responseJSON.wrongextension)
 	    	{
@@ -1527,20 +1546,24 @@ function readCookiesForParent(parent)
 			if (value != null && value.length > 0 && ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'internal_captcha_response'))) {
 				if (type == "text") {
 					$(this).val(value);
+					$(this).closest(".forprogress").addClass("answered");
 				} else if (type == "hidden" && $(this).attr("data-id") && ($(this).attr("id") == null || !strStartsWith($(this).attr("id"), 'regex'))) {
 					$(this).val(value);		
 					
 					if ($(this).attr("data-type") == "rating")
 					{
 						updateRatingIcons(parseInt(value)-1, $(this).parent());
+						$(this).closest(".forprogress").addClass("answered");
 					}					
 				} else if (type == "radio" || type == "checkbox") {
 					if (value == "true") {
 						$(this).prop("checked","checked");
 						$(this).closest(".possible-answer").addClass("selected-choice");
 						checkDependencies(this);
+						$(this).closest(".forprogress").addClass("answered");
 					}
 				}
+			
 			}					
 		});
 		
@@ -1549,8 +1572,11 @@ function readCookiesForParent(parent)
 			{
 				var id = $(this).attr("data-id");
 				var s = readCookie(survey+id);
-				if (s != null && s.length > 0)
-				$(this).val(s);
+				if (s != null && s.length > 0) {
+					$(this).closest(".forprogress").addClass("answered");
+					$(this).val(s);
+				}
+				
 			}
 		});
 		
@@ -1562,6 +1588,7 @@ function readCookiesForParent(parent)
 				var s = readCookie(survey+id);
 				if (s != null && s.length > 0) {
 					$(this).val(s);
+					$(this).closest(".forprogress").addClass("answered");
 					checkDependencies(this);
 				}
 			}

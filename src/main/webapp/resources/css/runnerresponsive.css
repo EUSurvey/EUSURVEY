@@ -551,3 +551,32 @@ legend {
 	z-index: 0;
 	bottom: 11px;
 }
+
+.progressBarPlaceholder {
+	height: 20px;
+}
+
+.progressBar {
+	z-index: 1000;
+	position: fixed;
+	top: 40px;
+	bottom: 60px;
+	left: 0px;
+	right: 0px;
+	height: 20px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.progressBar .progress {
+	background-color: #9e9b9b;
+	position: relative;
+}
+
+.progressBarLabel {
+    position: absolute;
+    left: 10px;
+    color: #fff;
+    font-size: 11px;
+    line-height: 20px;
+}

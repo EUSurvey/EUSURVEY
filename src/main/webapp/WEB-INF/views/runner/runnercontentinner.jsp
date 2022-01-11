@@ -60,6 +60,24 @@
 			</c:choose>						
 				
 				<div class="left-area">
+					<c:if test="${form.survey.progressBar}">
+						<div id="progressBarContainer" class="progressBar" style="display: none">
+							<div class="progress">
+							  <div id="progressBar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">							    
+							  </div>
+							  <div class="progressBarLabel">
+							    <c:if test="${form.survey.progressDisplay != 1}">
+							    	<span id="progressBarPercentage"></span>
+							    </c:if>
+							    <c:if test="${form.survey.progressDisplay == 2}"> (</c:if>
+							    <c:if test="${form.survey.progressDisplay != 0}"><span id="progressBarRatio"></span></c:if>
+							    <c:if test="${form.survey.progressDisplay == 2}">)</c:if>
+						       </div>
+							</div>
+						</div>
+						<div class="progressBarPlaceholder"></div>
+					</c:if>
+				
 					<c:if test="${!(form.survey.isDelphi)}">
 						<div id="nolocalstorage" class="hideme" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
 							<span class="alert-danger" style="padding: 10px;">${form.getMessage("info.LocalStorageDisabled")}</span>
@@ -667,7 +685,7 @@
 	 		filevalues = {};
 	 		validationMessages = {};
 	 		
-	 		<c:if test="${form.answerSets.size() >0}">
+	 		<c:if test="${form.answerSets.size() > 0}">
 	 		
 		 		<c:forEach items="${form.answerSets[0].answers}" var="answer" varStatus="rowCounter">	
 		 		
@@ -794,13 +812,24 @@
 	 	var values = null;
 	 	function getValueByQuestion(uniqueId)
 	 	{
-	 		return typeof values[uniqueId] != 'undefined' ? values[uniqueId] : "";
+	 		if (typeof values[uniqueId] != 'undefined') {
+	 			$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+	 			$('tr[data-uid="' + uniqueId + '"]').closest(".survey-element").addClass("answered");
+ 				return values[uniqueId];
+	 		}
+	 		
+	 		return "";
 	 	}
 	 	
 	 	var pavalues = null;
 	 	function getPAByQuestion(uniqueId)
 	 	{
-	 		return typeof pavalues[uniqueId] != 'undefined' ? pavalues[uniqueId] : "";
+	 		if (typeof pavalues[uniqueId] != 'undefined')
+	 		{
+	 			$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+	 			return pavalues[uniqueId];
+	 		}
+	 		return "";
 	 	}
 	 	
 	 	var pavaluesid = null;
@@ -813,6 +842,7 @@
 	 	{
 	 		if (getPAByQuestion(parentuniqueId).indexOf(uniqueId) > -1)
 	 		{
+	 			$('tr[data-uid="' + parentuniqueId + '"]').closest(".survey-element").addClass("answered");
 	 			return id.toString();
 	 		}
 	 		return "";
@@ -823,7 +853,10 @@
 	 		if (getPAByQuestion(parentuniqueId).length > 0)
 	 		{
 	 			var result = getIdForUniqueId(getPAByQuestion(parentuniqueId));
-	 			return typeof result != 'undefined' ? result : "";
+	 			if (typeof result != 'undefined')
+ 				{
+	 				return result;
+ 				}
 	 		}
 	 		return "";
 	 	}
@@ -836,7 +869,13 @@
 	 	var tablevalues = null;
 	 	function getTableAnswer(uniqueId, row, col)
 	 	{
-	 		return typeof tablevalues[uniqueId + "#" + row + "#" + col] != 'undefined' ? tablevalues[uniqueId + "#" + row + "#" + col] : "";
+	 		if (typeof tablevalues[uniqueId + "#" + row + "#" + col] != 'undefined')
+	 		{
+	 			$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+	 			return tablevalues[uniqueId + "#" + row + "#" + col];
+	 		}
+	 		
+	 		return "";
 	 	}
 	 	
 	 	var filevalues = null;

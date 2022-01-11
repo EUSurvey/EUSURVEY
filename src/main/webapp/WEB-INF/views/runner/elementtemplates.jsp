@@ -657,7 +657,7 @@
 		
 		<table class="ratingtable" role="list" data-bind="attr: {'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 			<tbody data-bind="foreach: childElements()">
-				<tr class="ratingquestion" data-bind="attr: {'data-id': id}">
+				<tr class="ratingquestion" data-bind="attr: {'data-id': id, 'data-uid': uniqueId}">
 					<td>
 						<!-- ko if: optional() == false -->
 							<span class="mandatory">*</span>
@@ -1235,7 +1235,7 @@
 					</thead>
 					<tbody>					
 						<!-- ko foreach: questionsOrdered() -->			
-						<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId)), 'data-useAndLogic': useAndLogic()}"> 
+						<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-uid': uniqueId(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId)), 'data-useAndLogic': useAndLogic()}"> 
 							<th class="matrix-header" scope="row" data-bind="attr: {'id' : id(), 'data-id': id}">
 								<!-- ko if: optional() == false -->
 									<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>
