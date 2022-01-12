@@ -151,6 +151,7 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 				case "MultipleChoice":
 				case "SingleChoice":
 				case "Number":
+				case "Ranking":
 					var graphData = result.data;
 
 					chartData = {
@@ -358,7 +359,7 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 								return [result.label].concat(titleLines_);
 							}
 						}
-						if (result.questionType === "SingleChoice" || result.questionType === "MultipleChoice"  || result.questionType === "Number") {
+						if (result.questionType === "SingleChoice" || result.questionType === "MultipleChoice"  || result.questionType === "Number" || result.questionType === "Ranking") {
 							return [result.label];
 						}
 						return titleLines_;
