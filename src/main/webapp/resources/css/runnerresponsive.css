@@ -573,9 +573,10 @@ legend {
 	position: relative;
 }
 
-.progressBarLabel {
+.progressBarLabel {   
     position: absolute;
-    left: 10px;
+    width: 100%;
+    text-align: center;
     color: #fff;
     font-size: 11px;
     line-height: 20px;
