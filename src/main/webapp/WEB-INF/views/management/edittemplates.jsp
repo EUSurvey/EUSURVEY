@@ -225,7 +225,12 @@
 		</td>
 	</tr>
 	<tr class="firstpropertyrow">
-		<td class="propertylabel" data-label="Attribute"><spring:message code="label.Attribute" /></td>
+		<td class="propertylabel" data-label="Attribute">
+			<spring:message code="label.Attribute" />
+			<a data-toggle="tooltip" data-placement="right" title="<spring:message code="label.AttributeTooltip" />">
+				<span class="glyphicon glyphicon-question-sign"></span>
+			</a>
+		</td>
 		<td class="propertycontent">
 			<!--  ko if: Value() == "true" -->
 			<input data-bind="disable: Disabled()" type='checkbox' checked='checked' onclick='update(this)' />
