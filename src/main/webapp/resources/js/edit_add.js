@@ -470,11 +470,7 @@ function getNewShortname()
 {
 	if (usedIDs.length == 0)
 	{
-		$("input[name^='shortname']").each(function(){
-			usedIDs[usedIDs.length] = $(this).val();
-		});
-		
-		$("input[name^='pashortname']").each(function(){
+		$("input[name^='shortname'],input[name^='pashortname'],input[name^='rankingitemshortname']").each(function(){
 			usedIDs[usedIDs.length] = $(this).val();
 		});
 		

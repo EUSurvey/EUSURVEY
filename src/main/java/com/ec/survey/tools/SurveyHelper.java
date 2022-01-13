@@ -3405,7 +3405,7 @@ public class SurveyHelper {
 				String thatUid = Tools.getFromListOrDefault(k, rankingItemUids, "");
 				RankingItem thatItem = null;
 				for (RankingItem existingItem : childElements) {
-					if (existingItem.getTitle().equals(thatTitle) || existingItem.getTitle().equals(thatOriginalTitle)) {
+					if (thatUid.equals(existingItem.getUniqueId())) {
 						thatItem = existingItem;
 						break;
 					}
