@@ -366,8 +366,29 @@ public class DelphiController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 	
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRankingQuestion(Survey survey, RankingQuestion question, Statistics statistics, StatisticsCreator creator, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) {
-		return null;	
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRankingQuestion(Survey survey, RankingQuestion question, Statistics statistics, StatisticsCreator creator, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) throws Exception {
+		int contributions = answerExplanationService.getTotalDelphiContributions(numberOfAnswersMapRankingQuestion.keySet(), survey.getIsDraft());
+
+		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
+			// only show statistics for this question if the total number of answers exceeds the threshold
+			return ResponseEntity.noContent().build();
+		}
+
+		creator.addStatistics4RankingQuestion(survey, question, statistics, numberOfAnswersMapRankingQuestion);
+
+		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+		result.setChartType(question.getDelphiChartType());
+		result.setQuestionType(DelphiQuestionType.Ranking);
+
+		for (RankingItem item : question.getChildElements()) {
+			DelphiGraphEntry entry = new DelphiGraphEntry();
+			entry.setLabel(item.getStrippedTitleNoEscape());
+			entry.setValue(statistics.getRequestedRecordsRankingPercentScore().get(item.getId().toString()));
+			result.addEntry(entry);
+		}
+
+		result.setLabel(question.getStrippedTitle());
+		return ResponseEntity.ok(result);
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
