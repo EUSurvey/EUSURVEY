@@ -684,38 +684,62 @@ public class XmlExportCreator extends ExportCreator {
 			FilesByType<String> explanationFilesToExport) throws XMLStreamException {
 		writer.writeStartElement("AnswerSet");
 
-		if (survey.getSecurity().contains("anonymous")) {
-			writer.writeAttribute("id", "Anonymous");
-		} else if (answerSet == null) {
-			writer.writeAttribute("id", row.get(0));
-			exportedUniqueCodes.put(Integer.parseInt(row.get(1)), row.get(0));
-		} else {
-			if (filter == null || filter.exported("case"))
+		if (meta || filter == null || filter.exported("case")) {
+			if (survey.getSecurity().contains("anonymous")) {
+				writer.writeAttribute("id", "Anonymous");
+			} else if (answerSet == null) {
+				writer.writeAttribute("id", row.get(0));
+				exportedUniqueCodes.put(Integer.parseInt(row.get(1)), row.get(0));
+			} else {
 				writer.writeAttribute("id", answerSet.getUniqueCode());
-			exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
+				exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
+			}
 		}
 
-		if (answerSet != null) {
-			if (meta || filter == null || filter.exported("created"))
-				writer.writeAttribute("create", Tools.formatDate(answerSet.getDate(), "yyyy-MM-dd_HH-mm-ss"));
+		//Exports may be found at different indices depending on which details should be exported
+		//This maps all exports to the correct index
+		HashMap<String, Integer> rowPosMap = null;
 
-			if (meta || filter == null || filter.exported("updated"))
-				writer.writeAttribute("last", Tools.formatDate(answerSet.getUpdateDate(), "yyyy-MM-dd_HH-mm-ss"));
+		String[] possibleExportsOrdered = {
+				"invitation",
+				"case",
+				"user",
+				"created",
+				"updated",
+				"languages"
+		};
+		if (answerSet == null && filter != null && row != null) {
+			rowPosMap = new HashMap<>();
+			int rowPosCount = 5;
+			for (String export : possibleExportsOrdered) {
+				if (filter.exported(export)) {
+					rowPosMap.put(export, rowPosCount);
+					rowPosCount++;
+				}
+			}
 		}
+
+		if (meta || filter == null || filter.exported("created"))
+			writer.writeAttribute("create", answerSet == null ? row.get(rowPosMap.get("created"))
+					: Tools.formatDate(answerSet.getDate(), "yyyy-MM-dd_HH-mm-ss"));
+
+		if (meta || filter == null || filter.exported("updated"))
+			writer.writeAttribute("last", answerSet == null ? row.get(rowPosMap.get("updated"))
+					: Tools.formatDate(answerSet.getUpdateDate(), "yyyy-MM-dd_HH-mm-ss"));
 
 		writer.writeAttribute("list", list);
 
 		if (meta || filter == null || filter.exported("languages"))
-			writer.writeAttribute("lang", answerSet == null ? row.get(row.size() - 2) : answerSet.getLanguageCode());
+			writer.writeAttribute("lang", answerSet == null ? row.get(rowPosMap.get("languages")) : answerSet.getLanguageCode());
 
 		if (meta || filter == null || filter.exported("user"))
-			writer.writeAttribute("user", answerSet == null ? row.get(row.size() - 5)
+			writer.writeAttribute("user", answerSet == null ? row.get(rowPosMap.get("user"))
 					: answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "");
 		if (meta || filter == null || filter.exported("invitation"))
-			writer.writeAttribute("invitation", answerSet == null ? row.get(row.size() - 6)
+			writer.writeAttribute("invitation", answerSet == null ? row.get(rowPosMap.get("invitation"))
 					: answerSet.getInvitationId() != null ? answerSet.getInvitationId() : "");
 		if (survey.getIsOPC() && (meta || filter == null || filter.exported("user"))) {
-			String suser = answerSet == null ? row.get(row.size() - 5) : answerSet.getResponderEmail();
+			String suser = answerSet == null ? row.get(rowPosMap.get("user")) : answerSet.getResponderEmail();
 			if (suser != null && suser.contains("@") && ECASUserLoginsByEmail != null
 					&& ECASUserLoginsByEmail.containsKey(suser)) {
 				writer.writeAttribute("userlogin", ECASUserLoginsByEmail.get(suser));
