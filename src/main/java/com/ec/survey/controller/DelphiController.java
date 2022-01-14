@@ -366,8 +366,8 @@ public class DelphiController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 	
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRankingQuestion(Survey survey, RankingQuestion question, Statistics statistics, StatisticsCreator creator, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) throws Exception {
-		int contributions = answerExplanationService.getTotalDelphiContributions(numberOfAnswersMapRankingQuestion.keySet(), survey.getIsDraft());
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRankingQuestion(Survey survey, RankingQuestion question, Statistics statistics, StatisticsCreator creator, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) {
+		int contributions = answerExplanationService.getTotalDelphiContributions(Collections.singletonList(question.getUniqueId()), survey.getIsDraft());
 
 		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
