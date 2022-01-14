@@ -341,10 +341,12 @@ public class ManagementController extends BasicController {
 			delete = Constants.FALSE;
 		}
 		User u = sessionService.getCurrentUser(request);
-		Access access = surveyService.getAccess(survey.getId(), u.getId());
+		
+		sessionService.upgradePrivileges(survey, u, request);
+		
 		if (!u.getId().equals(survey.getOwner().getId())
-				&& access.getLocalPrivilegeValue("FormManagement") < 2
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
 				&& (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1
 						|| answers != null && answers.equalsIgnoreCase("true"))) {
 			throw new ForbiddenURLException();
