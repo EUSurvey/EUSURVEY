@@ -40,21 +40,10 @@
 												<table class="table table-bordered">						
 													<c:forEach items="${question.questions}" var="matrixQuestion">
 														<tr>
-															<td>${matrixQuestion.title}</td>										
-															<c:set var="answers" value="${answerSet.getAnswers(matrixQuestion.id, matrixQuestion.uniqueId)}" />
-															<c:if test="${answers.size() > 1}">
-																<td class="questioncell" data-id="${matrixQuestion.id}">
-																	<c:forEach items="${answers}" var="answer">					
-																		${form.getAnswerTitle(answer)}<br />
-																	</c:forEach>
-																</td>
-								 							</c:if>
-															<c:if test="${answers.size() == 1}">
-																<td class="questioncell" data-id="${matrixQuestion.id}" data-uid="${matrixQuestion.uniqueId}">${form.getAnswerTitle(answers.get(0))}</td>
-															</c:if>
-								 							<c:if test="${answers.size() < 1}">
-																<td class="questioncell" data-id="${matrixQuestion.id}" data-uid="${matrixQuestion.uniqueId}">&#160;</td>
-															</c:if>										
+															<td>${matrixQuestion.title}</td>
+															<td class="questioncell" data-id="${matrixQuestion.id}" data-uid="${matrixQuestion.uniqueId}">
+																<!-- Set through JS; publication.jsp - individualsMoveTo(...) -->
+															</td>
 														</tr>
 													</c:forEach>							
 												</table>
@@ -102,15 +91,9 @@
 													<c:forEach items="${question.questions}" var="childQuestion">	
 														<tr>
 															<td>${childQuestion.title}</td>										
-															<c:set var="answers" value="${answerSet.getAnswers(childQuestion.id, childQuestion.uniqueId)}" />
-															<c:if test="${answers.size() > 0}">
-																<td class="questioncell" data-id="${childQuestion.id}">
-																	${answers.get(0).getValue()}
-																</td>
-								 							</c:if>
-															<c:if test="${answers.size() < 1}">
-																<td class="questioncell" data-id="${childQuestion.id}" data-uid="${childQuestion.uniqueId}">&#160;</td>
-															</c:if>										
+															<td class="questioncell" data-id="${childQuestion.id}" data-uid="${childQuestion.uniqueId}">
+																<!-- Set through JS; publication.jsp - individualsMoveTo(...) -->
+															</td>
 														</tr>
 													</c:forEach>							
 												</table>

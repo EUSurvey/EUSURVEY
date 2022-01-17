@@ -368,6 +368,31 @@ public class PublicationController extends BasicController {
 									}
 								}
 							}
+						}  else if (question instanceof RankingQuestion) {
+
+							String[] answerSplit = answer.getValue().split(";");
+
+							Map<String, RankingItem> childs = ((RankingQuestion) question).getChildElementsByUniqueId();
+							for (int i = 0; i < answerSplit.length; i++){
+								answerSplit[i] = childs.get(answerSplit[i]).getTitle();
+							}
+
+							String answerReadable = String.join("; ", answerSplit);
+
+							if (result.containsKey(answer.getQuestionId().toString())) {
+								result.put(answer.getQuestionId().toString(),
+										result.get(answer.getQuestionId().toString()) + "<br />" + answerReadable);
+							} else {
+								result.put(answer.getQuestionId().toString(), answerReadable);
+							}
+
+							if (result.containsKey(answer.getQuestionUniqueId())) {
+								result.put(answer.getQuestionUniqueId(),
+										result.get(answer.getQuestionUniqueId()) + "<br />" + answerReadable);
+							} else {
+								result.put(answer.getQuestionUniqueId(), answerReadable);
+							}
+
 						} else if (question instanceof GalleryQuestion) {
 							GalleryQuestion gallery = (GalleryQuestion) question;
 							for (int i = 0; i < gallery.getFiles().size(); i++) {
