@@ -228,7 +228,7 @@
 				
 				<form:form id="supportForm" method="POST" action="${contextpath}/home/support?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
 					<label><span class="mandatory">*</span><spring:message code="support.ContactReason" /></label><br />
-					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 400px" name="contactreason" id="contactreason">
+					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 425px" name="contactreason" id="contactreason">
 
 						<option id="generaloption"><spring:message code="support.GeneralQuestion" /></option>
 						<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
@@ -255,19 +255,19 @@
 					<div id="additionalsurveyinfodiv">
 						<p><spring:message code="support.additionalsurveyinfonew" />:</p>
 						<label><spring:message code="skin.SurveyTitle" /></label><br />
-						<textarea class="form-control" rows="3" style="width: 400px" name="additionalsurveyinfotitle" id="additionalsurveyinfotitle" ></textarea><br />
+						<textarea class="form-control" rows="3" style="width: 425px" name="additionalsurveyinfotitle" id="additionalsurveyinfotitle" ></textarea><br />
 						<label><spring:message code="label.SurveyAlias" /></label><br />
-						<input type="text" class="form-control" name="additionalsurveyinfoalias" id="additionalsurveyinfoalias" /><br /><br />
+						<input type="text" class="form-control" style="width: 425px" name="additionalsurveyinfoalias" id="additionalsurveyinfoalias" /><br /><br />
 					</div>
 					
 					<label><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
-					<input type="text" class="form-control required" name="name" id="yourname" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
+					<input type="text" class="form-control required" style="width: 425px" name="name" id="yourname" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
 					
 					<label><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
-					<input type="text" class="form-control required email" id="supportemail" name="email" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
+					<input type="text" class="form-control required email" style="width: 425px" id="supportemail" name="email" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
 					
 					<label><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
-					<input type="text" class="form-control required" name="subject" id="supportsubject" /><br /><br />
+					<input type="text" class="form-control required" name="subject" style="width: 425px" id="supportsubject" /><br /><br />
 							
 					<label><span class="mandatory">*</span><spring:message code="support.yourmessagetous" /></label>
 					<div class="helptext"><spring:message code="support.yourmessagetoushelp" /></div>
