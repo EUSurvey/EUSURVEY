@@ -49,6 +49,15 @@ public class XmlExportCreator extends ExportCreator {
 	private static final String EXPLANATION_FILE = "ExplanationFile";
 	private static final String EXPLANATION_TEXT = "ExplanationText";
 	private static final String DISCUSSION = "Discussion";
+
+	private static final String[] POSSIBLE_EXPORTS_ORDERED = {
+		"invitation",
+		"case",
+		"user",
+		"created",
+		"updated",
+		"languages"
+	};
 	
 	@Override
 	@Transactional
@@ -418,6 +427,22 @@ public class XmlExportCreator extends ExportCreator {
 		writer.writeStartElement("Answers");
 
 		if (answersets != null) {
+
+			//Exports may be found at different indices depending on which details should be exported
+			//This maps all exports to the correct index
+			HashMap<String, Integer> rowPosMap = null;
+
+			if (filterWithMeta != null) {
+				rowPosMap = new HashMap<>();
+				int rowPosCount = 5;
+				for (String exp : POSSIBLE_EXPORTS_ORDERED) {
+					if (filterWithMeta.exported(exp)) {
+						rowPosMap.put(exp, rowPosCount);
+						rowPosCount++;
+					}
+				}
+			}
+
 			for (List<String> row : answersets) {
 				String lang = row.get(row.size() - 2);
 				List<Element> questions = form.getSurvey().getQuestionsAndSections();
@@ -426,7 +451,7 @@ public class XmlExportCreator extends ExportCreator {
 				}
 				parseAnswerSet(form.getSurvey(), writer, questions, null, row, row.get(1), filesByAnswer,
 						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail, null, null,
-						explanationFilesOfSurvey, explanationFilesToExport);
+						explanationFilesOfSurvey, explanationFilesToExport, rowPosMap);
 			}
 		} else {
 
@@ -483,7 +508,7 @@ public class XmlExportCreator extends ExportCreator {
 						parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()),
 								answerSet, null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(),
 								filterWithMeta, ECASUserLoginsByEmail, explanations, discussions,
-								explanationFilesOfSurvey, explanationFilesToExport);
+								explanationFilesOfSurvey, explanationFilesToExport, null);
 					}
 
 					answerSet = new AnswerSet();
@@ -511,7 +536,7 @@ public class XmlExportCreator extends ExportCreator {
 			if (lastAnswerSet > 0)
 				parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()), answerSet,
 						null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta,
-						ECASUserLoginsByEmail, explanations, discussions, explanationFilesOfSurvey, explanationFilesToExport);
+						ECASUserLoginsByEmail, explanations, discussions, explanationFilesOfSurvey, explanationFilesToExport, null);
 			results.close();
 		}
 
@@ -681,7 +706,7 @@ public class XmlExportCreator extends ExportCreator {
 			Map<String, List<File>> uploadedFilesByQuestionUID, boolean meta, ResultFilter filter,
 			Map<String, String> ECASUserLoginsByEmail, Map<Integer, Map<String, String>> explanations,
 			Map<Integer, Map<String, String>> discussions, FilesByTypes<Integer, String> explanationFilesOfSurvey,
-			FilesByType<String> explanationFilesToExport) throws XMLStreamException {
+			FilesByType<String> explanationFilesToExport, HashMap<String, Integer> rowPosMap) throws XMLStreamException {
 		writer.writeStartElement("AnswerSet");
 
 		if (meta || filter == null || filter.exported("case")) {
@@ -693,29 +718,6 @@ public class XmlExportCreator extends ExportCreator {
 			} else {
 				writer.writeAttribute("id", answerSet.getUniqueCode());
 				exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
-			}
-		}
-
-		//Exports may be found at different indices depending on which details should be exported
-		//This maps all exports to the correct index
-		HashMap<String, Integer> rowPosMap = null;
-
-		String[] possibleExportsOrdered = {
-				"invitation",
-				"case",
-				"user",
-				"created",
-				"updated",
-				"languages"
-		};
-		if (answerSet == null && filter != null && row != null) {
-			rowPosMap = new HashMap<>();
-			int rowPosCount = 5;
-			for (String export : possibleExportsOrdered) {
-				if (filter.exported(export)) {
-					rowPosMap.put(export, rowPosCount);
-					rowPosCount++;
-				}
 			}
 		}
 
