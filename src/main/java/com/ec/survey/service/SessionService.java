@@ -10,6 +10,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
+import com.ec.survey.model.survey.Question;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
@@ -29,9 +30,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service("sessionService")
 public class SessionService extends BasicService {
@@ -524,6 +523,10 @@ public class SessionService extends BasicService {
 					filter.getExportedQuestions().add(id);
 				}
 			}
+
+			if (!idsToRemove.isEmpty()) {
+				updateFilterValueIds(filter);
+			}
 		}
 
 		return filter;
@@ -615,6 +618,32 @@ public class SessionService extends BasicService {
 
 		session.evict(filter);
 		session.saveOrUpdate(existing);
+	}
+
+	public void updateFilterValueIds(ResultFilter filter){
+		Map<String, String> filterValues = filter.getFilterValues();
+		Map<String, String> updatedValues = new HashMap<>();
+
+		Survey survey = surveyService.getSurvey(filter.getSurveyId());
+
+		Map<Integer, Question> qIdMap = survey.getQuestionMap();
+		Map<String, Element> qUidMap = survey.getQuestionMapByUniqueId();
+
+		for (Map.Entry<String, String> entry : filterValues.entrySet()){
+			String[] split = entry.getKey().split("\\|");
+			String uid = split[1];
+			String id = split[0].split("-")[0];
+
+			if (qIdMap.containsKey(Integer.parseInt(id)) || !qUidMap.containsKey(uid)) {
+				updatedValues.put(entry.getKey(), entry.getValue());
+			} else {
+				Element elem = qUidMap.get(uid);
+				String newKey = entry.getKey().replace(id, elem.getId().toString());
+				updatedValues.put(newKey, entry.getValue());
+			}
+		}
+
+		filter.setFilterValues(updatedValues);
 	}
 
 	public ActivityFilter getLastActivityFilter(HttpServletRequest request) {
