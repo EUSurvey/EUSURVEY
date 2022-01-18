@@ -110,23 +110,23 @@
 						</div>
 
                         <div class="statelement-wrapper">
-                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                        <tr>
-                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-											 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-										 </th>
-                                        </tr>
-                                        <tr>
-                                            <td style='padding-top:10px; padding-bottom:10px'>
-                                                <div class="delphi-chart-div"></div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div style="clear: both"></div>
-                               </div>
-                               <div class="chart-controls"></div>
-                               <div style="clear: both"></div>
+                        	<div class="chart-controls"></div>
+                            <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                 <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+                                     <tr>
+                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+								 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+							 </th>
+                                     </tr>
+                                     <tr>
+                                         <td style='padding-top:10px; padding-bottom:10px'>
+                                             <div class="delphi-chart-div"></div>
+                                         </td>
+                                     </tr>
+                                 </table>
+                                 <div style="clear: both"></div>
+                            </div>
+                            <div style="clear: both"></div>
                         </div>
 
 					</c:if>
@@ -282,6 +282,7 @@
 						</div>
 
                         <div class="statelement-wrapper">
+                        	   <div class="chart-controls"></div>
                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                        <tr>
@@ -297,7 +298,6 @@
                                    </table>
                                    <div style="clear: both"></div>
                                </div>
-                               <div class="chart-controls"></div>
                                <div style="clear: both"></div>
                         </div>
 
@@ -309,6 +309,7 @@
 						</div>
 
                         <div class="statelement-wrapper">
+                        	   <div class="chart-controls"></div>
                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}" data-initial-chart-type="${question.getDelphiChartType()}" data-chart-data-type="${question.getDelphiChartDataType()}">
                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                         <tr>
@@ -324,7 +325,6 @@
                                     </table>
                                     <div style="clear: both"></div>
                                </div>
-                               <div class="chart-controls"></div>
                                <div style="clear: both"></div>
                                <div class="no-chart-results-message"></div>
                         </div>
@@ -414,6 +414,7 @@
 						</div>
 
                         <div class="statelement-wrapper">
+                               <div class="chart-controls"></div>
                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                        <tr>
@@ -429,7 +430,6 @@
                                    </table>
                                    <div style="clear: both"></div>
                                </div>
-                               <div class="chart-controls"></div>
                                <div style="clear: both"></div>
                         </div>
 
@@ -505,6 +505,7 @@
 						</div>
 						
                         <div class="statelement-wrapper">
+                               <div class="chart-controls"></div>
                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                         <tr>
@@ -520,7 +521,6 @@
                                     </table>
                                     <div style="clear: both"></div>
                                </div>
-                               <div class="chart-controls"></div>
                                <div style="clear: both"></div>
                         </div>
 					</c:if>
@@ -599,7 +599,8 @@
 							</table>
 						</div>
 
-                        <div class="statelement-wrapper">
+                        <div class="statelement-wrapper ranking-chart">
+                               <div class="chart-controls"></div>
                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                        <tr>
@@ -615,7 +616,6 @@
                                    </table>
                                    <div style="clear: both"></div>
                                </div>
-                               <div class="chart-controls"></div>
                                <div style="clear: both"></div>
                         </div>
 
@@ -629,121 +629,126 @@
 </div>
 
 <div id="chart-controls-template" style="display: none">
-	<label><spring:message code="label.DelphiChartType" /></label><br />
-    <select onchange="changeChart(this)" class="chart-type form-control">
-    	<option data-type="numerical" value="Bar"><spring:message code="label.DelphiChartBar" /></option>
-    	<option data-type="numerical" value="Column"><spring:message code="label.DelphiChartColumn" /></option>
-    	<option data-type="numerical" value="Line"><spring:message code="label.DelphiChartLine" /></option>
-    	<option data-type="numerical" value="Pie"><spring:message code="label.DelphiChartPie" /></option>
-    	<option data-type="numerical" value="Radar"><spring:message code="label.DelphiChartRadar" /></option>
-    	<option data-type="numerical" value="Scatter"><spring:message code="label.DelphiChartScatter" /></option>
-    	<option data-type="none" value="None"><spring:message code="label.None" /></option>
-    	<option data-type="textual" value="WordCloud"><spring:message code="label.DelphiChartWordCloud" /></option>
-    </select>
+	<div style="float: left; margin-right: 10px;">
+		<label><spring:message code="label.DelphiChartType" /></label><br />
+	    <select onchange="changeChart(this)" class="chart-type form-control" style="width: auto">
+	    	<option data-type="numerical" value="Bar"><spring:message code="label.DelphiChartBar" /></option>
+	    	<option data-type="numerical" value="Column"><spring:message code="label.DelphiChartColumn" /></option>
+	    	<option data-type="numerical" value="Line"><spring:message code="label.DelphiChartLine" /></option>
+	    	<option data-type="numerical" value="Pie"><spring:message code="label.DelphiChartPie" /></option>
+	    	<option data-type="numerical" value="Radar"><spring:message code="label.DelphiChartRadar" /></option>
+	    	<option data-type="numerical" value="Scatter"><spring:message code="label.DelphiChartScatter" /></option>
+	    	<option data-type="none" value="None"><spring:message code="label.None" /></option>
+	    	<option data-type="textual" value="WordCloud"><spring:message code="label.DelphiChartWordCloud" /></option>
+	    </select>
+    </div>
     
-    <span class="chart-scheme-group" style="display: none">
-    <br />
-    <label><spring:message code="label.ColorScheme" /></label><br />
-    <select onchange="changeChart(this)" class="chart-scheme form-control">
-		<option data-type="numerical" selected="selected" value="tableau.Tableau10">Default</option>
-		<option data-type="numerical" value="tableau.Blue20">Blue</option>
-		<option data-type="numerical" value="tableau.BlueLight7">Blue (Light)</option>
-		<option data-type="numerical" value="tableau.BlueGreen7">Blue/Green</option>
-		<option data-type="numerical" value="tableau.BlueTeal20">Blue/Teal</option>
-		<option data-type="numerical" value="tableau.Brown20">Brown</option>
-		<option data-type="numerical" value="tableau.Classic10">Classic</option>
-		<option data-type="numerical" value="tableau.Classic20">Classic (Alternative)</option>
-		<option data-type="numerical" value="tableau.ClassicAreaBrown11">Classic (Area Brown)</option>
-		<option data-type="numerical" value="tableau.ClassicAreaGreen11">Classic (Area Green)</option>
-		<option data-type="numerical" value="tableau.ClassicAreaRed11">Classic (Area Red)</option>
-		<option data-type="numerical" value="tableau.ClassicAreaRedGreen21">Classic (Area Red/Green)</option>
-		<option data-type="numerical" value="tableau.ClassicBlue7">Classic (Blue)</option>
-		<option data-type="numerical" value="tableau.ClassicBlueRed12">Classic (Blue/Red Alt.)</option>
-		<option data-type="numerical" value="tableau.ClassicBlueRed6">Classic (Blue/Red)</option>
-		<option data-type="numerical" value="tableau.ClassicColorBlind10">Classic (Colorblind)</option>
-		<option data-type="numerical" value="tableau.ClassicCyclic13">Classic (Cyclic)</option>
-		<option data-type="numerical" value="tableau.ClassicGray13">Classic (Gray)</option>
-		<option data-type="numerical" value="tableau.ClassicGray5">Classic (Gray)</option>
-		<option data-type="numerical" value="tableau.ClassicGreenBlue11">Classic (Green Blue)</option>
-		<option data-type="numerical" value="tableau.ClassicGreen7">Classic (Green)</option>
-		<option data-type="numerical" value="tableau.ClassicGreenOrange12">Classic (Green/Orange Alt.)</option>
-		<option data-type="numerical" value="tableau.ClassicGreenOrange6">Classic (Green/Orange)</option>
-		<option data-type="numerical" value="tableau.ClassicLight10">Classic (Light)</option>
-		<option data-type="numerical" value="tableau.ClassicMedium10">Classic (Medium)</option>
-		<option data-type="numerical" value="tableau.ClassicOrange7">Classic (Orange)</option>
-		<option data-type="numerical" value="tableau.ClassicOrangeBlue13">Classic (Orange/Blue)</option>
-		<option data-type="numerical" value="tableau.ClassicOrangeWhiteBlueLight11">Classic (Orange/White/Blue Light)</option>
-		<option data-type="numerical" value="tableau.ClassicOrangeWhiteBlue11">Classic (Orange/White/Blue)</option>
-		<option data-type="numerical" value="tableau.ClassicPurpleGray12">Classic (Purple/Gray Alt.)</option>
-		<option data-type="numerical" value="tableau.ClassicPurpleGray6">Classic (Purple/Gray)</option>
-		<option data-type="numerical" value="tableau.ClassicRed9">Classic (Red)</option>
-		<option data-type="numerical" value="tableau.ClassicRedBlack11">Classic (Red/Black)</option>
-		<option data-type="numerical" value="tableau.ClassicRedBlue11">Classic (Red/Blue)</option>
-		<option data-type="numerical" value="tableau.ClassicRedGreenLight11">Classic (Red/Green Light)</option>
-		<option data-type="numerical" value="tableau.ClassicRedGreen11">Classic (Red/Green)</option>
-		<option data-type="numerical" value="tableau.ClassicRedWhiteBlackLight10">Classic (Red/White/Black Light)</option>
-		<option data-type="numerical" value="tableau.ClassicRedWhiteBlack11">Classic (Red/White/Black)</option>
-		<option data-type="numerical" value="tableau.ClassicRedWhiteGreenLight11">Classic (Red/White/Green Light)</option>
-		<option data-type="numerical" value="tableau.ClassicRedWhiteGreen11">Classic (Red/White/Green)</option>
-		<option data-type="numerical" value="tableau.ClassicTrafficLight9">Classic (Traffic Light)</option>
-		<option data-type="numerical" value="tableau.ColorBlind10">Colorblind</option>
-		<option data-type="numerical" value="tableau.GoldPurple7">Gold/Purple</option>
-		<option data-type="numerical" value="tableau.Gray20">Gray</option>
-		<option data-type="numerical" value="tableau.GrayWarm20">Gray (Warm)</option>
-		<option data-type="numerical" value="tableau.Green20">Green</option>
-		<option data-type="numerical" value="tableau.GreenBlue7">Green/Blue</option>
-		<option data-type="numerical" value="tableau.GreenBlueWhite7">Green/Blue/White</option>
-		<option data-type="numerical" value="tableau.GreenGold20">Green/Gold</option>
-		<option data-type="numerical" value="tableau.GreenOrangeTeal12">Green/Orange/Teal</option>
-		<option data-type="numerical" value="tableau.HueCircle19">Hue Circle</option>
-		<option data-type="numerical" value="tableau.JewelBright9">Jewel Bright</option>
-		<option data-type="numerical" value="tableau.MillerStone11">Miller Stone</option>
-		<option data-type="numerical" value="tableau.NurielStone9">Nuriel Stone</option>
-		<option data-type="numerical" value="tableau.Orange20">Orange</option>
-		<option data-type="numerical" value="tableau.OrangeLight7">Orange (Light)</option>
-		<option data-type="numerical" value="tableau.OrangeBlue7">Orange/Blue</option>
-		<option data-type="numerical" value="tableau.OrangeBlueLight7">Orange/Blue (Light)</option>
-		<option data-type="numerical" value="tableau.OrangeBlueWhite7">Orange/Blue/White</option>
-		<option data-type="numerical" value="tableau.OrangeGold20">Orange/Gold</option>
-		<option data-type="numerical" value="tableau.Purple20">Purple</option>
-		<option data-type="numerical" value="tableau.PurplePinkGray12">Purple/Pink/Gray</option>
-		<option data-type="numerical" value="tableau.Red20">Red</option>
-		<option data-type="numerical" value="tableau.RedBlack7">Red/Black</option>
-		<option data-type="numerical" value="tableau.RedBlackWhite7">Red/Black/White</option>
-		<option data-type="numerical" value="tableau.RedBlue7">Red/Blue</option>
-		<option data-type="numerical" value="tableau.RedBlueBrown12">Red/Blue/Brown</option>
-		<option data-type="numerical" value="tableau.RedBlueWhite7">Red/Blue/White</option>
-		<option data-type="numerical" value="tableau.RedGold21">Red/Gold</option>
-		<option data-type="numerical" value="tableau.RedGreen7">Red/Green</option>
-		<option data-type="numerical" value="tableau.RedGreenGold7">Red/Green/Gold</option>
-		<option data-type="numerical" value="tableau.RedGreenWhite7">Red/Green/White</option>
-		<option data-type="numerical" value="tableau.SeattleGrays5">Seattle Grays</option>
-		<option data-type="numerical" value="tableau.Summer8">Summer</option>
-		<option data-type="numerical" value="tableau.SunsetSunrise7">Sunset/Sunrise</option>
-		<option data-type="numerical" value="tableau.SuperfishelStone10">Superfishel Stone</option>
-		<option data-type="numerical" value="tableau.Tableau20">Tableau</option>
-		<option data-type="numerical" value="tableau.Temperature7">Temperature</option>
-		<option data-type="numerical" value="tableau.Traffic9">Traffic</option>
-		<option data-type="numerical" value="tableau.Winter10">Winter</option>
-		<option data-type="textual" value="d3.scale.category10">Style A</option>
-		<option data-type="textual" value="d3.scale.category20" >Style B</option>
-		<option data-type="textual" value="d3.scale.category20b">Style C</option>
-		<option data-type="textual" value="d3.scale.category20c">Style D</option>
-    </select>
-    </span>
+    <div class="chart-scheme-group" style="float: left; display: none; margin-right: 10px;">
+	    <label><spring:message code="label.ColorScheme" /></label><br />
+	    <select onchange="changeChart(this)" class="chart-scheme form-control" style="width: auto;">
+			<option data-type="numerical" selected="selected" value="tableau.Tableau10">Default</option>
+			<option data-type="numerical" value="tableau.Blue20">Blue</option>
+			<option data-type="numerical" value="tableau.BlueLight7">Blue (Light)</option>
+			<option data-type="numerical" value="tableau.BlueGreen7">Blue/Green</option>
+			<option data-type="numerical" value="tableau.BlueTeal20">Blue/Teal</option>
+			<option data-type="numerical" value="tableau.Brown20">Brown</option>
+			<option data-type="numerical" value="tableau.Classic10">Classic</option>
+			<option data-type="numerical" value="tableau.Classic20">Classic (Alternative)</option>
+			<option data-type="numerical" value="tableau.ClassicAreaBrown11">Classic (Area Brown)</option>
+			<option data-type="numerical" value="tableau.ClassicAreaGreen11">Classic (Area Green)</option>
+			<option data-type="numerical" value="tableau.ClassicAreaRed11">Classic (Area Red)</option>
+			<option data-type="numerical" value="tableau.ClassicAreaRedGreen21">Classic (Area Red/Green)</option>
+			<option data-type="numerical" value="tableau.ClassicBlue7">Classic (Blue)</option>
+			<option data-type="numerical" value="tableau.ClassicBlueRed12">Classic (Blue/Red Alt.)</option>
+			<option data-type="numerical" value="tableau.ClassicBlueRed6">Classic (Blue/Red)</option>
+			<option data-type="numerical" value="tableau.ClassicColorBlind10">Classic (Colorblind)</option>
+			<option data-type="numerical" value="tableau.ClassicCyclic13">Classic (Cyclic)</option>
+			<option data-type="numerical" value="tableau.ClassicGray13">Classic (Gray)</option>
+			<option data-type="numerical" value="tableau.ClassicGray5">Classic (Gray)</option>
+			<option data-type="numerical" value="tableau.ClassicGreenBlue11">Classic (Green Blue)</option>
+			<option data-type="numerical" value="tableau.ClassicGreen7">Classic (Green)</option>
+			<option data-type="numerical" value="tableau.ClassicGreenOrange12">Classic (Green/Orange Alt.)</option>
+			<option data-type="numerical" value="tableau.ClassicGreenOrange6">Classic (Green/Orange)</option>
+			<option data-type="numerical" value="tableau.ClassicLight10">Classic (Light)</option>
+			<option data-type="numerical" value="tableau.ClassicMedium10">Classic (Medium)</option>
+			<option data-type="numerical" value="tableau.ClassicOrange7">Classic (Orange)</option>
+			<option data-type="numerical" value="tableau.ClassicOrangeBlue13">Classic (Orange/Blue)</option>
+			<option data-type="numerical" value="tableau.ClassicOrangeWhiteBlueLight11">Classic (Orange/White/Blue Light)</option>
+			<option data-type="numerical" value="tableau.ClassicOrangeWhiteBlue11">Classic (Orange/White/Blue)</option>
+			<option data-type="numerical" value="tableau.ClassicPurpleGray12">Classic (Purple/Gray Alt.)</option>
+			<option data-type="numerical" value="tableau.ClassicPurpleGray6">Classic (Purple/Gray)</option>
+			<option data-type="numerical" value="tableau.ClassicRed9">Classic (Red)</option>
+			<option data-type="numerical" value="tableau.ClassicRedBlack11">Classic (Red/Black)</option>
+			<option data-type="numerical" value="tableau.ClassicRedBlue11">Classic (Red/Blue)</option>
+			<option data-type="numerical" value="tableau.ClassicRedGreenLight11">Classic (Red/Green Light)</option>
+			<option data-type="numerical" value="tableau.ClassicRedGreen11">Classic (Red/Green)</option>
+			<option data-type="numerical" value="tableau.ClassicRedWhiteBlackLight10">Classic (Red/White/Black Light)</option>
+			<option data-type="numerical" value="tableau.ClassicRedWhiteBlack11">Classic (Red/White/Black)</option>
+			<option data-type="numerical" value="tableau.ClassicRedWhiteGreenLight11">Classic (Red/White/Green Light)</option>
+			<option data-type="numerical" value="tableau.ClassicRedWhiteGreen11">Classic (Red/White/Green)</option>
+			<option data-type="numerical" value="tableau.ClassicTrafficLight9">Classic (Traffic Light)</option>
+			<option data-type="numerical" value="tableau.ColorBlind10">Colorblind</option>
+			<option data-type="numerical" value="tableau.GoldPurple7">Gold/Purple</option>
+			<option data-type="numerical" value="tableau.Gray20">Gray</option>
+			<option data-type="numerical" value="tableau.GrayWarm20">Gray (Warm)</option>
+			<option data-type="numerical" value="tableau.Green20">Green</option>
+			<option data-type="numerical" value="tableau.GreenBlue7">Green/Blue</option>
+			<option data-type="numerical" value="tableau.GreenBlueWhite7">Green/Blue/White</option>
+			<option data-type="numerical" value="tableau.GreenGold20">Green/Gold</option>
+			<option data-type="numerical" value="tableau.GreenOrangeTeal12">Green/Orange/Teal</option>
+			<option data-type="numerical" value="tableau.HueCircle19">Hue Circle</option>
+			<option data-type="numerical" value="tableau.JewelBright9">Jewel Bright</option>
+			<option data-type="numerical" value="tableau.MillerStone11">Miller Stone</option>
+			<option data-type="numerical" value="tableau.NurielStone9">Nuriel Stone</option>
+			<option data-type="numerical" value="tableau.Orange20">Orange</option>
+			<option data-type="numerical" value="tableau.OrangeLight7">Orange (Light)</option>
+			<option data-type="numerical" value="tableau.OrangeBlue7">Orange/Blue</option>
+			<option data-type="numerical" value="tableau.OrangeBlueLight7">Orange/Blue (Light)</option>
+			<option data-type="numerical" value="tableau.OrangeBlueWhite7">Orange/Blue/White</option>
+			<option data-type="numerical" value="tableau.OrangeGold20">Orange/Gold</option>
+			<option data-type="numerical" value="tableau.Purple20">Purple</option>
+			<option data-type="numerical" value="tableau.PurplePinkGray12">Purple/Pink/Gray</option>
+			<option data-type="numerical" value="tableau.Red20">Red</option>
+			<option data-type="numerical" value="tableau.RedBlack7">Red/Black</option>
+			<option data-type="numerical" value="tableau.RedBlackWhite7">Red/Black/White</option>
+			<option data-type="numerical" value="tableau.RedBlue7">Red/Blue</option>
+			<option data-type="numerical" value="tableau.RedBlueBrown12">Red/Blue/Brown</option>
+			<option data-type="numerical" value="tableau.RedBlueWhite7">Red/Blue/White</option>
+			<option data-type="numerical" value="tableau.RedGold21">Red/Gold</option>
+			<option data-type="numerical" value="tableau.RedGreen7">Red/Green</option>
+			<option data-type="numerical" value="tableau.RedGreenGold7">Red/Green/Gold</option>
+			<option data-type="numerical" value="tableau.RedGreenWhite7">Red/Green/White</option>
+			<option data-type="numerical" value="tableau.SeattleGrays5">Seattle Grays</option>
+			<option data-type="numerical" value="tableau.Summer8">Summer</option>
+			<option data-type="numerical" value="tableau.SunsetSunrise7">Sunset/Sunrise</option>
+			<option data-type="numerical" value="tableau.SuperfishelStone10">Superfishel Stone</option>
+			<option data-type="numerical" value="tableau.Tableau20">Tableau</option>
+			<option data-type="numerical" value="tableau.Temperature7">Temperature</option>
+			<option data-type="numerical" value="tableau.Traffic9">Traffic</option>
+			<option data-type="numerical" value="tableau.Winter10">Winter</option>
+			<option data-type="textual" value="d3.scale.category10">Style A</option>
+			<option data-type="textual" value="d3.scale.category20" >Style B</option>
+			<option data-type="textual" value="d3.scale.category20b">Style C</option>
+			<option data-type="textual" value="d3.scale.category20c">Style D</option>
+	    </select>
+    </div>
     
-    <span class="chart-size-group" style="display: none">
-    <br />
-    <label><spring:message code="label.Size" /></label><br />
-    <select onchange="changeChart(this)" class="chart-size form-control">
-    	<option selected="selected" value="small"><spring:message code="label.Small" /></option>
-    	<option value="medium"><spring:message code="label.Middle" /></option>
-    	<option value="large"><spring:message code="label.Large" /></option>
-    </select>
-    </span>
+    <div class="chart-size-group" style="float: left; display: none; margin-right: 10px;">
+	    <label><spring:message code="label.Size" /></label><br />
+	    <select onchange="changeChart(this)" class="chart-size form-control" style="width: auto;">
+	    	<option selected="selected" value="small"><spring:message code="label.Small" /></option>
+	    	<option value="medium"><spring:message code="label.Middle" /></option>
+	    	<option value="large"><spring:message code="label.Large" /></option>
+	    </select>
+    </div>
     
-    <span class="chart-legend-group" style="display: none">
-	    <br />
-    	<input class="chart-legend" onchange="changeChart(this)" type="checkbox" checked="checked" /> <spring:message code="label.Legend" />
-    </span>
+    <div style="clear: both"></div>
+    
+    <div class="chart-legend-group" style="float: left; display: none; margin-bottom: 10px; margin-right: 10px;">
+		<input class="chart-legend" onchange="changeChart(this)" type="checkbox" checked="checked" /> <spring:message code="label.Legend" />
+    </div>
+    
+    <div class="chart-score-group" style="float: left; display: none; margin-bottom: 10px;">
+		<input class="chart-score" onchange="changeChart(this)" type="checkbox" checked="checked" /> <spring:message code="label.ShowScore" />
+    </div>
 </div>
