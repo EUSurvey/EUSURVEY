@@ -49,6 +49,15 @@ public class XmlExportCreator extends ExportCreator {
 	private static final String EXPLANATION_FILE = "ExplanationFile";
 	private static final String EXPLANATION_TEXT = "ExplanationText";
 	private static final String DISCUSSION = "Discussion";
+
+	private static final String[] POSSIBLE_EXPORTS_ORDERED = {
+		"invitation",
+		"case",
+		"user",
+		"created",
+		"updated",
+		"languages"
+	};
 	
 	@Override
 	@Transactional
@@ -418,6 +427,22 @@ public class XmlExportCreator extends ExportCreator {
 		writer.writeStartElement("Answers");
 
 		if (answersets != null) {
+
+			//Exports may be found at different indices depending on which details should be exported
+			//This maps all exports to the correct index
+			HashMap<String, Integer> rowPosMap = null;
+
+			if (filterWithMeta != null) {
+				rowPosMap = new HashMap<>();
+				int rowPosCount = 5;
+				for (String exp : POSSIBLE_EXPORTS_ORDERED) {
+					if (filterWithMeta.exported(exp)) {
+						rowPosMap.put(exp, rowPosCount);
+						rowPosCount++;
+					}
+				}
+			}
+
 			for (List<String> row : answersets) {
 				String lang = row.get(row.size() - 2);
 				List<Element> questions = form.getSurvey().getQuestionsAndSections();
@@ -426,7 +451,7 @@ public class XmlExportCreator extends ExportCreator {
 				}
 				parseAnswerSet(form.getSurvey(), writer, questions, null, row, row.get(1), filesByAnswer,
 						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail, null, null,
-						explanationFilesOfSurvey, explanationFilesToExport);
+						explanationFilesOfSurvey, explanationFilesToExport, rowPosMap);
 			}
 		} else {
 
@@ -483,7 +508,7 @@ public class XmlExportCreator extends ExportCreator {
 						parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()),
 								answerSet, null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(),
 								filterWithMeta, ECASUserLoginsByEmail, explanations, discussions,
-								explanationFilesOfSurvey, explanationFilesToExport);
+								explanationFilesOfSurvey, explanationFilesToExport, null);
 					}
 
 					answerSet = new AnswerSet();
@@ -511,7 +536,7 @@ public class XmlExportCreator extends ExportCreator {
 			if (lastAnswerSet > 0)
 				parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()), answerSet,
 						null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta,
-						ECASUserLoginsByEmail, explanations, discussions, explanationFilesOfSurvey, explanationFilesToExport);
+						ECASUserLoginsByEmail, explanations, discussions, explanationFilesOfSurvey, explanationFilesToExport, null);
 			results.close();
 		}
 
@@ -681,38 +706,42 @@ public class XmlExportCreator extends ExportCreator {
 			Map<String, List<File>> uploadedFilesByQuestionUID, boolean meta, ResultFilter filter,
 			Map<String, String> ECASUserLoginsByEmail, Map<Integer, Map<String, String>> explanations,
 			Map<Integer, Map<String, String>> discussions, FilesByTypes<Integer, String> explanationFilesOfSurvey,
-			FilesByType<String> explanationFilesToExport) throws XMLStreamException {
+			FilesByType<String> explanationFilesToExport, HashMap<String, Integer> rowPosMap) throws XMLStreamException {
 		writer.writeStartElement("AnswerSet");
 
-		if (survey.getSecurity().contains("anonymous")) {
-			writer.writeAttribute("id", "Anonymous");
-		} else if (answerSet == null) {
-			writer.writeAttribute("id", row.get(0));
-			exportedUniqueCodes.put(Integer.parseInt(row.get(1)), row.get(0));
-		} else {
-			if (filter == null || filter.exported("case"))
+		if (meta || filter == null || filter.exported("case")) {
+			if (survey.getSecurity().contains("anonymous")) {
+				writer.writeAttribute("id", "Anonymous");
+			} else if (answerSet == null) {
+				writer.writeAttribute("id", row.get(0));
+				exportedUniqueCodes.put(Integer.parseInt(row.get(1)), row.get(0));
+			} else {
 				writer.writeAttribute("id", answerSet.getUniqueCode());
-			exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
+				exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
+			}
 		}
 
 		if (meta || filter == null || filter.exported("created"))
-			writer.writeAttribute("create", answerSet == null ? row.get(row.size() - 4)
+			writer.writeAttribute("create", answerSet == null ? row.get(rowPosMap.get("created"))
 					: Tools.formatDate(answerSet.getDate(), "yyyy-MM-dd_HH-mm-ss"));
-		writer.writeAttribute("list", list);
+
 		if (meta || filter == null || filter.exported("updated"))
-			writer.writeAttribute("last", answerSet == null ? row.get(row.size() - 3)
+			writer.writeAttribute("last", answerSet == null ? row.get(rowPosMap.get("updated"))
 					: Tools.formatDate(answerSet.getUpdateDate(), "yyyy-MM-dd_HH-mm-ss"));
+
+		writer.writeAttribute("list", list);
+
 		if (meta || filter == null || filter.exported("languages"))
-			writer.writeAttribute("lang", answerSet == null ? row.get(row.size() - 2) : answerSet.getLanguageCode());
+			writer.writeAttribute("lang", answerSet == null ? row.get(rowPosMap.get("languages")) : answerSet.getLanguageCode());
 
 		if (meta || filter == null || filter.exported("user"))
-			writer.writeAttribute("user", answerSet == null ? row.get(row.size() - 5)
+			writer.writeAttribute("user", answerSet == null ? row.get(rowPosMap.get("user"))
 					: answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "");
 		if (meta || filter == null || filter.exported("invitation"))
-			writer.writeAttribute("invitation", answerSet == null ? row.get(row.size() - 6)
+			writer.writeAttribute("invitation", answerSet == null ? row.get(rowPosMap.get("invitation"))
 					: answerSet.getInvitationId() != null ? answerSet.getInvitationId() : "");
 		if (survey.getIsOPC() && (meta || filter == null || filter.exported("user"))) {
-			String suser = answerSet == null ? row.get(row.size() - 5) : answerSet.getResponderEmail();
+			String suser = answerSet == null ? row.get(rowPosMap.get("user")) : answerSet.getResponderEmail();
 			if (suser != null && suser.contains("@") && ECASUserLoginsByEmail != null
 					&& ECASUserLoginsByEmail.containsKey(suser)) {
 				writer.writeAttribute("userlogin", ECASUserLoginsByEmail.get(suser));
