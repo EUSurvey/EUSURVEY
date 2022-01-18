@@ -592,7 +592,7 @@
 														<td data-bind="html: numberOfAnswerSetsPublished"></td>
 														<td style="word-break: break-all; word-wrap: break-word;">
 															<!-- ko foreach: translations -->
-															<div data-toggle="tooltip" title="Available" data-bind="html: $data, attr: {class: $data == $parent.language.code ? 'language pivotlanguage' : $.inArray($data, $parent.completeTranslations) > -1 ? 'language' : ' language languageUnpublished', title: $data == $parent.language.code ? '<spring:message code="label.MainLanguage" />' : $.inArray($data, $parent.completeTranslations) > -1 ? '<spring:message code="label.Available" />' : '<spring:message code="label.NotYetAvailable" />'}"></div>
+															<div data-toggle="tooltip" title="Available" data-bind="html: $data, attr: {class: $data == $parent.language.code ? 'language pivotlanguage' : $parent.completeTranslations.find(el => el.code == $data) != undefined ? 'language' : ' language languageUnpublished', title: $data == $parent.language.code ? '<spring:message code="label.MainLanguage" />' : $parent.completeTranslations.find(el => el.code == $data) != undefined ? '<spring:message code="label.Available" />' : '<spring:message code="label.NotYetAvailable" />'}"></div>
 															<!-- /ko -->
 														</td>
 														<td class="surveyactions">
