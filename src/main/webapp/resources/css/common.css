@@ -1587,8 +1587,9 @@ div.medianpa {
 	margin-bottom: 16px;
 }
 
-.statelement-wrapper > .chart-wrapper {
-	margin-right: 16px;
+.chart-controls {
+	min-width: 330px;
+	margin-right: 20px;
 }
 
 .chart-download {

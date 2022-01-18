@@ -143,6 +143,10 @@ public abstract class Question extends Element {
 			if (this instanceof FreeTextQuestion) {
 				return DelphiChartType.WordCloud;
 			}
+			
+			if (this instanceof RankingQuestion) {
+				return DelphiChartType.Bar;
+			}
 		}
 
 		return delphiChartType == null ? getDefaultDelphiChartType() : delphiChartType;

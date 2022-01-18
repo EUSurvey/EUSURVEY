@@ -1,4 +1,4 @@
-function loadGraphDataInnerForResults(div, chartCallback, chartType, scheme, legend, canvasWidth) {
+function loadGraphDataInnerForResults(div, chartCallback, chartType, scheme, legend, canvasWidth, score) {
 
 	const queryParams = {
 		surveyid : div.data("survey-id"),
@@ -15,7 +15,7 @@ function loadGraphDataInnerForResults(div, chartCallback, chartType, scheme, leg
 		forStartpage : false,
 	}
 
-	loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth);
+	loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth, score);
 }
 
 function loadGraphDataInnerForRunner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty, forModal, forStartpage, canvasWidth) {
@@ -39,11 +39,11 @@ function loadGraphDataInnerForRunner(div, surveyid, questionuid, languagecode, u
 	const scheme = null;
 	const legend = false;
 
-	loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth);
+	loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth, null);
 }
 
 
-function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth) {
+function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartType, scheme, legend, canvasWidth, score) {
 
 	var data =
 		"surveyid=" + queryParams.surveyid +
@@ -147,6 +147,15 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 				chartOptions.scales.xAxes[0].ticks.callback = chartOptions.scales.yAxes[0].ticks.callback = forModal ? wrapChartLabelCallback : chartLabelCallback;
 			}
 
+			if (result.questionType === "Ranking") {								
+				//only bar chart and line chart are available for ranking questions
+				$(elementWrapper).find(".chart-type option[data-type='numerical']").each(function(index) {
+					if (index > 1) {
+						$(this).remove();
+					}
+				});
+			}
+
 			switch (result.questionType) {
 				case "MultipleChoice":
 				case "SingleChoice":
@@ -233,40 +242,42 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 					Chart.helpers.each(chart.data.datasets.forEach(function (dataset) {
 						dataset.maxBarThickness = 32;
 					}));
-					let chainOnComplete = function() {};
-					if (!!chart.options.animation) {
-						if (!!chart.options.animation.onComplete) {
-							chainOnComplete = chart.options.animation.onComplete;
+					if (score == undefined || score) {
+						let chainOnComplete = function() {};
+						if (!!chart.options.animation) {
+							if (!!chart.options.animation.onComplete) {
+								chainOnComplete = chart.options.animation.onComplete;
+							}
+						} else {
+							chart.options.animation = {};
 						}
-					} else {
-						chart.options.animation = {};
-					}
-					chart.options.animation.onComplete = function(animation) {
-						const chartInstance = this.chart;
-						const ctx = chartInstance.ctx;
-						ctx.fillStyle= "#666";
-						ctx.font = "bold";
-						ctx.textAlign = "left";
-						ctx.textBaseline = "middle";
-						Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
-							const meta = chartInstance.controller.getDatasetMeta(i);
-							Chart.helpers.each(meta.data.forEach(function (bar, index) {
-								let xr = bar._model.x+5;
-								const value = dataset.data[index];
-								const valueMeasure = ctx.measureText(value);
-								const textWidth = valueMeasure.width;
-								if (xr+textWidth > chartInstance.width) {
-									ctx.fillStyle= "#eee";
-									xr = bar._model.x-textWidth-8;
-									ctx.fillText(value, xr, bar._model.y);
-								} else {
-									ctx.fillStyle= "#666";
-									ctx.fillText(value, xr, bar._model.y);
-								}
+						chart.options.animation.onComplete = function(animation) {
+							const chartInstance = this.chart;
+							const ctx = chartInstance.ctx;
+							ctx.fillStyle= "#666";
+							ctx.font = "bold";
+							ctx.textAlign = "left";
+							ctx.textBaseline = "middle";
+							Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+								const meta = chartInstance.controller.getDatasetMeta(i);
+								Chart.helpers.each(meta.data.forEach(function (bar, index) {
+									let xr = bar._model.x+5;
+									const value = dataset.data[index];
+									const valueMeasure = ctx.measureText(value);
+									const textWidth = valueMeasure.width;
+									if (xr+textWidth > chartInstance.width) {
+										ctx.fillStyle= "#eee";
+										xr = bar._model.x-textWidth-8;
+										ctx.fillText(value, xr, bar._model.y);
+									} else {
+										ctx.fillStyle= "#666";
+										ctx.fillText(value, xr, bar._model.y);
+									}
+								}), this);
 							}), this);
-						}), this);
-						chainOnComplete.call(this, animation);
-					};
+							chainOnComplete.call(this, animation);
+						};
+					}
 					break;
 				case "Column":
 					chart.type = "bar";
