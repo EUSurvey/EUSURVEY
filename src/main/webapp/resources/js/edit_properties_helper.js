@@ -317,7 +317,7 @@ function getVisibilityRow(multiselection, isVisible = true)
 				} else {
 					//triggered by a matrix cell
 					var ids = id.split("|");
-					var td = $("td[id=" + ids[1] + "]").first();
+					var td = $("th[id=" + ids[1] + "]").first();
 					var text = strip_tags($(td).find("textarea[name^='text']").text());
 					var pashortname = $(td).find("input[name^='shortname']").val()
 					
