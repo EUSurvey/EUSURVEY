@@ -935,6 +935,8 @@ function initModals(item)
 						$(form).find("input[data-is-answered='false']").val('');
 					}
 
+					$(form).find("input[data-is-answered='false'].sliderbox").val('');
+
 					$(form).submit();
 					return;
 				}
