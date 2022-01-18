@@ -230,7 +230,7 @@ public class DelphiController extends BasicController {
 
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
-			if (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
+			if (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -243,7 +243,7 @@ public class DelphiController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly()
+			if (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly()
 					&& !answerSetContainsAnswerForQuestion(answerSet, question)) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -251,8 +251,28 @@ public class DelphiController extends BasicController {
 			Statistics statistics = new Statistics();
 			statistics.setSurveyId(survey.getId());
 
+			ResultFilter filter = null;
+			
+			if (resultsview) {
+				if (user != null) {
+					filter = sessionService.getLastResultFilter(request, user.getId(), survey.getId());
+				}				
+				
+				if (survey.getDedicatedResultPrivileges()) {
+					ResultAccess resultAccess = surveyService.getResultAccess(survey.getUniqueId(), user.getId());
+					if (resultAccess != null && resultAccess.getResultFilter() != null) {
+						
+						if (filter == null) {
+							filter = new ResultFilter();
+						}
+						
+						filter.mergeResultAccess(resultAccess, survey);										
+					}
+				}
+			}
+			
 			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
-			creator.init(survey, null, false);
+			creator.init(survey, filter, false);
 
 			if (question instanceof NumberQuestion) {
 				NumberQuestion numq = (NumberQuestion) question;
@@ -477,9 +497,9 @@ public class DelphiController extends BasicController {
 			result.addEntry(entry);
 		}
 
-		if (question instanceof SingleChoiceQuestion) {
-			result.setLabel(question.getStrippedTitle());
-		}
+
+		result.setLabel(question.getStrippedTitle());
+
 		return ResponseEntity.ok(result);
 	}
 

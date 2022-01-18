@@ -88,9 +88,9 @@
 					<c:if test="${(form.answerSets.size() == 0 || !form.answerSets[0].disclaimerMinimized)}">
 						<c:if test="${!oss}">
 							<c:if test="${(form.survey.owner.type == 'ECAS' && form.survey.owner.getGlobalPrivilegeValue('ECAccess') == 0) || form.survey.owner.type == 'SYSTEM'  }">
-								<div id="ecDisclaimer" class="focusborder">
+								<div id="ecDisclaimer" class="surveyrunnerinfo focusborder">
 									<div tabindex="0" style="float: left">
-										<span class="ecDisclaimerTitle">${form.getMessage("label.Disclaimer")}</span>
+										<b>${form.getMessage("label.Disclaimer")}</b>
 										<p>
 											${form.getMessage("info.Disclaimer")}
 										</p>					
@@ -103,6 +103,20 @@
 								</div>
 							</c:if>
 						</c:if>	
+					</c:if>
+					<c:if test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
+						<div id="anonymousSurveyInfo" class="surveyrunnerinfo focusborder">
+							<div tabindex="0" style="float: left">
+								<b>${form.getMessage("label.AnonymousMode")}</b>
+								<p>
+									${form.getMessage("info.AnonymousMode")}
+								</p>					
+							</div>
+							<div style="float: right; margin-top: -15px; margin-right: -15px;">
+								<a href="javascript:;" style="cursor: pointer" onclick="$('#anonymousSurveyInfo').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+							</div>								
+							<div style="clear: both"></div>
+						</div>
 					</c:if>
 					<span class="introduction">${form.survey.introduction}</span>					
 					
@@ -164,10 +178,10 @@
 					
 					 	<c:choose>
 					 		<c:when test="${rowCounter.index == 0}">
-								<div class="single-page" tabindex="-1" id="page${rowCounter.index}">
+								<div class="single-page" tabindex="-1" id="page${rowCounter.index}" onmouseleave="validateLastContainer()">
 							</c:when>
 							<c:otherwise>
-								<div class="single-page" tabindex="-1" id="page${rowCounter.index}" style="display: none">
+								<div class="single-page" tabindex="-1" id="page${rowCounter.index}" style="display: none" onmouseleave="validateLastContainer()">
 							</c:otherwise>
 						</c:choose>						
 							
@@ -443,9 +457,9 @@
 							<hr style="margin-top: 15px;" />
 						</c:if>
 						
-						<c:if test="${!form.survey.isQuiz}">
+						<c:if test="${!form.survey.isQuiz && form.survey.allowQuestionnaireDownload}">
 							<div>
-								<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="link visiblelink" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
+								<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadPDFversion")}" id="download-survey-pdf-link" class="link visiblelink" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
 								<span id="download-survey-pdf-dialog-running" class="hideme">${form.getMessage("info.FileCreation")}</span>
 								<span id="download-survey-pdf-dialog-ready" class="hideme">${form.getMessage("info.FileCreated")}</span>
 								<div id="download-survey-pdf-dialog-spinner" class="hideme" style="padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>

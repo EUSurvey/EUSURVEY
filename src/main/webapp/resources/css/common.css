@@ -1102,7 +1102,7 @@ legend {
 
 .answer-column {
 	float: left;
-	margin-left: 20px;
+	/*margin-left: 20px;*/
 }
 
 .answer-columns {
@@ -1603,6 +1603,7 @@ div.medianpa {
 .validation-error {
 	color: #f00;
 	font-size: 13px;
+	z-index: 1 !important;
 }
 
 .area-header {
@@ -2101,22 +2102,18 @@ a.elearningWelcomeLink:hover
 	font-size:20px;
 }
 
-div#ecDisclaimer
+.surveyrunnerinfo
 {
 	padding: 20px;
     border: 1px solid #ccc;
     background-color: #f5f5f5;
+    margin-bottom: 10px;
 }
 
-div#ecDisclaimer p
+.surveyrunnerinfo p
 {
 	font-style: italic;
     color: #777;
-}
-
-div#ecDisclaimer span.ecDisclaimerTitle
-{
-	font-weight: bold;
 }
 
 .prepdf {

@@ -273,12 +273,11 @@ var ElementProperties = function() {
 			$(".navigationitem[data-id=" + id + "]").addClass("selectedquestion");
 			$(".navigationitem[data-id='navanswer" + id + "']").addClass("selectedquestion");
 		}
-		
-		if (!$("#cancelcuttoolboxitem").is(":visible") && !$("#cancelcopytoolboxitem").is(":visible"))
-		{
-			_actions.CopyEnabled(true);
-			_actions.CutEnabled(true);
-		}
+
+
+		_actions.CopyEnabled(true);
+		_actions.CutEnabled(true);
+
 		
 		if ($("#content").find(".selectedquestion").not(".locked").length > 0)
 		{
@@ -944,7 +943,7 @@ var ElementProperties = function() {
 			} else if ($(e).find(".gallery-image").length > 0)
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='comment']").first().text(), true);
-				getTextPropertiesRow("DescriptiveText", $(e).find("input[name^='desc']").first().val(), false);
+				getTextPropertiesRow("DescriptiveText", $(e).find("input[name^='desc']").first().val(), false, null, 200);
 				getTextPropertiesRow("LongDescription", $(e).find("input[name^='longdesc']").first().val(), false);
 				getTextPropertiesRow("Title", $(e).find("input[name^='name']").first().val(), false);
 				

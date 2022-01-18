@@ -558,7 +558,7 @@
 													<td style="vertical-align: top">
 														<label for="${possibleanswer.id}"><div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.title}</div></label>
 													</td>				
-													<c:if test="${status.count % element.numColumns == 0 && status.count < element.possibleAnswers.size()}">
+													<c:if test="${(element.numColumns == 0 || status.count % element.numColumns == 0) && status.count < element.possibleAnswers.size()}">
 														</tr>
 														<tr>
 													</c:if>
@@ -568,7 +568,7 @@
 									</c:when>
 									<c:otherwise>
 										<div class="answer-column">													
-											<ul class="${element.css} multiple-choice" <c:if test="${forpdf != null}">style="max-height: none"</c:if>>
+											<ul class="${element.css} multiple-choice" style="max-height: none;">
 												<c:forEach items="${element.orderedPossibleAnswers}" var="possibleanswer">															
 													<c:choose>
 														<c:when test="${form.getValues(element).contains(possibleanswer.id.toString()) || form.getValues(element).contains(possibleanswer.uniqueId)}">
@@ -591,6 +591,7 @@
 												</c:forEach>	
 											</ul>			
 										</div>
+										<div style="clear: both"></div>
 									</c:otherwise>
 								</c:choose>
 							</div>
@@ -610,6 +611,7 @@
 											</c:forEach>			
 										</div>
 									</div>
+									<div style="clear: both"></div>
 								</c:when>
 								<c:otherwise>
 									<div class="answer-columns">
@@ -636,7 +638,7 @@
 															<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.getTitleForDisplayMode(element.displayMode)}</div>
 														</label>
 													</td>					
-													<c:if test="${status.count % element.numColumns == 0 && status.count < element.possibleAnswers.size()}">
+													<c:if test="${(element.numColumns == 0 || status.count % element.numColumns == 0) && status.count < element.possibleAnswers.size()}">
 														</tr>
 														<tr>
 													</c:if>
@@ -650,7 +652,7 @@
 					
 						<c:if test="${element.getType() == 'RankingQuestion'}">
 							<div class="ranking-question-initial-answer-message">
-								${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer'")}
+								${form.getMessage("label.HintOnInitialRankingOrderPDF")}
 							</div>
 							<div class="rankingitem-list-container">
 								<div class="rankingitem-list">

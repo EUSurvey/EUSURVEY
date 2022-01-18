@@ -90,9 +90,9 @@ public class SchedulerService extends BasicService {
 	private SchemaService schemaService;
 
 	public @Value("${showecas}") String showecas;	
-	public @Value("${host.executing.task:@null}") String hostExecutingTask;
-	public @Value("${host.executing.todotask:@null}") String hostExecutingTODOTask;
-	public @Value("${host.executing.ldaptask:@null}") String hostExecutingLDAPTask;
+	public @Value("${host.executing.task:#{null}}") String hostExecutingTask;
+	public @Value("${host.executing.todotask:#{null}}") String hostExecutingTODOTask;
+	public @Value("${host.executing.ldaptask:#{null}}") String hostExecutingLDAPTask;
 		
 	public boolean isShowEcas()
 	{

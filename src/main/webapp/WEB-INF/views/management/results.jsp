@@ -996,7 +996,7 @@
 						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.QuizResultPage" />" id="results-statistics-quiz-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
 					</c:if>
 					<c:if test="${form.survey.isDelphi}">
-						<a id="results-statistics-delphi-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-delphi');"><img src="${contextpath}/resources/images/icons/24/delphi.png" /></a>
+						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.CompletionRate" />" id="results-statistics-delphi-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-delphi');"><img src="${contextpath}/resources/images/icons/24/delphi.png" /></a>
 					</c:if>
 					<c:if test="${form.survey.isECF}">
 						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results" />" id="results-ecf" class="btn btn-default btn-xs" onclick="switchTo('ecf');"><span class="glyphicon glyphicon-user" style="font-size: 19px; color: #333"></span></a>

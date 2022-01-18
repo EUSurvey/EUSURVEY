@@ -149,15 +149,16 @@
 		
 			<ul style="margin-top: 0px">
 				<li id="copiedtoolboxitem" class="toolboxitem copy draggable" style="display: none"><span class="glyphicon glyphicon-copy"></span> <spring:message code="label.Copy" /></li>
+				<li id="cancelcopytoolboxitem" style="display: none">
+					<a onclick="_actions.cancelCopy();" class="btn btn-xs btn-default"><spring:message code="label.Cancel" /></a>
+				</li>
 				<li id="cuttoolboxitem" class="toolboxitem cut draggable" style="display: none"><span class="glyphicon glyphicon-copy"></span> <spring:message code="label.Cut" /></li>
+				<li id="cancelcuttoolboxitem" style="display: none">
+					<a onclick="_actions.cancelCut();" class="btn btn-xs btn-default"><spring:message code="label.Cancel" /></a>
+				</li>
 			</ul>
 			
-			<div id="cancelcuttoolboxitem" style="display: none">
-				<a onclick="_actions.cancelCut();" class="btn btn-xs btn-default"><spring:message code="label.Cancel" /></a>
-			</div>
-			<div id="cancelcopytoolboxitem" style="display: none">
-				<a onclick="_actions.cancelCopy();" class="btn btn-xs btn-default"><spring:message code="label.Cancel" /></a>
-			</div>
+
 			
 			<div class="toolboxgroup accordion-group" style="margin-top: 5px;">
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapseStructure" aria-expanded="true"><spring:message code="label.Structure" /></a></div>
@@ -180,6 +181,7 @@
 								<li title="<spring:message code="form.NumberSlider.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
 								<li title="<spring:message code="form.Date.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_date" class="toolboxitem dateitem draggable quiz"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
 								<li title="<spring:message code="form.Time.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
+								<li title="<spring:message code="form.RankingQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
 							</c:when>
 							<c:otherwise>
 								<li title='<spring:message code="form.FreeText.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_freetext" class="toolboxitem freetextitem draggable"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
@@ -188,9 +190,7 @@
 								<li title="<spring:message code="form.NumberSlider.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
 								<li title="<spring:message code="form.Date.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
 								<li title="<spring:message code="form.Time.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
-								<c:if test="${form.survey.isDelphi}">
-									<li title="<spring:message code="form.RankingQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
-								</c:if>
+								<li title="<spring:message code="form.RankingQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
 							</c:otherwise>
 						</c:choose>
 						<li title="<spring:message code="form.Matrix.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_matrix" class="toolboxitem matrixitem draggable"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>

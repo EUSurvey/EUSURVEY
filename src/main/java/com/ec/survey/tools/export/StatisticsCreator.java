@@ -716,7 +716,7 @@ public class StatisticsCreator implements Runnable {
 		//we do not use the reporting database for delphi surveys as the data has to be up to date at any time
 		if (!survey.getIsDelphi() && reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
 			Map<String, Object> values = new HashMap<>();
-			String where = ReportingService.getWhereClause(new ResultFilter(), values, survey);
+			String where = ReportingService.getWhereClause(filter, values, survey);
 
 			try {
 				addReportingAnswers4Statistics(question, map, mapMatrix, mapGallery, mapRatingQuestion, values, where, mapNumberQuestion, multipleChoiceSelectionsByAnswerset);

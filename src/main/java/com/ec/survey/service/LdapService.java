@@ -753,7 +753,11 @@ public class LdapService extends BasicService {
 					{
 						lname = getAttributeValue(set_att, ldapMappingUserSn,false) ;
 					}
-					ldqpUsers.add(new LdapSearchResult(login, displayName, organisation, group, fname, lname));				
+					String mail = "";
+					if (set_att.get(ldapMappingUserMail) != null) {
+						mail = getAttributeValue(set_att, ldapMappingUserMail, false);
+					}
+					ldqpUsers.add(new LdapSearchResult(login, displayName, organisation, group, fname, lname, mail));
 				}
 			} catch (javax.naming.SizeLimitExceededException se) {
 				//this one is thrown when the configured limit is reached, so everything is as expected
@@ -774,7 +778,9 @@ public class LdapService extends BasicService {
 		} else if (order.equalsIgnoreCase("department"))
 		{
 			ldqpUsers.sort(LdapSearchResult.Comparators.GROUP);
-		} else {		
+		} else if (order.equalsIgnoreCase("mail")) {
+			ldqpUsers.sort(LdapSearchResult.Comparators.MAIL);
+		} else {
 			ldqpUsers.sort(LdapSearchResult.Comparators.DISPLAYNAME);
 		}		
 		
@@ -786,7 +792,8 @@ public class LdapService extends BasicService {
 			String organisation = ldapSearchResult.getOrganisation();
 			String group=  ldapSearchResult.getGroup();
 			String fname =  ldapSearchResult.getFname();
-			String lname =  ldapSearchResult.getLname();		
+			String lname =  ldapSearchResult.getLname();
+			String mail = ldapSearchResult.getMail();
 			
 			if ( displayName == null || displayName.length() == 0) displayName = login;
 			
@@ -799,7 +806,7 @@ public class LdapService extends BasicService {
 			
 			if (group == null || group.equals("null")) group = "";
 			
-			resultString.add("<tr id='" + login + "'><td>" + displayName + "</td><td>" + fname + "</td><td>" + lname + "</td><td>" + group + "</td></tr>");
+			resultString.add("<tr id='" + login + "'><td>" + mail + "</td><td>" + displayName + "</td><td>" + fname + "</td><td>" + lname + "</td><td>" + group + "</td></tr>");
 		}		
 		
 		ctx.close();
@@ -863,6 +870,8 @@ public class LdapService extends BasicService {
 				lstAttr.add(ldapMappingUserSn);
 			if (isAttributeEligible(ldapMappingUserGivenName))
 				lstAttr.add(ldapMappingUserGivenName);
+			if (isAttributeEligible(ldapMappingUserMail))
+				lstAttr.add(ldapMappingUserMail);
 			break;
 		case USERNAME:
 			if (isAttributeEligible(ldapMappingUserUid))

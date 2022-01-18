@@ -93,7 +93,7 @@ public abstract class ChoiceQuestion extends Question {
 			columns = ((MultipleChoiceQuestion)this).getNumColumns();
 		}
 		
-		if (columns == 1) return answers;
+		if (columns <= 1) return answers;
 		
 		int rows = (int)Math.ceil(((double)answers.size()) / columns);
 		

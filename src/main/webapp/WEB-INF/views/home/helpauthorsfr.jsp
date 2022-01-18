@@ -1243,39 +1243,78 @@
 				Ces contributions peuvent donc être exportées depuis la page des résultats.
 			</p>
 			<h2>
-				Que signifie la notion de «Complexité»?
+				Indicateur de complexité
 			</h2>
 			<p>
-				Ajouter trop d’éléments ou trop de dépendances rend votre enquête trop
-				«complexe», ce qui peut entraîner un ralentissement du système pour les
-				participants au moment de remplir votre questionnaire.
+				Si votre enquête est courte et simple, les personnes interrogées auront plus de facilité à la remplir et l'expérience utilisateur sera meilleure. Bien sûr, il est parfois nécessaire d'ajouter une logique de branche en utilisant des dépendances (c'est-à-dire des questions dépendantes qui sont cachées/affichées en fonction des réponses précédentes). C'est faisable, mais n'oubliez pas que l'ajout de trop d'éléments ou de dépendances à votre enquête la rend trop ‘complexe’. Cela peut entraîner un ralentissement du système pour les participants qui remplissent votre questionnaire.
 			</p>
 			<p>
-				Votre enquête pourrait présenter un niveau de complexité élevé pour
-				plusieurs raisons:
+				C'est pourquoi, il y a un petit indicateur dans le coin supérieur droit de l'éditeur du questionnaire:<br />
+				<img src="${contextpath}/resources/images/documentation/complexityFR.png" />
 			</p>
+			<p>
+				Votre enquête peut présenter un niveau de complexité élevé pour plusieurs raisons:
+				<ul>
+					<li>trop de dépendances</li>
+					<li>trop de dépendances en cascade</li>
+					<li>trop d'éléments de tableau/matrice</li>
+				</ul>
+			</p>
+			<p>
+				Pour plus d'informations, consultez notre <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">guide des meilleures pratiques</a> et n'hésitez pas à contacter <a href="${contextpath}/home/support?assistance=1">l'équipe de support EUSurvey</a> pour obtenir de l'aide afin de revoir la conception de votre formulaire si nécessaire.
+			</p>
+			<h2>Quel est «Numéro d'identification de la contribution»?</h2>
+			<p>
+				«Numéro d'identification de la contribution» est un code utilisé comme identifiant unique pour une contribution effectuée.
+			</p>
+			<p>
+				Il peut être utilisé par les responsables d'enquêtes pour retrouver une contribution à partir de l'écran «Résultats». Il peut également être utilisé par un participant au enquête pour soumettre sa contribution et y accéder ultérieurement.
+			</p>
+			<h2>Comment puis-je trouver une contribution à partir des résultats à l'aide d'un «Numéro d'identification de la contribution»?</h2>
+			<p>
+				«Numéro d'identification de la contribution» peut être utilisé par les propriétaires d’enquête pour trouver une contribution parmi tous les résultats :
+				<ol>
+					<li>
+						Ouvrez votre enquête
+					</li>
+					<li>
+						Allez dans l'onglet «Résultats»
+					</li>
+					<li>
+						Cliquez sur le bouton «Paramètres»
+					</li>
+					<li>
+						Cochez «Numéro d'identification de la contribution» dans les deux colonnes et appuyez sur «OK»
+					</li>
+					<li>
+						Aller au filtre  «Numéro d'identification de la contribution»
+					</li>
+					<li>
+						Insérez l'ID de contribution et cliquez sur Entrer
+					</li>
+				</ol>
+			</p>
+			<h2>Fonction de randomisation</h2>
+			<p>
+				Lorsque vous utilisez une <strong>Section</strong> de premier niveau, vous avez la possibilité de conserver les questions/éléments situés en dessous dans leur ordre d'origine ou de rendre leur position aléatoire.
+				La randomisation peut être sélectionnée dans les propriétés de la section, juste à côté de l'ordre.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/randomization_FR.png" style="margin-bottom: 1em" />
+			<p>Veuillez également noter les points suivants:</p>
 			<ul>
-				<li>
-					trop de tables/matrices;
-				</li>
-				<li>
-					trop de dépendances;
-				</li>
-				<li>
-					trop de dépendances imbriquées.
+				<li>Tous les éléments de l'enquête (y compris les images et le texte statique) sont positionnés aléatoirement.</li>
+				<li>Si une question déclenche un changement de visibilité ou est déclenchée par un changement de visibilité, sa position n'est pas modifiée. Elle est toujours affichées avant les autres éléments aléatoires.</li>
+				<li>Les sous-sections et leurs questions (niveaux 2 et 3) sont également randomisées aléatoirement, mais l’ordre de la sous-section au sein de la section de niveau 1 à laquelle elle appartient est conservé. Cela signifie que les questions d'une sous-section sont également randomisées lorsque la section de niveau 1 est randomisée.</li>
+				<li>La version PDF de l'enquête (fonction «Télécharger la version PDF») montre toujours les questions dans l'ordre d’origine.</li>
+				<li>Les contributions PDF montrent toujours les questions dans l'ordre d’origine.</li>
+				<li>Si la numérotation des sections/questions est activée en même temps que la fonction de randomisation, les numéros des questions seront également randomisés avec les questions.
+					<div><img src="${contextpath}/resources/images/documentation/randomization_sections_FR.png" /></div>
 				</li>
 			</ul>
-			<p>
-				Pour de plus amples informations, veuillez consulter notre
-				<a
-						href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf"
-						target="_blank"
-						>
-					guide des
-				</a>
-				<u> bonnes pratiques</u>
-				.
-			</p>
+			<p>Il y a un autre point spécifique aux enquêtes DELPHI:</p>
+			<ul>
+				<li>La page d'accueil de DELPHI présente les questions dans leur ordre original.</li>
+			</ul>
 			<h1>
 				Sécurité des enquêtes
 			</h1>
@@ -1393,39 +1432,64 @@
 				les résultats de l’enquête.
 			</p>
 			<h2>
-				Est-il possible d’autoriser les participants à accéder à leurs
-				contributions après envoi?
+				Puis-je permettre aux personnes interrogées d'accéder à leur contribution après sa soumission?
 			</h2>
 			<p>
-				Oui!
+				Oui. Cliquez sur «Sécurité» sous l'onglet «Propriétés», puis activez l'option <b>«Permettre aux participants de modifier leur contribution»</b>.
 			</p>
 			<p>
-				Dans la section «Sécurité» de la page «Propriétés» &#8594; activez l’option
-				«Allow participants to change their contribution».
+				Pour éditer/modifier leur contribution après soumission, les participants peuvent se rendre sur cette page: <a href="https://ec.europa.eu/eusurvey/home/editcontribution" target="_blank">https://ec.europa.eu/eusurvey/home/editcontribution</a>
 			</p>
 			<p>
-				Les participants auront besoin du numéro d’identification de leur
-				contribution, qui leur est donné après la soumission de celle-ci.
+				Les participants à votre enquête devront connaître leur identifiant de contribution. Cet identifiant leur est fourni lors de la soumission de leur contribution sur la page de confirmation.
 			</p>
 			<p>
-				Pour modifier leur contribution après envoi, les participants doivent
-				ouvrir la page d’accueil d’EUSurvey
-				<a href="https://ec.europa.eu/eusurvey/?language=fr" target="_blank">
-					https://ec.europa.eu/eusurvey/?language=fr
-				</a>
-				.
+				Veuillez noter que le lien «Modifier une contribution» est accessible sur la page d'accueil d'EUSurvey: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
+			</p>
+			<h2>
+				Comment puis-je permettre aux participants d'imprimer ou de télécharger leur contribution?
+			</h2>
+			<p>
+				Si elle est activée, cette fonctionnalité permet aux participants d'enregistrer leurs réponses au format PDF. Pour activer cette fonctionnalité, suivez les étapes ci-dessous :
+				<ol>
+					<li>
+						Ouvrez votre enquête
+					</li>
+					<li>
+						Allez dans l'onglet «Propriétés»
+					</li>
+					<li>
+						Allez dans l'onglet «Sécurité»
+					</li>
+					<li>
+						Activez l'option «Permet aux participants d'imprimer leur contribution et de la recevoir au format PDF»
+					</li>
+				</ol>
+				<img src="${contextpath}/resources/images/documentation/printdownloadFR.png" />
+			</p>
+			<h2>
+				Comment puis-je permettre aux participants de modifier (éditer) leur contribution?
+			</h2>
+			<p>
+				Si elle est activée, cette fonctionnalité permet aux participants de modifier/éditer leurs réponses après avoir été soumises.
 			</p>
 			<p>
-				Sous le bouton «Inscrivez-vous dès maintenant!», un lien permet d’accéder
-				<a
-						href="https://ec.europa.eu/eusurvey/home/editcontribution?language=fr"
-						target="_blank"
-						>
-					à la page de modification des contributions individuelles
-				</a>
-				. Sur cette page, les participants doivent indiquer le numéro
-				d’identification de leur contribution individuelle pour l’ouvrir et la
-				modifier.
+				Pour activer cette fonctionnalité :
+				<ol>
+					<li>
+						Ouvrez votre sondage
+					</li>
+					<li>
+						Allez dans l'onglet «Propriétés»
+					</li>
+					<li>
+						Allez dans l'onglet «Sécurité»
+					</li>
+					<li>
+						Activez l'option «Permettre aux participants de modifier leur contribution»
+					</li>
+				</ol>
+				<img src="${contextpath}/resources/images/documentation/changecontributionFR.png" />
 			</p>
 			<h1>
 				Tester une enquête
@@ -2599,6 +2663,103 @@
 				</a>
 				d’EUSurvey.
 			</p>
+			<h2>Comment puis-je récupérer les fichiers téléchargés par les contributeurs ?</h2>
+
+			<p>EUSurvey propose différents formats d'export : XLS, PDF, ODS et XML.
+				<br>
+				En fonction du format sélectionné, la structure et le contenu des
+				fichiers exportés pour l'élément «Charger un fichier» sont décrits ci-dessous :</p>
+
+			<h4>Export
+				des résultats en XLS</h4>
+
+			<ol>
+				<li>
+					<p>Un fichier Excel contenant les informations suivantes :</p>
+					<p>Alias : Alias de l'enquête (exemple :
+						6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Date d'export : Date au format «dd-mm-yyyy hh:mm» (exemple :
+						28-09-2020 15:28)</p>
+
+					<p>Un tableau composé comme ci-dessous :</p>
+					<ul>
+						<li>Chaque colonne représente une question «Charger un fichier» différente.</li>
+
+						<li>Chaque ligne représente une contribution
+							différente.</li>
+
+						<li>Chaque cellule contient tous les noms des
+							fichiers téléchargés.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Des dossiers correspondant à chaque contribution et nommés avec
+						l'ID de la contribution, contenant des sous-dossiers pour chaque question «Charger un fichier» (Upload_1, Upload_2, etc.). </p>
+
+					<p>Par exemple :</p>
+
+					<p>Dossier : 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
+
+						Sous-dossier : Upload_1 (correspondant à la première question de
+						type «Charger un fichier») contient tous les fichiers téléchargés.<br>
+
+						Sous-dossier : Upload_2 (correspondant à la deuxième question de type
+						«Charger un fichier») contient tous les fichiers téléchargés.</p>
+				</li>
+			</ol>
+			<h4>Export
+				des résultats au format PDF</h4>
+			<ol>
+				<li>
+					<p>Dossier nommé «PDFs» contenant toutes les contributions à
+						l'enquête sous forme de documents PDF.</p>
+				</li>
+				<li>
+					<p>Des dossiers correspondant à chaque contribution et nomméd avec
+						l'ID de la contribution.<br>
+
+						Chaque dossier contient des sous-dossiers pour chaque question de type
+						«Charger un fichier» (Upload_1, Upload_2, etc.).</p>
+				</li>
+			</ol>
+
+			<h4>Export des résultats au format ODS</h4>
+			<ol>
+				<li>
+					<p>Un fichier Open Office contenant les informations suivantes :</p>
+
+					<p>Alias : Alias de l'enquête (exemple :
+						6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+
+						Date d'export : Date au format «dd-mm-yyyy hh:mm» (exemple :
+						28-09-2020 15:28)</p>
+
+					<p>Un tableau composé comme ci-dessous :</p>
+
+					<ul>
+						<li>Chaque colonne représente une question «Charger un fichier» différente.</li>
+
+						<li>Chaque ligne représente une contribution
+							différente.</li>
+
+						<li>Chaque cellule contient tous les noms des
+							fichiers téléchargés.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Des dossiers correspondant à chaque contribution et nommés avec
+						l'ID de la contribution.<br>
+						Chaque dossier contient des sous-dossiers pour chaque question de
+						téléchargement de fichiers (Upload_1, Upload_2, etc.).</p>
+				</li>
+			</ol>
+			<h4>Export
+				des résultats au format XML</h4>
+
+			<p>Cet export est constitué d'un fichier XML contenant les résultats de
+				manière structurée.<br>
+
+			<b>Les fichiers téléchargés ne sont pas disponibles dans ce cas.</b></p>
 			<h1>
 				Style et mise en page
 			</h1>
@@ -3166,48 +3327,28 @@
 				</ol>
 			</p>
 			<h2>
-				Comment utiliser des jetons pour créer un lien?
+				Comment utiliser des jetons (tokens) pour créer un lien ?
 			</h2>
 			<p>
-				Suivez les étapes ci-dessous pour créer une liste de jetons (c’est-à-dire
-				de codes d’authentification uniques) qui peuvent être distribués hors ligne
-				afin d’accéder à une enquête en ligne sécurisée.
+				Afin de créer une liste de jetons (jeton d'authentification) qui peuvent être distribués pour accéder à un questionnaire en ligne sécurisé, ouvrez votre enquête et allez à la page «Participants».
+				Cliquez sur «Créer une nouvelle liste d'invités» pour lancer un assistant qui vous guidera tout au long du processus.
+				Choisissez un nom pour le groupe et sélectionnez «Tokens» parmi les types de listes d'invités.
 			</p>
 			<p>
-				<ol>
-					<li>
-						Ouvrez votre enquête.
-					</li>
-					<li>
-						Allez à la page «Participants».
-					</li>
-					<li>
-						Cliquez sur «Token list» pour lancer un assistant qui vous guidera tout
-						au long du processus.
-					</li>
-					<li>
-						Choisissez un nom pour le groupe et sélectionnez «Tokens» parmi les
-						différents types de listes d’invités.
-					</li>
-				</ol>
+				Utilisez les jetons créés pour créer des liens d'accès individuels que vous pouvez envoyer par courrier électronique aux participants en utilisant l'URL ci-dessous :
 			</p>
 			<p>
-				Utilisez les jetons créés pour générer des liens d’accès individuels qui
-				peuvent être envoyés par courrier électronique aux participants, comme
-				suit:
+				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>
 			</p>
 			<p>
-				https://ec.europa.eu/eusurvey/runner/<b>SurveyAlias</b>/<b>TOKEN</b>
-			</p>
-			<p>
-				Il vous suffit de remplacer:
+				Il suffit de remplacer :
 			</p>
 			<ul>
 				<li>
-					«<b>SurveyAlias</b>» par <b>l’alias</b> <b>de votre enquête</b>; et
+					<span style="color: #f00; font-weight: bold">SurveyAlias</span> par <b>l’alias</b> <b>de votre enquête</b>
 				</li>
 				<li>
-					«<b>TOKEN</b>» par le jeton de la liste que vous souhaitez utiliser.
+					<span style="color: #f00; font-weight: bold">TOKEN</span> avec un des jetons de la liste
 				</li>
 			</ul>
 			<h1>

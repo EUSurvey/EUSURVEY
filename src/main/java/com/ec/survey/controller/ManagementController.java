@@ -1170,7 +1170,7 @@ public class ManagementController extends BasicController {
 
 		if (invalid(uploadedSurvey.getShortname())) {
 			String message = resources.getMessage("validation.name2", null,
-					"The name must only contain alphanumerical characters (characters of the alphabet (from A to Z), numbers (0 to 9)) and hyphens.",
+					"Alias must be composed of lowercase and uppercase letters (a-z and A-Z), numbers (0-9), hyphens and underscores only.",
 					locale);
 			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
@@ -1468,6 +1468,7 @@ public class ManagementController extends BasicController {
 
 		survey.setShowPDFOnUnavailabilityPage(uploadedSurvey.getShowPDFOnUnavailabilityPage());
 		survey.setShowDocsOnUnavailabilityPage(uploadedSurvey.getShowDocsOnUnavailabilityPage());
+		survey.setAllowQuestionnaireDownload(uploadedSurvey.getAllowQuestionnaireDownload());
 
 		User u = sessionService.getCurrentUser(request);
 
@@ -2066,6 +2067,7 @@ public class ManagementController extends BasicController {
 				publishedSurvey.setSaveAsDraft(survey.getSaveAsDraft());
 				publishedSurvey.setDownloadContribution(survey.getDownloadContribution());
 				publishedSurvey.setPassword(survey.getPassword());
+				publishedSurvey.setDedicatedResultPrivileges(survey.getDedicatedResultPrivileges());
 
 				publishedSurvey.setMaxNumberContribution(survey.getMaxNumberContribution());
 				publishedSurvey.setMaxNumberContributionLink(survey.getMaxNumberContributionLink());
@@ -2084,7 +2086,8 @@ public class ManagementController extends BasicController {
 				publishedSurvey.setNotificationUnit(survey.getNotificationUnit());
 				publishedSurvey.setNotifyAll(survey.getNotifyAll());
 				publishedSurvey.setRegistrationForm(survey.getRegistrationForm());
-
+				publishedSurvey.setAllowQuestionnaireDownload(survey.getAllowQuestionnaireDownload());
+				
 				publishedSurvey.getPublication().setPassword(survey.getPublication().getPassword());
 
 				publishedSurvey.getPublication().setShowContent(survey.getPublication().isShowContent());
@@ -2095,7 +2098,7 @@ public class ManagementController extends BasicController {
 				publishedSurvey.getPublication().setAllContributions(survey.getPublication().isAllContributions());
 				publishedSurvey.getPublication()
 						.setShowUploadedDocuments(survey.getPublication().getShowUploadedDocuments());
-
+				
 				publishedSurvey.getPublication().getFilter().getVisibleQuestions().clear();
 				publishedSurvey.getPublication().getFilter().getFilterValues().clear();
 
@@ -2959,23 +2962,8 @@ public class ManagementController extends BasicController {
 		
 		if (user != null && user.getResultAccess() != null &&  user.getResultAccess().getResultFilter() != null)
 		{
-			filter.getReadOnlyFilterQuestions().clear();
-			for (String questionUID : user.getResultAccess().getResultFilter().getFilterValues().keySet()) {
-				Element question = survey.getQuestionMapByUniqueId().get(questionUID);
-				String key = question.getId() + "|" + questionUID;
-				
-				String value = user.getResultAccess().getResultFilter().getFilterValues().get(questionUID);
-				
-				if (question instanceof ChoiceQuestion) {
-					PossibleAnswer answer = ((ChoiceQuestion)question).getPossibleAnswerByUniqueId(value);
-					if (answer != null) {
-						value = answer.getId() + "|" + value;
-					}
-				}
-				
-				filter.getFilterValues().put(key, value);
-				filter.getReadOnlyFilterQuestions().add(questionUID);
-			}
+			filter.getReadOnlyFilterQuestions().clear();			
+			filter.mergeResultAccess(user.getResultAccess(), survey);
 		}
 
 		if (request != null) {
@@ -3745,7 +3733,7 @@ public class ManagementController extends BasicController {
 					for (String uid : median.getMedianUids()) {
 						PossibleAnswer pa = singleChoiceQuestion.getPossibleAnswerByUniqueId(uid);
 						if (pa != null) {
-							values.add(pa.getTitle());
+							values.add(pa.getStrippedTitle());
 						}
 					}
 					if (!values.isEmpty()) {
@@ -3835,12 +3823,9 @@ public class ManagementController extends BasicController {
 			return null;
 		}
 		
-		Survey survey = this.surveyService.getSurvey(Integer.parseInt(id), false, true);
-		ResultFilter filter = export.getResultFilter().copy();
 		ECFGlobalResult ecfGlobalResult = null;
 		return new ModelAndView("management/ecfGlobalResultsPDF", "ecfGlobalResult", ecfGlobalResult);
 	}
-
 
 	@RequestMapping(value = "/preparestatistics/{id}/{exportId}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparestatistics(@PathVariable String id, @PathVariable String exportId, Locale locale,
@@ -3956,7 +3941,7 @@ public class ManagementController extends BasicController {
 		form = new Form(resources);
 		form.setSurvey(survey);
 
-		if (!sessionService.userIsFormManager(form.getSurvey(), u, request) && (u.getResultAccess() == null || u.getResultAccess().isReadonly())) {
+		if (!sessionService.userIsFormManager(form.getSurvey(), u, request) && u.getResultAccess() == null) {
 			throw new ForbiddenURLException();
 		}
 
@@ -4037,7 +4022,7 @@ public class ManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/resultAccessesJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody List<ResultAccess> resultAccessesJSON(@PathVariable String shortname, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException, InvalidURLException {
+	public @ResponseBody List<ResultAccess> resultAccessesJSON(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException, InvalidURLException {
 		User u = sessionService.getCurrentUser(request);
 		
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
@@ -4055,7 +4040,7 @@ public class ManagementController extends BasicController {
 		String name = request.getParameter("name");
 		String order = request.getParameter("order");
 		
-		List<ResultAccess> result = surveyService.getResultAccesses(u.getResultAccess(), shortname, Integer.parseInt(page), Integer.parseInt(rows), name, order);
+		List<ResultAccess> result = surveyService.getResultAccesses(u.getResultAccess(), shortname, Integer.parseInt(page), Integer.parseInt(rows), name, order, locale);
 		
 		if (sessionService.userIsFormAdmin(survey, u, request))
 		{
@@ -4131,8 +4116,6 @@ public class ManagementController extends BasicController {
 		} else {			
 			// if the user himself has restrictions, he cannot remove them from "children"
 			if (!sessionService.userIsFormAdmin(survey, u, request) && u.getResultAccess() != null && u.getResultAccess().getResultFilter() != null) {			
-				String[] uids = access.getReadonlyFilterQuestions().split(";");
-				
 				for (String uid : u.getResultAccess().getResultFilter().getFilterValues().keySet()) {
 					readonlyFilterValues.put(uid, access.getResultFilter().getFilterValues().get(uid));
 				}
@@ -4141,13 +4124,18 @@ public class ManagementController extends BasicController {
 			access.getResultFilter().clearResultFilter();
 		}
 		
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		
 		for (Element question : survey.getElementsForResultAccessFilter().keySet()) {
 			if (readonlyFilterValues.containsKey(question.getUniqueId())) {
 				access.getResultFilter().getFilterValues().put(question.getUniqueId(), readonlyFilterValues.get(question.getUniqueId()));
-			} else {			
-				String value = request.getParameter(question.getUniqueId());
-				if (value != null && value.length() > 0) {
-					access.getResultFilter().getFilterValues().put(question.getUniqueId(), value);
+			} else {
+				if (parameters.containsKey(question.getUniqueId())) {
+					String[] values = parameters.get(question.getUniqueId());
+					String value = StringUtils.arrayToDelimitedString(values, ";");
+					if (value.length() > 0) {
+						access.getResultFilter().getFilterValues().put(question.getUniqueId(), value);
+					}
 				}
 			}
 		}		
@@ -4234,7 +4222,7 @@ public class ManagementController extends BasicController {
 		
 		boolean userIsFormManager = sessionService.userIsFormAdmin(form.getSurvey(), u, request);
 		
-		if (!userIsFormManager && (!resultsPrivilege || u.getResultAccess() == null || u.getResultAccess().isReadonly())) {
+		if (!userIsFormManager && (!resultsPrivilege || u.getResultAccess() == null)) {
 			throw new ForbiddenURLException();
 		}		
 
@@ -4280,6 +4268,10 @@ public class ManagementController extends BasicController {
 				resAccess.setSurveyUID(form.getSurvey().getUniqueId());
 				resAccess.setUser(user.getId());
 				resAccess.setOwner(u.getId());
+				
+				if (u.getResultAccess() != null && u.getResultAccess().isReadonly()) {
+					resAccess.setReadonly(true);
+				}
 				
 				String readonlyQuestionUIDs = "";
 				if (!userIsFormManager && u.getResultAccess() != null && u.getResultAccess().getResultFilter() != null) {
@@ -4384,7 +4376,7 @@ public class ManagementController extends BasicController {
 		
 		boolean userIsFormAdmin = sessionService.userIsFormAdmin(form.getSurvey(), u, request);
 		
-		if (!userIsFormAdmin && (!resultsPrivilege || u.getResultAccess() == null  || u.getResultAccess().isReadonly())) {
+		if (!userIsFormAdmin && (!resultsPrivilege || u.getResultAccess() == null)) {
 			throw new ForbiddenURLException();
 		}
 		

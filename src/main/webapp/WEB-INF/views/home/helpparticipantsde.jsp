@@ -294,6 +294,41 @@
 				    .
 				</p>
 				<h2>
+					Was ist meine „Kennnummer des Beitrags“?
+				</h2>
+				<p>
+					Die „Kennnummer des Beitrags“ ist die individuelle Nummer Ihrer Antwort, die automatisch generiert wird. Sie ist eine eindeutige Kennung, die es dem System ermöglicht, Ihren Beitrag zu erkennen.
+				</p>
+				<p>
+					Sobald Ihr Beitrag übermittelt wurde, wird Ihre Kennnummer auf der Bestätigungsseite angezeigt. Wenn Sie die PDF-Datei speichern oder an Ihre E-Mail-Adresse senden, sehen Sie die Kennnummer oben links in der PDF-Datei.
+				</p>
+				<p>
+					Ihre Kennnummer ist nützlich, falls Sie den EUSurvey-Support oder die Organisatoren der Umfrage kontaktieren möchten.
+				</p>
+				<h2>
+					Wo kann ich meine „Kennnummer des Beitrags“ finden?
+				</h2>
+				<p>
+					Sie wird direkt nach dem Absenden Ihrer Antworten angezeigt.
+					<ol>
+						<li>
+							Öffnen Sie Ihren Umfragelink und beantworten Sie die Umfrage
+						</li>
+						<li>
+							Nach dem Absenden Ihres Beitrags wird die Kennnummer auf der Bestätigungsseite angezeigt.
+						</li>
+						<li>
+							Senden Sie die Beitrags-PDF-Datei an Ihre E-Mail
+						</li>
+						<li>
+							Öffnen Sie den PDF-Beitrag
+						</li>
+						<li>
+							Die Kennnummer wird auf der linken oberen Seite des PDF-Dokuments angezeigt
+						</li>
+					</ol>
+				</p>
+				<h2>
 				    Ich habe gerade einen Beitrag zu einer Umfrage eingesandt. Kann ich
 				    einsehen, was andere Befragte geantwortet haben?
 				</h2>
@@ -314,6 +349,12 @@
 				        Verfasser
 				    </a>
 				    der Umfrage.
+				</p>
+				<h2>
+					Mein Beitrag wurde nicht fristgerecht eingereicht. Was kann ich tun?
+				</h2>
+				<p>
+					Bitte wenden Sie sich direkt an die Organisatoren der Umfrage. Wenn die Kontaktdaten der Umfrageorganisatoren nicht auf der Umfrageseite verfügbar sind, wenden Sie sich bitte an das  <a href="https://ec.europa.eu/eusurvey/home/support">EUSurvey Support-Team</a>.
 				</p>
 				<h2>
 				    Warum erscheint beim Öffnen der PDF Version meines Beitrags die

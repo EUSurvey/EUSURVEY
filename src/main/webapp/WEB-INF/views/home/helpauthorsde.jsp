@@ -1204,38 +1204,81 @@
 				gespeichert. Sie können somit von der Ergebnisseite aus exportiert werden.
 			</p>
 			<h2>
-				Was bedeutet „Komplexität“?
+				Indikator für Komplexität  
 			</h2>
 			<p>
-				Wenn Sie zu viele Elemente oder Abhängigkeiten in Ihre Umfrage einbauen,
-				wird sie zu „komplex“. Dies kann dazu führen, dass das System für die
-				Teilnehmer beim Ausfüllen Ihres Fragebogens verlangsamt wird.
+				Wenn Sie Ihre Umfrage kurz und einfach halten, erleichtert dies den Teilnehmern das Ausfüllen der Umfrage und führt zu einer besseren Benutzererfahrung. Natürlich müssen Sie manchmal eine Verzweigungslogik mithilfe von Abhängigkeiten hinzufügen (d. h. Fragen, die abhängig von den zuvor gegebenen Antworten ausgeblendet/angezeigt werden). Das ist in Ordnung, aber bedenken Sie bitte, dass das Hinzufügen von zu vielen Elementen oder Abhängigkeiten Ihre Umfrage zu "komplex" macht. Dies kann dazu führen, dass das System für die Teilnehmer beim Ausfüllen Ihres Fragebogens langsamer wird.
 			</p>
 			<p>
-				Dass Ihr Fragebogen eine hohe Komplexität aufweist, kann mehrere Gründe
-				haben:
+				Aus diesem Grund befindet sich in der oberen rechten Ecke des Formular-Editors ein kleiner Indikator:<br />
+				<img src="${contextpath}/resources/images/documentation/complexityDE.png" />
 			</p>
+			<p>
+				Ihre Umfrage könnte aus verschiedenen Gründen einen hohen Komplexitätsgrad aufweisen: 
+				<ul>
+					<li>zu viele Abhängigkeiten</li>
+					<li>zu viele kaskadierende Abhängigkeiten</li>
+					<li>zu viele Tabellen-/Matrixelemente</li>
+				</ul>
+			</p>
+			<p>
+				Weitere Informationen finden Sie in unserem <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">Leitfaden für bewährte Praktiken</a>, und zögern Sie nicht, sich an das <a href="${contextpath}/home/support?assistance=1">EUSurvey-Supportteam</a> zu wenden, um bei Bedarf Unterstützung bei der Neugestaltung Ihres Formulars zu erhalten.
+			</p>
+			<h2>
+				Was ist die „Kennnummer des Beitrags“?
+			</h2>
+			<p>
+				Die  „Kennnummer des Beitrags“ (Beitrags-ID) ist ein Code, der als eindeutiger Bezeichner für einen Beitrag verwendet wird.
+			</p>
+			<p>
+				Sie kann von Umfragemanagern verwendet werden, um einen Beitrag auf der Ergebnisseite wiederzufinden. Sie kann auch von einem Umfrageteilnehmer verwendet werden, um seinen Beitrag einzureichen und ihn später abzurufen.
+			</p>
+			<h2>
+				Wie kann ich einen Beitrag in den Ergebnissen mit Hilfe einer „Kennnummer des Beitrags“ finden?
+			</h2>
+			<p>
+				Die „Kennnummer des Beitrags“ (Beitrags-ID) kann von den Eigentümern der Umfrage verwendet werden, um einen Beitrag unter allen Ergebnissen zu finden:
+				<ol>
+					<li>
+						Öffnen Sie Ihre Umfrage
+					</li>
+					<li>
+						Gehen Sie zur Registerkarte „Ergebnisse“
+					</li>
+					<li>
+						Klicken Sie auf die Schaltfläche „Einstellungen“
+					</li>
+					<li>
+						Wählen Sie „Kennnummer des Beitrags“ in beiden Spalten aus
+					</li>
+					<li>
+						Gehen Sie zum Filter „Kennnummer des Beitrags“
+					</li>
+					<li>
+						Geben Sie die Kennnummer ein und klicken Sie auf Enter
+					</li>
+				</ol>
+			</p>
+			<h2>Randomisierungsfunktion</h2>
+			<p>
+				Wenn Sie einen <strong>Abschnitt</strong> der ersten Stufe verwenden, haben Sie die Möglichkeit, die darunter liegenden Fragen/Elemente in ihrer ursprünglichen Reihenfolge zu belassen oder ihre Position zu randomisieren. Die Zufallsanordnung kann in den Abschnittseigenschaften direkt neben "Ordnen nach" ausgewählt werden.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/randomization_DE.png" style="margin-bottom: 1em" />
+			<p>Bitte beachten Sie auch die folgenden Punkte:</p>
 			<ul>
-				<li>
-					zu viele Tabellen-/Matrix-Elemente
-				</li>
-				<li>
-					zu viele Abhängigkeiten
-				</li>
-				<li>
-					zu viele kaskadierende Abhängigkeiten
+				<li>Alle Umfrageelemente (einschließlich Bilder und statischer Text) werden zufällig angeordnet.</li>
+				<li>Wenn eine Frage eine Sichtbarkeitsänderung auslöst oder durch eine Sichtbarkeitsänderung (nicht) sichtbar wird, wird ihre Position nicht verändert. Sie wird immer vor den anderen "randomisierten" Elementen angezeigt.</li>
+				<li>Unterabschnitte und ihre Fragen (Stufe 2 und 3) werden ebenfalls randomisiert, aber ihre Reihenfolge innerhalb des Abschnitts der Stufe 1, zu dem sie gehören, wird beibehalten. Das bedeutet, dass die Fragen eines Unterabschnitts ebenfalls randomisiert werden, wenn der Abschnitt der Stufe 1 randomisiert wird.</li>
+				<li>Die PDF-Version der Umfrage (Funktion "PDF-Version herunterladen") zeigt die Fragen immer in der ursprünglichen Reihenfolge.</li>
+				<li>PDFs von Beiträgen zeigen die Fragen immer in der ursprünglichen Reihenfolge.</li>
+				<li>Wenn die automatische Nummerierung der Abschnitte/Fragen gleichzeitig mit der Randomisierungsfunktion aktiviert ist, werden auch die Fragennummern zusammen mit den Fragen randomisiert.
+					<div><img src="${contextpath}/resources/images/documentation/randomization_sections_DE.png" style="max-width: 100%;" /></div>
 				</li>
 			</ul>
-			<p>
-				Für mehr Informationen hierzu siehe unseren
-				<a
-						href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf"
-						target="_blank"
-						>
-					best practices
-				</a>
-				-Leitfaden.
-			</p>
+			<p>Es gibt noch einen weiteren Punkt, der speziell für DELPHI-Umfragen gilt:</p>
+			<ul>
+				<li>Auf der DELPHI-Startseite werden die Fragen in ihrer ursprünglichen Reihenfolge angezeigt.</li>
+			</ul>
 			<h1>
 				Sicherheit der Umfrage
 			</h1>
@@ -1350,38 +1393,67 @@
 				diese Weise erschwert werden.
 			</p>
 			<h2>
-				Kann ich es den Umfrageteilnehmern erlauben, nach dem Einsenden ihrer
-				Antworten auf diese zuzugreifen?
+				Kann ich den Umfrageteilnehmern die Möglichkeit geben, nach der Übermittlung auf ihren Beitrag zuzugreifen?
 			</h2>
 			<p>
-				Ja!
+				Ja. Klicken Sie unter der Registerkarte "Eigenschaften" auf "Sicherheit" und aktivieren Sie dann die Option "Ermöglicht Teilnehmern, ihren Beitrag zu ändern".
 			</p>
 			<p>
-				Gehen Sie unter „Eigenschaften“ zu „Sicherheit“ ? aktivieren Sie die Option
-				„Änderung der Beiträge durch deren Einsender ermöglichen“.
+				Um ihren Beitrag nach der Übermittlung zu bearbeiten/ändern, können die Teilnehmer auf diese Seite gehen: <a href="https://ec.europa.eu/eusurvey/home/editcontribution" target="_blank">https://ec.europa.eu/eusurvey/home/editcontribution</a>
 			</p>
 			<p>
-				Die Teilnehmer brauchen hierfür ihre Beitrags-Kennnummer, die ihnen nach
-				Einreichung ihrer Antworten angezeigt wurde.
+				Ihre Umfrageteilnehmer müssen ihre Beitrags-ID kennen. Diese ID wird ihnen bei der Übermittlung ihrer Antworten auf der Bestätigungsseite mitgeteilt.
 			</p>
 			<p>
-				Um ihre Antworten nach der Einsendung zu bearbeiten/zu ändern, müssen die
-				Teilnehmer auf die Startseite von EUSurvey gehen:
-				<a href="https://ec.europa.eu/eusurvey" target="_blank">
-					https://ec.europa.eu/eusurvey
-				</a>
-				.
+				Bitte beachten Sie, dass der Link "Beitrag bearbeiten" auf der EUSurvey-Startseite zu finden ist: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
+			</p>
+			<h2>
+				Wie kann ich den Teilnehmern erlauben, ihren Beitrag auszudrucken oder herunterzuladen?
+			</h2>
+			<p>
+				Wenn diese Funktion aktiviert ist, können die Teilnehmer ihre Antworten im PDF-Format speichern.
 			</p>
 			<p>
-				Unterhalb der Schaltfläche „Registrieren“ gibt es einen Link zur
-				<a
-						href="https://ec.europa.eu/eusurvey/home/editcontribution"
-						target="_blank"
-						>
-					Zugangsseite für individuelle Beiträge
-				</a>
-				. Hier müssen die Teilnehmer die Kennnummer ihres jeweiligen Beitrags
-				angeben, der dann vom System zur Bearbeitung geöffnet wird.
+				Um diese Funktion zu aktivieren, folgen Sie den nachstehenden Schritten:
+				<ol>
+					<li>
+						Öffnen Sie Ihre Umfrage
+					</li>
+					<li>
+						Gehen Sie auf die Registerkarte „Eigenschaften“
+					</li>
+					<li>
+						Gehen Sie auf die Registerkarte „Sicherheit“
+					</li>
+					<li>
+						Aktivieren Sie die Option „Ermöglicht Teilnehmern, ihren Beitrag auszudrucken und als PDF-Datei zu erhalten“.
+					</li>
+				</ol>
+				<img src="${contextpath}/resources/images/documentation/printDE.png" />
+			</p>
+			<h2>
+				Wie kann ich den Teilnehmern erlauben, ihren Beitrag zu ändern (zu bearbeiten)?
+			</h2>
+			<p>
+				Wenn diese Funktion aktiviert ist, können die Teilnehmer ihre Antworten nach dem Absenden ändern/bearbeiten.
+			</p>
+			<p>
+				So aktivieren Sie diese Funktion:
+				<ol>
+					<li>
+						Öffnen Sie Ihre Umfrage
+					</li>
+					<li>
+						Gehen Sie auf die Registerkarte „Eigenschaften“
+					</li>
+					<li>
+						Gehen Sie auf die Registerkarte „Sicherheit“
+					</li>
+					<li>
+						Aktivieren Sie die Option „Ermöglicht Teilnehmern, ihren Beitrag zu ändern“
+					</li>
+				</ol>
+			<img src="${contextpath}/resources/images/documentation/changecontributionDE.png" />
 			</p>
 			<h1>
 				Umfrage testen
@@ -2546,6 +2618,84 @@
 				Diese Verzögerung sollte nicht mehr als 12 Stunden betragen; sollte die
 				Verzögerung 12 Stunden übersteigen, wenden Sie sich bitte &#8594;  an EUSurvey    <a href="https://ec.europa.eu/eusurvey/home/support">Support</a>.
 			</p>
+			<h2>Wie kann ich Dateien abrufen, die von Teilnehmern hochgeladen wurden?</h2>
+
+			<p>EUSurvey bietet verschiedene Exportformate an: XLS, PDF, ODS und XML. </p>
+
+			<p>Je nach ausgewähltem Format sind Struktur und Inhalt der exportierten Dateien
+				des "Datei hochladen"-Elementes unterschiedlich und so wie in den folgenden Abschnitten beschrieben:</p>
+
+			<h4>Ergebnisexport im XLS-Format</h4>
+			<ol>
+				<li>
+					<p>Eine Excel-Datei, die die folgenden Informationen enthält:</p>
+					<p>Alias: Umfrage-Alias (Beispiel: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Export Date: Datum im Format "dd-mm-yyyy hh:mm" (Beispiel: 28-09-2020 15:28)</p>
+
+					<p>Eine Tabelle mit folgendem Aufbau:</p>
+
+					<ul>
+						<li>Jede Spalte steht für eine andere "Datei hochladen"-Frage.</li>
+
+						<li>Jede Zeile steht für einen anderen Beitrag.</li>
+
+						<li>Jede Zelle enthält alle Namen der hochgeladenen Dateien.</li>
+					</ul><br>
+
+				</li>
+				<li>
+					<p>Ordner, die den einzelnen Beiträgen entsprechen und nach der Kennnummer des Beitrags
+						benannt sind. Sie enthalten Unterordner für jede "Datei hochladen"-Frage (Upload_1, Upload_2 usw.).  </p>
+
+					<p>Zum Beispiel:</p>
+
+					<p>Ordner:
+						6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
+
+						Unterordner: Upload_1 (für die erste "Datei hochladen"-Frage ) beinhaltet alle hochgeladenen Dateien.<br>
+
+						Unterordner: Upload_2 (für die zweite "Datei hochladen"-Frage ) beinhaltet alle hochgeladenen Dateien.</p>
+				</li>
+			</ol>
+			<h4>Ergebnisexport im PDF-Format</h4>
+			<ol>
+				<li>
+					<p>Ordner mit dem Namen "PDFs", der alle Umfragebeiträge als PDF-Dokumente enthält.</p>
+				</li>
+				<li>
+					<p>Ordner, die den einzelnen Beiträgen entsprechen und nach der Kennnummer des Beitrags
+						benannt sind. Sie enthalten Unterordner für jede "Datei hochladen"-Frage (Upload_1, Upload_2 usw.). </p>
+				</li>
+			</ol>
+
+			<h4>Ergebnisexport im ODS-Format</h4>
+
+			<ol>
+				<li>
+					<p>Eine Open-Office-Datei, die die folgenden Informationen enthält:</p>
+					<p>Alias: Umfrage-Alias (Beispiel: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+						Export Date: Datum im Format "dd-mm-yyyy hh:mm" (Beispiel: 28-09-2020 15:28)</p>
+
+					<p>Eine Tabelle mit folgendem Aufbau:</p>
+
+					<ul>
+						<li>Jede Spalte steht für eine andere "Datei hochladen"-Frage.</li>
+
+						<li>Jede Zeile steht für einen anderen Beitrag.</li>
+
+						<li>Jede Zelle enthält alle Namen der hochgeladenen Dateien.</li>
+					</ul><br>
+				</li>
+				<li>
+					<p>Ordner, die den einzelnen Beiträgen entsprechen und nach der Kennnummer des Beitrags
+						benannt sind. Sie enthalten Unterordner für jede "Datei hochladen"-Frage (Upload_1, Upload_2 usw.). </p>
+				</li>
+			</ol>
+
+			<h4>Ergebnisexport im XML-Format</h4>
+
+			<p>Dieses Exportformat beinhaltet die Ergebnisse im strukturierten XML-Format.<br>
+			<b>Hochgeladene Dateien sind in diesem Fall nicht einsehbar.</b></p>
 			<h1>
 				Design und Layout
 			</h1>
@@ -3104,51 +3254,28 @@
 				Wie kann ich Token verwenden, um einen Link zu erstellen?
 			</h2>
 			<p>
-				Gehen Sie wie im Folgenden beschrieben vor, um eine Liste von Zugangscodes
-				(d. h. individuelle Authentifizierungscodes) zu erstellen, die offline
-				verteilt werden können, und den Zugriff auf eine geschützte Online-Umfrage
-				ermöglichen.
+				Um eine „Token-Liste“ (Authentifizierungs-Token) zu erstellen, die für den Zugriff auf
+				einen gesicherten Online-Fragebogen verteilt werden können, öffnen Sie Ihre Umfrage und gehen Sie auf die Seite „Teilnehmer“.
+				Klicken Sie auf „Token-Liste“, um einen Assistenten zu starten, der Sie durch den Prozess führen wird.
+				Wählen Sie einen Namen für die Gruppe und wählen Sie „Token“ aus den Arten von Gästelisten.
 			</p>
 			<p>
-				<ol>
-					<li>
-						Öffnen Sie Ihre Umfrage.
-					</li>
-					<li>
-						Gehen Sie zur Seite „Teilnehmer“:
-					</li>
-					<li>
-						Klicken Sie auf „Token list“, um einen Assistenten aufzurufen, der Sie
-						Schritt für Schritt durch den Prozess führt.
-					</li>
-					<li>
-						Geben Sie einen Namen für die Gruppe an und wählen Sie „Tokens“ für die
-						verschiedenen Gästelistearten aus.
-					</li>
-				</ol>
+				Verwenden Sie die erstellten Token, um individuelle Einladungslinks zu erstellen,
+				die Sie per E-Mail an die Teilnehmer senden können,
+				indem Sie die folgende URL verwenden:
 			</p>
 			<p>
-				Nutzen Sie die erstellten Zugangscodes wie im Folgenden beschrieben, um
-				individuelle Zugangslinks zu erstellen, die per E-Mail an die Teilnehmer
-				verschickt werden können:
-			</p>
-			<p>
-				https://ec.europa.eu/eusurvey/runner/<b>SurveyAlias</b>/<b>TOKEN</b>
+				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>
 			</p>
 			<p>
 				Ersetzen Sie dabei:
 			</p>
 			<ul>
 				<li>
-					<b>SurveyAlias</b>
-					<b> durch den </b>
-					<b>Aliasnamen Ihrer Umfrage</b>
-					<b> </b>
-					und
+					<span style="color: #f00; font-weight: bold">SurveyAlias</span> mit dem <b>Alias Ihrer Umfrage</b>
 				</li>
 				<li>
-					<b>TOKEN</b>
-					durch den Zugangscode, den Sie aus der Token-Liste auswählen.
+					<span style="color: #f00; font-weight: bold">TOKEN</span> mit einem der Token aus der „Token-Liste“
 				</li>
 			</ul>
 			<h1>

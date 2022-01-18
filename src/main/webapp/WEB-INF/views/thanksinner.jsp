@@ -84,6 +84,10 @@
 
 </div>
 
+<c:if test="${form.survey.isECF}">
+	</div>
+</c:if>
+
 <div class="modal" id="ask-export-dialog" data-backdrop="static" role="dialog">	
 	<div class="modal-dialog">
     <div class="modal-content">

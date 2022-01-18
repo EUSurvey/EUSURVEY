@@ -15,14 +15,84 @@
 			$(".g-recaptcha.unset").removeClass("unset");
 		}
 		
+		function getLocaleString() {
+			
+			<c:choose>
+				<c:when test="${form != null}">
+					let lang = '${form.language.code.toLowerCase()}';
+				</c:when>
+				<c:otherwise>
+					let lang = globalLanguage;						
+				</c:otherwise>
+			</c:choose>	
+			
+			
+			switch (lang) {
+				case 'bg':
+					return 'bg-BG';
+				case 'hr':
+					return 'hr-HR';
+				case 'cs':
+					return 'cs-CZ';
+				case 'da':
+					return 'da-DK';
+				case 'nl':
+					return 'nl-NL';
+				case 'en':
+					return 'en-GB';
+				case 'et':
+					return 'et-EE';
+				case 'fi':
+					return 'fi-FI';
+				case 'fr':
+					return 'fr-FR';
+				case 'de':
+					return 'de-DE';
+				case 'el':
+					return 'el-GR';
+				case 'hu':
+					return 'hu-HU';
+				case 'ga':
+					return 'ga-IE';
+				case 'it':
+					return 'it-IT';
+				case 'lv':
+					return 'lv-LV';
+				case 'lt':
+					return 'lt-LT';
+				case 'mt':
+					return 'mt-MT';
+				case 'pl':
+					return 'pl-PL';
+				case 'pt':
+					return 'pt-PT';
+				case 'ro':
+					return 'ro-RO';
+				case 'sk':
+					return 'sk-SK';
+				case 'sl':
+					return 'sl-SI';
+				case 'es':
+					return 'es-ES';
+				case 'sv':
+					return 'sv-SE';					
+			}
+			
+			return 'en-EN';
+		}
+		
 		function createCaptcha() {
 			<c:choose>
 				<c:when test='${captcha == "eucaptcha"}'>
 					const getCaptchaUrl = $.ajax({
 			            type: "GET",
-			            url: serverprefix + 'captchaImg',
+			            url: serverprefix + 'captchaImg?locale=' + getLocaleString() + "&capitalized=false",
+			            beforeSend: function (xhr) {
+			                xhr.withCredentials = true;
+			                xhr.crossDomain = true;
+			            },
 			            success: function (data, textStatus, request) {
-			                EuCaptchaToken = getCaptchaUrl.getResponseHeader("token");
+			                EuCaptchaToken = getCaptchaUrl.getResponseHeader("x-jwtString");  //"token");
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
 			                $("#captchaImg").attr("captchaId", jsonData.captchaId);
@@ -48,15 +118,16 @@
 				<c:when test='${captcha == "eucaptcha"}'>
 				 const reloadCaptchaUrl = $.ajax({
 			            type: "GET",
-			            url: serverprefix + 'reloadCaptchaImg/' + $("#captchaImg").attr("captchaId"),
+			            url: serverprefix + 'reloadCaptchaImg/' + $("#captchaImg").attr("captchaId") + '?locale=' + getLocaleString() + "&capitalized=false",
 			            crossDomain: true,
 			            beforeSend: function (xhr) {
 			                xhr.setRequestHeader("Accept", "application/json");
 			                xhr.setRequestHeader("Content-Type", "application/json");
-			                xhr.setRequestHeader("jwtString", EuCaptchaToken);
+			                xhr.setRequestHeader("x-jwtString", EuCaptchaToken);
+			                xhr.withCredentials = true;
 			            },
 			            success: function (data) {
-			                EuCaptchaToken = reloadCaptchaUrl.getResponseHeader("token"); 
+			                EuCaptchaToken = reloadCaptchaUrl.getResponseHeader("x-jwtString"); 
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
 			                $("#captchaImg").attr("captchaId", jsonData.captchaId);

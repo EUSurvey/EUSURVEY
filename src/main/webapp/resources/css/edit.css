@@ -449,6 +449,7 @@ td.table-header {
 	color: #333;
 	width: 100px;
 	max-width: 100px;
+	word-break: break-word;
 }
 
 .rightaligned {
@@ -743,4 +744,8 @@ a.accordion-toggle:hover {
     cursor: pointer;
     font-size: 14px;
     margin-left: 5px;
+}
+
+.survey-element[cut-item]{
+	opacity: 50%;
 }
