@@ -63,7 +63,9 @@
 																	<td>${question.childElements[question.columns + r - 2].title}</td>
 																</c:when>
 																<c:otherwise>
-																	<td class="tablequestioncell" data-id="${question.id}" data-uid="${question.uniqueId}" data-row="${r-1}" data-column="${c-1}"><esapi:encodeForHTML>${answerSet.getTableAnswer(question, r-1, c-1, false)}</esapi:encodeForHTML></td>
+																	<td class="tablequestioncell" data-id="${question.id}" data-uid="${question.uniqueId}" data-row="${r-1}" data-column="${c-1}">
+																		<!-- Set through JS; publication.jsp - individualsMoveTo(...) -->
+																	</td>
 																</c:otherwise>
 															</c:choose>
 														</c:forEach>
@@ -71,18 +73,6 @@
 													</c:forEach>
 												</table>		
 											</td>				
-										</c:when>
-										<c:when test="${question.getType() == 'SingleChoiceQuestion' || question.getType() == 'MultipleChoiceQuestion'}">
-											<td class="questioncell" data-id="${question.id}" data-uid="${question.uniqueId}">
-												<c:set var="answers" value="${answerSet.getAnswers(question.id, question.uniqueId)}" />					
-													<c:if test="${answers.size() > 1}">
-														<c:forEach items="${answers}" var="answer">					
-															${form.getAnswerTitle(answer)}<br />
-														</c:forEach>
-													</c:if>
-													<c:if test="${answers.size() == 1}">${form.getAnswerTitle(answers.get(0))}</c:if>
-						 							<c:if test="${answers.size() < 1}">&#160;</c:if>
-											</td>
 										</c:when>
 										
 										<c:when test="${question.getType() == 'RatingQuestion'}">
@@ -102,39 +92,7 @@
 										
 										<c:otherwise>
 											<td class="questioncell" data-id="${question.id}" data-uid="${question.uniqueId}">
-												<c:set var="answers" value="${answerSet.getAnswers(question.id, question.uniqueId)}" />					
-												<c:choose>
-													<c:when test="${question.getType() == 'Upload'}">
-														<c:if test="${answers.size() > 0}">
-															<c:forEach items="${answers}" var="answer">	
-																<c:forEach items="${answer.files}" var="file">					
-																	<a target="blank" href="${contextpath}/files/${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a><br />
-																</c:forEach>
-															</c:forEach>
-														</c:if>
-							 							<c:if test="${answers.size() < 1}">&#160;</c:if>
-													</c:when>
-													<c:when test="${question.getType() == 'GalleryQuestion'}">
-														<c:if test="${answers.size() > 0}">
-															<c:forEach items="${question.files}" var="file" varStatus="counter">
-																<c:forEach items="${answers}" var="answer">	
-																	<c:if test="${answer.value == counter.index.toString()}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML><br />				
-																	</c:if>
-																</c:forEach>
-															</c:forEach>
-														</c:if>
-							 							<c:if test="${answers.size() < 1}">&#160;</c:if>													
-							 						</c:when>												
-													<c:otherwise>
-														<c:if test="${answers.size() > 1}">
-															<c:forEach items="${answers}" var="answer">					
-																<esapi:encodeForHTML>${form.getAnswerTitle(answer)}</esapi:encodeForHTML><br />
-															</c:forEach>
-														</c:if>
-														<c:if test="${answers.size() == 1}"><esapi:encodeForHTML>${form.getAnswerTitle(answers.get(0))}</esapi:encodeForHTML></c:if>
-							 							<c:if test="${answers.size() < 1}">&#160;</c:if>
-													</c:otherwise>									
-												</c:choose>
+												<!-- Set through JS; publication.jsp - individualsMoveTo(...) -->
 											</td>
 										</c:otherwise>
 									</c:choose>								
