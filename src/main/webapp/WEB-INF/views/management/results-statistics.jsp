@@ -127,6 +127,7 @@
                                  <div style="clear: both"></div>
                             </div>
                             <div style="clear: both"></div>
+                            <div class="no-chart-results-message"></div>
                         </div>
 
 					</c:if>
@@ -299,6 +300,7 @@
                                    <div style="clear: both"></div>
                                </div>
                                <div style="clear: both"></div>
+                               <div class="no-chart-results-message"></div>
                         </div>
 
 					</c:if>
@@ -431,6 +433,7 @@
                                    <div style="clear: both"></div>
                                </div>
                                <div style="clear: both"></div>
+                               <div class="no-chart-results-message"></div>
                         </div>
 
 					</c:if>		
@@ -522,6 +525,7 @@
                                     <div style="clear: both"></div>
                                </div>
                                <div style="clear: both"></div>
+                               <div class="no-chart-results-message"></div>
                         </div>
 					</c:if>
 					
@@ -617,6 +621,7 @@
                                    <div style="clear: both"></div>
                                </div>
                                <div style="clear: both"></div>
+                               <div class="no-chart-results-message"></div>
                         </div>
 
 					</c:if>	

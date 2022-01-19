@@ -3359,6 +3359,14 @@ public class SurveyHelper {
 			newValues += " optional: " + isOptional;
 		}
 		rankingQuestion.setOptional(isOptional);
+		
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.None : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != rankingQuestion.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + rankingQuestion.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		rankingQuestion.setDelphiChartType(delphiChartType);
 
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(rankingQuestion.getShowExplanationBox())) {
