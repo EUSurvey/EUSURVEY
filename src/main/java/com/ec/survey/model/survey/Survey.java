@@ -1804,7 +1804,7 @@ final public class Survey implements java.io.Serializable {
 			throws ValidationException {
 		for (Element element : elements) {
 			Element copiedElement = element.copy(surveyService.getFileDir());
-			copiedElement.setLocked(makeQuestionsLocked);
+			copiedElement.setLocked(element.getLocked() || makeQuestionsLocked);
 			surveyCopy.elements.add(copiedElement);
 		}
 
