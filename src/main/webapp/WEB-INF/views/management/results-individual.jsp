@@ -2,8 +2,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <div id="individuals-div">						
-
-	<c:set var="answerSet" value="${paging.items[0]}"></c:set>	
 	
 	<c:choose>
 		<c:when test="${publication != null}">
