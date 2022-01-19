@@ -56,7 +56,8 @@ public class XmlExportCreator extends ExportCreator {
 		"user",
 		"created",
 		"updated",
-		"languages"
+		"languages",
+		"score"
 	};
 	
 	@Override
@@ -434,11 +435,12 @@ public class XmlExportCreator extends ExportCreator {
 
 			if (filterWithMeta != null) {
 				rowPosMap = new HashMap<>();
-				int rowPosCount = 5;
-				for (String exp : POSSIBLE_EXPORTS_ORDERED) {
+				int rowPosCount = answersets.isEmpty() ? 0 : answersets.get(0).size() - 2;
+				for (int i = POSSIBLE_EXPORTS_ORDERED.length - 1; i >= 0; i--) {
+					String exp = POSSIBLE_EXPORTS_ORDERED[i];
 					if (filterWithMeta.exported(exp)) {
 						rowPosMap.put(exp, rowPosCount);
-						rowPosCount++;
+						rowPosCount--;
 					}
 				}
 			}
