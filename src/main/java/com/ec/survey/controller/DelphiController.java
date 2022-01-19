@@ -234,7 +234,7 @@ public class DelphiController extends BasicController {
 
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
-			if (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
+			if (answerSet == null || (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly())) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
