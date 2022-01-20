@@ -234,7 +234,8 @@ public class DelphiController extends BasicController {
 
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
-			if (answerSet == null || (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly())) {
+			if (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
+			//if (answerSet == null || (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly())) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -338,6 +339,10 @@ public class DelphiController extends BasicController {
 		Collection<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
 		int contributions = answerExplanationService.getTotalDelphiContributions(uids, survey.getIsDraft());
 
+		if (contributions == 0) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
 		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -369,6 +374,10 @@ public class DelphiController extends BasicController {
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRankingQuestion(Survey survey, RankingQuestion question, Statistics statistics, StatisticsCreator creator, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) {
 		int contributions = answerExplanationService.getTotalDelphiContributions(Collections.singletonList(question.getUniqueId()), survey.getIsDraft());
 
+		if (contributions == 0) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
 		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return ResponseEntity.noContent().build();
@@ -399,6 +408,10 @@ public class DelphiController extends BasicController {
 		Collection<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
 		int contributions = answerExplanationService.getTotalDelphiContributions(uids, survey.getIsDraft());
 
+		if (contributions == 0) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
 		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -503,7 +516,7 @@ public class DelphiController extends BasicController {
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphChoiceQuestion(Survey survey, ChoiceQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) throws Exception {
-		if (survey.getIsDelphi() && numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
+		if (numberOfAnswersMap.get(question.getId()) == 0 || (survey.getIsDelphi() && numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics())) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
