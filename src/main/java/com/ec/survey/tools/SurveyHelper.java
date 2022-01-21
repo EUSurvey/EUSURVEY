@@ -3306,32 +3306,17 @@ public class SurveyHelper {
 			List<RankingItem> itemsToDelete = new ArrayList<>();
 			List<String> newUniqueItems = new ArrayList<>();
 			for (RankingItem thatItem : rankingQuestion.getChildElements()) {
-				boolean found = false;
-				for (String item : rankingItemTitles) {
-					if (thatItem.getTitle().equals(item)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					for (String item : rankingItemOriginalTitles) {
-						if (thatItem.getTitle().equals(item)) {
-							found = true;
-							break;
-						}
-					}
-				}
-				if (!found || newUniqueItems.contains(thatItem.getTitle())) {
+				String uid = thatItem.getUniqueId();
+				boolean found = rankingItemUids.contains(uid);
+
+				if (!found || newUniqueItems.contains(uid)) {
 					itemsToDelete.add(thatItem);
 				} else {
-					newUniqueItems.add(thatItem.getTitle());
+					newUniqueItems.add(uid);
 				}
 			}
 
-			for (RankingItem thatItem : itemsToDelete) {
-				rankingQuestion.getChildElements().remove(thatItem);
-			}
-
+			rankingQuestion.getChildElements().removeAll(itemsToDelete);
 		} else {
 			rankingQuestion = new RankingQuestion();
 			String uid = getString(parameterMap, "uid", id, servletContext);
