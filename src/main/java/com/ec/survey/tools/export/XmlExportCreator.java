@@ -438,7 +438,7 @@ public class XmlExportCreator extends ExportCreator {
 				int rowPosCount = answersets.isEmpty() ? 0 : answersets.get(0).size() - 2;
 				for (int i = POSSIBLE_EXPORTS_ORDERED.length - 1; i >= 0; i--) {
 					String exp = POSSIBLE_EXPORTS_ORDERED[i];
-					if (filterWithMeta.exported(exp)) {
+					if (filterWithMeta.exported(exp) || exp.equals("languages")) {
 						rowPosMap.put(exp, rowPosCount);
 						rowPosCount--;
 					}
