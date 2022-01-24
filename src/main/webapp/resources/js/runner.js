@@ -1515,11 +1515,15 @@ function saveDraft(mode) {
 		showSessionError();
 	} else if (networkproblems) {
 		$("#networkproblemsdialog").modal('show');
-	} else {	
-		$("#runnerForm").attr("action", contextpath + "/runner/draft/" + mode);
+	} else {
+		let form = $("#runnerForm")
+		form.attr("action", contextpath + "/runner/draft/" + mode);
 		
 		$("#busydialog").modal('show');
-		$("#runnerForm").submit();
+
+		form.find("input[data-is-answered='false'].sliderbox").val('');
+
+		form.submit();
 	}
 }
 
