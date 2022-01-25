@@ -824,7 +824,9 @@ function newRankingViewModel(element)
 		const rankingItemList = $(event.target).closest(".rankingitem").find(".rankingitem-list")[0];
 		viewModel.isAnswered(true);
 		propagateChange(rankingItemList);
-		tinyMCE.get('explanation' + data.id()).execCommand('mceFocus',false);
+		if (isdelphi) {
+			tinyMCE.get('explanation' + data.id()).execCommand('mceFocus', false);
+		}
 	}
 
 	viewModel.resetOrder = function(_, event) {
@@ -881,7 +883,7 @@ function newRankingViewModel(element)
 			});
 		}
 		if (allIdsValid) {
-			const permutation = $.map(formeranswervalues, uniqueId => viewmodel.originalItemUniqueIdOrder.indexOf(uniqueId));
+			const permutation = $.map(formeranswervalues, uniqueId => viewmodel.originalItemUniqueIdOrder().indexOf(uniqueId));
 			const rankingItemReordered = $.map(permutation, index => viewmodel.rankingItems()[index]);
 			viewmodel.rankingItems(rankingItemReordered);
 			viewmodel.answervalues(formeranswervalues);
@@ -1224,15 +1226,18 @@ function newNumberViewModel(element)
 		
 		propagateChange($(input));
 	}
-
+	let initVal
 	viewModel.initialValue = function() {
-		
-		var ovalue = getValueByQuestion(this.uniqueId());
-		if (ovalue.length > 0) {
-			this.isAnswered(true);
-			return ovalue;
+		if (initVal === undefined) {
+			let ovalue = getValueByQuestion(this.uniqueId());
+			if (ovalue.length > 0) {
+				this.isAnswered(true);
+				initVal = ovalue;
+			} else {
+				initVal = viewModel.initialDefaultValue();
+			}
 		}
-		return viewModel.initialDefaultValue();
+		return initVal
 	};
 
 	viewModel.initialDefaultValue = function() {
