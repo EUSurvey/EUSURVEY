@@ -879,7 +879,7 @@ public class SurveyCreator {
 		result.setTitle(translations.getTitle() + lang);
 		for (Translation translation: translations.getTranslations())
 		{
-			result.getTranslations().add(new Translation(translation.getKey(), translation.getLabel() + lang.getCode(), lang.getCode(), translations.getSurveyId(), result));
+			result.getTranslations().add(new Translation(translation.getKey(), translation.getLabel() + lang.getCode(), lang.getCode(), translations.getSurveyId(), result, translation.getLocked()));
 		}
 		return result;
 	}

@@ -2232,7 +2232,7 @@ public class TranslationsHelper {
 				existingTranslationsMap.get(translation.getKey()).setLabel(translation.getLabel());
 			} else {
 				existingTranslations.getTranslations().add(new Translation(translation.getKey(), translation.getLabel(),
-						translation.getLanguage(), existingTranslations.getSurveyId(), existingTranslations));
+						translation.getLanguage(), existingTranslations.getSurveyId(), existingTranslations, translation.getLocked()));
 			}
 		}
 
@@ -2301,7 +2301,7 @@ public class TranslationsHelper {
 						.add(new Translation(
 								translationsByKey.get(key + "#backgrounddocument").getLabel() + "#backgrounddocument",
 								translationsByKey.get(key + "#backgrounddocument").getLabel(),
-								translations.getLanguage().getCode(), survey.getId(), translations));
+								translations.getLanguage().getCode(), survey.getId(), translations, translationsByKey.get(key + "#backgrounddocument").getLocked()));
 				translations.getTranslations().remove(translationsByKey.get(key + "#backgrounddocument"));
 				backdocstodelete.add(key);
 			}

@@ -30,7 +30,7 @@ public class Translations implements java.io.Serializable {
 	private String title;
 	
 	public Translations() {}
-		
+
 	@Id
 	@Column(name = "TRANSLATIONS_ID")
 	@GeneratedValue
