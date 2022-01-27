@@ -394,7 +394,7 @@
 				<c:forEach items="${translations}" var="translation">
 					<tr id="${translation.id}" data-lang="${translation.language.code}" data-active="${translation.active}" data-complete="${translation.complete}" data-requested="${translation.requested}" >
 						<c:forEach items="${translation.translations}" var="trans">
-							<td id="${trans.id}" data-key="${trans.key}" data-locked="${trans.locked}" data-label="${trans.label}" data-key="${trans.key.replace("\"","")}"><textarea><c:out value="${trans.label}" /></textarea></td>
+							<td id="${trans.id}" data-locked="${trans.locked}" data-key="${trans.key.replace("\"","")}"><textarea><c:out value="${trans.label}" /></textarea></td>
 						</c:forEach>
 					</tr>
 				</c:forEach>
