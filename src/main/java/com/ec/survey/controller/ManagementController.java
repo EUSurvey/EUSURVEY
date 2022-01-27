@@ -341,8 +341,12 @@ public class ManagementController extends BasicController {
 			delete = Constants.FALSE;
 		}
 		User u = sessionService.getCurrentUser(request);
+		
+		sessionService.upgradePrivileges(survey, u, request);
+		
 		if (!u.getId().equals(survey.getOwner().getId())
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
 				&& (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1
 						|| answers != null && answers.equalsIgnoreCase("true"))) {
 			throw new ForbiddenURLException();
@@ -1374,6 +1378,10 @@ public class ManagementController extends BasicController {
 
 		if (survey.getMultiPaging() != uploadedSurvey.getMultiPaging())
 			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getProgressBar(), uploadedSurvey.getProgressBar()))
+			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getProgressDisplay(), uploadedSurvey.getProgressDisplay()))
+			hasPendingChanges = true;
 		if (survey.getValidatedPerPage() != uploadedSurvey.getValidatedPerPage())
 			hasPendingChanges = true;
 		if (survey.getPreventGoingBack() != uploadedSurvey.getPreventGoingBack())
@@ -1505,6 +1513,12 @@ public class ManagementController extends BasicController {
 						uploadedSurvey.getMultiPaging() ? "enabled" : "disabled" };
 				activitiesToLog.put(120, oldnew);
 			}
+			
+			if (uploadedSurvey.getProgressBar() != survey.getProgressBar()) {
+				String[] oldnew = { survey.getProgressBar() ? "enabled" : "disabled",
+						uploadedSurvey.getProgressBar() ? "enabled" : "disabled" };
+				activitiesToLog.put(124, oldnew);
+			}
 		}
 
 		if (!survey.getIsOPC()) {
@@ -1512,6 +1526,8 @@ public class ManagementController extends BasicController {
 		}
 		
 		survey.setMultiPaging(uploadedSurvey.getMultiPaging());
+		survey.setProgressBar(uploadedSurvey.getProgressBar());
+		survey.setProgressDisplay(uploadedSurvey.getProgressDisplay());
 
 		survey.setConfirmationPageLink(uploadedSurvey.getConfirmationPageLink());
 		survey.setEscapePageLink(uploadedSurvey.getEscapePageLink());

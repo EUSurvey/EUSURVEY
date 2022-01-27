@@ -222,6 +222,10 @@ public class DelphiController extends BasicController {
 
 			User user = sessionService.getCurrentUser(request);
 			
+			if (user != null) {
+				sessionService.upgradePrivileges(survey, user, request);
+			}
+			
 			boolean resultsview = request.getParameter("resultsview") != null && request.getParameter("resultsview").equalsIgnoreCase("true"); 
 			
 			boolean privileged = resultsview && (survey.getOwner().getId().equals(user.getId()) ||
@@ -231,6 +235,7 @@ public class DelphiController extends BasicController {
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
 			if (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
+			//if (answerSet == null || (!resultsview && !privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly())) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -334,6 +339,10 @@ public class DelphiController extends BasicController {
 		Collection<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
 		int contributions = answerExplanationService.getTotalDelphiContributions(uids, survey.getIsDraft());
 
+		if (contributions == 0) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
 		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -363,7 +372,32 @@ public class DelphiController extends BasicController {
 	}
 	
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRankingQuestion(Survey survey, RankingQuestion question, Statistics statistics, StatisticsCreator creator, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) {
-		return null;	
+		int contributions = answerExplanationService.getTotalDelphiContributions(Collections.singletonList(question.getUniqueId()), survey.getIsDraft());
+
+		if (contributions == 0) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
+		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
+			// only show statistics for this question if the total number of answers exceeds the threshold
+			return ResponseEntity.noContent().build();
+		}
+
+		creator.addStatistics4RankingQuestion(survey, question, statistics, numberOfAnswersMapRankingQuestion);
+
+		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+		result.setChartType(question.getDelphiChartType());
+		result.setQuestionType(DelphiQuestionType.Ranking);
+
+		for (RankingItem item : question.getChildElements()) {
+			DelphiGraphEntry entry = new DelphiGraphEntry();
+			entry.setLabel(item.getStrippedTitleNoEscape());
+			entry.setValue(statistics.getRequestedRecordsRankingPercentScore().get(item.getId().toString()));
+			result.addEntry(entry);
+		}
+
+		result.setLabel(question.getStrippedTitle());
+		return ResponseEntity.ok(result);
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
@@ -374,6 +408,10 @@ public class DelphiController extends BasicController {
 		Collection<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
 		int contributions = answerExplanationService.getTotalDelphiContributions(uids, survey.getIsDraft());
 
+		if (contributions == 0) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
 		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -478,7 +516,7 @@ public class DelphiController extends BasicController {
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphChoiceQuestion(Survey survey, ChoiceQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) throws Exception {
-		if (survey.getIsDelphi() && numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
+		if (numberOfAnswersMap.get(question.getId()) == 0 || (survey.getIsDelphi() && numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics())) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}

@@ -846,8 +846,12 @@ function initModals(item)
 
 		let focusElement = $(`[aria-describedby='${validError.attr("id")}']`)
 		
-		if (focusElement.length > 0 && focusElement.is("div,table")) {
-			focusElement = focusElement.find('input, textarea, select').first();
+		if (focusElement.length > 0 && focusElement.is("div,table,.ranking")) {
+			if (focusElement.hasClass("ranking")){
+				focusElement = focusElement.parent().find(".rankingitem-button").first()
+			} else {
+				focusElement = focusElement.find('input, textarea, select').first();
+			}
 		}
 		
 		if (focusElement.length <= 0){
@@ -930,6 +934,8 @@ function initModals(item)
 						// Empty value of unanswered input elements.
 						$(form).find("input[data-is-answered='false']").val('');
 					}
+
+					$(form).find("input[data-is-answered='false'].sliderbox").val('');
 
 					$(form).submit();
 					return;

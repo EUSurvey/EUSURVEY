@@ -669,6 +669,8 @@ function updateText(selectedelement, text, fromundo)
 		oldtext = rankingitem.title();
 		rankingitem.title(text);
 		uid = rankingitem.uniqueId();
+		selectedelement = $(_elementProperties.selectedelement).closest(".survey-element");
+		selectedid = parentid;
 	} else {
 		oldtext = $(_elementProperties.selectedelement).html();
 		$(_elementProperties.selectedelement).html(text);

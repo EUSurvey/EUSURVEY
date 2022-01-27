@@ -29,8 +29,12 @@ import org.odftoolkit.simple.chart.Chart;
 import org.odftoolkit.simple.chart.ChartType;
 import org.odftoolkit.simple.draw.FrameRectangle;
 import org.odftoolkit.simple.draw.Textbox;
+import org.odftoolkit.simple.style.Border;
 import org.odftoolkit.simple.style.Font;
+import org.odftoolkit.simple.style.StyleTypeDefinitions;
+import org.odftoolkit.simple.style.StyleTypeDefinitions.CellBordersType;
 import org.odftoolkit.simple.style.StyleTypeDefinitions.FontStyle;
+import org.odftoolkit.simple.style.StyleTypeDefinitions.LineType;
 import org.odftoolkit.simple.style.StyleTypeDefinitions.SupportedLinearMeasure;
 import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Row;
@@ -1543,6 +1547,7 @@ public class OdfExportCreator extends ExportCreator {
 		DecimalFormat df = new DecimalFormat("#.##");
 
 		TextDocument document = TextDocument.newTextDocument();
+		
 		Survey survey = surveyService.getSurveyInOriginalLanguage(form.getSurvey().getId(),
 				form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
 
@@ -1790,39 +1795,53 @@ public class OdfExportCreator extends ExportCreator {
 						cellValue += " (" + ranking.getShortname() + ")";
 					}
 					
-					org.odftoolkit.simple.table.Table table = CreateTableForRankingQuestion(document, cellValue, size);
-					
+					Border border = new Border(Color.BLACK, 0.05, StyleTypeDefinitions.SupportedLinearMeasure.PT);
+					border.setInnerLineWidth(0);
+					border.setOuterLineWidth(0);
+					border.setLineStyle(LineType.SINGLE);
+										
+					org.odftoolkit.simple.table.Table table = CreateTableForRankingQuestion(document, cellValue, size, border);
+					table.setCellStyleInheritance(false);
+										
 					Row row;
 					
 					int total = statistics.getRequestedRecordsRankingScore().get(ranking.getId().toString());
-
+										
 					for (Element childQuestion : ranking.getChildElements()) {
 						row = table.appendRow();
+						
 						cellValue = childQuestion.getTitle();
 						if (export.getShowShortnames()) {
 							cellValue += " (" + childQuestion.getShortname() + ")";
 						}
 						row.getCellByIndex(0).setStringValue(cellValue);
-											
+						row.getCellByIndex(0).setBorders(CellBordersType.ALL_FOUR, border);
+						
 						for (int i = 0; i < size; i++) {
 							double percent = statistics.getRequestedRecordsRankingPercentScore().get(childQuestion.getId() + "-" + i);
 							row.getCellByIndex(i+1).setPercentageValue(percent);
 							row.getCellByIndex(i+1).setStringValue(df.format(percent) + "%");
+							row.getCellByIndex(i+1).setBorders(CellBordersType.ALL_FOUR, border);
 						}
 						double score = statistics.getRequestedRecordsRankingPercentScore().get(childQuestion.getId().toString());
 						row.getCellByIndex(size+1).setDoubleValue(score);
+						row.getCellByIndex(size+1).setValueType("float");
+						row.getCellByIndex(size+1).setBorders(CellBordersType.ALL_FOUR, border);
 
 						row = table.appendRow();
+						row.getCellByIndex(0).setBorders(CellBordersType.ALL_FOUR, border);
 						
 						for (int i = 0; i < size; i++) {
 							int value = statistics.getRequestedRecordsRankingScore().get(childQuestion.getId() + "-" + i);	
 							row.getCellByIndex(i+1).setDoubleValue((double)value);
 							row.getCellByIndex(i+1).setValueType("float");
 							row.getCellByIndex(i+1).setFormatString("0");
+							row.getCellByIndex(i+1).setBorders(CellBordersType.ALL_FOUR, border);
 						}
 						row.getCellByIndex(size+1).setDoubleValue((double)total);
 						row.getCellByIndex(size+1).setValueType("float");
 						row.getCellByIndex(size+1).setFormatString("0");
+						row.getCellByIndex(size+1).setBorders(CellBordersType.ALL_FOUR, border);
 					}
 				} else if (question instanceof NumberQuestion) {
 					NumberQuestion numberQuestion = (NumberQuestion) question;
@@ -1912,7 +1931,7 @@ public class OdfExportCreator extends ExportCreator {
 		return table;
 	}
 	
-	private org.odftoolkit.simple.table.Table CreateTableForRankingQuestion(TextDocument document, String title, int children) {
+	private org.odftoolkit.simple.table.Table CreateTableForRankingQuestion(TextDocument document, String title, int children, Border border) {
 		Paragraph paragraph = document.addParagraph(ConversionTools.removeHTMLNoEscape(title));
 		paragraph.getOdfElement().setProperty(OdfParagraphProperties.KeepWithNext, "always");
 
@@ -1922,17 +1941,19 @@ public class OdfExportCreator extends ExportCreator {
 
 		org.odftoolkit.simple.table.Table table = document.addTable(1, children+2);
 		table.getOdfElement().setProperty(OdfTableProperties.MayBreakBetweenRows, "false");
-		
+				
 		Cell cell;
 		for (int i = 1; i <= children; i++) {
 			cell = table.getCellByPosition(i, 0);
 			cell.setFont(font);
 			cell.setStringValue(String.valueOf(i));
+			cell.setBorders(CellBordersType.ALL_FOUR, border);
 		}
 		
 		cell = table.getCellByPosition(children+1, 0);
 		cell.setFont(font);
 		cell.setStringValue("Score");
+		cell.setBorders(CellBordersType.ALL_FOUR, border);
 		return table;
 	}
 

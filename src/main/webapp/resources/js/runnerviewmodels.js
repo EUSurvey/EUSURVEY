@@ -425,6 +425,34 @@ function newBasicViewModel(element)
 			    		copy[prop].push(newitem);
 			    	}
 	            	continue;
+	            } else if (prop == "rankingItems")
+	            {
+	            	copy[prop] = ko.observableArray();
+	            	for (var i = 0; i < this.rankingItems().length; i++)
+			    	{
+			    		var copieditem = this.rankingItems()[i];
+			    		var newitem = newRankingItemViewModel(getNewId(), getNewId(), getNewShortname(), copieditem.title());
+			    		newitem.originalId = copieditem.id();
+			    		copy[prop].push(newitem);
+			    	}
+	            	continue;
+ 				} else if (prop == "initialOrder")
+	            {
+	            	copy[prop] = null;
+	            	continue;
+	            } else if (prop == "orderedRankingItems") {
+					copy[prop] = ko.computed(function() {
+						let result = copy.rankingItems.slice();
+
+						if (copy.order() === 1) {
+							result = result.sort((e1, e2) => e1.title().stripHtml().localeCompare(e2.title().stripHtml()));
+						} else if (copy.order() === 2) {
+							shuffle(result);
+						}
+
+						return result;
+					});
+					continue;
 	            }
 	            
 	            copy[prop] = ko.observable(val);
@@ -752,17 +780,45 @@ function newRankingViewModel(element)
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.minItems = function() { return 2; };
-	viewModel.answervalues = ko.observable($.map(viewModel.rankingItems(), item => item.uniqueId()));
 	viewModel.itemIdtoUniqueIdLookup = {};
 	$.each(element.childElements, (_, that) => {
 		viewModel.itemIdtoUniqueIdLookup[that.id] = that.uniqueId;
 	});
 	viewModel.isAnswered = ko.observable(false);
+	viewModel.css = ko.observable(element.css);
+	viewModel.itemCount = function() { return viewModel.rankingItems().length;}
+	viewModel.order = ko.observable(element.order);
+
+	viewModel.order.subscribe(function() {
+		viewModel.orderedRankingItems();
+	});
+
+	viewModel.initialOrder = null;
+
+	viewModel.orderedRankingItems = ko.computed(function() {
+		if (viewModel.foreditor || viewModel.initialOrder == null) {
+			let result = viewModel.rankingItems.slice();
+
+			if (viewModel.order() === 1) {
+				result = result.sort((e1, e2) => e1.title().stripHtml().localeCompare(e2.title().stripHtml()));
+			} else if (viewModel.order() === 2) {
+				shuffle(result);
+			}
+
+			if (viewModel.initialOrder == null) {
+				viewModel.initialOrder = result;
+			}
+
+			return result;
+		}
+
+		return viewModel.initialOrder;
+	});
+
+	viewModel.answervalues = ko.observable($.map(viewModel.orderedRankingItems(), item => item.uniqueId()));
 	viewModel.answervalues.subscribe(function() {
 		viewModel.isAnswered(true);
 	});
-	viewModel.css = ko.observable(element.css);
-	viewModel.itemCount = function() { return viewModel.rankingItems().length;}
 
 	viewModel.acceptInitialAnswer = function(data, event) {
 		const rankingItemList = $(event.target).closest(".rankingitem").find(".rankingitem-list")[0];
@@ -773,14 +829,14 @@ function newRankingViewModel(element)
 
 	viewModel.resetOrder = function(_, event) {
 		//.slice() because originalItemUniqueIdOrder would otherwise be changed by moving the items
-		viewModel.answervalues(viewModel.originalItemUniqueIdOrder.slice());
+		viewModel.answervalues(viewModel.originalItemUniqueIdOrder().slice());
 		viewModel.isAnswered(false);
 
 		const thatRanking = $(event.target).closest(".rankingitem");
 
 		const rankingItemsTexts = thatRanking.find(".rankingitemtext");
 		const rankingItemUniqueIds = $.map(rankingItemsTexts, that => viewModel.itemIdtoUniqueIdLookup[Number(that.id)]);
-		const permutation = $.map(viewModel.originalItemUniqueIdOrder, uniqueId => rankingItemUniqueIds.indexOf(uniqueId));
+		const permutation = $.map(viewModel.originalItemUniqueIdOrder(), uniqueId => rankingItemUniqueIds.indexOf(uniqueId));
 
 		const rankingItemList = thatRanking.find(".rankingitem-list")[0];
 		const rankingItemFormDatas = thatRanking.find(".rankingitem-form-data");
@@ -793,7 +849,8 @@ function newRankingViewModel(element)
 		enableDelphiSaveButtons(surveyElement);
 	};
 
-	viewModel.originalItemUniqueIdOrder = $.map(element.childElements, item => item.uniqueId);
+	viewModel.originalItemUniqueIdOrder = ko.computed(() => $.map(viewModel.orderedRankingItems(), item => item.uniqueId()));
+
 	viewModel.itemTitleLookup = {};
 	$.each(element.childElements, (_, that) => {
 		viewModel.itemTitleLookup[that.uniqueId] = that.title;

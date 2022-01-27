@@ -386,7 +386,9 @@
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
+			<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
 
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
@@ -396,7 +398,7 @@
 			</div>
 		<!-- /ko -->
 		
-		<div tabindex="0" class="focussable" role="group"  data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
+		<div role="group" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
 
 			<!-- ko ifnot: foreditor -->
 		
@@ -416,22 +418,28 @@
 					<span class="screen-reader-only" data-bind="html: getInitialOrderInfoText(), attr: {id: 'listorderinfo' + id()}"></span>
 					<!-- /ko -->
 
-					<!-- ko foreach: rankingItems() -->
-					<div tabindex="0" role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
+					<!-- ko foreach: orderedRankingItems() -->
+					<div role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
 						<div class="rankingitem-decoration">&#x283F;</div>
-						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" aria-label="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }"><span class="glyphicon glyphicon-arrow-up"></span></a>
-						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" aria-label="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }"><span class="glyphicon glyphicon-arrow-down"></span></a>
+						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }, attr: {'aria-label' : title()}"><span class="screen-reader-only"></span><span class="glyphicon glyphicon-arrow-up"></span></a>
+						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }, attr: {'aria-label' : title()}"><span class="glyphicon glyphicon-arrow-down"></span></a>
 						<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
-						<!-- ko if: $parent.foreditor -->
-						<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
-						<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'rankingitemuid' + $parents[0].id(), 'data-id' : id()}" />
-						<textarea style="display: none" data-bind="text: title(), attr: {'name': 'rankingitemtitle' + $parents[0].id(), 'data-id' : id()}"></textarea>
-						<textarea style="display: none" data-bind="text: originalTitle(), attr: {'name': 'rankingitemoriginaltitle' + $parent.id(), 'data-id' : id()}"></textarea>
-						<!-- /ko -->
 					</div>
 					<!-- /ko -->
 				</div>
 			</div>
+
+			<!-- ko if: foreditor -->
+			<!-- ko foreach: rankingItems() -->
+			<div class="possibleanswerrow hidden">
+				<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
+				<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'rankingitemuid' + $parents[0].id(), 'data-id' : id()}" />
+				<textarea style="display: none" data-bind="text: title(), attr: {'name': 'rankingitemtitle' + $parents[0].id(), 'data-id' : id()}"></textarea>
+				<textarea style="display: none" data-bind="text: originalTitle(), attr: {'name': 'rankingitemoriginaltitle' + $parent.id(), 'data-id' : id()}"></textarea>
+			</div>
+			<!-- /ko -->
+			<!-- /ko -->
+
 			<!-- ko ifnot: foreditor -->
 			<input type="hidden" data-bind="value:getAnswerValuesString(), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" type="text"></input>
 			<!-- /ko -->
@@ -656,7 +664,7 @@
 		
 		<table class="ratingtable" role="list" data-bind="attr: {'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 			<tbody data-bind="foreach: childElements()">
-				<tr class="ratingquestion" data-bind="attr: {'data-id': id}">
+				<tr class="ratingquestion" data-bind="attr: {'data-id': id, 'data-uid': uniqueId}">
 					<td>
 						<!-- ko if: optional() == false -->
 							<span class="mandatory">*</span>
@@ -1234,7 +1242,7 @@
 					</thead>
 					<tbody>					
 						<!-- ko foreach: questionsOrdered() -->			
-						<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId)), 'data-useAndLogic': useAndLogic()}"> 
+						<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-uid': uniqueId(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId)), 'data-useAndLogic': useAndLogic()}"> 
 							<th class="matrix-header" scope="row" data-bind="attr: {'id' : id(), 'data-id': id}">
 								<!-- ko if: optional() == false -->
 									<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>

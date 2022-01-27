@@ -41,6 +41,7 @@ function getNewElement(item)
 			getBasicElement("RankingItem", false, "Ranking Item 3", null, false),
 			];
 		element.isDelphiQuestion = isDelphi;
+		element.order = 0;
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
@@ -469,11 +470,7 @@ function getNewShortname()
 {
 	if (usedIDs.length == 0)
 	{
-		$("input[name^='shortname']").each(function(){
-			usedIDs[usedIDs.length] = $(this).val();
-		});
-		
-		$("input[name^='pashortname']").each(function(){
+		$("input[name^='shortname'],input[name^='pashortname'],input[name^='rankingitemshortname']").each(function(){
 			usedIDs[usedIDs.length] = $(this).val();
 		});
 		

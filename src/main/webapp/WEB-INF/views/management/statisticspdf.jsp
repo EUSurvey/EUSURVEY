@@ -74,7 +74,16 @@
             -webkit-box-shadow: inset 0 0 !important;
             
             height: 20px;
-        }   
+        }
+        
+        .statistics-table th {
+        	background-color: #ddd;
+        }
+        
+        .statistics-table th, .statistics-table td  {
+        	border: 1px solid #999;
+        	vertical-align: top;
+        }
         
 	  </style>
 	

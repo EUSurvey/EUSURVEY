@@ -840,6 +840,36 @@
 					<tr>
 						<td>
 							<div style="float: left">
+								<spring:message code="label.ProgressBar" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.ProgressBar" /></div>	
+							</div>						
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.progressBar" class="onoffswitch-checkbox" id="myonoffswitchprogressBar" data-bind="checked: _properties.progressBar()" />
+									 <label class="onoffswitch-label" onclick="_properties.toggleProgressBar()">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: progressBar">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.DisplayProgress" />
+							</div>
+							<div style="float: right">							
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="0"/><spring:message code="label.percentage" />&#160;
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="1"/><spring:message code="label.ratio" />&#160;
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="2"/><spring:message code="label.both" />	
+							</div>	
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
 								<spring:message code="label.AccessibilityMode" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								<div class="help hideme"><spring:message code="help.AccessibilityMode" /></div>
@@ -1112,10 +1142,10 @@
 								<div data-bind="visible: !useConfLink()">
 									<div class="preview">${form.survey.confirmationPage} <a class="iconbutton" onclick="$('#tinymceconfpage').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
 									<div id="tinymceconfpage" style="display: none">
-										<form:textarea class="tinymce required" path="survey.confirmationPage"></form:textarea>
+										<form:textarea class="tinymce" path="survey.confirmationPage"></form:textarea>
 									</div>		
 								</div>
-								<div data-bind="visible: useConfLink">	
+								<div data-bind="visible: useConfLink" id="confLink">
 									<form:input class="targeturl form-control" path="survey.confirmationLink" ></form:input>
 								</div>
 							</div>
@@ -1135,10 +1165,10 @@
 								<div data-bind="visible: !useEscapeLink()">
 									<div class="preview">${form.survey.escapePage} <a class="iconbutton" onclick="$('#tinymceescapepage').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
 									<div id="tinymceescapepage" style="display: none">
-										<form:textarea class="tinymce required" path="survey.escapePage"></form:textarea>
+										<form:textarea class="tinymce" path="survey.escapePage"></form:textarea>
 									</div>		
 								</div>
-								<div data-bind="visible: useEscapeLink">	
+								<div data-bind="visible: useEscapeLink" id="escapeLink">
 									<form:input class="targeturl form-control" path="survey.escapeLink" ></form:input>
 								</div>
 							</div>

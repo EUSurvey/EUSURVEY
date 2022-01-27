@@ -3338,6 +3338,10 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			if (draftSurvey.getMultiPaging() != publishedSurvey.getMultiPaging())
 				hasPendingChanges = true;
+			if (!Tools.isEqual(draftSurvey.getProgressBar(), publishedSurvey.getProgressBar()))
+				hasPendingChanges = true;
+			if (!Tools.isEqual(draftSurvey.getProgressDisplay(), publishedSurvey.getProgressDisplay()))
+				hasPendingChanges = true;
 			if (draftSurvey.getValidatedPerPage() != publishedSurvey.getValidatedPerPage())
 				hasPendingChanges = true;
 			if (draftSurvey.getPreventGoingBack() != publishedSurvey.getPreventGoingBack())
@@ -3430,6 +3434,10 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			}
 			
+			if (!hasPendingChanges && publicationDiffers(draftSurvey, publishedSurvey)) {
+				hasPendingChanges = true;
+			}
+			
 			if (!hasPendingChanges)
 				for (String key : draftSurvey.getUsefulLinks().keySet()) {
 					if (!publishedSurvey.getUsefulLinks().containsKey(key)
@@ -3465,7 +3473,7 @@ public class SurveyService extends BasicService {
 						break;
 					}
 				}
-
+			
 			if (hasPendingChanges)
 				result.put(new PropertiesElement(), 1);
 
@@ -3491,6 +3499,55 @@ public class SurveyService extends BasicService {
 
 		return result;
 	}
+	
+	private boolean publicationDiffers(Survey draftSurvey, Survey publishedSurvey) {
+	
+		if (draftSurvey.getPublication().isAllQuestions() != publishedSurvey.getPublication().isAllQuestions()) return true;
+		if (draftSurvey.getPublication().isAllContributions() != publishedSurvey.getPublication().isAllContributions()) return true;
+		if (draftSurvey.getPublication().isShowContent() != publishedSurvey.getPublication().isShowContent()) return true;
+		if (draftSurvey.getPublication().isShowStatistics() != publishedSurvey.getPublication().isShowStatistics()) return true;
+		
+		if (!draftSurvey.getPublication().isAllQuestions()) {
+			if (draftSurvey.getPublication().getFilter().getVisibleQuestions().size() != publishedSurvey.getPublication().getFilter().getVisibleQuestions().size()) {
+				return true;
+			}
+			
+			Map<String, String> draftElementUIDsByID = draftSurvey.getUniqueIDsByID();			
+			Map<String, String> publishedElementIDsByUID = publishedSurvey.getIDsByUniqueID();
+									
+			for (String id : draftSurvey.getPublication().getFilter().getVisibleQuestions()) {
+				String uid = draftElementUIDsByID.get(id);
+				
+				if (!publishedElementIDsByUID.containsKey(uid)) {
+					return true;
+				}
+				
+				String pid = publishedElementIDsByUID.get(uid);
+				if (!publishedSurvey.getPublication().getFilter().getVisibleQuestions().contains(pid)) {
+					return true;
+				}
+			}
+		}
+		
+		if (!draftSurvey.getPublication().isAllContributions()) {
+			if (draftSurvey.getPublication().getFilter().getFilterValues().size() != publishedSurvey.getPublication().getFilter().getFilterValues().size()) {
+				return true;
+			}
+			
+			for (String id : draftSurvey.getPublication().getFilter().getFilterValues().keySet()) {
+				if (!publishedSurvey.getPublication().getFilter().getFilterValues().containsKey(id)) {
+					return true;
+				}
+
+				if (!draftSurvey.getPublication().getFilter().getFilterValues().get(id).equals(publishedSurvey.getPublication().getFilter().getFilterValues().get(id))) {
+					return true;
+				}
+			}
+		}
+		
+		return false;		
+	}
+
 	private boolean checkTranslations(List<Translations> first, List<Translations> second,
 			Map<String, Translation> currentKeys) {
 		Map<String, Translations> secondTranslationsByLanguageCode = new HashMap<>();
