@@ -256,7 +256,7 @@
 			<div class='limits' data-bind="html: getMaxChoice(maxChoices()), attr: {id: 'questioninfo' + id()}"></div>
 		<!-- /ko -->
 	
-		<div class="answer-columns">
+		<div class="answer-columns" style="overflow-x:auto">
 			<!-- ko if: useCheckboxes -->
 			<table class="answers-table" role="list" data-bind="attr: {'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 				<tr class="hideme">
