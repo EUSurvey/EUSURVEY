@@ -1613,11 +1613,7 @@ public class AnswerService extends BasicService {
 
 				// delete temporary files folder
 				try {
-					if (fileDir != null) {
-						java.io.File directory = fileService
-								.getSurveyUploadsFolder(draft.getAnswerSet().getSurvey().getUniqueId(), false);
-						FileUtils.delete(directory);
-					}
+					fileService.deleteUploadedAnswerFiles(draft.getAnswerSet().getSurvey().getUniqueId(), draft.getAnswerSet().getUniqueCode());
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
