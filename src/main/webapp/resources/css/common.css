@@ -2544,3 +2544,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 .statRequestedRecordsRankingScore {
 	white-space: nowrap;
 }
+
+.translation-locked {
+	opacity: 0.3;
+}

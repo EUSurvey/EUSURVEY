@@ -78,7 +78,7 @@ public class MachineTranslationService extends BasicService {
 				String text = transMap.get(id);
 				text = text.replace("<br>", "<br />");
 				if (!existingTargetTranslation.containsKey(key)) {
-					translations.add(new Translation(key, text, language, surveyId, targetTranslations));
+					translations.add(new Translation(key, text, language, surveyId, targetTranslations, translation.getLocked()));
 				}else {
 					String translationId = String.valueOf(existingTargetTranslation.get(key));
 					Translation existingTranslation = targetTranslations.getTranslationById(translationId);

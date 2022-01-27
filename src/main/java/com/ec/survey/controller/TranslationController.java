@@ -602,7 +602,7 @@ public class TranslationController extends BasicController {
 
 					if (label != null) {
 						if (t == null) {
-							t = new Translation(key, label, ts.getLanguage().getCode(), ts.getSurveyId(), ts);
+							t = new Translation(key, label, ts.getLanguage().getCode(), ts.getSurveyId(), ts, false);
 							ts.getTranslations().add(t);
 						}
 

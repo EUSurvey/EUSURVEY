@@ -19,7 +19,8 @@ public class Translation implements java.io.Serializable, Comparable {
 	private Translations translations;
 	private String key;	
 	private String label;
-	private String language;	
+	private String language;
+	private boolean locked;
 	
 	public Translation()
 	{		
@@ -31,6 +32,24 @@ public class Translation implements java.io.Serializable, Comparable {
 		this.language = language;		
 		this.surveyId = surveyId;
 		this.translations = translations;
+		this.locked = false;
+	}
+
+	public Translation(String key, String label, String language, Integer surveyId, Translations translations, Boolean locked) {
+		this.key = key;
+		this.label = label;
+		this.language = language;
+		this.surveyId = surveyId;
+		this.translations = translations;
+		this.locked = locked;
+	}
+
+	@Column(name = "LOCKED", nullable = true)
+	public Boolean getLocked() {
+		return locked;
+	}
+	public void setLocked(boolean locked){
+		this.locked = locked;
 	}
 	
 	@Id
