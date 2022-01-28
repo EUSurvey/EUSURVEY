@@ -594,15 +594,10 @@ function initEditMatrix()
 		var key = $(cell).attr("data-key");
 		
 		var tr = document.createElement("tr");
-		
-		//if (!arrows)
-		//{
-			//infos
-			//Art der Bezeichnung
-			var td = document.createElement("td");
-			$(td).append(getInfo(key));
-			$(tr).append(td);
-		//}
+		var td = document.createElement("td");
+		$(td).append(getInfo(key));
+		$(tr).append(td);
+
 		$("#translationsTable").find("tr").each(function(index){
 			
 			var translationsId = $(this).attr("id");
