@@ -44,7 +44,7 @@ public class Translation implements java.io.Serializable, Comparable {
 		this.locked = locked;
 	}
 
-	@Column(name = "LOCKED", nullable = true)
+	@Column(name = "LOCKED")
 	public Boolean getLocked() {
 		return locked;
 	}
