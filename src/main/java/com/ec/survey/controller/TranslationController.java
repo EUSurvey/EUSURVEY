@@ -602,7 +602,7 @@ public class TranslationController extends BasicController {
 
 					if (label != null) {
 						if (t == null) {
-							t = new Translation(key, label, ts.getLanguage().getCode(), ts.getSurveyId(), ts);
+							t = new Translation(key, label, ts.getLanguage().getCode(), ts.getSurveyId(), ts, false);
 							ts.getTranslations().add(t);
 						}
 
@@ -852,7 +852,6 @@ public class TranslationController extends BasicController {
 
 					return mapper.writeValueAsString(result);
 				} else {
-
 					Translations existingTranslations = translationService.getTranslations(form.getSurvey().getId(),
 							translations.getLanguage().getCode());
 
@@ -865,6 +864,10 @@ public class TranslationController extends BasicController {
 					ArrayList<String> labels = new ArrayList<>();
 
 					Translations pivot = TranslationsHelper.getTranslations(form.getSurvey(), false);
+					
+					if (form.getSurvey().getIsOPC() && translations.getLanguage().getCode().equalsIgnoreCase(pivot.getLanguage().getCode())) {
+						TranslationsHelper.replaceLockedTranslations(translations, pivot);
+					}
 
 					Map<String, Translation> pivotTranslationsByKey = pivot.getTranslationsByKey();
 					Map<String, Translation> translationsByKey = translations.getTranslationsByKey();

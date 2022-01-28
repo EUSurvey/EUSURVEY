@@ -139,7 +139,7 @@ public class TranslationsHelper {
 				translations.getTranslations()
 						.add(new Translation(element.getUniqueId(),
 								element.getTitle() != null ? element.getTitle() : "", survey.getLanguage().getCode(),
-								survey.getId(), translations));
+								survey.getId(), translations, element.getLocked()));
 
 				if (element instanceof Question) {
 					Question question = (Question) element;
@@ -147,7 +147,7 @@ public class TranslationsHelper {
 						translations.getTranslations()
 								.add(new Translation(question.getUniqueId() + "help",
 										question.getHelp() != null ? question.getHelp() : "",
-										survey.getLanguage().getCode(), survey.getId(), translations));
+										survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 					}
 
 					if (question.getScoringItems() != null) {
@@ -156,7 +156,7 @@ public class TranslationsHelper {
 								translations.getTranslations()
 										.add(new Translation(scoringItem.getUniqueId() + Question.FEEDBACK,
 												scoringItem.getFeedback() != null ? scoringItem.getFeedback() : "",
-												survey.getLanguage().getCode(), survey.getId(), translations));
+												survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 							}
 						}
 					}
@@ -167,7 +167,7 @@ public class TranslationsHelper {
 					translations.getTranslations()
 							.add(new Translation(section.getUniqueId() + Section.TABTITLE,
 									section.getTabTitle() != null ? section.getTabTitle() : "",
-									survey.getLanguage().getCode(), survey.getId(), translations));
+									survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 				}
 
 				if (element instanceof NumberQuestion) {
@@ -175,7 +175,7 @@ public class TranslationsHelper {
 					translations.getTranslations()
 							.add(new Translation(number.getUniqueId() + NumberQuestion.UNIT,
 									number.getUnit() != null ? number.getUnit() : "", survey.getLanguage().getCode(),
-									survey.getId(), translations));
+									survey.getId(), translations, element.getLocked()));
 
 					if (number.isSlider()) {
 						translations.getTranslations().add(new Translation(
@@ -183,14 +183,14 @@ public class TranslationsHelper {
 								number.getMinLabel() != null ? number.getMinLabel() : "",
 								survey.getLanguage().getCode(),
 								survey.getId(),
-								translations));
+								translations, element.getLocked()));
 
 						translations.getTranslations().add(new Translation(
 								number.getUniqueId() + NumberQuestion.MAXLABEL,
 								number.getMaxLabel() != null ? number.getMaxLabel() : "",
 								survey.getLanguage().getCode(),
 								survey.getId(),
-								translations));
+								translations, element.getLocked()));
 					}
 				}
 
@@ -200,12 +200,12 @@ public class TranslationsHelper {
 						translations.getTranslations()
 								.add(new Translation(answer.getUniqueId(),
 										answer.getTitle() != null ? answer.getTitle() : "",
-										survey.getLanguage().getCode(), survey.getId(), translations));
+										survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 
 						if (answer.getScoring() != null && notNullOrEmpty(answer.getScoring().getFeedback())) {
 							translations.getTranslations().add(new Translation(answer.getUniqueId() + Question.FEEDBACK,
 									answer.getScoring().getFeedback() != null ? answer.getScoring().getFeedback() : "",
-									survey.getLanguage().getCode(), survey.getId(), translations));
+									survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 						}
 					}
 				}
@@ -217,7 +217,7 @@ public class TranslationsHelper {
 							survey.getLanguage().getCode(), survey.getId(), translations));
 					translations.getTranslations().add(new Translation(confirmation.getUniqueId() + Confirmation.LABEL,
 							confirmation.getConfirmationlabel() != null ? confirmation.getConfirmationlabel() : "",
-							survey.getLanguage().getCode(), survey.getId(), translations));
+							survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 				}
 
 				if (element instanceof Matrix) {
@@ -227,7 +227,7 @@ public class TranslationsHelper {
 						translations.getTranslations()
 								.add(new Translation(matrix.getUniqueId() + MatrixOrTable.FIRSTCELL,
 										matrix.getFirstCellText() != null ? matrix.getFirstCellText() : "",
-										survey.getLanguage().getCode(), survey.getId(), translations));
+										survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 					}
 
 					for (Element child : matrix.getChildElements()) {
@@ -235,7 +235,7 @@ public class TranslationsHelper {
 							translations.getTranslations()
 									.add(new Translation(child.getUniqueId(),
 											child.getTitle() != null ? child.getTitle() : "",
-											survey.getLanguage().getCode(), survey.getId(), translations));
+											survey.getLanguage().getCode(), survey.getId(), translations , element.getLocked()));
 						}
 					}
 				}
@@ -247,7 +247,7 @@ public class TranslationsHelper {
 						translations.getTranslations()
 								.add(new Translation(table.getUniqueId() + MatrixOrTable.FIRSTCELL,
 										table.getFirstCellText() != null ? table.getFirstCellText() : "",
-										survey.getLanguage().getCode(), survey.getId(), translations));
+										survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 					}
 
 					for (Element child : table.getChildElements()) {
@@ -255,7 +255,7 @@ public class TranslationsHelper {
 							translations.getTranslations()
 									.add(new Translation(child.getUniqueId(),
 											child.getTitle() != null ? child.getTitle() : "",
-											survey.getLanguage().getCode(), survey.getId(), translations));
+											survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 						}
 					}
 				}
@@ -267,7 +267,7 @@ public class TranslationsHelper {
 							translations.getTranslations()
 									.add(new Translation(child.getUniqueId(),
 											child.getTitle() != null ? child.getTitle() : "",
-											survey.getLanguage().getCode(), survey.getId(), translations));
+											survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 						}
 					}
 				}
@@ -278,7 +278,7 @@ public class TranslationsHelper {
 						translations.getTranslations()
 							.add(new Translation(child.getUniqueId(),
 								child.getTitle() != null ? child.getTitle() : "",
-								survey.getLanguage().getCode(), survey.getId(), translations));
+								survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 					}
 				}
 				
@@ -289,7 +289,7 @@ public class TranslationsHelper {
 						translations.getTranslations()
 								.add(new Translation(child.getUid() + GalleryQuestion.TEXT,
 										child.getComment() != null ? child.getComment() : "",
-										survey.getLanguage().getCode(), survey.getId(), translations));
+										survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 						translations.getTranslations()
 							.add(new Translation(child.getUid(),
 								child.getDescription() != null ? child.getDescription() : "",
@@ -297,7 +297,7 @@ public class TranslationsHelper {
 						translations.getTranslations()
 								.add(new Translation(child.getUid() + GalleryQuestion.TITLE,
 										child.getName() != null ? child.getName() : "",
-										survey.getLanguage().getCode(), survey.getId(), translations));
+										survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
 					}
 				}
 			} else {
@@ -2232,7 +2232,7 @@ public class TranslationsHelper {
 				existingTranslationsMap.get(translation.getKey()).setLabel(translation.getLabel());
 			} else {
 				existingTranslations.getTranslations().add(new Translation(translation.getKey(), translation.getLabel(),
-						translation.getLanguage(), existingTranslations.getSurveyId(), existingTranslations));
+						translation.getLanguage(), existingTranslations.getSurveyId(), existingTranslations, translation.getLocked()));
 			}
 		}
 
@@ -2301,7 +2301,7 @@ public class TranslationsHelper {
 						.add(new Translation(
 								translationsByKey.get(key + "#backgrounddocument").getLabel() + "#backgrounddocument",
 								translationsByKey.get(key + "#backgrounddocument").getLabel(),
-								translations.getLanguage().getCode(), survey.getId(), translations));
+								translations.getLanguage().getCode(), survey.getId(), translations, translationsByKey.get(key + "#backgrounddocument").getLocked()));
 				translations.getTranslations().remove(translationsByKey.get(key + "#backgrounddocument"));
 				backdocstodelete.add(key);
 			}
@@ -2601,6 +2601,15 @@ public class TranslationsHelper {
 			logger.error(e.getLocalizedMessage(), e);
 			return false;
 		}
+	}
+
+	public static void replaceLockedTranslations(Translations translations, Translations pivot) {
+		Map<String, Translation> translationsByKey = translations.getTranslationsByKey();
+		for (Translation translation : pivot.getTranslations()) {
+			if (translation.getLocked() && translationsByKey.containsKey(translation.getKey())) {
+				translationsByKey.get(translation.getKey()).setLabel(translation.getLabel());
+			}
+		}		
 	}
 
 }
