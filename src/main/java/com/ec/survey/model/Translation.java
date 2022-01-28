@@ -20,7 +20,7 @@ public class Translation implements java.io.Serializable, Comparable {
 	private String key;	
 	private String label;
 	private String language;
-	private boolean locked;
+	private Boolean locked;
 	
 	public Translation()
 	{		
@@ -46,9 +46,9 @@ public class Translation implements java.io.Serializable, Comparable {
 
 	@Column(name = "LOCKED")
 	public Boolean getLocked() {
-		return locked;
+		return locked != null && locked;
 	}
-	public void setLocked(boolean locked){
+	public void setLocked(Boolean locked){
 		this.locked = locked;
 	}
 	
