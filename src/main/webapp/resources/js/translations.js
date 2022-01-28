@@ -703,10 +703,8 @@ function initEditMatrix()
 							}
 						);
 					} else {
-						//add locked style
-						$(div).addClass("translation-locked");
-						// add tooltip
-						$(td).attr("title", "This translation is locked.");
+						//add locked style and tooltip
+						$(div).addClass("translation-locked").attr("title", labellocked).attr("data-toggle", "tooltip");
 					}
 					
 					$(td).append(input);
@@ -724,6 +722,8 @@ function initEditMatrix()
 	$("#edit-translations-table").find("thead").append(trHead);
 	
 	$("#edit-translations-dialog").modal("show");
+	
+	$('[data-toggle="tooltip"]').tooltip()
 }
 
 

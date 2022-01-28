@@ -50,6 +50,7 @@
 		var labelPublish = "<spring:message code='label.Publish' />";
 		var labelUnpublish = "<spring:message code='label.Unpublish' />";
 		var languagecodes = ${languagecodes};
+		var labellocked = "<spring:message code='label.lockedTranslation' />";
 				
 		$(function() {					
 			$("#form-menu-tab").addClass("active");

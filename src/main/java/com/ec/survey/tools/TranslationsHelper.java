@@ -2603,4 +2603,13 @@ public class TranslationsHelper {
 		}
 	}
 
+	public static void replaceLockedTranslations(Translations translations, Translations pivot) {
+		Map<String, Translation> translationsByKey = translations.getTranslationsByKey();
+		for (Translation translation : pivot.getTranslations()) {
+			if (translation.getLocked() && translationsByKey.containsKey(translation.getKey())) {
+				translationsByKey.get(translation.getKey()).setLabel(translation.getLabel());
+			}
+		}		
+	}
+
 }
