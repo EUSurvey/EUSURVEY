@@ -2783,6 +2783,7 @@ public class SurveyService extends BasicService {
 									tr2.setLabel(element.getTitle());
 									tr2.setLanguage(trOriginal.getLanguage());
 									tr2.setTranslations(t);
+									tr2.setLocked(trOriginal.getLocked() || element.getLocked());
 									t.getTranslations().add(tr2);
 								} else if (element instanceof Text && element.getShortname() != null
 										&& element.getShortname().equalsIgnoreCase("introduction")
