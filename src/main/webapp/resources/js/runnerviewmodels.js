@@ -882,14 +882,19 @@ function newRankingViewModel(element)
 				}
 			});
 		}
+		const self = $(domElement).find(".rankingitem-list")[0];
+
 		if (allIdsValid) {
 			const permutation = $.map(formeranswervalues, uniqueId => viewmodel.originalItemUniqueIdOrder().indexOf(uniqueId));
 			const rankingItemReordered = $.map(permutation, index => viewmodel.rankingItems()[index]);
 			viewmodel.rankingItems(rankingItemReordered);
 			viewmodel.answervalues(formeranswervalues);
+			let rankingitemFormData = $(self).find(".rankingitem-form-data");
+			let rankingitemFormDataReOrdered = $.map(permutation, value => rankingitemFormData.get(value));
+			$.each(rankingitemFormDataReOrdered, (_, that) => self.append(that));
+			propagateChange(self);
 		}
 
-		const self = $(domElement).find(".rankingitem-list")[0];
 		$(self).sortable({
 			start: function(event, ui) {
 				const width = $(ui.item).width();
