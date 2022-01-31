@@ -1131,6 +1131,7 @@ function newNumberViewModel(element)
 	viewModel.display = ko.observable(element.display);
 	viewModel.minLabel = ko.observable(element.minLabel);
 	viewModel.maxLabel = ko.observable(element.maxLabel);
+	viewModel.initVal = null;
 	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
@@ -1231,18 +1232,18 @@ function newNumberViewModel(element)
 		
 		propagateChange($(input));
 	}
-	let initVal
+	
 	viewModel.initialValue = function() {
-		if (initVal === undefined) {
+		if (this.initVal === null) {
 			let ovalue = getValueByQuestion(this.uniqueId());
 			if (ovalue.length > 0) {
 				this.isAnswered(true);
-				initVal = ovalue;
+				this.initVal = ovalue;
 			} else {
-				initVal = viewModel.initialDefaultValue();
+				this.initVal = viewModel.initialDefaultValue();
 			}
 		}
-		return initVal
+		return this.initVal
 	};
 
 	viewModel.initialDefaultValue = function() {
