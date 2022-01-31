@@ -148,6 +148,8 @@ $(function() {
 		if (!$(this).attr("onclick") && $(this).attr("href") && $(this).attr("href") != "#")
 		$(this).attr("onclick", "return checkChanges(this)");
 	});
+
+	$("#menuShowCreateSurveyDialogButton").attr("onclick", "checkChangesNewSurvey()");
 	
 	checkContent();	
 });
@@ -325,11 +327,28 @@ function checkChanges(link)
 {
 	if (!_actions.SaveEnabled()) return true;
 	
-	$("#checkChangesDialogDontSaveButton").attr("href", $(link).attr("href"));
+	$("#checkChangesDialogDontSaveButton").show().attr("href", $(link).attr("href"));
+	$("#checkChangesDialogDontSaveButtonEditor").hide();
 	$("#editorredirect").val($(link).attr("href"));
 	
 	$('#checkChangesDialog').modal("show");
 	return false;
+}
+
+function checkChangesNewSurvey() {
+	if (checkChanges(undefined)) {
+		// no changes detected
+		showCreateSurveyDialog();
+		return;
+	}
+
+	$("#checkChangesDialogDontSaveButton").hide();
+	$("#checkChangesDialogDontSaveButtonEditor").show();
+}
+
+function createSurveyIgnoreChanges() {
+	window.ignoreUnsavedChanges = true;
+	showCreateSurveyDialog();
 }
 
 function getIcon(element)
