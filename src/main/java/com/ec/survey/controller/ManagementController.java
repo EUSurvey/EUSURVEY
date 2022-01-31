@@ -79,6 +79,10 @@ public class ManagementController extends BasicController {
 	public @Value("${opc.template}") String opctemplatesurvey;
 	public @Value("${ecf.template}") String ecfTemplateSurvey;
 
+	private static final String[] KNOWN_RESULTTYPES = {
+			"content", "charts", "statistics", "ecf", "ecf2", "ecf3", "statistics-delphi"
+	};
+
 	@InitBinder
 	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(ConversionTools.DateFormat);
@@ -3246,12 +3250,7 @@ public class ManagementController extends BasicController {
 		resultType = resultType == null ? "content" : resultType;
 
 		// this is for security (prevent xss attack)
-		if (!resultType.equalsIgnoreCase("content") && !resultType.equalsIgnoreCase("charts")
-				&& !resultType.equalsIgnoreCase("statistics") 
-				&& !resultType.equalsIgnoreCase("ecf")
-				&& !resultType.equalsIgnoreCase("ecf2")
-				&& !resultType.equalsIgnoreCase("ecf3")
-				) {
+		if (!ArrayUtils.contains(KNOWN_RESULTTYPES, resultType.toLowerCase())){
 			resultType = "content";
 		}
 
