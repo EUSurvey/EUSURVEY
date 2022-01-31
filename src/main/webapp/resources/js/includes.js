@@ -2363,6 +2363,11 @@ function initModals(item)
 		
 		$("#add-survey-dialog").modal("hide");
 		$("#generic-wait-dialog").modal("show");
+
+		if (window.ignoreUnsavedChanges) {
+			// set in editor if user chooses to ignore unsaved changes; disables browser dialog whether user really wants to leave site
+			window.onbeforeunload = undefined;
+		}
 		
 		$("#create-survey").submit();
 	}
