@@ -1094,7 +1094,8 @@ var closeOverlayDivsEnabled = false;
 					  }
 					  
 					  $("#tbllist-empty").hide();
-					  $("#scrollareaheader").css("overflow-x", "hidden");
+					  if ('${resultType}' == 'content')
+						  $("#scrollareaheader").css({ 'overflow-x' : 'hidden'});
 					  
 					  $(".deactivatedexports").hide();
 					  $(".activatedexports").show();					  

@@ -465,10 +465,8 @@
 			$("#scrollarea").show();
 			
 			// Scrollareaheader
-			if ($('#tbllist-empty').is(":hidden"))
-			{
-				$("#scrollareaheader").css("overflow-x", "hidden");
-			}					
+			$("#scrollareaheader").css({ 'overflow-x' : 'hidden'});
+
 			$("#scrollareaheader").scrollLeft($("#scrollarea").scrollLeft());
 			
 			if ($('#scrollarea').hasScrollBar())
@@ -512,8 +510,9 @@
 					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 			
 			$("#results-charts").addClass('hidden');
-			$("#charts-export-buttons").addClass('hidden');			
-		
+			$("#charts-export-buttons").addClass('hidden');
+
+			$("#scrollareaheader").css({ 'overflow-x' : 'auto'})
 		
 			delphiPopulateAllGraphs($("#results-statistics"));
 			doResize();
@@ -532,7 +531,9 @@
 			$("#results-statistics-quiz-link").addClass("btn-primary");
 			$("#results-statistics-quiz").removeClass('hidden');
 			$("#statistics-quiz-export-buttons").removeClass('hidden');
-			
+
+			$("#scrollareaheader").css({ 'overflow-x' : 'auto'})
+
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
@@ -547,6 +548,8 @@
 		function showStatisticsDelphi() {
 			$("#results-statistics-delphi-link").addClass("btn-primary");
 			$("#results-statistics-delphi").removeClass('hidden');
+
+			$("#scrollareaheader").css({ 'overflow-x' : 'auto'})
 		}
 		
 		function hideStatisticsDelphi() {
@@ -560,7 +563,7 @@
 			$("#results-ecf").addClass("btn-primary");
 			$("#ecf-results").removeClass('hidden');
 			$("#ecf1-export-buttons").removeClass('hidden');
-			
+   
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');			
@@ -580,7 +583,7 @@
 			$("#results-ecf2").addClass("btn-primary");
 			$("#ecf-results2").removeClass('hidden');
 			$("#ecf2-export-buttons").removeClass('hidden');
-			
+   
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
@@ -600,7 +603,7 @@
 			$("#results-ecf3").addClass("btn-primary");
 			$("#ecf-results3").removeClass('hidden');
 			$("#ecf3-export-buttons").removeClass('hidden');
-			
+   
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
