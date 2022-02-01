@@ -145,7 +145,7 @@ $(function() {
     });	
 	
 	$("#divActionsFromMenu, #menutab2, .header").find("a").each(function(){
-		if (!$(this).attr("onclick") && $(this).attr("href") && $(this).attr("href") != "#")
+		if (!$(this).attr("onclick") && $(this).attr("href") && $(this).attr("href") != "#" && !$(this).hasClass("dropdown-toggle"))
 		$(this).attr("onclick", "return checkChanges(this)");
 	});
 

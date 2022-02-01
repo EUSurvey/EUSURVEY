@@ -2318,7 +2318,10 @@ public class ManagementController extends BasicController {
 			if (editorredirect.startsWith(Constants.PATH_DELIMITER)) {
 				editorredirect = editorredirect.substring(1);
 				editorredirect = editorredirect.substring(editorredirect.indexOf('/') + 1);
+			} else if (editorredirect.startsWith("?")) {
+				editorredirect = form.getSurvey().getShortname() + "/management/edit?saved=true&" + editorredirect.substring(1);
 			}
+
 			request.getSession().setAttribute("surveyeditorsaved", survey.getId());
 			return new ModelAndView("redirect:/" + editorredirect);
 		}
