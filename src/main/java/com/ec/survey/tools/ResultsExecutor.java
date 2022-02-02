@@ -103,7 +103,13 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 			String uid = UUID.randomUUID().toString();	
 			
 			Survey dbsurvey = surveyService.getSurvey(survey.getId(), false, true);
-			filter = dbsurvey.getPublication().getFilter();
+			ResultFilter dbfilter = dbsurvey.getPublication().getFilter();
+			if (filter != null){
+				dbfilter.setFilterValues(filter.getFilterValues());
+			}
+
+			filter = dbfilter;
+
 			String filename = "results";
 			
 			Calendar cal = Calendar.getInstance();

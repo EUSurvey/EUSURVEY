@@ -262,16 +262,22 @@
 		   		</c:otherwise>
 		   	</c:choose>
 		    		
-		    var url = null;
-		    var data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
+		    let url = null;
+		    let data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse, selectedContribution : ""};
+		    let filterForm = $("#resultsForm")
+			if (filterForm.length > 0){
+				filterForm.serializeArray().forEach((inp) => {
+					if (inp.name.includes("filter")){
+						data[inp.name] = inp.value
+					}
+				})
+			}
 			if (exporttype == "individuals" || exporttype == "singleindividual")
 			{
-				
+
 				if (exporttype == "singleindividual")
 				{
-					data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse, selectedContribution : currentIndividual};
-				} else {
-					data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse, selectedContribution : ""};
+					data.selectedContribution = currentIndividual
 				}
 				
 				url = "${contextpath}/publication/exportallindividuals/${form.survey.id}";
