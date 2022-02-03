@@ -97,32 +97,7 @@ public class PublicationController extends BasicController {
 
 				userFilter.setSurveyId(survey.getId());
 
-				for (Entry<String, String[]> entry : parameters.entrySet()) {
-					if (entry.getKey().startsWith(Constants.FILTER)) {
-						String questionId = entry.getKey().substring(6);
-						String[] values = entry.getValue();
-						String value = StringUtils.arrayToDelimitedString(values, ";");
-
-						if (value.replace(";", "").trim().length() > 0) {
-							String uid = questionId.substring(questionId.indexOf('|') + 1);
-							
-							boolean found = false;
-							for (String key : userFilter.getFilterValues().keySet()) {
-								if (key.endsWith(uid)) {
-									found = true;
-									break;
-								}								
-							}
-							if (found) {
-								// don't override existing filter from publication
-							} else {
-								userFilter.getFilterValues().put(questionId, value);
-							}
-					
-							filtered = true;
-						}
-					}
-				}
+				filtered = putParameterFilters(parameters, userFilter.getFilterValues());
 			}
 
 			if (survey != null && survey.getPublication() != null) {
@@ -194,6 +169,35 @@ public class PublicationController extends BasicController {
 				resources.getMessage("error.NoPublishedResults", null, "This survey has no published results", locale));
 		result.addObject("noMenu", true);
 		return result;
+	}
+
+	private boolean putParameterFilters(Map<String, String[]> parameters, Map<String, String> filterValues){
+		boolean filtered = false;
+		for (Entry<String, String[]> entry : parameters.entrySet()) {
+			if (entry.getKey().startsWith(Constants.FILTER)) {
+				String questionId = entry.getKey().substring(6);
+				String[] values = entry.getValue();
+				String value = StringUtils.arrayToDelimitedString(values, ";");
+
+				if (value.replace(";", "").trim().length() > 0) {
+					String uid = questionId.substring(questionId.indexOf('|') + 1);
+
+					boolean found = false;
+					for (String key : filterValues.keySet()) {
+						if (key.endsWith(uid)) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						filterValues.put(questionId, value);
+					}
+
+					filtered = true;
+				}
+			}
+		}
+		return filtered;
 	}
 
 	@GetMapping(value = "/auth/{shortname}")
@@ -530,6 +534,8 @@ public class PublicationController extends BasicController {
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get(Constants.EMAIL)[0];
 				ResultFilter filter = survey.getPublication().getFilter();
+				putParameterFilters(parameters, filter.getFilterValues());
+
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
 				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "xls",
 						resources, locale, null);
@@ -564,6 +570,8 @@ public class PublicationController extends BasicController {
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get(Constants.EMAIL)[0];
 				ResultFilter filter = survey.getPublication().getFilter();
+				putParameterFilters(parameters, filter.getFilterValues());
+
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
 				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "ods",
 						resources, locale, null);
