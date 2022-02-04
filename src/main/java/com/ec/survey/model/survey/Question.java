@@ -218,7 +218,6 @@ public abstract class Question extends Element {
 		copy.setUseAndLogic(getUseAndLogic());
 		copy.setShowExplanationBox(getShowExplanationBox());
 		copy.setDelphiChartType(getDelphiChartType());
-
 		
 		if (ecfCompetency != null) {
 			copy.setEcfCompetency(this.getEcfCompetency());

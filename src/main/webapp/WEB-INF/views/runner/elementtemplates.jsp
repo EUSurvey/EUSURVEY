@@ -31,6 +31,26 @@
 		<!-- /ko -->
 	</div>
 	
+	<div id="formula-template">
+		<div class="text" data-bind="html: title"></div>
+		<input type="text" class="formula" disabled="disabled" data-bind="value: result" />
+		<button data-bind="click: refreshResult">refresh</button>
+		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: 'formula', attr: {'name': 'type' + id()}" />	
+			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: formula, attr: {'name': 'formula' + id()}" />	
+			<input type="hidden" data-bind="value: min, attr: {'name': 'min' + id()}" />	
+			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
+			<input type="hidden" data-bind="value: decimalPlaces, attr: {'name': 'decimalplaces' + id()}" />
+			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
+			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
+			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+		<!-- /ko -->
+	</div>
+	
 	<div id="image-template">
 		
 		<div class='alignment-div' data-bind="attr: {'style': 'width: 920px; max-width: 100%; text-align:' + align()}">

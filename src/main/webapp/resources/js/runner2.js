@@ -23,6 +23,8 @@ function getElementViewModel(element)
 			return newFreeTextViewModel(element);
 		case 'RegExQuestion':
 			return newRegExViewModel(element);
+		case 'FormulaQuestion':
+			return newFormulaViewModel(element);
 		case 'SingleChoiceQuestion':
 			return newSingleChoiceViewModel(element);
 		case 'MultipleChoiceQuestion':
@@ -190,6 +192,10 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			var s = $("#freetext-template").clone().attr("id", "");
 			$(container).append(s);
 		}
+	} else if (viewModel.type == 'FormulaQuestion') {
+		$(container).addClass("formulaitem");
+		var s = $("#formula-template").clone().attr("id", "");
+		$(container.append(s));
 	} else if (viewModel.type == 'NumberQuestion') {
 		$(container).addClass("numberitem forprogress");
 		var s = $("#number-template").clone().attr("id", "");

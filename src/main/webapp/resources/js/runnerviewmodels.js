@@ -1060,6 +1060,31 @@ function newRegExViewModel(element)
 	return viewModel;
 }
 
+function newFormulaViewModel(element)
+{
+	var viewModel = newBasicViewModel(element);
+	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.formula = ko.observable(element.formula);
+	viewModel.help = ko.observable(element.help);
+	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));	
+	viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces : 0);	
+	viewModel.min = ko.observable(element.min);
+	viewModel.minString = ko.observable(element.minString);	
+	viewModel.max = ko.observable(element.max);
+	viewModel.maxString = ko.observable(element.maxString);	
+			
+	viewModel.result = ko.observable("");
+	
+	viewModel.refreshResult = function() {
+		var x = parseInt($("input[data-shortname='x']").val());
+		var y = parseInt($("input[data-shortname='y']").val());
+		
+		viewModel.result(x+y);
+	}
+	
+	return viewModel;
+}
+
 function newConfirmationViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);

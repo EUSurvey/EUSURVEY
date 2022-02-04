@@ -313,7 +313,7 @@ textarea {
  	background-color: #FCECED; 
 }
 
-.toolboxitem.uploaditem, .toolboxitem.downloaditem, .toolboxitem.emailitem, .toolboxitem.regexitem, .toolboxitem.galleryitem, .toolboxitem.confirmationitem, .toolboxitem.ratingitem {
+.toolboxitem.uploaditem, .toolboxitem.downloaditem, .toolboxitem.emailitem, .toolboxitem.regexitem, .toolboxitem.formulaitem, .toolboxitem.galleryitem, .toolboxitem.confirmationitem, .toolboxitem.ratingitem {
  	background-color: #F5E2FF; 
 }
 

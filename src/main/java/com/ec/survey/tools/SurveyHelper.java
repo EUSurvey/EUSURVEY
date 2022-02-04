@@ -2285,6 +2285,99 @@ public class SurveyHelper {
 		return number;
 	}
 
+	private static FormulaQuestion getFormula(Map<String, String[]> parameterMap, Element currentElement,
+			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+		FormulaQuestion formula;
+		String oldValues = "";
+		String newValues = "";
+		if (currentElement == null) {
+			formula = new FormulaQuestion(getString(parameterMap, "text", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
+					getString(parameterMap, "uid", id, servletContext));
+		} else {
+			formula = (FormulaQuestion) currentElement;
+		}
+
+		String title = getString(parameterMap, "text", id, servletContext);
+		if (log220 && !formula.getTitle().equals(title)) {
+			oldValues += " title: " + formula.getTitle();
+			newValues += " title: " + title;
+		}
+		formula.setTitle(title);
+
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
+		if (log220 && formula.getShortname() != null && !formula.getShortname().equals(shortname)) {
+			oldValues += " shortname: " + formula.getShortname();
+			newValues += " shortname: " + shortname;
+		}
+		formula.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !formula.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + formula.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		formula.setUseAndLogic(useAndLogic);
+		
+		Boolean isReadonly = getBoolean(parameterMap, "readonly", id);
+		if (log220 && !isReadonly.equals(formula.getReadonly())) {
+			oldValues += " readonly: " + formula.getReadonly();
+			newValues += " readonly: " + isReadonly;
+		}
+		formula.setReadonly(isReadonly);
+
+		String help = getString(parameterMap, "help", id, servletContext);
+		if (log220 && formula.getHelp() != null && !formula.getHelp().equals(help)) {
+			oldValues += " help: " + formula.getHelp();
+			newValues += " help: " + help;
+		}
+		formula.setHelp(help);
+
+		Boolean attribute = getBoolean(parameterMap, "attribute", id);
+		if (log220 && !attribute.equals(formula.getIsAttribute())) {
+			oldValues += " attribute: " + formula.getIsAttribute();
+			newValues += " attribute: " + attribute;
+		}
+		formula.setIsAttribute(attribute);
+
+		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
+		if (log220 && !formula.getAttributeName().equals(nameattribute)) {
+			oldValues += " attributename: " + formula.getAttributeName();
+			newValues += " attributename: " + nameattribute;
+		}
+		formula.setAttributeName(nameattribute);
+
+		String sformula = getString(parameterMap, "formula", id, servletContext);
+		if (log220 && !formula.getFormula().equals(sformula)) {
+			oldValues += " formula: " + formula.getFormula();
+			newValues += " formula: " + sformula;
+		}
+		formula.setFormula(sformula);
+
+		Double min = getDouble(parameterMap, "min", id);
+		if (log220 && formula.getMin() != null && !formula.getMin().equals(min)) {
+			oldValues += " min: " + formula.getMin();
+			newValues += " min: " + min;
+		}
+		formula.setMin(min);
+
+		Double max = getDouble(parameterMap, "max", id);
+		if (log220 && formula.getMax() != null && !formula.getMax().equals(max)) {
+			oldValues += " max: " + formula.getMax();
+			newValues += " max: " + max;
+		}
+		formula.setMax(max);
+
+		Integer decimalplaces = getInteger(parameterMap, "decimalplaces", id);
+		if (log220 && !formula.getDecimalPlaces().equals(decimalplaces)) {
+			oldValues += " decimalplaces: " + formula.getDecimalPlaces();
+			newValues += " decimalplaces: " + decimalplaces;
+		}
+		formula.setDecimalPlaces(decimalplaces);
+
+		return formula;
+	}
+	
 	private static DateQuestion getDate(Map<String, String[]> parameterMap, Element currentElement,
 			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		DateQuestion date;
@@ -3925,6 +4018,9 @@ public class SurveyHelper {
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("regex")) {
 			element = getRegEx(parameterMap, currentElement, id, servletContext,
+					log220 && currentElement != null);
+		} else if (type.equalsIgnoreCase("formula")) {
+			element = getFormula(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase(Constants.EMAIL)) {
 			element = getEmail(parameterMap, currentElement, id, servletContext,

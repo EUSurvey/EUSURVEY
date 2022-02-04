@@ -455,6 +455,11 @@ function update(input)
 				}				
 			}
 			
+			if (element.type == "FormulaQuestion")
+			{
+				return;
+			}
+			
 			if (element.type == "DateQuestion")
 			{
 				$(".quiz.invalidinput").each(function(){
@@ -715,7 +720,7 @@ function update(input)
 			
 			_undoProcessor.addUndoStep(["DecimalPlaces", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			
-			if (element.display() === "Slider") {
+			if (element.type == "NumberQuestion" && element.display() === "Slider") {
 				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);				
 			}
 			
@@ -1065,6 +1070,14 @@ function update(input)
 			
 			_undoProcessor.addUndoStep(["MaxDistanceToMedian", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
 		
+			break;
+		case "Formula":
+			var text = $(input).val();	
+			var oldtext = element.formula();
+			element.formula(text);
+			
+			_undoProcessor.addUndoStep(["Formula", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+			
 			break;
 		default:
 			throw label + " not implemented"; 

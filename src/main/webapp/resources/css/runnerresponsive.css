@@ -347,7 +347,7 @@ textarea.freetext {
 	top: -125px;
 }
 
-.freetext, .email, .regex, .alignment-div, .text {
+.freetext, .email, .regex, .formula, .alignment-div, .text {
 	width: 100%;
 	max-width: 600px;
 }

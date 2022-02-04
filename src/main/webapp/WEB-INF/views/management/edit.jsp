@@ -218,6 +218,11 @@
 						<li title="<spring:message code="form.FileDownload.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem downloaditem draggable"><span class="glyphicon glyphicon-arrow-down"></span> <spring:message code="form.FileDownload" /></li>
 						<li title="<spring:message code="form.EmailQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem emailitem draggable"><span class="glyphicon glyphicon-envelope"></span> <spring:message code="label.Email" /></li>
 						<li title="<spring:message code="form.RegExQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem regexitem draggable"><span class="glyphicon glyphicon-asterisk"></span> <spring:message code="label.RegEx" /></li>
+						<li title="<spring:message code="form.Formula.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem formulaitem draggable">
+							<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-slash-minus" viewBox="0 0 16 16">
+							  <path d="m1.854 14.854 13-13a.5.5 0 0 0-.708-.708l-13 13a.5.5 0 0 0 .708.708ZM4 1a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 4 1Zm5 11a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 9 12Z"/>
+							</svg>&nbsp;
+							<spring:message code="label.Formula" /></li>
 						<li title="<spring:message code="form.Gallery.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem galleryitem draggable"><span class="glyphicon glyphicon-th"></span> <spring:message code="form.Gallery" /></li>
 						<li title="<spring:message code="form.Confirmation.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem confirmationitem draggable"><span class="glyphicon glyphicon-ok"></span> <spring:message code="form.Confirmation" /></li>
 						<li title="<spring:message code="form.Rating.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem ratingitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.Rating" /></li>
@@ -642,6 +647,7 @@
 			if (element.hasClass("downloaditem")) return "<spring:message code='form.FileDownload' />";
 			if (element.hasClass("emailitem")) return "<spring:message code='label.Email' />";
 			if (element.hasClass("regexitem")) return "<spring:message code='label.RegEx' />";
+			if (element.hasClass("formulaitem")) return "<spring:message code='label.Formula' />";
 			if (element.hasClass("galleryitem")) return "<spring:message code='form.Gallery' />";
 			if (element.hasClass("confirmationitem")) return "<spring:message code='form.Confirmation' />";
 			if (element.hasClass("ratingitem")) return "<spring:message code='form.Rating' />";
@@ -672,6 +678,7 @@
 			if (element.hasClass("downloaditem")) return "idTypedownloaditem";
 			if (element.hasClass("emailitem")) return "idTypeemailitem";
 			if (element.hasClass("regexitem")) return "idTyperegexitem";
+			if (element.hasClass("formulaitem")) return "idTypeformulaitem";
 			if (element.hasClass("galleryitem")) return "idTypeSectionitem";
 			if (element.hasClass("confirmationitem")) return "idTypegalleryitem";
 			if (element.hasClass("ratingitem")) return "idTyperatingitem";
@@ -895,6 +902,7 @@
 			strings["None"] ="<spring:message code="label.None" />";
 			strings["WordCloud"] ="<spring:message code="label.DelphiChartWordCloud" />";
 			strings["ShowExplanationBox"] = "<spring:message code="label.ShowExplanationBox" />";
+			strings["Formula"] = "<spring:message code="label.Formula" />";
 			
 	 		return strings[label];
 	 	}

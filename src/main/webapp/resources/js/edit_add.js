@@ -193,6 +193,18 @@ function getNewElement(item)
 		element.regex = "";
 		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
+	} else if (item.hasClass("formulaitem"))
+	{
+		element = getBasicElement("FormulaQuestion", true, "Formula Question", item.attr("id"), true);
+		element.css = "formula";
+		element.formula = "";
+		element.min = null;
+		element.minString = null;
+		element.max = null;
+		element.maxString = null;
+		element.readonly = true;
+		element.isDelphiQuestion = isDelphi;	
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("galleryitem"))
 	{
 		element = getBasicElement("GalleryQuestion", true, "Gallery", item.attr("id"), true);

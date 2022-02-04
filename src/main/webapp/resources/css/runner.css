@@ -416,6 +416,7 @@ textarea.freetext {
 .tabletable,
 .dataTable,
 .regex,
+.formula,
 .alignment-div,
 .input-group,
 .ratingtable {
@@ -447,7 +448,7 @@ input[type="text"].time {
 	width: 177px;
 }
 
-input.regex, textarea.regex {
+input.regex, textarea.regex, input.formula {
 	width: 430px !important;
 }
 
