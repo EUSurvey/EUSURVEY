@@ -165,13 +165,6 @@ public class HomeController extends BasicController {
 		model.put("continueWithoutJavascript", true);
 		model.put("additionalinfo", getBrowserInformation(request, locale));
 		
-		if (request.getParameter(Constants.ERROR) != null)
-		{
-			model.put("fromerrorpage", true);
-		} else if (request.getParameter("assistance") != null)
-		{
-			model.put("needassistance", true);
-		}
 		
 		model.addAttribute("oss",super.isOss());
 		return "home/support";

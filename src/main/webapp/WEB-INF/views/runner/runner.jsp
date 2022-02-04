@@ -96,6 +96,8 @@
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");
 				$('[data-toggle="tooltip"]').ApplyCustomTooltips();
+				 
+				updateProgress();
 			}
 		}
 		

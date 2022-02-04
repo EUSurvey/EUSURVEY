@@ -31,7 +31,7 @@ public class ReportingServiceProxy {
 		return enablereportingdatabase != null && enablereportingdatabase.equalsIgnoreCase("true");
 	}
 	
-	public List<List<String>> getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
+	public List<List<String>>  getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
 		if (!isReportingDatabaseEnabled()) return null;
 		return reportingService.getAnswerSetsInternal(survey, filter, sqlPagination, addlinks, forexport, showuploadedfiles, doNotReplaceAnswerIDs, useXmlDateFormat, showShortnames);
 	}
@@ -91,6 +91,11 @@ public class ReportingServiceProxy {
 	{
 		if (!isReportingDatabaseEnabled()) return -1;
 		return reportingService.getAnswerSetsByQuestionUIDInternal(survey, quid, answersByAnswerSetID);
+	}
+	
+	public List<String> getAnswersByQuestionUID(Survey survey, String quid, String where, Map<String, Object> values) {
+		if (!isReportingDatabaseEnabled()) return null;
+		return reportingService.getAnswersByQuestionUIDInternal(survey, quid, where, values);
 	}
 
 	public void addToDo(ToDo todo, String uid, String code, boolean executeTodoSync) {

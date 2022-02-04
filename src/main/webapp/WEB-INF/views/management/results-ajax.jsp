@@ -80,6 +80,25 @@
 								 }
 							  });
 						  
+						  $(".statRequestedRecordsRankingScore").each(function(){
+								 var id = $(this).attr("data-id");
+								 var parentId = $(this).attr("data-parent-id");
+							
+								 if (statistics.requestedRecordsRankingScore[id] != null)
+								 {
+									var value = parseInt(statistics.requestedRecordsRankingScore[id]);
+									var total = parseInt(statistics.requestedRecordsRankingScore[parentId]);
+									 
+									if (id.indexOf("-") < 0) {
+										// the score column
+										$(this).html("<b><span>" + statistics.requestedRecordsRankingPercentScore[id] + "</span></b><br />" + total);
+									} else {
+									 	// other column
+									 	$(this).html("<b>" + statistics.requestedRecordsRankingPercentScore[id] + "%</b><br /><span>" + value + "</span>");
+									}
+								 }
+							  });
+						  
 						  $(".statRequestedRecordsPercentScore").each(function(){
 								 var id = $(this).attr("data-id");
 								 if (statistics.requestedRecordsScore[id] != null)
@@ -193,7 +212,7 @@
 				if ($(chartwrapper).data("initial-chart-type") == 'None') {
 					addChart(this, null, "None", false);
 				} else {
-					loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
+					loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300, null);
 				}
 			});
 		}
@@ -208,6 +227,7 @@
 				$(controls).find(".chart-scheme-group").first().hide();
 				$(controls).find(".chart-size-group").first().hide();
 				$(controls).find(".chart-legend-group").first().hide();
+				$(controls).find(".chart-score-group").hide();
 				$(chartwrapper).hide();
 				return;
 			} else {
@@ -217,11 +237,12 @@
 			}
 			const scheme = $(controls).find(".chart-scheme").first().val();
 			const legend = $(controls).find(".chart-legend").first().is(":checked");
+			const score = $(controls).find(".chart-score").first().is(":checked");
 
 			const size = $(chartwrapper).closest(".elementwrapper, .statelement-wrapper").find(".chart-size").first().val();
 			const canvasWidth = getChartCanvasHeightAndWidth(size).width;
 
-			loadGraphDataInnerForResults(chartwrapper, addChart, chartType, scheme, legend, canvasWidth);
+			loadGraphDataInnerForResults(chartwrapper, addChart, chartType, scheme, legend, canvasWidth, score);
 		}
 
 		function getChartCanvasHeightAndWidth(size) {
@@ -355,6 +376,12 @@
 			} else {
 				$(elementWrapper).find(".chart-legend-group").hide();
 			}
+			
+			if (isDrawChart && $(elementWrapper).hasClass("ranking-chart") && chartType === "Bar") {
+				$(elementWrapper).find(".chart-score-group").show();
+			} else {
+				$(elementWrapper).find(".chart-score-group").hide();
+			}
 
 			if (!!chart) {
 				new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
@@ -364,13 +391,14 @@
 				$(controls).find(".chart-scheme-group").first().hide();
 				$(controls).find(".chart-size-group").first().hide();
 				$(controls).find(".chart-legend-group").first().hide();
+				$(controls).find(".chart-score-group").first().hide();
 				const chartDataType = $(elementWrapper).find(".chart-wrapper").data("chart-data-type");
 				if (chartDataType == "Textual") {
 					$(elementWrapper).find("option[data-type='numerical']").hide();
 					$(elementWrapper).find(".chart-scheme").first().val("Style B");
 				} else {
 					$(elementWrapper).find("option[data-type='textual']").hide();
-				}
+				}				
 				$(elementWrapper).find(".chart-wrapper").hide();
 			} else {
 				$(controls).find(".chart-scheme-group").first().show();
@@ -382,6 +410,31 @@
 				$(elementWrapper).find(".chart-controls").hide();
 			}
         }
+		
+		function sortRankingStatistics(button, descending) {
+ 			var index = $(button).closest("th").index();
+ 			var table = $(button).closest("table")[0];
+
+			var rows, switching, i, x, y, shouldSwitch;
+			switching = true;
+			while (switching) {
+			    switching = false;
+			    rows = table.rows;
+			    for (i = 1; i < (rows.length - 1); i++) {
+			      shouldSwitch = false;
+			      x = rows[i].getElementsByTagName("TD")[index].getElementsByTagName("SPAN")[0];
+			      y = rows[i + 1].getElementsByTagName("TD")[index].getElementsByTagName("SPAN")[0];
+			      if ((descending && parseFloat(x.innerText) < parseFloat(y.innerText)) || (!descending && parseFloat(x.innerText) > parseFloat(y.innerText))) {
+			        shouldSwitch = true;
+			        break;
+			      }
+			    }
+			    if (shouldSwitch) {
+			      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+			      switching = true;
+			    }
+			}
+		}
 
 	</script>
 </c:if>

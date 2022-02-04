@@ -3306,32 +3306,17 @@ public class SurveyHelper {
 			List<RankingItem> itemsToDelete = new ArrayList<>();
 			List<String> newUniqueItems = new ArrayList<>();
 			for (RankingItem thatItem : rankingQuestion.getChildElements()) {
-				boolean found = false;
-				for (String item : rankingItemTitles) {
-					if (thatItem.getTitle().equals(item)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					for (String item : rankingItemOriginalTitles) {
-						if (thatItem.getTitle().equals(item)) {
-							found = true;
-							break;
-						}
-					}
-				}
-				if (!found || newUniqueItems.contains(thatItem.getTitle())) {
+				String uid = thatItem.getUniqueId();
+				boolean found = rankingItemUids.contains(uid);
+
+				if (!found || newUniqueItems.contains(uid)) {
 					itemsToDelete.add(thatItem);
 				} else {
-					newUniqueItems.add(thatItem.getTitle());
+					newUniqueItems.add(uid);
 				}
 			}
 
-			for (RankingItem thatItem : itemsToDelete) {
-				rankingQuestion.getChildElements().remove(thatItem);
-			}
-
+			rankingQuestion.getChildElements().removeAll(itemsToDelete);
 		} else {
 			rankingQuestion = new RankingQuestion();
 			String uid = getString(parameterMap, "uid", id, servletContext);
@@ -3359,6 +3344,14 @@ public class SurveyHelper {
 			newValues += " optional: " + isOptional;
 		}
 		rankingQuestion.setOptional(isOptional);
+		
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.None : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != rankingQuestion.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + rankingQuestion.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		rankingQuestion.setDelphiChartType(delphiChartType);
 
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(rankingQuestion.getShowExplanationBox())) {
@@ -3381,6 +3374,13 @@ public class SurveyHelper {
 		}
 		rankingQuestion.setShortname(shortname);
 
+		Integer order = getInteger(parameterMap, "order", id);
+		if (log220 && !order.equals(rankingQuestion.getOrder())) {
+			oldValues += " order: " + rankingQuestion.getOrder();
+			newValues += " order: " + order;
+		}
+		rankingQuestion.setOrder(order);
+
 		StringBuilder oldRankingItemTitles = new StringBuilder();
 		StringBuilder newRankingItemTitles = new StringBuilder();
 		if (log220) {
@@ -3398,7 +3398,7 @@ public class SurveyHelper {
 				String thatUid = Tools.getFromListOrDefault(k, rankingItemUids, "");
 				RankingItem thatItem = null;
 				for (RankingItem existingItem : childElements) {
-					if (existingItem.getTitle().equals(thatTitle) || existingItem.getTitle().equals(thatOriginalTitle)) {
+					if (thatUid.equals(existingItem.getUniqueId())) {
 						thatItem = existingItem;
 						break;
 					}

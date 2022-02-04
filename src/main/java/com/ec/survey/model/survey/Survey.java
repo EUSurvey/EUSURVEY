@@ -185,13 +185,15 @@ final public class Survey implements java.io.Serializable {
 	private Boolean sendConfirmationEmail = false;
 	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
 	private Boolean isDelphiShowAnswers = false;
-	private Integer minNumberDelphiStatistics = 5;
+	private Integer minNumberDelphiStatistics = 1;
 	private String logoText;
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
 	private boolean preventGoingBack = false;
 	private Boolean criticalComplexity = false;
 	private Boolean dedicatedResultPrivileges = false;
+	private Boolean progressBar = false;
+	private Integer progressDisplay = 0;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1674,6 +1676,8 @@ final public class Survey implements java.io.Serializable {
 		copy.setEcasMode(ecasMode);
 		copy.ecasMode = ecasMode;
 		copy.multiPaging = multiPaging;
+		copy.progressBar = progressBar;
+		copy.progressDisplay = progressDisplay;
 		copy.validatedPerPage = validatedPerPage;
 		copy.setWcagCompliance(wcagCompliance);
 		copy.captcha = captcha;
@@ -1800,7 +1804,7 @@ final public class Survey implements java.io.Serializable {
 			throws ValidationException {
 		for (Element element : elements) {
 			Element copiedElement = element.copy(surveyService.getFileDir());
-			copiedElement.setLocked(makeQuestionsLocked);
+			copiedElement.setLocked(element.getLocked() || makeQuestionsLocked);
 			surveyCopy.elements.add(copiedElement);
 		}
 
@@ -2196,7 +2200,7 @@ final public class Survey implements java.io.Serializable {
 		for (Element question : elements) {
 			if (question instanceof Matrix || question instanceof ChoiceQuestion
 					|| (question instanceof GalleryQuestion && ((GalleryQuestion) question).getSelection())
-					|| question instanceof RatingQuestion) {
+					|| question instanceof RatingQuestion || question instanceof RankingQuestion) {
 				return false;
 			}
 			
@@ -2476,5 +2480,23 @@ final public class Survey implements java.io.Serializable {
 		
 		String[] arr = timeLimit.split(":");
 		return Integer.parseInt(arr[0]) * 3600 + Integer.parseInt(arr[1]) * 60 + Integer.parseInt(arr[2]);		
+	}
+
+	@Column(name = "PROGRESSBAR")
+	public Boolean getProgressBar() {
+		return progressBar;
+	}
+
+	public void setProgressBar(Boolean progressBar) {
+		this.progressBar = progressBar != null ? progressBar : false;
+	}
+
+	@Column(name = "PROGRESSDISPLAY")
+	public Integer getProgressDisplay() {
+		return progressDisplay;
+	}
+
+	public void setProgressDisplay(Integer progressDisplay) {
+		this.progressDisplay = progressDisplay != null ? progressDisplay : 0;
 	}
 }

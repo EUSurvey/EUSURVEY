@@ -144,7 +144,7 @@ html, body {
 	margin-bottom: -198px; 
 	padding-bottom: 75px;
 	max-width: 100%;
-	overflow-x: auto;
+	/*overflow-x: auto;*/
 }
 
 .page-wrap:after {
@@ -1587,8 +1587,9 @@ div.medianpa {
 	margin-bottom: 16px;
 }
 
-.statelement-wrapper > .chart-wrapper {
-	margin-right: 16px;
+.chart-controls {
+	min-width: 330px;
+	margin-right: 20px;
 }
 
 .chart-download {
@@ -2538,4 +2539,12 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 .noHover {
 	pointer-events: none;
+}
+
+.statRequestedRecordsRankingScore {
+	white-space: nowrap;
+}
+
+.translation-locked {
+	opacity: 0.3;
 }

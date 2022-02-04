@@ -368,7 +368,7 @@ public class Form {
 			}
 		}
 		
-		return rankingQuestion.getChildElements();
+		return rankingQuestion.getOrderedChildElements();
 	}
 
 	private Set<String> passwordQuestions = null;

@@ -600,23 +600,17 @@ public class SurveyService extends BasicService {
 			oQueryParameters.put("endTo", Tools.getFollowingDay(filter.getEndTo()));
 		}
 
-		
-		if (filter.getOwner() != null && filter.getOwner().length() > 0 && filter.getUser() != null
-				&& (filter.getUser().getLogin().equals(filter.getOwner())
-						|| filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)) {
-			// Searching by owner, checking if current user is owner or has global priviledge
-			sql.append(
-					" AND (s.OWNER in (SELECT USER_ID FROM USERS WHERE USER_LOGIN = :ownername OR USER_DISPLAYNAME = :ownername))");
-			oQueryParameters.put("ownername", filter.getOwner());
-		
-		} else if (filter.getUser() == null) {
+		if (filter.getUser() == null) {
 			// Searching public surveys
-			sql.append(
-					" AND s.LISTFORM = 1 AND s.LISTFORMVALIDATED = 1 AND s.ISPUBLISHED = true AND s.ACTIVE = true AND (s.SURVEYSECURITY = 'open' or s.SURVEYSECURITY = 'openanonymous') AND (s.SURVEY_END_DATE IS NULL OR s.SURVEY_END_DATE > :now)");
+			sql.append(" AND s.LISTFORM = 1 AND s.LISTFORMVALIDATED = 1 AND s.ISPUBLISHED = true AND s.ACTIVE = true AND (s.SURVEYSECURITY = 'open' or s.SURVEYSECURITY = 'openanonymous') AND (s.SURVEY_END_DATE IS NULL OR s.SURVEY_END_DATE > :now)");
 			oQueryParameters.put("now", new Date());
-		} 
-		
-		if (filter.getUser() != null) {
+		} else {
+			if (filter.getOwner() != null && filter.getOwner().length() > 0) {
+				sql.append(" AND (s.OWNER in (SELECT USER_ID FROM USERS WHERE USER_LOGIN LIKE :ownername OR USER_DISPLAYNAME LIKE :ownername))");
+				String ownerName = "%" + filter.getOwner().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
+				oQueryParameters.put("ownername", ownerName);
+			}
+
 			if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("any") && filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) > 1) {
 				// form administrators can see all surveys
 			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("my")) {
@@ -2789,6 +2783,7 @@ public class SurveyService extends BasicService {
 									tr2.setLabel(element.getTitle());
 									tr2.setLanguage(trOriginal.getLanguage());
 									tr2.setTranslations(t);
+									tr2.setLocked(trOriginal.getLocked() || element.getLocked());
 									t.getTranslations().add(tr2);
 								} else if (element instanceof Text && element.getShortname() != null
 										&& element.getShortname().equalsIgnoreCase("introduction")
@@ -3344,6 +3339,10 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			if (draftSurvey.getMultiPaging() != publishedSurvey.getMultiPaging())
 				hasPendingChanges = true;
+			if (!Tools.isEqual(draftSurvey.getProgressBar(), publishedSurvey.getProgressBar()))
+				hasPendingChanges = true;
+			if (!Tools.isEqual(draftSurvey.getProgressDisplay(), publishedSurvey.getProgressDisplay()))
+				hasPendingChanges = true;
 			if (draftSurvey.getValidatedPerPage() != publishedSurvey.getValidatedPerPage())
 				hasPendingChanges = true;
 			if (draftSurvey.getPreventGoingBack() != publishedSurvey.getPreventGoingBack())
@@ -3436,6 +3435,10 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			}
 			
+			if (!hasPendingChanges && publicationDiffers(draftSurvey, publishedSurvey)) {
+				hasPendingChanges = true;
+			}
+			
 			if (!hasPendingChanges)
 				for (String key : draftSurvey.getUsefulLinks().keySet()) {
 					if (!publishedSurvey.getUsefulLinks().containsKey(key)
@@ -3471,7 +3474,7 @@ public class SurveyService extends BasicService {
 						break;
 					}
 				}
-
+			
 			if (hasPendingChanges)
 				result.put(new PropertiesElement(), 1);
 
@@ -3497,6 +3500,55 @@ public class SurveyService extends BasicService {
 
 		return result;
 	}
+	
+	private boolean publicationDiffers(Survey draftSurvey, Survey publishedSurvey) {
+	
+		if (draftSurvey.getPublication().isAllQuestions() != publishedSurvey.getPublication().isAllQuestions()) return true;
+		if (draftSurvey.getPublication().isAllContributions() != publishedSurvey.getPublication().isAllContributions()) return true;
+		if (draftSurvey.getPublication().isShowContent() != publishedSurvey.getPublication().isShowContent()) return true;
+		if (draftSurvey.getPublication().isShowStatistics() != publishedSurvey.getPublication().isShowStatistics()) return true;
+		
+		if (!draftSurvey.getPublication().isAllQuestions()) {
+			if (draftSurvey.getPublication().getFilter().getVisibleQuestions().size() != publishedSurvey.getPublication().getFilter().getVisibleQuestions().size()) {
+				return true;
+			}
+			
+			Map<String, String> draftElementUIDsByID = draftSurvey.getUniqueIDsByID();			
+			Map<String, String> publishedElementIDsByUID = publishedSurvey.getIDsByUniqueID();
+									
+			for (String id : draftSurvey.getPublication().getFilter().getVisibleQuestions()) {
+				String uid = draftElementUIDsByID.get(id);
+				
+				if (!publishedElementIDsByUID.containsKey(uid)) {
+					return true;
+				}
+				
+				String pid = publishedElementIDsByUID.get(uid);
+				if (!publishedSurvey.getPublication().getFilter().getVisibleQuestions().contains(pid)) {
+					return true;
+				}
+			}
+		}
+		
+		if (!draftSurvey.getPublication().isAllContributions()) {
+			if (draftSurvey.getPublication().getFilter().getFilterValues().size() != publishedSurvey.getPublication().getFilter().getFilterValues().size()) {
+				return true;
+			}
+			
+			for (String id : draftSurvey.getPublication().getFilter().getFilterValues().keySet()) {
+				if (!publishedSurvey.getPublication().getFilter().getFilterValues().containsKey(id)) {
+					return true;
+				}
+
+				if (!draftSurvey.getPublication().getFilter().getFilterValues().get(id).equals(publishedSurvey.getPublication().getFilter().getFilterValues().get(id))) {
+					return true;
+				}
+			}
+		}
+		
+		return false;		
+	}
+
 	private boolean checkTranslations(List<Translations> first, List<Translations> second,
 			Map<String, Translation> currentKeys) {
 		Map<String, Translations> secondTranslationsByLanguageCode = new HashMap<>();
@@ -4364,8 +4416,9 @@ public class SurveyService extends BasicService {
 			}
 		} else {
 			sqlquery = session.createSQLQuery(
-					"SELECT e.type, s.SURVEY_UID, s.SURVEYNAME FROM ELEMENTS e JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e.ID JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE URL = :url");
+					"SELECT e.type, s.SURVEY_UID, s.SURVEYNAME FROM ELEMENTS e JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e.ID JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE s.SURVEY_UID = :uid AND URL = :url");
 			sqlquery.setString("url", contextpath + "/files/" + surveyuid + Constants.PATH_DELIMITER + file.getUid());
+			sqlquery.setString("uid", surveyuid);
 			data = sqlquery.setMaxResults(1).list();
 			if (!data.isEmpty()) {
 				Object[] values = (Object[]) data.get(0);
@@ -4386,14 +4439,11 @@ public class SurveyService extends BasicService {
 		data = sqlquery.setMaxResults(1).list();
 		if (!data.isEmpty()) {
 			Object[] values = (Object[]) data.get(0);
-			if (values[0].toString().equalsIgnoreCase("IMAGE"))
-			{
-				String[] result = new String[3];
-				result[0] = values[0].toString();
-				result[1] = values[1].toString();
-				result[2] = "background document";
-				return result;
-			}
+			String[] result = new String[3];
+			result[0] = values[0].toString();
+			result[1] = values[1].toString();
+			result[2] = "background document";
+			return result;
 		}
 
 		return null;

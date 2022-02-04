@@ -178,9 +178,9 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(container).append(s);
 	} else if (viewModel.type == 'FreeTextQuestion' || viewModel.type == 'RegExQuestion') {
 		if (viewModel.type == 'RegExQuestion') {
-			$(container).addClass("regexitem");
+			$(container).addClass("regexitem forprogress");
 		} else {
-			$(container).addClass("freetextitem");
+			$(container).addClass("freetextitem forprogress");
 		}
 
 		if (viewModel.isPassword()) {
@@ -191,43 +191,43 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			$(container).append(s);
 		}
 	} else if (viewModel.type == 'NumberQuestion') {
-		$(container).addClass("numberitem");
+		$(container).addClass("numberitem forprogress");
 		var s = $("#number-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
-		$(container).addClass("singlechoiceitem");
+		$(container).addClass("singlechoiceitem forprogress");
 		var s = $("#single-choice-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'MultipleChoiceQuestion') {
-		$(container).addClass("multiplechoiceitem");
+		$(container).addClass("multiplechoiceitem forprogress");
 		var s = $("#multiple-choice-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'RankingQuestion') {
-		$(container).addClass("rankingitem");
+		$(container).addClass("rankingitem forprogress");
 		var s = $("#ranking-question-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'DateQuestion') {
-		$(container).addClass("dateitem");
+		$(container).addClass("dateitem forprogress");
 		var s = $("#date-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'TimeQuestion') {
-		$(container).addClass("timeitem");
+		$(container).addClass("timeitem forprogress");
 		var s = $("#time-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'EmailQuestion') {
-		$(container).addClass("emailitem");
+		$(container).addClass("emailitem forprogress");
 		var s = $("#email-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Matrix') {
-		$(container).addClass("matrixitem");
+		$(container).addClass("matrixitem forprogress");
 		var s = $("#matrix-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Table') {
-		$(container).addClass("mytableitem");
+		$(container).addClass("mytableitem forprogress");
 		var s = $("#table-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Upload') {
-		$(container).addClass("uploaditem");
+		$(container).addClass("uploaditem forprogress");
 		var s = $("#upload-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Download') {
@@ -239,11 +239,11 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		var s = $("#gallery-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Confirmation') {
-		$(container).addClass("confirmationitem");
+		$(container).addClass("confirmationitem forprogress");
 		var s = $("#confirmation-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'RatingQuestion') {
-		$(container).addClass("ratingitem");
+		$(container).addClass("ratingitem forprogress");
 		var s = $("#rating-template").clone().attr("id", "");
 		$(container.append(s));
 	}
@@ -1122,6 +1122,16 @@ let currentDelphiUpdateType;
 let currentDelphiUpdateContainer;
 
 function delphiUpdate(div) {
+
+	// check sessiontimeout
+	if(checkSessionTimeout()) {
+		showSessionError();
+		window.setTimeout(() => {
+			window.location.replace(window.location);
+		}, 2000)
+		return;
+	}
+
 	const message = $(div).find(".delphiupdatemessage").first();
 	$(message).attr("class", "delphiupdatemessage");
 
@@ -1155,6 +1165,40 @@ function confirmExplanationDeletion() {
 }
 
 const HAS_SHOWN_SURVEY_LINK = "hasShownSurveyLink";
+
+function checkSessionTimeout(){
+	var sessiontimeout = false;
+
+	try{
+
+		saveCookies();
+
+		$.ajax({type: "POST",
+			url: contextpath + "/runner/checksession",
+			async: false,
+			beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+			error: function(result)
+			{
+				var s = result.statusText.toLowerCase();
+				if (strStartsWith(s,"forbidden") || result.status == 403)
+				{
+					sessiontimeout = true;
+				}
+			},
+			success: function(result)
+			{
+				//everything is ok
+			}
+		});
+
+	} catch (err)
+	{
+		var stacktrace = err.stack || err.stacktrace || err;
+		$("#btnSubmit").parent().append("<div id='exceptionlogdiv' class='validation-error'>" + varExceptionDuringSave + "&nbsp;" + stacktrace + "</div>");
+	}
+
+	return sessiontimeout;
+}
 
 function delphiUpdateContinued(div, successCallback) {
 
@@ -1461,6 +1505,15 @@ function deleteDelphiComment(button, viewModel, isReply, errorCallback, successC
 
 function checkGoToDelphiStart(link)
 {
+	// check sessiontimeout
+	if(checkSessionTimeout()) {
+		showSessionError();
+		window.setTimeout(() => {
+			window.location.replace(window.location);
+		}, 2000)
+		return;
+	}
+
 	var button = $("a[data-type='delphisavebutton']:visible").not(".disabled").first();
 
 	var ansSetId = $('#IdAnswerSet').val();

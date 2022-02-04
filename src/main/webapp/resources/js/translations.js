@@ -522,7 +522,8 @@ function initEditMatrix()
 {
 	$("#edit-translations-table").find("thead").empty();
 	$("#edit-translations-table").find("tbody").empty();
-	
+
+
 	var trHead = document.createElement("tr");	
 	
 	var arrows = false;
@@ -593,26 +594,26 @@ function initEditMatrix()
 		var key = $(cell).attr("data-key");
 		
 		var tr = document.createElement("tr");
-		
-		//if (!arrows)
-		//{
-			//infos
-			var td = document.createElement("td");
-			$(td).append(getInfo(key));
-			$(tr).append(td);
-		//}
+		var td = document.createElement("td");
+		$(td).append(getInfo(key));
+		$(tr).append(td);
 
 		$("#translationsTable").find("tr").each(function(index){
 			
 			var translationsId = $(this).attr("id");
 			var active = $(this).attr("data-active");
-			
+			var locked = ($(this).find('td[data-key="' + key + '"]').attr("data-locked"));
+
 			if ($("#check" + translationsId).is(":checked"))
 			{
 				
 				if (translationsId != "0" )
 				{
 					td = document.createElement("td");
+
+					if(locked != null && locked == 'true'){
+						$(td).addClass("locked");
+					}
 					
 					if (active != null && active == 'true')
 					{
@@ -631,12 +632,13 @@ function initEditMatrix()
 					{
 						$(td).addClass("translink");
 					}
-					
+
+					// create editor
 					var input = document.createElement("textarea");
 					$(input).attr("style","display:none;");
 					var div = document.createElement("div");
 					$(div).addClass("questiontitle").css("max-width","600px");
-					
+
 					var translationId = "";
 					
 					var labels = $(this).find('td[data-key="' + key + '"]');
@@ -668,8 +670,13 @@ function initEditMatrix()
 					}
 					
 					$(input).attr("name", "trans#" + translationsId + "#" + key + "#" + translationId);
-					
+
+					//open editor onclick wherever cursor is pointer and if not locked
+
 					$(td).css("cursor","pointer").click(function(){
+						if($(this).hasClass("locked")){
+							return;
+						}
 						if ($(this).hasClass("translink"))
 						{
 							editLinkCell($(this));
@@ -677,16 +684,23 @@ function initEditMatrix()
 							editCell($(this));
 						}
 					});
-					
-					$(td).hover(
-					  function () {
-						  $(this).attr("data-bg", $(this).css("background-color"));
-						  $(this).css("background-color","#BABAFF");
-					  }, 
-					  function () {
-						  $(this).css("background-color", $(this).attr("data-bg"));
-					  }
-					);
+
+					// only add hover effects when translation is not locked
+					if(! $(td).hasClass("locked")){
+						//hover effects
+						$(td).hover(
+							function () {
+								$(this).attr("data-bg", $(this).css("background-color"));
+								$(this).css("background-color","#BABAFF");
+							},
+							function () {
+								$(this).css("background-color", $(this).attr("data-bg"));
+							}
+						);
+					} else {
+						//add locked style and tooltip
+						$(div).addClass("translation-locked").attr("title", labellocked).attr("data-toggle", "tooltip");
+					}
 					
 					$(td).append(input);
 					$(td).append(div);
@@ -703,6 +717,8 @@ function initEditMatrix()
 	$("#edit-translations-table").find("thead").append(trHead);
 	
 	$("#edit-translations-dialog").modal("show");
+	
+	$('[data-toggle="tooltip"]').tooltip()
 }
 
 

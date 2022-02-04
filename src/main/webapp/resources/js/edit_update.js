@@ -237,7 +237,8 @@ function update(input)
 				{
 					$("tr[data-label='Values']").find("input[data-type='min']").val("0");
 					element.min(0);
-					element.minString("0");
+					element.minString("0");									
+					element.initVal = null;
 				}
 				if (element.max() == null)
 				{
@@ -245,6 +246,7 @@ function update(input)
 					element.max(10);
 					element.maxString("10");
 				}
+				
 				if (element.minLabel() == null)
 				{
 					element.minLabel("Very unlikely");
@@ -287,9 +289,12 @@ function update(input)
 			var text = $(input).val();
 			var oldtext = element.initialSliderPosition();
 			element.initialSliderPosition(text);
+			element.initVal = null;
 			_undoProcessor.addUndoStep(["InitialSliderPosition", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
-			initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
+			const numberfield = $(".selectedquestion").find(".sliderbox").first();
+			numberfield.attr("data-slider-value",  element.initialValue());
+			initSlider(numberfield, true, element);
 			break;			
 		case "Order":
 			var text = $(input).val();

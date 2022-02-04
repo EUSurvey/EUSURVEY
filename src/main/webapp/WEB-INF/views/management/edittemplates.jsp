@@ -163,7 +163,7 @@
 				</div>
 
 				<button data-toggle="tooltip" title="<spring:message code="label.Add" />" class="btn btn-default btn-sm" data-bind="html: ContentItems()[0].Label, attr: {id: ContentItems()[0].Id, 'onclick' : ContentItems()[0].Value}"></button>
-				<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" title="<spring:message code="label.Remove"/>" data-bind="attr: {'onclick': ContentItems()[1].Value}">
+				<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" title="<spring:message code="label.Remove"/>" data-bind="attr: {'onclick': PreviewItems().length > MinItems() && ContentItems()[1].Value}">
 					<button data-bind="disable: !(PreviewItems().length > MinItems()),html: ContentItems()[1].Label, attr: {id: ContentItems()[1].Id, 'class': 'btn btn-default btn-sm' + (PreviewItems().length > MinItems() ? '' : '')}"></button>
 				</span>
 			</td>
@@ -225,7 +225,12 @@
 		</td>
 	</tr>
 	<tr class="firstpropertyrow">
-		<td class="propertylabel" data-label="Attribute"><spring:message code="label.Attribute" /></td>
+		<td class="propertylabel" data-label="Attribute">
+			<spring:message code="label.Attribute" />
+			<a data-toggle="tooltip" data-placement="right" title="<spring:message code="label.AttributeTooltip" />">
+				<span class="glyphicon glyphicon-question-sign"></span>
+			</a>
+		</td>
 		<td class="propertycontent">
 			<!--  ko if: Value() == "true" -->
 			<input data-bind="disable: Disabled()" type='checkbox' checked='checked' onclick='update(this)' />

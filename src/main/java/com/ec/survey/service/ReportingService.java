@@ -529,8 +529,9 @@ public class ReportingService extends BasicService {
 	    {
 	    	visibleQuestions.put("SCORE", null);
 	    }
-	        
-	    String sql = "SELECT QCONTRIBUTIONID, QANSWERSETID";
+	    
+	    // QANSWERSETID is used in all tables (after 1000 columns a new table is created)
+	    String sql = "SELECT QCONTRIBUTIONID, " + getOLAPTableName(survey) + ".QANSWERSETID";
 	    for (String question : visibleQuestions.keySet())
 	    {
 	    	if (question.equals("CONTRIBUTIONID"))
@@ -1765,6 +1766,40 @@ public class ReportingService extends BasicService {
 			length++;
 		}
 		return length;
+	}
+	
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public List<String> getAnswersByQuestionUIDInternal(Survey survey, String quid, String where, Map<String, Object> values) {
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		String sql = "SELECT Q" + quid.replace("-", "") + " FROM " + getOLAPTableName(survey);
+		
+		if (where != null) {
+			sql += where;
+		}
+
+		SQLQuery query = sessionReporting.createSQLQuery(sql);
+
+		if (where != null && values != null && !values.isEmpty()) {
+			for (String attrib : values.keySet()) {
+				Object value = values.get(attrib);
+				if (value instanceof String) {
+					query.setString(attrib, (String) values.get(attrib));
+				} else if (value instanceof Integer) {
+					query.setInteger(attrib, (Integer) values.get(attrib));
+				} else if (value instanceof Date) {
+					query.setTimestamp(attrib, (Date) values.get(attrib));
+				}
+			}
+		}
+		
+		List<String> result = new ArrayList<>();
+
+		for (Object answer : query.list()) {	
+			if (answer != null) {
+				result.add(answer.toString());
+			}
+		}
+		return result;
 	}
 
 	private String shrink(String input) {

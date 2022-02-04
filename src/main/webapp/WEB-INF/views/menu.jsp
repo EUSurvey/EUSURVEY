@@ -467,7 +467,7 @@
 						<div style="float: left; height: 50px; margin-right: 10px;">
 							<input class="required check" type="checkbox" name="radio-new-survey-audience" value="1" />
 						</div>
-						<spring:message code="message.highaudience" arguments="${monitoringEmail}" />
+						<spring:message code="message.highaudiencenew" />
 					</td>
 				</tr>
 					

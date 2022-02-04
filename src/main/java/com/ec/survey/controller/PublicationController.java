@@ -77,12 +77,22 @@ public class PublicationController extends BasicController {
 
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 
-				for (String questionId : publicationFilter.getVisibleQuestions()) {
-					userFilter.getVisibleQuestions().add(questionId);
+				if (survey.getPublication().isAllQuestions()) {
+					for (Element question : survey.getQuestionsAndSections()) {
+						userFilter.getVisibleQuestions().add(question.getId().toString());
+					}
+				} else {
+					for (String questionId : publicationFilter.getVisibleQuestions()) {
+						userFilter.getVisibleQuestions().add(questionId);
+					}
 				}
 
-				for (String key : publicationFilter.getFilterValues().keySet()) {
-					userFilter.getFilterValues().put(key, publicationFilter.getFilterValues().get(key));
+				if (!survey.getPublication().isAllContributions()) {
+					for (String key : publicationFilter.getFilterValues().keySet()) {
+						userFilter.getFilterValues().put(key, publicationFilter.getFilterValues().get(key));
+						String uid = key.substring(key.indexOf('|') + 1);
+						userFilter.getReadOnlyFilterQuestions().add(uid);
+					}
 				}
 
 				userFilter.setSurveyId(survey.getId());
@@ -94,13 +104,21 @@ public class PublicationController extends BasicController {
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 
 						if (value.replace(";", "").trim().length() > 0) {
-							if (userFilter.getFilterValues().containsKey(questionId)) {
-								userFilter.getFilterValues().put(questionId,
-										userFilter.getFilterValues().get(questionId) + ";" + value);
+							String uid = questionId.substring(questionId.indexOf('|') + 1);
+							
+							boolean found = false;
+							for (String key : userFilter.getFilterValues().keySet()) {
+								if (key.endsWith(uid)) {
+									found = true;
+									break;
+								}								
+							}
+							if (found) {
+								// don't override existing filter from publication
 							} else {
 								userFilter.getFilterValues().put(questionId, value);
 							}
-
+					
 							filtered = true;
 						}
 					}
@@ -350,6 +368,31 @@ public class PublicationController extends BasicController {
 									}
 								}
 							}
+						}  else if (question instanceof RankingQuestion) {
+
+							String[] answerSplit = answer.getValue().split(";");
+
+							Map<String, RankingItem> childs = ((RankingQuestion) question).getChildElementsByUniqueId();
+							for (int i = 0; i < answerSplit.length; i++){
+								answerSplit[i] = childs.get(answerSplit[i]).getTitle();
+							}
+
+							String answerReadable = String.join("; ", answerSplit);
+
+							if (result.containsKey(answer.getQuestionId().toString())) {
+								result.put(answer.getQuestionId().toString(),
+										result.get(answer.getQuestionId().toString()) + "<br />" + answerReadable);
+							} else {
+								result.put(answer.getQuestionId().toString(), answerReadable);
+							}
+
+							if (result.containsKey(answer.getQuestionUniqueId())) {
+								result.put(answer.getQuestionUniqueId(),
+										result.get(answer.getQuestionUniqueId()) + "<br />" + answerReadable);
+							} else {
+								result.put(answer.getQuestionUniqueId(), answerReadable);
+							}
+
 						} else if (question instanceof GalleryQuestion) {
 							GalleryQuestion gallery = (GalleryQuestion) question;
 							for (int i = 0; i < gallery.getFiles().size(); i++) {

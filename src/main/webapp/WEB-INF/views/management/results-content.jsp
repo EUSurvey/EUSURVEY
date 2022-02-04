@@ -325,7 +325,7 @@
 													  
 													  <div class="overlaymenu hideme maxH">
 													  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a><br />
-													  	<i><spring:message code="label.SelectFirstItem" /></i>
+													  	<i><spring:message code="label.FilterTopRankedItem" /></i>
 													  	 <c:forEach items="${question.childElements}" var="child" varStatus="status">
 													    	<div>
 														    	<c:choose>
