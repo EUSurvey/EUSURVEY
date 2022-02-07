@@ -1062,7 +1062,7 @@ function newRegExViewModel(element)
 
 function newFormulaViewModel(element)
 {
-	var viewModel = newBasicViewModel(element);
+	const viewModel = newBasicViewModel(element);
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.formula = ko.observable(element.formula);
 	viewModel.help = ko.observable(element.help);
@@ -1072,14 +1072,43 @@ function newFormulaViewModel(element)
 	viewModel.minString = ko.observable(element.minString);	
 	viewModel.max = ko.observable(element.max);
 	viewModel.maxString = ko.observable(element.maxString);	
-			
+				
 	viewModel.result = ko.observable("");
-	
-	viewModel.refreshResult = function() {
-		var x = parseInt($("input[data-shortname='x']").val());
-		var y = parseInt($("input[data-shortname='y']").val());
 		
-		viewModel.result(x+y);
+	viewModel.refreshResult = function() {
+		
+		try {
+		
+			const parser = math.parser();
+			const tree = math.parse(this.formula());
+			const arguments = tree.args;
+			
+			arguments.forEach (a => {
+				const input = $("input[data-shortname='" + a.name + "']");
+				if (input.length == 0) {
+					viewModel.result("");
+					return; //missing input
+				}
+				const value = $(input).val();
+				if (isNaN(value)) {
+					viewModel.result("");
+					return; //invalid input
+				} 
+				parser.set(a.name, parseFloat(value));
+			});
+			
+			let result = parser.evaluate(this.formula());
+			if (isNaN(result)) {
+				viewModel.result("");
+				return; //invalid input
+			} 
+			
+			viewModel.result(math.round(result, viewModel.decimalPlaces())); 
+		} catch (e) {
+			console.log(e);
+			viewModel.result("");
+			return; //invalid input
+		}
 	}
 	
 	return viewModel;

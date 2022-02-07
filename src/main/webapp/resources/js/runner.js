@@ -231,6 +231,16 @@ function propagateChange(element)
 	
 	$(element).closest(".forprogress").addClass("answered");
 	updateProgress();
+	
+	if ($(div).hasClass("numberitem")) {
+		updateFormulas();
+	}
+}
+
+function updateFormulas() {
+	for (let i = 0; i < modelsForFormula.length; i++) {
+		modelsForFormula[i].refreshResult();
+	}
 }
 
 function updateProgress() {

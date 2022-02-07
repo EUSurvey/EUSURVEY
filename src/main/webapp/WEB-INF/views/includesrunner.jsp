@@ -85,6 +85,7 @@
 <script type="text/javascript" src="${contextpath}/resources/js/tinymce/tinymce.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/chartjs-plugin-colorschemes.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/math.js?version=<%@include file="version.txt" %>"></script>
  
 <script type="text/javascript">
 	//if (top != self) top.location=location;

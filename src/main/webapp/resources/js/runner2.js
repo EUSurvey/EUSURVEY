@@ -196,6 +196,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(container).addClass("formulaitem");
 		var s = $("#formula-template").clone().attr("id", "");
 		$(container.append(s));
+		modelsForFormula[modelsForFormula.length] = viewModel;
 	} else if (viewModel.type == 'NumberQuestion') {
 		$(container).addClass("numberitem forprogress");
 		var s = $("#number-template").clone().attr("id", "");
@@ -503,6 +504,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 }
 
 var modelsForSlider = [];
+var modelsForFormula = [];
 
 function initSlider(input, foreditor, viewModel)
 {

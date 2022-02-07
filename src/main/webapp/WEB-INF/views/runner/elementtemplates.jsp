@@ -33,8 +33,8 @@
 	
 	<div id="formula-template">
 		<div class="text" data-bind="html: title"></div>
-		<input type="text" class="formula" disabled="disabled" data-bind="value: result" />
-		<button data-bind="click: refreshResult">refresh</button>
+		<input type="text" class="formula" disabled="disabled" autocomplete="off" data-bind="value: result" />
+		<input type="hidden" data-bind="value: result, attr: {'name': 'answer' + id()}" />
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'formula', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	

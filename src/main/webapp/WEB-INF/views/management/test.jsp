@@ -94,6 +94,7 @@
 			} else {
 				applyStandardWidths();
 				checkPages();
+				updateFormulas();
 				readCookies();
 				updateProgress();
 				$("#btnSubmit").removeClass("hidden");

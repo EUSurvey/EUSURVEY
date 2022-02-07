@@ -136,6 +136,7 @@
 				} else {
 					readCookies();
 					updateProgress();
+					updateFormulas();
 					$("#btnSubmit").removeClass("hidden");
 					$("#btnSaveDraft").removeClass("hidden");
 					$("#btnSaveDraftMobile").removeClass("hidden");
