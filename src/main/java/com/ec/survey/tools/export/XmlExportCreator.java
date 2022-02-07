@@ -420,6 +420,8 @@ public class XmlExportCreator extends ExportCreator {
 			filterWithMeta.getVisibleQuestions().add("case");
 		}
 
+		filterWithMeta.setExportedQuestions(filterWithMeta.getVisibleQuestions());
+		
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
 				true, true, true, true, false);
 
@@ -435,7 +437,7 @@ public class XmlExportCreator extends ExportCreator {
 
 			if (filterWithMeta != null) {
 				rowPosMap = new HashMap<>();
-				int rowPosCount = answersets.isEmpty() ? 0 : answersets.get(0).size() - 2;
+				int rowPosCount = answersets.isEmpty() ? 0 : answersets.get(0).size() - 1;
 				for (int i = POSSIBLE_EXPORTS_ORDERED.length - 1; i >= 0; i--) {
 					String exp = POSSIBLE_EXPORTS_ORDERED[i];
 					if (filterWithMeta.exported(exp) || exp.equals("languages")) {
