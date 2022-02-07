@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-
+<%@ page contentType="text/html; charset=UTF-8" %>
 <script type="text/html" id="firstrow-template">
 	<tr data-bind="attr: {'data-label' : $data.Label, class:  ContentType() == 'scoring' ? (Value() != '0' ? 'firstpropertyrow quiz' : 'firstpropertyrow quiz hideme') : 'firstpropertyrow'}, visible: IsVisible">
 		<td class="propertylabel" data-bind="html: LabelTitle, attr: {'data-label' : $data.Label}"></td>
@@ -256,6 +256,39 @@
 				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
 				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
 			</div>
+		</td>
+	</tr>
+</script>
+
+<script type="text/html" id="formulaoperators-template">
+	<tr class="propertyrow formulaoperators">
+		<td class="propertylabel" data-label="Attribute">
+			<spring:message code="label.Operators" />
+		</td>
+		<td class="propertycontent">
+			<button data-bind="click: function() {addOperator('+', FormulaInputId())}" class="btn btn-default btn-sm">＋</button>
+			<button data-bind="click: function() {addOperator('-', FormulaInputId())}" class="btn btn-default btn-sm">－</button>
+			<button data-bind="click: function() {addOperator('*', FormulaInputId())}" class="btn btn-default btn-sm">＊</button>
+			<button data-bind="click: function() {addOperator('/', FormulaInputId())}" class="btn btn-default btn-sm">／</button><br />
+			<button data-bind="click: function() {addOperator('(', FormulaInputId())}" class="btn btn-default btn-sm">（</button>
+			<button data-bind="click: function() {addOperator(')', FormulaInputId())}" class="btn btn-default btn-sm">）</button>
+			<button data-bind="click: function() {clearFormula(FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.clear" /></button>
+		</td>
+	</tr>
+	<tr class="collapsiblerow advanced">
+		<td colspan='2' style="text-align: left">
+			<a class='idpropertiestogglebutton' onclick='toggleSelectIDProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.SelectIdentifiers" /></a>
+		</td>
+	</tr>
+	<tr>
+		<td colspan='2' style="text-align: left;">
+			<table data-bind="foreach: NumberElements()" style="margin-left: 20px;">
+				<tr>
+					<td data-bind="html: shortname" style="font-weight: bold"></td>
+					<td data-bind="html: limitedTitle"></td>
+					<td><button data-bind="click: function() {addOperator(shortname(), $parent.FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.select" /></button></td>
+				</tr>
+			</table>
 		</td>
 	</tr>
 </script>

@@ -39,6 +39,18 @@ function toggleQuizProperties(button)
 	}
 }
 
+function toggleSelectIDProperties(button)
+{
+	if ($(button).parent().find(".glyphicon-minus-sign").length > 0)
+	{
+		$(button).parent().find(".glyphicon-minus-sign").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
+		$(button).closest("tr").next().hide();
+	} else {
+		$(button).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
+		$(button).closest("tr").next().show();
+	}
+}
+
 function showHideElementProperties(span)
 {
 	var tr = $(".properties").find("tr").first();
@@ -217,8 +229,22 @@ function getTextPropertiesRow(label, content, usetinymce, unit, maxLength)
 			row.ContentType("filetype");
 		}
 		
-		row.Content(rowcontent);		
+		row.Content(rowcontent);
 		_elementProperties.propertyRows.push(row);
+		
+		if (label == "Formula")
+		{
+			row = new PropertyRow();
+			row.Label(label);
+			row.Type("FormulaOperators");
+			row.FormulaInputId(id)			
+			for (let i = 0; i < modelsForNumber.length; i++) {
+				let model = modelsForNumber[i];
+				model.limitedTitle = getLimitedText(model.title());
+				row.NumberElements.push(model);
+			}
+			_elementProperties.propertyRows.push(row);
+		}
 	}
 }
 
@@ -2291,4 +2317,16 @@ function adaptDelphiChildControls(element, parent) {
 	} else {
 		mandatoryPropertyRow.Disabled(false);
 	}
+}
+
+function addOperator(character, id) {
+	const formulaElement = $("#" + id);
+	$(formulaElement).val($(formulaElement).val() + character);
+	update($(formulaElement));
+}
+
+function clearFormula(id) {
+	const formulaElement = $("#" + id);
+	$(formulaElement).val("");
+	update($(formulaElement));
 }

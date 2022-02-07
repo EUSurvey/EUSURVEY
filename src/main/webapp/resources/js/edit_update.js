@@ -1074,6 +1074,11 @@ function update(input)
 		case "Formula":
 			var text = $(input).val();	
 			var oldtext = element.formula();
+			
+			if (!checkFormula(input)) {
+				return;
+			}
+			
 			element.formula(text);
 			
 			_undoProcessor.addUndoStep(["Formula", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			

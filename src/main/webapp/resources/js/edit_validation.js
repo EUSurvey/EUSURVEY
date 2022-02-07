@@ -11,6 +11,18 @@ function removeValidationMarkup(row)
 	row.closest(".firstpropertyrow").find(".validationinfobutton").remove();
 }
 
+function checkFormula(formulaElement) {
+	removeValidationMarkup();
+	const value = $(formulaElement).val();
+	try {		
+		const parser = math.parser();
+		const tree = math.parse(this.formula());		
+	} catch (e) {
+		addValidationInfo(input, "invalidformula");
+		return false;
+	}
+}
+
 function checkMinMaxDate(input, hasInputError, showrulehint)
 {
 	removeValidationMarkup();
@@ -644,6 +656,8 @@ function addValidationInfo(input, type)
 		label = getPropertyLabel("invalidMatrixRows");
 	} else if (type == "invalidInterdependcyCriterias") {
 		label = getPropertyLabel("invalidInterdependencyCriteria");
+	} else if (type == "invalidformula") {
+		label = getPropertyLabel("invalidFormula");		
 	} else {
 		label = getPropertyLabel(type);
 	}

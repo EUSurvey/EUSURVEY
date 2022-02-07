@@ -201,6 +201,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(container).addClass("numberitem forprogress");
 		var s = $("#number-template").clone().attr("id", "");
 		$(container.append(s));
+		modelsForNumber[modelsForNumber.length] = viewModel;
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
 		$(container).addClass("singlechoiceitem forprogress");
 		var s = $("#single-choice-template").clone().attr("id", "");
@@ -505,6 +506,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 
 var modelsForSlider = [];
 var modelsForFormula = [];
+var modelsForNumber = [];
 
 function initSlider(input, foreditor, viewModel)
 {

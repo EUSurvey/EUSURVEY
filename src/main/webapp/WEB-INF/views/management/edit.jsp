@@ -219,9 +219,11 @@
 						<li title="<spring:message code="form.EmailQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem emailitem draggable"><span class="glyphicon glyphicon-envelope"></span> <spring:message code="label.Email" /></li>
 						<li title="<spring:message code="form.RegExQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem regexitem draggable"><span class="glyphicon glyphicon-asterisk"></span> <spring:message code="label.RegEx" /></li>
 						<li title="<spring:message code="form.Formula.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem formulaitem draggable">
-							<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-slash-minus" viewBox="0 0 16 16">
+							<!-- <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-plus-slash-minus" viewBox="0 0 16 16">
 							  <path d="m1.854 14.854 13-13a.5.5 0 0 0-.708-.708l-13 13a.5.5 0 0 0 .708.708ZM4 1a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 4 1Zm5 11a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 9 12Z"/>
-							</svg>&nbsp;
+							</svg>&nbsp; -->
+							<span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin-right: 5px;">fx</span>
+							
 							<spring:message code="label.Formula" /></li>
 						<li title="<spring:message code="form.Gallery.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem galleryitem draggable"><span class="glyphicon glyphicon-th"></span> <spring:message code="form.Gallery" /></li>
 						<li title="<spring:message code="form.Confirmation.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem confirmationitem draggable"><span class="glyphicon glyphicon-ok"></span> <spring:message code="form.Confirmation" /></li>
@@ -284,6 +286,10 @@
 				
 					<!--  ko if: Type() == 'TinyMCE' -->
 						<!-- ko template: { name: 'tinymce-template' } --><!-- /ko -->		
+					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'FormulaOperators' -->
+						<!-- ko template: { name: 'formulaoperators-template' } --><!-- /ko -->		
 					<!-- /ko -->
 					
 					<!--  ko if: Type() == 'PossibleAnswerShortnames' -->
@@ -721,6 +727,7 @@
 	 		strings["Advanced"] = "<spring:message code="label.Advanced" />";
 	 		strings["invalidMinMaxCharacters"] = "<spring:message code="error.invalidMinMaxCharacters" />";
 			strings["invalidInterdependencyCriteria"] = "<spring:message code="error.invalidInterdependencyCriteria" />";
+			strings["invalidFormula"]= "<spring:message code="error.invalidFormula" />";
 	 		strings["Style"] = "<spring:message code="label.Style" />";
 	 		strings["Order"] = "<spring:message code="label.Order" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Order" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["OrderSection"] = "<spring:message code="label.Order" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.OrderSection" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
@@ -902,7 +909,7 @@
 			strings["None"] ="<spring:message code="label.None" />";
 			strings["WordCloud"] ="<spring:message code="label.DelphiChartWordCloud" />";
 			strings["ShowExplanationBox"] = "<spring:message code="label.ShowExplanationBox" />";
-			strings["Formula"] = "<spring:message code="label.Formula" />";
+			strings["Formula"] = "<spring:message code="label.Formula" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.Formula" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 			
 	 		return strings[label];
 	 	}

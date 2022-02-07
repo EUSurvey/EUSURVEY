@@ -32,7 +32,7 @@
 	</div>
 	
 	<div id="formula-template">
-		<div class="text" data-bind="html: title"></div>
+		<div class='questiontitle' data-bind="html: title"></div>
 		<input type="text" class="formula" disabled="disabled" autocomplete="off" data-bind="value: result" />
 		<input type="hidden" data-bind="value: result, attr: {'name': 'answer' + id()}" />
 		<!-- ko if: foreditor -->
