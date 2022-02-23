@@ -573,26 +573,25 @@ legend {
 	z-index: 1000;	
 	position: fixed;		
 	top: 40px;
-	bottom: 60px;
-	left: 0px;
-	right: 0px;
-	padding-right: 300px;
-	height: 20px;
+	width: 960px;
+	height: 22px;	
+}
+
+#progressBarLabel {
+	white-space: nowrap;
+	padding: 5px;
+}
+
+.blacktext {
+	color: #000;
 }
 
 .progressBar .progress {
-	width: 960px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: #9e9b9b;
-	position: relative;
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
 }
 
-.progressBarLabel {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    color: #fff;
-    font-size: 11px;
-    line-height: 20px;
+.progress-bar-success {
+   background-color: #009200;
 }

@@ -235,14 +235,22 @@ function propagateChange(element)
 
 function updateProgress() {
 	if ($('#progressBar').length == 0) return;
-	var totalForProgress = $('.forprogress').length;
-	var answered = $('.forprogress.answered').length;
+	var totalForProgress = $('.forprogress:visible').length;
+	var answered = $('.forprogress.answered:visible').length;
 	var percent = Math.round(answered / totalForProgress * 100);
 	
 	$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);	
 	$('#progressBarPercentage').html(percent + '%');
 	$('#progressBarRatio').html(answered + '/' + totalForProgress);	
 	$('#progressBarContainer').show();
+	
+	var totalwidth = $('#progressBarContainer').width();
+	
+	if ((percent * totalwidth / 100) < 80) {
+		$('#progressBarLabel').addClass("blacktext");
+	} else {
+		$('#progressBarLabel').removeClass("blacktext");
+	}
 }
 
 var downloadsurveypdflang;
@@ -958,6 +966,7 @@ function checkDependenciesAsync(input, override) {
 			cachedIsTriggered = {};
 			try {
 				checkDependencies(input, override != null && override);
+				updateProgress();
 			} catch (e) {}
 			
 			$(input).closest(".elementwrapper").removeClass("waiting").find(".waitingdiv").remove();
