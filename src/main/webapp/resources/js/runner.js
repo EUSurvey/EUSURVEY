@@ -235,9 +235,9 @@ function propagateChange(element)
 
 function updateProgress() {
 	if ($('#progressBar').length == 0) return;
-	var totalForProgress = $('.forprogress:visible').length;
-	var answered = $('.forprogress.answered:visible').length;
-	var percent = Math.round(answered / totalForProgress * 100);
+	var totalForProgress = $('.forprogress').not(".untriggered").length;
+	var answered = $('.forprogress.answered').not(".untriggered").length;
+	var percent = answered == 0 ? 0 : Math.round(answered / totalForProgress * 100);
 	
 	$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);	
 	$('#progressBarPercentage').html(percent + '%');
