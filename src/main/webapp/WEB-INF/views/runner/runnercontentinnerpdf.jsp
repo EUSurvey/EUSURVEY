@@ -132,6 +132,17 @@
 								<c:when test="${element.getType() == 'NumberQuestion' && element.getDisplay() != 'Slider' && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MaxNumber", element.getMaxString())}</div>
 								</c:when>
+								
+								<c:when test="${element.getType() == 'FormulaQuestion' && element.getMin() != null && element.getMax() != null}">
+									<div class='limits'>${form.getMessage("limits.MinMaxNumber", element.getMinString(), element.getMaxString())}</div>
+								</c:when>
+								<c:when test="${element.getType() == 'FormulaQuestion' && element.getMin() != null}">
+									<div class='limits'>${form.getMessage("limits.MinNumber", element.getMinString())}</div>
+								</c:when>
+								<c:when test="${element.getType() == 'FormulaQuestion' && element.getMax() != null}">
+									<div class='limits'>${form.getMessage("limits.MaxNumber", element.getMaxString())}</div>
+								</c:when>
+								
 								<c:when test="${element.getType() == 'DateQuestion' && element.getMin() != null && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MinMaxDate", element.getMinString(), element.getMaxString())}</div>
 								</c:when>
@@ -522,6 +533,12 @@
 								<div style="float: left; width: 206px; word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;"><esapi:encodeForHTML>${form.getValue(element)}</esapi:encodeForHTML></div>						
 								<div style="float: left" class="unit-text">${element.unit}</div>	
 								<div style="clear: both"></div>		
+							</div>	
+						</c:if>
+						
+						<c:if test="${element.getType() == 'FormulaQuestion'}">								
+							<div>
+								<div style="width: 206px; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;"><esapi:encodeForHTML>${form.getValue(element)}</esapi:encodeForHTML></div>					
 							</div>	
 						</c:if>
 						

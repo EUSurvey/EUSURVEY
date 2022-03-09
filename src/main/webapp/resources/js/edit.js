@@ -145,9 +145,11 @@ $(function() {
     });	
 	
 	$("#divActionsFromMenu, #menutab2, .header").find("a").each(function(){
-		if (!$(this).attr("onclick") && $(this).attr("href") && $(this).attr("href") != "#")
+		if (!$(this).attr("onclick") && $(this).attr("href") && $(this).attr("href") != "#" && !$(this).hasClass("dropdown-toggle"))
 		$(this).attr("onclick", "return checkChanges(this)");
 	});
+
+	$("#menuShowCreateSurveyDialogButton").attr("onclick", "checkChangesNewSurvey()");
 	
 	checkContent();	
 });
@@ -325,11 +327,28 @@ function checkChanges(link)
 {
 	if (!_actions.SaveEnabled()) return true;
 	
-	$("#checkChangesDialogDontSaveButton").attr("href", $(link).attr("href"));
+	$("#checkChangesDialogDontSaveButton").show().attr("href", $(link).attr("href"));
+	$("#checkChangesDialogDontSaveButtonEditor").hide();
 	$("#editorredirect").val($(link).attr("href"));
 	
 	$('#checkChangesDialog').modal("show");
 	return false;
+}
+
+function checkChangesNewSurvey() {
+	if (checkChanges(undefined)) {
+		// no changes detected
+		showCreateSurveyDialog();
+		return;
+	}
+
+	$("#checkChangesDialogDontSaveButton").hide();
+	$("#checkChangesDialogDontSaveButtonEditor").show();
+}
+
+function createSurveyIgnoreChanges() {
+	window.ignoreUnsavedChanges = true;
+	showCreateSurveyDialog();
 }
 
 function getIcon(element)
@@ -368,6 +387,8 @@ function getIcon(element)
 		$(span).addClass("glyphicon glyphicon-envelope");
 	} else if (element.hasClass("regexitem")) {
 		$(span).addClass("glyphicon glyphicon-asterisk");
+	} else if (element.hasClass("formulaitem")) {
+		$(span).append('<span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin-right: 5px;">fx</span>');
 	} else if (element.hasClass("galleryitem")) {
 		$(span).addClass("glyphicon glyphicon-th");
 	} else if (element.hasClass("confirmationitem")) {

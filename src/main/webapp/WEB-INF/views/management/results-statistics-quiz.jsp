@@ -64,15 +64,17 @@
 					</c:choose>	
 				</tr>
 			</table>
+	
+			<c:set var="openSection" value="false"/>
 			
 			<c:forEach items="${form.getSurvey().getElements()}" var="element" varStatus="loop">
 				<c:choose>
 					<c:when test="${element.getType() == 'Section'}">
 					
 						<c:if test='${statistics == null || statistics.maxSectionScore[element.uniqueId] > 0}'>  	
-					
-							<c:if test="${loop.index > 0}">
-								</table>
+							<c:if test="${openSection eq true}">
+ 								</table>
+ 								<c:set var="openSection" value="false"/>
 							</c:if>
 						
 							<div class="sectiontitle section${element.getLevel()}" data-id="${element.uniqueId}" style="margin-top: 20px;">${form.getSectionTitle(element)}</div>
@@ -116,7 +118,8 @@
 									<th>&nbsp;</th>
 									<th><spring:message code="label.MaxScores" /></th>
 									<th><spring:message code="label.Ratio" /></th>
-								</tr>						
+								</tr>
+								<c:set var="openSection" value="true"/>
 						</c:if>
 					</c:when>					
 					<c:otherwise>
@@ -128,6 +131,7 @@
 									<th><spring:message code="label.MaxScores" /></th>
 									<th><spring:message code="label.Ratio" /></th>
 								</tr>
+								<c:set var="openSection" value="true"/>
 						</c:if>
 						
 						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">

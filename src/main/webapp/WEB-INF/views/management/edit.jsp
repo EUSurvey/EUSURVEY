@@ -218,6 +218,11 @@
 						<li title="<spring:message code="form.FileDownload.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem downloaditem draggable"><span class="glyphicon glyphicon-arrow-down"></span> <spring:message code="form.FileDownload" /></li>
 						<li title="<spring:message code="form.EmailQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem emailitem draggable"><span class="glyphicon glyphicon-envelope"></span> <spring:message code="label.Email" /></li>
 						<li title="<spring:message code="form.RegExQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem regexitem draggable"><span class="glyphicon glyphicon-asterisk"></span> <spring:message code="label.RegEx" /></li>
+						<li title="<spring:message code="form.Formula.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem formulaitem draggable">
+
+							<span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin-right: 5px;">fx</span>
+							
+							<spring:message code="label.Formula" /></li>
 						<li title="<spring:message code="form.Gallery.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem galleryitem draggable"><span class="glyphicon glyphicon-th"></span> <spring:message code="form.Gallery" /></li>
 						<li title="<spring:message code="form.Confirmation.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem confirmationitem draggable"><span class="glyphicon glyphicon-ok"></span> <spring:message code="form.Confirmation" /></li>
 						<li title="<spring:message code="form.Rating.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem ratingitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.Rating" /></li>
@@ -253,10 +258,7 @@
 			<spring:message code="label.Properties" />
 		</div>
 		<div class="toolboxheader" style="position: absolute; top: 185px; margin-left: -2px;">
-			<a>
-				<span id="elementpropertiescollapsebutton" class="glyphicon glyphicon-chevron-down" onclick="showHideElementProperties(this)"></span>
-				<spring:message code="label.ElementProperties" />
-			</a>
+			<spring:message code="label.ElementProperties" />
 		</div>
 		<div class="panecontent" style="width: 100%; min-width: 300px; top: 222px;">
 			<div id="lockedElementInfo" style="display: none; padding: 20px;">
@@ -279,6 +281,10 @@
 				
 					<!--  ko if: Type() == 'TinyMCE' -->
 						<!-- ko template: { name: 'tinymce-template' } --><!-- /ko -->		
+					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'FormulaOperators' -->
+						<!-- ko template: { name: 'editformula-template' } --><!-- /ko -->		
 					<!-- /ko -->
 					
 					<!--  ko if: Type() == 'PossibleAnswerShortnames' -->
@@ -642,6 +648,7 @@
 			if (element.hasClass("downloaditem")) return "<spring:message code='form.FileDownload' />";
 			if (element.hasClass("emailitem")) return "<spring:message code='label.Email' />";
 			if (element.hasClass("regexitem")) return "<spring:message code='label.RegEx' />";
+			if (element.hasClass("formulaitem")) return "<spring:message code='label.Formula' />";
 			if (element.hasClass("galleryitem")) return "<spring:message code='form.Gallery' />";
 			if (element.hasClass("confirmationitem")) return "<spring:message code='form.Confirmation' />";
 			if (element.hasClass("ratingitem")) return "<spring:message code='form.Rating' />";
@@ -672,6 +679,7 @@
 			if (element.hasClass("downloaditem")) return "idTypedownloaditem";
 			if (element.hasClass("emailitem")) return "idTypeemailitem";
 			if (element.hasClass("regexitem")) return "idTyperegexitem";
+			if (element.hasClass("formulaitem")) return "idTypeformulaitem";
 			if (element.hasClass("galleryitem")) return "idTypeSectionitem";
 			if (element.hasClass("confirmationitem")) return "idTypegalleryitem";
 			if (element.hasClass("ratingitem")) return "idTyperatingitem";
@@ -701,6 +709,8 @@
 	 		strings["Identifier"] = "<spring:message code="label.Identifier" />";
 	 		var readonly = '<spring:message code="info.Readonly" />'.replace('"',"`");
 	 		strings["ReadOnly"] = "<spring:message code="label.Readonly" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + readonly + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
+	 		var readonlyFormula = '<spring:message code="info.ReadonlyFormula" />';
+	 		strings["ReadOnlyFormula"] = "<spring:message code="label.Readonly" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + readonlyFormula + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["AcceptedNumberOfCharacters"] = "<spring:message code="label.AcceptedNumberOfCharacters" />";
 	 		strings["between"] = "<spring:message code="label.between" />";
 	 		strings["and"] = "<spring:message code="label.and" />";
@@ -714,7 +724,10 @@
 	 		strings["Advanced"] = "<spring:message code="label.Advanced" />";
 	 		strings["invalidMinMaxCharacters"] = "<spring:message code="error.invalidMinMaxCharacters" />";
 			strings["invalidInterdependencyCriteria"] = "<spring:message code="error.invalidInterdependencyCriteria" />";
-	 		strings["Style"] = "<spring:message code="label.Style" />";
+			strings["invalidFormula"]= "<spring:message code="error.invalidFormula" />";
+			strings["invalidFormulaBrackets"]= "<spring:message code="error.invalidFormulaBrackets" />";
+			strings["invalidformulaUnknownID"]= "<spring:message code="error.invalidformulaUnknownID" />";
+			strings["Style"] = "<spring:message code="label.Style" />";
 	 		strings["Order"] = "<spring:message code="label.Order" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Order" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["OrderSection"] = "<spring:message code="label.Order" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.OrderSection" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["Columns"] = "<spring:message code="label.Columns" />";
@@ -895,6 +908,13 @@
 			strings["None"] ="<spring:message code="label.None" />";
 			strings["WordCloud"] ="<spring:message code="label.DelphiChartWordCloud" />";
 			strings["ShowExplanationBox"] = "<spring:message code="label.ShowExplanationBox" />";
+			strings["Formula"] = "<spring:message code="label.Formula" />";
+			
+			if (label == "ReadOnly") {
+				if ($(_elementProperties.selectedelement).hasClass("formulaitem")) {
+					return strings["ReadOnlyFormula"];
+				}
+			}
 			
 	 		return strings[label];
 	 	}

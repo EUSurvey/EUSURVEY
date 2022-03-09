@@ -233,9 +233,9 @@ public class QuizHelper {
 							result.getQuestionScores().put(question.getUniqueId(), 0);
 						} else if (defaultItem != null)
 						{
-							score += defaultItem.getPoints();
-							currentSectionScore += defaultItem.getPoints();
-							result.getQuestionScores().put(question.getUniqueId(), defaultItem.getPoints());
+							score += question.getQuizPoints();
+							currentSectionScore += question.getQuizPoints();
+							result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
 							result.getQuestionScoringItems().put(element.getUniqueId(), defaultItem);
 						}
 					}
@@ -469,7 +469,7 @@ public class QuizHelper {
 		if (scoringItem.getType() == 8) return value == null || value.length() == 0;		
 		
 		if (value == null || value.trim().length() == 0) return false;
-		
+
 		String ruleValue = scoringItem.getValue().trim();
 		return ruleValue.equalsIgnoreCase(value.trim());
 	}

@@ -193,6 +193,17 @@ function getNewElement(item)
 		element.regex = "";
 		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
+	} else if (item.hasClass("formulaitem"))
+	{
+		element = getBasicElement("FormulaQuestion", true, "Calculated field", item.attr("id"), true);
+		element.css = "formula";
+		element.formula = "";
+		element.min = null;
+		element.minString = null;
+		element.max = null;
+		element.maxString = null;
+		element.readonly = true;
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("galleryitem"))
 	{
 		element = getBasicElement("GalleryQuestion", true, "Gallery", item.attr("id"), true);
@@ -302,11 +313,7 @@ function addNewElement(item, element)
 	var model = getElementViewModel(element);
 	var model = addElementToContainer(model, item, true, false);	
 	_elements[model.id()] = model;
-	
-	if (item.hasClass("confirmationitem")) {
-		item.find(".questiontitle").prepend("<input disabled='disabled' type='checkbox' />")
-	}
-	
+
 //	if (!element.optional)
 //	{
 //		item.find(".questiontitle").prepend("<span class='mandatory'>*</span>")
@@ -418,8 +425,13 @@ function getMatrixQuestions(element)
 
 function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 {
+	var titleprefix = "";
+	if(type == "Confirmation"){
+		titleprefix = "<input disabled='disabled' type='checkbox'/> ";
+	}
+
 	var element = {
-			"title" : title,
+			"title" : titleprefix + title,
 			"type" : type,
 			"shortname" : getNewShortname(),
 			"uniqueId" : getNewId(),
@@ -483,7 +495,7 @@ function getNewShortname()
 	//the 200000 are a security limit to prevent endless loops
 	for (var i = lastIdTried + 1; i < 200000; i++)
 	{
-		var s = "[ID" + i + "]";
+		var s = "ID" + i;
 		var found = false;
 		
 		if (usedIDs.indexOf(s) > -1)

@@ -76,7 +76,7 @@
 <script type="text/javascript" src="${contextpath}/resources/js/scroll-sneak.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/system.js?version=<%@include file="version.txt" %>"></script>
 <c:if test="${enablecookieconsentkit == 'true'}">
-	<script defer src="https://europa.eu/webtools/load.js" type="text/javascript"></script>	
+	<script defer src="https://europa.eu/webtools/load.js" type="text/javascript"></script>
 	<script type="application/json">{
   "utility": "cck"
 }</script>
@@ -86,6 +86,7 @@
 <script type="text/javascript" src="${contextpath}/resources/js/tinymce/tinymce.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/chartjs-plugin-colorschemes.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/math.js?version=<%@include file="version.txt" %>"></script>
  
 <script type="text/javascript">
 	//if (top != self) top.location=location;

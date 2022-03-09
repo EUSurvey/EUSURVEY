@@ -209,28 +209,49 @@ function propagateChange(element)
 		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
 		$(div).find(".explanation-file-upload-section").hide();
-		$(element).closest(".forprogress").removeClass("answered");
-		updateProgress();
-		return;
+		$(element).closest(".forprogress").removeClass("answered");		
+	} else {
+		const surveyElement = $(element).closest(".survey-element");
+		if ($(surveyElement).find(".slider-div").length) {
+			const questionUid = $(surveyElement).attr("data-uid");
+			const viewModel = modelsForSlider[questionUid];
+			viewModel.isAnswered(true);
+		}
+		
+		if ($(surveyElement).find("textarea.unique").length > 0) {
+			$(surveyElement).find(".validation-error-server").remove();
+		}	
+		
+		$(div).find(".explanation-section").show();
+		$(div).find(".explanation-file-upload-section").show();
+		$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
+		
+		$(element).closest(".forprogress").addClass("answered");
 	}
-
-	const surveyElement = $(element).closest(".survey-element");
-	if ($(surveyElement).find(".slider-div").length) {
-		const questionUid = $(surveyElement).attr("data-uid");
-		const viewModel = modelsForSlider[questionUid];
-		viewModel.isAnswered(true);
-	}
 	
-	if ($(surveyElement).find("textarea.unique").length > 0) {
-		$(surveyElement).find(".validation-error-server").remove();
-	}	
-	
-	$(div).find(".explanation-section").show();
-	$(div).find(".explanation-file-upload-section").show();
-	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
-	
-	$(element).closest(".forprogress").addClass("answered");
 	updateProgress();
+	
+	if ($(div).hasClass("numberitem") || $(div).hasClass("formulaitem") || $(div).hasClass("regexitem")) {
+		updateFormulas($(div).attr("id"), $(element).attr("data-shortname"));
+	}
+}
+
+function updateAllFormulas() {
+	for (let i = 0; i < modelsForFormula.length; i++) {
+		if (modelsForFormula[i].readonly()) {
+			modelsForFormula[i].refreshResult();
+		}
+	}
+}
+
+function updateFormulas(id, alias) {
+	for (let i = 0; i < modelsForFormula.length; i++) {
+		if (id == null || modelsForFormula[i].id().toString() != id) { //check not to update itself
+			if (modelsForFormula[i].dependsOn(alias)) { //check that the change influences the formula
+				modelsForFormula[i].refreshResult();
+			}
+		}
+	}
 }
 
 function updateProgress() {
@@ -376,7 +397,7 @@ function createUploader(instance, maxSize)
 $(function() {
 	
 	$('#runnerForm').on('submit', function() {
-		$('input, select').attr('disabled', false);
+		$('input, select, textarea').attr('disabled', false);
 	});
 
 	if ($("#nolocalstorage").length > 0) {

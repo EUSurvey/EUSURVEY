@@ -113,7 +113,7 @@
 						<c:if test="${!oss}">
 							<c:if test="${(form.survey.owner.type == 'ECAS' && form.survey.owner.getGlobalPrivilegeValue('ECAccess') == 0) || form.survey.owner.type == 'SYSTEM'  }">
 								<div id="ecDisclaimer" class="surveyrunnerinfo">
-									<div style="float: left">
+									<div style="float: left; width: calc(100% - 18px)">
 										<b>${form.getMessage("label.Disclaimer")}</b>
 										<p>
 											${form.getMessage("info.Disclaimer")}

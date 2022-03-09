@@ -22,7 +22,7 @@
 		<table id="individuals-table" class="table table-striped table-bordered" style="width: auto; margin-left: auto; margin-right: auto;">
 			<c:forEach items="${form.survey.getQuestions()}" var="question">
 				<c:choose>
-					<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation'}"></c:when>
+					<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation' || question.getType() == 'Ruler' }"></c:when>
 					<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
 					<c:when test="${question.getType() == 'Upload' && publication != null && !publication.getShowUploadedDocuments()}"></c:when>
 				

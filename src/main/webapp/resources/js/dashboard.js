@@ -227,6 +227,7 @@ function DashboardViewModel()
 				if (s == "archived")
 				{
 					$("#surveytypeselector").val(s);
+					$("#surveytypeselector").trigger("change")
 				}
 			}
 				

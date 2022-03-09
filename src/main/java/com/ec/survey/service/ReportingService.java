@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -30,7 +31,6 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
-import com.ec.survey.model.Form;
 import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.ResultFilter.ResultFilterSortKey;
 import com.ec.survey.model.Setting;
@@ -40,9 +40,9 @@ import com.ec.survey.model.survey.DateQuestion;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.EmailQuestion;
 import com.ec.survey.model.survey.FreeTextQuestion;
+import com.ec.survey.model.survey.FormulaQuestion;
 import com.ec.survey.model.survey.GalleryQuestion;
 import com.ec.survey.model.survey.Matrix;
-import com.ec.survey.model.survey.MatrixOrTable;
 import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
 import com.ec.survey.model.survey.Question;
@@ -325,7 +325,7 @@ public class ReportingService extends BasicService {
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i, "%" + answerUid + "%");
-								} else if (question instanceof NumberQuestion) {
+								} else if (question instanceof NumberQuestion || question instanceof FormulaQuestion) {
 									double val = Double.parseDouble(answer);
 									where += columnname + " = :answer" + i;
 									values.put(Constants.ANSWER + i, val);
@@ -415,7 +415,7 @@ public class ReportingService extends BasicService {
 				columns++;
 			} else if (question instanceof EmailQuestion || question instanceof RegExQuestion) {
 				columns++;
-			} else if (question instanceof NumberQuestion) {
+			} else if (question instanceof NumberQuestion || question instanceof FormulaQuestion) {
 				columns++;	
 			} else if (question instanceof DateQuestion) {
 				columns++;
@@ -712,6 +712,13 @@ public class ReportingService extends BasicService {
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
+							} else if (question instanceof FormulaQuestion) {
+								FormulaQuestion formulaQuestion = (FormulaQuestion)question;
+								if (formulaQuestion.getDecimalPlaces() != null) {
+									row.add(String.format(Locale.ROOT, "%." + formulaQuestion.getDecimalPlaces() + "f", item));
+								} else {
+									row.add(item.toString());
+								}
 							} else {
 								row.add(item.toString());
 							}
@@ -946,6 +953,8 @@ public class ReportingService extends BasicService {
 			} else if (question instanceof EmailQuestion || question instanceof RegExQuestion) {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof NumberQuestion) {
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DOUBLE");
+			} else if (question instanceof FormulaQuestion) {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DOUBLE");
 			} else if (question instanceof DateQuestion) {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DATE");
@@ -1343,7 +1352,7 @@ public class ReportingService extends BasicService {
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());
 				parameters.put("value" + parameters.size(), !answers.isEmpty() ? shrink(answers.get(0).getValue()) : null);
-			} else if (question instanceof NumberQuestion) {
+			} else if (question instanceof NumberQuestion || question instanceof FormulaQuestion) {
 				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
 				Double num = null;
 				if (!answers.isEmpty())
@@ -1652,7 +1661,6 @@ public class ReportingService extends BasicService {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
 	public int getCount(Survey survey) {
 		return this.getCountInternal(survey.getIsDraft(), survey.getUniqueId());
@@ -1811,7 +1819,6 @@ public class ReportingService extends BasicService {
 	public void addToDoInternal(ToDo todo, String uid, String code) { 
 		this.addToDoInternal(todo, uid, code, false);
 	}
-
 
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
 	public void addToDoInternal(ToDo todo, String uid, String code, boolean executeTodoSynchronously) {

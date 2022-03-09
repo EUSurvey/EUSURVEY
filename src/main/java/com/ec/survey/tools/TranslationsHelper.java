@@ -135,6 +135,10 @@ public class TranslationsHelper {
 		}
 
 		for (Element element : survey.getElements()) {
+			if (element instanceof Ruler) {
+				continue;
+			}
+
 			if (element.getUniqueId() != null) {
 				translations.getTranslations()
 						.add(new Translation(element.getUniqueId(),
@@ -334,6 +338,10 @@ public class TranslationsHelper {
 		}
 
 		for (Element element : survey.getElements()) {
+			if (element instanceof Ruler) {
+				continue;
+			}
+
 			if (element instanceof Section) {
 				result.add(new KeyValue(element.getUniqueId(), "L"));
 				result.add(new KeyValue(element.getUniqueId() + Section.TABTITLE, "T"));
@@ -469,6 +477,10 @@ public class TranslationsHelper {
 		}
 
 		for (Element element : survey.getElements()) {
+			if (element instanceof Ruler) {
+				continue;
+			}
+
 			result.add(new KeyValue(element.getUniqueId() + Constants.SHORTNAME,
 					resources.getMessage("label.Identifier", null, "Identifier", locale)));
 
@@ -963,6 +975,10 @@ public class TranslationsHelper {
 			rootElement.appendChild(lang);
 
 			for (Element element : survey.getElements()) {
+				if (element instanceof Ruler) {
+					continue;
+				}
+
 				rootElement.appendChild(getElementNode(element, doc, translationByKey));
 			}
 
@@ -1113,6 +1129,10 @@ public class TranslationsHelper {
 			}
 
 			for (Element element : survey.getElements()) {
+				if (element instanceof Ruler) {
+					continue;
+				}
+
 				String label = getLabel(element, "", translationsByKey);
 
 				if (notNullOrEmpty(label)) {
@@ -1463,6 +1483,10 @@ public class TranslationsHelper {
 			}
 
 			for (Element element : survey.getElements()) {
+				if (element instanceof Ruler) {
+					continue;
+				}
+
 				label = getLabel(element, "", translationsByKey);
 				if (notNullOrEmpty(label)) {
 					cell = sheet.getCellByPosition(0, rowIndex);
@@ -2314,6 +2338,10 @@ public class TranslationsHelper {
 		}
 
 		for (Element element : survey.getElements()) {
+			if (element instanceof Ruler) {
+				continue;
+			}
+
 			if (translationsByKey.containsKey(element.getId().toString())
 					&& notNullOrEmpty(translationsByKey.get(element.getId().toString()).getLabel()))
 				element.setTitle(translationsByKey.get(element.getId().toString()).getLabel());
@@ -2500,6 +2528,27 @@ public class TranslationsHelper {
 		}
 	}
 
+	public static boolean includeNewKeyTranslations(Survey survey, Translations translations, Iterable<String> keys) {
+		Map<String, String> translationsMap = translations.getTranslationsMap();
+		boolean changed = false;
+		for (String key : keys){
+			if (!translationsMap.containsKey(key)){
+				changed = true;
+				if (key.equals(Survey.LOGOTEXT) && notNullOrEmpty(survey.getLogoText()))
+					translations.getTranslations().add(new Translation(key, survey.getLogoText(), translations.getLanguage().getCode(), translations.getSurveyId(), translations));
+				if (key.equals(Survey.ESCAPEPAGE) && notNullOrEmpty(survey.getEscapePage()))
+					translations.getTranslations().add(new Translation(key, survey.getEscapePage(), translations.getLanguage().getCode(), translations.getSurveyId(), translations));
+				if (key.equals(Survey.ESCAPELINK) && notNullOrEmpty(survey.getEscapeLink()))
+					translations.getTranslations().add(new Translation(key, survey.getEscapeLink(), translations.getLanguage().getCode(), translations.getSurveyId(), translations));
+				if (key.equals(Survey.CONFIRMATIONPAGE) && notNullOrEmpty(survey.getConfirmationPage()))
+					translations.getTranslations().add(new Translation(key, survey.getConfirmationPage(), translations.getLanguage().getCode(), translations.getSurveyId(), translations));
+				if (key.equals(Survey.CONFIRMATIONLINK) && notNullOrEmpty(survey.getConfirmationLink()))
+					translations.getTranslations().add(new Translation(key, survey.getConfirmationLink(), translations.getLanguage().getCode(), translations.getSurveyId(), translations));
+			}
+		}
+		return changed;
+	}
+
 	public static boolean isComplete(Translations translations, Survey survey) // TODO: Add all the other mandatory
 																				// elements. Check also all elements are
 																				// correctly taken into account in the
@@ -2537,6 +2586,10 @@ public class TranslationsHelper {
 				return false;
 
 			for (Element element : survey.getElementsRecursive()) {
+				if (element instanceof Ruler) {
+					continue;
+				}
+
 				if (!(element instanceof EmptyElement) && element.getTitle() != null) {
 					if (element.getTitle().length() > 0 && (getLabel(element, "", translationMap).length() == 0)) {
 						return false;

@@ -210,42 +210,40 @@ public class SurveyExportHelper {
 			}
 		}
 	    for (String url :  survey.getBackgroundDocuments().values()) {
-			String uid = url.substring(url.lastIndexOf(Constants.PATH_DELIMITER)+1);
-			
-			File fi = fileService.get(uid);
-			if (fi != null)
-			{
-				os.putArchiveEntry(new ZipArchiveEntry(uid + ".file"));
-				    IOUtils.copy(new FileInputStream(getFileForObject(fi, session, fileService)), os);
-			    os.closeArchiveEntry();
-			    writtenFiles.add(uid + ".file");
-			}
-			
-			java.io.File f = fileService.getSurveyFile(survey.getUniqueId(), uid);
-	    	if (!f.exists())
-	    	{
-	    		f = new java.io.File(fileDir + uid);
-	    		if (f.exists())
-				{
-					fileService.logOldFileSystemUse(fileDir + uid);
+	    	try {
+				String uid = url.substring(url.lastIndexOf(Constants.PATH_DELIMITER) + 1);
+
+				File fi = fileService.get(uid);
+				if (fi != null) {
+					os.putArchiveEntry(new ZipArchiveEntry(uid + ".file"));
+					IOUtils.copy(new FileInputStream(getFileForObject(fi, session, fileService)), os);
+					os.closeArchiveEntry();
+					writtenFiles.add(uid + ".file");
 				}
-	    	}
-			if (f.exists())
-			{
-				os.putArchiveEntry(new ZipArchiveEntry(uid + ".fil"));
-				FileInputStream fis = null;
-		    	try {
-		    		fis = new FileInputStream(f);
-		    		IOUtils.copy(fis, os);
-		    	}
-		    	finally {
-		    		if (fis != null)
-		    		{
-		    			fis.close();
-		    		}
-		    	}
-			    os.closeArchiveEntry();
-			    writtenFiles.add(uid + ".fil");
+
+				java.io.File f = fileService.getSurveyFile(survey.getUniqueId(), uid);
+				if (!f.exists()) {
+					f = new java.io.File(fileDir + uid);
+					if (f.exists()) {
+						fileService.logOldFileSystemUse(fileDir + uid);
+					}
+				}
+				if (f.exists()) {
+					os.putArchiveEntry(new ZipArchiveEntry(uid + ".fil"));
+					FileInputStream fis = null;
+					try {
+						fis = new FileInputStream(f);
+						IOUtils.copy(fis, os);
+					} finally {
+						if (fis != null) {
+							fis.close();
+						}
+					}
+					os.closeArchiveEntry();
+					writtenFiles.add(uid + ".fil");
+				}
+			} catch (Exception e){
+	    		//continue
 			}
 		}		   
 	}

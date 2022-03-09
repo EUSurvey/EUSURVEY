@@ -70,6 +70,7 @@
 	      <div class="modal-footer">
 	      	<a onclick="_actions.UnsavedChangesConfirmed(true); $('#checkChangesDialog').modal('hide'); saveForm(false);" id="checkChangesDialogSaveButton" class="btn btn-default btn-primary"><spring:message code="label.Save" /></a>
 	        <a onclick="_actions.UnsavedChangesConfirmed(true); return true;" id="checkChangesDialogDontSaveButton" href="${contextpath}/${form.survey.shortname}/management/test" class="btn btn-default"><spring:message code="label.DontSave" /></a>
+			<a onclick="createSurveyIgnoreChanges()" id="checkChangesDialogDontSaveButtonEditor" class="btn btn-default" data-dismiss="modal"><spring:message code="label.DontSave" /></a>
 	        <button onclick="$('#editorredirect').val('');" type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>
 	      </div>
 	    </div>

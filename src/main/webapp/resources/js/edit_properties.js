@@ -20,6 +20,8 @@ var PropertyRow = function()
 	this.ContentType = ko.observable("html");
 	this.TinyMCEId = ko.observable("");
 	this.TinyMCEContent = ko.observable("");
+	this.FormulaInputId = ko.observable("");
+	this.NumberElements = ko.observableArray(); 
 	this.Value = ko.observable("");
 	this.NumValue = ko.observable(0);
 	this.Edit = ko.observable(false);
@@ -332,7 +334,8 @@ var ElementProperties = function() {
 				}
 				
 				getTextPropertiesRow("TabTitle", $(e).find("input[name^='tabtitle']").val(), false);
-				getVisibilityRow(false);
+				if (!isDelphi)
+					getVisibilityRow(false);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 			} else if ($(e).hasClass("freetextitem"))
@@ -857,6 +860,44 @@ var ElementProperties = function() {
 				{
 					adaptDelphiControls(element);
 				}
+			} else if ($(e).hasClass("formulaitem"))
+			{
+				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				getFormulaPropertiesRow($(e).find("input[name^='formula']").first().val());
+				getChoosePropertiesRow("DecimalPlaces", ",1,2,3,4,5,6,7,8,9,10", false, false, $(e).find("input[name^='decimalplaces']").val());
+				getMinMaxPropertiesRow("Values", null, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false);
+				getAdvancedPropertiesRow();
+				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
+				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
+			} else if ($(e).hasClass("formulaitem"))
+			{
+				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
+				if (isDelphi)
+				{
+					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
+				}
+				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				getTextPropertiesRow("Formula", $(e).find("input[name^='formula']").first().val(), false);
+				getChoosePropertiesRow("DecimalPlaces", ",1,2,3,4,5,6,7,8,9,10", false, false, $(e).find("input[name^='decimalplaces']").val());
+				getMinMaxPropertiesRow("Values", null, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false);
+				getAdvancedPropertiesRow();
+				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
+				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("galleryitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -1055,14 +1096,6 @@ var ElementProperties = function() {
 		if (!advancedOpen)
 		{
 			toggleAdvancedProperties($("#properties").find(".advancedtogglebutton").first());
-		}
-		
-		var span = $("#elementpropertiescollapsebutton");
-		if ($(span).hasClass("glyphicon-chevron-right"))
-		{
-			var tr = $(".properties").find("tr").first();
-			$(tr).hide(400);
-			$(tr).nextUntil(".quiz").addClass("hideme2");
 		}
 		
 		if (isQuiz && !lastQuizPropertiesVisible && $("#quizpropertiescollapsebutton").is(":visible"))

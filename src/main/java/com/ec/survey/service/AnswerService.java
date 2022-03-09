@@ -17,7 +17,6 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
 import com.ec.survey.tools.MathUtils;
 import com.ec.survey.tools.NotAgreedToPsException;

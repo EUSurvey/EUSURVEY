@@ -1,10 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-
+<%@ page contentType="text/html; charset=UTF-8" %>
 <script type="text/html" id="firstrow-template">
 	<tr data-bind="attr: {'data-label' : $data.Label, class:  ContentType() == 'scoring' ? (Value() != '0' ? 'firstpropertyrow quiz' : 'firstpropertyrow quiz hideme') : 'firstpropertyrow'}, visible: IsVisible">
 		<td class="propertylabel" data-bind="html: LabelTitle, attr: {'data-label' : $data.Label}"></td>
-
 		
 		<!--  ko if: ContentType() == 'html' -->
 			<td class="propertycontent">
@@ -260,6 +259,49 @@
 	</tr>
 </script>
 
+<script type="text/html" id="editformula-template">
+	<tr class="firstpropertyrow">
+		<td class="propertylabel" data-label="Formula">
+			<spring:message code="label.Formula" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.Formula" />'><span class='glyphicon glyphicon-question-sign'></span></a>
+		</td>
+		<td class="propertycontent">
+			<a data-bind="click: function() {showFormulaDialog(FormulaInputId())}" class="btn btn-default btn-sm" style="height: 30px; padding: 3px;"><span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin: 4px;">fx</span></a>
+			<textarea class="form-control" maxlength="40" data-bind="value: Value(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='update(this)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
+		</td>
+	</tr>
+	<tr class="propertyrow">
+		<td class="propertylabel" data-label="Attribute">
+			<spring:message code="label.Operators" />
+		</td>
+		<td class="propertycontent">
+			<button data-bind="click: function() {addFormulaText('+', FormulaInputId())}" class="btn btn-default btn-sm">＋</button>
+			<button data-bind="click: function() {addFormulaText('-', FormulaInputId())}" class="btn btn-default btn-sm">－</button>
+			<button data-bind="click: function() {addFormulaText('*', FormulaInputId())}" class="btn btn-default btn-sm">＊</button>
+			<button data-bind="click: function() {addFormulaText('/', FormulaInputId())}" class="btn btn-default btn-sm">／</button><br />
+			<button data-bind="click: function() {addFormulaText('(', FormulaInputId())}" class="btn btn-default btn-sm">（</button>
+			<button data-bind="click: function() {addFormulaText(')', FormulaInputId())}" class="btn btn-default btn-sm">）</button>
+			<button style="width: 34px" data-bind="click: function() {addFormulaText(',', FormulaInputId())}" class="btn btn-default btn-sm">,</button>
+			<button data-bind="click: function() {clearFormula(FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.clear" /></button>
+		</td>
+	</tr>
+	<tr class="collapsiblerow advanced">
+		<td colspan='2' style="text-align: left">
+			<a class='idpropertiestogglebutton' onclick='toggleSelectIDProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.SelectIdentifiers" /></a>
+		</td>
+	</tr>
+	<tr>
+		<td colspan='2' style="text-align: left;">
+			<table data-bind="foreach: NumberElements()" style="margin-left: 20px;">
+				<tr>
+					<td class="innertd" data-bind="html: shortname" style="font-weight: bold; padding-right: 10px;"></td>
+					<td class="innertd" style="padding-right: 10px;" data-bind="html: limitedTitle"></td>
+					<td class="innertd"><button data-bind="click: function() {addFormulaText(shortname(), $parent.FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.select" /></button></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</script>
+
 <script type="text/html" id="PossibleAnswerShortnames-template">
 	<tr class="propertyrow hideme">
 		<td class="propertycontent" colspan='2'>
@@ -449,9 +491,34 @@
 	</tr>
 	<tr>
 		<td colspan="2" style="border-bottom: 1px dashed #ccc; text-align: right"></td>
-	</tr>
-	
+	</tr>	
 	
 	<!-- /ko -->	
 </script>
 
+<div class="modal" id="FormulaDialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+   		<div class="modal-content">
+			<div class="modal-header">
+				<spring:message code="label.Function" />
+			</div>
+			<div class="modal-body">		
+				<div style="margin-bottom: 20px; font-weight: bold"><spring:message code="label.SelectAFunction" />:</div>
+				<select size="3" class="form-control" id="FormulaFunction" onchange="adaptFormulaInfo()" >
+					<option selected="selected" value="mean">mean</option>
+					<option value="min">min</option>
+					<option value="max">max</option>
+				</select>
+				<div style="margin-top: 20px">
+					<span style="display: none" id="FormulaDialogMean"><spring:message code="info.formulamean" /></span>
+					<span style="display: none" id="FormulaDialogMin"><spring:message code="info.formulamin" /></span>
+					<span style="display: none" id="FormulaDialogMax"><spring:message code="info.formulamax" /></span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a id="okStartExportButton" onclick="addFormula($('#FormulaFunction').val());" class="btn btn-primary"><spring:message code="label.OK" /></a>	
+				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
+			</div>
+		</div>
+	</div>
+</div>

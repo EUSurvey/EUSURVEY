@@ -39,6 +39,18 @@ function toggleQuizProperties(button)
 	}
 }
 
+function toggleSelectIDProperties(button)
+{
+	if ($(button).parent().find(".glyphicon-minus-sign").length > 0)
+	{
+		$(button).parent().find(".glyphicon-minus-sign").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
+		$(button).closest("tr").next().hide();
+	} else {
+		$(button).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
+		$(button).closest("tr").next().show();
+	}
+}
+
 function showHideElementProperties(span)
 {
 	var tr = $(".properties").find("tr").first();
@@ -217,9 +229,38 @@ function getTextPropertiesRow(label, content, usetinymce, unit, maxLength)
 			row.ContentType("filetype");
 		}
 		
-		row.Content(rowcontent);		
+		row.Content(rowcontent);
 		_elementProperties.propertyRows.push(row);
 	}
+}
+
+function getFormulaPropertiesRow(formulatext) {
+	var selectedelementId = $("#content").find(".selectedquestion").first().attr("id");
+	var id = "id" + idcounter++;	
+	var row = new PropertyRow();
+	row.Label("formula");
+	row.LabelTitle(getPropertyLabel("formula"));
+	row.Type("FormulaOperators");
+	row.FormulaInputId(id)		
+	row.Value(formulatext);	
+	for (let i = 0; i < modelsForNumber.length; i++) {
+		let model = modelsForNumber[i];
+		model.limitedTitle = getLimitedText(model.title());
+		row.NumberElements.push(model);
+	}
+	for (let i = 0; i < modelsForRegEx.length; i++) {
+		let model = modelsForRegEx[i];
+		model.limitedTitle = getLimitedText(model.title());
+		row.NumberElements.push(model);
+	}
+	for (let i = 0; i < modelsForFormula.length; i++) {
+		let model = modelsForFormula[i];
+		if (model.id() != selectedelementId) {
+			model.limitedTitle = getLimitedText(model.title());
+			row.NumberElements.push(model);
+		}
+	}
+	_elementProperties.propertyRows.push(row);		
 }
 
 function getCleanArray(arr)
@@ -2291,4 +2332,56 @@ function adaptDelphiChildControls(element, parent) {
 	} else {
 		mandatoryPropertyRow.Disabled(false);
 	}
+}
+
+function addFormulaText(text, id) {
+	const formulaElement = $("#" + id);
+	
+	const cursorPos = formulaElement.prop('selectionStart');
+	const oldtext = formulaElement.val();
+    const textBefore = oldtext.substring(0,  cursorPos);
+    const textAfter  = oldtext.substring(cursorPos, oldtext.length);
+
+    formulaElement.val(textBefore + text + textAfter).focus();
+	formulaElement.prop('selectionStart', cursorPos + text.length);
+	formulaElement.prop('selectionEnd', cursorPos + text.length)
+
+	update($(formulaElement));
+}
+
+let formulaDialogId = 0;
+function showFormulaDialog(id) {
+	formulaDialogId = id;
+	
+	adaptFormulaInfo();	
+	$('#FormulaDialog').modal("show");
+}
+
+function adaptFormulaInfo() {
+	if ($("#FormulaFunction").val() == "mean") {
+		$("#FormulaDialogMean").show();
+		$("#FormulaDialogMin").hide();
+		$("#FormulaDialogMax").hide();
+	} else if ($("#FormulaFunction").val() == "min") {
+		$("#FormulaDialogMean").hide();
+		$("#FormulaDialogMin").show();
+		$("#FormulaDialogMax").hide();
+	} else {
+		$("#FormulaDialogMean").hide();
+		$("#FormulaDialogMin").hide();
+		$("#FormulaDialogMax").show();
+	}
+}
+
+function addFormula(value) {
+	const formulaElement = $("#" + formulaDialogId);
+	$(formulaElement).val($(formulaElement).val() + value + "(");
+	update($(formulaElement));
+	$('#FormulaDialog').modal("hide");
+}
+
+function clearFormula(id) {
+	const formulaElement = $("#" + id);
+	$(formulaElement).val("");
+	update($(formulaElement));
 }

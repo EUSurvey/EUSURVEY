@@ -43,6 +43,19 @@
 							  setTimeout(function(){ loadStatisticsAsync(publication); }, 10000);
 							  return;
 						  }
+
+						  //If there are no contributions, maxSectionScore is empty
+						  //Sections visibility is dependent on maxSectionScore, so if there are no quiz questions in the table
+						  // -> set maxSectionScore to 0
+						  if (JSON.stringify(statistics.maxSectionScore) === "{}"){
+							  $(".sectiontitle").each(function () {
+								  let section = $(this)
+								  let questionsTable = section.nextAll("table.table:first")
+								  if (questionsTable.find("tr").length <= 1){
+									  statistics.maxSectionScore[section.attr("data-id")] = 0
+								  }
+							  })
+						  }
 						  
 						  $(".deactivatedstatexports").hide();
 						  $(".activatedstatexports").show();	
@@ -88,13 +101,15 @@
 								 {
 									var value = parseInt(statistics.requestedRecordsRankingScore[id]);
 									var total = parseInt(statistics.requestedRecordsRankingScore[parentId]);
+									var percentage = statistics.requestedRecordsRankingPercentScore[id];
 									 
 									if (id.indexOf("-") < 0) {
 										// the score column
-										$(this).html("<b><span>" + statistics.requestedRecordsRankingPercentScore[id] + "</span></b><br />" + total);
+										$(this).html("<b><span>" + percentage + "</span></b><br />" + total);
+										$(this).closest("tr").attr("data-value", percentage);
 									} else {
 									 	// other column
-									 	$(this).html("<b>" + statistics.requestedRecordsRankingPercentScore[id] + "%</b><br /><span>" + value + "</span>");
+									 	$(this).html("<b>" + percentage + "%</b><br /><span>" + value + "</span>");
 									}
 								 }
 							  });
@@ -117,7 +132,7 @@
 						  $(".statMeanScore").html(roundToTwo(statistics.meanScore) + '&#x20;<spring:message code="label.of" />&#x20;' + statistics.maxScore + '&#x20;<spring:message code="label.points" /> (' + roundToTwo(statistics.maxScore == 0 ? 0 : statistics.meanScore / statistics.maxScore * 100) + '%)');
 						  $(".statBestScore").html(statistics.bestScore + '&#x20;<spring:message code="label.of" />&#x20;' + statistics.maxScore + '&#x20;<spring:message code="label.points" /> (' + roundToTwo(statistics.maxScore == 0 ? 0 : statistics.bestScore / statistics.maxScore * 100) + '%)');
 						  $(".statTotal").html(statistics.total);
-						  
+
 						  $(".statMeanSectionScore").each(function(){
 							  var id = $(this).attr("data-id");							  
 							  $(this).html(roundToTwo(statistics.meanSectionScore[id]) + '&#x20;<spring:message code="label.of" />&#x20;' + statistics.maxSectionScore[id] + '&#x20;<spring:message code="label.points" /> (' + roundToTwo(statistics.maxSectionScore[id] == 0 ? 0 : statistics.meanSectionScore[id] / statistics.maxSectionScore[id] * 100) + '%)');
@@ -420,7 +435,7 @@
 			while (switching) {
 			    switching = false;
 			    rows = table.rows;
-			    for (i = 1; i < (rows.length - 1); i++) {
+			    for (i = 1; i < (rows.length - 2); i++) {
 			      shouldSwitch = false;
 			      x = rows[i].getElementsByTagName("TD")[index].getElementsByTagName("SPAN")[0];
 			      y = rows[i + 1].getElementsByTagName("TD")[index].getElementsByTagName("SPAN")[0];

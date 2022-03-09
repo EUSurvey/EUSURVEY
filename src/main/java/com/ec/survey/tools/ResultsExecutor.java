@@ -103,7 +103,13 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 			String uid = UUID.randomUUID().toString();	
 			
 			Survey dbsurvey = surveyService.getSurvey(survey.getId(), false, true);
-			filter = dbsurvey.getPublication().getFilter();
+			ResultFilter dbfilter = dbsurvey.getPublication().getFilter().copy();
+			if (filter != null){
+				dbfilter.setFilterValues(filter.getFilterValues());
+			}
+
+			filter = dbfilter;
+
 			String filename = "results";
 			
 			Calendar cal = Calendar.getInstance();
@@ -201,13 +207,13 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 					{
 						XlsExportCreator xlsExportCreator = (XlsExportCreator) context.getBean("xlsExportCreator");
 						xlsExportCreator.init(0,form,null, fileService.getSurveyExportFile(survey.getUniqueId(), uid).getPath(), resources, locale, "", "");			
-						xlsExportCreator.exportContent(dbsurvey.getPublication(), false);
+						xlsExportCreator.exportContent(dbsurvey.getPublication(), false, filter);
 						f.setName(filename);
 					} else if (type.equalsIgnoreCase("ods"))
 					{
 						OdfExportCreator odfExportCreator = (OdfExportCreator) context.getBean("odfExportCreator");
 						odfExportCreator.init(0,form,null,fileService.getSurveyExportFile(survey.getUniqueId(), uid).getPath(), resources, locale, "", "");	
-						odfExportCreator.ExportContent(dbsurvey.getPublication(), false);
+						odfExportCreator.ExportContent(dbsurvey.getPublication(), false, filter);
 						f.setName(filename);
 					}
 					

@@ -98,6 +98,7 @@
 				$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 				 
 				updateProgress();
+				updateAllFormulas();
 			}
 		}
 		

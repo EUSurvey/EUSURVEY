@@ -353,15 +353,15 @@
 								<form:radiobutton data-bind="click: function() {isUseMaxNumberContributionLink(false); return true;}" class="check" path="survey.isUseMaxNumberContributionLink" value="false"/><spring:message code="label.Text" />&nbsp;		
 								<form:radiobutton data-bind="click: function() {isUseMaxNumberContributionLink(true); return true;}" class="check" path="survey.isUseMaxNumberContributionLink" value="true"/><spring:message code="label.Link" />
 				
-								<div data-bind="hidden: isUseMaxNumberContributionLink">						
+								<div data-bind="hidden: isUseMaxNumberContributionLink">
 									<div class="preview">${form.survey.maxNumberContributionText} <a class="iconbutton" onclick="$('#tinymcelimit').show();$(this).closest('.preview').hide()" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil"></span></a></div>
 									<div id="tinymcelimit" style="display: none">
-										<form:textarea maxlength="255" class="tinymcealign required xhtml max255" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
+										<form:textarea maxlength="255" class="tinymcealign xhtml max255" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
 									</div>
 								</div>	
 								
-								<div data-bind="visible: isUseMaxNumberContributionLink">
-									<form:input htmlEscape="false" path="survey.maxNumberContributionLink" type="text" class="form-control" style="display: inline-block" />
+								<div data-bind="visible: isUseMaxNumberContributionLink" id="useMaxContributionLink">
+									<form:input htmlEscape="false" path="survey.maxNumberContributionLink" class="form-control" style="display: inline-block"/>
 								</div>
 							</div>
 						</td>
@@ -901,7 +901,7 @@
 								
 								<input type="hidden" name="logo" id="logo" />
 					
-								<a id="removelogobutton" style="margin-bottom: 10px" class="btn btn-default" <c:if test="${form.survey.logo == null}">style="display: none"</c:if> onclick="$(this).closest('td').find('img').remove();$(this).closest('td').find('p').remove(); $('#logo').val('deleted'); $(this).addClass('disabled').hide(); $('#file-uploader-area-div').hide();"><spring:message code="label.Remove" /></a>
+								<a id="removelogobutton" style="margin-bottom: 10px; ${form.survey.logo == null ? "display: none" : ""}" class="btn btn-default" onclick="$(this).closest('td').find('img').remove();$(this).closest('td').find('p').remove(); $('#logo').val('deleted'); $(this).addClass('disabled').hide(); $('#file-uploader-area-div').hide();"><spring:message code="label.Remove" /></a>
 								
 								<div id="file-uploader-logo" style="margin-left: 90px;">
 									<noscript>
@@ -1146,7 +1146,7 @@
 									</div>		
 								</div>
 								<div data-bind="visible: useConfLink" id="confLink">
-									<form:input class="targeturl form-control" path="survey.confirmationLink" ></form:input>
+									<form:input class="form-control" path="survey.confirmationLink" ></form:input>
 								</div>
 							</div>
 						</td>
@@ -1158,7 +1158,7 @@
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
 								<div class="help hideme"><spring:message code="info.UnavailabilityPage" /></div>	
 							</div>
-							<div style="float: right; text-align: right; max-width: 500px;">
+							<div style="float: right; text-align: right;">
 								<form:radiobutton onclick="_properties.useEscapeLink(false)" class="check" path="survey.escapePageLink" value="false"/><spring:message code="label.Text" />&#160;
 								<form:radiobutton onclick="_properties.useEscapeLink(true)"  id="esclink" class="check" path="survey.escapePageLink" value="true"/><spring:message code="label.Link" />
 								<br />
@@ -1169,7 +1169,7 @@
 									</div>		
 								</div>
 								<div data-bind="visible: useEscapeLink" id="escapeLink">
-									<form:input class="targeturl form-control" path="survey.escapeLink" ></form:input>
+									<form:input class="form-control" path="survey.escapeLink" ></form:input>
 								</div>
 							</div>
 						</td>

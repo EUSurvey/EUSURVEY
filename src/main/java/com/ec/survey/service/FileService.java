@@ -1100,37 +1100,31 @@ public class FileService extends BasicService {
 		return result;
 	}
 
-	public int deleteFilesForSurveys(List<Integer> surveyIDs) throws Exception {
-		int deletecounter = 0;
-
-		Set<java.io.File> files = getFilesForSurveys(surveyIDs, false);
-		for (java.io.File file : files) {
-			if (file.exists() && file.delete()) {
-				deletecounter++;
+	public boolean deleteFilesForSurveys(String surveyUID) throws Exception {		
+		java.io.File folder = this.getSurveyFolder(surveyUID);
+		if (folder.exists()) {
+			try {
+				FileUtils.deleteDirectory(folder);
+				return true;
+			} catch (IOException e) {
+				logger.error(e.getLocalizedMessage(), e);
 			}
 		}
-
-		return deletecounter;
+		return false;
 	}
 
 	public int deleteFilesForArchivedSurveys() throws Exception {
-
-		logger.info("starting deleteFilesForArchivedSurveys: " + ConversionTools.getFullString(new Date()));
-
 		ArchiveFilter filter = new ArchiveFilter();
 		filter.setFinished(true);
 		List<Archive> archives = archiveService.getAllArchives(filter, 1, Integer.MAX_VALUE, false);
-		int deletecounter = 0;
-
+		int counter = 0;
 		for (Archive a : archives) {
-			List<Integer> surveyIDs = surveyService.getAllSurveyVersions(a.getSurveyShortname(), a.getSurveyUID());
-			deletecounter += deleteFilesForSurveys(surveyIDs);
+			if (deleteFilesForSurveys(a.getSurveyUID())) {
+				counter++;
+			}
 		}
-
-		logger.info("finish deleteFilesForArchivedSurveys: " + deletecounter + " files deleted "
-				+ ConversionTools.getFullString(new Date()));
-
-		return deletecounter;
+		
+		return counter;
 	}
 
 	public int deleteFilesForDeletedElements() throws Exception {

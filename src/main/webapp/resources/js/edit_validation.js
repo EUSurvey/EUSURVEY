@@ -11,6 +11,42 @@ function removeValidationMarkup(row)
 	row.closest(".firstpropertyrow").find(".validationinfobutton").remove();
 }
 
+function checkFormula(input, viewmodel) {
+	removeValidationMarkup();
+	const formula = $(input).val();
+	try {		
+		if (formula.length == 0) return true;
+		
+		const openingBrackets = formula.split("(").length - 1;
+		const closingBrackets = formula.split(")").length - 1;
+		if (openingBrackets != closingBrackets) {
+			addValidationInfo(input, "invalidformulaBrackets");
+			return false;
+		}
+		
+		math.parse(formula);		
+		const arguments = viewmodel.getVariables(formula);
+			
+		arguments.forEach (a => {
+			
+			if (typeof a != 'undefined') {			
+				const field = $("input[name^='shortname'][value='" + a +"']");
+				
+				if (field.length == 0) {
+					addValidationInfo(input, "invalidformulaUnknownID");
+					return false;
+				}
+			}
+		});
+		
+	} catch (e) {
+		addValidationInfo(input, "invalidformula");
+		return false;
+	}
+	
+	return true;
+}
+
 function checkMinMaxDate(input, hasInputError, showrulehint)
 {
 	removeValidationMarkup();
@@ -644,6 +680,12 @@ function addValidationInfo(input, type)
 		label = getPropertyLabel("invalidMatrixRows");
 	} else if (type == "invalidInterdependcyCriterias") {
 		label = getPropertyLabel("invalidInterdependencyCriteria");
+	} else if (type == "invalidformula") {
+		label = getPropertyLabel("invalidFormula");
+	} else if (type == "invalidformulaBrackets") {
+		label = getPropertyLabel("invalidFormulaBrackets");		
+	} else if (type == "invalidformulaUnknownID") {
+		label = getPropertyLabel("invalidformulaUnknownID");		
 	} else {
 		label = getPropertyLabel(type);
 	}

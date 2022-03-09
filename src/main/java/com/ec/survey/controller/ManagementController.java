@@ -79,6 +79,10 @@ public class ManagementController extends BasicController {
 	public @Value("${opc.template}") String opctemplatesurvey;
 	public @Value("${ecf.template}") String ecfTemplateSurvey;
 
+	private static final String[] KNOWN_RESULTTYPES = {
+			"content", "charts", "statistics", "ecf", "ecf2", "ecf3", "statistics-delphi", "statistics-quiz"
+	};
+
 	@InitBinder
 	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(ConversionTools.DateFormat);
@@ -1122,6 +1126,8 @@ public class ManagementController extends BasicController {
 		Map<Integer, String[]> activitiesToLog = new HashMap<>();
 		Map<String, String> oldBackgroundDocuments = new HashMap<>();
 
+		List<String> keyTranslationsToAdd = new LinkedList<>();
+
 		File oldlogo = null;
 
 		if (creation) {
@@ -1396,10 +1402,22 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (survey.getQuestionNumbering() != uploadedSurvey.getQuestionNumbering())
 			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getEscapePage(), uploadedSurvey.getEscapePage()))
+		if (!Tools.isEqual(survey.getEscapePage(), uploadedSurvey.getEscapePage())){
 			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getConfirmationPage(), uploadedSurvey.getConfirmationPage()))
+			keyTranslationsToAdd.add(Survey.ESCAPEPAGE);
+		}
+		if (!Tools.isEqual(survey.getEscapeLink(), uploadedSurvey.getEscapeLink())){
 			hasPendingChanges = true;
+			keyTranslationsToAdd.add(Survey.ESCAPELINK);
+		}
+		if (!Tools.isEqual(survey.getConfirmationPage(), uploadedSurvey.getConfirmationPage())){
+			hasPendingChanges = true;
+			keyTranslationsToAdd.add(Survey.CONFIRMATIONPAGE);
+		}
+		if (!Tools.isEqual(survey.getConfirmationLink(), uploadedSurvey.getConfirmationLink())){
+			hasPendingChanges = true;
+			keyTranslationsToAdd.add(Survey.CONFIRMATIONLINK);
+		}
 		if (!Tools.isEqualIgnoreEmptyString(survey.getQuizWelcomeMessage(), uploadedSurvey.getQuizWelcomeMessage()))
 			hasPendingChanges = true;
 		if (!Tools.isEqualIgnoreEmptyString(survey.getQuizResultsMessage(), uploadedSurvey.getQuizResultsMessage()))
@@ -1874,11 +1892,13 @@ public class ManagementController extends BasicController {
 			String logo = request.getParameter("logo");
 			if (logo != null && logo.length() > 0) {
 				if (logo.equalsIgnoreCase(Constants.DELETED)) {
-					String[] oldnew = { survey.getLogo().getName(), Constants.DELETED };
-					activitiesToLog.put(213, oldnew);
+					if (survey.getLogo() != null) {
+						String[] oldnew = {survey.getLogo().getName(), Constants.DELETED};
+						activitiesToLog.put(213, oldnew);
 
-					survey.setLogo(null);
-					hasPendingChanges = true;
+						survey.setLogo(null);
+						hasPendingChanges = true;
+					}
 				} else {
 					File f;
 					try {
@@ -1900,9 +1920,10 @@ public class ManagementController extends BasicController {
 			}
 			
 			survey.setLogoInInfo(uploadedSurvey.getLogoInInfo());
-			
+
 			if (!Objects.equals(uploadedSurvey.getLogoText(), survey.getLogoText())) {
 				hasPendingChanges = true;
+				keyTranslationsToAdd.add(Survey.LOGOTEXT);
 			}
 
 			survey.setLogoText(ConversionTools.escape(uploadedSurvey.getLogoText()));
@@ -2063,6 +2084,20 @@ public class ManagementController extends BasicController {
 
 			return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit");
 		} else {
+
+			for (Translations t : translationService.getTranslationsForSurvey(survey.getId(), true)){
+				boolean changed = false;
+				if (languageChanged && t.getLanguage().getCode().equals(survey.getLanguage().getCode())){
+					t.setActive(true);
+					changed = true;
+				}
+
+				changed |= TranslationsHelper.includeNewKeyTranslations(survey, t, keyTranslationsToAdd);
+
+				if (changed)
+					translationService.save(t);
+			}
+
 			if (languageChanged) {
 				Translations translations = translationService.getTranslations(survey.getId(),
 						survey.getLanguage().getCode());
@@ -2314,7 +2349,10 @@ public class ManagementController extends BasicController {
 			if (editorredirect.startsWith(Constants.PATH_DELIMITER)) {
 				editorredirect = editorredirect.substring(1);
 				editorredirect = editorredirect.substring(editorredirect.indexOf('/') + 1);
+			} else if (editorredirect.startsWith("?")) {
+				editorredirect = form.getSurvey().getShortname() + "/management/edit?saved=true&" + editorredirect.substring(1);
 			}
+
 			request.getSession().setAttribute("surveyeditorsaved", survey.getId());
 			return new ModelAndView("redirect:/" + editorredirect);
 		}
@@ -3246,12 +3284,7 @@ public class ManagementController extends BasicController {
 		resultType = resultType == null ? "content" : resultType;
 
 		// this is for security (prevent xss attack)
-		if (!resultType.equalsIgnoreCase("content") && !resultType.equalsIgnoreCase("charts")
-				&& !resultType.equalsIgnoreCase("statistics") 
-				&& !resultType.equalsIgnoreCase("ecf")
-				&& !resultType.equalsIgnoreCase("ecf2")
-				&& !resultType.equalsIgnoreCase("ecf3")
-				) {
+		if (!ArrayUtils.contains(KNOWN_RESULTTYPES, resultType.toLowerCase())){
 			resultType = "content";
 		}
 
@@ -4126,10 +4159,12 @@ public class ManagementController extends BasicController {
 		String order = request.getParameter("order");
 		
 		List<ResultAccess> result = surveyService.getResultAccesses(u.getResultAccess(), shortname, Integer.parseInt(page), Integer.parseInt(rows), name, order, locale);
-		
-		if (sessionService.userIsFormAdmin(survey, u, request))
+		sessionService.upgradePrivileges(survey, u, request);
+
+		if (sessionService.userIsFormAdmin(survey, u, request) || u.getLocalPrivileges().get(LocalPrivilege.FormManagement) >= 2)
 		{
 			//form admins can edit all filtered questions
+			//Privileged Users too
 			for (ResultAccess resultAccess : result) {
 				resultAccess.setReadonlyFilterQuestions("");
 			}
@@ -4547,7 +4582,7 @@ public class ManagementController extends BasicController {
 			List<String> replaceResults = new ArrayList<>();
 
 			for (Translation translation : translations.getTranslations()) {
-				if (translation.getLabel() != null && translation.getLabel().contains(search)) {
+				if (!translation.getLocked() && translation.getLabel() != null && translation.getLabel().contains(search)) {
 					searchResults.add(translation.getLabel().replace(search,
 							"<span style='background: #FFEDA8'>" + search + "</span>"));
 

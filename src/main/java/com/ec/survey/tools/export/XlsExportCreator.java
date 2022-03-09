@@ -251,10 +251,13 @@ public class XlsExportCreator extends ExportCreator {
 	@Override
 	void exportContent(boolean sync) throws Exception {		
 		exportContent(null, sync);
-	}	
+	}
+
+	public void exportContent(Publication publication, boolean sync) throws Exception{
+		exportContent(publication, sync, null);
+	}
 	
-	
-	public void exportContent(Publication publication, boolean sync) throws Exception {	
+	public void exportContent(Publication publication, boolean sync, ResultFilter resultFilter) throws Exception {
 		sheets = new ArrayList<>();
 
 		safeName = WorkbookUtil.createSafeSheetName("Content");
@@ -264,8 +267,9 @@ public class XlsExportCreator extends ExportCreator {
 		sheets.add(sheet);
 
 		ResultFilter filter;
-
-		if (publication != null && export == null) {
+		if (resultFilter != null){
+			filter = resultFilter;
+		} else if (publication != null && export == null) {
 			filter = publication.getFilter();
 		} else {
 			filter = export.getResultFilter().copy();
@@ -795,7 +799,7 @@ public class XlsExportCreator extends ExportCreator {
 						}
 						cell.setCellValue(cellValue.toString());
 					}
-				} else if (question instanceof NumberQuestion && (export == null || !export.getShowShortnames())) {
+				} else if ((question instanceof NumberQuestion || question instanceof FormulaQuestion) && (export == null || !export.getShowShortnames())) {
 					Cell cell = checkColumnsParseAnswerSet();
 					
 					CellStyle numberCellStyle;					
@@ -807,17 +811,30 @@ public class XlsExportCreator extends ExportCreator {
 						numberCellStyle = wb.createCellStyle();
 						
 						String format = "0";
-						NumberQuestion numberQuestion = (NumberQuestion)question;
-						if (numberQuestion.getDecimalPlaces() > 0)
-						{
-							format += ".";
-							for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
+
+						if (question instanceof NumberQuestion) {
+							NumberQuestion numberQuestion = (NumberQuestion)question;
+							if (numberQuestion.getDecimalPlaces() > 0)
 							{
-								format += "0";
+								format += ".";
+								for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
+								{
+									format += "0";
+								}
 							}
-						}				
-						
-						numberCellStyle.setDataFormat(wb.createDataFormat().getFormat(format));	
+						} else {
+							FormulaQuestion formulaQuestion = (FormulaQuestion)question;
+							if (formulaQuestion.getDecimalPlaces() > 0)
+							{
+								format += ".";
+								for (int i = 0; i < formulaQuestion.getDecimalPlaces(); i++)
+								{
+									format += "0";
+								}
+							}
+						}
+
+						numberCellStyle.setDataFormat(wb.createDataFormat().getFormat(format));
 						
 						cellStyles.put(question.getUniqueId(), numberCellStyle);
 					}				

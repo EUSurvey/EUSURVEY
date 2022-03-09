@@ -31,6 +31,46 @@
 		<!-- /ko -->
 	</div>
 	
+	<div id="formula-template">
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
+		</label>
+		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
+		
+		<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
+			<div class='limits' data-bind="html: getMinMax(minString(), maxString()), attr: {id: 'questioninfo' + id()}"></div>
+		<!-- /ko -->
+		<!-- ko if: min() != 0 && min() != null && (max() == 0 || max() == null) -->
+			<div class='limits' data-bind="html: getMin(minString()), attr: {id: 'questioninfo' + id()}"></div>
+		<!-- /ko -->
+		<!-- ko if: (min() == 0 || min() == null) && max() != null && max() != 0 -->
+			<div class='limits' data-bind="html: getMax(maxString()), attr: {id: 'questioninfo' + id()}"></div>
+		<!-- /ko -->
+		
+		<input data-bind="enable: !readonly(), value: result, attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : (readonly() ? '' : 'answer' + id()), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" oninput="propagateChange(this);" onblur="validateInput($(this).parent())" type="text" autocomplete="off" />
+		
+		<!-- ko if: readonly() -->
+		<input type="hidden" data-bind="value: result, attr: {'name': 'answer' + id()}" />
+		<!-- /ko -->
+		
+		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: 'formula', attr: {'name': 'type' + id()}" />	
+			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: formula, attr: {'name': 'formula' + id()}" />	
+			<input type="hidden" data-bind="value: min, attr: {'name': 'min' + id()}" />	
+			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
+			<input type="hidden" data-bind="value: decimalPlaces, attr: {'name': 'decimalplaces' + id()}" />
+			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
+			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
+			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+		<!-- /ko -->
+	</div>
+	
 	<div id="image-template">
 		
 		<div class='alignment-div' data-bind="attr: {'style': 'width: 920px; max-width: 100%; text-align:' + align()}">
@@ -180,7 +220,6 @@
 					<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}"  onchange="validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);">
 						<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
 					</select>
-					<span data-bind="if: readonly"><input data-bind="value: getPAByQuestion3(uniqueId()), attr: {'name':'answer'+id()}" type="hidden" /></span>	
 					<!-- ko if: foreditor -->
 						<!-- ko foreach: possibleAnswers() -->
 							<div class="possibleanswerrow hidden">		
@@ -200,7 +239,7 @@
 				<!-- /ko -->
 			<!-- /ko -->
 			<input type="hidden" data-bind="value: choiceType, attr: {'name': 'choicetype' + id()}" />
-
+					
 			<!-- ko if: foreditor -->
 				<input type="hidden" data-bind="value: 'choice', attr: {'name': 'type' + id()}" />
 				<input type="hidden" data-bind="value: 'true', attr: {'name': 'single' + id()}" />
@@ -256,7 +295,7 @@
 			<div class='limits' data-bind="html: getMaxChoice(maxChoices()), attr: {id: 'questioninfo' + id()}"></div>
 		<!-- /ko -->
 	
-		<div class="answer-columns">
+		<div class="answer-columns" style="overflow-x:auto;padding-top:4px;padding-bottom:8px;">
 			<!-- ko if: useCheckboxes -->
 			<table class="answers-table" role="list" data-bind="attr: {'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 				<tr class="hideme">
@@ -573,6 +612,7 @@
 		<!-- ko if: maxCharacters() == 0 -->	
 			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
 		<!-- /ko -->
+		
 		<!-- ko if: isComparable() -->		
 			<br /><span style="margin-left: 20px">${form.getMessage("label.PleaseRepeat")}</span>:<br />
 			<textarea data-bind="enable: !readonly(), attr: {'data-id':id() + '2', 'class': 'comparable-second ' + css() + ' expand', 'data-rows':numRows, 'rows':numRows(), 'name' : 'secondanswer' + id()}"  onblur="validateInputForSecondAnswer($(this))"></textarea>

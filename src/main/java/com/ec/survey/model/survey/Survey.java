@@ -266,11 +266,14 @@ final public class Survey implements java.io.Serializable {
 	@Lob
 	@Column(name = "CONFIRMATION", nullable = false, length = 40000)
 	public String getConfirmationPage() {
-		return confirmationPage;
+		return this.confirmationPage != null && this.confirmationPage.length() > 0
+				? this.confirmationPage
+				: CONFIRMATIONTEXT;
 	}
 
 	public void setConfirmationPage(String confirmationPage) {
-		this.confirmationPage = confirmationPage;
+		this.confirmationPage = confirmationPage != null ? Tools.filterHTML(confirmationPage)
+				: CONFIRMATIONTEXT;
 	}
 
 	@Column(name = "CONFLINK")
@@ -285,11 +288,14 @@ final public class Survey implements java.io.Serializable {
 	@Lob
 	@Column(name = "ESCAPE", nullable = false, length = 40000)
 	public String getEscapePage() {
-		return escapePage;
+		return this.escapePage != null && this.escapePage.length() > 0
+				? this.escapePage
+				: ESCAPETEXT;
 	}
 
 	public void setEscapePage(String escapePage) {
-		this.escapePage = escapePage;
+		this.escapePage = escapePage != null ? Tools.filterHTML(escapePage)
+				: ESCAPETEXT;
 	}
 
 	@Column(name = "ESCLINK")

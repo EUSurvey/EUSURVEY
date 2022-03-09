@@ -831,6 +831,19 @@ select {
 	border-color: #000;
 }
 
+.nav-tabs.white > li > a {
+	background-color: white;
+	color: #245077 !important;
+	border-color: #ddd;
+	border-width: 1px 1px 0px 1px;
+}
+.nav-tabs.white > .active > a {
+	font-weight: bold;
+}
+.nav-tabs.white > li > a:hover {
+	background-color: #ddd !important;
+}
+
 #menutab2 .nav-tabs > .active > a, #menutab2 .nav-tabs > .active > a:hover {
 	background-color: #fff !important;
 	border-color: #fff !important;
@@ -2109,6 +2122,18 @@ a.elearningWelcomeLink:hover
     border: 1px solid #ccc;
     background-color: #f5f5f5;
     margin-bottom: 10px;
+}
+
+.info-box {
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border: 1px solid #999;
+
+	background-color: #FDF5D9 !important;
+	margin-bottom: 20px;
+	padding: 10px;
+	font-size: 13px;
 }
 
 .surveyrunnerinfo p

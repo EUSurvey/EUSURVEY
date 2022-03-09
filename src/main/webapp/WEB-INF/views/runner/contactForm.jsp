@@ -14,8 +14,11 @@
 	<script type="text/javascript">
 		function checkAndSubmit()
 		{
+			let supportForm = $("#supportForm");
 			$(".validation-error").remove();
-			var result = validateInput($("#supportForm"));
+			var result = validateInput(supportForm);
+
+			saveFormInputs(supportForm);
 			
 			 if ($(".g-recaptcha.unset").length > 0)	{
 				$('#runner-captcha-error').show();
@@ -24,12 +27,56 @@
 			
 			if (result == false)
 			{
-				goToFirstValidationError($("#supportForm"));
+				goToFirstValidationError(supportForm);
 			} else {
-				$("#supportForm").submit();
+				supportForm.submit();
 			}			
 		}
-		
+
+		function saveFormInputs(form){
+			let formInputs = form.find("input, textarea, select")
+
+			let saveObject = {}
+
+			formInputs.each(function(){
+				let element = $(this);
+				let id = element.attr("id")
+				if (id){
+					saveObject[id] = element.val()
+				}
+			});
+
+			saveObject["file-uploader-support-div"] = $("#file-uploader-support-div").html()
+
+			window.sessionStorage.setItem("contactFormSave", JSON.stringify(saveObject))
+		}
+
+		$(document).ready(function(){
+			//Run async because the runner-captcha-error is set visible in another document.ready function
+			window.setTimeout(function() {
+				let captchaError = $("#runner-captcha-error")
+				if (captchaError.is(":visible")) {
+
+					let contactFormSave = window.sessionStorage.getItem("contactFormSave")
+					if (contactFormSave) {
+						contactFormSave = JSON.parse(contactFormSave)
+
+						$.each(contactFormSave, function (key, value) {
+							if (key == "file-uploader-support-div") {
+								$("#" + key).html(value)
+							} else {
+								$("#" + key).val(value)
+							}
+
+							if (key == "contactreason"){
+								showHideAdditionalInfo()
+							}
+						})
+					}
+				}
+			}, 100) //0 works too, tested in ff and chrome but you never know
+		})
+
 		function deleteUploadedFile(button)
 		{
 			var uid = $(button).closest(".uploadedfile").attr("data-id");

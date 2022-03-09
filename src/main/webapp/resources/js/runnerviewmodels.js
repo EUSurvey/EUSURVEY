@@ -1060,6 +1060,94 @@ function newRegExViewModel(element)
 	return viewModel;
 }
 
+function newFormulaViewModel(element)
+{
+	const viewModel = newBasicViewModel(element);
+	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.formula = ko.observable(element.formula);
+	viewModel.help = ko.observable(element.help);
+	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));	
+	viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces : 0);	
+	viewModel.min = ko.observable(element.min);
+	viewModel.minString = ko.observable(element.minString);	
+	viewModel.max = ko.observable(element.max);
+	viewModel.maxString = ko.observable(element.maxString);
+	viewModel.variables = [];
+				
+	viewModel.result = ko.observable("");
+	if (!viewModel.foreditor) {
+		viewModel.result(getValueByQuestion(viewModel.uniqueId()));
+	}
+	
+	viewModel.getVariables = function(formula) {
+		let variables = [];
+		const root = math.parse(formula);
+		root.traverse(function (node) {
+		  if (node.type === 'SymbolNode' && !(['mean', 'min', 'max'].indexOf(node.name) > -1)) {
+		      variables.push(node.name);
+		  }
+		})
+		
+		return variables;
+	}
+	
+	viewModel.dependsOn = function(alias) {
+		if (this.variables.length == 0) {
+			this.variables = this.getVariables(this.formula());
+		}
+		return this.variables.indexOf(alias) >= 0;
+	}
+		
+	viewModel.refreshResult = function() {
+		try {		
+			const parser = math.parser();
+			if (this.variables.length == 0) {
+				this.variables = this.getVariables(this.formula());
+			}		
+			let allEmpty = true;			
+			this.variables.forEach (a => {
+				let input = $("input[data-shortname='" + a + "']");
+				if (input.length == 0) {
+					input = $("textarea[data-shortname='" + a + "']");
+				}
+				let value = 0;
+				if (input.length > 0) {
+					value = $(input).val();
+					if (value.length == 0) {
+						value = "0";
+					} else {
+						allEmpty = false;
+					}
+				}
+				if (isNaN(value)) {
+					viewModel.result("");
+					return; //invalid input
+				} 
+				parser.set(a, parseFloat(value));
+			});
+			
+			if (allEmpty) {
+				viewModel.result("");
+				return;
+			}
+			
+			let result = parser.evaluate(this.formula());
+			if (isNaN(result)) {
+				viewModel.result("");
+				return; //invalid input
+			} 
+			
+			viewModel.result(math.round(result, viewModel.decimalPlaces())); 
+		} catch (e) {
+			console.log(e);
+			viewModel.result("");
+			return; //invalid input
+		}
+	}
+	
+	return viewModel;
+}
+
 function newConfirmationViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);

@@ -296,9 +296,31 @@
 					return;
 				}
 
+				if(_properties.isUseMaxNumberContribution()){
+					if (_properties.isUseMaxNumberContributionLink()){
+						if(isPropEmpty("[name='survey.maxNumberContributionLink']")){
+							$("#useMaxContributionLink").append("<div class='validation-error'>" + requiredText + "</div>")
+							return
+						}
+						if(isURLNotValid("[name='survey.maxNumberContributionLink']")) {
+							$("#useMaxContributionLink").append("<div class='validation-error'>" +invalidURL + "</div>")
+							return
+						}
+					} else {
+						if(isPropEmpty("[name='survey.maxNumberContributionText']")){
+							$("#tinymcelimit").append("<div class='validation-error'>" + requiredText + "</div>")
+							return
+						}
+					}
+				}
+
 				if (_properties.useConfLink()){
 					if (isPropEmpty("[name='survey.confirmationLink']")){
 						$("#confLink").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+					if(isURLNotValid("[name='survey.confirmationLink']")) {
+						$("#confLink").append("<div class='validation-error'>" +invalidURL + "</div>")
 						return
 					}
 				} else {
@@ -311,6 +333,10 @@
 				if (_properties.useEscapeLink()){
 					if (isPropEmpty("[name='survey.escapeLink']")){
 						$("#escapeLink").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+					if(isURLNotValid("[name='survey.escapeLink']")) {
+						$("#escapeLink").append("<div class='validation-error'>" +invalidURL + "</div>")
 						return
 					}
 				} else {
@@ -390,7 +416,6 @@
 				});				
 				
 				if (invalid) return;
-				
 				if ($("#survey-contact-type").val() == "url") {
 					$("#survey\\.contact").removeClass("email").addClass("url");
 					result = validateInput($("#survey\\.contact").parent());
@@ -415,7 +440,7 @@
 				{
 					return;
 				}
-				
+
 				result = validateInput($("#maxContributionInput").parent());
 				
 				if (result == false)
@@ -525,6 +550,12 @@
 		function isPropEmpty(select){
 			let elem = $(select)
 			return elem.text().trim().length <= 0 && elem.val().trim().length <= 0
+		}
+
+		function isURLNotValid(select){
+			let value = $(select).val();
+			var urlregex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+			return !urlregex.test( value  );
 		}
 		
 	</script>

@@ -23,6 +23,8 @@ function getElementViewModel(element)
 			return newFreeTextViewModel(element);
 		case 'RegExQuestion':
 			return newRegExViewModel(element);
+		case 'FormulaQuestion':
+			return newFormulaViewModel(element);
 		case 'SingleChoiceQuestion':
 			return newSingleChoiceViewModel(element);
 		case 'MultipleChoiceQuestion':
@@ -179,6 +181,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	} else if (viewModel.type == 'FreeTextQuestion' || viewModel.type == 'RegExQuestion') {
 		if (viewModel.type == 'RegExQuestion') {
 			$(container).addClass("regexitem forprogress");
+			modelsForNumber[modelsForNumber.length] = viewModel;
 		} else {
 			$(container).addClass("freetextitem forprogress");
 		}
@@ -190,10 +193,16 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			var s = $("#freetext-template").clone().attr("id", "");
 			$(container).append(s);
 		}
+	} else if (viewModel.type == 'FormulaQuestion') {
+		$(container).addClass("formulaitem");
+		var s = $("#formula-template").clone().attr("id", "");
+		$(container.append(s));
+		modelsForFormula[modelsForFormula.length] = viewModel;
 	} else if (viewModel.type == 'NumberQuestion') {
 		$(container).addClass("numberitem forprogress");
 		var s = $("#number-template").clone().attr("id", "");
 		$(container.append(s));
+		modelsForNumber[modelsForNumber.length] = viewModel;
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
 		$(container).addClass("singlechoiceitem forprogress");
 		var s = $("#single-choice-template").clone().attr("id", "");
@@ -497,6 +506,9 @@ function addElementToContainer(element, container, foreditor, forskin) {
 }
 
 var modelsForSlider = [];
+var modelsForFormula = [];
+var modelsForNumber = [];
+var modelsForRegEx = [];
 
 function initSlider(input, foreditor, viewModel)
 {

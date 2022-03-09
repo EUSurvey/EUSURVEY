@@ -218,10 +218,13 @@ public class ActivityService extends BasicService {
 		{
 			switch (filter.getObject()) {
 				case "Survey":
-					hql += " AND logID > 100 AND logID < 300";
+					hql += " AND logID > 100 AND logID < 200";
 					break;
 				case "DraftSurvey":
 					hql += " AND logID > 200 AND logID < 300";
+					break;
+				case "SurveyAndDraft":
+					hql += " AND logID > 100 AND logID < 300";
 					break;
 				case "Results":
 					hql += " AND logID > 300 AND logID < 400";

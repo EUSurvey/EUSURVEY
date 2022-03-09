@@ -229,16 +229,14 @@
 				<form:form id="supportForm" method="POST" action="${contextpath}/home/support?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
 					<label><span class="mandatory">*</span><spring:message code="support.ContactReason" /></label><br />
 					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 425px" name="contactreason" id="contactreason">
-
-						<option id="generaloption"><spring:message code="support.GeneralQuestion" /></option>
-						<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
-						<option><spring:message code="support.idea" /></option>
-						<option id="assistanceoption"><spring:message code="support.assistance" /></option>
-						<option><spring:message code="support.Accessibility" /></option>
-						<option><spring:message code="support.DataProtection" /></option>
-						<option id="highaudienceoption"><spring:message code="support.HighAudience" /></option>
-						<option><spring:message code="support.otherreason" /></option>
-						
+						<option value="generalquestion" id="generaloption"><spring:message code="support.GeneralQuestion" /></option>
+						<option value="technicalproblem" id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
+						<option value="idea"><spring:message code="support.idea" /></option>
+						<option value="assistance" id="assistanceoption"><spring:message code="support.assistance" /></option>
+						<option value="accessibility"><spring:message code="support.Accessibility" /></option>
+						<option value="dataprotection"><spring:message code="support.DataProtection" /></option>
+						<option value="highaudience" id="highaudienceoption"><spring:message code="support.HighAudience" /></option>
+						<option value="otherreason"><spring:message code="support.otherreason" /></option>						
 					</select><br /><br />
 					<script>
 						if (window.location.search.toLowerCase().includes("error")){

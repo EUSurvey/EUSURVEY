@@ -305,7 +305,7 @@
 
 					</c:if>
 										
-					<c:if test="${forpdf == null && question.getType() == 'FreeTextQuestion'}">				
+					<c:if test="${forpdf == null && publication == null && question.getType() == 'FreeTextQuestion'}">
 						<div style="width: 700px; margin-left: auto; margin-right: auto;">
 							<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
 						</div>
@@ -566,7 +566,7 @@
 						
 								 <c:forEach items="${question.childElements}" var="child" varStatus="loop">
 								
-									<tr data-position="${loop.index}">
+									<tr data-position="${loop.index}" data-value="${statistics == null ? "" : statistics.requestedRecordsRankingPercentScore[child.id.toString()]}">
 										<td>${child.getStrippedTitleNoEscape()}</td>
 										<c:forEach items="${question.childElements}" varStatus="status">
 										
@@ -598,6 +598,22 @@
 									</tr>
 								
 								</c:forEach>
+								
+									<tr>
+										<td><spring:message code="label.NoAnswer" /></td>
+										<td colspan="4">
+											<c:choose>
+												<c:when test="${statistics != null}">						
+													<span class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</span><br />
+													<span class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</span>
+												</c:when>
+												<c:otherwise>
+													<span id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></span><br />
+													<span id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></span>
+												</c:otherwise>
+											</c:choose>		
+										</td>
+									</tr>
 								
 								</tbody>
 							</table>

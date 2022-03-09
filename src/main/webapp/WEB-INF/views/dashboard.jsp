@@ -255,51 +255,7 @@
 										
 											<table class="table table-striped table-bordered" style="margin-bottom: 10px; max-width: 99.9%">
 												<tr class="headerrow">
-													<!-- ko if: surveysMode() == 'simple' || surveysMode() == 'advanced' -->									
-													<th>
-														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('SURVEYNAME',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('SURVEYNAME',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-														</div>
-														<spring:message code="label.Alias" />
-													</th>
-													<th>
-														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('TITLESORT',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('TITLESORT',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-														</div>
-														<spring:message code="label.Title" />
-													</th>
-													<th>
-														<spring:message code="label.Owner" />
-													</th>
-														
-													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Status" /></th>
-													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Security" /></th>
-													<th data-bind="visible: surveysMode() == 'advanced'">
-														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_Start_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_Start_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-														</div>
-														<spring:message code="label.StartDate" />											
-													</th>
-													<th data-bind="visible: surveysMode() == 'advanced'">
-														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_End_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_End_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-														</div>
-														<spring:message code="label.ExpiryDate" />
-													</th>
-													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Invited" /></th>
-													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Drafts" /></th>
-													<th style="min-width: 130px;">
-														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-														</div>
-														<spring:message code="label.Contributions" />											
-													</th>
-													<th><spring:message code="label.Languages" /></th>
-													<th style="min-width: 280px;"><spring:message code="label.Actions" /></th>
-													
-													<!-- /ko -->
-													
-													<!-- ko if: surveysMode() == 'reported' -->									
+													<!-- ko if: surveysMode() != 'archived' -->
 													<th>
 														<div style="float: right">
 															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('SURVEYNAME',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('SURVEYNAME',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
@@ -346,7 +302,7 @@
 													<!-- ko if: surveysMode() == 'archived' -->	
 														<th>
 															<div style="float: right">
-																<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Shortname',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Shortname',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+																<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('surveyShortname',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('surveyShortname',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 															</div>
 															<spring:message code="label.Alias" />
 														</th>

@@ -167,7 +167,7 @@ public class TranslationController extends BasicController {
 				}
 
 				for (Translation translation : translations.getTranslations()) {
-					if (translation.getLabel() != null && translation.getLabel().contains(search)) {
+					if (!translation.getLocked() && translation.getLabel() != null && translation.getLabel().contains(search)) {
 						translation.setLabel(translation.getLabel().replace(search, replace));
 						if (translation.getLabel().length() == 0) {
 							throw new MessageException("found empty label after replace!");

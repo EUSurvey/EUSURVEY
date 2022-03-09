@@ -1579,6 +1579,7 @@ public class SurveyService extends BasicService {
 		newDraft.setIsDraft(true);
 		newDraft.setIsPublished(true);
 		newDraft.setIsActive(active);
+		newDraft.setIsFrozen(survey.getIsFrozen());
 		session.update(newDraft);
 
 		AdaptIDs(survey, newDraft, true);
@@ -2127,7 +2128,7 @@ public class SurveyService extends BasicService {
 		Survey s = this.getSurvey(id, false, false);
 
 		List<Integer> surveyIDs = surveyService.getAllSurveyVersions(s.getShortname(), s.getUniqueId());
-		fileService.deleteFilesForSurveys(surveyIDs);
+		fileService.deleteFilesForSurveys(s.getUniqueId());
 
 		if (contextpath == null || contextpath.trim().length() == 0) {
 			throw new MessageException("contextpath empty");
@@ -4503,7 +4504,7 @@ public class SurveyService extends BasicService {
 		}
 
 		if (survey.getBackgroundDocuments() != null) {
-			Set<String> labels = survey.getBackgroundDocuments().keySet();
+			Set<String> labels = new HashSet<>(survey.getBackgroundDocuments().keySet());
 			for (String label : labels) {
 				String url = survey.getBackgroundDocuments().get(label);
 				String olduid = getFileUIDFromUrl(url);

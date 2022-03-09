@@ -83,6 +83,10 @@ public class OdfExportCreator extends ExportCreator {
 		ExportContent(null, sync);
 	}
 
+	public void ExportContent(Publication publication, boolean sync) throws Exception {
+		ExportContent(publication, sync, null);
+	}
+
 	private void initHeader(Publication publication, ResultFilter filter, Export export) {
 		String cellValue;
 		for (Question question : questions) {
@@ -247,7 +251,7 @@ public class OdfExportCreator extends ExportCreator {
 	int fileCounter;
 	SpreadsheetDocument spreadsheet;
 
-	public void ExportContent(Publication publication, boolean sync) throws Exception {
+	public void ExportContent(Publication publication, boolean sync, ResultFilter resultFilter) throws Exception {
 		spreadsheet = SpreadsheetDocument.newSpreadsheetDocument();
 		sheet = spreadsheet.getSheetByIndex(0);
 		sheet.setTableName("Content");
@@ -255,8 +259,9 @@ public class OdfExportCreator extends ExportCreator {
 		fileCounter = 0;
 
 		ResultFilter filter;
-
-		if (publication != null && export == null) {
+		if (resultFilter != null){
+			filter = resultFilter;
+		} else if (publication != null && export == null) {
 			filter = publication.getFilter();
 		} else {
 			filter = export.getResultFilter();
@@ -729,17 +734,24 @@ public class OdfExportCreator extends ExportCreator {
 								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
 							}
 							cell.setValueType(Constants.STRING);
-						} else if (question instanceof NumberQuestion
+						} else if ((question instanceof NumberQuestion || question instanceof FormulaQuestion)
 								&& (export == null || !export.getShowShortnames())) {
 
 							cell = sheet.getCellByPosition(columnIndex++, rowIndex);
 							
 							String format = "0";
-							NumberQuestion numberQuestion = (NumberQuestion)question;
-							if (numberQuestion.getDecimalPlaces() > 0)
+							int decimalPlaces = 0;
+							if (question instanceof NumberQuestion) {
+								NumberQuestion numberQuestion = (NumberQuestion)question;
+								decimalPlaces = numberQuestion.getDecimalPlaces();
+							} else {
+								FormulaQuestion formulaQuestion = (FormulaQuestion)question;
+								decimalPlaces = formulaQuestion.getDecimalPlaces();
+							}
+							if (decimalPlaces > 0)
 							{
 								format += ".";
-								for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
+								for (int i = 0; i < decimalPlaces; i++)
 								{
 									format += "0";
 								}

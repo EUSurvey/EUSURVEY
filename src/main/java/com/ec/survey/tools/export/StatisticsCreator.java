@@ -993,7 +993,8 @@ public class StatisticsCreator implements Runnable {
 	
 	public void addStatistics4RankingQuestion(Survey survey, RankingQuestion ranking, Statistics statistics, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) {
 		int size = ranking.getChildElements().size();
-		int total = 0;
+		int total = survey.getNumberOfAnswerSets();
+		int answered = 0;
 		boolean firstChild = true;
 		for (Element child : ranking.getChildElements()) {
 			int score = 0;
@@ -1003,7 +1004,7 @@ public class StatisticsCreator implements Runnable {
 				score += (size - i) * value;
 				
 				if (firstChild) {
-					total += value;
+					answered += value;
 				}
 			}
 			
@@ -1014,13 +1015,17 @@ public class StatisticsCreator implements Runnable {
 		for (Element child : ranking.getChildElements()) {
 			for (int i = 0; i < size; i++) {
 				int value = statistics.getRequestedRecordsRankingScore().get(child.getId() + "-" + i);
-				statistics.getRequestedRecordsRankingPercentScore().put(child.getId() + "-" + i, divideToPercent(value, total));
+				statistics.getRequestedRecordsRankingPercentScore().put(child.getId() + "-" + i, divideToPercent(value, answered));
 			}
 			int score = statistics.getRequestedRecordsRankingScore().get(child.getId().toString());
-			statistics.getRequestedRecordsRankingPercentScore().put(child.getId().toString(), divide(score, total));
+			statistics.getRequestedRecordsRankingPercentScore().put(child.getId().toString(), divide(score, answered));
 		}		
 		
-		statistics.getRequestedRecordsRankingScore().put(ranking.getId().toString(), total);
+		statistics.getRequestedRecordsRankingScore().put(ranking.getId().toString(), answered);
+		
+		statistics.getRequestedRecords().put(ranking.getId().toString(), total - answered);
+		double percent = total == 0 ? 0 : (double) (total - answered) / (double) total * 100;
+		statistics.getRequestedRecordsPercent().put(ranking.getId().toString(), percent);
 	}
 	
 	private double divide(int a, int b) {

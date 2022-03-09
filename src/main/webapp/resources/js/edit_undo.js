@@ -713,6 +713,9 @@ var UndoProcessor = function() {
 				addElementHandler($(_elementProperties.selectedelement));
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
+			case "Formula":
+				element.formula(step[3]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -1257,6 +1260,9 @@ var UndoProcessor = function() {
 			case "REMOVERANKINGITEM":
 				element.rankingItems.pop();
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "Formula":
+				element.formula(step[4]);
 				break;
 		}
 		

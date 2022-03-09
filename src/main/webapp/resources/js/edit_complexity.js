@@ -214,7 +214,7 @@ function removeElementScore(element)
 	
 	if($(element).hasClass("freetextitem") || $(element).hasClass("numberitem")
 			|| $(element).hasClass("dateitem") || $(element).hasClass("timeitem") || $(element).hasClass("uploaditem") || $(element).hasClass("emailitem")
-			|| $(element).hasClass("regexitem"))
+			|| $(element).hasClass("regexitem") || $(element).hasClass("formulaitem"))
 	{
 		updateComplexityScore("removeSimpleQuestion");
 	}

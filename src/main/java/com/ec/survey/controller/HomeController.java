@@ -12,6 +12,13 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizExecutor;
 import com.ec.survey.tools.Ucs2Utf8;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
@@ -48,6 +55,8 @@ public class HomeController extends BasicController {
 	
 	private @Value("${support.recipient}") String supportEmail;
 	private @Value("${support.recipientinternal}") String supportEmailInternal;
+
+	private @Value("${support.smIncidentHost}") String incidentHost;
 
 	@Autowired
 	protected PaginationMapper paginationMapper;    
@@ -155,7 +164,7 @@ public class HomeController extends BasicController {
 				result.append("Error time: ").append(time).append("\n");
 			}
 		}
-		result.append("Bowser: ").append(request.getHeader("User-Agent")).append("\n");
+		result.append("Browser: ").append(request.getHeader("User-Agent")).append("\n");
 		result.append("Language: ").append(locale.getLanguage()).append("\n");
 		return result.toString();
 	}
@@ -180,14 +189,59 @@ public class HomeController extends BasicController {
 	}
 	
 	@PostMapping(value = "/home/support")
-	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws IOException, MessageException {
-		
+	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws IOException, MessageException {		
 		if (!checkCaptcha(request))
 		{
 			model.put("wrongcaptcha", true);
 			return "home/support";
-		}		
+		}
 		
+		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
+		
+		String SMTServiceEnabled = settingsService.get(Setting.UseSMTService);
+		if (email.toLowerCase().endsWith("ec.europa.eu") && SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
+			return sendSupportSmt(request, locale, model);
+		} else {
+			return sendSupportEmail(request, locale, model);
+		}
+	}
+	
+	private String GetLabelForReason(String reason, Locale locale) {
+		switch (reason) {
+			case "generalquestion":
+				return resources.getMessage("support.GeneralQuestion", null, reason, locale);
+			case "technicalproblem":
+				return resources.getMessage("support.TechnicalProblem", null, reason, locale);
+			case "idea":
+				return resources.getMessage("support.idea", null, reason, locale);
+			case "assistance":
+				return resources.getMessage("support.assistance", null, reason, locale);
+			case "accessibility":
+				return resources.getMessage("support.Accessibility", null, reason, locale);
+			case "dataprotection":
+				return resources.getMessage("support.DataProtection", null, reason, locale);
+			case "highaudience":
+				return resources.getMessage("support.HighAudience", null, reason, locale);
+			default:
+				return resources.getMessage("support.otherreason", null, reason, locale);
+		}			
+	}
+	
+	private String GetSmtLabelForReason(String reason) {
+		switch (reason) {
+			case "technicalproblem":
+				return "Incident";
+			case "idea":
+				return "Request for change";
+			case "assistance":
+			case "highaudience":
+				return "Request for service";
+			default:
+				return "Request for information";
+		}		
+	}
+
+	private String sendSupportEmail(HttpServletRequest request, Locale locale, ModelMap model) throws IOException, MessageException {
 		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
 		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
 		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
@@ -196,27 +250,27 @@ public class HomeController extends BasicController {
 		String additionalinfo  = request.getParameter("additionalinfo");
 		String additionalsurveyinfotitle = request.getParameter("additionalsurveyinfotitle");
 		String additionalsurveyinfoalias = request.getParameter("additionalsurveyinfoalias");
-		String[] uploadedfiles = request.getParameterValues("uploadedfile");				
-		
+		String[] uploadedfiles = request.getParameterValues("uploadedfile");
+
 		StringBuilder body = new StringBuilder();
 		body.append("Dear helpdesk team,<br />please open a ticket and assign it to DIGIT EUSURVEY SUPPORT.<br />Thank you in advance<br/><hr /><br />");
-		
+
 		body.append("<table>");
-		
+
 		body.append("<tr><td>Affected user:</td><td>").append(name).append("</td></tr>");
 		body.append("<tr><td>Email address:</td><td>").append(email).append("</td></tr>");
-		
+
 		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
-		
+
 		boolean additioninfo = false;
 		if (additionalsurveyinfotitle != null && additionalsurveyinfotitle.length() > 0) {
 			body.append("<tr><td>Survey Title:</td><td>").append(additionalsurveyinfotitle).append("</td></tr>");
 			additioninfo = true;
-		}		
+		}
 		if (additionalsurveyinfoalias != null && additionalsurveyinfoalias.length() > 0) {
-			
-			String link = host + "runner/" + additionalsurveyinfoalias;			
-			
+
+			String link = host + "runner/" + additionalsurveyinfoalias;
+
 			body.append("<tr><td>Survey Alias:</td><td><a href='").append(link).append("'>").append(additionalsurveyinfoalias).append("</a></td></tr>");
 			additioninfo = true;
 		}
@@ -224,21 +278,21 @@ public class HomeController extends BasicController {
 		{
 			body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
 		}
-		
-		body.append("<tr><td>Reason:</td><td>").append(reason).append("</td></tr>");
+
+		body.append("<tr><td>Reason:</td><td>").append(GetLabelForReason(reason, locale)).append("</td></tr>");
 		body.append("<tr><td>Subject:</td><td>").append(subject).append("</td></tr>");
-		
-		body.append("</table>");		
-		
+
+		body.append("</table>");
+
 		body.append("<br />Message text:<br />").append(message).append("<br /><br />");
 		if (additionalinfo != null)
 		{
 			body.append(ConversionTools.escape(additionalinfo).replace("\n", "<br />"));
 		}
-		
+
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
-		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);		
-		
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);
+
 		java.io.File attachment1 = null;
 		java.io.File attachment2 = null;
 		if (uploadedfiles != null && uploadedfiles.length > 0)
@@ -249,14 +303,66 @@ public class HomeController extends BasicController {
 				attachment2 = fileService.getTemporaryFile(uploadedfiles[1]);
 			}
 		}
-		
+
 		if (email.toLowerCase().endsWith("ec.europa.eu"))
 		{
 			mailService.SendHtmlMail(supportEmailInternal, sender, sender, subject, text, attachment1, attachment2, null, true);
 		} else {
 			mailService.SendHtmlMail(supportEmail, sender, sender, subject, text, attachment1, attachment2, null, true);
 		}
+
+		model.put("messagesent", true);
+		model.put("additionalinfo", getBrowserInformation(request, locale));
+		return "home/support";
+	}
+
+	private String sendSupportSmt(HttpServletRequest request, Locale locale, ModelMap model) throws IOException, MessageException {
+		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
+		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
+		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
+		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
+		String message = ConversionTools.removeHTML(GetLabelForReason(reason, locale) + ": " + request.getParameter(Constants.MESSAGE), true);
+		String additionalinfo  = ConversionTools.removeHTML(request.getParameter("additionalinfo"), true);
+		String additionalsurveyinfotitle = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfotitle"), true);
+		String additionalsurveyinfoalias = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfoalias"), true);
 		
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.xml");
+		String createTemplate = IOUtils.toString(inputStream, "UTF-8");
+
+		createTemplate = createTemplate.replace("[MESSAGE]", message);
+		createTemplate = createTemplate.replace("[ADDITIONALINFOUSERNAME]", name);
+		createTemplate = createTemplate.replace("[ADDITIONALINFOEMAIL]", email);
+		createTemplate = createTemplate.replace("[ADDITIONALINFO]", additionalinfo);
+		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYTITLE]", additionalsurveyinfotitle);
+		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
+		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
+		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
+
+		try {
+
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost(incidentHost);
+
+			httppost.setEntity(new StringEntity(createTemplate));
+
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+				String strResponse = EntityUtils.toString(entity);
+				if (!strResponse.contains("message=\"success\"")) {
+					logger.error(strResponse);
+					throw new MessageException("Calling SMT web service failed.");
+				}
+				logger.info(strResponse);
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			//fallback to email
+			return sendSupportEmail(request, locale, model);
+		}
+
 		model.put("messagesent", true);
 		model.put("additionalinfo", getBrowserInformation(request, locale));
 		return "home/support";

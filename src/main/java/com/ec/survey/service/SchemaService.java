@@ -48,6 +48,26 @@ public class SchemaService extends BasicService {
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
 	
+	
+	@Transactional
+	public void step103() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.UseSMTService);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.UseSMTService);
+			s.setValue("false");
+			s.setFormat("true / false");
+			session.saveOrUpdate(s);
+		}
+		
+		status.setDbversion(103);
+		session.saveOrUpdate(status);
+	}
+
+	
 	@Transactional
 	public void step102() {
 		Session session = sessionFactory.getCurrentSession();

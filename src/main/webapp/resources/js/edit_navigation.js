@@ -99,6 +99,9 @@ var NavigationModel = function () {
     		} else if ($(e).hasClass("rankingitem")) {
     			ni.type = "rankingquestion";
     			ni.css = "navigationitemranking navquestion";
+			} else if ($(e).hasClass("formulaitem")) {
+    			ni.type = "formulaquestion";
+    			ni.css = "navigationitemformula navquestion";
     		} else {
     			ni.css += " navquestion";
     		}
