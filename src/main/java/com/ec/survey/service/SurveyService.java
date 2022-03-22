@@ -1672,6 +1672,13 @@ public class SurveyService extends BasicService {
 				access.setSurvey(newSurvey);
 				session.update(access);
 			}
+			
+			//update guest-lists
+			List<ParticipationGroup> groups = participationService.getAll(oldSurvey.getId());
+			for (ParticipationGroup group : groups) {
+				group.setSurveyId(newSurvey.getId());
+				session.update(group);
+			}
 		}
 	}
 
