@@ -523,8 +523,10 @@ public class StatisticsCreator implements Runnable {
 					String[] items = answer.split(";");
 					int counter = 0;
 					for (String id : items) {
-						mapRankingQuestion.get(id).put(counter, mapRankingQuestion.get(id).get(counter) + 1);
-						counter++;
+						if (mapRankingQuestion.get(id) != null) {
+							mapRankingQuestion.get(id).put(counter, mapRankingQuestion.get(id).get(counter) + 1);
+							counter++;
+						}
 					}
 				}
 			}
