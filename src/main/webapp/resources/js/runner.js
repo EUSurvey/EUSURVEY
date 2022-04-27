@@ -349,7 +349,7 @@ function createUploader(instance, maxSize)
 $(function() {
 	
 	$('#runnerForm').on('submit', function() {
-		$('input, select').attr('disabled', false);
+		$('input, select, textarea').attr('disabled', false);
 	});
 
 	if ($("#nolocalstorage").length > 0) {
