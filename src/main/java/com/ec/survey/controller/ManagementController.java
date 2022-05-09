@@ -23,9 +23,16 @@ import com.ec.survey.service.SurveyException;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +85,8 @@ public class ManagementController extends BasicController {
 	public @Value("${opc.department:@null}") String opcdepartments;
 	public @Value("${opc.template}") String opctemplatesurvey;
 	public @Value("${ecf.template}") String ecfTemplateSurvey;
+	public @Value("${codaCreateDashboardLink:#{null}}") String codaCreateDashboardLink;
+	public @Value("${codaApiKey:#{null}}") String codaApiKey;
 
 	private static final String[] KNOWN_RESULTTYPES = {
 			"content", "charts", "statistics", "ecf", "ecf2", "ecf3", "statistics-delphi", "statistics-quiz"
@@ -1091,6 +1100,7 @@ public class ManagementController extends BasicController {
 						possibleKeys.put(oldUniqueId + MatrixOrTable.FIRSTCELL, newUniqueId + MatrixOrTable.FIRSTCELL);
 						possibleKeys.put(oldUniqueId + GalleryQuestion.TEXT, newUniqueId + GalleryQuestion.TEXT);
 						possibleKeys.put(oldUniqueId + GalleryQuestion.TITLE, newUniqueId + GalleryQuestion.TITLE);
+						possibleKeys.put(oldUniqueId + "RESULTTEXT", newUniqueId + "RESULTTEXT");
 						
 						for (String languageCode : oldTranslations.keySet()) {
 							Map<String, Translation> translationsByKey = oldTranslations.get(languageCode);
@@ -1386,6 +1396,16 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getProgressBar(), uploadedSurvey.getProgressBar()))
 			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationPopup(), uploadedSurvey.getMotivationPopup()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationText(), uploadedSurvey.getMotivationText()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationTriggerProgress(), uploadedSurvey.getMotivationTriggerProgress()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationTriggerTime(), uploadedSurvey.getMotivationTriggerTime()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationType(), uploadedSurvey.getMotivationType()))
+			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getProgressDisplay(), uploadedSurvey.getProgressDisplay()))
 			hasPendingChanges = true;
 		if (survey.getValidatedPerPage() != uploadedSurvey.getValidatedPerPage())
@@ -1537,6 +1557,12 @@ public class ManagementController extends BasicController {
 						uploadedSurvey.getProgressBar() ? "enabled" : "disabled" };
 				activitiesToLog.put(124, oldnew);
 			}
+
+			if(uploadedSurvey.getMotivationPopup() != survey.getMotivationPopup()) {
+				String[] oldnew = { survey.getMotivationPopup() ? "enabled" : "disabled",
+						uploadedSurvey.getMotivationPopup() ? "enabled" : "disabled" };
+				activitiesToLog.put(128, oldnew);
+			}
 		}
 
 		if (!survey.getIsOPC()) {
@@ -1546,6 +1572,12 @@ public class ManagementController extends BasicController {
 		survey.setMultiPaging(uploadedSurvey.getMultiPaging());
 		survey.setProgressBar(uploadedSurvey.getProgressBar());
 		survey.setProgressDisplay(uploadedSurvey.getProgressDisplay());
+
+		survey.setMotivationPopup(uploadedSurvey.getMotivationPopup());
+		survey.setMotivationText(uploadedSurvey.getMotivationText());
+		survey.setMotivationTriggerProgress(uploadedSurvey.getMotivationTriggerProgress());
+		survey.setMotivationTriggerTime(uploadedSurvey.getMotivationTriggerTime());
+		survey.setMotivationType(uploadedSurvey.getMotivationType());
 
 		survey.setConfirmationPageLink(uploadedSurvey.getConfirmationPageLink());
 		survey.setEscapePageLink(uploadedSurvey.getEscapePageLink());
@@ -3222,7 +3254,8 @@ public class ManagementController extends BasicController {
 		}
 
 		form.setLanguages(languages);
-
+		form.setCodaEnabled(settingsService.get("Coda").equals("true"));
+		
 		paging.setItems(answerSets);
 
 		ModelAndView result = new ModelAndView("management/results", "form", form);
@@ -3230,6 +3263,9 @@ public class ManagementController extends BasicController {
 		result.addObject("active", active);
 		result.addObject("allanswers", allanswers);
 		result.addObject("filtered", filtered);
+		if (user != null) {
+			result.addObject("userid", user.getId());
+		}
 		
 		if (columnDeleted) {
 			result.addObject("columnDeleted", true);
@@ -3468,6 +3504,24 @@ public class ManagementController extends BasicController {
 								for (int c = 1; c < table.getAllColumns(); c++) {
 									result.add(ConversionTools.escape(answerSet.getTableAnswer(question, r, c, false)));
 								}
+							}
+						} else if (question instanceof ComplexTable) {
+							ComplexTable table = (ComplexTable) question;
+							for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
+								StringBuilder s = new StringBuilder();
+								for (Answer answer : answerSet.getAnswers(childQuestion.getId(),
+										childQuestion.getUniqueId())) {
+									if (s.length() > 0) {
+										s.append("<br />");
+									}
+									
+									if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+										s.append(form.getAnswerTitle(answer));
+									} else {
+										s.append(ConversionTools.escape(form.getAnswerTitle(answer)));
+									}
+								}
+								result.add(s.toString());
 							}
 						} else if (question instanceof GalleryQuestion) {
 							GalleryQuestion gallery = (GalleryQuestion) question;
@@ -4627,5 +4681,99 @@ public class ManagementController extends BasicController {
 		Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 		Map<Element, Integer> changes = surveyService.getPendingChanges(draft);
 		return !changes.isEmpty();
+	}
+
+	@PostMapping(value = "/requestCodaDashboard")
+	public @ResponseBody boolean requestCodaDashboard(@PathVariable String shortname, HttpServletRequest request) throws Exception {
+		User u = sessionService.getCurrentUser(request);
+
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
+
+		if (survey != null && survey.getOwner().getId().equals(u.getId())){
+
+			if (codaCreateDashboardLink == null || survey.getCodaWaiting() || (survey.getCodaLink() != null && survey.getCodaLink().length() > 0)){
+				return false;
+			}
+
+			HttpClient httpClient = HttpClients.createDefault();
+			HttpPost httpPost = new HttpPost(codaCreateDashboardLink);
+			if (codaApiKey != null){
+				httpPost.setHeader(HttpHeaders.AUTHORIZATION, codaApiKey);
+			}
+
+			Map<String, Object> jsonMap = new HashMap<>();
+			jsonMap.put("Alias", shortname);
+
+			String type = "Standard";
+			if (survey.getIsQuiz()){
+				type = "Quiz";
+			} else if (survey.getIsECF()){
+				type = "ECF";
+			} else if (survey.getIsDelphi()){
+				type = "Delphi";
+			}
+
+			jsonMap.put("Type", type);
+			jsonMap.put("DashboardType", "Standard");
+
+			List<Map<String, String>> users = new LinkedList<>();
+			List<Access> accesses = surveyService.getAccesses(survey.getId());
+
+			for (Access access : accesses){
+				//This decision code might have to be adjusted
+				if (!access.hasAnyPrivileges() || access.getUser() == null){
+					continue;
+				}
+				User user = access.getUser();
+				HashMap<String, String> userMap = new HashMap<>();
+				userMap.put("Username", user.getLogin());
+				if (access.getLocalPrivilegeValue("FormManagement") > 1){
+					userMap.put("Role", "Executive");
+				} else if (access.getLocalPrivilegeValue("AccessResults") >= 1) {
+					userMap.put("Role", "Analyst");
+				} else {
+					continue;
+				}
+
+				userMap.put("User_email", user.getEmail());
+				userMap.put("Firstname", user.getGivenName());
+				userMap.put("Surname", user.getSurName());
+				users.add(userMap);
+			}
+			User owner = survey.getOwner();
+			HashMap<String, String> ownerMap = new HashMap<>();
+			ownerMap.put("Username", owner.getLogin());
+			ownerMap.put("Role", "Executive");
+			ownerMap.put("User_email", owner.getEmail());
+			ownerMap.put("Firstname", owner.getGivenName());
+			ownerMap.put("Surname", owner.getSurName());
+			users.add(ownerMap);
+			jsonMap.put("Users", users);
+
+			ObjectMapper mapper = new ObjectMapper();
+			String stringResult = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
+
+			StringEntity jsonEntity = new StringEntity(stringResult);
+			jsonEntity.setContentType("application/json");
+			httpPost.setEntity(jsonEntity);
+
+			try {
+			
+				HttpResponse response = httpClient.execute(httpPost);
+
+				if (response != null) {
+					int code = response.getStatusLine().getStatusCode();
+					if (code >= 200 && code < 300){
+						surveyService.setCodaWaiting(survey.getUniqueId(), true);
+						return true;
+					}
+				}
+			
+			} catch (IOException e) {
+				logger.error(e.getLocalizedMessage(), e);				
+			}
+		}
+
+		return false;
 	}
 }

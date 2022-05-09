@@ -294,7 +294,7 @@ a.ratingitem {
 	max-width: 95%;
 }
 
-.tabletable td, .tabletable th {border: 1px solid #bbb; padding: 0 4px 0 4px; word-wrap: break-word; }
+.tabletable td, .tabletable th, .complextable td, .complextable th {border: 1px solid #bbb; padding: 0 4px 0 4px; word-wrap: break-word; }
 
 .table-header {
 	background-color: #eee;
@@ -409,17 +409,18 @@ textarea.freetext {
 	top: -145px;
 }
 
-.freetext,
-.number,
+.freetext:not(.complex),
+.number:not(.complex),
 .date,
 .matrixtable,
 .tabletable,
 .dataTable,
 .regex,
-.formula,
+.formula:not(.complex),
 .alignment-div,
 .input-group,
-.ratingtable {
+.ratingtable,
+.complextable {
 	margin-left: 20px;
 }
 
@@ -448,7 +449,7 @@ input[type="text"].time {
 	width: 177px;
 }
 
-input.regex, textarea.regex, input.formula {
+input.regex, textarea.regex, input.formula:not(.complex) {
 	width: 430px !important;
 }
 
@@ -463,17 +464,20 @@ input.email {
 	padding: 5px !important;
 	max-height: 85px;
 	width: auto;
-	min-width: 200px;
 	overflow-x: auto;
 	cursor: pointer;
 	margin: 0px;
+}
+
+.multiple-choice:not(.complex) {
+	min-width: 200px;
 }
 
 .listbox a {
 	text-decoration: none;
 }
 
-.single-choice {
+.single-choice:not(.complex) {
 	border: 1px solid #ddd; 
 	display: inline-block;
 	background-color: #fff;

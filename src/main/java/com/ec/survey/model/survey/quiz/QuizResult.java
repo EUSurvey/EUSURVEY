@@ -103,18 +103,13 @@ public class QuizResult implements java.io.Serializable {
 		}
 		return 0;
 	}
-	
-	public int getMaxSectionScore()
+
+	public int getMaxSectionScore(String uid)
 	{
-		int result = 0;
-		
-		for (String s : sectionScores.values())
-		{
-			String max = s.substring(s.indexOf('/')+1);
-			int m = Integer.parseInt(max);
-			if (m > result) result = m;
+		if (sectionScores.containsKey(uid)){
+			return Integer.parseInt(sectionScores.get(uid).substring(sectionScores.get(uid).indexOf('/')+1));
 		}
-		
-		return result;		
+
+		return 0;
 	}
 }

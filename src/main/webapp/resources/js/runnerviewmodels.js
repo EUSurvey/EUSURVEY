@@ -301,7 +301,6 @@ function createNewDelphiBasicViewModel() {
 }
 
 function newBasicViewModel(element)
-//HERE
 {
 	const viewModel = new createNewDelphiBasicViewModel();
 	
@@ -330,26 +329,57 @@ function newBasicViewModel(element)
 		
 	if (element != null)
 	{
-		viewModel.title = ko.observable(element.title);
-		viewModel.originalTitle = ko.observable(element.originalTitle);
-		viewModel.type = element.type;
-		viewModel.id = ko.observable(element.id);
-		viewModel.uniqueId = ko.observable(element.uniqueId);
-		viewModel.shortname = ko.observable(element.shortname);
-		viewModel.scoring = ko.observable(element.scoring);
-		viewModel.points = ko.observable(element.quizPoints);
-		viewModel.locked = ko.observable(element.locked);
-		viewModel.css = ko.observable(element.css);
-		viewModel.optional = ko.observable(element.optional);
-		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
-		viewModel.useAndLogic = ko.observable(element.useAndLogic);
-		viewModel.showExplanationBox = ko.observable(element.showExplanationBox);
-		viewModel.delphiChartType = ko.observable(element.delphiChartType);
-
-		if (element.scoringItems != null) {
-			for (var i = 0; i < element.scoringItems.length; i++) {
-				viewModel.scoringItems.push(newScoringViewModel(element.scoringItems[i]));
+		if (element.hasOwnProperty("isViewModel") && element.isViewModel)
+		{
+			viewModel.title = ko.observable(element.title());
+			viewModel.originalTitle = ko.observable(element.originalTitle());
+			viewModel.type = element.type;
+			viewModel.id = ko.observable(element.id());
+			viewModel.uniqueId = ko.observable(element.uniqueId());
+			viewModel.shortname = ko.observable(element.shortname());
+			viewModel.scoring = ko.observable(element.scoring());
+			//viewModel.points = ko.observable(element.quizPoints());
+			viewModel.locked = ko.observable(element.locked());
+			viewModel.css = ko.observable(element.css());
+			viewModel.optional = ko.observable(element.optional());
+			viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion());
+			viewModel.useAndLogic = ko.observable(element.useAndLogic());
+			viewModel.showExplanationBox = ko.observable(element.showExplanationBox());
+			viewModel.delphiChartType = ko.observable(element.delphiChartType());
+			viewModel.editorRowsLocked = ko.observable(element.editorRowsLocked());
+			viewModel.editorColumnsLocked = ko.observable(element.editorColumnsLocked());
+	
+			if (element.scoringItems != null) {
+				for (var i = 0; i < element.scoringItems.length; i++) {
+					viewModel.scoringItems.push(newScoringViewModel(element.scoringItems[i]));
+				}
 			}
+		} else {
+		
+			viewModel.title = ko.observable(element.title);
+			viewModel.originalTitle = ko.observable(element.originalTitle);
+			viewModel.type = element.type;
+			viewModel.id = ko.observable(element.id);
+			viewModel.uniqueId = ko.observable(element.uniqueId);
+			viewModel.shortname = ko.observable(element.shortname);
+			viewModel.scoring = ko.observable(element.scoring);
+			viewModel.points = ko.observable(element.quizPoints);
+			viewModel.locked = ko.observable(element.locked);
+			viewModel.css = ko.observable(element.css);
+			viewModel.optional = ko.observable(element.optional);
+			viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
+			viewModel.useAndLogic = ko.observable(element.useAndLogic);
+			viewModel.showExplanationBox = ko.observable(element.showExplanationBox);
+			viewModel.delphiChartType = ko.observable(element.delphiChartType);
+			viewModel.editorRowsLocked = ko.observable(element.editorRowsLocked);
+			viewModel.editorColumnsLocked = ko.observable(element.editorColumnsLocked);
+	
+			if (element.scoringItems != null) {
+				for (var i = 0; i < element.scoringItems.length; i++) {
+					viewModel.scoringItems.push(newScoringViewModel(element.scoringItems[i]));
+				}
+			}
+		
 		}
 	}
 	
@@ -357,109 +387,136 @@ function newBasicViewModel(element)
 	{
 		var copy = [];
 		
-	    for (var prop in this) {
-	        var propVal = this[prop];
-	        if (ko.isObservable(propVal)) {
-	            var val = propVal();
-	            if (prop == "dependentElementsStrings")
-	            {
-	            	copy[prop] = ko.observableArray();
-	            	for (var i = 0; i < this.dependentElementsStrings().length; i++)
-			    	{
-			    		var deps = this.dependentElementsStrings()[i]();
-			    		copy[prop].push(ko.observable(deps));
-			    	}
-	            	continue;
-	            } else if (prop == "questions")
-	            {
-	            	copy[prop] = ko.observableArray();
-	            	for (var i = 0; i < this.questions().length; i++)
-			    	{
-			    		var copiedquestion = this.questions()[i];
-			    		var newmatrixquestion = newMatrixItemViewModel(getNewId(), getNewId(), copiedquestion.optional(), getNewShortname(), copiedquestion.readonly(), copiedquestion.title(), copiedquestion.originalTitle(), copiedquestion.isDependentMatrixQuestion(), copiedquestion.css(), i);
-			    		newmatrixquestion.originalId = copiedquestion.id();
-			    		copy[prop].push(newmatrixquestion);
-			    	}
-	            	continue;
-	            } else if (prop == "answers")
-	            {
-	            	copy[prop] = ko.observableArray();
-	            	for (var i = 0; i < this.answers().length; i++)
-			    	{
-			    		var copiedanswer = this.answers()[i];
-			    		var newanswer = newMatrixItemViewModel(getNewId(), getNewId(), copiedanswer.optional(), getNewShortname(), copiedanswer.readonly(), copiedanswer.title(), copiedanswer.originalTitle(), copiedanswer.isDependentMatrixQuestion(), copiedanswer.css(), i)
-			    		newanswer.originalId = copiedanswer.id();
-			    		copy[prop].push(newanswer);
-			    	}
-	            	continue;
-	            } else if (prop == "childElements")
-	            {
-	            	copy[prop] = ko.observableArray();
-	            	for (var i = 0; i < this.childElements().length; i++)
-			    	{
-			    		var copiedquestion = this.childElements()[i];
-			    		var newquestion = newRatingItemViewModel(getNewId(), getNewId(), copiedquestion.optional(), getNewShortname(), copiedquestion.title(), copiedquestion.originalTitle(), copiedquestion.css())
-			    		newquestion.originalId = copiedquestion.id();
-			    		copy[prop].push(newquestion);
-			    	}
-	            	continue;
-	            } else if (prop == "possibleAnswers")
-	            {
-	            	copy[prop] = ko.observableArray();
-	            	for (var i = 0; i < this.possibleAnswers().length; i++)
-			    	{
-			    		var copiedanswer = this.possibleAnswers()[i];
-			    		var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), copiedanswer.dependentElementsString(), copiedanswer.title(), copiedanswer.scoring, copiedanswer.ecfScore(), copiedanswer.ecfProfile());
-			    		newanswer.originalId = copiedanswer.id();
-			    		copy[prop].push(newanswer);
-			    	}
-	            	continue;
-	            } else if (prop == "scoringItems")
-	            {
-	            	copy[prop] = ko.observableArray();
-	            	for (var i = 0; i < this.scoringItems().length; i++)
-			    	{
-			    		var copieditem = this.scoringItems()[i];
-			    		var newitem = newScoringViewModel(copieditem);
-			    		newitem.originalId = copieditem.id();
-			    		copy[prop].push(newitem);
-			    	}
-	            	continue;
-	            } else if (prop == "rankingItems")
-	            {
-	            	copy[prop] = ko.observableArray();
-	            	for (var i = 0; i < this.rankingItems().length; i++)
-			    	{
-			    		var copieditem = this.rankingItems()[i];
-			    		var newitem = newRankingItemViewModel(getNewId(), getNewId(), getNewShortname(), copieditem.title());
-			    		newitem.originalId = copieditem.id();
-			    		copy[prop].push(newitem);
-			    	}
-	            	continue;
- 				} else if (prop == "initialOrder")
-	            {
-	            	copy[prop] = null;
-	            	continue;
-	            } else if (prop == "orderedRankingItems") {
-					copy[prop] = ko.computed(function() {
-						let result = copy.rankingItems.slice();
-
-						if (copy.order() === 1) {
-							result = result.sort((e1, e2) => e1.title().stripHtml().localeCompare(e2.title().stripHtml()));
-						} else if (copy.order() === 2) {
-							shuffle(result);
-						}
-
-						return result;
-					});
-					continue;
-	            }
-	            
-	            copy[prop] = ko.observable(val);
-	        } else {
-	        	copy[prop] = propVal;
-	        }
-	    }	
+		if (this.type == "ComplexTable") {
+			copy = newComplexTableViewModel(this, true);
+			copy.foreditor = true;
+			
+			for (var i = 0; i < copy.childElements().length; i++)
+	    	{
+				var childCopy = copy.childElements()[i];
+	    		childCopy.id(getNewId());
+			    childCopy.uniqueId(getNewId());
+			    childCopy.shortname(getNewShortname());
+			    childCopy.originalId = this.id();
+			    childCopy.locked(false);
+				childCopy.foreditor = true;
+				
+				for (var j = 0; j < childCopy.possibleAnswers().length; j++)
+	    		{
+					var pa = childCopy.possibleAnswers()[j];
+					pa.id(getNewId());
+				    pa.uniqueId(getNewId());
+				    pa.shortname(getNewShortname());
+				    pa.originalId = this.id();			
+				}
+	    	}			
+		} else {
+		
+		    for (var prop in this) {
+		        var propVal = this[prop];
+		        if (ko.isObservable(propVal)) {
+		            var val = propVal();
+		            if (prop == "dependentElementsStrings")
+		            {
+		            	copy[prop] = ko.observableArray();
+		            	for (var i = 0; i < this.dependentElementsStrings().length; i++)
+				    	{
+				    		var deps = this.dependentElementsStrings()[i]();
+				    		copy[prop].push(ko.observable(deps));
+				    	}
+		            	continue;
+		            } else if (prop == "questions")
+		            {
+		            	copy[prop] = ko.observableArray();
+		            	for (var i = 0; i < this.questions().length; i++)
+				    	{
+				    		var copiedquestion = this.questions()[i];
+				    		var newmatrixquestion = newMatrixItemViewModel(getNewId(), getNewId(), copiedquestion.optional(), getNewShortname(), copiedquestion.readonly(), copiedquestion.title(), copiedquestion.originalTitle(), copiedquestion.isDependentMatrixQuestion(), copiedquestion.css(), i);
+				    		newmatrixquestion.originalId = copiedquestion.id();
+				    		copy[prop].push(newmatrixquestion);
+				    	}
+		            	continue;
+		            } else if (prop == "answers")
+		            {
+		            	copy[prop] = ko.observableArray();
+		            	for (var i = 0; i < this.answers().length; i++)
+				    	{
+				    		var copiedanswer = this.answers()[i];
+				    		var newanswer = newMatrixItemViewModel(getNewId(), getNewId(), copiedanswer.optional(), getNewShortname(), copiedanswer.readonly(), copiedanswer.title(), copiedanswer.originalTitle(), copiedanswer.isDependentMatrixQuestion(), copiedanswer.css(), i)
+				    		newanswer.originalId = copiedanswer.id();
+				    		copy[prop].push(newanswer);
+				    	}
+		            	continue;
+		            } else if (prop == "childElements")
+		            {
+		            	copy[prop] = ko.observableArray();
+		            	for (var i = 0; i < this.childElements().length; i++)
+				    	{
+				    		var copiedquestion = this.childElements()[i];
+							var newquestion = newRatingItemViewModel(getNewId(), getNewId(), copiedquestion.optional(), getNewShortname(), copiedquestion.title(), copiedquestion.originalTitle(), copiedquestion.css())
+		
+				    		newquestion.originalId = copiedquestion.id();
+				    		copy[prop].push(newquestion);
+				    	}
+		            	continue;
+		            } else if (prop == "possibleAnswers")
+		            {
+		            	copy[prop] = ko.observableArray();
+		            	for (var i = 0; i < this.possibleAnswers().length; i++)
+				    	{
+				    		var copiedanswer = this.possibleAnswers()[i];
+				    		var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), copiedanswer.dependentElementsString(), copiedanswer.title(), copiedanswer.scoring, copiedanswer.ecfScore(), copiedanswer.ecfProfile());
+				    		newanswer.originalId = copiedanswer.id();
+				    		copy[prop].push(newanswer);
+				    	}
+		            	continue;
+		            } else if (prop == "scoringItems")
+		            {
+		            	copy[prop] = ko.observableArray();
+		            	for (var i = 0; i < this.scoringItems().length; i++)
+				    	{
+				    		var copieditem = this.scoringItems()[i];
+				    		var newitem = newScoringViewModel(copieditem);
+				    		newitem.originalId = copieditem.id();
+				    		copy[prop].push(newitem);
+				    	}
+		            	continue;
+		            } else if (prop == "rankingItems")
+		            {
+		            	copy[prop] = ko.observableArray();
+		            	for (var i = 0; i < this.rankingItems().length; i++)
+				    	{
+				    		var copieditem = this.rankingItems()[i];
+				    		var newitem = newRankingItemViewModel(getNewId(), getNewId(), getNewShortname(), copieditem.title());
+				    		newitem.originalId = copieditem.id();
+				    		copy[prop].push(newitem);
+				    	}
+		            	continue;
+	 				} else if (prop == "initialOrder")
+		            {
+		            	copy[prop] = null;
+		            	continue;
+		            } else if (prop == "orderedRankingItems") {
+						copy[prop] = ko.computed(function() {
+							let result = copy.rankingItems.slice();
+	
+							if (copy.order() === 1) {
+								result = result.sort((e1, e2) => e1.title().stripHtml().localeCompare(e2.title().stripHtml()));
+							} else if (copy.order() === 2) {
+								shuffle(result);
+							}
+	
+							return result;
+						});
+						continue;
+		            }
+		            
+		            copy[prop] = ko.observable(val);
+		        } else {
+		        	copy[prop] = propVal;
+		        }
+		    }
+		}
 		
 	    copy.id(getNewId());
 	    copy.uniqueId(getNewId());
@@ -1060,6 +1117,18 @@ function newRegExViewModel(element)
 	return viewModel;
 }
 
+function getVariablesForFormula(formula) {
+	let variables = [];
+	const root = math.parse(formula);
+	root.traverse(function (node) {
+	  if (node.type === 'SymbolNode' && !(['mean', 'min', 'max'].indexOf(node.name) > -1)) {
+	      variables.push(node.name);
+	  }
+	})
+	
+	return variables;
+}
+
 function newFormulaViewModel(element)
 {
 	const viewModel = newBasicViewModel(element);
@@ -1078,74 +1147,66 @@ function newFormulaViewModel(element)
 	if (!viewModel.foreditor) {
 		viewModel.result(getValueByQuestion(viewModel.uniqueId()));
 	}
-	
-	viewModel.getVariables = function(formula) {
-		let variables = [];
-		const root = math.parse(formula);
-		root.traverse(function (node) {
-		  if (node.type === 'SymbolNode' && !(['mean', 'min', 'max'].indexOf(node.name) > -1)) {
-		      variables.push(node.name);
-		  }
-		})
-		
-		return variables;
-	}
-	
+
 	viewModel.dependsOn = function(alias) {
 		if (this.variables.length == 0) {
-			this.variables = this.getVariables(this.formula());
+			this.variables = getVariablesForFormula(this.formula());
 		}
 		return this.variables.indexOf(alias) >= 0;
 	}
 		
 	viewModel.refreshResult = function() {
-		try {		
-			const parser = math.parser();
-			if (this.variables.length == 0) {
-				this.variables = this.getVariables(this.formula());
-			}		
-			let allEmpty = true;			
-			this.variables.forEach (a => {
-				let input = $("input[data-shortname='" + a + "']");
-				if (input.length == 0) {
-					input = $("textarea[data-shortname='" + a + "']");
-				}
-				let value = 0;
-				if (input.length > 0) {
-					value = $(input).val();
-					if (value.length == 0) {
-						value = "0";
-					} else {
-						allEmpty = false;
-					}
-				}
-				if (isNaN(value)) {
-					viewModel.result("");
-					return; //invalid input
-				} 
-				parser.set(a, parseFloat(value));
-			});
-			
-			if (allEmpty) {
-				viewModel.result("");
-				return;
-			}
-			
-			let result = parser.evaluate(this.formula());
-			if (isNaN(result)) {
-				viewModel.result("");
-				return; //invalid input
-			} 
-			
-			viewModel.result(math.round(result, viewModel.decimalPlaces())); 
-		} catch (e) {
-			console.log(e);
-			viewModel.result("");
-			return; //invalid input
-		}
+		refreshResult(this);
 	}
 	
 	return viewModel;
+}
+
+function refreshResult(viewModel) {
+	try {		
+		const parser = math.parser();
+		if (viewModel.variables.length == 0) {
+			viewModel.variables = getVariablesForFormula(viewModel.formula());
+		}		
+		let allEmpty = true;			
+		viewModel.variables.forEach (a => {
+			let input = $("input[data-shortname='" + a + "']");
+			if (input.length == 0) {
+				input = $("textarea[data-shortname='" + a + "']");
+			}
+			let value = 0;
+			if (input.length > 0 && input.attr("data-is-answered") !== "false") {
+				value = $(input).val();
+				if (value.length == 0) {
+					value = "0";
+				} else {
+					allEmpty = false;
+				}
+			}
+			if (isNaN(value) || !isFinite(value)) {
+				viewModel.result("");
+				return; //invalid input
+			} 
+			parser.set(a, parseFloat(value));
+		});
+		
+		if (allEmpty) {
+			viewModel.result("");
+			return;
+		}
+		
+		let result = parser.evaluate(viewModel.formula());
+		if (isNaN(result) || !isFinite(result)) { //Divide by 0 will result in non Finite
+			viewModel.result("");
+			return; //invalid input
+		} 
+		
+		viewModel.result(math.round(result, viewModel.decimalPlaces())); 
+	} catch (e) {
+		console.log(e);
+		viewModel.result("");
+		return; //invalid input
+	}
 }
 
 function newConfirmationViewModel(element)
@@ -1238,6 +1299,7 @@ function newNumberViewModel(element)
 		if (explanationBox != null) {
 			explanationBox.execCommand('mceFocus',false);
 		}
+		updateFormulas(this.id(), this.shortname());
 	};
 
 	viewModel.resetToInitialPosition = function(_, event) {
@@ -1643,6 +1705,383 @@ function newTableViewModel(element)
 		}
 	}
 	
+	return viewModel;
+}
+
+function newComplexTableViewModel(element, foreditor)
+{
+	var viewModel = newBasicViewModel(element);
+	
+	if (element != null)
+	{
+		if (element.hasOwnProperty("isViewModel") && element.isViewModel)
+		{
+			viewModel.help = ko.observable(element.help());
+			viewModel.niceHelp = ko.observable(getNiceHelp(element.help()));
+			viewModel.css = ko.observable(element.css());
+			viewModel.rows = ko.observable(element.rows());
+			viewModel.columns = ko.observable(element.columns());
+			viewModel.showHeadersAndBorders = ko.observable(element.showHeadersAndBorders());
+			viewModel.size = ko.observable(element.size());
+			viewModel.childElements = newComplexTableItemsViewModel(element.childElements(), foreditor);		
+		} else {	
+			viewModel.help = ko.observable(element.help);
+			viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
+			viewModel.css = ko.observable(element.css);
+			viewModel.rows = ko.observable(element.rows);
+			viewModel.columns = ko.observable(element.columns);
+			viewModel.showHeadersAndBorders = ko.observable(element.showHeadersAndBorders);
+			viewModel.size = ko.observable(element.size);
+			viewModel.childElements = newComplexTableItemsViewModel(element.childElements, foreditor);
+		}	
+	}
+	
+	viewModel.orderedChildElements = ko.pureComputed(() => {
+		return viewModel.childElements.sorted(function(left, right) {
+			if (left.row() < right.row()) {
+				return -1;
+			}
+
+			if (left.row() > right.row()) {
+				return 1;
+			}
+
+			if (left.column() < right.column()) {
+				return -1;
+			}
+
+			if (left.column() > right.column()) {
+				return 1;
+			}
+
+			return 0;
+		})
+	})
+		
+	viewModel.answers = ko.computed(function() {
+		var result = ko.observableArray();
+		for (let i = 0; i < viewModel.childElements().length; i++) {
+			if (viewModel.childElements()[i].row() === 0) {
+				result.push(viewModel.childElements()[i]);
+			}
+		}
+		return result();
+	}, this);
+	
+	viewModel.questions = ko.computed(function() {
+		var result = ko.observableArray();
+		for (let i = 0; i < viewModel.childElements().length; i++) {
+			if (viewModel.childElements()[i].column() === 0 && viewModel.childElements()[i].row() > 0) {
+				result.push(viewModel.childElements()[i]);
+			}
+		}
+		return result();
+	}, this);
+	
+	viewModel.removeChildAt = function (col, row) {
+		let child = viewModel.getChild(col, row);
+		if (child != null) {
+			viewModel.childElements.remove(child);
+			return child
+		}
+	}
+	
+	viewModel.isCellVisible = function (col, row) {
+		if (col == 1) return true;
+		
+		for (let i = 1; i < viewModel.columns(); i++) {
+			if (col > i) {
+				previous = viewModel.getChild(col-i, row);
+				if (previous != null) {
+					return previous.columnSpan() == null || previous.columnSpan() < (i+1);
+				}
+			} else {
+				return true;
+			}
+		}
+		
+		return true;
+	}
+	
+	viewModel.getChild = function (col, row) {
+		for (let i = 0; i < viewModel.childElements().length; i++) {
+			if (viewModel.childElements()[i].column() === col && viewModel.childElements()[i].row() === row) {
+				return viewModel.childElements()[i];
+			}
+		}
+		return null;
+	}
+	
+	viewModel.getChildbyId = function (id) {
+		for (let i = 0; i < viewModel.childElements().length; i++) {
+			if (viewModel.childElements()[i].id().toString() === id.toString()) {
+				return viewModel.childElements()[i];
+			}
+		}
+		return null;
+	}
+			
+	viewModel.availableColumnSpans = function(column) {
+		const result = [];
+		for (let i = 1; i <= viewModel.columns() - column + 1; i++) {
+			result.push(i);	
+		}
+		return result;
+	}
+	
+	viewModel.childIds = function() {
+		let result = "";
+		for (let i = 0; i < viewModel.childElements().length; i++) {
+			result += viewModel.childElements()[i].id() + ";";
+		}
+		return result;
+	}
+	
+	
+	return viewModel;
+}
+
+function newComplexTableItemsViewModel(items, foreditor)
+{
+	var viewModel = ko.observableArray();
+	if (items != null) {
+		for (var i = 0; i < items.length; i++)
+		{
+			const child = newComplexTableItemViewModel(items[i]);
+			child.foreditor = foreditor;
+			viewModel.push(child);
+		}
+	}
+	return viewModel;
+}
+
+function newComplexTableItemViewModel(element)
+{
+	var viewModel = newBasicViewModel(element);
+	
+	if (element != null)
+	{
+		if (element.hasOwnProperty("isViewModel") && element.isViewModel)
+		{
+			viewModel.help = ko.observable(element.help());
+			viewModel.niceHelp = ko.observable(getNiceHelp(element.help()));
+			viewModel.css = ko.observable(element.css());
+			viewModel.row = ko.observable(element.row());
+			viewModel.column = ko.observable(element.column());
+			viewModel.cellType = ko.observable(element.cellType());
+			viewModel.columnSpan = ko.observable(element.columnSpan());
+			viewModel.minCharacters = ko.observable(element.minCharacters());
+			viewModel.maxCharacters = ko.observable(element.maxCharacters());
+			viewModel.minChoices = ko.observable(element.minChoices() == null ? 0 : element.minChoices());
+			viewModel.maxChoices = ko.observable(element.maxChoices() == null ? 0 : element.maxChoices());
+			viewModel.numRows = ko.observable(element.numRows() == null ? 1 : element.numRows());
+		
+			viewModel.possibleAnswers = newComplexPossibleAnswersViewModel(element.possibleAnswers());
+			
+			viewModel.useRadioButtons = ko.observable(element.useRadioButtons());
+			viewModel.useCheckboxes = ko.observable(element.useCheckboxes());	
+			viewModel.numColumns = ko.observable(element.numColumns());
+			viewModel.order = ko.observable(element.order());	
+			viewModel.resultText = ko.observable(element.resultText());
+			viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces() : 0);	
+			viewModel.unit = ko.observable(element.unit());	
+			viewModel.min = ko.observable(element.min());	
+			viewModel.max = ko.observable(element.max());	
+			viewModel.minString = ko.observable(element.minString());	
+			viewModel.maxString = ko.observable(element.maxString());
+			viewModel.formula = ko.observable(element.formula());
+			viewModel.readonly = ko.observable(element.readonly());
+		} else {	
+			viewModel.help = ko.observable(element.help);
+			viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
+			viewModel.css = ko.observable(element.css);
+			viewModel.row = ko.observable(element.row);
+			viewModel.column = ko.observable(element.column);
+			viewModel.cellType = ko.observable(element.cellType);
+			viewModel.columnSpan = ko.observable(element.columnSpan);
+			viewModel.minCharacters = ko.observable(element.minCharacters);
+			viewModel.maxCharacters = ko.observable(element.maxCharacters);
+			viewModel.minChoices = ko.observable(element.minChoices == null ? 0 : element.minChoices);
+			viewModel.maxChoices = ko.observable(element.maxChoices == null ? 0 : element.maxChoices);
+			viewModel.numRows = ko.observable(element.numRows == null || element.numRows < 1 ? 1 : element.numRows);
+		
+			viewModel.possibleAnswers = newComplexPossibleAnswersViewModel(element.possibleAnswers);
+			
+			viewModel.useRadioButtons = ko.observable(element.useRadioButtons);
+			viewModel.useCheckboxes = ko.observable(element.useCheckboxes);	
+			viewModel.numColumns = ko.observable(element.numColumns == null || element.numColumns < 1 ? 1 : element.numColumns);
+			viewModel.order = ko.observable(element.order);	
+			viewModel.resultText = ko.observable(element.resultText);
+			viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces : 0);	
+			viewModel.unit = ko.observable(element.unit);	
+			viewModel.min = ko.observable(element.min);	
+			viewModel.max = ko.observable(element.max);	
+			viewModel.minString = ko.observable(element.minString);	
+			viewModel.maxString = ko.observable(element.maxString);
+			viewModel.formula = ko.observable(element.formula);
+			viewModel.readonly = ko.observable(element.readonly);
+		}
+
+		viewModel.variables = [];				
+		viewModel.result = ko.observable("");
+
+		viewModel.result.subscribe(function (){
+			setTimeout(() => {
+				validateInput($(".cell[data-id=" + viewModel.id() + "]"))
+			})
+		})
+
+	viewModel.orderedPossibleAnswers = function(mobile, responsive){
+		if (this.order() != null && this.order() === 1){
+			let dic = [];
+			for (let i = 0; i < this.possibleAnswers().length; i++){
+				let item = [];
+				item[0] = this.possibleAnswers()[i].title().stripHtml();
+				item[1] = this.possibleAnswers()[i];
+				dic[dic.length] = item;
+			}
+
+			dic.sort(sortFunction);
+
+			let answers = [];
+			for (let i = 0; i < dic.length; i++)
+			{
+				answers[answers.length] = dic[i][1];
+			}
+
+			return answers;
+		} else if (this.order() != null && this.order() === 2)
+		{
+			let answers = this.possibleAnswers().slice();
+			answers = shuffle(answers);
+			return answers;
+		} else {
+			return this.possibleAnswers();
+		}
+	}
+
+	viewModel.orderedPossibleAnswersByColumn = function(mobile, responsive){
+		let orderedPossibleAnswers = this.orderedPossibleAnswers(mobile, responsive);
+		let result = [];
+
+		let limit = this.numColumns();
+		if (limit == 0) limit = 1;
+		
+		if (responsive && limit > 3) limit = 3;
+		if (mobile) limit = 1;
+
+		let itemsLeft = orderedPossibleAnswers.length
+		let sizeMap = {}
+		let pos = 0
+		while (itemsLeft > 0){
+			if (sizeMap[pos % limit] == null){
+				sizeMap[pos % limit] = 1
+			} else {
+				sizeMap[pos % limit]++
+			}
+			pos++;
+			itemsLeft--;
+		}
+		pos = 0;
+		for (let i = 0; i < limit; i++){
+			let column = []
+			for(let j = 0; j < sizeMap[i]; j++) {
+				let el = orderedPossibleAnswers[pos]
+				if (el != null && el.id() !== "dummy") {
+					column.push(el)
+				}
+				pos++;
+			}
+			result.push(column)
+		}
+
+		return result;
+	}
+
+	viewModel.hasEmptyLastColumn = function(){
+		if (this.numColumns() < 3) return false;
+
+		return this.possibleAnswers().length < this.numColumns()
+	}
+		
+		//properties for rows / columns
+		viewModel.cellTypeChildren = ko.observable("");
+		viewModel.titleChildren = ko.observable("");
+		viewModel.optionalChildren = ko.observable(true);
+		viewModel.optionalIndeterminate = ko.observable(false); //Visual Checkbox indicator for different values
+		viewModel.numRowsChildren = ko.observable("");
+		viewModel.minChildren = ko.observable(""); //minCharacters, minChoices or min depending on child type
+		viewModel.maxChildren = ko.observable("");
+		viewModel.formulaChildren = ko.observable("");
+		viewModel.decimalsChildren = ko.observable("");
+		viewModel.unitChildren = ko.observable("");
+		viewModel.possibleAnswersChildren = ko.observableArray();
+		viewModel.possibleAnswersMatch = ko.observable(false);
+	}
+
+	viewModel.cellTypeChanged = function (newType){
+		if (newType == 3){
+			if (!modelsForFormula.includes(viewModel)){
+				modelsForFormula.push(viewModel)
+			}
+		} else if (newType == 6){
+			if (!modelsForNumber.includes(viewModel)){
+				modelsForNumber.push(viewModel)
+			}
+		} else {
+			let index = modelsForFormula.indexOf(viewModel)
+			if (index >= 0){
+				modelsForFormula.splice(index, 1)
+			}
+			index = modelsForNumber.indexOf(viewModel)
+			if (index >= 0){
+				modelsForNumber.splice(index, 1)
+			}
+		}
+	}
+	
+	viewModel.cellStyle = function() {
+		if (viewModel.cellType() == 4) {
+			return viewModel.useRadioButtons() ? 'RadioButton' : 'SelectBox';
+		}
+		
+		if (viewModel.cellType() == 5) {
+			return viewModel.useCheckboxes() ? 'CheckBox' : 'ListBox';
+		}
+	}
+
+	viewModel.cellType.subscribe(viewModel.cellTypeChanged);
+
+	viewModel.cellTypeChanged(viewModel.cellType());
+	
+	viewModel.dependsOn = function(alias) {
+		if (this.variables.length == 0) {
+			this.variables = getVariablesForFormula(this.formula());
+		}
+		return this.variables.indexOf(alias) >= 0;
+	}
+		
+	viewModel.refreshResult = function() {
+		refreshResult(this);
+	}
+
+	return viewModel;
+}
+
+function newComplexPossibleAnswersViewModel(answers)
+{
+	var viewModel = ko.observableArray();
+	if (answers != null) {		
+		for (var i = 0; i < answers.length; i++)
+		{
+			if (answers[i].hasOwnProperty("isViewModel") && answers[i].isViewModel)
+			{
+				viewModel.push(newPossibleAnswerViewModel(answers[i].id(), answers[i].uniqueId(), answers[i].shortname(), answers[i].dependentElementsString(), answers[i].title(), answers[i].scoring, answers[i].ecfScore(), answers[i].ecfProfile()));
+			} else {
+				viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring, answers[i].ecfScore, answers[i].ecfProfile));
+			}
+		}
+	}
 	return viewModel;
 }
 

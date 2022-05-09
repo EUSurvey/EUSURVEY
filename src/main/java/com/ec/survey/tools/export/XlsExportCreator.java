@@ -138,6 +138,20 @@ public class XlsExportCreator extends ExportCreator {
 						sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
 						checkColumnInsertHeader(export);
 					}
+				} else if (question instanceof ComplexTable) {
+					ComplexTable table = (ComplexTable) question;
+					for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
+						Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
+						cellValue = ConversionTools.removeHTMLNoEscape(ConversionTools
+								.removeHTMLNoEscape(childQuestion.getResultTitle(table)));
+						if (export != null && export.getShowShortnames()) {
+							cellValue += " (" + childQuestion.getShortname() + ")";
+						}
+						cell.setCellValue(cellValue);
+						cell.setCellStyle(questionTitleStyle);
+						sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
+						checkColumnInsertHeader(export);
+					}
 				} else if (question instanceof Table) {
 					Table table = (Table) question;
 					for (Element tableQuestion : table.getQuestions()) {
@@ -667,6 +681,31 @@ public class XlsExportCreator extends ExportCreator {
 							if (!answers.isEmpty()) {
 								cellValue.append((cellValue.length() > 0) ? ";" : "")
 										.append(ConversionTools.removeHTMLNoEscape(answers.get(0).getValue()));
+							}
+							cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
+						}
+					}
+				} else if (question instanceof ComplexTable) {
+					ComplexTable table = (ComplexTable) question;
+					for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
+						Cell cell = checkColumnsParseAnswerSet();
+
+						if (answerSet == null) {
+							String v = answerrow.get(answerrowcounter++);
+
+							if (v != null) {
+								cell.setCellValue(ConversionTools.removeHTMLNoEscape(v));
+							}
+						} else {
+							List<Answer> answers = answerSet.getAnswers(childQuestion.getId(),
+									childQuestion.getUniqueId());
+							StringBuilder cellValue = new StringBuilder();
+							for (Answer answer : answers) {
+								cellValue.append((cellValue.length() > 0) ? ";" : "")
+										.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+								if (export != null && export.getShowShortnames()) {
+									cellValue.append(" ").append(form.getAnswerShortname(answer));
+								}
 							}
 							cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
 						}
@@ -1334,6 +1373,102 @@ public class XlsExportCreator extends ExportCreator {
 
 						rowIndex++;
 						row = sheet.createRow(rowIndex++);
+					}
+				} else if (question instanceof ComplexTable) {
+
+					ComplexTable table = (ComplexTable) question;
+
+					for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
+						boolean isChoice = childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice;
+						boolean hasStatistics = isChoice;
+						if (!hasStatistics) {
+							if (childQuestion.getCellType() == ComplexTableItem.CellType.Number || childQuestion.getCellType() == ComplexTableItem.CellType.Formula) {
+								hasStatistics = childQuestion.showStatisticsForNumberQuestion();
+							}
+						}
+						
+						if (hasStatistics)
+						{
+							cellValue = childQuestion.getResultTitle(table);
+							if (export.getShowShortnames()) {
+								cellValue += " (" + childQuestion.getShortname() + ")";
+							}
+							
+							CreateTableForAnswer(cellValue, boldstyle);
+							if (isChoice) {
+								for (PossibleAnswer possibleAnswer : childQuestion.getPossibleAnswers()) {
+									row = sheet.createRow(rowIndex++);
+	
+									cellValue = ConversionTools.removeHTMLNoEscape(possibleAnswer.getTitle());
+									if (export.getShowShortnames()) {
+										cellValue += " (" + possibleAnswer.getShortname() + ")";
+									}
+	
+									row.createCell(0).setCellValue(cellValue);
+	
+									Double percent = statistics.getRequestedRecordsPercent().get(possibleAnswer.getId().toString());
+	
+									if (percent == null)
+										percent = 0.0;
+	
+									drawChart(percent, helper, drawing);
+	
+									if (statistics.getRequestedRecords().get(possibleAnswer.getId().toString()) != null) {
+										row.createCell(2).setCellValue(
+												statistics.getRequestedRecords().get(possibleAnswer.getId().toString()));
+									}
+									Cell pcell = row.createCell(3);
+									pcell.setCellValue(percent / 100);
+									pcell.setCellStyle(percentStyle);
+								}
+							} else {
+								for (String answer : childQuestion.getPossibleNumberAnswers()) {				
+									row = sheet.createRow(rowIndex++);
+			
+									cellValue = answer;
+			
+									Cell icell = row.createCell(0);
+									icell.setCellValue(Integer.parseInt(cellValue));
+									icell.setCellStyle(numberStyle);
+			
+									Double percent = statistics.getRequestedRecordsPercent().get(childQuestion.getAnswerWithPrefix(answer));
+			
+									if (percent > 0) {
+										drawChart(percent, helper, drawing);
+									}
+			
+									row.createCell(2)
+											.setCellValue(statistics.getRequestedRecords().get(childQuestion.getAnswerWithPrefix(answer)));
+			
+									Cell pcell = row.createCell(3);
+									pcell.setCellValue(percent / 100);
+									pcell.setCellStyle(percentStyle);
+								}
+							}
+							row = sheet.createRow(rowIndex++);
+
+							// noanswers
+							row.createCell(0).setCellValue("No Answer");
+
+							Double percent = statistics.getRequestedRecordsPercent().get(childQuestion.getId().toString());
+
+							if (percent == null)
+								percent = 0.0;
+
+							if (percent > 0) {
+								drawChart(percent, helper, drawing);
+							}
+							if (statistics.getRequestedRecords().get(childQuestion.getId().toString()) != null) {
+								row.createCell(2)
+										.setCellValue(statistics.getRequestedRecords().get(childQuestion.getId().toString()));
+							}
+							Cell pcell = row.createCell(3);
+							pcell.setCellValue(percent / 100);
+							pcell.setCellStyle(percentStyle);
+
+							rowIndex++;
+							row = sheet.createRow(rowIndex++);
+						}
 					}
 				} else if (question instanceof RatingQuestion) {
 

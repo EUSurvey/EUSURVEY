@@ -31,6 +31,7 @@
 			this.selectedQuestions = ko.observable(${!form.survey.publication.allQuestions});
 			this.selectedContributions = ko.observable(${!form.survey.publication.allContributions});
 			this.useConfLink =  ko.observable(${form.survey.confirmationPageLink});
+			this.useMotivationTime = ko.observable(${form.survey.motivationType});
 			this.useEscapeLink =  ko.observable(${form.survey.escapePageLink});
 			this.quiz = ko.observable(${form.survey.isQuiz});
 			this.delphi = ko.observable(${form.survey.isDelphi});
@@ -46,6 +47,7 @@
 			this.showCountdown = ko.observable(${form.survey.showCountdown});
 			this.preventGoingBack = ko.observable(${form.survey.preventGoingBack});
 			this.progressBar = ko.observable(${form.survey.progressBar});
+			this.motivationPopup = ko.observable(${form.survey.motivationPopup});
 			this.progressDisplay = ko.observable(${form.survey.progressDisplay});
 			
 			this.addLinksRow = function()
@@ -208,6 +210,11 @@
 			{
 				this.self.progressBar(!this.self.progressBar());
 			}
+
+			this.toggleMotivationPopup = function()
+			{
+				this.self.motivationPopup(!this.self.motivationPopup());
+			}
 			
 			this.toggleQuiz = function()
 			{
@@ -311,6 +318,20 @@
 							$("#tinymcelimit").append("<div class='validation-error'>" + requiredText + "</div>")
 							return
 						}
+					}
+				}
+
+				if(_properties.motivationPopup()){
+					if(isPropEmpty("[name='survey.motivationText']")){
+						$("#tinymcemotivationpopup").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+
+					var motivation = $("#edit-survey-motivation-popup").text().length;
+					if (motivation > 255)
+					{
+						$("#tinymcemotivationpopup").append("<div class='validation-error'>" + texttoolongText + "</div>")
+						return;
 					}
 				}
 

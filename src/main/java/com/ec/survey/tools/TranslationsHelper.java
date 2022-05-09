@@ -263,6 +263,52 @@ public class TranslationsHelper {
 						}
 					}
 				}
+				
+				if (element instanceof ComplexTable) {
+					ComplexTable table = (ComplexTable) element;
+
+					for (ComplexTableItem child : table.getOrderedChildElements()) {
+						if (child.getCellType() != ComplexTableItem.CellType.Empty) {
+							translations.getTranslations()
+									.add(new Translation(child.getUniqueId(),
+											child.getTitle() != null ? child.getTitle() : "",
+											survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
+							if (child.getCellType() != ComplexTableItem.CellType.StaticText) {
+								if (complete || (child.getHelp() != null && child.getHelp().trim().length() > 0)) {
+									translations.getTranslations()
+											.add(new Translation(child.getUniqueId() + "help",
+													child.getHelp() != null ? child.getHelp() : "",
+													survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
+								}
+
+								if (complete || (child.getResultText() != null && child.getResultText().trim().length() > 0)) {
+									translations.getTranslations()
+											.add(new Translation(child.getUniqueId() + "RESULTTEXT",
+													child.getResultText() != null ? child.getResultText() : "",
+													survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
+								}
+							}
+
+							if (child.isChoice()) {
+								for (PossibleAnswer answer : child.getPossibleAnswers()) {
+									translations.getTranslations()
+											.add(new Translation(answer.getUniqueId(),
+													answer.getTitle() != null ? answer.getTitle() : "",
+													survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
+								}
+							}
+
+							if (child.getCellType() == ComplexTableItem.CellType.Number){
+								if (complete || (child.getUnit() != null && child.getUnit().trim().length() > 0)) {
+									translations.getTranslations()
+											.add(new Translation(child.getUniqueId() + "UNIT",
+													child.getUnit() != null ? child.getUnit() : "",
+													survey.getLanguage().getCode(), survey.getId(), translations, element.getLocked()));
+								}
+							}
+						}
+					}
+				}
 
 				if (element instanceof RatingQuestion) {
 					RatingQuestion rating = (RatingQuestion) element;
@@ -439,6 +485,38 @@ public class TranslationsHelper {
 
 				}
 			}
+
+			if (element instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) element;
+
+				for (ComplexTableItem child : table.getChildElements()) {
+					if (child.getCellType() != ComplexTableItem.CellType.Empty) {
+						result.add(new KeyValue(child.getUniqueId(), "L"));
+
+						if (notNullOrEmpty(child.getResultText())){
+							result.add(new KeyValue(child.getUniqueId() + "RESULTTEXT", "RT"));
+						}
+
+						if (notNullOrEmpty(child.getHelp())) {
+							result.add(new KeyValue(child.getUniqueId() + "help", "H"));
+						}
+
+						if (child.getCellType() == ComplexTableItem.CellType.Number){
+							result.add(new KeyValue(child.getUniqueId() + "UNIT", "U"));
+						}
+
+						if (child.isChoice()) {
+							for (PossibleAnswer answer : child.getPossibleAnswers()) {
+								result.add(new KeyValue(answer.getUniqueId(), "L"));
+
+								if (answer.getScoring() != null && notNullOrEmpty(answer.getScoring().getFeedback())) {
+									result.add(new KeyValue(answer.getUniqueId() + Question.FEEDBACK, "F"));
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		return result;
 	}
@@ -608,6 +686,42 @@ public class TranslationsHelper {
 							resources.getMessage("label.Title", null, "Title", locale)));
 				}
 			}
+
+			if (element instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) element;
+
+				for (ComplexTableItem child : table.getChildElements()) {
+					if (child.getCellType() != ComplexTableItem.CellType.Empty) {
+						result.add(new KeyValue(child.getUniqueId(),
+								resources.getMessage("label.Text", null, "Text", locale)));
+
+
+						result.add(new KeyValue(child.getUniqueId() + "RESULTTEXT",
+								resources.getMessage("label.ResultText", null, "Result Text", locale)));
+
+						result.add(new KeyValue(child.getUniqueId() + "help",
+								resources.getMessage("label.HelpMessage", null, "Help Message", locale)));
+
+
+						if (child.getCellType() == ComplexTableItem.CellType.Number){
+							result.add(new KeyValue(child.getUniqueId() + "UNIT",
+									resources.getMessage("label.Unit", null, "Unit", locale)));
+						}
+
+						if (child.isChoice()) {
+							for (PossibleAnswer answer : child.getPossibleAnswers()) {
+								result.add(new KeyValue(answer.getUniqueId(),
+										resources.getMessage("label.Answer", null, "Answer", locale)));
+
+								if (answer.getScoring() != null && notNullOrEmpty(answer.getScoring().getFeedback())) {
+									result.add(new KeyValue(answer.getUniqueId() + Question.FEEDBACK,
+											resources.getMessage("label.Feedback", null, "Feedback", locale)));
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		return result;
 	}
@@ -713,7 +827,7 @@ public class TranslationsHelper {
 			unitNode.appendChild(doc.createCDATASection(label));
 			elementNode.appendChild(unitNode);
 
-			if (((NumberQuestion) element).isSlider()) {
+			if (number.isSlider()) {
 				org.w3c.dom.Element minLabelNode = doc.createElement("MinLabel");
 				label = getLabel(number, NumberQuestion.MINLABEL, translationByKey);
 				minLabelNode.appendChild(doc.createCDATASection(label));
@@ -834,6 +948,58 @@ public class TranslationsHelper {
 				childrenElement.appendChild(galleryImage);
 			}
 			elementNode.appendChild(childrenElement);
+		}
+
+		if (element instanceof ComplexTable) {
+
+			ComplexTable table = (ComplexTable) element;
+			org.w3c.dom.Element childrenElement = doc.createElement("Children");
+
+			for (ComplexTableItem child : table.getChildElements()) {
+				childrenElement.appendChild(getElementNode(child, doc, translationByKey));
+			}
+			elementNode.appendChild(childrenElement);
+		}
+
+		if (element instanceof ComplexTableItem){
+			ComplexTableItem item = (ComplexTableItem) element;
+
+			attr = doc.createAttribute("ResultText");
+			label = getLabel(item, "RESULTTEXT", translationByKey);
+			if (label.length() > 0) {
+				attr.setValue(label);
+				elementNode.setAttributeNode(attr);
+			}
+
+			attr = doc.createAttribute("Unit");
+			label = getLabel(item, "UNIT", translationByKey);
+			if (label.length() > 0) {
+				attr.setValue(label);
+				elementNode.setAttributeNode(attr);
+			}
+
+			if (item.isChoice()) {
+
+				for (PossibleAnswer answer : item.getPossibleAnswers()) {
+					org.w3c.dom.Element answerNode = doc.createElement("Answer");
+
+					attr = doc.createAttribute("key");
+					attr.setValue(answer.getUniqueId());
+					answerNode.setAttributeNode(attr);
+
+					label = getLabel(answer, "", translationByKey);
+					labelNode = doc.createElement(Constants.LABEL);
+					labelNode.appendChild(doc.createCDATASection(label));
+					answerNode.appendChild(labelNode);
+
+					label = getLabel(answer, Question.FEEDBACK, translationByKey);
+					org.w3c.dom.Element feedbackNode = doc.createElement("Feedback");
+					feedbackNode.appendChild(doc.createCDATASection(label));
+					answerNode.appendChild(feedbackNode);
+
+					elementNode.appendChild(answerNode);
+				}
+			}
 		}
 
 		return elementNode;
@@ -1030,301 +1196,9 @@ public class TranslationsHelper {
 			Workbook wb = new HSSFWorkbook();
 			String safeName = WorkbookUtil.createSafeSheetName("Translation");
 			Sheet sheet = wb.createSheet(safeName);
+			XlsTranslationCreator creator = new XlsTranslationCreator(sheet, translationsByKey, descriptions);
 
-			// Create a row and put some cells in it. Rows are 0 based.
-			int rowIndex = 0;
-			Row row = sheet.createRow(rowIndex++);
-			addTextCell(row, 0, survey.getUniqueId());
-			addTextCell(row, 1, translations.getLanguage().getCode());
-
-			row = sheet.createRow(rowIndex++);
-			addTextCell(row, 0, Survey.TITLE);
-			addTextCell(row, 1, descriptions.get(Survey.TITLE));
-			addTextCell(row, 2, translationsByKey.get(Survey.TITLE) != null ? translationsByKey.get(Survey.TITLE) : "");
-			
-			row = sheet.createRow(rowIndex++);
-			addTextCell(row, 0, Survey.LOGOTEXT);
-			addTextCell(row, 1, descriptions.get(Survey.LOGOTEXT));
-			addTextCell(row, 2, translationsByKey.get(Survey.LOGOTEXT) != null ? translationsByKey.get(Survey.LOGOTEXT) : "");
-
-			if (translationsByKey.get(Survey.QUIZWELCOMEMESSAGE) != null
-					&& translationsByKey.get(Survey.QUIZWELCOMEMESSAGE).length() > 0) {
-				row = sheet.createRow(rowIndex++);
-				addTextCell(row, 0, Survey.QUIZWELCOMEMESSAGE);
-				addTextCell(row, 1, descriptions.get(Survey.QUIZWELCOMEMESSAGE));
-				addTextCell(row, 2,
-						translationsByKey.get(Survey.QUIZWELCOMEMESSAGE) != null
-								? translationsByKey.get(Survey.QUIZWELCOMEMESSAGE)
-								: "");
-			}
-
-			if (translationsByKey.get(Survey.QUIZRESULTSMESSAGE) != null
-					&& translationsByKey.get(Survey.QUIZRESULTSMESSAGE).length() > 0) {
-				row = sheet.createRow(rowIndex++);
-				addTextCell(row, 0, Survey.QUIZRESULTSMESSAGE);
-				addTextCell(row, 1, descriptions.get(Survey.QUIZRESULTSMESSAGE));
-				addTextCell(row, 2,
-						translationsByKey.get(Survey.QUIZRESULTSMESSAGE) != null
-								? translationsByKey.get(Survey.QUIZRESULTSMESSAGE)
-								: "");
-			}
-
-			if (translationsByKey.get(Survey.ESCAPEPAGE) != null
-					&& translationsByKey.get(Survey.ESCAPEPAGE).length() > 0) {
-				row = sheet.createRow(rowIndex++);
-				addTextCell(row, 0, Survey.ESCAPEPAGE);
-				addTextCell(row, 1, descriptions.get(Survey.ESCAPEPAGE));
-				addTextCell(row, 2,
-						translationsByKey.get(Survey.ESCAPEPAGE) != null ? translationsByKey.get(Survey.ESCAPEPAGE)
-								: "");
-			}
-
-			if (translationsByKey.get(Survey.ESCAPELINK) != null
-					&& translationsByKey.get(Survey.ESCAPELINK).length() > 0) {
-				row = sheet.createRow(rowIndex++);
-				addTextCell(row, 0, Survey.ESCAPELINK);
-				addTextCell(row, 1, descriptions.get(Survey.ESCAPELINK));
-				addTextCell(row, 2,
-						translationsByKey.get(Survey.ESCAPELINK) != null ? translationsByKey.get(Survey.ESCAPELINK)
-								: "");
-			}
-
-			if (translationsByKey.get(Survey.CONFIRMATIONPAGE) != null
-					&& translationsByKey.get(Survey.CONFIRMATIONPAGE).length() > 0) {
-				row = sheet.createRow(rowIndex++);
-				addTextCell(row, 0, Survey.CONFIRMATIONPAGE);
-				addTextCell(row, 1, descriptions.get(Survey.CONFIRMATIONPAGE));
-				addTextCell(row, 2,
-						translationsByKey.get(Survey.CONFIRMATIONPAGE) != null
-								? translationsByKey.get(Survey.CONFIRMATIONPAGE)
-								: "");
-			}
-
-			if (translationsByKey.get(Survey.CONFIRMATIONLINK) != null
-					&& translationsByKey.get(Survey.CONFIRMATIONLINK).length() > 0) {
-				row = sheet.createRow(rowIndex++);
-				addTextCell(row, 0, Survey.CONFIRMATIONLINK);
-				addTextCell(row, 1, descriptions.get(Survey.CONFIRMATIONLINK));
-				addTextCell(row, 2,
-						translationsByKey.get(Survey.CONFIRMATIONLINK) != null
-								? translationsByKey.get(Survey.CONFIRMATIONLINK)
-								: "");
-			}
-
-			for (String key : survey.getUsefulLinks().keySet()) {
-				row = sheet.createRow(rowIndex++);
-				String[] data = key.split("#");
-				String newkey = data[0] + "#usefullink";
-				addTextCell(row, 0, newkey);
-				addTextCell(row, 1, descriptions.get(newkey));
-				addTextCell(row, 2, translationsByKey.get(newkey) != null ? translationsByKey.get(newkey) : "");
-			}
-
-			for (String key : survey.getBackgroundDocuments().keySet()) {
-				row = sheet.createRow(rowIndex++);
-				String newkey = key + "#backgrounddocument";
-				addTextCell(row, 0, newkey);
-				addTextCell(row, 1, descriptions.get(newkey));
-				addTextCell(row, 2, translationsByKey.get(newkey) != null ? translationsByKey.get(newkey) : "");
-			}
-
-			for (Element element : survey.getElements()) {
-				if (element instanceof Ruler) {
-					continue;
-				}
-
-				String label = getLabel(element, "", translationsByKey);
-
-				if (notNullOrEmpty(label)) {
-					row = sheet.createRow(rowIndex++);
-					addTextCell(row, 0, element.getUniqueId());
-					addTextCell(row, 1, descriptions.get(element.getUniqueId()));
-					addTextCell(row, 2, label);
-				}
-
-				if (element instanceof Section) {
-					Section section = (Section) element;
-					label = getLabel(section, Section.TABTITLE, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						row = sheet.createRow(rowIndex++);
-						addTextCell(row, 0, section.getUniqueId());
-						addTextCell(row, 1, descriptions.get(section.getUniqueId() + Section.TABTITLE));
-						addTextCell(row, 2, label);
-					}
-				}
-
-				if (element instanceof NumberQuestion) {
-					NumberQuestion number = (NumberQuestion) element;
-					label = getLabel(number, NumberQuestion.UNIT, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						row = sheet.createRow(rowIndex++);
-						addTextCell(row, 0, number.getUniqueId());
-						addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.UNIT));
-						addTextCell(row, 2, label);
-					}
-
-					if (number.isSlider()) {
-						label = getLabel(number, NumberQuestion.MINLABEL, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, number.getUniqueId());
-							addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.MINLABEL));
-							addTextCell(row, 2, label);
-						}
-
-						label = getLabel(number, NumberQuestion.MAXLABEL, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, number.getUniqueId());
-							addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.MAXLABEL));
-							addTextCell(row, 2, label);
-						}
-					}
-				}
-
-				if (element instanceof Confirmation) {
-					Confirmation confirmation = (Confirmation) element;
-					label = getLabel(confirmation, Confirmation.TEXT, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						row = sheet.createRow(rowIndex++);
-						addTextCell(row, 0, confirmation.getUniqueId());
-						addTextCell(row, 1, descriptions.get(confirmation.getUniqueId() + Confirmation.TEXT));
-						addTextCell(row, 2, label);
-					}
-					label = getLabel(confirmation, Confirmation.LABEL, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						row = sheet.createRow(rowIndex++);
-						addTextCell(row, 0, confirmation.getUniqueId());
-						addTextCell(row, 1, descriptions.get(confirmation.getUniqueId() + Confirmation.LABEL));
-						addTextCell(row, 2, label);
-					}
-				}
-
-				if (element instanceof ChoiceQuestion) {
-					ChoiceQuestion choice = (ChoiceQuestion) element;
-					for (PossibleAnswer answer : choice.getPossibleAnswers()) {
-						label = getLabel(answer, "", translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, answer.getUniqueId());
-							addTextCell(row, 1, descriptions.get(answer.getUniqueId()));
-							addTextCell(row, 2, label);
-						}
-
-						label = getLabel(answer, Question.FEEDBACK, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, answer.getUniqueId());
-							addTextCell(row, 1, descriptions.get(answer.getUniqueId() + Question.FEEDBACK));
-							addTextCell(row, 2, label);
-						}
-					}
-				}
-
-				if (element instanceof Question) {
-					Question question = (Question) element;
-					if (question.getHelp() != null && question.getHelp().length() > 0) {
-						label = getLabel(question, "help", translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, question.getUniqueId());
-							addTextCell(row, 1, descriptions.get(question.getUniqueId() + "help"));
-							addTextCell(row, 2, label);
-						}
-					}
-
-					if (question.getScoringItems() != null) {
-						for (ScoringItem scoringItem : question.getScoringItems()) {
-							label = translationsByKey.get(scoringItem.getUniqueId() + Question.FEEDBACK);
-							if (notNullOrEmpty(label)) {
-								row = sheet.createRow(rowIndex++);
-								addTextCell(row, 0, scoringItem.getUniqueId());
-								addTextCell(row, 1, descriptions.get(scoringItem.getUniqueId() + Question.FEEDBACK));
-								addTextCell(row, 2, label);
-							}
-						}
-					}
-				}
-
-				if (element instanceof MatrixOrTable) {
-					MatrixOrTable matrix = (MatrixOrTable) element;
-
-					label = getLabel(matrix, MatrixOrTable.FIRSTCELL, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						row = sheet.createRow(rowIndex++);
-						addTextCell(row, 0, element.getUniqueId());
-						addTextCell(row, 1, descriptions.get(element.getUniqueId() + MatrixOrTable.FIRSTCELL));
-						addTextCell(row, 2, label);
-					}
-
-					for (Element child : matrix.getChildElements()) {
-						if (!(child instanceof EmptyElement)) {
-							label = getLabel(child, "", translationsByKey);
-							if (notNullOrEmpty(label)) {
-								row = sheet.createRow(rowIndex++);
-								addTextCell(row, 0, child.getUniqueId());
-								addTextCell(row, 1, descriptions.get(child.getUniqueId()));
-								addTextCell(row, 2, label);
-							}
-						}
-					}
-				}
-
-				if (element instanceof RatingQuestion) {
-					RatingQuestion rating = (RatingQuestion) element;
-					for (Element child : rating.getChildElements()) {
-						if (!(child instanceof EmptyElement)) {
-							label = getLabel(child, "", translationsByKey);
-							if (notNullOrEmpty(label)) {
-								row = sheet.createRow(rowIndex++);
-								addTextCell(row, 0, child.getUniqueId());
-								addTextCell(row, 1, descriptions.get(child.getUniqueId()));
-								addTextCell(row, 2, label);
-							}
-						}
-					}
-				}
-				
-				if (element instanceof RankingQuestion) {
-					RankingQuestion ranking = (RankingQuestion) element;
-					for (Element child : ranking.getChildElements()) {
-						label = getLabel(child, "", translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, child.getUniqueId());
-							addTextCell(row, 1, descriptions.get(child.getUniqueId()));
-							addTextCell(row, 2, label);
-						}
-					}
-				}
-				
-				if (element instanceof GalleryQuestion) {
-					GalleryQuestion gallery = (GalleryQuestion) element;
-					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
-						label = getLabel(child, GalleryQuestion.TEXT, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, child.getUid());
-							addTextCell(row, 1, descriptions.get(child.getUid() + GalleryQuestion.TEXT));
-							addTextCell(row, 2, label);
-						}
-						label = getLabel(child,"", translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, child.getUid());
-							addTextCell(row, 1, descriptions.get(child.getUid()));
-							addTextCell(row, 2, label);
-						}
-						label = getLabel(child, GalleryQuestion.TITLE, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							row = sheet.createRow(rowIndex++);
-							addTextCell(row, 0, child.getUid());
-							addTextCell(row, 1, descriptions.get(child.getUid() + GalleryQuestion.TITLE));
-							addTextCell(row, 2, label);
-						}
-					}
-				}
-			}
+			createSheet(creator, survey, translations, descriptions, translationsByKey);
 
 			java.io.File temp = fileService.createTempFile("translation" + UUID.randomUUID().toString(), ".xls");
 
@@ -1363,357 +1237,9 @@ public class TranslationsHelper {
 			SpreadsheetDocument spreadsheet = SpreadsheetDocument.newSpreadsheetDocument();
 			org.odftoolkit.simple.table.Table sheet = spreadsheet.getSheetByIndex(0);
 			sheet.setTableName("Translation");
+			OdsTranslationCreator creator = new OdsTranslationCreator(sheet, translationsByKey, descriptions);
 
-			// Create a row and put some cells in it. Rows are 0 based.
-			int rowIndex = 0;
-			org.odftoolkit.simple.table.Cell cell;
-
-			cell = sheet.getCellByPosition(0, rowIndex);
-			cell.setStringValue(survey.getUniqueId());
-			cell = sheet.getCellByPosition(1, rowIndex++);
-			cell.setStringValue(translations.getLanguage().getCode());
-
-			String label = translationsByKey.get(Survey.TITLE) != null ? translationsByKey.get(Survey.TITLE) : "";
-			if (notNullOrEmpty(label)) {
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(Survey.TITLE);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(Survey.TITLE));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(label);
-			}
-			
-			label = translationsByKey.get(Survey.LOGOTEXT) != null ? translationsByKey.get(Survey.LOGOTEXT) : "";
-			if (notNullOrEmpty(label)) {
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(Survey.LOGOTEXT);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(Survey.LOGOTEXT));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(label);
-			}
-
-			label = translationsByKey.get(Survey.QUIZWELCOMEMESSAGE) != null
-					? translationsByKey.get(Survey.QUIZWELCOMEMESSAGE)
-					: "";
-			if (notNullOrEmpty(label)) {
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(Survey.QUIZWELCOMEMESSAGE);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(Survey.QUIZWELCOMEMESSAGE));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(label);
-			}
-
-			label = translationsByKey.get(Survey.QUIZRESULTSMESSAGE) != null
-					? translationsByKey.get(Survey.QUIZRESULTSMESSAGE)
-					: "";
-			if (notNullOrEmpty(label)) {
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(Survey.QUIZRESULTSMESSAGE);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(Survey.QUIZRESULTSMESSAGE));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(label);
-			}
-
-			label = translationsByKey.get(Survey.ESCAPEPAGE) != null ? translationsByKey.get(Survey.ESCAPEPAGE) : "";
-			if (notNullOrEmpty(label)) {
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(Survey.ESCAPEPAGE);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(Survey.ESCAPEPAGE));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(label);
-			}
-
-			label = translationsByKey.get(Survey.ESCAPELINK) != null ? translationsByKey.get(Survey.ESCAPELINK) : "";
-			if (notNullOrEmpty(label)) {
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(Survey.ESCAPELINK);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(Survey.ESCAPELINK));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(label);
-			}
-
-			label = translationsByKey.get(Survey.CONFIRMATIONPAGE) != null
-					? translationsByKey.get(Survey.CONFIRMATIONPAGE)
-					: "";
-			if (notNullOrEmpty(label)) {
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(Survey.CONFIRMATIONPAGE);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(Survey.CONFIRMATIONPAGE));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(label);
-			}
-
-			label = translationsByKey.get(Survey.CONFIRMATIONLINK) != null
-					? translationsByKey.get(Survey.CONFIRMATIONLINK)
-					: "";
-			if (notNullOrEmpty(label)) {
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(Survey.CONFIRMATIONLINK);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(Survey.CONFIRMATIONLINK));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(label);
-			}
-
-			for (String key : survey.getUsefulLinks().keySet()) {
-				String[] data = key.split("#");
-				String newkey = data[0] + "#usefullink";
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(newkey);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(newkey));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(translationsByKey.get(newkey) != null ? translationsByKey.get(newkey) : "");
-			}
-
-			for (String key : survey.getBackgroundDocuments().keySet()) {
-				String newkey = key + "#backgrounddocument";
-				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(newkey);
-				cell = sheet.getCellByPosition(1, rowIndex);
-				cell.setStringValue(descriptions.get(newkey));
-				cell = sheet.getCellByPosition(2, rowIndex++);
-				cell.setStringValue(translationsByKey.get(newkey) != null ? translationsByKey.get(newkey) : "");
-			}
-
-			for (Element element : survey.getElements()) {
-				if (element instanceof Ruler) {
-					continue;
-				}
-
-				label = getLabel(element, "", translationsByKey);
-				if (notNullOrEmpty(label)) {
-					cell = sheet.getCellByPosition(0, rowIndex);
-					cell.setStringValue(element.getUniqueId());
-					cell = sheet.getCellByPosition(1, rowIndex);
-					cell.setStringValue(descriptions.get(element.getUniqueId()));
-					cell = sheet.getCellByPosition(2, rowIndex++);
-					cell.setStringValue(label);
-				}
-
-				if (element instanceof Section) {
-					Section section = (Section) element;
-					label = getLabel(section, Section.TABTITLE, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						cell = sheet.getCellByPosition(0, rowIndex);
-						cell.setStringValue(section.getUniqueId());
-						cell = sheet.getCellByPosition(1, rowIndex);
-						cell.setStringValue(descriptions.get(section.getUniqueId() + Section.TABTITLE));
-						cell = sheet.getCellByPosition(2, rowIndex++);
-						cell.setStringValue(label);
-					}
-				}
-
-				if (element instanceof NumberQuestion) {
-					NumberQuestion number = (NumberQuestion) element;
-					label = getLabel(number, NumberQuestion.UNIT, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						cell = sheet.getCellByPosition(0, rowIndex);
-						cell.setStringValue(number.getUniqueId());
-						cell = sheet.getCellByPosition(1, rowIndex);
-						cell.setStringValue(descriptions.get(number.getUniqueId() + NumberQuestion.UNIT));
-						cell = sheet.getCellByPosition(2, rowIndex++);
-						cell.setStringValue(label);
-					}
-
-					if (number.isSlider()) {
-						label = getLabel(number, NumberQuestion.MINLABEL, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(number.getUniqueId());
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(number.getUniqueId() + NumberQuestion.MINLABEL));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
-						}
-
-						label = getLabel(number, NumberQuestion.MAXLABEL, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(number.getUniqueId());
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(number.getUniqueId() + NumberQuestion.MAXLABEL));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
-						}
-					}
-				}
-
-				if (element instanceof Confirmation) {
-					Confirmation confirmation = (Confirmation) element;
-					label = getLabel(confirmation, Confirmation.TEXT, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						cell = sheet.getCellByPosition(0, rowIndex);
-						cell.setStringValue(confirmation.getUniqueId());
-						cell = sheet.getCellByPosition(1, rowIndex);
-						cell.setStringValue(descriptions.get(confirmation.getUniqueId() + Confirmation.TEXT));
-						cell = sheet.getCellByPosition(2, rowIndex++);
-						cell.setStringValue(label);
-					}
-					label = getLabel(confirmation, Confirmation.LABEL, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						cell = sheet.getCellByPosition(0, rowIndex);
-						cell.setStringValue(confirmation.getUniqueId());
-						cell = sheet.getCellByPosition(1, rowIndex);
-						cell.setStringValue(descriptions.get(confirmation.getUniqueId() + Confirmation.LABEL));
-						cell = sheet.getCellByPosition(2, rowIndex++);
-						cell.setStringValue(label);
-					}
-				}
-
-				if (element instanceof ChoiceQuestion) {
-					ChoiceQuestion choice = (ChoiceQuestion) element;
-					for (PossibleAnswer answer : choice.getPossibleAnswers()) {
-						label = getLabel(answer, "", translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(answer.getUniqueId());
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(answer.getUniqueId()));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
-						}
-
-						label = getLabel(answer, Question.FEEDBACK, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(answer.getUniqueId());
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(answer.getUniqueId() + Question.FEEDBACK));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
-						}
-					}
-				}
-
-				if (element instanceof Question) {
-					Question question = (Question) element;
-					if (question.getHelp() != null && question.getHelp().length() > 0) {
-						label = getLabel(question, "help", translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(question.getUniqueId());
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(question.getUniqueId() + "help"));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
-						}
-					}
-
-					if (question.getScoringItems() != null) {
-						for (ScoringItem scoringItem : question.getScoringItems()) {
-							label = translationsByKey.get(scoringItem.getUniqueId() + Question.FEEDBACK);
-							if (notNullOrEmpty(label)) {
-								cell = sheet.getCellByPosition(0, rowIndex);
-								cell.setStringValue(scoringItem.getUniqueId());
-								cell = sheet.getCellByPosition(1, rowIndex);
-								cell.setStringValue(descriptions.get(scoringItem.getUniqueId() + Question.FEEDBACK));
-								cell = sheet.getCellByPosition(2, rowIndex++);
-								cell.setStringValue(label);
-							}
-						}
-					}
-				}
-
-				if (element instanceof MatrixOrTable) {
-					MatrixOrTable matrix = (MatrixOrTable) element;
-
-					label = getLabel(matrix, MatrixOrTable.FIRSTCELL, translationsByKey);
-					if (notNullOrEmpty(label)) {
-						cell = sheet.getCellByPosition(0, rowIndex);
-						cell.setStringValue(element.getUniqueId());
-						cell = sheet.getCellByPosition(1, rowIndex);
-						cell.setStringValue(descriptions.get(element.getUniqueId() + MatrixOrTable.FIRSTCELL));
-						cell = sheet.getCellByPosition(2, rowIndex++);
-						cell.setStringValue(label);
-					}
-
-					for (Element child : matrix.getChildElements()) {
-						if (!(child instanceof EmptyElement)) {
-							label = getLabel(child, "", translationsByKey);
-							if (notNullOrEmpty(label)) {
-								cell = sheet.getCellByPosition(0, rowIndex);
-								cell.setStringValue(child.getUniqueId());
-								cell = sheet.getCellByPosition(1, rowIndex);
-								cell.setStringValue(descriptions.get(child.getUniqueId()));
-								cell = sheet.getCellByPosition(2, rowIndex++);
-								cell.setStringValue(label);
-							}
-						}
-					}
-				}
-
-				if (element instanceof RatingQuestion) {
-					RatingQuestion rating = (RatingQuestion) element;
-					for (Element child : rating.getChildElements()) {
-						if (!(child instanceof EmptyElement)) {
-							label = getLabel(child, "", translationsByKey);
-							if (notNullOrEmpty(label)) {
-								cell = sheet.getCellByPosition(0, rowIndex);
-								cell.setStringValue(child.getUniqueId());
-								cell = sheet.getCellByPosition(1, rowIndex);
-								cell.setStringValue(descriptions.get(child.getUniqueId()));
-								cell = sheet.getCellByPosition(2, rowIndex++);
-								cell.setStringValue(label);
-							}
-						}
-					}
-				}
-				
-				if (element instanceof RankingQuestion) {
-					RankingQuestion ranking = (RankingQuestion) element;
-					for (Element child : ranking.getChildElements()) {
-						label = getLabel(child, "", translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(child.getUniqueId());
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(child.getUniqueId()));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
-						}
-					}
-				}
-				
-				if (element instanceof GalleryQuestion) {
-					GalleryQuestion gallery = (GalleryQuestion) element;
-					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
-						label = getLabel(child, GalleryQuestion.TEXT, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(child.getUid()) ;
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(child.getUid() + GalleryQuestion.TEXT));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
-						}
-						label = getLabel(child, "", translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(child.getUid()) ;
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(child.getUid()));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(	label);
-						}
-						label = getLabel(child, GalleryQuestion.TITLE, translationsByKey);
-						if (notNullOrEmpty(label)) {
-							cell = sheet.getCellByPosition(0, rowIndex);
-							cell.setStringValue(child.getUid()) ;
-							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(child.getUid() + GalleryQuestion.TITLE));
-							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
-						}
-					}
-				}
-			}
+			createSheet(creator, survey, translations, descriptions, translationsByKey);
 
 			java.io.File temp = fileService.createTempFile("translation" + UUID.randomUUID().toString(), ".ods");
 
@@ -1732,10 +1258,187 @@ public class TranslationsHelper {
 		return null;
 	}
 
+	private static void createSheet(SheetTranslationCreator creator, Survey survey, Translations translations, Map<String, String> descriptions, Map<String, String> translationsByKey){
+		SheetRow row = creator.nextRow();
+		addTextCell(row, 0, survey.getUniqueId());
+		addTextCell(row, 1, translations.getLanguage().getCode());
+
+		row = creator.nextRow();
+		addTextCell(row, 0, Survey.TITLE);
+		addTextCell(row, 1, descriptions.get(Survey.TITLE));
+		addTextCell(row, 2, translationsByKey.get(Survey.TITLE) != null ? translationsByKey.get(Survey.TITLE) : "");
+
+		row = creator.nextRow();
+		addTextCell(row, 0, Survey.LOGOTEXT);
+		addTextCell(row, 1, descriptions.get(Survey.LOGOTEXT));
+		addTextCell(row, 2, translationsByKey.get(Survey.LOGOTEXT) != null ? translationsByKey.get(Survey.LOGOTEXT) : "");
+
+		creator.nextAttributeRow(Survey.QUIZWELCOMEMESSAGE);
+
+		creator.nextAttributeRow(Survey.QUIZRESULTSMESSAGE);
+
+		creator.nextAttributeRow(Survey.ESCAPEPAGE);
+
+		creator.nextAttributeRow(Survey.ESCAPELINK);
+
+		creator.nextAttributeRow(Survey.CONFIRMATIONPAGE);
+
+		creator.nextAttributeRow(Survey.CONFIRMATIONLINK);
+
+		for (String key : survey.getUsefulLinks().keySet()) {
+			row = creator.nextRow();
+			String[] data = key.split("#");
+			String newkey = data[0] + "#usefullink";
+			addTextCell(row, 0, newkey);
+			addTextCell(row, 1, descriptions.get(newkey));
+			addTextCell(row, 2, translationsByKey.get(newkey) != null ? translationsByKey.get(newkey) : "");
+		}
+
+		for (String key : survey.getBackgroundDocuments().keySet()) {
+			row = creator.nextRow();
+			String newkey = key + "#backgrounddocument";
+			addTextCell(row, 0, newkey);
+			addTextCell(row, 1, descriptions.get(newkey));
+			addTextCell(row, 2, translationsByKey.get(newkey) != null ? translationsByKey.get(newkey) : "");
+		}
+
+		for (Element element : survey.getElements()) {
+			if (element instanceof Ruler) {
+				continue;
+			}
+
+			creator.nextLabelRow(element);
+
+			if (element instanceof Section) {
+				Section section = (Section) element;
+				creator.nextLabelRow(section, Section.TABTITLE);
+			}
+
+			if (element instanceof NumberQuestion) {
+				NumberQuestion number = (NumberQuestion) element;
+
+				creator.nextLabelRow(number, NumberQuestion.UNIT);
+
+				if (number.isSlider()) {
+					creator.nextLabelRow(number, NumberQuestion.MINLABEL);
+
+					creator.nextLabelRow(number, NumberQuestion.MAXLABEL);
+				}
+			}
+
+			if (element instanceof Confirmation) {
+				Confirmation confirmation = (Confirmation) element;
+
+				creator.nextLabelRow(confirmation, Confirmation.TEXT);
+				creator.nextLabelRow(confirmation, Confirmation.LABEL);
+			}
+
+			if (element instanceof ChoiceQuestion) {
+				ChoiceQuestion choice = (ChoiceQuestion) element;
+				for (PossibleAnswer answer : choice.getPossibleAnswers()) {
+					creator.nextLabelRow(answer);
+
+					creator.nextLabelRow(answer, Question.FEEDBACK);
+				}
+			}
+
+			if (element instanceof Question) {
+				Question question = (Question) element;
+				if (question.getHelp() != null && question.getHelp().length() > 0) {
+					creator.nextLabelRow(question, "help");
+				}
+
+				if (question.getScoringItems() != null) {
+					for (ScoringItem scoringItem : question.getScoringItems()) {
+						String label = translationsByKey.get(scoringItem.getUniqueId() + Question.FEEDBACK);
+						if (notNullOrEmpty(label)) {
+							row = creator.nextRow();
+							addTextCell(row, 0, scoringItem.getUniqueId());
+							addTextCell(row, 1, descriptions.get(scoringItem.getUniqueId() + Question.FEEDBACK));
+							addTextCell(row, 2, label);
+						}
+					}
+				}
+			}
+
+			if (element instanceof MatrixOrTable) {
+				MatrixOrTable matrix = (MatrixOrTable) element;
+
+				creator.nextLabelRow(matrix, MatrixOrTable.FIRSTCELL);
+
+				for (Element child : matrix.getChildElements()) {
+					if (!(child instanceof EmptyElement)) {
+						creator.nextLabelRow(child);
+					}
+				}
+			}
+
+			if (element instanceof RatingQuestion) {
+				RatingQuestion rating = (RatingQuestion) element;
+				for (Element child : rating.getChildElements()) {
+					if (!(child instanceof EmptyElement)) {
+						creator.nextLabelRow(child);
+					}
+				}
+			}
+
+			if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				for (Element child : ranking.getChildElements()) {
+					creator.nextLabelRow(child);
+				}
+			}
+
+			if (element instanceof GalleryQuestion) {
+				GalleryQuestion gallery = (GalleryQuestion) element;
+				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+					creator.nextLabelRow(child, GalleryQuestion.TEXT);
+
+					creator.nextLabelRow(child);
+
+					creator.nextLabelRow(child, GalleryQuestion.TITLE);
+				}
+			}
+
+			if (element instanceof ComplexTable){
+				ComplexTable table = (ComplexTable) element;
+
+				for (ComplexTableItem child : table.getChildElements()) {
+
+					creator.nextLabelRow(child);
+
+					creator.nextLabelRow(child, "RESULTTEXT");
+					creator.nextLabelRow(child, "UNIT");
+					creator.nextLabelRow(child, "help");
+
+					if (child.isChoice()){
+						for (PossibleAnswer answer : child.getPossibleAnswers()) {
+							creator.nextLabelRow(answer);
+							creator.nextLabelRow(answer, Question.FEEDBACK);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	private static void addTextCell(Row row, int col, String text) {
 		Cell cell = row.createCell(col);
 		cell.setCellValue(text);
 		cell.setCellType(Cell.CELL_TYPE_STRING);
+	}
+
+	private static void addTextCell(org.odftoolkit.simple.table.Row row, int col, String text) {
+		org.odftoolkit.simple.table.Cell cell = row.getCellByIndex(col);
+		cell.setStringValue(text);
+	}
+
+	private static void addTextCell(SheetRow row, int col, String text) {
+		if (row.isForXls){
+			addTextCell((Row) row.rowObject, col, text);
+		} else {
+			addTextCell((org.odftoolkit.simple.table.Row) row.rowObject, col, text);
+		}
 	}
 
 	private static HashMap<String, String> getTypeSuffixMapping() {
@@ -1753,6 +1456,7 @@ public class TranslationsHelper {
 		typeSuffixByShortType.put("GT", "GALLERYTEXT");
 		typeSuffixByShortType.put("GDT", "");
 		typeSuffixByShortType.put("GL", "TITLE");
+		typeSuffixByShortType.put("RT", "RESULTTEXT");
 
 		return typeSuffixByShortType;
 	}
@@ -1920,7 +1624,50 @@ public class TranslationsHelper {
 					}
 				}
 
-				if (type.contains("Matrix") || type.contains("Table")) {
+				if (type.contains("ComplexTable")) {
+
+					org.w3c.dom.Element children = (org.w3c.dom.Element) element.getElementsByTagName("Children")
+							.item(0);
+
+					for (int j = 0; children != null && j < children.getElementsByTagName("Element").getLength(); j++) {
+						org.w3c.dom.Element child = (org.w3c.dom.Element) children.getElementsByTagName("Element")
+								.item(j);
+						key = Tools.repairXML(child.getAttribute("key"));
+						type = Tools.repairXML(child.getAttribute("type"));
+						label = getText(child.getElementsByTagName(Constants.LABEL), Constants.LABEL);
+
+						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
+
+						label = getText(child.getElementsByTagName("Help"), "Help");
+						if (label != null)
+							result.getTranslations().add(new Translation(key + "help", label, lang, surveyId, result));
+
+						label = child.getAttribute("ResultText");
+						if (label.length() > 0){
+							result.getTranslations().add(new Translation(key + "RESULTTEXT", label, lang, surveyId, result));
+						}
+
+						label = child.getAttribute("Unit");
+						if (label.length() > 0){
+							result.getTranslations().add(new Translation(key + "UNIT", label, lang, surveyId, result));
+						}
+
+						NodeList answers = child.getElementsByTagName("Answer");
+
+						for (int k = 0; k < answers.getLength(); k++) {
+							org.w3c.dom.Element answer = (org.w3c.dom.Element) answers.item(k);
+							key = answer.getAttribute("key");
+							label = getText(answer.getElementsByTagName(Constants.LABEL), Constants.LABEL);
+							result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
+
+							try {
+								label = getText(answer.getElementsByTagName("Feedback"), "Feedback");
+								result.getTranslations()
+										.add(new Translation(key + Question.FEEDBACK, label, lang, surveyId, result));
+							} catch (Exception ignored) { }
+						}
+					}
+				} else if (type.contains("Matrix") || type.contains("Table")) {
 
 					if (element.getElementsByTagName("FirstCell").getLength() > 0) {
 						label = getText(element.getElementsByTagName("FirstCell"), "FirstCell");
@@ -2525,6 +2272,33 @@ public class TranslationsHelper {
 						child.setName(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel());
 				}
 			}
+
+			if (element instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) element;
+
+				for (ComplexTableItem child : table.getChildElements()) {
+
+					if (translationsByKey.containsKey(child.getUniqueId())
+							&& notNullOrEmpty(translationsByKey.get(child.getUniqueId()).getLabel()))
+						child.setTitle(translationsByKey.get(child.getUniqueId()).getLabel());
+
+					if (translationsByKey.containsKey(child.getUniqueId() + "RESULTTEXT")
+							&& notNullOrEmpty(translationsByKey.get(child.getUniqueId() + "RESULTTEXT").getLabel()))
+						child.setResultText(translationsByKey.get(child.getUniqueId() + "RESULTTEXT").getLabel());
+
+					if (translationsByKey.containsKey(child.getUniqueId() + "UNIT")
+							&& notNullOrEmpty(translationsByKey.get(child.getUniqueId() + "UNIT").getLabel()))
+						child.setUnit(translationsByKey.get(child.getUniqueId() + "UNIT").getLabel());
+
+					if (child.isChoice()){
+						for (PossibleAnswer possibleAnswer : child.getPossibleAnswers()){
+							if (translationsByKey.containsKey(possibleAnswer.getUniqueId())
+									&& notNullOrEmpty(translationsByKey.get(possibleAnswer.getUniqueId()).getLabel()))
+								possibleAnswer.setTitle(translationsByKey.get(possibleAnswer.getUniqueId()).getLabel());
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -2647,6 +2421,19 @@ public class TranslationsHelper {
 						}
 					}
 
+					if (element instanceof ComplexTable){
+						ComplexTable table = (ComplexTable) element;
+						for (ComplexTableItem child : table.getChildElements()) {
+							if (child.isChoice()) {
+								for (PossibleAnswer answer : child.getPossibleAnswers()) {
+									if (getLabel(answer, "", translationMap).length() == 0) {
+										return false;
+									}
+								}
+							}
+						}
+					}
+
 				}
 			}
 			return true;
@@ -2665,4 +2452,107 @@ public class TranslationsHelper {
 		}		
 	}
 
+	private static abstract class SheetTranslationCreator {
+
+		private final Map<String, String> descriptions;
+		private final Map<String, String> translationsByKey;
+
+		private SheetTranslationCreator(Map<String, String> translationsByKey, Map<String, String> descriptions) {
+			this.descriptions = descriptions;
+			this.translationsByKey = translationsByKey;
+		}
+
+		public abstract SheetRow nextRow();
+
+		public void nextLabelRow(Element element, String suffix){
+			String label = getLabel(element, suffix, translationsByKey);
+			if (label.trim().length() > 0) {
+				SheetRow row = nextRow();
+				addTextCell(row, 0, element.getUniqueId());
+				addTextCell(row, 1, descriptions.get(element.getUniqueId() + suffix));
+				addTextCell(row, 2, label);
+			}
+		}
+
+		public void nextLabelRow(com.ec.survey.model.survey.base.File file, String suffix){
+			String label = getLabel(file, suffix, translationsByKey);
+			if (label.trim().length() > 0) {
+				SheetRow row = nextRow();
+				addTextCell(row, 0, file.getUid());
+				addTextCell(row, 1, descriptions.get(file.getUid() + suffix));
+				addTextCell(row, 2, label);
+			}
+		}
+
+		public void nextLabelRow(Element element){
+			nextLabelRow(element, "");
+		}
+
+		public void nextLabelRow(com.ec.survey.model.survey.base.File file){
+			nextLabelRow(file, "");
+		}
+
+		public void nextAttributeRow(String key){
+			if (translationsByKey.get(key) != null && translationsByKey.get(key).trim().length() > 0) {
+				SheetRow row = nextRow();
+				addTextCell(row, 0, key);
+				addTextCell(row, 1, descriptions.get(key));
+				addTextCell(row, 2, translationsByKey.get(key));
+			}
+		}
+	}
+
+	private static class SheetRow {
+
+		private final boolean isForXls;
+
+		private final Object rowObject;
+
+		private SheetRow(Object rowObject){
+			this.rowObject = rowObject;
+			isForXls = rowObject instanceof Row;
+		}
+	}
+
+	private static class XlsTranslationCreator extends SheetTranslationCreator {
+		
+		private final Sheet sheet;
+		
+		private XlsTranslationCreator(Sheet sheet, Map<String, String> translationsByKey, Map<String, String> descriptions){
+			super(translationsByKey, descriptions);
+			this.sheet = sheet;
+		}
+
+		private boolean anyRows = false;
+
+		@Override
+		public SheetRow nextRow(){
+			if (!anyRows){
+				anyRows = true;
+				return new SheetRow(sheet.createRow(0));
+			}
+			return new SheetRow(sheet.createRow(sheet.getLastRowNum() + 1));
+		}
+	}
+
+	private static class OdsTranslationCreator extends SheetTranslationCreator {
+
+		private final org.odftoolkit.simple.table.Table sheet;
+
+		private OdsTranslationCreator(org.odftoolkit.simple.table.Table sheet, Map<String, String> translationsByKey, Map<String, String> descriptions){
+			super(translationsByKey, descriptions);
+			this.sheet = sheet;
+		}
+
+		private boolean anyRows = false;
+
+		@Override
+		public SheetRow nextRow(){
+			if (!anyRows){
+				anyRows = true;
+				return new SheetRow(sheet.getRowByIndex(0));
+			}
+			return new SheetRow(sheet.getRowByIndex(sheet.getRowCount()));
+		}
+	}
 }

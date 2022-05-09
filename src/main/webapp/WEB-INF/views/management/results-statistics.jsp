@@ -39,222 +39,56 @@
 						
 				<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
 				
-					<c:if test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion' }">
-					
-						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
-					
-							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
-							
-							<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px;">
-								<thead>
-									<tr>								
-										<th style="width: 300px">&#160;</th>
-										<th style="width: 200px">&#160;</th>
-										<th style="width: 1px"><spring:message code="label.Answers" /></th>
-										<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
-									</tr>
-								</thead>						
-								<tbody>
-									<c:forEach items="${question.allPossibleAnswers}" var="answer" varStatus="status">
-										<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[answer.id.toString()]}">
-											<td>${answer.getStrippedTitleNoEscape()}  <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${answer.shortname})</span></td>
-							
-											<td>
-												<div class="progress" style="width: 200px; margin-bottom: 2px;">
-												  <div class="chartRequestedRecordsPercent progress-bar" data-id="${answer.id}" style="width: ${statistics.requestedRecordsPercent[answer.id.toString()]}%;"></div>
-												</div>
-											</td>	
-							
-											<c:choose>
-												<c:when test="${statistics != null}">						
-													<td class="statRequestedRecords" data-id="${answer.id}">${statistics.requestedRecords[answer.id.toString()]}</td>			
-													<td class="statRequestedRecordsPercent" data-id="${answer.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[answer.id.toString()]}"/> %</td>		
-												</c:when>
-												<c:otherwise>
-													<td id="awaitingResult" class="statRequestedRecords" data-id="${answer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-													<td id="awaitingResultPercent" class="statRequestedRecordsPercent" data-id="${answer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-												</c:otherwise>
-											</c:choose>		
-										</tr>
-									</c:forEach>
-									<tr data-position="10000" class="noanswer">
-										<td><spring:message code="label.NoAnswer" /></td>
-										<td>
-											<div class="progress" style="width: 200px; margin-bottom: 2px;">											
-												<c:choose>
-													<c:when test="${statistics != null}">
-														<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}" style="width: ${statistics.requestedRecordsPercent[question.id.toString()]}%;"></div>
-													</c:when>
-													<c:otherwise>
-														<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}"></div>
-													</c:otherwise>
-												</c:choose>
-											</div>
-										</td>
-										
-										<c:choose>
-											<c:when test="${statistics != null}">						
-												<td class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</td>			
-												<td class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</td>		
-											</c:when>
-											<c:otherwise>
-												<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-												<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-											</c:otherwise>
-										</c:choose>										
-										
-									</tr>
-								</tbody>
-							</table>
-							
-						</div>
-
-                        <div class="statelement-wrapper">
-                        	<div class="chart-controls"></div>
-                            <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                 <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                     <tr>
-                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-								 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-							 </th>
-                                     </tr>
-                                     <tr>
-                                         <td style='padding-top:10px; padding-bottom:10px'>
-                                             <div class="delphi-chart-div"></div>
-                                         </td>
-                                     </tr>
-                                 </table>
-                                 <div style="clear: both"></div>
-                            </div>
-                            <div style="clear: both"></div>
-                            <div class="no-chart-results-message"></div>
-                        </div>
-
-					</c:if>
-					
-					<c:if test="${question.getType() == 'GalleryQuestion' && question.selection}">
-						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
-					
-							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
-							
-							<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px;">
-								<thead>
-									<tr>								
-										<th style="width: 300px">&#160;</th>
-										<th style="width: 200px">&#160;</th>
-										<th style="width: 1px"><spring:message code="label.Answers" /></th>
-										<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
-									</tr>
-								</thead>						
-								<tbody>
-									<c:forEach items="${question.files}" var="file" varStatus="status">
-										<tr data-position="${status.index}" data-value="${statistics.getRequestedRecordsPercentForGallery(question, status.index)}">
-											<td>${file.name}</td>
-											<td>
-												<div class="progress" style="width: 200px; margin-bottom: 2px;">
-												  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}-${status.index}" style="width: ${statistics.getRequestedRecordsPercentForGallery(question, status.index)}%;"></div>
-												</div>
-											</td>					
-											<c:choose>
-												<c:when test="${statistics != null}">						
-													<td class="statRequestedRecords" data-id="${question.id}-${status.index}">${statistics.getRequestedRecordsForGallery(question, status.index)}</td>			
-													<td class="statRequestedRecordsPercent" data-id="${question.id}-${status.index}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForGallery(question, status.index)}"/> %</td>		
-												</c:when>
-												<c:otherwise>
-													<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-													<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-												</c:otherwise>
-											</c:choose>		
-										</tr>
-									</c:forEach>
-									<tr data-position="10000" class="noanswer">
-										<td><spring:message code="label.NoAnswer" /></td>
-										<td>
-											<div class="progress" style="width: 200px; margin-bottom: 2px;">											
-												<c:choose>
-													<c:when test="${statistics != null}">
-														<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}" style="width: ${statistics.requestedRecordsPercent[question.id.toString()]}%;"></div>
-													</c:when>
-													<c:otherwise>
-														<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}"></div>
-													</c:otherwise>
-												</c:choose>
-											</div>
-										</td>
-										
-										<c:choose>
-											<c:when test="${statistics != null}">						
-												<td class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</td>			
-												<td class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</td>		
-											</c:when>
-											<c:otherwise>
-												<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-												<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-											</c:otherwise>
-										</c:choose>										
-										
-									</tr>
-								</tbody>
-							</table>						
-						</div>				
-					</c:if>
-					
-					<c:if test="${question.getType() == 'Matrix'}">
-					
-						<div class="cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
+					<c:choose>
+				
+						<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion' }">
 						
-							<c:forEach items="${question.questions}" var="matrixQuestion">
-							
-								<div class="statelement">
-							
-									<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${matrixQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${matrixQuestion.shortname})</span></div>
-									
-									<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
-									
-										<thead>
-											<tr>								
-												<th style="width: 300px">&#160;</th>
-												<th style="width: 200px">&#160;</th>
-												<th style="width: 1px"><spring:message code="label.Answers" /></th>
-												<th style="width: 90px"><spring:message code="label.Ratio" /></th>							
-											</tr>
-										</thead>
-														
-										<tbody>
+							<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
+						
+								<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
 								
-										<c:forEach items="${question.answers}" var="possibleanswer" varStatus="status">
-										
-											<tr data-position="${status.count}" data-value="${statistics.getRequestedRecordsForMatrix(matrixQuestion, possibleanswer)}">
-												<td>${possibleanswer.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${possibleanswer.shortname})</span></td>
+								<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px;">
+									<thead>
+										<tr>								
+											<th style="width: 300px">&#160;</th>
+											<th style="width: 200px">&#160;</th>
+											<th style="width: 1px"><spring:message code="label.Answers" /></th>
+											<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
+										</tr>
+									</thead>						
+									<tbody>
+										<c:forEach items="${question.allPossibleAnswers}" var="answer" varStatus="status">
+											<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[answer.id.toString()]}">
+												<td>${answer.getStrippedTitleNoEscape()}  <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${answer.shortname})</span></td>
+								
 												<td>
 													<div class="progress" style="width: 200px; margin-bottom: 2px;">
-													  <div class="chartRequestedRecordsPercent progress-bar" data-id="${matrixQuestion.id}${possibleanswer.id}" style="width: ${statistics.getRequestedRecordsPercentForMatrix(matrixQuestion, possibleanswer)}%;"></div>
+													  <div class="chartRequestedRecordsPercent progress-bar" data-id="${answer.id}" style="width: ${statistics.requestedRecordsPercent[answer.id.toString()]}%;"></div>
 													</div>
 												</td>	
+								
 												<c:choose>
 													<c:when test="${statistics != null}">						
-														<td class="statRequestedRecords" data-id="${matrixQuestion.id}${possibleanswer.id}">${statistics.getRequestedRecordsForMatrix(matrixQuestion, possibleanswer)}</td>			
-														<td class="statRequestedRecordsPercent" data-id="${matrixQuestion.id}${possibleanswer.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForMatrix(matrixQuestion, possibleanswer)}"/> %</td>	
+														<td class="statRequestedRecords" data-id="${answer.id}">${statistics.requestedRecords[answer.id.toString()]}</td>			
+														<td class="statRequestedRecordsPercent" data-id="${answer.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[answer.id.toString()]}"/> %</td>		
 													</c:when>
 													<c:otherwise>
-														<td id="awaitingResult" class="statRequestedRecords" data-id="${matrixQuestion.id}${possibleanswer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-														<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${matrixQuestion.id}${possibleanswer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>	
+														<td id="awaitingResult" class="statRequestedRecords" data-id="${answer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+														<td id="awaitingResultPercent" class="statRequestedRecordsPercent" data-id="${answer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 													</c:otherwise>
-												</c:choose>											
+												</c:choose>		
 											</tr>
-										
 										</c:forEach>
-										
 										<tr data-position="10000" class="noanswer">
 											<td><spring:message code="label.NoAnswer" /></td>
 											<td>
 												<div class="progress" style="width: 200px; margin-bottom: 2px;">											
 													<c:choose>
 														<c:when test="${statistics != null}">
-															<div class="chartRequestedRecordsPercent progress-bar" data-id="${matrixQuestion.id}" style="width: ${statistics.requestedRecordsPercent[matrixQuestion.id.toString()]}%;"></div>
+															<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}" style="width: ${statistics.requestedRecordsPercent[question.id.toString()]}%;"></div>
 														</c:when>
 														<c:otherwise>
-															<div class="chartRequestedRecordsPercent progress-bar" data-id="${matrixQuestion.id}"></div>
+															<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}"></div>
 														</c:otherwise>
 													</c:choose>
 												</div>
@@ -262,132 +96,89 @@
 											
 											<c:choose>
 												<c:when test="${statistics != null}">						
-													<td class="statRequestedRecords" data-id="${matrixQuestion.id}">${statistics.requestedRecords[matrixQuestion.id.toString()]}</td>			
-													<td class="statRequestedRecordsPercent" data-id="${matrixQuestion.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[matrixQuestion.id.toString()]}"/> %</td>		
+													<td class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</td>			
+													<td class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</td>		
 												</c:when>
 												<c:otherwise>
-													<td id="awaitingResult" class="statRequestedRecords" data-id="${matrixQuestion.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-													<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${matrixQuestion.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+													<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+													<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 												</c:otherwise>
 											</c:choose>										
 											
 										</tr>
-										
-										</tbody>
-									</table>
-									
-								</div>
-							
-							</c:forEach>
-							
-						</div>
-
-                        <div class="statelement-wrapper">
-                        	   <div class="chart-controls"></div>
-                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                       <tr>
-                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-											<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-										</th>
-                                       </tr>
-                                       <tr>
-                                           <td style='padding-top:10px; padding-bottom:10px'>
-                                               <div class="delphi-chart-div"></div>
-                                           </td>
-                                       </tr>
-                                   </table>
-                                   <div style="clear: both"></div>
-                               </div>
-                               <div style="clear: both"></div>
-                               <div class="no-chart-results-message"></div>
-                        </div>
-
-					</c:if>
-										
-					<c:if test="${forpdf == null && publication == null && question.getType() == 'FreeTextQuestion'}">
-						<div style="width: 700px; margin-left: auto; margin-right: auto;">
-							<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
-						</div>
-
-                        <div class="statelement-wrapper">
-                        	   <div class="chart-controls"></div>
-                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}" data-initial-chart-type="${question.getDelphiChartType()}" data-chart-data-type="${question.getDelphiChartDataType()}">
-                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                        <tr>
-                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-											    <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-										    </th>
-                                        </tr>
-                                        <tr>
-                                            <td style='padding-top:10px; padding-bottom:10px'>
-                                                <div id="wordcloud${question.uniqueId}" class="delphi-chart-div" style="min-width: 300px; min-height: 220px"></div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div style="clear: both"></div>
-                               </div>
-                               <div style="clear: both"></div>
-                               <div class="no-chart-results-message"></div>
-                        </div>
-					</c:if>
-					
-					<c:if test="${question.getType() == 'RatingQuestion'}">
-					
-						<div class="cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
-						
-							<c:forEach items="${question.childElements}" var="childQuestion">
-							
-								<div class="statelement">
-							
-									<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
-									
-									<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
-									
-										<thead>
-											<tr>								
-												<th style="width: 300px">&#160;</th>
-												<th style="width: 200px">&#160;</th>
-												<th style="width: 1px"><spring:message code="label.Answers" /></th>
-												<th style="width: 90px"><spring:message code="label.Ratio" /></th>							
-											</tr>
-										</thead>
-														
-										<tbody>
+									</tbody>
+								</table>
 								
-										 <c:forEach begin="1" end="${question.numIcons}" varStatus="loop">
-										
-											<tr data-position="${loop.index}" data-value="${statistics.getRequestedRecordsForRatingQuestion(childQuestion, loop.index)}">
-												<td>${loop.index}/${question.numIcons}</td>
+							</div>
+	
+	                        <div class="statelement-wrapper">
+	                        	<div class="chart-controls"></div>
+	                            <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+	                                 <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+	                                     <tr>
+	                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+									 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+								 </th>
+	                                     </tr>
+	                                     <tr>
+	                                         <td style='padding-top:10px; padding-bottom:10px'>
+	                                             <div class="delphi-chart-div"></div>
+	                                         </td>
+	                                     </tr>
+	                                 </table>
+	                                 <div style="clear: both"></div>
+	                            </div>
+	                            <div style="clear: both"></div>
+	                            <div class="no-chart-results-message"></div>
+	                        </div>
+	
+						</c:when>
+						
+						<c:when test="${question.getType() == 'GalleryQuestion' && question.selection}">
+							<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
+						
+								<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+								
+								<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px;">
+									<thead>
+										<tr>								
+											<th style="width: 300px">&#160;</th>
+											<th style="width: 200px">&#160;</th>
+											<th style="width: 1px"><spring:message code="label.Answers" /></th>
+											<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
+										</tr>
+									</thead>						
+									<tbody>
+										<c:forEach items="${question.files}" var="file" varStatus="status">
+											<tr data-position="${status.index}" data-value="${statistics.getRequestedRecordsPercentForGallery(question, status.index)}">
+												<td>${file.name}</td>
 												<td>
 													<div class="progress" style="width: 200px; margin-bottom: 2px;">
-													  <div class="chartRequestedRecordsPercent progress-bar" data-id="${childQuestion.id}${loop.index}" style="width: ${statistics.getRequestedRecordsPercentForRatingQuestion(childQuestion, loop.index)}%;"></div>
+													  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}-${status.index}" style="width: ${statistics.getRequestedRecordsPercentForGallery(question, status.index)}%;"></div>
 													</div>
-												</td>	
+												</td>					
 												<c:choose>
 													<c:when test="${statistics != null}">						
-														<td class="statRequestedRecords" data-id="${childQuestion.id}${loop.index}">${statistics.getRequestedRecordsForRatingQuestion(childQuestion, loop.index)}</td>			
-														<td class="statRequestedRecordsPercent" data-id="${childQuestion.id}${loop.index}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForRatingQuestion(childQuestion, loop.index)}"/> %</td>	
+														<td class="statRequestedRecords" data-id="${question.id}-${status.index}">${statistics.getRequestedRecordsForGallery(question, status.index)}</td>			
+														<td class="statRequestedRecordsPercent" data-id="${question.id}-${status.index}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForGallery(question, status.index)}"/> %</td>		
 													</c:when>
 													<c:otherwise>
-														<td id="awaitingResult" class="statRequestedRecords" data-id="${childQuestion.id}${loop.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-														<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${childQuestion.id}${loop.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>	
+														<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+														<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 													</c:otherwise>
-												</c:choose>											
+												</c:choose>		
 											</tr>
-										
 										</c:forEach>
-										
 										<tr data-position="10000" class="noanswer">
 											<td><spring:message code="label.NoAnswer" /></td>
 											<td>
 												<div class="progress" style="width: 200px; margin-bottom: 2px;">											
 													<c:choose>
 														<c:when test="${statistics != null}">
-															<div class="chartRequestedRecordsPercent progress-bar" data-id="${childQuestion.id}" style="width: ${statistics.requestedRecordsPercent[childQuestion.id.toString()]}%;"></div>
+															<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}" style="width: ${statistics.requestedRecordsPercent[question.id.toString()]}%;"></div>
 														</c:when>
 														<c:otherwise>
-															<div class="chartRequestedRecordsPercent progress-bar" data-id="${childQuestion.id}"></div>
+															<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}"></div>
 														</c:otherwise>
 													</c:choose>
 												</div>
@@ -395,258 +186,686 @@
 											
 											<c:choose>
 												<c:when test="${statistics != null}">						
-													<td class="statRequestedRecords" data-id="${childQuestion.id}">${statistics.requestedRecords[childQuestion.id.toString()]}</td>			
-													<td class="statRequestedRecordsPercent" data-id="${childQuestion.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[childQuestion.id.toString()]}"/> %</td>		
+													<td class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</td>			
+													<td class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</td>		
 												</c:when>
 												<c:otherwise>
-													<td id="awaitingResult" class="statRequestedRecords" data-id="${childQuestion.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-													<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${childQuestion.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+													<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+													<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 												</c:otherwise>
 											</c:choose>										
 											
 										</tr>
+									</tbody>
+								</table>						
+							</div>				
+						</c:when>
+						
+						<c:when test="${question.getType() == 'Matrix'}">
+						
+							<div class="cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
+							
+								<c:forEach items="${question.questions}" var="matrixQuestion">
+								
+									<div class="statelement">
+								
+										<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${matrixQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${matrixQuestion.shortname})</span></div>
 										
-										</tbody>
-									</table>
+										<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
+										
+											<thead>
+												<tr>								
+													<th style="width: 300px">&#160;</th>
+													<th style="width: 200px">&#160;</th>
+													<th style="width: 1px"><spring:message code="label.Answers" /></th>
+													<th style="width: 90px"><spring:message code="label.Ratio" /></th>							
+												</tr>
+											</thead>
+															
+											<tbody>
 									
-								</div>
-							
-							</c:forEach>
-							
-						</div>
-
-                        <div class="statelement-wrapper">
-                               <div class="chart-controls"></div>
-                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                       <tr>
-                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-											<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-										</th>
-                                       </tr>
-                                       <tr>
-                                           <td style='padding-top:10px; padding-bottom:10px'>
-                                               <div class="delphi-chart-div"></div>
-                                           </td>
-                                       </tr>
-                                   </table>
-                                   <div style="clear: both"></div>
-                               </div>
-                               <div style="clear: both"></div>
-                               <div class="no-chart-results-message"></div>
-                        </div>
-
-					</c:if>		
-		
-					<c:if test="${question.getType() == 'NumberQuestion' && question.showStatisticsForNumberQuestion()}">
-						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
-					
-							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
-							
-							<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px; ">
-								<thead>
-									<tr>								
-										<th style="width: 300px">&#160;</th>
-										<th style="width: 200px">&#160;</th>
-										<th style="width: 1px"><spring:message code="label.Answers" /></th>
-										<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
-									</tr>
-								</thead>						
-								<tbody>
-									<c:forEach items="${question.allPossibleAnswers}" var="answer" varStatus="status">
-										<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[question.id.toString() + answer]}">
-											<td>${answer}</td>
-							
-											<td>
-												<div class="progress" style="width: 200px; margin-bottom: 2px;">
-												  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id.toString()}${answer}" style="width: ${statistics.requestedRecordsPercent[question.getAnswerWithPrefix(answer)]}%;"></div>
-												</div>
-											</td>	
-							
-											<c:choose>
-												<c:when test="${statistics != null}">						
-													<td class="statRequestedRecords" data-id="${question.id.toString()}${answer}">${statistics.requestedRecords[question.getAnswerWithPrefix(answer)]}</td>			
-													<td class="statRequestedRecordsPercent" data-id="${question.id.toString()}${answer}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.getAnswerWithPrefix(answer)]}"/> %</td>		
-												</c:when>
-												<c:otherwise>
-													<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-													<td id="awaitingResultPercent" class="statRequestedRecordsPercent" data-id="${question.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-												</c:otherwise>
-											</c:choose>		
-										</tr>
-									</c:forEach>
-									<tr data-position="10000" class="noanswer">
-										<td><spring:message code="label.NoAnswer" /></td>
-										<td>
-											<div class="progress" style="width: 200px; margin-bottom: 2px;">											
+											<c:forEach items="${question.answers}" var="possibleanswer" varStatus="status">
+											
+												<tr data-position="${status.count}" data-value="${statistics.getRequestedRecordsForMatrix(matrixQuestion, possibleanswer)}">
+													<td>${possibleanswer.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${possibleanswer.shortname})</span></td>
+													<td>
+														<div class="progress" style="width: 200px; margin-bottom: 2px;">
+														  <div class="chartRequestedRecordsPercent progress-bar" data-id="${matrixQuestion.id}${possibleanswer.id}" style="width: ${statistics.getRequestedRecordsPercentForMatrix(matrixQuestion, possibleanswer)}%;"></div>
+														</div>
+													</td>	
+													<c:choose>
+														<c:when test="${statistics != null}">						
+															<td class="statRequestedRecords" data-id="${matrixQuestion.id}${possibleanswer.id}">${statistics.getRequestedRecordsForMatrix(matrixQuestion, possibleanswer)}</td>			
+															<td class="statRequestedRecordsPercent" data-id="${matrixQuestion.id}${possibleanswer.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForMatrix(matrixQuestion, possibleanswer)}"/> %</td>	
+														</c:when>
+														<c:otherwise>
+															<td id="awaitingResult" class="statRequestedRecords" data-id="${matrixQuestion.id}${possibleanswer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+															<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${matrixQuestion.id}${possibleanswer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>	
+														</c:otherwise>
+													</c:choose>											
+												</tr>
+											
+											</c:forEach>
+											
+											<tr data-position="10000" class="noanswer">
+												<td><spring:message code="label.NoAnswer" /></td>
+												<td>
+													<div class="progress" style="width: 200px; margin-bottom: 2px;">											
+														<c:choose>
+															<c:when test="${statistics != null}">
+																<div class="chartRequestedRecordsPercent progress-bar" data-id="${matrixQuestion.id}" style="width: ${statistics.requestedRecordsPercent[matrixQuestion.id.toString()]}%;"></div>
+															</c:when>
+															<c:otherwise>
+																<div class="chartRequestedRecordsPercent progress-bar" data-id="${matrixQuestion.id}"></div>
+															</c:otherwise>
+														</c:choose>
+													</div>
+												</td>
+												
 												<c:choose>
-													<c:when test="${statistics != null}">
-														<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}" style="width: ${statistics.requestedRecordsPercent[question.id.toString()]}%;"></div>
+													<c:when test="${statistics != null}">						
+														<td class="statRequestedRecords" data-id="${matrixQuestion.id}">${statistics.requestedRecords[matrixQuestion.id.toString()]}</td>			
+														<td class="statRequestedRecordsPercent" data-id="${matrixQuestion.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[matrixQuestion.id.toString()]}"/> %</td>		
 													</c:when>
 													<c:otherwise>
-														<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}"></div>
+														<td id="awaitingResult" class="statRequestedRecords" data-id="${matrixQuestion.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+														<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${matrixQuestion.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 													</c:otherwise>
-												</c:choose>
-											</div>
-										</td>
+												</c:choose>										
+												
+											</tr>
+											
+											</tbody>
+										</table>
 										
-										<c:choose>
-											<c:when test="${statistics != null}">						
-												<td class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</td>			
-												<td class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</td>		
-											</c:when>
-											<c:otherwise>
-												<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-												<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-											</c:otherwise>
-										</c:choose>										
-										
-									</tr>
-								</tbody>
-							</table>
+									</div>
+								
+								</c:forEach>
+								
+							</div>
+	
+	                        <div class="statelement-wrapper">
+	                        	   <div class="chart-controls"></div>
+	                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+	                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+	                                       <tr>
+	                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+											</th>
+	                                       </tr>
+	                                       <tr>
+	                                           <td style='padding-top:10px; padding-bottom:10px'>
+	                                               <div class="delphi-chart-div"></div>
+	                                           </td>
+	                                       </tr>
+	                                   </table>
+	                                   <div style="clear: both"></div>
+	                               </div>
+	                               <div style="clear: both"></div>
+	                               <div class="no-chart-results-message"></div>
+	                        </div>
+	
+						</c:when>
+											
+						<c:when test="${forpdf == null && publication == null && question.getType() == 'FreeTextQuestion'}">
+							<div style="width: 700px; margin-left: auto; margin-right: auto;">
+								<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
+							</div>
+	
+	                        <div class="statelement-wrapper">
+	                        	   <div class="chart-controls"></div>
+	                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}" data-initial-chart-type="${question.getDelphiChartType()}" data-chart-data-type="${question.getDelphiChartDataType()}">
+	                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+	                                        <tr>
+	                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+												    <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+											    </th>
+	                                        </tr>
+	                                        <tr>
+	                                            <td style='padding-top:10px; padding-bottom:10px'>
+	                                                <div id="wordcloud${question.uniqueId}" class="delphi-chart-div" style="min-width: 300px; min-height: 220px"></div>
+	                                            </td>
+	                                        </tr>
+	                                    </table>
+	                                    <div style="clear: both"></div>
+	                               </div>
+	                               <div style="clear: both"></div>
+	                               <div class="no-chart-results-message"></div>
+	                        </div>
+						</c:when>
+						
+						<c:when test="${question.getType() == 'RatingQuestion'}">
+						
+							<div class="cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
 							
-						</div>
-						
-                        <div class="statelement-wrapper">
-                               <div class="chart-controls"></div>
-                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                        <tr>
-                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-											 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-										 </th>
-                                        </tr>
-                                        <tr>
-                                            <td style='padding-top:10px; padding-bottom:10px'>
-                                                <div class="delphi-chart-div"></div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div style="clear: both"></div>
-                               </div>
-                               <div style="clear: both"></div>
-                               <div class="no-chart-results-message"></div>
-                        </div>
-					</c:if>
-					
-					<c:if test="${question.getType() == 'RankingQuestion'}">
-					
-						<div class="cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">	
-						
-							<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+								<c:forEach items="${question.childElements}" var="childQuestion">
+								
+									<div class="statelement">
+								
+										<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
+										
+										<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
+										
+											<thead>
+												<tr>								
+													<th style="width: 300px">&#160;</th>
+													<th style="width: 200px">&#160;</th>
+													<th style="width: 1px"><spring:message code="label.Answers" /></th>
+													<th style="width: 90px"><spring:message code="label.Ratio" /></th>							
+												</tr>
+											</thead>
+															
+											<tbody>
 									
-							<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
-							
-								<thead>
-									<tr>								
-										<th style="width: 300px">&#160;</th>
+											 <c:forEach begin="1" end="${question.numIcons}" varStatus="loop">
+											
+												<tr data-position="${loop.index}" data-value="${statistics.getRequestedRecordsForRatingQuestion(childQuestion, loop.index)}">
+													<td>${loop.index}/${question.numIcons}</td>
+													<td>
+														<div class="progress" style="width: 200px; margin-bottom: 2px;">
+														  <div class="chartRequestedRecordsPercent progress-bar" data-id="${childQuestion.id}${loop.index}" style="width: ${statistics.getRequestedRecordsPercentForRatingQuestion(childQuestion, loop.index)}%;"></div>
+														</div>
+													</td>	
+													<c:choose>
+														<c:when test="${statistics != null}">						
+															<td class="statRequestedRecords" data-id="${childQuestion.id}${loop.index}">${statistics.getRequestedRecordsForRatingQuestion(childQuestion, loop.index)}</td>			
+															<td class="statRequestedRecordsPercent" data-id="${childQuestion.id}${loop.index}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForRatingQuestion(childQuestion, loop.index)}"/> %</td>	
+														</c:when>
+														<c:otherwise>
+															<td id="awaitingResult" class="statRequestedRecords" data-id="${childQuestion.id}${loop.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+															<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${childQuestion.id}${loop.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>	
+														</c:otherwise>
+													</c:choose>											
+												</tr>
+											
+											</c:forEach>
+											
+											<tr data-position="10000" class="noanswer">
+												<td><spring:message code="label.NoAnswer" /></td>
+												<td>
+													<div class="progress" style="width: 200px; margin-bottom: 2px;">											
+														<c:choose>
+															<c:when test="${statistics != null}">
+																<div class="chartRequestedRecordsPercent progress-bar" data-id="${childQuestion.id}" style="width: ${statistics.requestedRecordsPercent[childQuestion.id.toString()]}%;"></div>
+															</c:when>
+															<c:otherwise>
+																<div class="chartRequestedRecordsPercent progress-bar" data-id="${childQuestion.id}"></div>
+															</c:otherwise>
+														</c:choose>
+													</div>
+												</td>
+												
+												<c:choose>
+													<c:when test="${statistics != null}">						
+														<td class="statRequestedRecords" data-id="${childQuestion.id}">${statistics.requestedRecords[childQuestion.id.toString()]}</td>			
+														<td class="statRequestedRecordsPercent" data-id="${childQuestion.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[childQuestion.id.toString()]}"/> %</td>		
+													</c:when>
+													<c:otherwise>
+														<td id="awaitingResult" class="statRequestedRecords" data-id="${childQuestion.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+														<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${childQuestion.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+													</c:otherwise>
+												</c:choose>										
+												
+											</tr>
+											
+											</tbody>
+										</table>
 										
-										<c:forEach items="${question.childElements}" var="child" varStatus="status">
-											<th>
+									</div>
+								
+								</c:forEach>
+								
+							</div>
+	
+	                        <div class="statelement-wrapper">
+	                               <div class="chart-controls"></div>
+	                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+	                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+	                                       <tr>
+	                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+											</th>
+	                                       </tr>
+	                                       <tr>
+	                                           <td style='padding-top:10px; padding-bottom:10px'>
+	                                               <div class="delphi-chart-div"></div>
+	                                           </td>
+	                                       </tr>
+	                                   </table>
+	                                   <div style="clear: both"></div>
+	                               </div>
+	                               <div style="clear: both"></div>
+	                               <div class="no-chart-results-message"></div>
+	                        </div>
+	
+						</c:when>		
+			
+						<c:when test="${(question.type == 'NumberQuestion' || question.type == 'FormulaQuestion') && question.showStatisticsForNumberQuestion()}">
+							<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
+						
+								<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+								
+								<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px; ">
+									<thead>
+										<tr>								
+											<th style="width: 300px">&#160;</th>
+											<th style="width: 200px">&#160;</th>
+											<th style="width: 1px"><spring:message code="label.Answers" /></th>
+											<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
+										</tr>
+									</thead>						
+									<tbody>
+										<c:forEach items="${question.allPossibleAnswers}" var="answer" varStatus="status">
+											<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[question.id.toString() + answer]}">
+												<td>${answer}</td>
+								
+												<td>
+													<div class="progress" style="width: 200px; margin-bottom: 2px;">
+													  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id.toString()}${answer}" style="width: ${statistics.requestedRecordsPercent[question.getAnswerWithPrefix(answer)]}%;"></div>
+													</div>
+												</td>	
+								
+												<c:choose>
+													<c:when test="${statistics != null}">						
+														<td class="statRequestedRecords" data-id="${question.id.toString()}${answer}">${statistics.requestedRecords[question.getAnswerWithPrefix(answer)]}</td>			
+														<td class="statRequestedRecordsPercent" data-id="${question.id.toString()}${answer}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.getAnswerWithPrefix(answer)]}"/> %</td>		
+													</c:when>
+													<c:otherwise>
+														<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+														<td id="awaitingResultPercent" class="statRequestedRecordsPercent" data-id="${question.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+													</c:otherwise>
+												</c:choose>		
+											</tr>
+										</c:forEach>
+										<tr data-position="10000" class="noanswer">
+											<td><spring:message code="label.NoAnswer" /></td>
+											<td>
+												<div class="progress" style="width: 200px; margin-bottom: 2px;">											
+													<c:choose>
+														<c:when test="${statistics != null}">
+															<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}" style="width: ${statistics.requestedRecordsPercent[question.id.toString()]}%;"></div>
+														</c:when>
+														<c:otherwise>
+															<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}"></div>
+														</c:otherwise>
+													</c:choose>
+												</div>
+											</td>
+											
+											<c:choose>
+												<c:when test="${statistics != null}">						
+													<td class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</td>			
+													<td class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</td>		
+												</c:when>
+												<c:otherwise>
+													<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+													<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+												</c:otherwise>
+											</c:choose>										
+											
+										</tr>
+									</tbody>
+								</table>
+								
+							</div>
+							
+	                        <div class="statelement-wrapper">
+	                               <div class="chart-controls"></div>
+	                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+	                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+	                                        <tr>
+	                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+												 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+											 </th>
+	                                        </tr>
+	                                        <tr>
+	                                            <td style='padding-top:10px; padding-bottom:10px'>
+	                                                <div class="delphi-chart-div"></div>
+	                                            </td>
+	                                        </tr>
+	                                    </table>
+	                                    <div style="clear: both"></div>
+	                               </div>
+	                               <div style="clear: both"></div>
+	                               <div class="no-chart-results-message"></div>
+	                        </div>
+						</c:when>
+						
+						<c:when test="${question.getType() == 'RankingQuestion'}">
+						
+							<div class="cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">	
+							
+								<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+										
+								<table class="statistics-table table table-bordered table-striped" style="margin-top: 10px;">
+								
+									<thead>
+										<tr>								
+											<th style="width: 300px">&#160;</th>
+											
+											<c:forEach items="${question.childElements}" var="child" varStatus="status">
+												<th>
+													<div style="float: right">
+														<a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></a>
+														<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></a>
+													</div>
+													${status.index+1}
+												</th>
+											</c:forEach>
+											
+											<th style="min-width: 100px">
 												<div style="float: right">
 													<a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></a>
 													<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></a>
 												</div>
-												${status.index+1}
-											</th>
-										</c:forEach>
-										
-										<th style="min-width: 100px">
-											<div style="float: right">
-												<a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></a>
-												<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></a>
-											</div>
-											${form.getMessage("label.Score")}											
-										</th>									
-																
-									</tr>
-								</thead>
+												${form.getMessage("label.Score")}											
+											</th>									
+																	
+										</tr>
+									</thead>
+													
+									<tbody>
+							
+									 <c:forEach items="${question.childElements}" var="child" varStatus="loop">
+									
+										<tr data-position="${loop.index}" data-value="${statistics == null ? "" : statistics.requestedRecordsRankingPercentScore[child.id.toString()]}">
+											<td>${child.getStrippedTitleNoEscape()}</td>
+											<c:forEach items="${question.childElements}" varStatus="status">
+											
+												<c:choose>
+													<c:when test="${statistics != null}">						
+														<td class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}-${status.index}">
+															<b>${statistics.requestedRecordsRankingPercentScore[child.id.toString().concat("-").concat(status.index)]}%</b><br />														
+															${statistics.requestedRecordsRankingScore[child.id.toString().concat("-").concat(status.index)]}
+														</td>			
+													</c:when>
+													<c:otherwise>
+														<td id="awaitingResult" class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+													</c:otherwise>
+												</c:choose>											
 												
-								<tbody>
-						
-								 <c:forEach items="${question.childElements}" var="child" varStatus="loop">
-								
-									<tr data-position="${loop.index}" data-value="${statistics == null ? "" : statistics.requestedRecordsRankingPercentScore[child.id.toString()]}">
-										<td>${child.getStrippedTitleNoEscape()}</td>
-										<c:forEach items="${question.childElements}" varStatus="status">
-										
+											</c:forEach>
+											
 											<c:choose>
 												<c:when test="${statistics != null}">						
-													<td class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}-${status.index}">
-														<b>${statistics.requestedRecordsRankingPercentScore[child.id.toString().concat("-").concat(status.index)]}%</b><br />														
-														${statistics.requestedRecordsRankingScore[child.id.toString().concat("-").concat(status.index)]}
+													<td class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}">
+														<b>${statistics.requestedRecordsRankingPercentScore[child.id.toString()]}</b><br />
+														${statistics.requestedRecordsRankingScore[question.id.toString()]}
 													</td>			
 												</c:when>
 												<c:otherwise>
-													<td id="awaitingResult" class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+													<td id="awaitingResult" class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
 												</c:otherwise>
-											</c:choose>											
+											</c:choose>							
+										</tr>
+									
+									</c:forEach>
+									
+										<tr>
+											<td><spring:message code="label.NoAnswer" /></td>
+											<td colspan="4">
+												<c:choose>
+													<c:when test="${statistics != null}">						
+														<span class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</span><br />
+														<span class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</span>
+													</c:when>
+													<c:otherwise>
+														<span id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></span><br />
+														<span id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></span>
+													</c:otherwise>
+												</c:choose>		
+											</td>
+										</tr>
+									
+									</tbody>
+								</table>
+							</div>
+	
+	                        <div class="statelement-wrapper ranking-chart">
+	                               <div class="chart-controls"></div>
+	                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+	                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+	                                       <tr>
+	                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+											</th>
+	                                       </tr>
+	                                       <tr>
+	                                           <td style='padding-top:10px; padding-bottom:10px'>
+	                                               <div class="delphi-chart-div"></div>
+	                                           </td>
+	                                       </tr>
+	                                   </table>
+	                                   <div style="clear: both"></div>
+	                               </div>
+	                               <div style="clear: both"></div>
+	                               <div class="no-chart-results-message"></div>
+	                        </div>
+	
+						</c:when>
+						
+						<c:when test="${question.getType() == 'ComplexTable'}">
+							<c:forEach items="${question.getQuestionChildElements()}" var="child">
+								<c:choose>										
+									<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'MultipleChoice'}">
+										<div class="cell${child.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
+											<div class="statelement cell${child.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
+						
+												<div class="questiontitle" style="font-weight: bold;">${child.getResultTitle(question)} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${child.shortname})</span></div>
+												
+												<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px;">
+													<thead>
+														<tr>								
+															<th style="width: 300px">&#160;</th>
+															<th style="width: 200px">&#160;</th>
+															<th style="width: 1px"><spring:message code="label.Answers" /></th>
+															<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
+														</tr>
+													</thead>						
+													<tbody>
+														<c:forEach items="${child.possibleAnswers}" var="answer" varStatus="status">
+															<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[answer.id.toString()]}">
+																<td>${answer.getStrippedTitleNoEscape()}  <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${answer.shortname})</span></td>
+												
+																<td>
+																	<div class="progress" style="width: 200px; margin-bottom: 2px;">
+																	  <div class="chartRequestedRecordsPercent progress-bar" data-id="${answer.id}" style="width: ${statistics.requestedRecordsPercent[answer.id.toString()]}%;"></div>
+																	</div>
+																</td>	
+												
+																<c:choose>
+																	<c:when test="${statistics != null}">						
+																		<td class="statRequestedRecords" data-id="${answer.id}">${statistics.requestedRecords[answer.id.toString()]}</td>			
+																		<td class="statRequestedRecordsPercent" data-id="${answer.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[answer.id.toString()]}"/> %</td>		
+																	</c:when>
+																	<c:otherwise>
+																		<td id="awaitingResult" class="statRequestedRecords" data-id="${answer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+																		<td id="awaitingResultPercent" class="statRequestedRecordsPercent" data-id="${answer.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+																	</c:otherwise>
+																</c:choose>		
+															</tr>
+														</c:forEach>
+														<tr data-position="10000" class="noanswer">
+															<td><spring:message code="label.NoAnswer" /></td>
+															<td>
+																<div class="progress" style="width: 200px; margin-bottom: 2px;">											
+																	<c:choose>
+																		<c:when test="${statistics != null}">
+																			<div class="chartRequestedRecordsPercent progress-bar" data-id="${child.id}" style="width: ${statistics.requestedRecordsPercent[child.id.toString()]}%;"></div>
+																		</c:when>
+																		<c:otherwise>
+																			<div class="chartRequestedRecordsPercent progress-bar" data-id="${child.id}"></div>
+																		</c:otherwise>
+																	</c:choose>
+																</div>
+															</td>
+															
+															<c:choose>
+																<c:when test="${statistics != null}">						
+																	<td class="statRequestedRecords" data-id="${child.id}">${statistics.requestedRecords[child.id.toString()]}</td>			
+																	<td class="statRequestedRecordsPercent" data-id="${child.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[child.id.toString()]}"/> %</td>		
+																</c:when>
+																<c:otherwise>
+																	<td id="awaitingResult" class="statRequestedRecords" data-id="${child.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+																	<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${child.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+																</c:otherwise>
+															</c:choose>										
+															
+														</tr>
+													</tbody>
+												</table>
+												
+											</div>
+					
+					                        <div class="statelement-wrapper">
+					                        	<div class="chart-controls"></div>
+					                            <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${child.uniqueId}" data-uid="${child.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+					                                 <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+					                                     <tr>
+					                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+																 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+															 </th>
+					                                     </tr>
+					                                     <tr>
+					                                         <td style='padding-top:10px; padding-bottom:10px'>
+					                                             <div class="delphi-chart-div"></div>
+					                                         </td>
+					                                     </tr>
+					                                 </table>
+					                                 <div style="clear: both"></div>
+					                            </div>
+					                            <div style="clear: both"></div>
+					                            <div class="no-chart-results-message"></div>
+					                        </div>
+										</div>
+									</c:when>
+									
+									<c:when test="${forpdf == null && publication == null && child.getCellType() == 'FreeText'}">
+										<div style="width: 700px; margin-left: auto; margin-right: auto;">
+											<div class="questiontitle" style="font-weight: bold">${child.getResultTitle(question)} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${child.shortname})</span></div>
+										</div>
+				
+				                        <div class="statelement-wrapper">
+				                        	   <div class="chart-controls"></div>
+				                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${child.uniqueId}" data-uid="${child.uniqueId}" data-language-code="${form.getSurvey().language.code}" data-initial-chart-type="${child.getDelphiChartType()}" data-chart-data-type="${child.getDelphiChartDataType()}">
+				                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+				                                        <tr>
+				                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+															    <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+														    </th>
+				                                        </tr>
+				                                        <tr>
+				                                            <td style='padding-top:10px; padding-bottom:10px'>
+				                                                <div id="wordcloud${child.uniqueId}" class="delphi-chart-div" style="min-width: 300px; min-height: 220px"></div>
+				                                            </td>
+				                                        </tr>
+				                                    </table>
+				                                    <div style="clear: both"></div>
+				                               </div>
+				                               <div style="clear: both"></div>
+				                               <div class="no-chart-results-message"></div>
+				                        </div>
+									</c:when>
+									
+									<c:when test="${(child.getCellType() == 'Number' || child.getCellType() == 'Formula') && child.showStatisticsForNumberQuestion()}">
+										<div class="statelement cell${child.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
+									
+											<div class="questiontitle" style="font-weight: bold;">${child.getResultTitle(question)} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${child.shortname})</span></div>
 											
-										</c:forEach>
+											<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px; ">
+												<thead>
+													<tr>								
+														<th style="width: 300px">&#160;</th>
+														<th style="width: 200px">&#160;</th>
+														<th style="width: 1px"><spring:message code="label.Answers" /></th>
+														<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
+													</tr>
+												</thead>						
+												<tbody>
+													<c:forEach items="${child.getPossibleNumberAnswers()}" var="answer" varStatus="status">
+														<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[child.id.toString() + answer]}">
+															<td>${answer}</td>
+											
+															<td>
+																<div class="progress" style="width: 200px; margin-bottom: 2px;">
+																  <div class="chartRequestedRecordsPercent progress-bar" data-id="${child.id.toString()}${answer}" style="width: ${statistics.requestedRecordsPercent[child.getAnswerWithPrefix(answer)]}%;"></div>
+																</div>
+															</td>	
+											
+															<c:choose>
+																<c:when test="${statistics != null}">						
+																	<td class="statRequestedRecords" data-id="${child.id.toString()}${answer}">${statistics.requestedRecords[child.getAnswerWithPrefix(answer)]}</td>			
+																	<td class="statRequestedRecordsPercent" data-id="${child.id.toString()}${answer}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[child.getAnswerWithPrefix(answer)]}"/> %</td>		
+																</c:when>
+																<c:otherwise>
+																	<td id="awaitingResult" class="statRequestedRecords" data-id="${child.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+																	<td id="awaitingResultPercent" class="statRequestedRecordsPercent" data-id="${child.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+																</c:otherwise>
+															</c:choose>		
+														</tr>
+													</c:forEach>
+													<tr data-position="10000" class="noanswer">
+														<td><spring:message code="label.NoAnswer" /></td>
+														<td>
+															<div class="progress" style="width: 200px; margin-bottom: 2px;">											
+																<c:choose>
+																	<c:when test="${statistics != null}">
+																		<div class="chartRequestedRecordsPercent progress-bar" data-id="${child.id}" style="width: ${statistics.requestedRecordsPercent[child.id.toString()]}%;"></div>
+																	</c:when>
+																	<c:otherwise>
+																		<div class="chartRequestedRecordsPercent progress-bar" data-id="${child.id}"></div>
+																	</c:otherwise>
+																</c:choose>
+															</div>
+														</td>
+														
+														<c:choose>
+															<c:when test="${statistics != null}">						
+																<td class="statRequestedRecords" data-id="${child.id}">${statistics.requestedRecords[child.id.toString()]}</td>			
+																<td class="statRequestedRecordsPercent" data-id="${child.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[child.id.toString()]}"/> %</td>		
+															</c:when>
+															<c:otherwise>
+																<td id="awaitingResult" class="statRequestedRecords" data-id="${child.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+																<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${child.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+															</c:otherwise>
+														</c:choose>										
+														
+													</tr>
+												</tbody>
+											</table>
+											
+										</div>
 										
-										<c:choose>
-											<c:when test="${statistics != null}">						
-												<td class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}">
-													<b>${statistics.requestedRecordsRankingPercentScore[child.id.toString()]}</b><br />
-													${statistics.requestedRecordsRankingScore[question.id.toString()]}
-												</td>			
-											</c:when>
-											<c:otherwise>
-												<td id="awaitingResult" class="statRequestedRecordsRankingScore" data-parent-id="${question.id}" data-id="${child.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-											</c:otherwise>
-										</c:choose>							
-									</tr>
-								
-								</c:forEach>
-								
-									<tr>
-										<td><spring:message code="label.NoAnswer" /></td>
-										<td colspan="4">
-											<c:choose>
-												<c:when test="${statistics != null}">						
-													<span class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</span><br />
-													<span class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</span>
-												</c:when>
-												<c:otherwise>
-													<span id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></span><br />
-													<span id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></span>
-												</c:otherwise>
-											</c:choose>		
-										</td>
-									</tr>
-								
-								</tbody>
-							</table>
-						</div>
-
-                        <div class="statelement-wrapper ranking-chart">
-                               <div class="chart-controls"></div>
-                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                       <tr>
-                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-											<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-										</th>
-                                       </tr>
-                                       <tr>
-                                           <td style='padding-top:10px; padding-bottom:10px'>
-                                               <div class="delphi-chart-div"></div>
-                                           </td>
-                                       </tr>
-                                   </table>
-                                   <div style="clear: both"></div>
-                               </div>
-                               <div style="clear: both"></div>
-                               <div class="no-chart-results-message"></div>
-                        </div>
-
-					</c:if>	
-		
+				                        <div class="statelement-wrapper">
+				                               <div class="chart-controls"></div>
+				                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${child.uniqueId}" data-uid="${child.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+				                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+				                                        <tr>
+				                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+															 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+														 </th>
+				                                        </tr>
+				                                        <tr>
+				                                            <td style='padding-top:10px; padding-bottom:10px'>
+				                                                <div class="delphi-chart-div"></div>
+				                                            </td>
+				                                        </tr>
+				                                    </table>
+				                                    <div style="clear: both"></div>
+				                               </div>
+				                               <div style="clear: both"></div>
+				                               <div class="no-chart-results-message"></div>
+				                        </div>
+									</c:when>
+									
+								</c:choose>
+							</c:forEach>															
+						</c:when>						
+					</c:choose>		
 				</c:if>
 			</c:if>		
-		</c:forEach>
-		
-		</div>
+		</c:forEach>		
+	</div>
 </div>
 
 <div id="chart-controls-template" style="display: none">

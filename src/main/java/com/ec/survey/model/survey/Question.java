@@ -136,7 +136,7 @@ public abstract class Question extends Element {
 		}		
 
 		if (!delphiQuestion && (delphiChartType == null || delphiChartType == DelphiChartType.None)) {
-			if (this instanceof ChoiceQuestion || this instanceof Matrix || this instanceof NumberQuestion || this instanceof RatingQuestion) {
+			if (this instanceof ChoiceQuestion || this instanceof Matrix || this instanceof NumberQuestion || this instanceof RatingQuestion || this instanceof FormulaQuestion) {
 				return DelphiChartType.Pie;
 			}
 
@@ -146,6 +146,12 @@ public abstract class Question extends Element {
 			
 			if (this instanceof RankingQuestion) {
 				return DelphiChartType.Bar;
+			}
+			
+			if (this instanceof ComplexTableItem) {
+				if (((ComplexTableItem)this).getCellType() == ComplexTableItem.CellType.FreeText) {
+					return DelphiChartType.WordCloud;
+				}
 			}
 		}
 

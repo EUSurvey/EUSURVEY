@@ -4,6 +4,7 @@ import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
+import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Share;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.NotAgreedToPsException;
@@ -274,6 +275,16 @@ public class SettingsController extends BasicController {
 		result.addObject("passiveShares", passiveShares);
 		result.addObject("attributeNames", user.getSelectedAttributes());
 		result.addObject("allAttributeNames", attendeeService.getAllAttributes(ownerId));
+		boolean ownerSelected = false;
+		if (user.getSelectedAttributes() != null){
+			for (AttributeName name : user.getSelectedAttributes()){
+				if (name.getName().equals("Owner")){
+					ownerSelected = true;
+					break;
+				}
+			}
+		}
+		result.addObject("ownerSelected",ownerSelected);
 
 		return result;
 	}

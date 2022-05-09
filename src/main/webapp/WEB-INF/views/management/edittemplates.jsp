@@ -155,9 +155,9 @@
 					</div>
 				<!-- /ko -->				
 
-				<div class="PreviewItems" onclick="edit(this)">
+				<div class="PreviewItems">
 				<!--  ko foreach: PreviewItems() -->
-					<div data-bind="html: getLimitedText($data)"></div>
+					<div><a href="javascript:void(0)"  data-bind="html: getLimitedText($data), click: function(d, e){propertiesFromPreviewIndex($index(), e, $parent)}"></a></div>
 				<!-- /ko -->
 				</div>
 
@@ -280,7 +280,6 @@
 			<button data-bind="click: function() {addFormulaText('/', FormulaInputId())}" class="btn btn-default btn-sm">／</button><br />
 			<button data-bind="click: function() {addFormulaText('(', FormulaInputId())}" class="btn btn-default btn-sm">（</button>
 			<button data-bind="click: function() {addFormulaText(')', FormulaInputId())}" class="btn btn-default btn-sm">）</button>
-			<button style="width: 34px" data-bind="click: function() {addFormulaText(',', FormulaInputId())}" class="btn btn-default btn-sm">,</button>
 			<button data-bind="click: function() {clearFormula(FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.clear" /></button>
 		</td>
 	</tr>
@@ -298,6 +297,679 @@
 					<td class="innertd"><button data-bind="click: function() {addFormulaText(shortname(), $parent.FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.select" /></button></td>
 				</tr>
 			</table>
+		</td>
+	</tr>
+</script>
+
+<script type="text/html" id="editcomplextableheader-template">
+	<tr class="firstpropertyrow">
+		<td class="propertylabel" data-label="CellText">
+			<spring:message code="label.Text" />
+		</td>
+		<td class="propertycontent">
+			<div class="rightaligned">
+				<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)"></span>
+			</div>
+			<form autocomplete="off">
+				<div data-bind="html: Cell().title"></div>
+			</form>
+		</td>
+	</tr>
+
+	<tr class="propertyrow tinymcerow hideme">
+		<td colspan='2'>
+			<textarea data-bind="text: Cell().title, attr: {id: TinyMCEId()}"></textarea>
+			<div class='edittextbuttons'>
+				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
+				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
+			</div>
+		</td>
+	</tr>
+
+	<tr class="collapsiblerow" data-bind="attr: {'style': Cell().cellType() > 0 ? '' : 'display: none;'}">
+		<td colspan='2' style="text-align: left">
+			<a onclick='toggleCellProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.CellProperties" /></a>
+		</td>
+	</tr>
+
+	<tr class="firstpropertyrow">
+		<td class="propertylabel" data-label="CellType">
+			<spring:message code="label.CellType" />
+		</td>
+		<td class="propertycontent">
+			<select data-label="CellType" onchange="changeChildren(this, event)" data-bind="value: Cell().cellTypeChildren()">
+				<option value="-1"><spring:message code="label.varying" /></option>
+				<option value="0"><spring:message code="label.empty" /></option>
+				<option value="1"><spring:message code="label.StaticText" /></option>
+				<option value="2"><spring:message code="form.FreeText" /></option>
+				<option value="3"><spring:message code="label.Formula" /></option>
+				<option value="4"><spring:message code="form.SingleChoice" /></option>
+				<option value="5"><spring:message code="form.MultipleChoice" /></option>
+				<option value="6"><spring:message code="form.Number" /></option>
+			</select>	
+		</td>
+	</tr>
+
+	<!-- Text -->
+	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() > 0 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="CellText">
+			<spring:message code="label.Text" />
+		</td>
+		<td class="propertycontent">
+			<div class="rightaligned">
+				<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)"></span>
+			</div>
+			<form autocomplete="off">
+				<div data-bind="html: Cell().titleChildren"></div>
+			</form>
+		</td>
+	</tr>
+	<tr class="propertyrow tinymcerow hideme">
+		<td colspan='2'>
+			<textarea data-bind="text: Cell().titleChildren, attr: {id: TinyMCEId() + 'children'}"></textarea>
+			<div class='edittextbuttons'>
+				<button data-label="CellText" data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='changeChildren(this, null)'><spring:message code="label.Apply" /></button>
+				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
+			</div>
+		</td>
+	</tr>
+
+	<!-- Mandatory -->
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() > 1 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Mandatory">
+			<spring:message code="label.Mandatory" />
+		</td>
+		<td class="propertycontent">
+			<input data-label="Mandatory" data-bind="checked: !Cell().optionalChildren(), indeterminateValue: Cell().optionalIndeterminate()" type='checkbox' onclick='changeChildren(this, null)' />
+		</td>
+	</tr>
+
+	<!-- Rows -->
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 2 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Rows">
+			<spring:message code="label.Rows" />
+		</td>
+		<td class="propertycontent">
+			<select data-label="Rows" onchange="changeChildren(this, event)" data-bind="options: ['', '1', '2', '3', '4', '5', '10', '20', '30', '40', '50'], value: Cell().numRowsChildren()">
+			</select>
+		</td>
+	</tr>
+	
+	<!-- Free Text -->
+	
+		
+		<!-- min / max -->
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 2 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="AcceptedNumberOfCharacters">
+			<spring:message code="label.AcceptedNumberOfCharacters" />
+		</td>
+		<td class="propertycontent">
+			<form autocomplete="off">
+				<table class="minmaxtable">
+					<tr>
+						<td><spring:message code="label.min" />&nbsp;</td>
+						<td><input class="spinner" data-forcell="true" data-label="MinMax" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChildren, attr: {id: Cell().id() + 'min', 'data-to' : Cell().id() + 'max'}" onchange="changeChildren(this, event)" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="label.max" />&nbsp;</td>
+						<td><input class="spinner" data-forcell="true" data-label="MinMax" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChildren, attr: {id: Cell().id() + 'max', 'data-from' : Cell().id() + 'min'}" onchange="changeChildren(this, event)" /></td>
+					</tr>
+				</table>
+			</form>
+		</td>
+	</tr>
+	<!-- Free Text / -->
+
+	<!-- Formula -->
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 3 ? '' : 'display: none;'}">
+		<td class="propertylabel">
+			<spring:message code="label.Formula" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.Formula" />'><span class='glyphicon glyphicon-question-sign'></span></a>
+		</td>
+		<td class="propertycontent">
+			<a data-bind="click: function() {showFormulaDialog(FormulaInputId())}" class="btn btn-default btn-sm" style="height: 30px; padding: 3px;"><span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin: 4px;">fx</span></a>
+			<textarea class="form-control" data-label="Formula" maxlength="40" data-bind="value: Cell().formulaChildren(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='changeChildren(this, event)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
+		</td>
+	</tr>
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 3 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Attribute">
+			<spring:message code="label.Operators" />
+		</td>
+		<td class="propertycontent">
+			<button data-bind="click: function() {addFormulaText('+', FormulaInputId())}" class="btn btn-default btn-sm">＋</button>
+			<button data-bind="click: function() {addFormulaText('-', FormulaInputId())}" class="btn btn-default btn-sm">－</button>
+			<button data-bind="click: function() {addFormulaText('*', FormulaInputId())}" class="btn btn-default btn-sm">＊</button>
+			<button data-bind="click: function() {addFormulaText('/', FormulaInputId())}" class="btn btn-default btn-sm">／</button><br />
+			<button data-bind="click: function() {addFormulaText('(', FormulaInputId())}" class="btn btn-default btn-sm">（</button>
+			<button data-bind="click: function() {addFormulaText(')', FormulaInputId())}" class="btn btn-default btn-sm">）</button>
+			<button style="width: 34px" data-bind="click: function() {addFormulaText(',', FormulaInputId())}" class="btn btn-default btn-sm">,</button>
+			<button data-bind="click: function() {clearFormula(FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.clear" /></button>
+		</td>
+	</tr>
+	<tr class="collapsiblerow advanced" data-bind="attr: {'style': Cell().cellTypeChildren() == 3 ? '' : 'display: none;'}">
+		<td colspan='2' style="text-align: left">
+			<a class='idpropertiestogglebutton' onclick='toggleSelectIDProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.SelectIdentifiers" /></a>
+		</td>
+	</tr>
+	<tr data-bind="attr: {'style': Cell().cellTypeChildren() == 3 ? '' : 'display: none;'}">
+		<td colspan='2' style="text-align: left;">
+			<table data-bind="foreach: NumberElements()" style="margin-left: 20px;">
+				<tr>
+					<td class="innertd" data-bind="html: shortname" style="font-weight: bold; padding-right: 10px;"></td>
+					<td class="innertd" style="padding-right: 10px;" data-bind="html: limitedTitle"></td>
+					<td class="innertd"><button data-bind="click: function() {addFormulaText(shortname(), $parent.FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.select" /></button></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<!-- Formula / -->
+
+	<!-- Number -->
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 6 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Unit">
+			<spring:message code="label.Unit" />
+		</td>
+		<td class="propertycontent">
+			<input type='text' data-label="Unit" data-bind="value: Cell().unitChildren()" onblur="changeChildren(this, event)" />
+		</td>
+	</tr>
+	<!-- Number / -->
+
+	<!-- Number And Formula -->
+	<tr data-label="DecimalPlaces" class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 3  || Cell().cellTypeChildren() == 6 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="DecimalPlaces">
+			<spring:message code="label.DecimalPlacesNew" />
+		</td>
+
+		<td class="propertycontent">
+			<select data-label="DecimalPlaces" data-bind="value: Cell().decimalsChildren()" onchange="changeChildren(this, event)">
+				<option></option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 3 || Cell().cellTypeChildren() == 6 ? '' : 'display: none;'}">
+		<td class="propertylabel"><spring:message code="label.Values" /></td>
+		<td class="propertycontent">
+			<form autocomplete="off">
+				<table class="minmaxtable">
+					<tr>
+						<td><spring:message code="label.min" />&nbsp;</td>
+						<td><input class="spinner" data-label="MinMax" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChildren, attr: {id: Cell().id() + 'minValue'}" onchange="changeChildren(this, event)" role="spinbutton" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="label.max" />&nbsp;</td>
+						<td><input class="spinner" data-label="MinMax" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChildren, attr: {id: Cell().id() + 'maxValue'}" onchange="changeChildren(this, event)" role="spinbutton" /></td>
+					</tr>
+				</table>
+			</form>
+
+		</td>
+	</tr>
+	<!-- Number And Formula / -->
+
+
+	<!-- Choice -->
+	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 4 || Cell().cellTypeChildren() == 5 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="PossibleAnswers">
+			<spring:message code="label.PossibleAnswers" />
+		</td>
+		<td class="propertycontent">
+			<div class="rightaligned">
+				<!-- ko if: Cell().possibleAnswersMatch() -->
+				<span data-bind="attr: {id: 'idEdit' + Label()}" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" class="glyphicon glyphicon-pencil" onclick="edit(this)"></span>
+				<!-- /ko -->
+			</div>
+
+			<div class="PreviewItems">
+				<!--  ko foreach: PreviewItems() -->
+				<div><span data-bind="html: getLimitedText($data)"></span></div>
+				<!-- /ko -->
+			</div>
+
+			<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" title="<spring:message code="label.Add" />" onclick="addPossibleAnswerChildren()">
+				<button data-bind="disable: !Cell().possibleAnswersMatch()" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></button>
+			</span>
+			<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" title="<spring:message code="label.Remove"/>" onclick="removePossibleAnswerChildren()">
+				<button data-bind="disable: !(PreviewItems().length > 0) || !Cell().possibleAnswersMatch()" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></button>
+			</span>
+		</td>
+	</tr>
+	<tr class="propertyrow tinymcerow hideme">
+		<td colspan='2'>
+			<textarea data-bind="text: PreviewItems(), attr: {id: TinyMCEId() + 'possibleAnswers'}"></textarea>
+			<div class='edittextbuttons'>
+				<button data-bind="attr: {id: 'idBtnSavePossibleAnswers'}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
+				<button data-bind="attr: {id: 'idBtnCancelPossibleAnswers'}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
+			</div>
+		</td>
+	</tr>
+	<tr class="propertyrow hideme">
+		<td class="propertycontent" colspan='2'>
+			<table class="table table-bordered propertiessubtable"></table>
+			<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button></div>
+		</td>
+	</tr>
+	<!-- Choice -->
+
+</script>
+
+<script type="text/html" id="editcomplextable-template">
+	<tr class="firstpropertyrow">
+		<td class="propertylabel" data-label="CellType">
+			<spring:message code="label.CellType" />
+		</td>
+		<td class="propertycontent">
+			<select data-label="CellType" data-forcell="true" onchange="change(this, event)" data-bind="value: Cell().cellType(), attr: {'data-value': Cell().cellType()}">
+				<option value="0"><spring:message code="label.empty" /></option>
+				<option value="1"><spring:message code="label.StaticText" /></option>
+				<option value="2"><spring:message code="form.FreeText" /></option>
+				<option value="3"><spring:message code="label.Formula" /></option>
+				<option value="4"><spring:message code="form.SingleChoice" /></option>
+				<option value="5"><spring:message code="form.MultipleChoice" /></option>
+				<option value="6"><spring:message code="form.Number" /></option>
+			</select>	
+		</td>
+	</tr>
+
+	<tr class="collapsiblerow" data-bind="attr: {'style': Cell().cellType() == 0 ? 'display: none;' : ''}">
+		<td colspan='2' style="text-align: left">
+			<a onclick='toggleCellProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.CellProperties" /></a>
+		</td>
+	</tr>
+
+	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 0 ? 'display: none;' : ''}">
+		<td class="propertylabel" data-label="CellText">
+			<spring:message code="label.Text" />
+		</td>
+		<td class="propertycontent">
+			<div class="rightaligned">
+				<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)"></span>
+			</div>
+			<form autocomplete="off">
+				<div data-bind="html: Cell().title"></div>
+			</form>
+		</td>
+	</tr>
+
+	<tr class="propertyrow tinymcerow hideme">
+		<td colspan='2'>
+			<textarea data-bind="text: Cell().title, attr: {id: TinyMCEId()}"></textarea>
+			<div class='edittextbuttons'>
+				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
+				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
+			</div>
+		</td>
+	</tr>
+
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() > 1 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Mandatory">
+			<spring:message code="label.Mandatory" />
+		</td>
+		<td class="propertycontent">
+			<input data-label="Mandatory" data-bind="checked: !Cell().optional()" id="idPropertyMandatory" type='checkbox' onclick='update(this)' />
+		</td>
+	</tr>
+	
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 5 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Style">
+			<spring:message code="label.Style" />
+		</td>
+		<td class="propertycontent">
+			<label>
+				<input data-label="Style" data-bind="checked: Cell().cellStyle(), attr: {name: Cell().id() + 'style'}" type='radio' class='check' onclick='update(this)' value="CheckBox" />
+				<span><spring:message code="html.CheckBox" /></span>
+			</label><br />
+			<label>
+				<input data-label="Style" data-bind="checked: Cell().cellStyle(), attr: {name: Cell().id() + 'style'}" type='radio' class='check' onclick='update(this)' value="ListBox" />
+				<span><spring:message code="html.ListBox" /></span>
+			</label>
+		</td>
+	</tr>
+
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 4 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Style">
+			<spring:message code="label.Style" />
+		</td>
+		<td class="propertycontent">
+			<label>
+				<input data-label="Style" data-bind="checked: Cell().cellStyle(), attr: {name: Cell().id() + 'style'}" type='radio' class='check' onclick='update(this)' value="RadioButton" />
+				<span><spring:message code="html.RadioButton" /></span>
+			</label><br />
+			<label>
+				<input data-label="Style" data-bind="checked: Cell().cellStyle(), attr: {name: Cell().id() + 'style'}" type='radio' class='check' onclick='update(this)' value="SelectBox" />
+				<span><spring:message code="html.SelectBox" /></span>
+			</label>
+		</td>
+	</tr>
+
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 1 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Text">
+			<spring:message code="label.ColumnSpan" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.ColumnSpan" />'><span class='glyphicon glyphicon-question-sign'></span></a>
+		</td>
+		<td class="propertycontent">
+			<select data-label="ColumnSpan" onchange="change(this, event)" data-bind="options: Element().availableColumnSpans(Cell().column()), value: Cell().columnSpan()">
+			</select>
+		</td>
+	</tr>
+
+	<!-- Formula Properties -->
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 3 ? '' : 'display: none;'}">
+		<td class="propertylabel">
+			<spring:message code="label.Formula" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.Formula" />'><span class='glyphicon glyphicon-question-sign'></span></a>
+		</td>
+		<td class="propertycontent">
+			<a data-bind="click: function() {showFormulaDialog(FormulaInputId())}" class="btn btn-default btn-sm" style="height: 30px; padding: 3px;"><span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin: 4px;">fx</span></a>
+			<textarea class="form-control" data-label="Formula" maxlength="40" data-bind="value: Cell().formula(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='update(this)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
+		</td>
+	</tr>
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 3 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Attribute">
+			<spring:message code="label.Operators" />
+		</td>
+		<td class="propertycontent">
+			<button data-bind="click: function() {addFormulaText('+', FormulaInputId())}" class="btn btn-default btn-sm">＋</button>
+			<button data-bind="click: function() {addFormulaText('-', FormulaInputId())}" class="btn btn-default btn-sm">－</button>
+			<button data-bind="click: function() {addFormulaText('*', FormulaInputId())}" class="btn btn-default btn-sm">＊</button>
+			<button data-bind="click: function() {addFormulaText('/', FormulaInputId())}" class="btn btn-default btn-sm">／</button><br />
+			<button data-bind="click: function() {addFormulaText('(', FormulaInputId())}" class="btn btn-default btn-sm">（</button>
+			<button data-bind="click: function() {addFormulaText(')', FormulaInputId())}" class="btn btn-default btn-sm">）</button>
+			<button data-bind="click: function() {clearFormula(FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.clear" /></button>
+		</td>
+	</tr>
+	<tr class="collapsiblerow advanced" data-bind="attr: {'style': Cell().cellType() == 3 ? '' : 'display: none;'}">
+		<td colspan='2' style="text-align: left">
+			<a class='idpropertiestogglebutton' onclick='toggleSelectIDProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.SelectIdentifiers" /></a>
+		</td>
+	</tr>
+	<tr data-bind="attr: {'style': Cell().cellType() == 3 ? '' : 'display: none;'}">
+		<td colspan='2' style="text-align: left;">
+			<table data-bind="foreach: NumberElements()" style="margin-left: 20px;">
+				<tr>
+					<td class="innertd" data-bind="html: shortname" style="font-weight: bold; padding-right: 10px;"></td>
+					<td class="innertd" style="padding-right: 10px;" data-bind="html: limitedTitle"></td>
+					<td class="innertd"><button data-bind="click: function() {addFormulaText(shortname(), $parent.FormulaInputId())}" class="btn btn-default btn-sm"><spring:message code="label.select" /></button></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+
+	<!-- Formula Properties / -->
+
+	<!-- Number Properties -->
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 6 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Unit">
+			<spring:message code="label.Unit" />
+		</td>
+		<td class="propertycontent">
+			<input type='text' data-label="Unit" data-bind="value: Cell().unit()" onblur="update(this)" />
+		</td>
+	</tr>
+
+	<!-- Number Properties / -->
+
+	<!-- Number And Formula Properties -->
+	<tr data-label="DecimalPlaces" class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 3  || Cell().cellType() == 6 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="DecimalPlaces">
+			<spring:message code="label.DecimalPlacesNew" />
+		</td>
+
+		<td class="propertycontent">
+			<select data-label="DecimalPlaces" data-bind="value: Cell().decimalPlaces()" onchange="update(this)">
+				<option></option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+			</select>
+		</td>
+	</tr>
+	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 3 || Cell().cellType() == 6 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Values"><spring:message code="label.Values" /></td>
+		<td class="propertycontent">
+			<form autocomplete="off">
+				<table class="minmaxtable">
+					<tr>
+						<td><spring:message code="label.min" />&nbsp;</td>
+						<td><input class="spinner" data-label="Values" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().min() > 0 ? Cell().min() : '', attr: {id: Cell().id() + 'minValue', 'data-to' : Cell().id() + 'maxValue'}" onchange="update(this)" role="spinbutton" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="label.max" />&nbsp;</td>
+						<td><input class="spinner" data-label="Values" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().max() > 0 ? Cell().max() : '', attr: {id: Cell().id() + 'maxValue', 'data-from' : Cell().id() + 'minValue'}" onchange="update(this)" role="spinbutton" /></td>
+					</tr>
+				</table>
+			</form>
+
+		</td>
+	</tr>
+	<!-- Number And Formula Properties / -->
+
+	<!-- Choice Properties -->
+		<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 4 || Cell().cellType() == 5 ? '' : 'display: none;'}">
+			<td class="propertylabel" data-label="PossibleAnswers">
+				<spring:message code="label.PossibleAnswers" />
+			</td>
+			<td class="propertycontent">
+				<div class="rightaligned">
+					<span data-bind="attr: {id: 'idEdit' + Label()}" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" class="glyphicon glyphicon-pencil" onclick="edit(this)"></span>
+					<span style="margin-left: 5px;" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.AssignValues" />" class="glyphicon glyphicon-tag" onclick="editShortnames(this)" id="idEditShortNamePossibleAnswers"></span>
+				</div>
+			
+				<div class="PreviewItems">
+				<!--  ko foreach: PreviewItems() -->
+					<div><span data-bind="html: getLimitedText($data)"></span></div>
+				<!-- /ko -->
+				</div>
+
+				<button data-toggle="tooltip" title="<spring:message code="label.Add" />" class="btn btn-default btn-sm" onclick="addPossibleAnswer()"><span class="glyphicon glyphicon-plus"></span></button>
+				<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" title="<spring:message code="label.Remove"/>" onclick="removePossibleAnswer()">
+					<button data-bind="disable: !(PreviewItems().length > 0)" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></button>
+				</span>
+			</td>
+		</tr>
+		<tr class="propertyrow tinymcerow hideme">
+			<td colspan='2'>
+				<textarea data-bind="text: PreviewItems(), attr: {id: TinyMCEId() + 'possibleAnswers'}"></textarea>
+				<div class='edittextbuttons'>
+					<button data-bind="attr: {id: 'idBtnSavePossibleAnswers'}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
+					<button data-bind="attr: {id: 'idBtnCancelPossibleAnswers'}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
+				</div>
+			</td>
+		</tr>
+		<tr class="propertyrow hideme">
+			<td class="propertycontent" colspan='2'>
+				<table class="table table-bordered propertiessubtable"></table>
+				<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button></div>
+			</td>
+		</tr>
+
+		<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 4 || Cell().cellType() == 5 ? '' : 'display: none;'}">
+			<td class="propertylabel" data-label="Order">
+				<spring:message code="label.Order" />
+				<a style='margin-left: 2px'><span data-toggle='tooltip' data-html="true" data-original-title='<spring:message code="info.Order" />' class='glyphicon glyphicon glyphicon-question-sign'></span></a>
+			</td>
+
+			<td class="propertycontent">
+				<label><input data-bind="checked: Cell().order() == 0 ? 'Original' : '', attr : { name: Cell().id() + 'order' }" class="check" onclick="update(this)" type="radio" id="selectOriginal" value="Original"><spring:message code="label.OriginalOrder" /></label><br>
+
+				<label><input data-bind="checked: Cell().order() == 1 ? 'Alphabetical' : '', attr : { name: Cell().id() + 'order' }" class="check" onclick="update(this)" type="radio" id="selectAlphabetical" value="Alphabetical"><spring:message code="label.AlphabeticalOrder" /></label><br>
+
+				<label><input data-bind="checked: Cell().order() == 2 ? 'Random' : '', attr : { name: Cell().id() + 'order' }" class="check" onclick="update(this)" type="radio" id="selectRandom" value="Random"><spring:message code="label.RandomOrder" /></label><br>
+			</td>
+		</tr>
+
+		<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 4 || Cell().cellType() == 5 ? '' : 'display: none;'}">
+			<td class="propertylabel" data-label="Text">
+				<spring:message code="label.Columns" />
+			</td>
+			<td class="propertycontent">
+				<select data-label="Columns" onchange="change(this, event)" data-bind="options: [1, 2, 3, 4], value: Cell().numColumns(), disable: (Cell().cellType() === 4 && !Cell().useRadioButtons()) || (Cell().cellType() === 5 && !Cell().useCheckboxes())">
+				</select>
+			</td>
+		</tr>
+
+		<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 5 ? '' : 'display: none;'}">
+			<td class="propertylabel" data-label="NumberOfChoices">
+				<spring:message code="label.NumberOfChoices" />
+			</td>
+			<td class="propertycontent">
+				<form autocomplete="off">
+					<table class="minmaxtable">
+						<tr>
+							<td><spring:message code="label.min" />&nbsp;</td>
+							<td><input class="spinner" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChoices(), attr: {id: Cell().id() + 'minC', 'data-to' : Cell().id() + 'maxC'}" /></td>
+						</tr>
+						<tr>
+							<td><spring:message code="label.max" />&nbsp;</td>
+							<td><input class="spinner" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChoices(), attr: {id: Cell().id() + 'maxC', 'data-from' : Cell().id() + 'minC'}" /></td>
+						</tr>
+					</table>
+				</form>
+			</td>
+		</tr>
+	<!-- Choice Properties / -->
+
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() > 1 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="ResultText">
+			<spring:message code="label.ResultText" />
+			<a style='margin-left: 2px'><span data-toggle='tooltip' title='<spring:message code="info.ResultText" />' class='glyphicon glyphicon glyphicon-question-sign'></span></a>
+		</td>
+		<td class="propertycontent">
+			<form autocomplete="off">
+				<input type="text" data-label="ResultText" data-bind="value: Cell().resultText()" onblur="update(this)" />
+			</form>
+		</td>
+	</tr>
+
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 2 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Rows">
+			<spring:message code="label.Rows" />
+		</td>
+		<td class="propertycontent">
+			<select data-label="Rows" data-forcell="true" onchange="change(this, event)" data-bind="options: ['1', '2', '3', '4', '5', '10', '20', '30', '40', '50'], value: Cell().numRows()">
+			</select>
+		</td>
+	</tr>
+
+	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() > 1 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="Help">
+			<spring:message code="label.HelpMessage" />
+		</td>
+		<td class="propertycontent">
+			<div class="rightaligned">
+				<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)"></span>
+				<span class="glyphicon glyphicon-trash" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Remove" />" onclick="resetHelp(this)"></span>
+			</div>
+			<form autocomplete="off">
+				<div data-bind="html: getShortnedText(Cell().help())"></div>
+			</form>
+		</td>
+	</tr>
+
+	<tr class="propertyrow tinymcerow hideme">
+		<td colspan='2'>
+			<textarea data-bind="text: Cell().help, attr: {id: TinyMCEId() + 'help'}"></textarea>
+			<div class='edittextbuttons'>
+				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
+				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
+			</div>
+		</td>
+	</tr>
+
+	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 2 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="AcceptedNumberOfCharacters">
+			<spring:message code="label.AcceptedNumberOfCharacters" />
+		</td>
+		<td class="propertycontent">
+			<form autocomplete="off">
+				<table class="minmaxtable">
+					<tr>
+						<td><spring:message code="label.min" />&nbsp;</td>
+						<td><input class="spinner" data-forcell="true" data-label="AcceptedNumberOfCharacters" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minCharacters() > 0 ? Cell().minCharacters() : '', attr: {id: Cell().id() + 'min', 'data-to' : Cell().id() + 'max'}" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="label.max" />&nbsp;</td>
+						<td><input class="spinner" data-forcell="true" data-label="AcceptedNumberOfCharacters" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxCharacters() > 0 ? Cell().maxCharacters() : '', attr: {id: Cell().id() + 'max', 'data-from' : Cell().id() + 'min'}" /></td>
+					</tr>
+				</table>
+			</form>
+		</td>
+	</tr>
+
+	<!-- ADVANCED -->
+
+	<tr class="firstpropertyrow collapsiblerow advanced" data-bind="attr: {'style': Cell().cellType() < 2 ? 'display: none;' : ''}">
+		<td colspan='2' style="text-align: left">
+			<a class='advancedtogglebutton' onclick='toggleAdvancedProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.Advanced" /></a>
+		</td>
+	</tr>
+
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() <= 1 ? 'display: none;' : '' }">
+		<td class="propertylabel" data-label="Identifier">
+			<spring:message code="label.Identifier" />
+		</td>
+		<td class="propertycontent">
+			<form autocomplete="off">
+				<input type="text" data-label="Identifier" data-bind="value: Cell().shortname()" onblur="update(this)" />
+			</form>
+		</td>
+	</tr>
+
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() > 1 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="ReadOnly">
+			<spring:message code="label.Readonly" />&nbsp;
+			<!-- ko if: Cell().cellType() == 3 -->
+			<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.ReadonlyFormula" />'><span class='glyphicon glyphicon-question-sign'></span></a>
+			<!-- /ko -->
+			<!-- ko if: Cell().cellType() != 3 -->
+			<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.Readonly" />'><span class='glyphicon glyphicon-question-sign'></span></a>
+			<!-- /ko -->
+		</td>
+		<td class="propertycontent">
+			<form autocomplete="off">
+				<input type="checkbox" data-label="ReadOnly" data-bind="checked: Cell().readonly()" onchange="update(this)" id="idPropertyReadOnly" />
+			</form>
+		</td>
+	</tr>
+
+</script>
+
+<script type="text/html" id="editcomplextablefirst-template">
+	<tr class="firstpropertyrow">
+		<td class="propertylabel" data-label="CellText">
+			<spring:message code="label.Text" />
+		</td>
+		<td class="propertycontent">
+			<div class="rightaligned">
+				<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)"></span>
+			</div>
+			<form autocomplete="off">
+				<div data-bind="html: Cell().title"></div>
+			</form>
+		</td>
+	</tr>
+
+	<tr class="propertyrow tinymcerow hideme">
+		<td colspan='2'>
+			<textarea data-bind="text: Cell().title, attr: {id: TinyMCEId()}"></textarea>
+			<div class='edittextbuttons'>
+				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
+				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
+			</div>
 		</td>
 	</tr>
 </script>

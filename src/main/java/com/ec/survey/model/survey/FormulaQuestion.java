@@ -6,6 +6,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a formula question in a survey
@@ -136,5 +140,34 @@ public class FormulaQuestion extends Question {
 		if (minD != null && !minD.equals(formula.minD)) return true;
 		
 		return false;
+	}
+
+	@Transient
+	public boolean showStatisticsForNumberQuestion() {
+		if (decimalPlaces > 0 || minD == null || maxD == null) {
+			return false;
+		}
+
+		return (maxD - minD) <= 10;
+	}
+
+	@Transient
+	public List<String> getAllPossibleAnswers() {
+		List<String> answers = new ArrayList<>();
+
+		if (!showStatisticsForNumberQuestion()) {
+			return answers;
+		}
+
+		NumberFormat nf = DecimalFormat.getInstance();
+		nf.setMaximumFractionDigits(0);
+
+		double v = minD;
+		while (v <= maxD) {
+			answers.add(nf.format(v));
+			v++;
+		}
+
+		return answers;
 	}
 }

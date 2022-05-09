@@ -426,6 +426,54 @@ public class PublicationController extends BasicController {
 
 							String uidString = row.toString() + answer.getQuestionUniqueId() + column.toString();
 							result.put(uidString, ConversionTools.escape(answer.getValue()));
+						} else if (question instanceof ComplexTableItem) {
+							ComplexTableItem item = (ComplexTableItem) question;
+							
+							if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+								String title = item.getPossibleAnswer(answer.getPossibleAnswerId()) != null
+												? item.getPossibleAnswer(answer.getPossibleAnswerId()).getTitle()
+												: "";
+
+								if (title.length() == 0) {
+									title = item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
+													? item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
+													.getTitle()
+													: "";
+								}
+
+								if (result.containsKey(answer.getQuestionId().toString())) {
+									result.put(answer.getQuestionId().toString(),
+											result.get(answer.getQuestionId().toString()) + "<br />" + title);
+								} else {
+									result.put(answer.getQuestionId().toString(), title);
+								}
+
+								if (result.containsKey(answer.getQuestionUniqueId())) {
+									result.put(answer.getQuestionUniqueId(),
+											result.get(answer.getQuestionUniqueId()) + "<br />" + title);
+								} else {
+									result.put(answer.getQuestionUniqueId(), title);
+								}
+							} else {
+								if (result.containsKey(answer.getQuestionId().toString())) {
+									result.put(answer.getQuestionId().toString(),
+											result.get(answer.getQuestionId().toString()) + "<br />"
+													+ ConversionTools.escape(answer.getValue()));
+								} else {
+									result.put(answer.getQuestionId().toString(),
+											ConversionTools.escape(answer.getValue()));
+								}
+
+								if (result.containsKey(answer.getQuestionUniqueId())) {
+									result.put(answer.getQuestionUniqueId(),
+											result.get(answer.getQuestionUniqueId()) + "<br />"
+													+ ConversionTools.escape(answer.getValue()));
+								} else {
+									result.put(answer.getQuestionUniqueId(),
+											ConversionTools.escape(answer.getValue()));
+								}
+							}
+							
 						} else {
 
 							if (answer.getPossibleAnswerId() != null && answer.getPossibleAnswerId() > 0) {

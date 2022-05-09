@@ -1,12 +1,11 @@
 function toggleMandatory(checkbox)
 {
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	var element = getElement();
 	var checked = $(checkbox).is(":checked");
 	var text = checked ? "true" : "false";
 	var oldtext = checked ? "false" : "true";
 	setMandatoryInner(element, checked, checkbox);
-	_undoProcessor.addUndoStep(["Mandatory", $(_elementProperties.selectedelement).attr("id"), $(_elementProperties.selectedelement).index(), oldtext, text])
+	_undoProcessor.addUndoStep(["Mandatory", element.id(), $(_elementProperties.selectedelement).index(), oldtext, text])
 }
 	
 function setMandatoryInner(element, checked, checkbox)
@@ -181,8 +180,7 @@ function updateShortname(input)
 {
 	var val = $(input).val();
 	var label = $(_elementProperties.selectedproperty).find(".propertylabel").first().attr("data-label");
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	var element = getElement();
 	var index = $(input).closest("tr").index();
 
 	updateShortnameInner(label, element, index, val);
@@ -205,10 +203,22 @@ function updateShortnameInner(label, element, index, val)
 	}
 }
 
-function updateChoice(answers)
-{
-	var id = $(_elementProperties.selectedelement).attr("data-id");
+function getElement() {
+	var selectedElement = $(_elementProperties.selectedelement);
+	var id = selectedElement.attr("data-id");
 	var element = _elements[id];
+	
+	if (element == null && selectedElement.hasClass("cell")){
+		let parentId = selectedElement.closest("li.complextableitem").attr("data-id")
+		element = _elements[parentId].getChildbyId(id)
+	}
+	
+	return element;
+}
+
+function updateChoice(element, answers)
+{
+	//var element = getElement();
 	
 	var scorings = [];
 	
@@ -230,6 +240,10 @@ function updateChoice(answers)
 		}
 	}
 	
+	if ($(_elementProperties.selectedelement).hasClass("cell")) {
+		return;
+	}
+	
 	ko.cleanNode($(_elementProperties.selectedelement)[0]);
 	$(_elementProperties.selectedelement).empty();
 	addElementToContainer(element, $(_elementProperties.selectedelement)[0], true, false);
@@ -237,6 +251,7 @@ function updateChoice(answers)
 	
 	updateDependenciesView();
 	checkInputStates();
+	var id = $(_elementProperties.selectedelement).attr("data-id");
 	updateNavigation($(_elementProperties.selectedelement), id);
 
 	var element = _elementProperties.selectedelement;
@@ -435,7 +450,7 @@ function removeVisibility(triggerid, selectedquestionid)
 	scanQuestionDependencies(trigger);
 }
 
-function updatePossibleAnswers(selectedelement, text, inundo)
+function updatePossibleAnswers(selectedelement, text, inundo, element)
 {
 	var dependenciesfound = false;
 	
@@ -443,8 +458,17 @@ function updatePossibleAnswers(selectedelement, text, inundo)
 	var shortnames = [];
 	var dependentElementsStrings = [];
 	var ids = [];
-	$(_elementProperties.selectedelement).find("input[name^='pauid']").each(function(){
-		
+	
+	var possibleAnswers;
+	
+	if ($(selectedelement).hasClass("cell")) {
+		var id = $(selectedelement).attr("data-id");
+		possibleAnswers = $('child' + id).find("input[name^='pauid']");
+	} else {	
+		possibleAnswers = $(selectedelement).find("input[name^='pauid']");
+	}
+	
+	$(possibleAnswers).each(function(){		
 		var parentid = $(this).attr("name").substring(5);
 		var id = $(this).attr("data-id");
 		
@@ -452,7 +476,6 @@ function updatePossibleAnswers(selectedelement, text, inundo)
 		var uniqueId = $("input[name='pauid" + parentid + "'][data-id='" + id + "']").first().val();
 		var shortname = $("input[name='pashortname" + parentid + "'][data-id='" + id + "']").first().val();
 		var dependentElementsString = $("input[name='dependencies" + parentid + "'][data-id='" + id + "']").first().val();
-		//var id = $(this).parent().find("textarea[name^='answer']").attr("data-id");
 		
 		uniqueIDs[title] = uniqueId;
 		shortnames[title] = shortname;
@@ -539,11 +562,11 @@ function updatePossibleAnswers(selectedelement, text, inundo)
 	    }
 	}
 
-	updateChoice(answers);
+	updateChoice(element, answers);
 
 	if (!inundo)
 	{
-		_undoProcessor.addUndoStep(["PossibleAnswers", $(_elementProperties.selectedelement).attr("id"), $(_elementProperties.selectedelement).index(), oldtext, text]);
+		_undoProcessor.addUndoStep(["PossibleAnswers", $(selectedelement).attr("id"), $(selectedelement).index(), oldtext, text]);
 		if (dependenciesfound) showInfo(getPropertyLabel("checkVisibilities"));
 	}
 	return true;
@@ -554,9 +577,10 @@ function updateText(selectedelement, text, fromundo)
 	
 	var isgalleryimage = $(_elementProperties.selectedelement).find(".gallery-image").length > 0 && $(_elementProperties.selectedelement).closest(".gallery-div").length > 0;
 	var isfirstcell = $(_elementProperties.selectedelement).hasClass("firstCell");
+	var isComplexTable = $(_elementProperties.selectedelement).hasClass("complextableitem") || $(_elementProperties.selectedelement).hasClass("cell");
 	
 	if (!fromundo)
-	if (!isgalleryimage && !isfirstcell)
+	if (!isgalleryimage && !isfirstcell && !isComplexTable)
 	if (!checkText(text))
 	{
 		return false;
@@ -565,7 +589,7 @@ function updateText(selectedelement, text, fromundo)
 	
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var uid = "";
-	var element = _elements[id];
+	var element = getElement();
 	var selectedelement = $(_elementProperties.selectedelement);
 	var selectedid = id;
 	
@@ -586,7 +610,15 @@ function updateText(selectedelement, text, fromundo)
 	{
 		oldtext = element.originalTitle();
 		element.originalTitle(text);
-		element.title(getQuestionTitle($(_elementProperties.selectedelement), false));
+		
+		if (element.type === 'ComplexTableItem') {
+			element.title(text);
+			selectedelement = $(_elementProperties.selectedelement).closest(".survey-element"); //needed tp update navigation
+			selectedid = selectedelement.attr("data-id");
+		} else {
+			element.title(getQuestionTitle($(_elementProperties.selectedelement), false));
+		}		
+		
 	} else if ($(_elementProperties.selectedelement).find(".sectiontitle").length > 0)
 	{		
 		oldtext = element.originalTitle();
@@ -671,6 +703,16 @@ function updateText(selectedelement, text, fromundo)
 		uid = rankingitem.uniqueId();
 		selectedelement = $(_elementProperties.selectedelement).closest(".survey-element");
 		selectedid = parentid;
+	} else if ($(_elementProperties.selectedelement).hasClass("cell"))
+	{
+		var parentID = $("#content").find(".selectedquestion").closest(".survey-element").first().attr("id");
+		var table = _elements[parentID];
+		var cell = table.getChildbyId(id);
+		oldtext = cell.title()
+		cell.originalTitle(text);
+		cell.title(text);
+		selectedelement =  $("#content").find(".selectedquestion").closest(".survey-element");
+		selectedid = parentID;
 	} else {
 		oldtext = $(_elementProperties.selectedelement).html();
 		$(_elementProperties.selectedelement).html(text);

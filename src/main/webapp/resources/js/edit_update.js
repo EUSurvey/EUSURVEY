@@ -7,6 +7,166 @@ function change(input, event)
 	}
 }
 
+function changeChildren(input, event) {
+	if (event != null && event.cancelable != false) return;
+	
+	const headerCell = getElement();
+	const label = $(input).attr("data-label");
+	const parentId = $(_elementProperties.selectedelement).closest("li.complextableitem").attr("data-id");
+	const table = _elements[parentId];
+	const children = [];
+	
+	$('.highlightedquestion').each(function() {
+		let id = $(this).attr("data-id");
+		let child = table.getChildbyId(id);
+		
+		if (child == null) {
+			//empty cell: create new "empty" child
+			const cell =  getBasicElement("ComplexTableItem", true, "", null, false);
+			cell.row = $(this).closest("tr").index();
+			cell.column = $(this).index();
+			cell.cellType = 0; //empty
+			child = newComplexTableItemViewModel(cell);
+			table.childElements.push(child);
+			id = cell.id;
+		}
+		
+		children.push(child);
+	});
+	
+	switch (label) {
+		case "CellType":
+			const type = parseInt($(input).val());
+			for (let child of children) {
+				child.cellType(type);
+				
+				if (type === 1) { // set optional for static text cells
+					child.optional(true);
+				}
+			}
+			headerCell.cellTypeChildren(type);
+			
+			// update navigation (changes if empty cell is involved)
+			selectedElement = $(_elementProperties.selectedelement).closest(".survey-element");
+			updateNavigation(selectedElement, selectedElement.attr("data-id"));
+			
+			break;
+		case "CellText":
+			_elementProperties.selectedid = $(input).closest("tr").find("textarea").first().attr("id");
+			var text = tinyMCE.get(_elementProperties.selectedid).getContent({format: 'xhtml'});
+			var doc = new DOMParser().parseFromString(text, 'text/html');
+			text = new XMLSerializer().serializeToString(doc);		
+			/<body>([^]*)<\/body>/im.exec(text);
+			text = RegExp.$1;
+			for (let child of children) {
+				child.originalTitle(text);
+				child.title(text);
+			}
+			headerCell.titleChildren(text);
+			$('.highlightedquestion').each(function() {
+				updateNavigation(this, $(this).attr("data-id"));
+			});
+			
+			$(input).closest("tr").hide();
+			break;
+		case "Mandatory":
+			const checked = $(input).is(":checked");
+			for (let child of children) {
+				child.optional(!checked);
+			}
+			break;
+		case "Rows":
+			var text = $(input).val();
+			if (text === "")
+				return;
+			const rows = parseInt(text);
+			for (let child of children) {
+				child.numRows(rows);
+			}
+			
+			$('.highlightedquestion').each(function() {
+				//the following line is needed to reset the height of the textarea
+				$(this).find("textarea.freetext").css("height","");
+			});
+			
+			break;
+		case "MinMax":
+			let isMin = $(input).attr("data-type") === "min";
+			let value = $(input).val()
+
+			if (isMin){
+				if (value == headerCell.minChildren()){
+					return;
+				}
+				headerCell.minChildren(value);
+			} else {
+				if (value == headerCell.maxChildren()){
+					return;
+				}
+				headerCell.maxChildren(value);
+			}
+
+			let useKey = "";
+
+			if (headerCell.cellTypeChildren() == 2){
+				useKey = isMin ? "minCharacters" : "maxCharacters";
+			} else if (headerCell.cellTypeChildren() == 4 || headerCell.cellTypeChildren() == 5){
+				useKey = isMin ? "minChoices" : "maxChoices";
+			} else {
+				useKey = isMin ? "min" : "max";
+			}
+
+			for (let child of children) {
+				child[useKey](value);
+			}
+
+			break;
+		case "Formula":
+			if (!checkFormula($(input))) {
+				return;
+			}
+
+			var text = $(input).val()
+			headerCell.formulaChildren(text);
+
+			for (let child of children) {
+				child.formula(text);
+			}
+			break;
+		case "DecimalPlaces":
+			var text = $(input).val();
+
+			if (text.length === 0) text = "0";
+
+			var oldtext = headerCell.decimalPlaces();
+			if (oldtext != text){
+				headerCell.decimalsChildren(parseInt(text));
+				for (let child of children) {
+					child.decimalPlaces(parseInt(text));
+				}
+			}
+
+			break;
+
+		case "Unit":
+			var text = $(input).val();
+			if (!checkCharacters(text)){
+				return;
+			}
+			var oldtext = headerCell.unitChildren();
+			if (oldtext != text){
+				headerCell.unitChildren(text);
+				for (let child of children) {
+					child.unit(text);
+				}
+			}
+
+			break;
+	}
+	
+	_actions.SaveEnabled(true);
+}
+
 function update(input)
 {
 	var label = "";
@@ -17,9 +177,9 @@ function update(input)
 	} else {
 		label = $(input).attr("data-label");
 	}
-
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	let selectedElement = $(_elementProperties.selectedelement);
+	var id = selectedElement.attr("data-id");
+	var element = getElement();
 	
 	_elementProperties.selectedproperty = $(input).closest("tr");
 	var hasInputError = $(input).closest("tr").hasClass("invalidinput");
@@ -74,7 +234,7 @@ function update(input)
 				{
 					checkInterdependentMatrix(input);
 				}
-			} else if(element.type == "Table") {
+			} else if(element.type == "Table" || element.type == "ComplexTable") {
 				break;
 			} else {
 				var text = $(input).val();
@@ -99,12 +259,12 @@ function update(input)
 				{
 					checkInterdependentMatrix(input);
 				}
-			} else if(element.type == "Table") {
+			} else if (element.type == "Table" || element.type == "ComplexTable") {
 				break;
 			} else {
 				oldindex = element.numColumns();
 				element.numColumns(newindex);
-				updateChoice();
+				updateChoice(element);
 
 				checkNumColumns(input, element);
 			}
@@ -333,6 +493,19 @@ function update(input)
 				var oldtext = element.style();
 				element.style(text);
 				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			} else if ($(_elementProperties.selectedelement).hasClass("cell")) {
+				var text = $(input).val();
+				var oldtext = "";
+				if (element.cellType() == 4) //Single Choice 
+				{
+					oldtext = element.useRadioButtons() ? 'RadioButton' : 'SelectBox';
+					element.useRadioButtons(text == "RadioButton");					
+				} else {
+					oldtext = element.useCheckboxes() ? 'CheckBox' : 'ListBox';
+					element.useCheckboxes(text == "CheckBox");			
+				}
+				
+				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			} else {
 				var text = $(input).val();
 				var oldtext;
@@ -378,7 +551,7 @@ function update(input)
 					element.choiceType("list");
 					element.useCheckboxes(false);					
 				}
-				updateChoice();
+				updateChoice(element);
 				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			}
 			break;
@@ -390,7 +563,9 @@ function update(input)
 			}			
 			var oldtext = element.unit();
 			element.unit(text);
-			_undoProcessor.addUndoStep(["Unit", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			if (oldtext !== text) {
+				_undoProcessor.addUndoStep(["Unit", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			}
 			break;
 		case "Size":
 			var size = $(input).val();
@@ -403,6 +578,11 @@ function update(input)
 				}
 
 				updateImageSize(element, size, input, false);
+			} else if (element.type == "ComplexTable")
+			{
+				var oldsize = element.size();
+				element.size(size == "fitToContent" ? 0 : 1);
+				_undoProcessor.addUndoStep(["Size", id, $(_elementProperties.selectedelement).index(), oldtext, oldsize]);
 			} else {
 				updateMatrixSize(element, size, false);
 			}
@@ -455,7 +635,7 @@ function update(input)
 				}				
 			}
 			
-			if (element.type == "FormulaQuestion")
+			if (element.type == "FormulaQuestion" || element.type == "ComplexTableItem")
 			{
 				return;
 			}
@@ -491,6 +671,11 @@ function update(input)
 			break;
 		case "NumberOfChoices":
 			var numanswers = $(_elementProperties.selectedelement).find("input[name^=pashortname]").length;
+			
+			if (element.type === "ComplexTableItem") {
+				numanswers = element.possibleAnswers().length;
+			}
+			
 			if (!checkMinMax(input, hasInputError, numanswers, $(".quizrule").length > 0))
 			{
 				return;
@@ -1075,13 +1260,88 @@ function update(input)
 			var text = $(input).val();	
 			var oldtext = element.formula();
 			
-			if (!checkFormula($(input), element)) {
+			if (!checkFormula($(input))) {
 				return;
 			}
 			
 			element.formula(text);
 			
 			_undoProcessor.addUndoStep(["Formula", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+			
+			break;
+		case "CellType":			
+			var type = parseInt($(input).val());	
+			var oldType = element.cellType();
+			
+			element.cellType(type);			
+			
+			if (type != oldType) {
+				if (type == 1) { // set optional for static text cells
+					element.optional(true);
+				} else if (type == 3) { //set "readonly" for formula cells
+					element.readonly(true);
+				} else if (type == 4) { //set "useRadioButtons" for single choice cells
+					element.useRadioButtons(false);
+					if (element.possibleAnswers() == null || element.possibleAnswers().length == 0) {
+						addPossibleAnswer(true);
+						addPossibleAnswer(true);
+					}
+				} else if (type == 5) { //set "useCheckboxes" for multiple choice cells
+					element.useCheckboxes(true);
+					if (element.possibleAnswers() == null || element.possibleAnswers().length == 0) {
+						addPossibleAnswer(true);
+						addPossibleAnswer(true);
+					}
+				}
+				
+				if (oldType == 0 || type == 0) { // update navigation if empty cell is involved
+					selectedElement = $(_elementProperties.selectedelement).closest(".survey-element");
+					updateNavigation(selectedElement, selectedElement.attr("data-id"));
+				}
+			}
+			
+			_undoProcessor.addUndoStep(["CellType", id, $(_elementProperties.selectedelement).index(), oldType, type]);			
+			
+			break;
+		case "ResultText":			
+			var text = $(input).val();
+			var oldtext = element.resultText();
+			
+			element.resultText(text);
+			if (text !== oldtext) {
+				_undoProcessor.addUndoStep(["ResultText", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			}
+			
+			break;
+		case "ShowHeadersAndBorders":
+			var value = $(input).is(":checked");
+			var oldValue = element.showHeadersAndBorders();
+			
+			element.showHeadersAndBorders(value);
+			
+			_undoProcessor.addUndoStep(["ShowHeadersAndBorders", id, $(_elementProperties.selectedelement).index(), oldvalue, value]);	
+			
+			break;
+		case "ColumnSpan":
+			var span = parseInt($(input).val());	
+			var oldspan = element.columnSpan();
+			if (oldspan == null || oldspan == 0) oldspan = 1;
+			
+			element.columnSpan(span);
+			
+			_undoProcessor.addUndoStep(["ColumnSpan", id, $(_elementProperties.selectedelement).index(), oldspan, span]);
+			
+			//delete cells that are now invisible
+			if (span > oldspan) {
+				const parentId = $(_elementProperties.selectedelement).closest("li.complextableitem").attr("data-id");
+				const table = _elements[parentId];
+				
+				const column = element.column();
+				const row = element.row();
+				for (let i = column + span - 1; i >= column + oldspan; i--) {
+					table.removeChildAt(i, row);
+				}
+			}
 			
 			break;
 		default:
@@ -1275,15 +1535,24 @@ function save(span)
 {
 	_elementProperties.selectedproperty = $(span).closest(".propertyrow").prevAll(".firstpropertyrow").first();
 	$(span).closest(".propertyrow").removeClass("invalidinput");
-	
+
 	var label = $(_elementProperties.selectedproperty).find(".propertylabel").first().attr("data-label");
 	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	var element = getElement();
 	var originalLabel = label;
-	
-	if ((label == "PossibleAnswers" || label == "Columns" || label == "Rows" || label == "Questions") && $(span).closest(".editvaluesbuttons").length > 0)
+
+	let isRowsLabel = label === "PossibleAnswers" || label === "Columns" || label === "Rows" || label === "Questions"
+
+	if (isRowsLabel && $(span).closest(".editvaluesbuttons").length > 0)
 	{
 		label = "EDITVALUES";
+	}
+
+	if (label === "CellType") {
+		_elementProperties.selectedproperty = $(span).closest(".propertyrow").prev().first();
+		label =  $(_elementProperties.selectedproperty).find(".propertylabel").first().attr("data-label");
+	} else if (label === "CellText") {
+		label = "Text"
 	}
 
 	switch (label) {
@@ -1304,6 +1573,14 @@ function save(span)
 			{
 				$(span).closest("tr").addClass("invalidinput");	
 				return;
+			}
+
+			if (!$(_elementProperties.selectedelement).hasClass("cell")) {
+				if (originalLabel === "Columns") {
+					element.editorColumnsLocked(true)
+				} else {
+					element.editorRowsLocked(true)
+				}
 			}
 			
 			var elements;
@@ -1331,7 +1608,7 @@ function save(span)
 			$(span).closest("td").find("input").each(function(){
 				updateShortname(this);
 			});
-			
+
 			$(span).closest("tr").hide();
 			
 			var oldtext = $(_elementProperties.selectedproperty).attr("data-oldvalues");
@@ -1340,15 +1617,29 @@ function save(span)
 		case "PossibleAnswers":
 			_elementProperties.selectedid = $(span).closest("tr").find("textarea").first().attr("id");
 			var text = tinyMCE.get(_elementProperties.selectedid).getContent();
-			if (!updatePossibleAnswers(_elementProperties.selectedelement, text, false))
-			{
-				return;
+			var isHeaderCell = $(_elementProperties.selectedelement).hasClass("headercell");
+			if (isHeaderCell) {
+				let parentId = $(_elementProperties.selectedelement).closest("li.complextableitem").attr("data-id");
+				$('.highlightedquestion').each(function() {
+					let id = $(this).attr("data-id");
+					let element = _elements[parentId].getChildbyId(id)
+					if (!updatePossibleAnswers(this, text, false, element))
+					{
+						return;
+					}
+				});
+			} else {			
+				if (!updatePossibleAnswers(_elementProperties.selectedelement, text, false, getElement()))
+				{
+					return;
+				}
 			}
+			
 			$(_elementProperties.selectedproperty).next().hide();
 			
-			if (isQuiz)
+			if (isQuiz || isHeaderCell)
 			{
-				var element = _elementProperties.selectedelement;
+				let element = _elementProperties.selectedelement;
 				_elementProperties.deselectAll();
 				if (element != null) _elementProperties.showProperties($(element), null, false);
 			}
@@ -1443,6 +1734,22 @@ function save(span)
 			
 			break;
 	}
+
+	if (isRowsLabel) {
+		
+		if ($(_elementProperties.selectedelement).hasClass("cell")) {
+			return;
+		}
+		
+		if (label === "Columns") {
+			element.editorColumnsLocked(true)
+		} else {
+			element.editorRowsLocked(true)
+		}
+		let currentElement = _elementProperties.selectedelement
+		_elementProperties.showProperties(null)
+		_elementProperties.showProperties(currentElement)
+	}
 	
 	$("#properties").find('[data-toggle="tooltip"]').tooltip({
 	    trigger : 'hover'
@@ -1456,7 +1763,7 @@ function updateColumns(element, columns)
 	{
 		answers.push(element.answers()[i]);
 	}
-
+	
 	element.answers.removeAll();
 	for (var i = 0; i < columns.length; i++)
 	{
@@ -1476,7 +1783,7 @@ function updateColumns(element, columns)
 		
 		element.answers.push(newelement);
 	}
-
+	
 	updateNavigation($(_elementProperties.selectedelement), element.id());
 }
 

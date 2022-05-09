@@ -165,11 +165,6 @@
 			$(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 			$(".qq-upload-list").hide();
 			$(".qq-upload-drop-area").css("margin-left", "-1000px");
-			
-			<c:if test="${messagesent != null}">
-				showSuccess('<spring:message code="support.messagesent" />')
-			</c:if>
-			
 		});
 	</script>
 	

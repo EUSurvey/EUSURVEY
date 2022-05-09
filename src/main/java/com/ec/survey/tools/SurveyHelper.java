@@ -4,14 +4,16 @@ import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
+import com.ec.survey.model.survey.ComplexTableItem.CellType;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.lowagie.text.pdf.BaseFont;
 import com.mysql.jdbc.StringUtils;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
@@ -166,6 +168,13 @@ public class SurveyHelper {
 
 									ChoiceQuestion cq = (ChoiceQuestion) question;
 									answer.setPossibleAnswerUniqueId(cq.getPossibleAnswer(paid).getUniqueId());
+								} else if (question instanceof ComplexTableItem) {
+									ComplexTableItem item = (ComplexTableItem) question;
+									if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+										int paid = Integer.parseInt(value);
+										answer.setPossibleAnswerId(paid);
+										answer.setPossibleAnswerUniqueId(item.getPossibleAnswer(paid).getUniqueId());
+									}
 								}
 																					
 								answerSet.addAnswer(answer);
@@ -356,6 +365,13 @@ public class SurveyHelper {
 				}
 				if (!atLeastOneQuestionVisible && !invisibleElements.contains(r.getUniqueId())) {
 					invisibleElements.add(r.getUniqueId());
+				}
+			} else if (element instanceof ComplexTable) {
+				ComplexTable c = (ComplexTable) element;
+				for (Element childquestion : c.getQuestionChildElements()) {
+					childquestion.setSurvey(c.getSurvey());
+					validateElement(childquestion, answerSet, dependencies, result, answerService, invisibleElements,
+							resources, locale, c, request, draft);
 				}
 			}
 		}
@@ -606,61 +622,8 @@ public class SurveyHelper {
 					}
 				}
 
-				if (element instanceof NumberQuestion) {
-					NumberQuestion numberQuestion = (NumberQuestion) element;
-
-					double answer = 0;
-					try {
-						if (!answers.isEmpty() && answers.get(0).getValue().length() > 0) {
-							answer = Double.parseDouble(answers.get(0).getValue());
-
-							if (numberQuestion.getMin() != null && answer != 0 && answer < numberQuestion.getMin()) {
-								result.put(element, resources.getMessage("validation.valueTooSmall", null,
-										"This value is too small", locale));
-							}
-
-							if (numberQuestion.getMax() != null && answer != 0 && answer > numberQuestion.getMax()) {
-								result.put(element, resources.getMessage("validation.valueTooBig", null,
-										"This value is too big", locale));
-							}
-
-							if (numberQuestion.getIsUnique()) {
-								int existing = answerService.getNumberAnswersForValue(answers.get(0).getValue().trim(),
-										numberQuestion.getId(), numberQuestion.getUniqueId(),
-										answerSet.getSurvey().getIsDraft(), answerSet.getUniqueCode());
-								if (existing > 0)
-									result.put(element, resources.getMessage("validation.notUnique", null,
-											"This input already exists. Please try another entry.", locale));
-							}
-						}
-					} catch (Exception e) {
-						result.put(element, resources.getMessage("validation.invalidNumber", null,
-								"This value is not a valid number", locale));
-					}
-				}
-				
-				if (element instanceof FormulaQuestion) {
-					FormulaQuestion formulaQuestion = (FormulaQuestion) element;
-
-					double answer = 0;
-					try {
-						if (!answers.isEmpty() && answers.get(0).getValue().length() > 0) {
-							answer = Double.parseDouble(answers.get(0).getValue());
-
-							if (formulaQuestion.getMin() != null && answer != 0 && answer < formulaQuestion.getMin()) {
-								result.put(element, resources.getMessage("validation.valueTooSmall", null,
-										"This value is too small", locale));
-							}
-
-							if (formulaQuestion.getMax() != null && answer != 0 && answer > formulaQuestion.getMax()) {
-								result.put(element, resources.getMessage("validation.valueTooBig", null,
-										"This value is too big", locale));
-							}
-						}
-					} catch (Exception e) {
-						result.put(element, resources.getMessage("validation.invalidNumber", null,
-								"This value is not a valid number", locale));
-					}
+				if (element instanceof NumberQuestion || element instanceof FormulaQuestion) {
+					checkNumber(element, answerSet, answers, result, resources, locale, answerService);
 				}
 
 				if (element instanceof DateQuestion) {
@@ -755,6 +718,45 @@ public class SurveyHelper {
 								"Invalid (non UTF-8) characters detected. Please check your input.", locale));
 					}
 				}
+				
+				if (element instanceof ComplexTableItem) {
+					ComplexTableItem complexTableItem = (ComplexTableItem) element;
+					switch (complexTableItem.getCellType()) {
+						case FreeText:
+							String answer = "";
+							if (!answers.isEmpty())
+								answer = answers.get(0).getValue();
+
+							if (complexTableItem.getMinCharacters() > 0 && answer.length() > 0
+									&& answer.length() < complexTableItem.getMinCharacters()) {
+								result.put(element, resources.getMessage("validation.textNotLongEnough", null,
+										"This text is not long enough", locale));
+							}
+
+							if (complexTableItem.getMaxCharacters() > 0 && answer.length() > 0
+									&& answer.length() > complexTableItem.getMaxCharacters()) {
+								result.put(element, resources.getMessage("validation.textTooLong", null,
+										"This text is too long", locale));
+							}					
+							break;
+						case MultipleChoice:
+							if (complexTableItem.getMinChoices() > answers.size() && !answers.isEmpty()) {
+								result.put(element, resources.getMessage("validation.notEnoughAnswers", null,
+										"Not enough answers selected", locale));
+							}
+
+							if (complexTableItem.getMaxChoices() < answers.size()
+									&& complexTableItem.getMaxChoices() > 0 && !answers.isEmpty()) {
+								result.put(element, resources.getMessage("validation.tooManyAnswers", null,
+										"Too many answers selected", locale));
+							}
+							break;
+						case Number:
+						case Formula:
+							checkNumber(complexTableItem, answerSet, answers, result, resources, locale, answerService);
+							break;
+					}
+				}
 
 			} else if (element instanceof Section) {
 				Section section = (Section) element;
@@ -807,6 +809,55 @@ public class SurveyHelper {
 			logger.error(e.getLocalizedMessage(), e);
 			return false;
 		}
+	}
+
+	private static void checkNumber(Element element, AnswerSet answerSet, List<Answer> answers, Map<Element, String> result, MessageSource resources, Locale locale, AnswerService answerService) {
+		double answer = 0;
+		Double min = null;
+		Double max = null;
+		boolean unique = false;
+		if (element instanceof NumberQuestion) {
+			NumberQuestion n = (NumberQuestion) element;
+			min = n.getMin();
+			max = n.getMax();
+			unique = n.getIsUnique();
+		} else if (element instanceof FormulaQuestion) {
+			FormulaQuestion f = (FormulaQuestion) element;
+			min = f.getMin();
+			max = f.getMax();
+		} else {
+			ComplexTableItem item = (ComplexTableItem) element;
+			min = item.getMin();
+			max = item.getMax();
+		}
+		try {
+			if (!answers.isEmpty() && answers.get(0).getValue().length() > 0) {
+				answer = Double.parseDouble(answers.get(0).getValue());
+
+				if (min != null && answer != 0 && answer < min) {
+					result.put(element, resources.getMessage("validation.valueTooSmall", null,
+							"This value is too small", locale));
+				}
+
+				if (max != null && answer != 0 && answer > max) {
+					result.put(element, resources.getMessage("validation.valueTooBig", null,
+							"This value is too big", locale));
+				}
+
+				if (unique) {
+					int existing = answerService.getNumberAnswersForValue(answers.get(0).getValue().trim(),
+							element.getId(), element.getUniqueId(),
+							answerSet.getSurvey().getIsDraft(), answerSet.getUniqueCode());
+					if (existing > 0)
+						result.put(element, resources.getMessage("validation.notUnique", null,
+								"This input already exists. Please try another entry.", locale));
+				}
+			}
+		} catch (Exception e) {
+			result.put(element, resources.getMessage("validation.invalidNumber", null,
+					"This value is not a valid number", locale));
+		}
+		
 	}
 
 	public static AnswerSet parseAndMergeAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
@@ -2810,6 +2861,417 @@ public class SurveyHelper {
 
 		return rating;
 	}
+	
+	private static ComplexTable getComplexTable(Map<String, String[]> parameterMap, Element currentElement, 
+			Survey survey, String id, ServletContext servletContext, boolean log220, Map<Integer, Element> elementsById) throws InvalidXHTMLException {
+		String oldValues = "";
+		String newValues = "";
+		ComplexTable table;
+		
+		if (currentElement == null) {
+			table = new ComplexTable(getString(parameterMap, "text", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
+					getString(parameterMap, "uid", id, servletContext));
+		} else {
+			table = (ComplexTable) currentElement;
+		}
+
+		String title = getString(parameterMap, "text", id, servletContext);
+		if (log220 && table.getTitle() != null && !table.getTitle().equals(title)) {
+			oldValues += " title: " + table.getTitle();
+			newValues += " title: " + title;
+		}
+		table.setTitle(title);
+
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
+		if (log220 && table.getShortname() != null && !table.getShortname().equals(shortname)) {
+			oldValues += " shortname: " + table.getShortname();
+			newValues += " shortname: " + shortname;
+		}
+		table.setShortname(shortname);
+
+		int rows = getInteger(parameterMap, "rows", id);
+		if (log220 && table.getRows() != rows) {
+			oldValues += " rows: " + table.getRows();
+			newValues += " rows: " + rows;
+		}
+		table.setRows(rows);
+
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && table.getUseAndLogic() != null && !table.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + table.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		table.setUseAndLogic(useAndLogic);
+
+		int columns = getInteger(parameterMap, "columns", id);
+		if (log220 && table.getColumns() != columns) {
+			oldValues += " columns: " + table.getColumns();
+			newValues += " columns: " + columns;
+		}
+		table.setColumns(columns);
+
+		boolean showHeadersAndBorders = getBoolean(parameterMap, "showHeadersAndBorders", id);
+		if (log220 && table.isShowHeadersAndBorders() != showHeadersAndBorders) {
+			oldValues += " showHeadersAndBorders: " + table.isShowHeadersAndBorders();
+			newValues += " showHeadersAndBorders: " + showHeadersAndBorders;
+		}
+		table.setShowHeadersAndBorders(showHeadersAndBorders);
+
+		ComplexTable.SizeType size = ComplexTable.SizeType.values()[getInteger(parameterMap, "size", id)];
+		if (log220 && table.getSize() != null && !table.getSize().equals(size)) {
+			oldValues += " size: " + table.getSize();
+			newValues += " size: " + size;
+		}
+		table.setSize(size);
+
+		boolean optional = getBoolean(parameterMap, "optional", id);
+		if (log220 && table.getOptional() != null && !table.getOptional().equals(optional)) {
+			oldValues += " optional: " + table.getOptional();
+			newValues += " optional: " + optional;
+		}
+		table.setOptional(optional);
+
+		String help = getString(parameterMap, "help", id, servletContext);
+		if (log220 && table.getHelp() != null && !table.getHelp().equals(help)) {
+			oldValues += " help: " + table.getHelp();
+			newValues += " help: " + help;
+		}
+		table.setHelp(help);
+		
+		String childIdsAsString = parameterMap.get("childelements" + id)[0];
+		String[] childIds = childIdsAsString.split(";");
+
+		ArrayList<ComplexTableItem> newChildren = new ArrayList<>();
+
+		for (String childid : childIds) {
+			Element currentChild = null;
+			if (!childid.contains("-") && elementsById.containsKey(Integer.parseInt(childid))) {
+				currentChild = elementsById.get(Integer.parseInt(childid));
+			}
+
+			ComplexTableItem child = getComplexTableItem(childid, currentChild, parameterMap, servletContext, log220, survey);
+			if (child.getCellType() != CellType.Empty) {
+				newChildren.add(child);
+			}
+		}
+
+		table.setChildElements(newChildren);
+
+		if (log220 && oldValues.length() > 0) {
+			String[] oldnew = { oldValues, newValues };
+			table.getActivitiesToLog().put(220, oldnew);
+		}
+		
+		return table;
+	}
+	
+	private static ComplexTableItem getComplexTableItem(String id, Element currentElement, Map<String, String[]> parameterMap, ServletContext servletContext, boolean log220, Survey survey) throws InvalidXHTMLException {
+		String oldValues = "";
+		String newValues = "";
+		ComplexTableItem item;
+		boolean newElement = false;
+
+		if (currentElement == null) {
+			item = new ComplexTableItem(getString(parameterMap, "text", id, servletContext),
+					getString(parameterMap, "originalTitle", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
+					getString(parameterMap, "uid", id, servletContext));
+			newElement = true;
+		} else {
+			item = (ComplexTableItem) currentElement;
+		}
+
+		String title = getString(parameterMap, "text", id, servletContext);
+		if (log220 && item.getTitle() != null && !item.getTitle().equals(title)) {
+			oldValues += " title: " + item.getTitle();
+			newValues += " title: " + title;
+		}
+		item.setTitle(title);
+
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
+		if (log220 && item.getShortname() != null && !item.getShortname().equals(shortname)) {
+			oldValues += " shortname: " + item.getShortname();
+			newValues += " shortname: " + shortname;
+		}
+		item.setShortname(shortname);
+
+		boolean optional = getBoolean(parameterMap, "optional", id);
+		if (log220 && item.getOptional() != null && !item.getOptional().equals(optional)) {
+			oldValues += " optional: " + item.getOptional();
+			newValues += " optional: " + optional;
+		}
+		item.setOptional(optional);
+
+		ComplexTableItem.CellType cellType = ComplexTableItem.CellType.values()[getInteger(parameterMap, "cellType", id)];
+		if (log220 && item.getCellType() != null && !item.getCellType().equals(cellType)) {
+			oldValues += " cellType: " + item.getCellType();
+			newValues += " cellType: " + cellType;
+		}
+		item.setCellType(cellType);
+
+		int row = getInteger(parameterMap, "row", id);
+		if (log220 && item.getRow() != row) {
+			oldValues += " row: " + item.getRow();
+			newValues += " row: " + row;
+		}
+		item.setRow(row);
+
+		int column = getInteger(parameterMap, "column", id);
+		if (log220 && item.getColumn() != column) {
+			oldValues += " column: " + item.getColumn();
+			newValues += " column: " + column;
+		}
+		item.setColumn(column);
+
+		int columnSpan = getInteger(parameterMap, "columnSpan", id);
+		if (log220 && item.getColumn() != columnSpan) {
+			oldValues += " columnSpan: " + item.getColumnSpan();
+			newValues += " columnSpan: " + columnSpan;
+		}
+		item.setColumnSpan(columnSpan);
+
+		String help = getString(parameterMap, "help", id, servletContext);
+		if (log220 && item.getHelp() != null && !item.getHelp().equals(help)) {
+			oldValues += " help: " + item.getHelp();
+			newValues += " help: " + help;
+		}
+		item.setHelp(help);
+
+		int minCharacters = getInteger(parameterMap, "minCharacters", id);
+		if (log220 && item.getMinCharacters() != null && !item.getMinCharacters().equals(minCharacters)) {
+			oldValues += " minCharacters: " + item.getMinCharacters();
+			newValues += " minCharacters: " + minCharacters;
+		}
+		item.setMinCharacters(minCharacters);
+
+		int maxCharacters = getInteger(parameterMap, "maxCharacters", id);
+		if (log220 && item.getMaxCharacters() != null && !item.getMaxCharacters().equals(maxCharacters)) {
+			oldValues += " maxCharacters: " + item.getMaxCharacters();
+			newValues += " maxCharacters: " + maxCharacters;
+		}
+		item.setMaxCharacters(maxCharacters);
+
+		int minChoices = getInteger(parameterMap, "minChoices", id);
+		if (log220 && item.getMinChoices() != minChoices) {
+			oldValues += " minChoices: " + item.getMinChoices();
+			newValues += " minChoices: " + minChoices;
+		}
+		item.setMinChoices(minChoices);
+
+		int maxChoices = getInteger(parameterMap, "maxChoices", id);
+		if (log220 && item.getMaxChoices() != maxChoices) {
+			oldValues += " maxChoices: " + item.getMaxChoices();
+			newValues += " maxChoices: " + maxChoices;
+		}
+		item.setMaxChoices(maxChoices);
+
+		int numRows = getInteger(parameterMap, "numRows", id);
+		if (log220 && item.getNumRows() != null && !item.getNumRows().equals(numRows)) {
+			oldValues += " numRows: " + item.getNumRows();
+			newValues += " numRows: " + numRows;
+		}
+		item.setNumRows(numRows);
+
+		boolean useRadioButtons = getBoolean(parameterMap, "useRadioButtons", id);
+		if (log220 && item.getUseRadioButtons() != useRadioButtons) {
+			oldValues += " useRadioButtons: " + item.getUseRadioButtons();
+			newValues += " useRadioButtons: " + useRadioButtons;
+		}
+		item.setUseRadioButtons(useRadioButtons);
+
+		boolean useCheckBoxes = getBoolean(parameterMap, "useCheckboxes", id);
+		if (log220 && item.getUseCheckboxes() != useCheckBoxes) {
+			oldValues += " useCheckBoxes: " + item.getUseCheckboxes();
+			newValues += " useCheckBoxes: " + useCheckBoxes;
+		}
+		item.setUseCheckboxes(useCheckBoxes);
+
+		int numColumns = getInteger(parameterMap, "numColumns", id);
+		if (log220 && item.getNumColumns() != numColumns) {
+			oldValues += " numColumns: " + item.getNumRows();
+			newValues += " numColumns: " + numColumns;
+		}
+		item.setNumColumns(numColumns);
+
+		int order = getInteger(parameterMap, "order", id);
+		if (log220 && item.getOrder() != null && !item.getOrder().equals(order)) {
+			oldValues += " order: " + item.getOrder();
+			newValues += " order: " + order;
+		}
+		item.setOrder(order);
+
+		String resultText = getString(parameterMap, "resultText", id, servletContext);
+		if (log220 && item.getResultText() != null && !item.getResultText().equals(resultText)) {
+			oldValues += " resultText: " + item.getResultText();
+			newValues += " resultText: " + resultText;
+		}
+		item.setResultText(resultText);
+
+		int decimalPlaces = getInteger(parameterMap, "decimalPlaces", id);
+		if (log220 && item.getDecimalPlaces() != null && !item.getDecimalPlaces().equals(decimalPlaces)) {
+			oldValues += " decimalPlaces: " + item.getDecimalPlaces();
+			newValues += " decimalPlaces: " + decimalPlaces;
+		}
+		item.setDecimalPlaces(decimalPlaces);
+
+		String unit = getString(parameterMap, "unit", id, servletContext);
+		if (log220 && item.getUnit() != null && !item.getUnit().equals(unit)) {
+			oldValues += " unit: " + item.getUnit();
+			newValues += " unit: " + unit;
+		}
+		item.setUnit(unit);
+
+		Double min = getDouble(parameterMap, "min", id);
+		if (log220 && item.getMin() != null && !item.getMin().equals(min)) {
+			oldValues += " min: " + item.getMin();
+			newValues += " min: " + min;
+		}
+		item.setMin(min);
+
+		Double max = getDouble(parameterMap, "max", id);
+		if (log220 && item.getMax() != null && !item.getMax().equals(max)) {
+			oldValues += " max: " + item.getMax();
+			newValues += " max: " + max;
+		}
+		item.setMax(max);
+
+		String formula = getString(parameterMap, "formula", id, servletContext);
+		if (log220 && item.getFormula() != null && !item.getFormula().equals(formula)) {
+			oldValues += " formula: " + item.getFormula();
+			newValues += " formula: " + formula;
+		}
+		item.setFormula(formula);
+		
+		Boolean isReadonly = getBoolean(parameterMap, "readonly", id);
+		if (log220 && !isReadonly.equals(item.getReadonly())) {
+			oldValues += " readonly: " + item.getReadonly();
+			newValues += " readonly: " + isReadonly;
+		}
+		item.setReadonly(isReadonly);
+		
+		if (item.getCellType() == CellType.SingleChoice || item.getCellType() == CellType.MultipleChoice) {
+			String[] answers = getAnswers(parameterMap, id);
+			String[] originalAnswers = getOriginalAnswers(parameterMap, id);
+			String[] shortnamesForAnswers = parameterMap.get("pashortname" + id);
+			if (!newElement) {
+				DeletePossibleAnswers(answers, originalAnswers, item.getPossibleAnswers());
+			}
+			getPossibleAnswers(answers, originalAnswers, null, shortnamesForAnswers, null, null, null, item.getPossibleAnswers(), survey, log220, new StringBuilder(), null);
+		}
+
+		if (log220 && oldValues.length() > 0) {
+			String[] oldnew = { oldValues, newValues };
+			item.getActivitiesToLog().put(220, oldnew);
+		}
+
+		return item;
+	}
+	
+	private static void DeletePossibleAnswers(String[] answers, String[] originalAnswers, List<PossibleAnswer> possibleAnswers) {
+		List<PossibleAnswer> toDelete = new ArrayList<>();
+		List<String> palist = new ArrayList<>();
+		for (PossibleAnswer pa : possibleAnswers) {
+			boolean found = false;
+			for (String answer : answers) {
+				if (pa.getTitle().equals(answer)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+	        {
+	    	  for (String answer : originalAnswers) {
+	             if (pa.getTitle().equals(answer)) {
+	               found = true;
+	               break;
+	             }
+	          }	
+	        }
+			if (!found || palist.contains(pa.getTitle())) {
+				toDelete.add(pa);
+			} else {
+				palist.add(pa.getTitle());
+			}
+		}
+
+		for (PossibleAnswer pa : toDelete) {
+			possibleAnswers.remove(pa);
+		}
+	}
+	
+	private static void getPossibleAnswers(String[] answers, String[] originalAnswers, String[] dependenciesForAnswers, String[] shortnamesForAnswers, String[] correctForAnswers, String[] pointsForAnswers, String[] feedbackForAnswers, List<PossibleAnswer> possibleAnswers, Survey survey, boolean log220, StringBuilder newAnswers, HashMap<PossibleAnswer, String> dependencies) {
+		PossibleAnswer p;
+		int j = 0;
+		String shortname;
+		for (int k = 0; k < answers.length; k++) {
+
+			String answer = answers[k];
+			String originalAnswer = originalAnswers[k];
+			String answerDependencies = "";
+			if (dependenciesForAnswers != null && dependenciesForAnswers.length > k)
+				answerDependencies = dependenciesForAnswers[k];
+			shortname = "";
+			if (shortnamesForAnswers != null && shortnamesForAnswers.length > k)
+				shortname = shortnamesForAnswers[k];
+
+			p = null;
+			boolean found = false;
+
+			for (PossibleAnswer pa : possibleAnswers) {
+				if (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)) {
+					p = pa;
+					p.getDependentElements().getDependentElements().clear();
+					found = true;
+					break;
+				}
+			}
+
+			if (p == null) {
+				p = new PossibleAnswer();
+				p.setUniqueId(UUID.randomUUID().toString());
+			}
+
+			p.setTitle(answer);
+			p.setShortname(shortname);
+			p.setPosition(j);
+
+			if (survey.getIsQuiz()) {
+				boolean correct = false;
+				if (correctForAnswers != null && correctForAnswers.length > k)
+					correct = correctForAnswers[k].equalsIgnoreCase("true");
+
+				int points = 0;
+				if (pointsForAnswers != null && pointsForAnswers.length > k)
+					points = Integer.parseInt(pointsForAnswers[k]);
+
+				String feedback = "";
+				if (feedbackForAnswers != null && feedbackForAnswers.length > k)
+					feedback = feedbackForAnswers[k];
+
+				if (p.getScoring() == null) {
+					p.setScoring(new ScoringItem());
+				}
+
+				p.getScoring().setCorrect(correct);
+				p.getScoring().setPoints(points);
+				p.getScoring().setFeedback(feedback);
+			}
+
+			j++;
+
+			if (log220) {
+				newAnswers.append(p.getTitle()).append("(").append(p.getShortname()).append("),");
+			}
+
+			if (!found)
+				possibleAnswers.add(p);
+
+			if (answerDependencies != null && answerDependencies.trim().length() > 0) {
+				dependencies.put(p, answerDependencies);
+			}
+		}
+	}
 
 	private static SingleChoiceQuestion getSingleChoice(Map<String, String[]> parameterMap, Element currentElement,
 			Survey survey, String id, String[] answers, String[] originalAnswers, String[] dependenciesForAnswers,
@@ -2828,36 +3290,7 @@ public class SurveyHelper {
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			singlechoice = (SingleChoiceQuestion) currentElement;
-
-			List<PossibleAnswer> toDelete = new ArrayList<>();
-			List<String> palist = new ArrayList<>();
-			for (PossibleAnswer pa : singlechoice.getPossibleAnswers()) {
-				boolean found = false;
-				for (String answer : answers) {
-					if (pa.getTitle().equals(answer)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-		        {
-		    	  for (String answer : originalAnswers) {
-		             if (pa.getTitle().equals(answer)) {
-		               found = true;
-		               break;
-		             }
-		          }	
-		        }
-				if (!found || palist.contains(pa.getTitle())) {
-					toDelete.add(pa);
-				} else {
-					palist.add(pa.getTitle());
-				}
-			}
-
-			for (PossibleAnswer pa : toDelete) {
-				singlechoice.getPossibleAnswers().remove(pa);
-			}
+			DeletePossibleAnswers(answers, originalAnswers, singlechoice.getPossibleAnswers());
 		}
 
 		String title = getString(parameterMap, "text", id, servletContext);
@@ -3013,75 +3446,7 @@ public class SurveyHelper {
 			}
 		}
 
-		PossibleAnswer p;
-		int j = 0;
-		for (int k = 0; k < answers.length; k++) {
-
-			String answer = answers[k];
-			String originalAnswer = originalAnswers[k];
-			String answerDependencies = "";
-			if (dependenciesForAnswers != null && dependenciesForAnswers.length > k)
-				answerDependencies = dependenciesForAnswers[k];
-			shortname = "";
-			if (shortnamesForAnswers != null && shortnamesForAnswers.length > k)
-				shortname = shortnamesForAnswers[k];
-
-			p = null;
-			boolean found = false;
-
-			for (PossibleAnswer pa : singlechoice.getPossibleAnswers()) {
-				if (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)) {
-					p = pa;
-					p.getDependentElements().getDependentElements().clear();
-					found = true;
-					break;
-				}
-			}
-
-			if (p == null) {
-				p = new PossibleAnswer();
-				p.setUniqueId(UUID.randomUUID().toString());
-			}
-
-			p.setTitle(answer);
-			p.setShortname(shortname);
-			p.setPosition(j);
-
-			if (survey.getIsQuiz()) {
-				boolean correct = false;
-				if (correctForAnswers != null && correctForAnswers.length > k)
-					correct = correctForAnswers[k].equalsIgnoreCase("true");
-
-				points = 0;
-				if (pointsForAnswers != null && pointsForAnswers.length > k)
-					points = Integer.parseInt(pointsForAnswers[k]);
-
-				String feedback = "";
-				if (feedbackForAnswers != null && feedbackForAnswers.length > k)
-					feedback = feedbackForAnswers[k];
-
-				if (p.getScoring() == null) {
-					p.setScoring(new ScoringItem());
-				}
-
-				p.getScoring().setCorrect(correct);
-				p.getScoring().setPoints(points);
-				p.getScoring().setFeedback(feedback);
-			}
-
-			j++;
-
-			if (log220) {
-				newAnswers.append(p.getTitle()).append("(").append(p.getShortname()).append("),");
-			}
-
-			if (!found)
-				singlechoice.getPossibleAnswers().add(p);
-
-			if (answerDependencies != null && answerDependencies.trim().length() > 0) {
-				dependencies.put(p, answerDependencies);
-			}
-		}
+		getPossibleAnswers(answers, originalAnswers, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, singlechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
 
 		if (log220 && !oldAnswers.toString().equals(newAnswers.toString())) {
 			oldValues += " answers: " + oldAnswers;
@@ -3114,36 +3479,7 @@ public class SurveyHelper {
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			multiplechoice = (MultipleChoiceQuestion) currentElement;
-
-			List<PossibleAnswer> toDelete = new ArrayList<>();
-			List<String> palist = new ArrayList<>();
-			for (PossibleAnswer pa : multiplechoice.getPossibleAnswers()) {
-				boolean found = false;
-				for (String answer : answers) {
-					if (pa.getTitle().equals(answer)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-		        {
-		    	  for (String answer : originalAnswers) {
-		             if (pa.getTitle().equals(answer)) {
-		               found = true;
-		               break;
-		             }
-		          }	
-		        }
-				if (!found || palist.contains(pa.getTitle())) {
-					toDelete.add(pa);
-				} else {
-					palist.add(pa.getTitle());
-				}
-			}
-
-			for (PossibleAnswer pa : toDelete) {
-				multiplechoice.getPossibleAnswers().remove(pa);
-			}
+			DeletePossibleAnswers(answers, originalAnswers, multiplechoice.getPossibleAnswers());
 		}
 
 		String title = getString(parameterMap, "text", id, servletContext);
@@ -3306,75 +3642,7 @@ public class SurveyHelper {
 			}
 		}
 
-		PossibleAnswer p;
-		int j = 0;
-		for (int k = 0; k < answers.length; k++) {
-
-			String answer = answers[k];
-			String originalAnswer = originalAnswers[k];
-			String answerDependencies = "";
-			if (dependenciesForAnswers != null && dependenciesForAnswers.length > k)
-				answerDependencies = dependenciesForAnswers[k];
-			shortname = "";
-			if (shortnamesForAnswers != null && shortnamesForAnswers.length > k)
-				shortname = shortnamesForAnswers[k];
-
-			p = null;
-			boolean found = false;
-
-			for (PossibleAnswer pa : multiplechoice.getPossibleAnswers()) {
-				if (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)) {
-					p = pa;
-					p.getDependentElements().getDependentElements().clear();
-					found = true;
-					break;
-				}
-			}
-
-			if (p == null) {
-				p = new PossibleAnswer();
-				p.setUniqueId(UUID.randomUUID().toString());
-			}
-
-			p.setTitle(answer);
-			p.setShortname(shortname);
-			p.setPosition(j);
-
-			if (survey.getIsQuiz()) {
-				boolean correct = false;
-				if (correctForAnswers != null && correctForAnswers.length > k)
-					correct = correctForAnswers[k].equalsIgnoreCase("true");
-
-				points = 0;
-				if (pointsForAnswers != null && pointsForAnswers.length > k)
-					points = Integer.parseInt(pointsForAnswers[k]);
-
-				String feedback = "";
-				if (feedbackForAnswers != null && feedbackForAnswers.length > k)
-					feedback = feedbackForAnswers[k];
-
-				if (p.getScoring() == null) {
-					p.setScoring(new ScoringItem());
-				}
-
-				p.getScoring().setCorrect(correct);
-				p.getScoring().setPoints(points);
-				p.getScoring().setFeedback(feedback);
-			}
-
-			j++;
-
-			if (log220) {
-				newAnswers.append(p.getTitle()).append("(").append(p.getShortname()).append("),");
-			}
-
-			if (!found)
-				multiplechoice.getPossibleAnswers().add(p);
-
-			if (answerDependencies != null && answerDependencies.trim().length() > 0) {
-				dependencies.put(p, answerDependencies);
-			}
-		}
+		getPossibleAnswers(answers, originalAnswers, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, multiplechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
 
 		if (log220 && !oldAnswers.toString().equals(newAnswers.toString())) {
 			oldValues += " answers: " + oldAnswers;
@@ -4081,35 +4349,8 @@ public class SurveyHelper {
 			element = getRating(parameterMap, currentElement, id, servletContext, log220 && currentElement != null,
 					questions, shortnamesForQuestions, uidsForQuestions, optionalsForQuestions);
 		} else if (type.equalsIgnoreCase("choice")) {
-			String[] answers = parameterMap.get(Constants.ANSWER + id);
-			if (answers == null) {
-				answers = new String[0];
-			}
-
-			List<String> list = new ArrayList<>(Arrays.asList(answers));
-			list.removeAll(Arrays.asList("", null));
-			answers = list.toArray(new String[0]);
-
-			for (int i = 0; i < answers.length; i++) {
-				if (answers[i] != null)
-					answers[i] = Tools.filterHTML(answers[i]);
-			}
-			
-			String[] originalAnswers = parameterMap.get("originalAnswer" + id);
-			if (originalAnswers == null) {
-				originalAnswers = new String[0];
-			}
-			
-			list = new ArrayList<>(Arrays.asList(originalAnswers));
-			list.removeAll(Arrays.asList("", null));
-			originalAnswers = list.toArray(new String[0]);
-			
-			for (int i = 0; i < originalAnswers.length; i++) {
-				if (originalAnswers[i] != null) {
-					originalAnswers[i] = Tools.filterHTML(originalAnswers[i]);
-				}
-			}
-
+			String[] answers = getAnswers(parameterMap, id);
+			String[] originalAnswers = getOriginalAnswers(parameterMap, id);
 			String[] dependenciesForAnswers = parameterMap.get("dependencies" + id);
 			String[] shortnamesForAnswers = parameterMap.get("pashortname" + id);
 			String[] correctForAnswers = parameterMap.get("correct" + id);
@@ -4134,6 +4375,15 @@ public class SurveyHelper {
 			List<String> rankingItemUids = new ArrayList<>();
 			parseParameterMapForRankingitems(parameterMap, id, rankingItemTitles, rankinItemOriginalTitles, rankingItemShortNames, rankingItemUids);
 			element = getRankingQuestion(parameterMap, currentElement, id, rankingItemTitles, rankinItemOriginalTitles, rankingItemShortNames, rankingItemUids, servletContext, log220 && currentElement != null);
+		} else if (type.equalsIgnoreCase("complextable")) {
+			element = getComplexTable(parameterMap, currentElement, survey, id, servletContext, log220, elementsById);			
+		}
+
+		if (element instanceof Question){
+			String[] rowsLocked = parameterMap.getOrDefault("editorRowsLocked" + id, new String[]{"false"});
+			String[] columnsLocked = parameterMap.getOrDefault("editorColumnsLocked" + id, new String[]{"false"});
+			element.setEditorRowsLocked(BooleanUtils.toBooleanObject(rowsLocked[0]));
+			element.setEditorColumnsLocked(BooleanUtils.toBooleanObject(columnsLocked[0]));
 		}
 
 		if (survey.getIsQuiz() && element instanceof Question) {
@@ -4166,7 +4416,45 @@ public class SurveyHelper {
 
 		return element;
 	}
+	
+	private static String[] getAnswers(Map<String, String[]> parameterMap, String id) {
+		String[] answers = parameterMap.get(Constants.ANSWER + id);
+		if (answers == null) {
+			answers = new String[0];
+		}
 
+		List<String> list = new ArrayList<>(Arrays.asList(answers));
+		list.removeAll(Arrays.asList("", null));
+		answers = list.toArray(new String[0]);
+
+		for (int i = 0; i < answers.length; i++) {
+			if (answers[i] != null)
+				answers[i] = Tools.filterHTML(answers[i]);
+		}
+		
+		return answers;
+	}
+	
+	private static String[] getOriginalAnswers(Map<String, String[]> parameterMap, String id) {
+		String[] originalAnswers = parameterMap.get("originalAnswer" + id);
+	
+		if (originalAnswers == null) {
+			originalAnswers = new String[0];
+		}
+		
+		List<String> list = new ArrayList<>(Arrays.asList(originalAnswers));
+		list.removeAll(Arrays.asList("", null));
+		originalAnswers = list.toArray(new String[0]);
+		
+		for (int i = 0; i < originalAnswers.length; i++) {
+			if (originalAnswers[i] != null) {
+				originalAnswers[i] = Tools.filterHTML(originalAnswers[i]);
+			}
+		}
+
+		return originalAnswers;
+	}
+	
 	private static ScoringItem getScoringItem(Map<String, String[]> parameterMap, Question element, String id,
 			ServletContext servletContext) throws InvalidXHTMLException {
 		ScoringItem scoringItem = null;
@@ -4771,6 +5059,30 @@ public class SurveyHelper {
 						}
 					}
 				}
+
+				if (element instanceof ComplexTable) {
+					ComplexTable table = (ComplexTable) element;
+
+					for (ComplexTableItem child : table.getChildElements()) {
+
+						if (translationsByKey.get(child.getUniqueId()) != null)
+							child.setTitle(translationsByKey.get(child.getUniqueId()).getLabel());
+
+						if (translationsByKey.get(child.getUniqueId() + "RESULTTEXT") != null)
+							child.setResultText(translationsByKey.get(child.getUniqueId() + "RESULTTEXT").getLabel());
+
+						if (translationsByKey.get(child.getUniqueId() + "UNIT") != null)
+							child.setUnit(translationsByKey.get(child.getUniqueId() + "UNIT").getLabel());
+
+						if (child.isChoice()){
+							for (PossibleAnswer possibleAnswer : child.getPossibleAnswers()){
+								if (translationsByKey.get(possibleAnswer.getUniqueId()) != null)
+									possibleAnswer.setTitle(translationsByKey.get(possibleAnswer.getUniqueId()).getLabel());
+							}
+						}
+					}
+
+				}
 			}
 		}
 	}
@@ -4808,7 +5120,7 @@ public class SurveyHelper {
 		}
 
 		for (Element element : survey.getElementsRecursive()) {
-			if (bf != null && (element instanceof MatrixOrTable || element instanceof GalleryQuestion)) {
+			if (bf != null && (element instanceof MatrixOrTable || element instanceof GalleryQuestion || element instanceof ComplexTable)) {
 
 				boolean isTable = element instanceof Table;
 
@@ -4817,7 +5129,12 @@ public class SurveyHelper {
 				double wtext;
 				double wimage;
 
-				if (element instanceof GalleryQuestion) {
+				if (element instanceof ComplexTable) {
+					w = (((ComplexTable) element).getColumns()) * 200;
+					done = true;
+				}
+				
+				if (!done && element instanceof GalleryQuestion) {
 					GalleryQuestion gallery = (GalleryQuestion) element;
 					double imageWidth = (600 - 20 - (gallery.getColumns() * 30)) / gallery.getColumns();
 
@@ -5123,6 +5440,17 @@ public class SurveyHelper {
 					}
 
 					return "";
+				} else if (question instanceof ComplexTableItem) {
+					ComplexTableItem item = (ComplexTableItem) question;
+					if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+						for (PossibleAnswer a : item.getPossibleAnswers()) {
+							if (a.getUniqueId().equals(answer.getPossibleAnswerUniqueId())) {
+								return a.getStrippedTitleNoEscape2();
+							}
+						}
+					}
+					
+					return answerValue;
 				} else if (question instanceof Text || question instanceof Image || question instanceof EmptyElement) {
 					// could be inside a matrix
 					int possibleAnswerId = Integer.parseInt(answerValue);

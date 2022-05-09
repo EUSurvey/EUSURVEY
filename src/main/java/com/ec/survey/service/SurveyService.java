@@ -695,6 +695,8 @@ public class SurveyService extends BasicService {
 		if ((filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("FROZEN"))
 				|| filter.getFrozen() != null && filter.getFrozen()) {
 			sql.append(" AND (s.FROZEN = 1)");
+		} else {
+			sql.append(" AND (s.FROZEN = 0)");
 		}
 
 		if (filter.getMinContributions() != null) {
@@ -1360,6 +1362,16 @@ public class SurveyService extends BasicService {
 					}
 				}
 			}
+			if (element instanceof ComplexTableItem) {
+				ComplexTableItem item = (ComplexTableItem) element;
+				if (item.isChoice()){
+					for (PossibleAnswer answer : item.getPossibleAnswers()){
+						publishedSurveyKeys.put(answer.getUniqueId(), answer.getUniqueId());
+						publishedSurveyKeys.put(answer.getSourceId().toString(), answer.getId().toString());
+					}
+				}
+
+			}
 		}
 		List<Translations> draftTranslationsList = translationService.getTranslationsForSurvey(draftSurvey.getId(), true);
 		for (Translations draftTranslations : draftTranslationsList) {
@@ -1486,6 +1498,14 @@ public class SurveyService extends BasicService {
 							String draftKey = draftTranslation.getKey().replace("TITLE", "");
 							if (publishedSurveyKeys.containsKey(draftKey)) {
 								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "TITLE");
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
+						} else if (draftTranslation.getKey().endsWith("RESULTTEXT")) {
+							String draftKey = draftTranslation.getKey().replace("RESULTTEXT", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "RESULTTEXT");
 								translationsCopy.getTranslations().add(translationCopy);
 							} else {
 								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
@@ -2988,6 +3008,14 @@ public class SurveyService extends BasicService {
 				retVal = Integer.parseInt(uid);
 				if (elementsBySourceId.containsKey(retVal))
 					return elementsBySourceId.get(retVal).getUniqueId() + GalleryQuestion.TEXT;
+			} else if (key.endsWith("RESULTTEXT")) {
+				uid = key.substring(0, key.indexOf("RESULTTEXT"));
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + "RESULTTEXT";
+				}
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal))
+					return elementsBySourceId.get(retVal).getUniqueId() + "RESULTTEXT";
 			} else if (oldToNewUniqueIds.containsKey(key)) {
 				return oldToNewUniqueIds.get(key);
 			} else if (convertedFileUIDs.containsKey(key)) {
@@ -3350,6 +3378,16 @@ public class SurveyService extends BasicService {
 			if (!Tools.isEqual(draftSurvey.getProgressBar(), publishedSurvey.getProgressBar()))
 				hasPendingChanges = true;
 			if (!Tools.isEqual(draftSurvey.getProgressDisplay(), publishedSurvey.getProgressDisplay()))
+				hasPendingChanges = true;
+			if(!Tools.isEqual(draftSurvey.getMotivationPopup(), publishedSurvey.getMotivationPopup()))
+				hasPendingChanges = true;
+			if(!Tools.isEqual(draftSurvey.getMotivationType(), publishedSurvey.getMotivationType()))
+				hasPendingChanges = true;
+			if(!Tools.isEqual(draftSurvey.getMotivationTriggerTime(), publishedSurvey.getMotivationTriggerTime()))
+				hasPendingChanges = true;
+			if(!Tools.isEqual(draftSurvey.getMotivationTriggerProgress(), publishedSurvey.getMotivationTriggerProgress()))
+				hasPendingChanges = true;
+			if(!Tools.isEqual(draftSurvey.getMotivationText(), publishedSurvey.getMotivationText()))
 				hasPendingChanges = true;
 			if (draftSurvey.getValidatedPerPage() != publishedSurvey.getValidatedPerPage())
 				hasPendingChanges = true;
@@ -3820,12 +3858,42 @@ public class SurveyService extends BasicService {
 							}
 						} else if (!surveyelementsbyuid.containsKey(parentRating.getUniqueId())
 								&& missingelementuids.containsKey(parentRating.getUniqueId())) {
-							// check if matrix contains question
+							// check if rating contains question
 							if (!(parentRating).containsChild(missingquestion.getId())) {
 								(parentRating).getMissingQuestions().add(missingquestion);
 							}
 						}
 					}
+				} else if (missingquestion instanceof ComplexTableItem) {
+					Element parent = getParentForChildQuestion(missingquestion.getId());
+					
+					if (parent instanceof ComplexTable) {
+						ComplexTable parentComplexTable = (ComplexTable) parent;
+						if (surveyelementsbyuid.containsKey(parentComplexTable.getUniqueId())) {
+							// the complextable element still exists (only the cell was deleted)
+							ComplexTable table = (ComplexTable) surveyelementsbyuid
+									.get(parentComplexTable.getUniqueId());
+							table.getMissingChildElements().add((ComplexTableItem)missingquestion);
+							missingelementuids.put(missingquestion.getUniqueId(), missingquestion);
+						} else if (!surveyelementsbyuid.containsKey(parentComplexTable.getUniqueId())
+								&& !missingelementuids.containsKey(parentComplexTable.getUniqueId())) {
+							survey.getMissingElements().add(parentComplexTable);
+							missingelementuids.put(parentComplexTable.getUniqueId(), parentComplexTable);
+							if (filter != null) {
+								if (!filter.getVisibleQuestions().contains(parentComplexTable.getId().toString()))
+									filter.getVisibleQuestions().add(parentComplexTable.getId().toString());
+
+								if (!filter.getExportedQuestions().contains(parentComplexTable.getId().toString()))
+									filter.getExportedQuestions().add(parentComplexTable.getId().toString());
+							}
+
+							// check if rating contains question
+							if (!(parentComplexTable).containsChild(missingquestion.getId())) {
+								(parentComplexTable).getMissingChildElements().add((ComplexTableItem)missingquestion);
+							}							
+						}
+					}
+					
 				} else {
 					survey.getMissingElements().add(missingquestion);
 					missingelementuids.put(questionUID, missingquestion);
@@ -3904,6 +3972,8 @@ public class SurveyService extends BasicService {
 							Element parent = missingelementuids.get(questionUID);
 							if (parent instanceof ChoiceQuestion) {
 								((ChoiceQuestion) parent).getMissingPossibleAnswers().add((PossibleAnswer) pa);
+							} else if (parent instanceof ComplexTableItem) {
+								((ComplexTableItem) parent).getMissingPossibleAnswers().add((PossibleAnswer) pa);
 							}
 						}
 					} else if (pa instanceof Text) {
@@ -5057,7 +5127,7 @@ public class SurveyService extends BasicService {
 		EcasHelper.readData(owner, this.ldapService);
 
 		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
-		s.append("<Survey id='").append(survey.getId()).append("' alias='").append(survey.getShortname())
+		s.append("<Survey id='").append(survey.getId()).append("' uid='").append(survey.getUniqueId()).append("' alias='").append(survey.getShortname())
 				.append("'>\n");
 
 		s.append("<SurveyType>")
@@ -5570,5 +5640,52 @@ public class SurveyService extends BasicService {
 			}
 		}
 		return result;
+	}
+
+	@Transactional
+	public void updateCodaLink(String uid, String link){
+		Survey draft = getSurvey(uid, true, false, false, false, null, false, false);
+		Survey published = getSurvey(uid, false, false, false, false, null, false, false);
+		if (draft != null){
+
+			draft.setCodaLink(link.trim());
+
+			User owner = draft.getOwner();
+
+			if (draft.getCodaWaiting()){
+
+				draft.setCodaWaiting(false);
+
+				if (link.trim().length() > 0) {
+					String message = resources.getMessage("message.CodaDashboardAvailable", new String[]{}, "Your data analytics dashboard is now available",
+							new Locale(owner.getLanguage()));
+					systemService.sendUserSuccessMessage(owner.getId(), message);
+				} else {
+					String message = resources.getMessage("message.CodaRequestError", new String[]{}, "Your data analytics dashboard could not be requested. Try again later",
+							new Locale(owner.getLanguage()));
+					systemService.sendUserErrorMessage(owner.getId(), message);
+				}
+			}
+		}
+
+		if (published != null){
+			published.setCodaLink(link.trim());
+			published.setCodaWaiting(false);
+		}
+
+	}
+
+	@Transactional
+	public void setCodaWaiting(String uid, boolean waiting){
+		Survey draft = getSurvey(uid, true, false, false, false, null, false, false);
+		Survey published = getSurvey(uid, false, false, false, false, null, false, false);
+		if (draft != null){
+			draft.setCodaWaiting(waiting);
+		}
+
+		if (published != null){
+			published.setCodaWaiting(waiting);
+		}
+
 	}
 }

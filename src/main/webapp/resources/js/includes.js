@@ -1810,9 +1810,11 @@ function initModals(item)
 			};
 		});
 		
-		$(parent).find(".number").each(function(){
+		$(parent).find(".number,.formula").each(function(){
 
-			if (isElementInvisible(this) || $(this).val() == "") return;
+			//In FF val() is "" even when input[type=number] has non empty text.
+			//the validity.badInput check takes care of this, so that later a validation error is set
+			if (isElementInvisible(this) || ($(this).val() == "" && !this.validity.badInput)) return;
 			
 			var classes = $(this).attr('class').split(" ");
 			var value = parseFloat($(this).val());
@@ -1877,7 +1879,7 @@ function initModals(item)
 			}
 		});
 		
-		$(parent).find(".listbox").each(function(){
+		$(parent).find(".listbox,.multiple-choice[role=listbox]").each(function(){
 
 			if (isElementInvisible(this)) return;
 			
@@ -1907,7 +1909,7 @@ function initModals(item)
 			}	
 		});
 		
-		$(parent).find(".answer-columns").each(function(){
+		$(parent).find(".answer-columns,.complex-multitable").each(function(){
 
 			if (isElementInvisible(this)) return;
 

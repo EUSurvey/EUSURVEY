@@ -574,6 +574,10 @@ select {
 	background-color: #fff;
 }
 
+.pagepdf .complextable.table-bordered .answer-columns {
+	padding-left: 0;
+}
+
 .page1200 {
 	width: 1200px;
 	min-width: 1200px;
@@ -1123,8 +1127,8 @@ legend {
 	padding-left: 20px;
 }
 
-.answers-table td {
-
+.noborder {
+	border: 0 !important;
 }
 
 .unit-text {
@@ -1789,13 +1793,16 @@ div.medianpa {
 	background-color: #fff;
 	padding: 5px;
 	max-height: 85px;
-	width: auto;
-	min-width: 200px;
+	width: auto;	
 	overflow-x: auto;
 	cursor: pointer;
 }
 
-.single-choice {
+.multiple-choice:not(.complex) {
+	min-width: 200px;
+}
+
+.single-choice:not(.complex) {
 	border: 1px solid #ddd; 
 	display: inline-block;
 	background-color: #fff;
@@ -1804,6 +1811,10 @@ div.medianpa {
 	min-width: 100px;
 	overflow-x: auto;
 	cursor: pointer;
+}
+
+.complex.single-choice {
+	min-width: unset;
 }
 
 .possible-answer {
@@ -1926,7 +1937,7 @@ div.medianpa {
 	max-width: none; 
 	width: auto; 
 	margin-left: auto; 
-	margin-right: auto;"
+	margin-right: auto;
 }
 
 #contentstable .headertitle {
@@ -2572,4 +2583,44 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 .translation-locked {
 	opacity: 0.3;
+}
+
+.complextable .cell {
+	padding: 5px;
+	background-color: #fff;
+}
+
+.complextable .headercell {
+	padding: 2px;
+	vertical-align: middle;
+	background-color: #eee;
+}
+
+.complextable.table-bordered td,
+.complextable.table-bordered th {
+	border: 1px solid #bbb !important;
+}
+
+.complextable td, .complextable th {
+	border: none !important;
+	padding: 2px;
+	min-width: 25px;
+}
+
+.complextable textarea, .complextable input[type="text"] {
+	width: 100%;
+	max-width: 100px;
+}
+
+.complextable input[type="number"] {
+	max-width: 100px !important;
+}
+
+.complextable td.cell {
+	min-width: 150px;	
+}
+
+.complextable .headercell {
+	width: auto;
+	padding-left: 5px !important;
 }

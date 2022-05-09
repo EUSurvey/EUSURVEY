@@ -131,8 +131,7 @@
 								</c:when>
 								<c:when test="${element.getType() == 'NumberQuestion' && element.getDisplay() != 'Slider' && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MaxNumber", element.getMaxString())}</div>
-								</c:when>
-								
+								</c:when>								
 								<c:when test="${element.getType() == 'FormulaQuestion' && element.getMin() != null && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MinMaxNumber", element.getMinString(), element.getMaxString())}</div>
 								</c:when>
@@ -141,8 +140,7 @@
 								</c:when>
 								<c:when test="${element.getType() == 'FormulaQuestion' && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MaxNumber", element.getMaxString())}</div>
-								</c:when>
-								
+								</c:when>								
 								<c:when test="${element.getType() == 'DateQuestion' && element.getMin() != null && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MinMaxDate", element.getMinString(), element.getMaxString())}</div>
 								</c:when>
@@ -151,8 +149,7 @@
 								</c:when>
 								<c:when test="${element.getType() == 'DateQuestion' && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MaxDate", element.getMaxString())}</div>
-								</c:when>
-								
+								</c:when>								
 								<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null && element.getMin().length() > 0 && element.getMax() != null && element.getMax().length() > 0}">
 									<div class='limits'>${form.getMessage("limits.MinMaxDate", element.getMin(), element.getMax())}</div>
 								</c:when>
@@ -161,12 +158,10 @@
 								</c:when>
 								<c:when test="${element.getType() == 'TimeQuestion' && element.getMax() != null && element.getMax().length() > 0}">
 									<div class='limits'>${form.getMessage("limits.MaxDate", element.getMax())}</div>
-								</c:when>
-								
+								</c:when>								
 								<c:when test="${element.getType() == 'GalleryQuestion' && element.selection && element.getLimit() != null && element.getLimit() > 0}">
 									<div class='limits'>${form.getMessage("limits.MaxSelections", element.getLimit())}</div>
-								</c:when>
-								
+								</c:when>								
 							</c:choose>										
 						</c:if>
 						
@@ -406,6 +401,230 @@
 											</tr>									
 										</c:forEach>
 									</tbody>	
+								</table>
+							
+							</div>						
+
+						</c:if>
+						
+						<c:if test="${element.getType() == 'ComplexTable'}">
+							<div class="questiontitle">${form.getQuestionTitle(element)}</div>
+							<div class="questionhelp">${element.help}</div>
+							
+							<div>
+								<table id="${element.id}" class="table_${element.id} table complextable ${element.showHeadersAndBorders ? 'table-bordered' : ''}" style="width: auto">	
+									<c:if test="${element.showHeadersAndBorders}">
+										<tr>
+											<c:forEach var="c" begin="0" end="${element.columns}"> 
+												<c:set var="child" value="${element.getChildAt(0, c)}" />
+												<th class="headercell cell">${child.title}</th>
+											</c:forEach>
+										</tr>
+									</c:if>
+									
+									<c:forEach var="r" begin="1" end="${element.rows}"> 
+										<c:set var="rowheader" value="${element.getChildAt(r, 0)}" />								
+										<tr>
+											<c:if test="${element.showHeadersAndBorders}">
+												<th class="headercell cell">${rowheader.title}</th>
+											</c:if>
+											
+											<c:forEach var="c" begin="1" end="${element.columns}"> 
+												<c:if test="${element.isCellVisible(c, r)}">
+													<c:set var="child" value="${element.getChildAt(r, c)}" />
+													<td class="cell" colspan="${child == null ? 1 : child.columnSpan}">
+														<c:choose>
+															<c:when test="${child == null}">
+																&nbsp;
+															</c:when>
+															<c:otherwise>
+																<c:if test="${!child.getOptional()}">
+																	<span class="mandatory">*</span>
+																</c:if>
+																<label for="input${child.id}"><span class="questiontitle">${form.getQuestionTitle(child)}</span></label>
+																<c:choose>
+																	<c:when test="${child.getCellType() == 'FreeText' && child.getMinCharacters() != null && child.getMinCharacters() > 0 && child.getMaxCharacters() != null && child.getMaxCharacters() > 0}">
+																		<div class='limits'>${form.getMessage("limits.MinMaxCharacters", child.getMinCharacters(), child.getMaxCharacters())}&nbsp;<span class="charactercounter"></span></div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'FreeText' && child.getMinCharacters() != null && child.getMinCharacters() > 0}">
+																		<div class='limits'>${form.getMessage("limits.MinCharacters", child.getMinCharacters())}&nbsp;<span class="charactercounter"></span></div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'FreeText' && child.getMaxCharacters() != null && child.getMaxCharacters() > 0}">
+																		<div class='limits'>${form.getMessage("limits.MaxCharacters", child.getMaxCharacters())}&nbsp;<span class="charactercounter"></span></div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMinChoices() != null && child.getMinChoices() > 0 && child.getMaxChoices() != null && child.getMaxChoices() > 0}">
+																		<div class='limits'>${form.getMessage("limits.MinMaxChoices", child.getMinChoices(), child.getMaxChoices())}</div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMinChoices() != null && child.getMinChoices() > 0}">
+																		<div class='limits'>${form.getMessage("limits.MinChoices", child.getMinChoices())}</div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMaxChoices() != null && child.getMaxChoices() > 0}">
+																		<div class='limits'>${form.getMessage("limits.MaxChoices", child.getMaxChoices())}</div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'Number' && child.getMin() != null && child.getMax() != null}">
+																		<div class='limits'>${form.getMessage("limits.MinMaxNumber", child.getMinString(), child.getMaxString())}</div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'Number' && child.getMin() != null}">
+																		<div class='limits'>${form.getMessage("limits.MinNumber", child.getMinString())}</div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'Number' && child.getMax() != null}">
+																		<div class='limits'>${form.getMessage("limits.MaxNumber", child.getMaxString())}</div>
+																	</c:when>								
+																	<c:when test="${child.getCellType() == 'Formula' && child.getMin() != null && child.getMax() != null}">
+																		<div class='limits'>${form.getMessage("limits.MinMaxNumber", child.getMinString(), child.getMaxString())}</div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'Formula' && child.getMin() != null}">
+																		<div class='limits'>${form.getMessage("limits.MinNumber", child.getMinString())}</div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'Formula' && child.getMax() != null}">
+																		<div class='limits'>${form.getMessage("limits.MaxNumber", child.getMaxString())}</div>
+																	</c:when>						
+																</c:choose>
+																
+																<c:if test="${child.getHelp().length() > 0}">
+																	<div class="questionhelp">${child.help}</div>
+																</c:if>
+																
+																<c:choose>
+																	<c:when test="${child.getCellType() == 'FreeText'}">
+																		<pre class="prepdf"><div style="word-wrap: break-word; min-height: ${child.getNumRows()*20}px;">${form.getValueStripInvalidXML(child)}</div></pre>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'SingleChoice'}">
+																		<c:choose>
+																			<c:when test="${child.getUseRadioButtons() == false && form.getValues(child).size() > 0}">
+																				<div class="answer-columns">
+																					<div class="answer-column" style="word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px;">
+																						<div style="float: right"><i class="icon icon-chevron-down"></i></div>
+																						<c:forEach items="${child.orderedPossibleAnswers}" var="possibleanswer">												
+																							<c:if test="${form.getValues(child).contains(possibleanswer.id.toString()) || form.getValues(child).contains(possibleanswer.uniqueId)}">
+																								${possibleanswer.getTitleForDisplayMode(child.displayMode)}
+																							</c:if>																																
+																						</c:forEach>			
+																					</div>
+																				</div>
+																				<div style="clear: both"></div>
+																			</c:when>
+																			<c:otherwise>
+																				<div class="answer-columns">
+																					<table class="answers-table">
+																						<tr class="hideme">
+																							<th>radio button</th>
+																							<th>label</th>
+																						</tr>
+																						<tr>
+																							<c:forEach items="${child.orderedPossibleAnswers}" var="possibleanswer" varStatus="status">
+																								<td style="vertical-align: top; border: 0 !important; padding-right: 0px; min-width: 1px;">
+																									<c:choose>
+																										<c:when test="${possibleanswer == null}"></c:when>
+																										<c:when test="${(form.getValues(child).contains(possibleanswer.id.toString()) || form.getValues(child).contains(possibleanswer.uniqueId))}">
+																											<div style="margin-bottom: 2px"><img align="middle" src="${contextpath}/resources/images/radiobuttonchecked.png" /></div>
+																										</c:when>
+																										<c:otherwise>
+																											<div style="margin-bottom: 2px"><img align="middle" src="${contextpath}/resources/images/radiobutton.png" /></div>
+																										</c:otherwise>												
+																									</c:choose>
+																								</td>
+																								<td style="vertical-align: top; border: 0 !important; padding-right: 10px; padding-left: 0px;">
+																									<label for="${possibleanswer.id}">
+																										<div class="answertext" style="max-width: ${form.maxColumnWidth(child)}">${possibleanswer.getTitleForDisplayMode(child.displayMode)}</div>
+																									</label>
+																								</td>					
+																								<c:if test="${(child.numColumns == 0 || status.count % child.numColumns == 0) && status.count < child.possibleAnswers.size()}">
+																									</tr>
+																									<tr>
+																								</c:if>
+																							</c:forEach>
+																						</tr>			
+																					</table>	
+																				</div>
+																			</c:otherwise>
+																		</c:choose>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'MultipleChoice'}">
+																		<div class="answer-columns">
+																			<c:choose>
+																				<c:when test="${child.useCheckboxes || form.wcagCompliance}">											
+																					<table class="answers-table">
+																						<tr class="hideme">
+																							<th>checkbox</th>
+																							<th>label</th>
+																						</tr>
+																						<tr>
+																							<c:forEach items="${child.orderedPossibleAnswers}" var="possibleanswer" varStatus="status">
+																								<td style="vertical-align: top; border: 0 !important;">
+																									<c:choose>
+																										<c:when test="${possibleanswer == null}">
+																										
+																										</c:when>
+																										<c:when test="${(form.getValues(child).contains(possibleanswer.id.toString()) || form.getValues(child).contains(possibleanswer.uniqueId))}">
+																											<div style="margin-bottom: 2px"><img align="middle" src="${contextpath}/resources/images/checkboxchecked.png" /></div>
+																										</c:when>
+																										<c:otherwise>
+																											<c:if test="${child.useCheckboxes || form.answerSets.size() == 0}">
+																												<div style="margin-bottom: 2px"><img align="middle" src="${contextpath}/resources/images/checkbox.png" /></div>
+																											</c:if>
+																										</c:otherwise>												
+																									</c:choose>
+																								</td>			
+																								<td style="vertical-align: top; border: 0 !important;">
+																									<label for="${possibleanswer.id}"><div class="answertext" style="max-width: ${form.maxColumnWidth(child)}">${possibleanswer.title}</div></label>
+																								</td>				
+																								<c:if test="${(child.numColumns == 0 || status.count % child.numColumns == 0) && status.count < child.possibleAnswers.size()}">
+																									</tr>
+																									<tr>
+																								</c:if>
+																							</c:forEach>
+																						</tr>			
+																					</table>	
+																				</c:when>
+																				<c:otherwise>
+																					<div class="answer-column">													
+																						<ul class="${child.css} multiple-choice" style="max-height: none;">
+																							<c:forEach items="${child.orderedPossibleAnswers}" var="possibleanswer">															
+																								<c:choose>
+																									<c:when test="${form.getValues(child).contains(possibleanswer.id.toString()) || form.getValues(child).contains(possibleanswer.uniqueId)}">
+																										<li class="possible-answer trigger" id="trigger${possibleanswer.id}">
+																											<a>
+																												<span class="answertext">${possibleanswer.getStrippedTitleNoEscape()}</span>
+																											</a>
+																			 								<input id="${possibleanswer.id}" data-id="${child.id}${possibleanswer.id}" checked="checked" value="${possibleanswer.id}" style="display: none" type="checkbox" name="answer${child.id}" />
+																										</li>	
+																									</c:when>
+																									<c:when test="${form.getValues(child).size() == 0}">
+																										<li class="possible-answer trigger" id="trigger${possibleanswer.id}">
+																											<a>
+																												<span class="answertext">${possibleanswer.getStrippedTitleNoEscape()}</span>
+																											</a>
+																			 								<input id="${possibleanswer.id}" data-id="${element.id}${possibleanswer.id}" value="${possibleanswer.id}" style="display: none" type="checkbox" name="answer${child.id}" />
+																										</li>	
+																									</c:when>												
+																								</c:choose>																									
+																							</c:forEach>	
+																						</ul>			
+																					</div>
+																					<div style="clear: both"></div>
+																				</c:otherwise>
+																			</c:choose>
+																		</div>
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'Number'}">
+																		<div>
+																			<div style="float: left; width: 206px; word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px;"><esapi:encodeForHTML>${form.getValue(child)}</esapi:encodeForHTML></div>
+																			<div style="float: left" class="unit-text">${child.unit}</div>	
+																			<div style="clear: both"></div>		
+																		</div>																		
+																	</c:when>
+																	<c:when test="${child.getCellType() == 'Formula'}">
+																		<div style="width: 206px; border: 1px solid #bbb; padding: 5px; min-height: 20px;"><esapi:encodeForHTML>${form.getValue(child)}</esapi:encodeForHTML></div>
+																	</c:when>
+																</c:choose>				
+															</c:otherwise>
+														</c:choose>
+													</td>
+												</c:if>
+											</c:forEach>
+										</tr>
+									</c:forEach>									
 								</table>
 							
 							</div>						

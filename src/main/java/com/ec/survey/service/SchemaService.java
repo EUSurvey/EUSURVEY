@@ -47,7 +47,24 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
-	
+
+	@Transactional
+	public void step104() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get("Coda");
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey("Coda");
+			s.setValue("false");
+			s.setFormat("true / false");
+			session.saveOrUpdate(s);
+		}
+
+		status.setDbversion(104);
+		session.saveOrUpdate(status);
+	}
 	
 	@Transactional
 	public void step103() {

@@ -16,6 +16,7 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizHelper;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.hibernate.mapping.Formula;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,7 +105,7 @@ public class StatisticsCreator implements Runnable {
 
 		for (Element element : survey.getQuestions()) {
 			if (element instanceof ChoiceQuestion) {
-				addStatistics(survey, (ChoiceQuestion) element, statistics, numberOfAnswersMap,
+				addChoiceStatistics(survey, (ChoiceQuestion) element, statistics, numberOfAnswersMap,
 						multipleChoiceSelectionsByAnswerset);
 			} else if (element instanceof Matrix) {
 				Matrix matrix = (Matrix) element;
@@ -144,6 +145,17 @@ public class StatisticsCreator implements Runnable {
 					statistics.getRequestedRecordsPercent().put(questionElement.getId().toString(), percent);
 					statistics.getTotalsPercent().put(questionElement.getId().toString(), percent);
 				}
+			} else if (element instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) element;
+
+				for (ComplexTableItem child : table.getQuestionChildElements()) {
+					if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+						addChoiceStatistics(survey, child, statistics, numberOfAnswersMap,
+								multipleChoiceSelectionsByAnswerset);
+					} else if ((child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) && child.showStatisticsForNumberQuestion()) {
+						addStatistics4NumberQuestion(survey, child, statistics, numberOfNumberAnswersMap, numberOfAnswersMap);
+					}
+				}
 			} else if (element instanceof RankingQuestion) {
 				RankingQuestion ranking = (RankingQuestion) element;						
 				addStatistics4RankingQuestion(survey, ranking, statistics,
@@ -158,6 +170,14 @@ public class StatisticsCreator implements Runnable {
 				}
 				if (survey.getIsQuiz() && number.getScoring() > 0) {
 					quizquestions.add(number);
+				}
+			} else if (element instanceof FormulaQuestion) {
+				FormulaQuestion formula = (FormulaQuestion) element;
+				if (formula.showStatisticsForNumberQuestion()) {
+					addStatistics4NumberQuestion(survey, formula, statistics, numberOfNumberAnswersMap, numberOfAnswersMap);
+				}
+				if (survey.getIsQuiz() && formula.getScoring() > 0) {
+					quizquestions.add(formula);
 				}
 			} else if (survey.getIsQuiz() && element instanceof Question) {
 				Question question = (Question) element;
@@ -252,7 +272,7 @@ public class StatisticsCreator implements Runnable {
 
 		for (Element element : survey.getMissingElements()) {
 			if (element instanceof ChoiceQuestion) {
-				addStatistics(survey, (ChoiceQuestion) element, statistics, numberOfAnswersMap,
+				addChoiceStatistics(survey, (ChoiceQuestion) element, statistics, numberOfAnswersMap,
 						multipleChoiceSelectionsByAnswerset);
 			} else if (element instanceof RatingQuestion) {
 				RatingQuestion rating = (RatingQuestion) element;
@@ -435,6 +455,59 @@ public class StatisticsCreator implements Runnable {
 			}
 			int count = reportingService.getCount(survey, number.getUniqueId(), null, false, false, where, values);
 			map.put(q.getId(), count);
+		} else if (q instanceof FormulaQuestion) {
+			FormulaQuestion formula = (FormulaQuestion) q;
+			if (formula.showStatisticsForNumberQuestion()) {
+				for (String answer : formula.getAllPossibleAnswers()) {
+					int count = reportingService.getCount(survey, formula.getUniqueId(), answer, true, true, where, values);
+					mapNumberQuestion.put(formula.getUniqueId() + answer, count);
+				}
+			}
+			int count = reportingService.getCount(survey, formula.getUniqueId(), null, false, false, where, values);
+			map.put(q.getId(), count);
+		} else if (q instanceof ComplexTable) {
+			ComplexTable table = (ComplexTable) q;
+			for (ComplexTableItem child : table.getQuestionChildElements()) {
+				if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
+					for (PossibleAnswer a : child.getPossibleAnswers()) {
+						int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, where,
+								values);
+						map.put(a.getId(), count);
+					}
+					int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, where, values);
+					map.put(child.getId(), count);
+				} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
+					if (child.showStatisticsForNumberQuestion()) {
+						for (String answer : child.getPossibleNumberAnswers()) {
+							int count = reportingService.getCount(survey, child.getUniqueId(), answer, true, true, where, values);
+							mapNumberQuestion.put(child.getUniqueId() + answer, count);
+						}
+						int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, where, values);
+						map.put(child.getId(), count);
+					}			
+				}
+			}
+			
+		} else if (q instanceof ComplexTableItem) {
+			ComplexTableItem child = (ComplexTableItem) q;			
+			if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
+				for (PossibleAnswer a : child.getPossibleAnswers()) {
+					int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, where,
+							values);
+					map.put(a.getId(), count);
+				}
+				int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, where, values);
+				map.put(child.getId(), count);
+			} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
+				if (child.showStatisticsForNumberQuestion()) {
+					for (String answer : child.getPossibleNumberAnswers()) {
+						int count = reportingService.getCount(survey, child.getUniqueId(), answer, true, true, where, values);
+						mapNumberQuestion.put(child.getUniqueId() + answer, count);
+					}
+					int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, where, values);
+					map.put(child.getId(), count);
+				}			
+			}
 		}
 	}
 
@@ -531,9 +604,41 @@ public class StatisticsCreator implements Runnable {
 				}
 			}
 			
-		} else if (q instanceof NumberQuestion) {
+		} else if (q instanceof NumberQuestion || q instanceof FormulaQuestion) {
 			map.put(q.getId(),
 					answerSetQuestion.get(q.getUniqueId()) != null ? answerSetQuestion.get(q.getUniqueId()).size() : 0);
+		} else if (q instanceof ComplexTable) {
+			ComplexTable table = (ComplexTable) q;
+			for (ComplexTableItem child : table.getQuestionChildElements()) {
+				
+				if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
+					for (PossibleAnswer a : child.getPossibleAnswers()) {
+						if (countsUID.containsKey(a.getUniqueId() + "#" + q.getUniqueId())) {
+							map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + q.getUniqueId()));
+						} else {
+							map.put(a.getId(), counts.getOrDefault(a.getId().toString(), 0));
+						}
+					}
+				}
+				
+				map.put(child.getId(),
+						answerSetQuestion.get(child.getUniqueId()) != null ? answerSetQuestion.get(child.getUniqueId()).size() : 0);
+			}
+		} else if (q instanceof ComplexTableItem) {
+			ComplexTableItem child = (ComplexTableItem) q;
+			
+			if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
+				for (PossibleAnswer a : child.getPossibleAnswers()) {
+					if (countsUID.containsKey(a.getUniqueId() + "#" + q.getUniqueId())) {
+						map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + q.getUniqueId()));
+					} else {
+						map.put(a.getId(), counts.getOrDefault(a.getId().toString(), 0));
+					}
+				}
+			}
+			
+			map.put(child.getId(),
+					answerSetQuestion.get(child.getUniqueId()) != null ? answerSetQuestion.get(child.getUniqueId()).size() : 0);
 		}
 	}
 
@@ -668,7 +773,7 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	@Transactional
-	public NumberQuestionStatistics getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question) throws TooManyFiltersException {
+	public NumberQuestionStatistics getAnswers4NumberQuestionStatistics(Survey survey, Question question) throws TooManyFiltersException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		NumberQuestionStatistics numberQuestionStats = new NumberQuestionStatistics();
@@ -789,8 +894,20 @@ public class StatisticsCreator implements Runnable {
 			if (q instanceof NumberQuestion && ((NumberQuestion)q).showStatisticsForNumberQuestion()) {
 				numberQuestionUids.add(q.getUniqueId());
 			}
+			if (q instanceof FormulaQuestion && ((FormulaQuestion)q).showStatisticsForNumberQuestion()) {
+				numberQuestionUids.add(q.getUniqueId());
+			}
 			if (q instanceof RankingQuestion) {
 				rankingQuestionAnswers.put(q.getUniqueId(), new ArrayList<>());
+			}
+			if (q instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) q;
+				for (ComplexTableItem item : table.getQuestionChildElements())
+				{
+					if ((item.getCellType() == ComplexTableItem.CellType.Number || item.getCellType() == ComplexTableItem.CellType.Formula) && item.showStatisticsForNumberQuestion()) {
+						numberQuestionUids.add(item.getUniqueId());
+					}
+				}
 			}
 		}
 		
@@ -883,11 +1000,22 @@ public class StatisticsCreator implements Runnable {
 			if (q instanceof NumberQuestion && ((NumberQuestion)q).showStatisticsForNumberQuestion()) {
 				numberQuestionUids.add(q.getUniqueId());
 			}
+			if (q instanceof FormulaQuestion && ((FormulaQuestion)q).showStatisticsForNumberQuestion()) {
+				numberQuestionUids.add(q.getUniqueId());
+			}
 			if (q instanceof RankingQuestion) {
 				rankingQuestionAnswers.put(q.getUniqueId(), new ArrayList<>());
 			}
-		}
-
+			if (q instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) q;
+				for (ComplexTableItem child : table.getQuestionChildElements()) {
+					if ((child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) && child.showStatisticsForNumberQuestion()) {
+						numberQuestionUids.add(child.getUniqueId());
+					}
+				}
+			}
+		}		
+		
 		if (reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
 
 			Map<String, Object> values = new HashMap<>();
@@ -1044,14 +1172,16 @@ public class StatisticsCreator implements Runnable {
 		return result;
 	}
 
-	public void addStatistics(Survey survey, ChoiceQuestion question, Statistics statistics,
+	public void addChoiceStatistics(Survey survey, Question question, Statistics statistics,
 			Map<Integer, Integer> numberOfAnswersMap,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) {
 		boolean quiz = survey.getIsQuiz() && question.getScoring() > 0;
 		int total = survey.getNumberOfAnswerSets();
 		int correct = 0;
+		
+		List<PossibleAnswer> answers = question instanceof ChoiceQuestion ? ((ChoiceQuestion)question).getAllPossibleAnswers() : ((ComplexTableItem)question).getPossibleAnswers();
 
-		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
+		for (PossibleAnswer answer : answers) {
 			int numberOfAnswers = numberOfAnswersMap.getOrDefault(answer.getId(), 0);
 
 			double percent = total == 0 ? 0 : (double) numberOfAnswers / (double) total * 100;
@@ -1073,7 +1203,7 @@ public class StatisticsCreator implements Runnable {
 					int ascorrect = 1;
 					if (entry.getValue().containsKey(question.getUniqueId())) {
 						Set<String> answerUIDs = entry.getValue().get(question.getUniqueId());
-						for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
+						for (PossibleAnswer answer : answers) {
 							if ((answer.getScoring().isCorrect() && !answerUIDs.contains(answer.getUniqueId()))
 									|| (!answer.getScoring().isCorrect()
 											&& answerUIDs.contains(answer.getUniqueId()))) {
@@ -1146,12 +1276,21 @@ public class StatisticsCreator implements Runnable {
 		statistics.getRequestedRecordsPercent().put(question.getId().toString(), percent);
 		statistics.getTotalsPercent().put(question.getId().toString(), percent);
 	}
-	
-	private void addStatistics4NumberQuestion(Survey survey, NumberQuestion number, Statistics statistics,
+
+	private void addStatistics4NumberQuestion(Survey survey, Question number, Statistics statistics,
 			Map<String, Integer> numberOfNumberAnswersMap, Map<Integer, Integer> numberOfAnswersMap) {
 		int total = survey.getNumberOfAnswerSets();
+
+		List<String> answers;
+		if (number instanceof NumberQuestion) {
+			answers = ((NumberQuestion)number).getAllPossibleAnswers();
+		} else if (number instanceof FormulaQuestion) {
+			answers = ((FormulaQuestion)number).getAllPossibleAnswers();
+		} else {
+			answers = ((ComplexTableItem)number).getPossibleNumberAnswers();
+		}
 		
-		for (String answer : number.getAllPossibleAnswers()) {
+		for (String answer : answers) {
 			int numberOfAnswers = 0;
 			if (numberOfNumberAnswersMap.containsKey(number.getUniqueId() + answer)) {
 				numberOfAnswers = numberOfNumberAnswersMap.get(number.getUniqueId() + answer);
@@ -1162,13 +1301,36 @@ public class StatisticsCreator implements Runnable {
 			statistics.getRequestedRecordsPercent().put(number.getId() + answer, percent);
 			statistics.getTotalsPercent().put(number.getId() + answer, percent);
 		}
-		
+
 		int answered = numberOfAnswersMap.get(number.getId());
 
 		statistics.getRequestedRecords().put(number.getId().toString(), survey.getNumberOfAnswerSets() - answered);
 		double percent = total == 0 ? 0 : (double) (survey.getNumberOfAnswerSets() - answered) / (double) total * 100;
 		statistics.getRequestedRecordsPercent().put(number.getId().toString(), percent);
-		statistics.getTotalsPercent().put(number.getId().toString(), percent);		
+		statistics.getTotalsPercent().put(number.getId().toString(), percent);
 	}
 
+//	private void addStatisticsForFormulaQuestion(Survey survey, Question formula, Statistics statistics,
+//											  Map<String, Integer> numberOfNumberAnswersMap, Map<Integer, Integer> numberOfAnswersMap) {
+//		int total = survey.getNumberOfAnswerSets();
+//
+//		for (String answer : formula.getAllPossibleAnswers()) {
+//			int numberOfAnswers = 0;
+//			if (numberOfNumberAnswersMap.containsKey(formula.getUniqueId() + answer)) {
+//				numberOfAnswers = numberOfNumberAnswersMap.get(formula.getUniqueId() + answer);
+//			}
+//			double percent = total == 0 ? 0 : (double) numberOfAnswers / (double) total * 100;
+//
+//			statistics.getRequestedRecords().put(formula.getId() + answer, numberOfAnswers);
+//			statistics.getRequestedRecordsPercent().put(formula.getId() + answer, percent);
+//			statistics.getTotalsPercent().put(formula.getId() + answer, percent);
+//		}
+//
+//		int answered = numberOfAnswersMap.get(formula.getId());
+//
+//		statistics.getRequestedRecords().put(formula.getId().toString(), survey.getNumberOfAnswerSets() - answered);
+//		double percent = total == 0 ? 0 : (double) (survey.getNumberOfAnswerSets() - answered) / (double) total * 100;
+//		statistics.getRequestedRecordsPercent().put(formula.getId().toString(), percent);
+//		statistics.getTotalsPercent().put(formula.getId().toString(), percent);
+//	}
 }

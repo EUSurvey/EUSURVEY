@@ -870,6 +870,63 @@
 					<tr>
 						<td>
 							<div style="float: left">
+								<spring:message code="label.MotivationPopup" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.MotivationPopup" /></div>
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.motivationPopup" class="onoffswitch-checkbox" id="myonoffswitchMotivationPopup" data-bind="checked: _properties.motivationPopup()" />
+									<label class="onoffswitch-label" onclick="_properties.toggleMotivationPopup()">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: motivationPopup">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MotivationPopupTrigger" />
+							</div>
+							<div style="float: right">
+								<form:radiobutton onclick="_properties.useMotivationTime(false)" class="required check" path="survey.motivationType" value="false"/><spring:message code="label.progress" />&#160;
+								<form:radiobutton onclick="_properties.useMotivationTime(true)" class="required check" path="survey.motivationType" value="true"/><spring:message code="label.timer" />&#160;
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: motivationPopup">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MotivationPopupThreshold" />
+							</div>
+							<div style="float: right">
+								<div data-bind="visible: !useMotivationTime()">
+									<input id='motivationtriggerprogress' class="form-control number min1 max99" type='number' name='survey.motivationTriggerProgress' min='1' max='99' value="<esapi:encodeForHTMLAttribute>${form.survey.motivationTriggerProgress}</esapi:encodeForHTMLAttribute>">
+								</div>
+								<div data-bind="visible: useMotivationTime()">
+									<input id='motivationtriggertimer' class="form-control number min5 max60" type='number' name='survey.motivationTriggerTime' min='5' max='60' value="<esapi:encodeForHTMLAttribute>${form.survey.motivationTriggerTime}</esapi:encodeForHTMLAttribute>">
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: motivationPopup">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MotivationPopupText" />
+							</div>
+							<div style="float: right; text-align: right;">
+								<div class="preview">${form.survey.motivationText} <a class="iconbutton" onclick="$('#tinymcemotivationpopup').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
+								<div id="tinymcemotivationpopup" style="display: none">
+									<form:textarea class="tinymce" id="edit-survey-motivation-popup" path="survey.motivationText"></form:textarea>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
 								<spring:message code="label.AccessibilityMode" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								<div class="help hideme"><spring:message code="help.AccessibilityMode" /></div>

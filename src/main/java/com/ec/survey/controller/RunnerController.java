@@ -2331,6 +2331,11 @@ public class RunnerController extends BasicController {
 				for (Element child : ((Table) element).getAnswers()) {
 					child.setOriginalTitle(child.getTitle());
 				}
+			} else if (element instanceof ComplexTable) {
+				for (Element child : ((ComplexTable) element).getChildElements()) {
+					child.setOriginalTitle(child.getTitle());
+					//child.setTitle(form.getQuestionTitle(child));
+				}
 			} else if (element instanceof Image) {
 				Image image = (Image) element;
 				if (image.getUrl() != null && image.getUrl().length() > 0) {
@@ -2375,6 +2380,10 @@ public class RunnerController extends BasicController {
 				for (Element e : q.getPossibleAnswers()) {
 					PossibleAnswer a = (PossibleAnswer) e;
 					a.clearForJSON();
+				}
+			} else if (element instanceof ComplexTable){
+				for (ComplexTableItem item : ((ComplexTable) element).getChildElements()){
+					item.setForEditor(foreditor);
 				}
 			}
 		}

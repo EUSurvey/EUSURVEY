@@ -11,7 +11,7 @@ function removeValidationMarkup(row)
 	row.closest(".firstpropertyrow").find(".validationinfobutton").remove();
 }
 
-function checkFormula(input, viewmodel) {
+function checkFormula(input) {
 	removeValidationMarkup();
 	const formula = $(input).val();
 	try {		
@@ -25,7 +25,7 @@ function checkFormula(input, viewmodel) {
 		}
 		
 		math.parse(formula);		
-		const arguments = viewmodel.getVariables(formula);
+		const arguments = getVariablesForFormula(formula);
 			
 		arguments.forEach (a => {
 			
@@ -615,8 +615,8 @@ function checkPossibleAnswers(lines)
 		return false;
 	}
 	
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	var element = getElement();
+	
 	if (element.minChoices() != null && element.minChoices() > count)
 	{
 		addValidationInfo($("#btnRemovePossibleAnswers"), "checkNumberOfChoices");

@@ -313,7 +313,7 @@ public class HomeController extends BasicController {
 
 		model.put("messagesent", true);
 		model.put("additionalinfo", getBrowserInformation(request, locale));
-		return "home/support";
+		return "home/documentation";
 	}
 
 	private String sendSupportSmt(HttpServletRequest request, Locale locale, ModelMap model) throws IOException, MessageException {
@@ -365,7 +365,7 @@ public class HomeController extends BasicController {
 
 		model.put("messagesent", true);
 		model.put("additionalinfo", getBrowserInformation(request, locale));
-		return "home/support";
+		return "home/documentation";
 	}
 	
 	@RequestMapping(value = "/home/support/deletefile", method = {RequestMethod.GET, RequestMethod.HEAD})

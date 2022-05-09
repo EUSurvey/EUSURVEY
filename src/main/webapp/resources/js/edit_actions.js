@@ -809,7 +809,7 @@ var Actions = function() {
 	    	
 	    	var element = _elements[elementid];
 	    	element.isViewModel = false;
-	    	var model = getElementViewModel(element);
+	    	var model = getElementViewModel(element, true);
 	    	 _elements[elementid] = model;
 	    	var item = addElement(element, true, false);
 			addElementHandler(item);    	    

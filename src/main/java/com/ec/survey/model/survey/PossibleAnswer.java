@@ -148,7 +148,22 @@ public class PossibleAnswer extends Element {
 	}
 	
 	@Override
-	public boolean differsFrom(Element element) {
+	public boolean differsFrom(Element possibleAnswer) {
+		PossibleAnswer other = (PossibleAnswer)possibleAnswer;		
+		
+		if (!getTitle().equals(other.getTitle()))
+			return true;
+		if (!getDependentElementsUIDString()
+				.equals(other.getDependentElementsUIDString()))
+			return true;
+		if (!Tools.isEqual(getShortname(),
+				other.getShortname()))
+			return true;
+
+		if (getScoring() != null && getScoring()
+				.differsFrom(other.getScoring())) {
+			return true;
+		}
 		return false;
 	}
 }

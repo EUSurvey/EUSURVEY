@@ -88,6 +88,21 @@
 											</td>
 										</c:when>
 										
+										<c:when test="${question.getType() == 'ComplexTable'}">
+											<td>
+												<table class="table table-bordered">						
+													<c:forEach items="${question.getQuestionChildElements()}" var="child">
+														<tr>
+															<td>${child.getResultTitle(question)}</td>
+															<td class="questioncell" data-id="${child.id}" data-uid="${child.uniqueId}">
+																<!-- Set through JS; publication.jsp - individualsMoveTo(...) -->
+															</td>
+														</tr>
+													</c:forEach>							
+												</table>
+											</td>
+										</c:when>	
+										
 										<c:otherwise>
 											<td class="questioncell" data-id="${question.id}" data-uid="${question.uniqueId}">
 												<!-- Set through JS; publication.jsp - individualsMoveTo(...) -->

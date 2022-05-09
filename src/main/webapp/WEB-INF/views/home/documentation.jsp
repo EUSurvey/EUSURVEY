@@ -34,6 +34,10 @@
 				{
 					$(".thousandseparator").html(",");
 				}
+				
+				<c:if test="${messagesent != null}">
+					showSuccess('<spring:message code="support.messagesent" />')
+				</c:if>
 			});
 	</script>
 	
@@ -262,6 +266,10 @@
 	</div>
 
 	<%@ include file="../footer.jsp" %>	
+	
+	<c:if test="${USER == null || runnermode != null || responsive != null}">
+		<%@ include file="../generic-messages.jsp" %>
+	</c:if>
 
 </body>
 </html>

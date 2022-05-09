@@ -217,7 +217,7 @@
 				<!-- /ko -->
 				<!-- ko ifnot: useRadioButtons() || likert() -->
 				<div class="answer-column">		
-					<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}"  onchange="validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);">
+					<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'onclick': !foreditor ? 'validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);' : '', 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 						<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
 					</select>
 					<!-- ko if: foreditor -->
@@ -268,6 +268,7 @@
 				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
 				
 				<input type="hidden" data-bind="value: maxDistance, attr: {'name': 'maxDistance' + id()}" />
+				<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
 			<!-- /ko -->		
 		</div>
 	</div>
@@ -404,6 +405,8 @@
 		
 				<input type="hidden" data-bind="value: subType, attr: {'name': 'subType' + id()}" />
 				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
+
+				<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
 			<!-- /ko -->
 		</div>
 	</div>
@@ -689,6 +692,7 @@
 			<input type="hidden" data-bind="value: iconType, attr: {'name': 'iconType' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+			<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
 
 			<div class="hiddenratingquestions hideme">
 				<!-- ko foreach: childElements() -->
@@ -1210,6 +1214,8 @@
 			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+			<input type="hidden" data-bind="value: editorColumnsLocked(), attr: {'name': 'editorColumnsLocked' + id()}" />
+			<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
 		<!-- /ko -->		
 	
 		<!-- ko if: optional() == false -->
@@ -1313,10 +1319,12 @@
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
-			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
-			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+		    <input type="hidden" data-bind="value: editorColumnsLocked(), attr: {'name': 'editorColumnsLocked' + id()}" />
+			<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
 		<!-- /ko -->
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
@@ -1495,6 +1503,243 @@
 			</div>
 		</div>
 		
+		<!-- /ko -->
+	</div>
+	
+	<div id="complextable-template">
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+			<span class="screen-reader-only" data-bind="if: help">${form.getMessage("form.HelpAvailable")}</span>
+		</label>
+		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
+		
+		<div class="table-responsive">
+		
+			<table class="table complextable" data-bind="css: { 'table-bordered': showHeadersAndBorders() || foreditor }, attr: {'style': size() == 0 ? 'width: auto' : 'width: 900px'}">
+				<tr data-bind="if: showHeadersAndBorders() || foreditor">
+					<!-- ko foreach: answers() -->
+						<th class="headercell cell" data-bind="html: title, attr:{'data-id': id(), colspan: columnSpan()}"></th>
+					<!-- /ko -->
+				</tr>
+				
+				<!-- ko foreach: questions() -->
+				<tr>
+					<!-- ko if: $parent.showHeadersAndBorders() || $parent.foreditor -->
+					<th class="headercell cell" data-bind="html: title, attr:{'data-id': id(), 'data-type': cellType(), colspan: columnSpan()}"></th>
+					<!-- /ko -->
+	
+					<!-- ko foreach: new Array($parent.columns()) -->
+					  	
+					  	<!-- ko if: $parents[1].isCellVisible($index()+1, $parentContext.$index()+1) -->
+					  	
+					  	<!--ko let: {child: $parents[1].getChild($index()+1, $parentContext.$index()+1)}-->
+					  	<td class="cell" data-bind="attr:{'data-id': child == null ? '' : child.id(), 'data-type': child == null ? '' : child.cellType(), colspan: child && child.columnSpan(), 'data-col': $index()+1}">
+							<!-- ko if: child == null || child.cellType() == 0 -->
+							<span>&nbsp;</span>
+							<!-- /ko -->
+	
+							<!-- ko if: child && child.cellType() > 0 -->						
+								<!-- ko if: child.optional() == false -->
+									<span class="mandatory">*</span>
+								<!-- /ko -->
+						
+								<!-- ko if: child.title() -->
+									<label class='questiontitle' data-bind="attr: {for: 'answer' + child.id(), id: 'questiontitle' + child.id()}">
+										<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+										<span data-bind='html: child.title()'></span>
+										<span class="screen-reader-only" data-bind="if: child.help()">${form.getMessage("form.HelpAvailable")}</span>
+									</label>
+								<!-- /ko -->
+								
+								<!-- ko if: child.help() -->
+									<span class='questionhelp' data-bind="html: child.niceHelp(), attr:{id: 'questionhelp' + child.id()}"></span>
+								<!-- /ko -->
+							<!-- /ko -->
+							
+							<!-- ko if: child && child.cellType() > 1 -->
+							<div data-bind="attr: {class: child.cellType() == 3 ? 'innercell' : 'innercell forprogress',
+								onfocusout: !$parents[1].foreditor ? 'validateInput($(this).closest(\'.cell\'))' : '',
+								onmouseleave: !$parents[1].foreditor ? 'validateInput($(this).closest(\'.cell\'))' : ''}">
+								<!-- focusout bubbles while blur does not; this combination of mouseleave and focusout covers all Tab/Mouse cases of leaving the cell -->
+	
+								<!-- ko if: child && child.cellType() == 2 -->
+								
+								<!-- ko if: child.minCharacters() > 0 && child.maxCharacters() > 0 -->
+									<div class='limits' data-bind="html: getMinMaxCharacters(child.minCharacters(), child.maxCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
+								<!-- /ko -->
+								<!-- ko if: child.minCharacters() > 0 && child.maxCharacters() == 0 -->
+									<div class='limits' data-bind="html: getMinCharacters(child.minCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
+								<!-- /ko -->
+								<!-- ko if: child.minCharacters() == 0 && child.maxCharacters() > 0 -->
+									<div class='limits' data-bind="html: getMaxCharacters(child.maxCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
+								<!-- /ko -->							
+
+								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : ''}"></textarea>
+								<!-- /ko -->
+		
+								<!-- ko if: child && child.cellType() == 3 -->
+									<!-- ko if: child.min() != null && child.min() != 0 && child.max() != null && child.max() != 0 -->
+										<div class='limits' data-bind="html: getMinMax(child.min(), child.max()), attr: {id: 'questioninfo' + child.id()}"></div>
+									<!-- /ko -->
+									<!-- ko if: child.min() != 0 && child.min() != null && (child.max() == 0 || child.max() == null) -->
+										<div class='limits' data-bind="html: getMin(child.min()), attr: {id: 'questioninfo' + child.id()}"></div>
+									<!-- /ko -->
+									<!-- ko if: (child.min() == 0 || child.min() == null) && child.max() != null && child.max() != 0 -->
+										<div class='limits' data-bind="html: getMax(child.max()), attr: {id: 'questioninfo' + child.id()}"></div>
+									<!-- /ko -->							
+									
+								
+									<input data-bind="enable: child.foreditor == false && !child.readonly(), value: child.result, attr: {'id': 'answer' + child.id(), 'data-id':child.id(), 'data-shortname': child.shortname(), 'name' : (child.readonly() ? '' : 'answer' + child.id()), 'class': child.css(), 'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}" oninput="propagateChange(this);" onblur="resetValidationErrors($(this).closest('.cell'));validateInput($(this).parent())" type="text" autocomplete="off" />
+									
+									<!-- ko if: child.readonly() -->
+									<input type="hidden" data-bind="value: child.result, attr: {'name': 'answer' + child.id()}" />
+									<!-- /ko -->							
+								<!-- /ko -->
+		
+								<!-- ko if: child && child.cellType() == 4 -->
+									<!-- ko if: child && child.useRadioButtons() -->
+										<div style="display: table">
+											<div style="display: table-row">
+												<!-- ko foreach: child.orderedPossibleAnswersByColumn(${ismobile != null}, ${responsive != null}) -->
+												<div style="display: table-cell; padding-right: 10px">
+													<!-- ko foreach: $data -->
+													<input type="radio" data-bind="enable: child.foreditor == false && !child.readonly(), checkedValue: true, checked: !child.foreditor && getPAByQuestion(child.uniqueId(), $element).indexOf(uniqueId()) > -1, value: id(), attr: {'name' : 'answer' + child.id(), class: child.css(), 'onclick': child.readonly() ? 'return false;' : 'checkSingleClick(this); propagateChange(this);', onkeyup: 'singleKeyUp(event, this, '+child.readonly()+')'}" /> <span data-bind="html: title()"></span><br />
+													<!-- /ko -->
+												</div>
+												<!-- /ko -->
+											</div>
+										</div>
+									<!-- /ko -->
+									<!-- ko if: child && !child.useRadioButtons() -->
+										<select data-bind="enable: child.foreditor == false && !child.readonly(), value: getPAByQuestion3(child.uniqueId(), $element), attr: {'id': 'answer' + child.id(), 'onclick': !child.foreditor ? 'validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);' : '', 'data-id':child.id(), 'data-shortname': child.shortname(), 'name' : child.foreditor ? '' : ('answer' + child.id()), 'class': child.css(), 'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}">
+											<option selected="selected" value=''></option>
+											<!-- ko foreach: child.orderedPossibleAnswers(false) -->
+												<option data-bind="html: title(), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
+											<!-- /ko -->
+										</select>
+									<!-- /ko -->
+								<!-- /ko -->
+		
+								<!-- ko if: child && child.cellType() == 5 -->
+									<!-- ko if: child.minChoices() != 0 && child.maxChoices() != 0 -->
+										<div class='limits' data-bind="html: getMinMaxChoice(child.minChoices(), child.maxChoices()), attr: {id: 'questioninfo' + child.id()}"></div>
+									<!-- /ko -->
+									<!-- ko if: child.minChoices() != 0 && child.maxChoices() == 0 -->
+										<div class='limits' data-bind="html: getMinChoice(child.minChoices()), attr: {id: 'questioninfo' + child.id()}"></div>
+									<!-- /ko -->
+									<!-- ko if: child.minChoices() == 0 && child.maxChoices() != 0 -->
+										<div class='limits' data-bind="html: getMaxChoice(child.maxChoices()), attr: {id: 'questioninfo' + child.id()}"></div>
+									<!-- /ko -->
+								
+									<!-- ko if: child && child.useCheckboxes() -->
+										<div class="complex-multitable" style="display: table">
+											<div style="display: table-row">
+											<!-- ko foreach: child.orderedPossibleAnswersByColumn(${ismobile != null}, ${responsive != null}) -->
+												<div style="display: table-cell; padding-right: 10px">
+													<!-- ko foreach: $data -->
+													<input type="checkbox" onclick="resetValidationErrors($(this).closest('.cell'));propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), checked: !child.foreditor && getPAByQuestion(child.uniqueId(), $element).indexOf(uniqueId()) > -1, value: id(), attr: {'name' : 'answer' + child.id(), class: child.css()}"/> <span data-bind="html: title()"></span><br />
+													<!-- /ko -->
+												</div>
+											<!-- /ko -->
+											</div>
+										</div>
+									<!-- /ko -->
+									<!-- ko if: child && !child.useCheckboxes() -->	
+										<ul role="listbox" data-bind="attr: {'class': child.css() + ' multiple-choice', 'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}, foreach: child.orderedPossibleAnswers(false),">
+											<li role="listitem" data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion(child.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '') , 'onclick' : child.readonly() || child.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this).children().first()); propagateChange($(this).children().first()); event.stopImmediatePropagation();'}">
+												<a tabindex="0" data-bind="attr: {'data-shortname': shortname(), 'onkeypress': child.readonly() || child.foreditor ? 'return false;' : 'preventScrollOnSpaceInput(event);findSurveyElementAndResetValidationErrors(this);selectMultipleChoiceAnswer(this);propagateChange(this);'}" >
+													<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
+													<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
+												</a>
+												<input data-bind="value: id(), checked: getPAByQuestion2(child.uniqueId(), uniqueId(), id, $element), attr: {'name': 'answer' + child.id(), 'id':id(), 'data-id': child.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />
+											</li>	
+										</ul>
+									<!-- /ko -->
+								<!-- /ko -->
+		
+								<!-- ko if: child && child.cellType() == 6 -->
+								
+								<!-- ko if: child.min() != null && child.min() != 0 && child.max() != null && child.max() != 0 -->
+									<div class='limits' data-bind="html: getMinMax(child.min(), child.max()), attr: {id: 'questioninfo' + child.id()}"></div>
+								<!-- /ko -->
+								<!-- ko if: child.min() != 0 && child.min() != null && (child.max() == 0 || child.max() == null) -->
+									<div class='limits' data-bind="html: getMin(child.min()), attr: {id: 'questioninfo' + child.id()}"></div>
+								<!-- /ko -->
+								<!-- ko if: (child.min() == 0 || child.min() == null) && child.max() != null && child.max() != 0 -->
+									<div class='limits' data-bind="html: getMax(child.max()), attr: {id: 'questioninfo' + child.id()}"></div>
+								<!-- /ko -->							
+								
+								<input type="number" oninput="propagateChange(this);" onblur="resetValidationErrors($(this).closest('.cell'));validateInput($(this).parent())" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), $element), attr: {'name' : 'answer' + child.id(), min: child.min(), max: child.max(), 'data-shortname': child.shortname()}"/>
+								<!-- ko if: child.unit -->
+								<span data-bind="text: child.unit"></span>
+								<!-- /ko -->
+								<!-- /ko -->
+							</div>
+							<!-- /ko -->
+					  	</td>
+					  	<!-- /ko -->
+					  	<!-- /ko -->
+					  	
+					<!-- /ko -->
+				</tr>
+				<!-- /ko -->	
+			</table>
+		</div>
+			
+		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: 'complextable', attr: {'name': 'type' + id()}" />	
+			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
+			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
+			<input type="hidden" data-bind="value: rows, attr: {'name': 'rows' + id()}" />
+			<input type="hidden" data-bind="value: columns, attr: {'name': 'columns' + id()}" />
+			<input type="hidden" data-bind="value: size, attr: {'name': 'size' + id()}" />
+			<input type="hidden" data-bind="value: showHeadersAndBorders, attr: {'name': 'showHeadersAndBorders' + id()}" />
+			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
+			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+			<input type="hidden" data-bind="value: childIds(), attr: {'name': 'childelements' + id()}" />
+			
+			<div class="children">
+			<!-- ko foreach: orderedChildElements -->
+				<div data-bind="attr: {'id' : 'child' + id()}">
+					<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id(), 'data-id': id()}"></textarea>
+					<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
+					<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+					<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
+					<input type="hidden" data-bind="value: cellType, attr: {'name': 'cellType' + id()}" />
+					<input type="hidden" data-bind="value: row, attr: {'name': 'row' + id()}" />
+					<input type="hidden" data-bind="value: column, attr: {'name': 'column' + id()}" />
+					<input type="hidden" data-bind="value: columnSpan, attr: {'name': 'columnSpan' + id()}" />
+					<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+					<input type="hidden" data-bind="value: minCharacters, attr: {'name': 'minCharacters' + id()}" />
+					<input type="hidden" data-bind="value: maxCharacters, attr: {'name': 'maxCharacters' + id()}" />
+					<input type="hidden" data-bind="value: minChoices, attr: {'name': 'minChoices' + id()}" />
+					<input type="hidden" data-bind="value: maxChoices, attr: {'name': 'maxChoices' + id()}" />
+					<input type="hidden" data-bind="value: numRows, attr: {'name': 'numRows' + id()}" />			
+					<input type="hidden" data-bind="value: useRadioButtons, attr: {'name': 'useRadioButtons' + id()}" />
+					<input type="hidden" data-bind="value: useCheckboxes, attr: {'name': 'useCheckboxes' + id()}" />
+					<input type="hidden" data-bind="value: numColumns, attr: {'name': 'numColumns' + id()}" />
+					<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
+					<input type="hidden" data-bind="value: resultText, attr: {'name': 'resultText' + id()}" />
+					<input type="hidden" data-bind="value: decimalPlaces, attr: {'name': 'decimalPlaces' + id()}" />
+					<input type="hidden" data-bind="value: unit, attr: {'name': 'unit' + id()}" />
+					<input type="hidden" data-bind="value: min, attr: {'name': 'min' + id()}" />
+					<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
+					<input type="hidden" data-bind="value: formula, attr: {'name': 'formula' + id()}" />
+					<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+									
+					<!-- ko foreach: possibleAnswers() -->
+						<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
+						<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
+						<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parents[0].id(), 'data-id' : id()}"></textarea>
+						<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea> 
+					<!-- /ko -->
+				</div>
+			<!-- /ko -->
+			</div>
+			
 		<!-- /ko -->
 	</div>
 </div>

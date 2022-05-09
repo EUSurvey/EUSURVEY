@@ -96,7 +96,12 @@
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");
 				$('[data-toggle="tooltip"]').ApplyCustomTooltips();
-				 
+				
+				// Do not show motivation-popup when loaded  from draft/local safe and progress already over
+				if(!$("#motivationPopup").data("type") && $("#motivationPopup").data("popup") && calculateProgressPercentage() > $("#motivationPopup").data("progress")){
+					$("#motivationPopup").removeClass('not-shown');
+				}
+
 				updateProgress();
 				updateAllFormulas();
 			}

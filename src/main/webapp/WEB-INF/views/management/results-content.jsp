@@ -60,6 +60,12 @@
 											<c:set var="count" value="${count + 1}" scope="page"/>
 										</c:if>
 									</c:when>
+									<c:when test="${question.getType() == 'ComplexTable'}">
+										<c:forEach items="${question.getQuestionChildElements()}" var="child">
+											<th class="topaligned cell${child.id}"><div class="headertitle">${child.getResultTitle(question)}<span class="assignedValue hideme">(${child.shortname})</span></div></th>
+											<c:set var="count" value="${count + 1}" scope="page"/>
+										</c:forEach>
+									</c:when>
 									<c:otherwise>
 										<th class="topaligned cell${question.id}"><div class="headertitle">${question.getStrippedTitle()}  <span class="assignedValue hideme">(${question.shortname})</span></div></th>
 										<c:set var="count" value="${count + 1}" scope="page"/>
@@ -218,6 +224,65 @@
 									</c:when>
 									<c:when test="${question.getType() == 'Upload' && publication != null && !publication.getShowUploadedDocuments()}">
 									
+									</c:when>
+									<c:when test="${question.getType() == 'ComplexTable'}">
+										<c:forEach items="${question.getQuestionChildElements()}" var="child">
+											<th class="filtercell cell${child.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
+												<c:choose>
+													<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'MultipleChoice'}">
+														<div>
+														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
+														    <span class="caret"></span>
+														  </a>
+														  
+														  <div class="overlaymenu hideme maxH">
+														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
+														  	 <c:forEach items="${child.possibleAnswers}" var="possibleanswer" varStatus="status">
+														    	<div>
+															    	<c:choose>
+																		<c:when test="${filter.contains(child.id, child.uniqueId, possibleanswer.id, possibleanswer.uniqueId) }">
+																			<input checked="checked" name="filter${child.id}|${child.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.strippedTitle}</input>
+																		</c:when>
+																		<c:otherwise>
+																			<input name="filter${child.id}|${child.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.strippedTitle}</input>
+																		</c:otherwise>
+																	</c:choose>
+														    	</div>
+															</c:forEach>
+														  </div>
+														  
+														  <div style="display: inline-block; margin: 0px;">
+																<a onclick="showOverlayMenu(this)" >
+															    	<span class="glyphicon glyphicon-option-vertical"></span>
+																</a>
+																<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+																	<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+																	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+	                                                 					<a onclick="showDeleteColumnDialog('${child.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+																	</c:if>
+															   </div>
+														   </div>
+														  
+														</div>
+													</c:when>
+													<c:otherwise>
+														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(child.id, child.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${child.getCellType() == 'Number' || child.getCellType() == 'Formula' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${child.id}|${child.uniqueId}" />
+														<div style="display: inline-block; margin: 0px; width: 5px;">
+															<a onclick="showOverlayMenu(this)" >
+														    	<span class="glyphicon glyphicon-option-vertical"></span>
+															</a>
+															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+	                                                					<a onclick="showDeleteColumnDialog('${child.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+																</c:if>
+														   </div>
+													   </div>
+													</c:otherwise>
+												</c:choose>
+											</th>
+										</c:forEach>
 									</c:when>
 									<c:otherwise>
 										<th class="filtercell cell${question.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
@@ -404,7 +469,7 @@
 												   </div>
 												</c:when>													
 												<c:otherwise>
-													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${question.getType() == 'NumberQuestion' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
+													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${question.type == 'NumberQuestion' || question.type == 'FormulaQuestion' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
 													<div style="display: inline-block; margin: 0px; width: 5px;">
 														<a onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
@@ -416,7 +481,7 @@
 															</c:if>
 													   </div>
 												   </div>
-                                                  	</c:otherwise>
+                                               </c:otherwise>
 											</c:choose>
 										</th>
 									</c:otherwise>
@@ -1264,6 +1329,19 @@ var closeOverlayDivsEnabled = false;
 													var td = document.createElement("td");
 													var div = document.createElement("div");
 													$(div).addClass("answercell");
+													$(div).append(list[i++]);
+													$(td).append(div);
+													$(tr).append(td);
+												
+												</c:forEach>	
+											</c:when>
+											
+											<c:when test="${question.getType() == 'ComplexTable'}">
+												<c:forEach items="${question.questionChildElements}" var="child">
+												
+													var td = document.createElement("td");
+													var div = document.createElement("div");
+													$(div).addClass("answercell complextablecell");
 													$(div).append(list[i++]);
 													$(td).append(div);
 													$(tr).append(td);

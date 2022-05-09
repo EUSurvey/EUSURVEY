@@ -1,57 +1,86 @@
 Chart.defaults.global.plugins.colorschemes.scheme = 'tableau.Tableau10';
 
-function getElementViewModel(element)
+function getElementViewModel(element, foreditor)
 {
 	if (element.hasOwnProperty("isViewModel") && element.isViewModel)
 	{
 		return element;
 	}
+
+	var viewModel;
 	
 	switch (element.type)
 	{
 		case 'Section':
-			return newSectionViewModel(element);
+			viewModel = newSectionViewModel(element);
+			break;
 		case 'GalleryQuestion':
-			return newGalleryViewModel(element);
+			viewModel = newGalleryViewModel(element);
+			break;
 		case 'Text':
-			return newTextViewModel(element);
+			viewModel = newTextViewModel(element);
+			break;
 		case 'Image':
-			return newImageViewModel(element);
+			viewModel = newImageViewModel(element);
+			break;
 		case 'Ruler':
-			return newRulerViewModel(element);
+			viewModel = newRulerViewModel(element);
+			break;
 		case 'FreeTextQuestion':
-			return newFreeTextViewModel(element);
+			viewModel = newFreeTextViewModel(element);
+			break;
 		case 'RegExQuestion':
-			return newRegExViewModel(element);
+			viewModel = newRegExViewModel(element);
+			break;
 		case 'FormulaQuestion':
-			return newFormulaViewModel(element);
+			viewModel = newFormulaViewModel(element);
+			break;
 		case 'SingleChoiceQuestion':
-			return newSingleChoiceViewModel(element);
+			viewModel = newSingleChoiceViewModel(element);
+			break;
 		case 'MultipleChoiceQuestion':
-			return newMultipleChoiceViewModel(element);
+			viewModel = newMultipleChoiceViewModel(element);
+			break;
 		case 'RankingQuestion':
-			return newRankingViewModel(element);
+			viewModel = newRankingViewModel(element);
+			break;
 		case 'NumberQuestion':
-			return newNumberViewModel(element);
+			viewModel = newNumberViewModel(element);
+			break;
 		case 'DateQuestion':
-			return newDateViewModel(element);
+			viewModel = newDateViewModel(element);
+			break;
 		case 'TimeQuestion':
-			return newTimeViewModel(element);
+			viewModel = newTimeViewModel(element);
+			break;
 		case 'EmailQuestion':
-			return newEmailViewModel(element);
+			viewModel = newEmailViewModel(element);
+			break;
 		case 'Matrix':
-			return newMatrixViewModel(element);
+			viewModel = newMatrixViewModel(element);
+			break;
 		case 'Table':
-			return newTableViewModel(element);
+			viewModel = newTableViewModel(element);
+			break;
 		case 'Confirmation':
-			return newConfirmationViewModel(element);
+			viewModel = newConfirmationViewModel(element);
+			break;
 		case 'RatingQuestion':
-			return newRatingViewModel(element);
+			viewModel = newRatingViewModel(element);
+			break;
 		case 'Upload':
-			return newUploadViewModel(element);
+			viewModel = newUploadViewModel(element);
+			break;
 		case 'Download':
-			return newDownloadViewModel(element);
-	} 
+			viewModel = newDownloadViewModel(element);
+			break;
+		case 'ComplexTable':
+			viewModel = newComplexTableViewModel(element, foreditor);
+			break;
+	} 	
+		
+	viewModel.foreditor = foreditor;
+	return viewModel;
 }
 
 function addElement(element, foreditor, forskin)
@@ -140,9 +169,8 @@ var lastFocusedContainer = null;
 function addElementToContainer(element, container, foreditor, forskin) {
 	addDelphiClassToContainerIfNeeded(element, container);
 
-	var viewModel = getElementViewModel(element);
-	
-	viewModel.foreditor = foreditor;
+	var viewModel = getElementViewModel(element, foreditor);
+
 	viewModel.ismobile = false;
 	viewModel.isresponsive = false;
 	viewModel.istablet = false;
@@ -254,6 +282,11 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	} else if (viewModel.type == 'RatingQuestion') {
 		$(container).addClass("ratingitem forprogress");
 		var s = $("#rating-template").clone().attr("id", "");
+		$(container.append(s));
+	} else if (viewModel.type == 'ComplexTable') {
+		$(container).addClass("complextableitem");
+		var s = $("#complextable-template").clone().attr("id", "");
+		//forprogress is set in elementtemplates .innercell[data-bind]
 		$(container.append(s));
 	}
 
@@ -401,7 +434,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		  lastEditDate = new Date();
 	});	
 	
-	$(container).find("select.single-choice").prepend("<option value=''></option>");
+	$(container).find("select.single-choice").not(".complex").prepend("<option value=''></option>");
 				
 	$(container).find(".tabletable").find("textarea").each(function(){
 		var height = $(this).parent().height();
@@ -428,7 +461,8 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			event.stopImmediatePropagation();
 			event.preventDefault();
 		}).change(function(event){
-			$(this).val("");
+			propertiesFromSelect(this, event)
+			this.value = ""
 		});
 		$(container).find("a").removeAttr("href").removeAttr("onkeypress").removeAttr("onclick");
 		
@@ -1221,6 +1255,8 @@ function delphiUpdateContinued(div, successCallback) {
 	
 	var form = document.createElement("form");
 	$(form).append($(div).clone());
+	
+	$(form).find("input[data-is-answered='false'].sliderbox").val('');
 	
 	var surveyId = $('#survey\\.id').val();
 	$(form).append('<input type="hidden" name="surveyId" value="' + surveyId + '" />');

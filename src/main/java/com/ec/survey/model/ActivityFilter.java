@@ -277,6 +277,7 @@ public class ActivityFilter implements java.io.Serializable {
 		"EditContribution",
 		"MultiPaging",
 		"ProgressBar",
+				"MotivationPopup",
 		"PageWiseValidation",
 		"Properties",
 		"UsefulLink",

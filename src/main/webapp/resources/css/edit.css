@@ -313,7 +313,7 @@ textarea {
  	background-color: #FCECED; 
 }
 
-.toolboxitem.uploaditem, .toolboxitem.downloaditem, .toolboxitem.emailitem, .toolboxitem.regexitem, .toolboxitem.formulaitem, .toolboxitem.galleryitem, .toolboxitem.confirmationitem, .toolboxitem.ratingitem {
+.toolboxitem.uploaditem, .toolboxitem.downloaditem, .toolboxitem.emailitem, .toolboxitem.regexitem, .toolboxitem.formulaitem, .toolboxitem.galleryitem, .toolboxitem.confirmationitem, .toolboxitem.ratingitem, .toolboxitem.complextableitem {
  	background-color: #F5E2FF; 
 }
 
@@ -413,9 +413,8 @@ textarea {
 	width: 300px !important;
 }
 
-.selectedquestion {
+.selectedquestion, .highlightedquestion {
 	background-color: rgb(218, 237, 255) !important;
-	/*border-radius: 5px;*/
 }
 
 .table-header.selectedquestion {

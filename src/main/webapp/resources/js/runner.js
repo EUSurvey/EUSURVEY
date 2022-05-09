@@ -169,6 +169,10 @@ function checkHasValue(element) {
 		if ($(element).closest('.matrix-cell').length > 0) {
 			return $(element).closest('.matrixtable').find("input:checked").length > 0;
 		}
+
+		if ($(element).closest('.cell[data-type="4"]').length > 0) {
+			return $(element).closest('.cell[data-type="4"]').find("input:checked").length > 0;
+		}
 		
 		return $(element).is(":checked");
 	}
@@ -177,12 +181,16 @@ function checkHasValue(element) {
 		if ($(element).closest('.matrix-cell').length > 0) {
 			return $(element).closest('.matrixtable').find("input:checked").length > 0;
 		}
+
+		if ($(element).closest('.cell[data-type="5"]').length > 0) {
+			return $(element).closest('.cell[data-type="5"]').find("input:checked").length > 0;
+		}
 		
 		return $(element).closest('.answers-table').find("input:checked").length > 0;
 	}
 	
-	if ($(element).is("a")) {
-		return $(element).closest(".listbox").find("input:checked").length > 0;
+	if ($(element).is("a") || $(element).is("li.possible-answer")) {
+		return $(element).closest(".listbox,.multiple-choice[role=listbox]").find("input:checked").length > 0;
 	}
 	
 	if ($(element).closest('.tabletable').length > 0) {
@@ -209,7 +217,7 @@ function propagateChange(element)
 		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
 		$(div).find(".explanation-file-upload-section").hide();
-		$(element).closest(".forprogress").removeClass("answered");		
+		$(element).closest(".forprogress").removeClass("answered");
 	} else {
 		const surveyElement = $(element).closest(".survey-element");
 		if ($(surveyElement).find(".slider-div").length) {
@@ -231,7 +239,7 @@ function propagateChange(element)
 	
 	updateProgress();
 	
-	if ($(div).hasClass("numberitem") || $(div).hasClass("formulaitem") || $(div).hasClass("regexitem")) {
+	if ($(div).hasClass("numberitem") || $(div).hasClass("formulaitem") || $(div).hasClass("regexitem") || $(element).hasClass("number") || $(element).hasClass("formula")) { //.number and .formula are for complex table cells
 		updateFormulas($(div).attr("id"), $(element).attr("data-shortname"));
 	}
 }
@@ -240,6 +248,13 @@ function updateAllFormulas() {
 	for (let i = 0; i < modelsForFormula.length; i++) {
 		if (modelsForFormula[i].readonly()) {
 			modelsForFormula[i].refreshResult();
+		} else {
+			var value = getValueByQuestion(modelsForFormula[i].uniqueId());
+			if (value.length > 0) {
+				modelsForFormula[i].result(parseInt(value));
+			} else {
+				modelsForFormula[i].refreshResult();
+			}
 		}
 	}
 }
@@ -255,23 +270,42 @@ function updateFormulas(id, alias) {
 }
 
 function updateProgress() {
-	if ($('#progressBar').length == 0) return;
+
+	var percent = null;
+
+	// progressbar
+	if ($('#progressBar').length != 0) {
+		var totalForProgress = $('.forprogress').not(".untriggered").length;
+		var answered = $('.forprogress.answered').not(".untriggered").length;
+		percent = answered == 0 ? 0 : Math.round(answered / totalForProgress * 100);
+
+		$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);
+		$('#progressBarPercentage').html(percent + '%');
+		$('#progressBarRatio').html(answered + '/' + totalForProgress);
+		$('#progressBarContainer').show();
+
+		var totalwidth = $('#progressBarContainer').width();
+
+		if ((percent * totalwidth / 100) < 80) {
+			$('#progressBarLabel').addClass("blacktext");
+		} else {
+			$('#progressBarLabel').removeClass("blacktext");
+		}
+	}
+
+	// motivationprogress
+	if(!$("#motivationPopup").data("type") && $("#motivationPopup").data("popup") && $("#motivationPopup").hasClass("not-shown")){
+		if(percent == null) percent = calculateProgressPercentage(); //only calculate percent again when it hasnt been for the progressbar;
+		if(percent >= $("#motivationPopup").data("progress")){
+			showPopup();
+		}
+	}
+}
+
+function calculateProgressPercentage() {
 	var totalForProgress = $('.forprogress').not(".untriggered").length;
 	var answered = $('.forprogress.answered').not(".untriggered").length;
-	var percent = answered == 0 ? 0 : Math.round(answered / totalForProgress * 100);
-	
-	$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);	
-	$('#progressBarPercentage').html(percent + '%');
-	$('#progressBarRatio').html(answered + '/' + totalForProgress);	
-	$('#progressBarContainer').show();
-	
-	var totalwidth = $('#progressBarContainer').width();
-	
-	if ((percent * totalwidth / 100) < 80) {
-		$('#progressBarLabel').addClass("blacktext");
-	} else {
-		$('#progressBarLabel').removeClass("blacktext");
-	}
+	return answered == 0 ? 0 : Math.round(answered / totalForProgress * 100);
 }
 
 var downloadsurveypdflang;
@@ -366,8 +400,8 @@ function createUploader(instance, maxSize)
 			enableDelphiSaveButtons($(this.element).closest(".survey-element"));
 			$(this.element).closest(".forprogress").addClass("answered");
 			updateProgress();
-	    	
-	    	if (responseJSON.wrongextension)
+
+			if (responseJSON.wrongextension)
 	    	{
 	    		 $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + getWrongExtensionMessage(fileName) + "</div>");
 	    	}
@@ -502,7 +536,7 @@ $(function() {
 
 function applyStandardWidths()
 {
-	$(".single-choice").each(function(){
+	$(".single-choice").not(".complex").each(function(){
 		var w = $(this).width();
 		if (w <= 215) {
 			$(this).css("width", "215px");
@@ -515,7 +549,7 @@ function applyStandardWidths()
 		}
 	});
 	
-	$(".multiple-choice").each(function(){
+	$(".multiple-choice").not(".complex").each(function(){
 		var w = $(this).width();
 		if (w <= 215) {
 			$(this).css("width", "215px");

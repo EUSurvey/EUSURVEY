@@ -3,8 +3,6 @@ package com.ec.survey.model.survey;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.owasp.esapi.errors.ValidationException;
-import com.ec.survey.tools.Tools;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -147,17 +145,8 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 			return true;
 
 		for (int i = 0; i < getPossibleAnswers().size(); i++) {
-			if (!getPossibleAnswers().get(i).getTitle().equals(multi.getPossibleAnswers().get(i).getTitle()))
+			if (getPossibleAnswers().get(i).differsFrom(multi.getPossibleAnswers().get(i))) {
 				return true;
-			if (!getPossibleAnswers().get(i).getDependentElementsUIDString()
-					.equals(multi.getPossibleAnswers().get(i).getDependentElementsUIDString()))
-				return true;
-			if (!Tools.isEqual(getPossibleAnswers().get(i).getShortname(),
-					multi.getPossibleAnswers().get(i).getShortname()))
-				return true;
-			if (getPossibleAnswers().get(i).getScoring() != null && getPossibleAnswers().get(i).getScoring()
-					.differsFrom(multi.getPossibleAnswers().get(i).getScoring())) {
-					return true;
 			}
 		}
 

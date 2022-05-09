@@ -36,6 +36,8 @@ import com.ec.survey.model.ResultFilter.ResultFilterSortKey;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.survey.ChoiceQuestion;
+import com.ec.survey.model.survey.ComplexTable;
+import com.ec.survey.model.survey.ComplexTableItem;
 import com.ec.survey.model.survey.DateQuestion;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.EmailQuestion;
@@ -495,6 +497,12 @@ public class ReportingService extends BasicService {
 	    			{
 	    				visibleQuestions.put(question.getUniqueId(), question);	  
 	    			}
+	    		} else if (question instanceof ComplexTable)
+    			{
+	    			for (Element child : ((ComplexTable)question).getQuestionChildElements())
+    				{
+	    				visibleQuestions.put(child.getUniqueId(), child);
+		    		}
     			} else if (question.isUsedInResults()) {
 	    			visibleQuestions.put(question.getUniqueId(), question);	    		
 	    		}
@@ -716,6 +724,39 @@ public class ReportingService extends BasicService {
 								FormulaQuestion formulaQuestion = (FormulaQuestion)question;
 								if (formulaQuestion.getDecimalPlaces() != null) {
 									row.add(String.format(Locale.ROOT, "%." + formulaQuestion.getDecimalPlaces() + "f", item));
+								} else {
+									row.add(item.toString());
+								}
+							} else if (question instanceof ComplexTableItem) {
+								ComplexTableItem child = (ComplexTableItem) question;
+								if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+									String[] answerids = item.toString().split(";");						
+									String v = "";
+									for (String answerid : answerids)
+									{
+										if (v.length() > 0) v += ";";
+										Element answer = child.getPossibleAnswerByUniqueId(answerid);
+										if (answer != null)
+										{
+											if (doNotReplaceAnswerIDs)
+											{
+												v += answerid;
+											} else {
+												v += answer.getStrippedTitle();
+											}
+											
+											if (showShortnames) {
+												v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+											}
+										}							
+									}						
+									row.add(v.length() > 0 ? v : null);
+								} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
+									if (child.getDecimalPlaces() != null) {
+										row.add(String.format(Locale.ROOT, "%." + child.getDecimalPlaces() + "f", item));
+									} else {
+										row.add(item.toString());
+									}
 								} else {
 									row.add(item.toString());
 								}
@@ -993,6 +1034,15 @@ public class ReportingService extends BasicService {
 				}
 			} else if (question instanceof RankingQuestion) {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
+			} else if (question instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) question;
+				for (ComplexTableItem child : table.getQuestionChildElements()) {
+					if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
+						putColumnNameAndType(columnNamesToType, child.getUniqueId(), "DOUBLE");
+					} else {
+						putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
+					}
+				}
 			}
 		}
 		return columnNamesToType;
@@ -1510,6 +1560,48 @@ public class ReportingService extends BasicService {
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());
 				parameters.put("value" + parameters.size(), d);	
+			} else if (question instanceof ComplexTable) {
+				
+				ComplexTable table = (ComplexTable) question;
+				
+				for(ComplexTableItem child: table.getQuestionChildElements()) {				
+					if (child.getCellType() == ComplexTableItem.CellType.FreeText)
+					{
+						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());
+						columns.add(child.getUniqueId());
+						values.add(":value" + parameters.size());
+						parameters.put("value" + parameters.size(), !answers.isEmpty() ? shrink(answers.get(0).getValue()) : null);
+					} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
+						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());				
+						Double num = null;
+						if (!answers.isEmpty())
+						{
+							try {
+								num = Double.parseDouble(answers.get(0).getValue());
+							} catch (Exception e) {
+								num = 0.0;
+							}
+						}											
+						columns.add(child.getUniqueId());
+						values.add(":value" + parameters.size());
+						parameters.put("value" + parameters.size(), num);			
+					} else if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());				
+						columns.add(child.getUniqueId());
+						String v = null;
+						if (!answers.isEmpty())
+						{
+							v = "'";
+							for (Answer answer : answers)
+							{
+								v += answer.getPossibleAnswerUniqueId();
+								if (child.getCellType() == ComplexTableItem.CellType.MultipleChoice) v += ";";
+							}
+							v += "'";
+						}
+						values.add(v);				
+					}					
+				}
 			}
 		}
 		

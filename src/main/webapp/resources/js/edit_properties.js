@@ -29,6 +29,8 @@ var PropertyRow = function()
 	this.Disabled = ko.observable(false);
 	this.Element = ko.observable(null);
 	this.IsVisible = ko.observable(true);
+	this.Cell = ko.observable(null);
+	
 	this.MinItems = function() {
 		if (this.Label() == "RankingItems") {
 			return 2;
@@ -39,21 +41,28 @@ var PropertyRow = function()
 	this.PreviewItems = function()
 	{
 		var arr;
-		if (this.Label() == "Columns")
-		{	
-			arr = getColumnsText(false);
-		} else if (this.Label() == "Rows")
-		{	
-			arr = getRowsText(false);
-		} else if (this.Label() == "PossibleAnswers")
-		{	
-			arr = getCombinedAnswerText(false);
-		} else if (this.Label() == "Questions")
-		{	
-			arr = getQuestionsText(false);
-		} else if (this.Label() == "RankingItems")
-		{
-			arr = getCombinedRankingText(false);
+
+		switch (this.Label()) {
+			case "Columns":
+				arr = getColumnsText(false);
+				break;
+			case "Rows":
+				arr = getRowsText(false);
+				break;
+			case "cell":
+			case "column":
+			case "row":
+			case "PossibleAnswers":
+				arr = getCombinedAnswerText(false);
+				break;
+			case "Questions":
+				arr = getQuestionsText(false);
+				break;
+			case "RankingItems":
+				arr = getCombinedRankingText(false);
+				break;
+			default:
+				arr = ["Undefined PreviewItems Label"] //Helps to find the problem faster
 		}
 		
 		if (arr.length > 5)
@@ -176,7 +185,9 @@ var ElementProperties = function() {
            var ed_id = tinymce.editors[i].id;
            if (ed_id != "new-survey-title")
            {
-        	   tinyMCE.execCommand("mceRemoveEditor", true, ed_id);
+				try {
+					tinyMCE.execCommand("mceRemoveEditor", true, ed_id);
+				} catch {}       	   
            }           
         }
 		
@@ -218,6 +229,8 @@ var ElementProperties = function() {
 		this.selectedelement = e;
 		var id = $(e).attr("data-id");
 		var removeselection = false;
+		
+		$(".highlightedquestion").removeClass("highlightedquestion");
 		
 		// ACTIONS
 		if (!cntrlIsPressed && !shiftIsPressed && !$("#multiselectButton").hasClass("selected"))
@@ -261,25 +274,25 @@ var ElementProperties = function() {
 			
 			$(e).find(".selectedquestion").removeClass("selectedquestion");
 			
-			if ($(e).hasClass("matrix-header") || $(e).hasClass("table-header") || $(e).hasClass("answertext") || $(e).is("td"))
+			if ($(e).hasClass("matrix-header") || $(e).hasClass("table-header") || $(e).hasClass("answertext") || $(e).is("td") || $(e).is("th"))
 			{
 				$(e).closest(".survey-element.selectedquestion").removeClass("selectedquestion");
 			}			
 		}
 
-		if (removeselection)
-		{
-			$(".navigationitem[data-id=" + id + "]").removeClass("selectedquestion");
-			$(".navigationitem[data-id='navanswer" + id + "']").removeClass("selectedquestion");
-		} else {
-			$(".navigationitem[data-id=" + id + "]").addClass("selectedquestion");
-			$(".navigationitem[data-id='navanswer" + id + "']").addClass("selectedquestion");
+		if (id != null && id.length > 0) {
+			if (removeselection)
+			{
+				$(".navigationitem[data-id=" + id + "]").removeClass("selectedquestion");
+				$(".navigationitem[data-id='navanswer" + id + "']").removeClass("selectedquestion");
+			} else {
+				$(".navigationitem[data-id=" + id + "]").addClass("selectedquestion");
+				$(".navigationitem[data-id='navanswer" + id + "']").addClass("selectedquestion");
+			}
 		}
-
 
 		_actions.CopyEnabled(true);
 		_actions.CutEnabled(true);
-
 		
 		if ($("#content").find(".selectedquestion").not(".locked").length > 0)
 		{
@@ -381,7 +394,8 @@ var ElementProperties = function() {
 					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
-				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
+				let editenabled = !element.editorRowsLocked()
+				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 			
 				if (isDelphi)
@@ -439,7 +453,8 @@ var ElementProperties = function() {
 					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
-				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
+				let editenabled = !element.editorRowsLocked()
+				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getChoosePropertiesRow("Style", "CheckBox,ListBox", false, false, $(e).find("input[name^='choicetype']").val() == 'checkbox' ? "CheckBox" : "ListBox");
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false,  parseInt($(e).find("input[name^='order']").val()));
@@ -472,7 +487,7 @@ var ElementProperties = function() {
 					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
-				getActionRow("RankingItems", "<span class='glyphicon glyphicon-plus'></span>", "addRankingEntry()", "<span class='glyphicon glyphicon-minus'></span>", "removeRankingEntry($(_elementProperties.selectedelement))");
+				getActionRow("RankingItems", "<span class='glyphicon glyphicon-plus'></span>", "addRankingEntry()", "<span class='glyphicon glyphicon-minus'></span>", "removeRankingEntry($(_elementProperties.selectedelement))", false);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
@@ -598,9 +613,10 @@ var ElementProperties = function() {
 				var rows = $(e).find(".matrixtable").first().find("tr").length-1;
 				var mandatoryrows = $(e).find("input[name^='optional'][value=false]").length;
 				getCheckPropertiesRow("Mandatory", rows == mandatoryrows, isDelphiQuestion);
-
-				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)");
-				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
+				let columnEditenabled = !element.editorColumnsLocked()
+				let rowEditenabled = !element.editorRowsLocked()
+				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)", columnEditenabled);
+				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)", rowEditenabled);
 				getChoosePropertiesRow("Style", "SingleChoice,MultipleChoice", false, false, $(e).find("input[name^='single']").val() == 'true' ? "SingleChoice" : "MultipleChoice");
 				getCheckPropertiesRow("Interdependency", $(e).find("input[name^='interdependent']").val() == 'true');
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false,  parseInt($(e).find("input[name^='order']").val()));
@@ -674,8 +690,10 @@ var ElementProperties = function() {
 				var rows = $(e).find(".tabletable").first().find("tr").length-1;
 				var mandatoryrows = $(e).find("th[data-optional=false]").length;
 				getCheckPropertiesRow("Mandatory", rows == mandatoryrows, isDelphiQuestion);
-				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)");
-				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
+				let columnEditenabled = !element.editorColumnsLocked()
+				let rowEditenabled = !element.editorRowsLocked()
+				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)", columnEditenabled);
+				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)", rowEditenabled);
 			
 				getChoosePropertiesRow("Size", "fitToContent,fitToPage,manualColumnWidth", false, true, parseInt($(e).find("input[name^='tabletype']").val()));
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
@@ -733,6 +751,62 @@ var ElementProperties = function() {
 						adaptDelphiChildControls(element, parent);
 					}
 				}
+			} else if ($(e).hasClass("complextableitem"))
+			{
+				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)");
+				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
+				getChoosePropertiesRow("Size", "fitToContent,fitToPage", false, true, parseInt($(e).find("input[name^='size']").val()));
+				getCheckPropertiesRow("ShowHeadersAndBorders", $(e).find("input[name^='showHeadersAndBorders']").first().val() == "true", false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, true);
+				getAdvancedPropertiesRow();
+				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);				
+			} else if ($(e).hasClass("headercell"))
+			{	
+				const id = $(e).attr("data-id");
+				const row = $(e).closest("tr").index();
+				const column = $(e).index();
+				_actions.DeleteEnabled(false);
+				_actions.MoveUpEnabled(false);
+				_actions.MoveDownEnabled(false);
+				_actions.CopyEnabled(false);
+				_actions.CutEnabled(false);
+				if (row == 0 && column == 0) {
+					getFirstCellPropertiesRow(id);
+				} else if (row == 0) { // column header
+					var col = $(e).index();
+					$(e).closest("tbody").find("tr").each(function(index) {
+						if (index > 0) {
+							$($(this).find("td[data-col='" + col + "']")).addClass("highlightedquestion"); //column-1 as first cell is a th
+						}
+					});
+					getCellHeaderPropertiesRow(id, false);
+				} else { // row header
+					$(e).closest("tr").find("td").addClass("highlightedquestion");
+					getCellHeaderPropertiesRow(id, true);
+				}
+			} else if ($(e).hasClass("cell"))
+			{	
+				var id = $(e).attr("data-id");
+				var tableId = $(e).closest(".survey-element").attr("data-id");
+				
+				if (id.length == 0) {
+					//empty cell: create new "empty" child
+					element = _elements[tableId];
+					const cell =  getBasicElement("ComplexTableItem", true, "", null, false);
+					cell.row = $(e).closest("tr").index();
+					cell.column = parseInt($(e).attr("data-col"));
+					cell.cellType = 0; //empty
+					element.childElements.push(newComplexTableItemViewModel(cell));
+					id = cell.id;
+				}
+				_actions.DeleteEnabled(false);
+				_actions.MoveUpEnabled(false);
+				_actions.MoveDownEnabled(false);
+				_actions.CopyEnabled(false);
+				_actions.CutEnabled(false);
+				getCellPropertiesRow(id);
 			} else if ($(e).hasClass("dateitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
@@ -936,8 +1010,8 @@ var ElementProperties = function() {
 				var rows = $(e).find(".ratingtable").first().find("tr").length;
 				var mandatoryrows = $(e).find(".hiddenratingquestions").find("input[name^='questionoptional'][value=false]").length;
 				getCheckPropertiesRow("Mandatory", rows == mandatoryrows, isDelphiQuestion);
-				
-				getActionRow("Questions", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
+				let editenabled = !element.editorRowsLocked()
+				getActionRow("Questions", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)", editenabled);
 				getChoosePropertiesRow("IconType", "Stars,Circles,Hearts", false, false, parseInt($(e).find("input[name^='iconType']").val()));
 				getNumberPropertiesRow("NumIcons", $(e).find("input[name^='numIcons']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
@@ -1004,7 +1078,6 @@ var ElementProperties = function() {
 			
 			var childselected = false;
 			var hidevisibility = false;
-			var galleryselected = false;
 			var locked = false;
 			var firstselected = false;
 			var lastselected = false;
@@ -1032,10 +1105,18 @@ var ElementProperties = function() {
 					}
 				}
 				
-				if ($(this).hasClass("answertext"))
+				if ($(this).hasClass("answertext") || $(this).hasClass("cell"))
 				{
 					hidevisibility = true;
 					_actions.DeleteEnabled(false);
+				}
+				
+				if ($(this).hasClass("cell"))
+				{
+					_actions.MoveUpEnabled(false);
+					_actions.MoveDownEnabled(false);
+					_actions.CopyEnabled(false);
+					_actions.CutEnabled(false);
 				}
 				
 				if ($(this).hasClass("matrix-header") || $(this).hasClass("table-header"))
@@ -1111,6 +1192,34 @@ var ElementProperties = function() {
 };
 
 var _elementProperties = new ElementProperties();
+
+function propertiesFromPreviewIndex(index, event, data){
+	if (data.Label() === "Columns"){
+		if ($(_elementProperties.selectedelement).hasClass("complextableitem")) {
+			let table = getElement();
+			let child = table.getChild(index, 0);
+			_elementProperties.showProperties($(".headercell[data-id='" + child.id() + "']"), event, false);
+		} else {
+			_elementProperties.showProperties($(_elementProperties.selectedelement).find(".matrix-header[scope=col], .table-header[scope=col]")[index], event, false);
+		}
+	} else if (data.Label() === "Rows"){
+		if ($(_elementProperties.selectedelement).hasClass("complextableitem")) {
+			let table = getElement();
+			let child = table.getChild(0, index+1);
+			_elementProperties.showProperties($(".headercell[data-id='" + child.id() + "']"), event, false);
+		} else {
+			_elementProperties.showProperties($(_elementProperties.selectedelement).find(".matrix-header[scope=row], .table-header[scope=row]")[index], event, false);
+		}
+	} else {
+		_elementProperties.showProperties($(_elementProperties.selectedelement).find(".answertext, .rankingitemtext, .ratingquestion")[index], event, false);
+	}
+}
+
+function propertiesFromSelect(el, event){
+	if (el.value !== ""){
+		_elementProperties.showProperties(document.getElementById(el.value), event, false);
+	}
+}
 
 $(function() {
 	ko.applyBindings(_elementProperties, $("#properties")[0]);

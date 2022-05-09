@@ -80,6 +80,9 @@ final public class Survey implements java.io.Serializable {
 	public static final String RESULTSMESSAGETEXT = "Thank you for your contribution";
 
 	public static final String MAXNUMBEROFRESULTSTEXT = "This survey has been closed due to the maximum number of contributions reached.";
+	public static final String MOTIVATIONPOPUPTEXT = "Motivation Text";
+	public static final Integer MOTIVATIONPOPUPPROGRESS  = 50;
+	public static final Integer MOTIVATIONPOPUPTIME = 20;
 
 	private Integer id;
 	private String uniqueId;
@@ -194,6 +197,13 @@ final public class Survey implements java.io.Serializable {
 	private Boolean dedicatedResultPrivileges = false;
 	private Boolean progressBar = false;
 	private Integer progressDisplay = 0;
+	private Boolean motivationPopup = false;
+	private Boolean motivationType = false;
+	private String motivationText = MOTIVATIONPOPUPTEXT;
+	private Integer motivationTriggerProgress = MOTIVATIONPOPUPPROGRESS;
+	private Integer motivationTriggerTime = MOTIVATIONPOPUPTIME;
+	private String codaLink;
+	private boolean codaWaiting = false;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -745,6 +755,14 @@ final public class Survey implements java.io.Serializable {
 				elementsRecursive.addAll(((RankingQuestion) element).getChildElements());
 				elementsRecursiveWithAnswers.addAll(((RankingQuestion) element).getChildElements());
 			}
+			if (element instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) element;
+				elementsRecursive.addAll(table.getChildElements());
+				elementsRecursiveWithAnswers.addAll(table.getChildElements());
+				for (ComplexTableItem item : table.getChildElements()) {
+					elementsRecursiveWithAnswers.addAll(item.getPossibleAnswers());
+				}
+			}
 		}
 
 		if (answers) {
@@ -813,6 +831,44 @@ final public class Survey implements java.io.Serializable {
 
 	public void setContact(String contact) {
 		this.contact = contact;
+	}
+
+	@Lob
+	@Column(name = "MOTIVATIONSTEXT", nullable = false)
+	public String getMotivationText() {
+		return this.motivationText != null && this.motivationText.length() > 0
+				? this.motivationText
+				: MOTIVATIONPOPUPTEXT;
+	}
+
+	public void setMotivationText(String motivationText) {
+		this.motivationText = motivationText != null ? Tools.filterHTML(motivationText)
+				: MOTIVATIONPOPUPTEXT;
+	}
+
+	@Column(name = "MOTIVATIONTRIGGERPROGRESS")
+	public Integer getMotivationTriggerProgress() {
+		return this.motivationTriggerProgress != null && this.motivationTriggerProgress > 0
+				? this.motivationTriggerProgress
+				: MOTIVATIONPOPUPPROGRESS;
+	}
+
+	public void setMotivationTriggerProgress(Integer motivationTriggerProgress) {
+		this.motivationTriggerProgress = motivationTriggerProgress != null ? motivationTriggerProgress
+				: MOTIVATIONPOPUPPROGRESS;
+	}
+
+	@Column(name = "MOTIVATIONTRIGGERTIME")
+	public Integer getMotivationTriggerTime() {
+		return this.motivationTriggerTime != null && this.motivationTriggerTime > 0
+				? this.motivationTriggerTime
+				: MOTIVATIONPOPUPTIME;
+	}
+
+	public void setMotivationTriggerTime(Integer motivationTriggerTime) {
+		/*TODO  filter here for  valid input? */
+		this.motivationTriggerTime = motivationTriggerTime != null ? motivationTriggerTime
+				: MOTIVATIONPOPUPTIME;
 	}
 
 	@Column(name = "CONTACTLABEL")
@@ -1077,7 +1133,11 @@ final public class Survey implements java.io.Serializable {
 					for (Element child : ((RatingQuestion) element).getQuestions()) {
 						result.put(child.getId(), (Question) child);
 					}
-				}
+				} else if (element instanceof ComplexTable) {
+					for (ComplexTableItem child : ((ComplexTable) element).getChildElements()) {
+						result.put(child.getId(), child);
+					}
+				} 
 			}
 		}
 		for (Element element : missingElements) {
@@ -1105,6 +1165,12 @@ final public class Survey implements java.io.Serializable {
 			if (element instanceof RatingQuestion) {
 				RatingQuestion rating = (RatingQuestion) element;
 				for (Element child : rating.getChildElements()) {
+					result.put(child.getUniqueId(), child);
+				}
+			}
+			if (element instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) element;
+				for (Element child : table.getQuestionChildElements()) {
 					result.put(child.getUniqueId(), child);
 				}
 			}
@@ -1586,6 +1652,11 @@ final public class Survey implements java.io.Serializable {
 			result.append(" confirmationPage: ").append(confirmationPage).append(";");
 			result.append(" confirmationLink: ").append(this.getConfirmationLink()).append(";");
 			result.append(" confirmationPageLink: ").append(confirmationPageLink).append(";");
+			result.append(" motivationText: ").append(this.getMotivationText()).append(";");
+			result.append(" motivationTriggerProgress: ").append(motivationTriggerProgress).append(";");
+			result.append(" motivationTriggerTime: ").append(motivationTriggerTime).append(";");
+			result.append(" motivationPopup: ").append(motivationPopup).append(";");
+			result.append(" motivationType: ").append(motivationType).append(";");
 			result.append(" escapePage: ").append(escapePage).append(";");
 			result.append(" escapeLink: ").append(this.getEscapeLink()).append(";");
 			result.append(" escapePageLink: ").append(escapePageLink).append(";");
@@ -1683,6 +1754,11 @@ final public class Survey implements java.io.Serializable {
 		copy.ecasMode = ecasMode;
 		copy.multiPaging = multiPaging;
 		copy.progressBar = progressBar;
+		copy.motivationPopup = motivationPopup;
+		copy.motivationType = motivationType;
+		copy.motivationText = Tools.filterHTML(motivationText);
+		copy.motivationTriggerProgress = motivationTriggerProgress;
+		copy.motivationTriggerTime = motivationTriggerTime;
 		copy.progressDisplay = progressDisplay;
 		copy.validatedPerPage = validatedPerPage;
 		copy.setWcagCompliance(wcagCompliance);
@@ -1720,6 +1796,8 @@ final public class Survey implements java.io.Serializable {
 		copy.setPreventGoingBack(preventGoingBack);
 		copy.setDedicatedResultPrivileges(dedicatedResultPrivileges);
 		copy.criticalComplexity = criticalComplexity;
+		copy.codaLink = codaLink;
+		copy.codaWaiting = codaWaiting;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -2216,6 +2294,15 @@ final public class Survey implements java.io.Serializable {
 					return false;
 				}
 			}
+			
+			if (question instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) question;
+				for (ComplexTableItem child: table.getQuestionChildElements()) {
+					if (child.getCellType() != ComplexTableItem.CellType.Empty && child.getCellType() != ComplexTableItem.CellType.StaticText) {
+						return false;
+					}
+				}
+			}
 		}
 
 		return true;
@@ -2504,5 +2591,41 @@ final public class Survey implements java.io.Serializable {
 
 	public void setProgressDisplay(Integer progressDisplay) {
 		this.progressDisplay = progressDisplay != null ? progressDisplay : 0;
+	}
+
+	@Column(name = "MOTIVATIONPOPUP")
+	public Boolean getMotivationPopup() {
+		return motivationPopup;
+	}
+
+	public void setMotivationPopup(Boolean motivationPopup) {
+		this.motivationPopup = motivationPopup != null ? motivationPopup : false;
+	}
+
+	@Column(name = "MOTIVATIONTYPE")
+	public Boolean getMotivationType() {
+		return  this.motivationType != null ? this.motivationType : false;
+	}
+
+	public void setMotivationType(Boolean motivationType) {
+		this.motivationType = motivationType != null ? motivationType : false;
+	}
+
+	@Column(name = "CODA_LINK")
+	public String getCodaLink() {
+		return codaLink;
+	}
+
+	public void setCodaLink(String codaLink) {
+		this.codaLink = codaLink;
+	}
+
+	@Column(name = "CODA_WAITING")
+	public Boolean getCodaWaiting() {
+		return codaWaiting;
+	}
+
+	public void setCodaWaiting(Boolean codaWaiting) {
+		this.codaWaiting = codaWaiting != null ? codaWaiting : false;
 	}
 }

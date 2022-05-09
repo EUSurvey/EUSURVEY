@@ -151,6 +151,18 @@ function toggleRegistrationFormProperties(button)
 	}
 }
 
+function toggleCellProperties(button)
+{
+	if ($(button).parent().find(".glyphicon-minus-sign").length > 0)
+	{
+		$(button).parent().find(".glyphicon-minus-sign").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
+		$(button).closest("tr").nextUntil(".collapsiblerow").addClass("hideme");
+	} else {
+		$(button).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
+		$(button).closest("tr").nextAll(":not(.tinymcerow)").removeClass("hideme");
+	}
+}
+
 function markActiveProperty(input) {
 	$(input).addClass("activeproperty");
 }
@@ -234,15 +246,16 @@ function getTextPropertiesRow(label, content, usetinymce, unit, maxLength)
 	}
 }
 
-function getFormulaPropertiesRow(formulatext) {
-	var selectedelementId = $("#content").find(".selectedquestion").first().attr("id");
-	var id = "id" + idcounter++;	
-	var row = new PropertyRow();
-	row.Label("formula");
-	row.LabelTitle(getPropertyLabel("formula"));
-	row.Type("FormulaOperators");
-	row.FormulaInputId(id)		
-	row.Value(formulatext);	
+function InitNumberElements(row) {
+	let selectedQuestion = $("#content").find(".selectedquestion").first()
+	let selectedelementId = selectedQuestion.attr("id");
+	if (selectedelementId == null){
+		selectedelementId = selectedQuestion.attr("data-id");
+	}
+	let highlightedIds = []
+	$("#content").find(".highlightedquestion").each(function(){
+		highlightedIds.push($(this).attr("data-id"))
+	})
 	for (let i = 0; i < modelsForNumber.length; i++) {
 		let model = modelsForNumber[i];
 		model.limitedTitle = getLimitedText(model.title());
@@ -255,12 +268,306 @@ function getFormulaPropertiesRow(formulatext) {
 	}
 	for (let i = 0; i < modelsForFormula.length; i++) {
 		let model = modelsForFormula[i];
-		if (model.id() != selectedelementId) {
+		if (model.id() != selectedelementId && highlightedIds.indexOf(model.id()) < 0) {
 			model.limitedTitle = getLimitedText(model.title());
 			row.NumberElements.push(model);
 		}
 	}
+}
+
+function getFormulaPropertiesRow(formulatext) {
+	var id = "id" + idcounter++;	
+	var row = new PropertyRow();
+	row.Label("formula");
+	row.LabelTitle(getPropertyLabel("formula"));
+	row.Type("FormulaOperators");
+	row.FormulaInputId(id)		
+	row.Value(formulatext);	
+	InitNumberElements(row);
 	_elementProperties.propertyRows.push(row);		
+}
+
+function getCellPropertiesRow(cellID) {
+	var parentID = $("#content").find(".selectedquestion").closest(".survey-element").first().attr("id");
+	var table = _elements[parentID];
+	var cell = table.getChildbyId(cellID);
+	var row = new PropertyRow();
+	row.Element(table);
+	row.Cell(cell);
+	row.Label("cell");
+	row.LabelTitle(getPropertyLabel("cell"));
+	row.Type("CellProperties");
+	let id = "id" + idcounter++;
+	row.TinyMCEId(id);
+	InitNumberElements(row);
+	_elementProperties.propertyRows.push(row);
+		
+	tinyMCE.settings = myConfigSettingEditor;
+	tinymce.EditorManager.execCommand('mceToggleEditor', true, id);
+	tinymce.EditorManager.execCommand('mceToggleEditor', true, id + "help");
+	
+	tinyMCE.settings = myConfigSetting2Editor;
+	tinymce.EditorManager.execCommand('mceToggleEditor', true, id + "possibleAnswers");
+	
+	id = "id" + idcounter++;
+	row.FormulaInputId(id)
+	
+	var input = $("#" + cellID + "min");
+	$(input).spinner({ decimals:2, min:0, max:5000, start:"", allowNull: true });
+	$(input).parent().find('.ui-spinner-button').click(function() {
+		update($("#" + cellID + "min"));
+	});
+	$(input).blur(function() {
+		  update(this)
+	});	
+	
+	input = $("#" + cellID + "max");
+	$(input).spinner({ decimals:2, min:0, max:5000, start:"", allowNull: true });
+	$(input).parent().find('.ui-spinner-button').click(function() {
+		update($("#" + cellID + "max"));
+	});
+	$(input).blur(function() {
+		  update(this)
+	});
+	
+	input = $("#" + cellID + "minValue");
+	$(input).spinner({ decimals:0, start:"", allowNull: true });
+	$(input).parent().find('.ui-spinner-button').click(function() {
+		update($("#" + cellID + "minValue"));
+	});
+	$(input).blur(function() {
+		  update(this)
+	});	
+	
+	input = $("#" + cellID + "maxValue");
+	$(input).spinner({ decimals:0, start:"", allowNull: true });
+	$(input).parent().find('.ui-spinner-button').click(function() {
+		update($("#" + cellID + "maxValue"));
+	});
+	$(input).blur(function() {
+		  update(this)
+	});
+	
+	input = $("#" + cellID + "minC");
+	$(input).spinner({ decimals:0, start:"", allowNull: true });
+	$(input).parent().find('.ui-spinner-button').click(function() {
+		update($("#" + cellID + "minC"));
+	});
+	$(input).blur(function() {
+		  update(this)
+	});	
+	
+	input = $("#" + cellID + "maxC");
+	$(input).spinner({ decimals:0, start:"", allowNull: true });
+	$(input).parent().find('.ui-spinner-button').click(function() {
+		update($("#" + cellID + "maxC"));
+	});
+	$(input).blur(function() {
+		  update(this)
+	});
+}
+
+function getCellHeaderPropertiesRow(cellID, isRow) {
+	var parentID = $("#content").find(".selectedquestion").closest(".survey-element").first().attr("id");
+	var table = _elements[parentID];
+	var cell = table.getChildbyId(cellID);
+	var row = new PropertyRow();
+	row.Element(table);
+	row.Cell(cell);
+	row.Label(isRow ? "row" : "column");
+	row.LabelTitle(getPropertyLabel(row.Label()));
+	row.Type("HeaderCellProperties");
+	let id = "id" + idcounter++;
+	row.TinyMCEId(id);
+
+	row.FormulaInputId("id" + idcounter++)
+
+	InitNumberElements(row);
+	
+	const types = [];
+	const titles = [];
+	const numRows = [];
+	let allMandatorySame = true;
+	let lastOptional = null;
+
+	const formulas = [];
+	const minValues = [];
+	const maxValues = [];
+	const decimals = [];
+	const units = [];
+
+	let possibleAnswers = null
+	let possibleAnswersMatch = true
+
+	$(".highlightedquestion").each(function() {
+		const childId = $(this).attr("data-id");
+		let type = $(this).attr("data-type");
+		if (type.length == 0) type = "0";
+		if (types.indexOf(type) < 0) {
+			types.push(type);
+		}
+		const child = table.getChildbyId(childId);
+		const title = child == null ? "" : child.title();
+		if (titles.indexOf(title) < 0) {
+			titles.push(title);
+		}
+		if (child != null) {
+			if (lastOptional != null && child.optional() !== lastOptional){
+				allMandatorySame = false
+			}
+			lastOptional = child.optional()
+		}
+		const rows = child == null ? "" : child.numRows();
+		if (numRows.indexOf(rows) < 0) {
+			numRows.push(rows);
+		}
+
+		const formula = child == null ? "" : child.formula();
+		if (formulas.indexOf(formula) < 0) {
+			formulas.push(formula);
+		}
+
+		if (child == null){
+			//ignore
+		} else if (type == 2){
+			if (minValues.indexOf(child.minCharacters()) < 0) {
+				minValues.push(child.minCharacters());
+			}
+			if (maxValues.indexOf(child.maxCharacters()) < 0) {
+				maxValues.push(child.maxCharacters());
+			}
+		} else if (type == 4 || type == 5){
+			if (minValues.indexOf(child.minChoices()) < 0) {
+				minValues.push(child.minChoices());
+			}
+			if (maxValues.indexOf(child.maxChoices()) < 0) {
+				maxValues.push(child.maxChoices());
+			}
+		} else {
+			if (minValues.indexOf(child.min()) < 0) {
+				minValues.push(child.min());
+			}
+			if (maxValues.indexOf(child.max()) < 0) {
+				maxValues.push(child.max());
+			}
+		}
+
+		const decimalPlaces = child == null ? "" : child.decimalPlaces();
+		if (decimals.indexOf(decimalPlaces) < 0) {
+			decimals.push(decimalPlaces);
+		}
+
+		const unit = child == null ? "" : child.unit();
+		if (units.indexOf(unit) < 0) {
+			units.push(unit);
+		}
+
+		const answers = child == null ? null : child.possibleAnswers()
+		if (possibleAnswers == null){
+			possibleAnswers = answers
+		} else if (possibleAnswersMatch && answers != null){
+			if (possibleAnswers.length === answers.length){
+				for (let i = 0; i < answers.length; i++){
+					if (answers[i].title() !== possibleAnswers[i].title()){
+						possibleAnswersMatch = false
+						break;
+					}
+				}
+			} else {
+				possibleAnswersMatch = false;
+			}
+		}
+	})
+	
+	if (types.length > 1) {
+		cell.cellTypeChildren(-1);
+	} else if (types.length == 1) {
+		cell.cellTypeChildren(types[0]);
+	}
+	
+	if (titles.length > 1) {
+		cell.titleChildren("");
+	} else if (titles.length == 1) {
+		cell.titleChildren(titles[0]);
+	}
+
+	if (allMandatorySame) {
+		cell.optionalChildren(lastOptional !== false); //!== false removes null case
+		cell.optionalIndeterminate(false)
+	} else {
+		cell.optionalChildren(false);
+		cell.optionalIndeterminate(true)
+	}
+
+	if (numRows.length > 1) {
+		cell.numRowsChildren("");
+	} else if (numRows.length == 1) {
+		cell.numRowsChildren(numRows[0]);
+	}
+
+	if (formulas.length > 1) {
+		cell.formulaChildren("");
+	} else if (formulas.length === 1) {
+		cell.formulaChildren(formulas[0]);
+	}
+
+	if (minValues.length > 1) {
+		cell.minChildren("");
+	} else if (minValues.length === 1) {
+		cell.minChildren(minValues[0]);
+	}
+
+	if (maxValues.length > 1) {
+		cell.maxChildren("");
+	} else if (maxValues.length === 1) {
+		cell.maxChildren(maxValues[0]);
+	}
+
+	if (decimals.length > 1) {
+		cell.decimalsChildren("");
+	} else if (decimals.length === 1) {
+		cell.decimalsChildren(decimals[0]);
+	}
+
+	if (units.length > 1) {
+		cell.unitChildren("");
+	} else if (units.length === 1) {
+		cell.unitChildren(units[0]);
+	}
+
+	cell.possibleAnswersMatch(possibleAnswersMatch);
+	cell.possibleAnswers.removeAll();
+	cell.possibleAnswersChildren.removeAll();
+	if (possibleAnswersMatch && possibleAnswers != null){
+		cell.possibleAnswers.push(...possibleAnswers);
+		cell.possibleAnswersChildren.push(...possibleAnswers);
+	}
+
+	_elementProperties.propertyRows.push(row);
+	tinyMCE.settings = myConfigSettingEditor;
+	tinymce.EditorManager.execCommand('mceToggleEditor', true, id);
+	tinymce.EditorManager.execCommand('mceToggleEditor', true, id + "children");
+	
+	tinyMCE.settings = myConfigSetting2Editor;
+	tinymce.EditorManager.execCommand('mceToggleEditor', true, id + "possibleAnswers");
+}
+
+function getFirstCellPropertiesRow(cellID) {
+	var parentID = $("#content").find(".selectedquestion").closest(".survey-element").first().attr("id");
+	var table = _elements[parentID];
+	var cell = table.getChildbyId(cellID);
+	var row = new PropertyRow();
+	row.Element(table);
+	row.Cell(cell);
+	row.Label("cell");
+	row.LabelTitle(getPropertyLabel("cell"));
+	row.Type("FirstCellProperties");
+	let id = "id" + idcounter++;
+	row.TinyMCEId(id);
+	_elementProperties.propertyRows.push(row);
+
+	tinyMCE.settings = myConfigSettingEditor;
+	tinymce.EditorManager.execCommand('mceToggleEditor', true, id);
 }
 
 function getCleanArray(arr)
@@ -1001,7 +1308,7 @@ function getMinMaxPropertiesRow(label, min, max, valuemin, valuemax)
 	});
 }
 
-function getActionRow(label, l1, action, l2, action2)
+function getActionRow(label, l1, action, l2, action2, editenabled)
 {
 	var row = new PropertyRow();
 	row.Type("first");
@@ -1019,12 +1326,18 @@ function getActionRow(label, l1, action, l2, action2)
 	item.Label = l2;
 	item.Id("btnRemove" + label);
 	item.Value(action2);
-	row.ContentItems.push(item);	
+	row.ContentItems.push(item);
 	
-	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions" || label == "RankingItem")
+	if (!$(_elementProperties.selectedelement).hasClass("complextableitem"))
 	{
-		row.Edit(true);
-		row.EditShortnames(true);
+		if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions" || label == "RankingItem")
+		{
+			if (editenabled == null){
+				editenabled = true
+			}
+			row.Edit(editenabled);
+			row.EditShortnames(editenabled);
+		}
 	}
 	
 	_elementProperties.propertyRows.push(row);
@@ -1519,36 +1832,38 @@ function showHideGalleryButtons()
 	});
 }
 
-function addPossibleAnswer()
+function addPossibleAnswer(noundo)
 {
 	var text;
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	var selectedElement = $(_elementProperties.selectedelement);
+	var id = selectedElement.attr("data-id");
+	var element = getElement();
 	
 	text = "Answer " + (element.possibleAnswers().length + 1);
 
 	var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text);
 	element.possibleAnswers.push(newanswer);	
 	
-	if (isQuiz)
+	if (isQuiz && quizanswersrow != null)
 	{
 		quizanswersrow.ContentItems.push(newanswer);
 		initQuizElements(element);
 	}
-	
-	_undoProcessor.addUndoStep(["ADDANSWER", element.id(), newanswer]);
+	if (!noundo) {
+		_undoProcessor.addUndoStep(["ADDANSWER", element.id(), newanswer]);
+	}
 	
 	updateDependenciesView();
-	addElementHandler($(_elementProperties.selectedelement));
+	addElementHandler(selectedElement);
 	
-	updateNavigation($(_elementProperties.selectedelement), id);
+	updateNavigation(selectedElement, id);
 }
 
 function removePossibleAnswer()
 {
-	var text;
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	var selectedElement = $(_elementProperties.selectedelement);
+	var id = selectedElement.attr("data-id");
+	var element = getElement();
 	
 	_elementProperties.selectedproperty = $("#btnRemovePossibleAnswers").closest("tr");
 	removeValidationMarkup();
@@ -1570,9 +1885,59 @@ function removePossibleAnswer()
 	
 	_undoProcessor.addUndoStep(["REMOVEANSWER", element.id(), answer]);
 	updateDependenciesView();
-	addElementHandler($(_elementProperties.selectedelement));
+	addElementHandler(selectedElement);
 	
-	updateNavigation($(_elementProperties.selectedelement), id);
+	updateNavigation(selectedElement, id);
+}
+
+function addPossibleAnswerChildren(){
+	const headerCell = getElement();
+
+	if (!headerCell.possibleAnswersMatch()){
+		return
+	}
+
+	const parentId = $(_elementProperties.selectedelement).closest("li.complextableitem").attr("data-id");
+	const table = _elements[parentId];
+
+	let text = "Answer " + (headerCell.possibleAnswersChildren().length + 1);
+
+	function nextAnswer(){
+		return newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text);
+	}
+
+	headerCell.possibleAnswersChildren.push(nextAnswer());
+
+	$('.highlightedquestion').each(function() {
+		let id = $(this).attr("data-id");
+		let child = table.getChildbyId(id);
+
+		if (child != null) {
+			child.possibleAnswers.push(nextAnswer())
+		}
+	});
+}
+
+function removePossibleAnswerChildren(){
+	const headerCell = getElement();
+
+	if (!headerCell.possibleAnswersMatch() || headerCell.possibleAnswersChildren().length <= 0){
+		return
+	}
+
+	const parentId = $(_elementProperties.selectedelement).closest("li.complextableitem").attr("data-id");
+	const table = _elements[parentId];
+
+	headerCell.possibleAnswersChildren.pop();
+
+	$('.highlightedquestion').each(function() {
+		let id = $(this).attr("data-id");
+		let child = table.getChildbyId(id);
+
+		if (child != null) {
+			child.possibleAnswers.pop()
+		}
+	});
 }
 
 function addRankingEntry()
@@ -1623,28 +1988,41 @@ function addColumn(noundo)
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
 	
-	if (element.type == "Matrix")
-	{
+	if (element.type == "Matrix") {
 		text = "Answer " + (element.answers().length + 1);
+	} else if (element.type == "ComplexTable") {
+		text = getBigLetter(element.answers().length);
 	} else {
 		text = getBigLetter(element.answers().length + 1);
 	}
-	var newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, text, text, false, "", element.answers().length);
-	element.answers.push(newelement);
 	
-	if (element.type == "Matrix")
+	if (element.type == "ComplexTable")
 	{
-		var oldanswerscount = element.answers().length - 1;
-		element.columns(element.columns()+1);
-		//update dependencies
-		for (var i = oldanswerscount; i < element.dependentElementsStrings().length; i+=oldanswerscount+1)
-		{
-			element.dependentElementsStrings.splice(i,0,ko.observable(""));
-		}  
+		element.columns(element.columns() + 1);
+		var newElement = getBasicElement("ComplexTableItem", true, text, null, false);
+		newElement.row = 0;
+		newElement.column = element.columns();
+		newElement.cellType = 1
+		newelement = newComplexTableItemViewModel(newElement);
+		element.childElements.push(newelement);
+	} else {	
+		var newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, text, text, false, "", element.answers().length);
+		element.answers.push(newelement);
 		
-		if(element.isInterdependent())
+		if (element.type == "Matrix")
 		{
-			checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+			var oldanswerscount = element.answers().length - 1;
+			element.columns(element.columns() + 1);
+			//update dependencies
+			for (var i = oldanswerscount; i < element.dependentElementsStrings().length; i+=oldanswerscount+1)
+			{
+				element.dependentElementsStrings.splice(i,0,ko.observable(""));
+			}  
+			
+			if(element.isInterdependent())
+			{
+				checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+			}
 		}
 	}
 	
@@ -1663,21 +2041,32 @@ function removeColumn(noundo)
 	if(element.answers().length <= 1) {
 		return;
 	}
-
-	var col = element.answers.pop();
 	
-	if (element.type == "Matrix")
+	var col;
+	
+	if (element.type == "ComplexTable")
 	{
-		element.columns(element.columns()-1);
-		//update dependencies
-		for (var i = element.questionsOrdered().length * (element.answers().length + 1)  - 1; i >= 0; i-=(element.answers().length+1))
-		{
-			element.dependentElementsStrings.splice(i,1);
-		} 
+		col = []
+		for (let i = 0; i <= element.rows(); i++) {
+			col.push(element.removeChildAt(element.columns(), i));
+		}
+		element.columns(element.columns() - 1);
+	} else {
+		col = element.answers.pop();
 		
-		if(element.isInterdependent())
+		if (element.type == "Matrix")
 		{
-			checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+			element.columns(element.columns()-1);
+			//update dependencies
+			for (var i = element.questionsOrdered().length * (element.answers().length + 1)  - 1; i >= 0; i-=(element.answers().length+1))
+			{
+				element.dependentElementsStrings.splice(i,1);
+			} 
+			
+			if(element.isInterdependent())
+			{
+				checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+			}
 		}
 	}
 	
@@ -1733,13 +2122,22 @@ function addRow(noundo)
 		}
 	}	
 	
-	var newelemen;
+	var newelement;
 	if (element.type == "RatingQuestion")
 	{
 		newelement = newBasicViewModel(getBasicElement("Text", false, text, null, false));
 		element.childElements.push(newelement);
 		
 		$(_elementProperties.selectedelement).find("a.ratingitem").removeAttr("onclick");
+	} else if (element.type == "ComplexTable")
+	{
+		element.rows(element.rows() + 1);
+		var newElement = getBasicElement("ComplexTableItem", true, text, null, false);
+		newElement.row = element.rows();
+		newElement.column = 0;
+		newElement.cellType = 1
+		newelement = newComplexTableItemViewModel(newElement);
+		element.childElements.push(newelement);
 	} else {
 		newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, text, text, false, "", element.questions().length);
 		element.questions.push(newelement);
@@ -1789,6 +2187,15 @@ function removeRow(noundo)
 		{
 			row = element.childElements.pop();
 		}
+	} else if (element.type == "ComplexTable")
+	{
+
+		row = []
+		for (let i = 0; i <= element.columns(); i++) {
+			row.push(element.removeChildAt(i, element.rows()));
+		}
+			
+		element.rows(element.rows() - 1);
 	} else {
 		if (element.questions().length > 1)
 		{
@@ -1821,7 +2228,7 @@ function cancel(button)
 
 	$(button).closest(".propertyrow").removeClass("invalidinput").hide();
 	$(_elementProperties.selectedproperty).removeClass("invalidinput").find(".validationinfobutton").remove();
-	update($("tr[data-label='Columns']"));
+	//update($("tr[data-label='Columns']"));
 }
 
 
@@ -2070,6 +2477,11 @@ function edit(span)
 	} else if (label == "RankingItems")
 	{
 		console.log("RankingItem can not be edited via TinyMCE.");
+	} else if (label == "Text")
+	{
+		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
+		originaltext = tinyMCE.get(_elementProperties.selectedid).getContent();
+		$(span).closest("tr").next().show();
 	} else {
 		var tr = $(span).closest("tr").next();
 		_elementProperties.selectedid = $(tr).find("textarea").first().attr("id");	
@@ -2091,8 +2503,7 @@ function editShortnames(span)
 	var table = $(tr2).find("table").first();
 	$(table).empty();
 	
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	var element = getElement();
 	
 	var elements;
 	if (element.type == "Matrix" || element.type == "Table")
@@ -2188,7 +2599,11 @@ function getColumnsText(useparagraphs)
 				s += "<p>" + title + "</p>";	
 			}
 		} else {
-			arr[arr.length] = element.answers()[i].originalTitle();
+			var title = element.answers()[i].originalTitle();
+			if (title.length == 0) {
+				title = "-";
+			}
+			arr[arr.length] = title;
 		}
 	}
 	
@@ -2245,7 +2660,11 @@ function getRowsText(useparagraphs)
 					s += "<p>" + title + "</p>";	
 				}
 			} else {
-				arr[arr.length] = element.questions()[i].originalTitle();
+				var title = element.questions()[i].originalTitle();
+				if (title.length == 0) {
+					title = "-";
+				}
+				arr[arr.length] = title;
 			}
 		}
 	}
@@ -2346,7 +2765,7 @@ function addFormulaText(text, id) {
 	formulaElement.prop('selectionStart', cursorPos + text.length);
 	formulaElement.prop('selectionEnd', cursorPos + text.length)
 
-	update($(formulaElement));
+	$(formulaElement).blur()
 }
 
 let formulaDialogId = 0;
@@ -2376,12 +2795,19 @@ function adaptFormulaInfo() {
 function addFormula(value) {
 	const formulaElement = $("#" + formulaDialogId);
 	$(formulaElement).val($(formulaElement).val() + value + "(");
-	update($(formulaElement));
+	$(formulaElement).blur();
 	$('#FormulaDialog').modal("hide");
 }
 
 function clearFormula(id) {
 	const formulaElement = $("#" + id);
 	$(formulaElement).val("");
-	update($(formulaElement));
+	$(formulaElement).blur();
 }
+
+ko.bindingHandlers.indeterminateValue = { //This knockout binding, makes checkboxes show as indeterminate
+	update: function (element, valueAccessor) {
+		let value = ko.utils.unwrapObservable(valueAccessor());
+		element.indeterminate = value;
+	}
+};
