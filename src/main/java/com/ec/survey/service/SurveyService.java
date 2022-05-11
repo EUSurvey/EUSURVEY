@@ -845,9 +845,11 @@ public class SurveyService extends BasicService {
 			List<String> translations = translationService.getTranslationLanguagesForSurvey(survey.getId());
 			survey.setTranslations(translations);
 		}
-		if (survey != null && synchronizeSurvey) {
-			synchronizeSurvey(survey, survey.getLanguage().getCode(), setSurvey);
-			Hibernate.initialize(survey.getOwner().getRoles());
+		if (survey != null) {
+			if (synchronizeSurvey) {
+				synchronizeSurvey(survey, survey.getLanguage().getCode(), setSurvey);
+				Hibernate.initialize(survey.getOwner().getRoles());
+			}
 
 			session.setReadOnly(survey, readonly);
 			for (Element e : survey.getElementsRecursive(true)) {
@@ -1156,15 +1158,21 @@ public class SurveyService extends BasicService {
 				survey.setIsPublished(true);
 				session.update(survey);
 			}
-
-			if (checkActive && !isDraft) {
+			
+			Survey draft = null;
+			if (isDraft) {
+				draft = survey;
+			} else {
 				query = session.createQuery(sql).setString("uid", uidorshortname).setBoolean("draft", true);
 				id = ConversionTools.getValue(query.uniqueResult());
 
 				if (id == 0)
 					return null;
 
-				Survey draft = (Survey) session.get(Survey.class, id);
+				draft = (Survey) session.get(Survey.class, id);
+			}
+
+			if (checkActive && !isDraft) {				
 				if (!draft.getIsActive())
 					return null;
 			}
@@ -1177,7 +1185,7 @@ public class SurveyService extends BasicService {
 
 			if (synchronize) {
 				if (language == null) {
-					synchronizeSurvey(survey, survey.getLanguage().getCode(), true);
+					synchronizeSurvey(survey, draft.getLanguage().getCode(), true);
 				} else {
 					synchronizeSurvey(survey, language, true);
 				}

@@ -506,7 +506,7 @@ public class AnswerExplanationService extends BasicService {
 		query.executeUpdate();
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public Map<String, String> getUserAliases(String surveyUid) {
 		final Session session = sessionFactory.getCurrentSession();
 
