@@ -217,6 +217,11 @@ public class RunnerController extends BasicController {
 					if (draftSurvey.getIsFrozen()) {
 						throw new FrozenSurveyException();
 					}
+					
+					if (!draftSurvey.getLanguage().getCode().equals(survey.getLanguage().getCode())) {
+						//this can happen as a result of a known issue
+						SurveyHelper.synchronizeSurvey(survey, draftSurvey.getLanguage().getCode(), translationService, draftSurvey.getLanguage(), true);
+					}
 
 					Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 							survey.getLanguage(), resources, contextpath);
