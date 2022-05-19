@@ -2267,7 +2267,7 @@ function resetFeedback(button)
 function resetHelp(button)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
-	var element = _elements[id];
+	var element = getElement();
 	
 	var oldtext = element.help();
 	element.help("");

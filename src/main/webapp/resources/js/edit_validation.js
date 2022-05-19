@@ -602,7 +602,7 @@ function checkPossibleAnswers(lines)
 		}
 	}
 	
-	if (count < 2)
+	if ((count < 2) && !($(_elementProperties.selectedelement).hasClass("cell")))
 	{
 		$(_elementProperties.selectedproperty).closest("tr").addClass("invalidinput");					
 		var label = getPropertyLabel("TableAnswers");					

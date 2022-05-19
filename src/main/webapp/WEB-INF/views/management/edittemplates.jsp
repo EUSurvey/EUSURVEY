@@ -776,8 +776,8 @@
 				</div>
 
 				<button data-toggle="tooltip" title="<spring:message code="label.Add" />" class="btn btn-default btn-sm" onclick="addPossibleAnswer()"><span class="glyphicon glyphicon-plus"></span></button>
-				<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" title="<spring:message code="label.Remove"/>" onclick="removePossibleAnswer()">
-					<button data-bind="disable: !(PreviewItems().length > 0)" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></button>
+				<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" data-bind="attr: {'onclick': PreviewItems().length > 1 ? 'removePossibleAnswer()' : ''}" title="<spring:message code="label.Remove"/>">
+					<button data-bind="disable: !(PreviewItems().length > 1)" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></button>
 				</span>
 			</td>
 		</tr>
