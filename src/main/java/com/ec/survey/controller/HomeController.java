@@ -49,14 +49,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class HomeController extends BasicController {
 	
 	public @Value("${stresstests.createdata}") String createStressData;	
-	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${server.prefix}") String host;
 	
 	private @Value("${support.recipient}") String supportEmail;
 	private @Value("${support.recipientinternal}") String supportEmailInternal;
 
 	private @Value("${support.smIncidentHost}") String incidentHost;
+	private @Value("${support.smBasicAuth:#{null}}") String smtpAuth;
 
 	@Autowired
 	protected PaginationMapper paginationMapper;    
@@ -344,6 +343,10 @@ public class HomeController extends BasicController {
 			HttpPost httppost = new HttpPost(incidentHost);
 
 			httppost.setEntity(new StringEntity(createTemplate));
+			
+			if (smtpAuth != null) {
+				httppost.addHeader("Authorization", "Basic " + smtpAuth);
+			}
 
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
