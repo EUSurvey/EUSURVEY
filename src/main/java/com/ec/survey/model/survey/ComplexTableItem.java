@@ -323,10 +323,7 @@ public class ComplexTableItem extends Question {
 		ComplexTableItem row = parent.getChildAt(0, this.column);
 		ComplexTableItem column = parent.getChildAt(this.row, 0);
 		
-		String columnPart = column == null ? "-" : valueOrDash(column.getStrippedTitle());
-		String rowPart = row == null ? "-" : valueOrDash(row.getStrippedTitle());
-		
-		return valueOrDash(parent.getStrippedTitle()) + " : " + columnPart + " : " + rowPart;		
+		return valueOrDash(parent.getStrippedTitle()) + " : " + valueOrDash(column.getStrippedTitle()) + " : " + valueOrDash(row.getStrippedTitle());		
 	}
 	
 	private String valueOrDash(String value) {
