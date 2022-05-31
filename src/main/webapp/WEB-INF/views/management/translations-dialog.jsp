@@ -376,13 +376,11 @@
     <div class="modal-content">
 	  <div class="modal-header"> 
 	  	<spring:message code="label.RequestTranslationHeader" /><span id="current-lang-request" name ="current-lang-request"></span> 
-	  </div>	
-	  <div class="modal-body">			 
-	  	<spring:message code="label.MainLanguage"/>
+	  </div>
+	  <div class="modal-body">
+	  	<b><spring:message code="label.MachineTranslationInstructions"/></b>
 	  	<br />
-	  	<spring:message code="label.MainExplanation"/>
-	  	<br />
-	  	<select id="pivotlangs" name="pivotlangs" >
+	  	<select id="pivotlangs" name="pivotlangs" style="margin-top: 6px; width: auto" class="form-control">
 				<c:forEach items="${completedTranslations}" var="trans">				
 					<option value="${trans.key}"><esapi:encodeForHTML>${trans.value}</esapi:encodeForHTML></option>
  				</c:forEach>

@@ -629,7 +629,7 @@ function initModals(item)
 				
 			} else {
 				if (!resetButtonAdded)
-                $(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
+                $(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this, !!$(\"#add-share-dialog2-static\").length)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
             }
 		} else if ($(cell).find(".activityselect").length > 0) {
 			if ($(cell).find(".activityselect").first().val().length > 0)
@@ -744,47 +744,51 @@ function initModals(item)
 		}
 	}
 	
-	function clearFilterCellContent(link)
+	function clearFilterCellContent(link, staticSearch)
 	{
-		var cell = $(link).closest('.filtercell');
-		$(cell).find(".check").removeAttr("checked");
-		$(cell).find("input[type='text']").val("");
-		$(cell).find(".datepicker").each(function(){
+		let cell = $(link).closest('.filtercell');
+		cell.find(".check").removeAttr("checked");
+		cell.find("input[type='text']").val("");
+		cell.find(".datepicker").each(function(){
 			removeDateSelection(this);
 		});
-		$(cell).find(".activityselect").val("");
+		cell.find(".activityselect").val("");
 		
 		checkFilterCell(cell, true);
-		$(cell).css("background-color", "");
+		cell.css("background-color", "");
 		
 		if ($("#contributionsearchForm").length > 0 || $(".noautosubmitonclearfilter").length > 0){
 			//we do not automatically submit due to performance reasons			
 			return;
 		}
 		
-		if ($(cell).closest("#contactshead").length > 0){
+		if (cell.closest("#contactshead").length > 0){
 			_participants.loadAttendees(true); 
-		} else if ($(cell).closest("#selectedcontactshead").length > 0){
+		} else if (cell.closest("#selectedcontactshead").length > 0){
 			_participants.selectedGroup().filterContacts(); 
-		} else if ($(cell).closest("#selectedeccontactshead").length > 0){
+		} else if (cell.closest("#selectedeccontactshead").length > 0){
 			_participants.selectedGroup().filterUsers(); 			
-		} else if ($(cell).closest("#eccontactshead").length > 0){
+		} else if (cell.closest("#eccontactshead").length > 0){
 			_participants.loadUsers(true); 
 		} else if ($(link).closest('form').length == 0 && $("#resultsForm").length > 0){
 			$("#resultsForm").submit();	
 		} else if ($(link).closest('form').length == 0 && $("#publishsurveysform").length > 0){
 			$("#publishsurveysform").submit();	
 		} else {
-			var found = false;
-			$("form").each(function(){
-				if ($(this).find(".filtercell").length > 0)
-				{
-					$(this).submit();
-					found = true;
-					return;
-				}
-			});
-			if (!found)	$("form").submit();
+			if (staticSearch){
+				searchStatic(true, true, false);
+			} else {
+				var found = false;
+				$("form").each(function(){
+					if ($(this).find(".filtercell").length > 0)
+					{
+						$(this).submit();
+						found = true;
+						return;
+					}
+				});
+				if (!found)	$("form").submit();
+			}
 		}
 	}
 
@@ -846,8 +850,12 @@ function initModals(item)
 
 		let focusElement = $(`[aria-describedby='${validError.attr("id")}']`)
 		
-		if (focusElement.length > 0 && focusElement.is("div,table")) {
-			focusElement = focusElement.find('input, textarea, select').first();
+		if (focusElement.length > 0 && focusElement.is("div,table,.ranking")) {
+			if (focusElement.hasClass("ranking")){
+				focusElement = focusElement.parent().find(".rankingitem-button").first()
+			} else {
+				focusElement = focusElement.find('input, textarea, select').first();
+			}
 		}
 		
 		if (focusElement.length <= 0){
@@ -930,6 +938,8 @@ function initModals(item)
 						// Empty value of unanswered input elements.
 						$(form).find("input[data-is-answered='false']").val('');
 					}
+
+					$(form).find("input[data-is-answered='false'].sliderbox").val('');
 
 					$(form).submit();
 					return;
@@ -1800,9 +1810,11 @@ function initModals(item)
 			};
 		});
 		
-		$(parent).find(".number").each(function(){
+		$(parent).find(".number,.formula").each(function(){
 
-			if (isElementInvisible(this) || $(this).val() == "") return;
+			//In FF val() is "" even when input[type=number] has non empty text.
+			//the validity.badInput check takes care of this, so that later a validation error is set
+			if (isElementInvisible(this) || ($(this).val() == "" && !this.validity.badInput)) return;
 			
 			var classes = $(this).attr('class').split(" ");
 			var value = parseFloat($(this).val());
@@ -1867,7 +1879,7 @@ function initModals(item)
 			}
 		});
 		
-		$(parent).find(".listbox").each(function(){
+		$(parent).find(".listbox,.multiple-choice[role=listbox]").each(function(){
 
 			if (isElementInvisible(this)) return;
 			
@@ -1897,7 +1909,7 @@ function initModals(item)
 			}	
 		});
 		
-		$(parent).find(".answer-columns").each(function(){
+		$(parent).find(".answer-columns,.complex-multitable").each(function(){
 
 			if (isElementInvisible(this)) return;
 
@@ -2357,6 +2369,11 @@ function initModals(item)
 		
 		$("#add-survey-dialog").modal("hide");
 		$("#generic-wait-dialog").modal("show");
+
+		if (window.ignoreUnsavedChanges) {
+			// set in editor if user chooses to ignore unsaved changes; disables browser dialog whether user really wants to leave site
+			window.onbeforeunload = undefined;
+		}
 		
 		$("#create-survey").submit();
 	}

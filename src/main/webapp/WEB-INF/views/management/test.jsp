@@ -36,6 +36,13 @@
 		.page {
 		 	background-color: #fff;
 		}
+		.progressBar {
+			top: 120px;
+			bottom: 140px;
+		}
+		.progressBarPlaceholder {
+			height: 0px;
+		}
 	</style>
 
 	<script type="text/javascript" src="${contextpath}/resources/js/fileuploader.js?version=<%@include file="../version.txt" %>"></script>
@@ -87,7 +94,9 @@
 			} else {
 				applyStandardWidths();
 				checkPages();
+				updateAllFormulas();
 				readCookies();
+				updateProgress();
 				$("#btnSubmit").removeClass("hidden");
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");

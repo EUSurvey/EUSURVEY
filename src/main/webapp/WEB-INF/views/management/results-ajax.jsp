@@ -43,6 +43,19 @@
 							  setTimeout(function(){ loadStatisticsAsync(publication); }, 10000);
 							  return;
 						  }
+
+						  //If there are no contributions, maxSectionScore is empty
+						  //Sections visibility is dependent on maxSectionScore, so if there are no quiz questions in the table
+						  // -> set maxSectionScore to 0
+						  if (JSON.stringify(statistics.maxSectionScore) === "{}"){
+							  $(".sectiontitle").each(function () {
+								  let section = $(this)
+								  let questionsTable = section.nextAll("table.table:first")
+								  if (questionsTable.find("tr").length <= 1){
+									  statistics.maxSectionScore[section.attr("data-id")] = 0
+								  }
+							  })
+						  }
 						  
 						  $(".deactivatedstatexports").hide();
 						  $(".activatedstatexports").show();	
@@ -80,6 +93,27 @@
 								 }
 							  });
 						  
+						  $(".statRequestedRecordsRankingScore").each(function(){
+								 var id = $(this).attr("data-id");
+								 var parentId = $(this).attr("data-parent-id");
+							
+								 if (statistics.requestedRecordsRankingScore[id] != null)
+								 {
+									var value = parseInt(statistics.requestedRecordsRankingScore[id]);
+									var total = parseInt(statistics.requestedRecordsRankingScore[parentId]);
+									var percentage = statistics.requestedRecordsRankingPercentScore[id];
+									 
+									if (id.indexOf("-") < 0) {
+										// the score column
+										$(this).html("<b><span>" + percentage + "</span></b><br />" + total);
+										$(this).closest("tr").attr("data-value", percentage);
+									} else {
+									 	// other column
+									 	$(this).html("<b>" + percentage + "%</b><br /><span>" + value + "</span>");
+									}
+								 }
+							  });
+						  
 						  $(".statRequestedRecordsPercentScore").each(function(){
 								 var id = $(this).attr("data-id");
 								 if (statistics.requestedRecordsScore[id] != null)
@@ -98,7 +132,7 @@
 						  $(".statMeanScore").html(roundToTwo(statistics.meanScore) + '&#x20;<spring:message code="label.of" />&#x20;' + statistics.maxScore + '&#x20;<spring:message code="label.points" /> (' + roundToTwo(statistics.maxScore == 0 ? 0 : statistics.meanScore / statistics.maxScore * 100) + '%)');
 						  $(".statBestScore").html(statistics.bestScore + '&#x20;<spring:message code="label.of" />&#x20;' + statistics.maxScore + '&#x20;<spring:message code="label.points" /> (' + roundToTwo(statistics.maxScore == 0 ? 0 : statistics.bestScore / statistics.maxScore * 100) + '%)');
 						  $(".statTotal").html(statistics.total);
-						  
+
 						  $(".statMeanSectionScore").each(function(){
 							  var id = $(this).attr("data-id");							  
 							  $(this).html(roundToTwo(statistics.meanSectionScore[id]) + '&#x20;<spring:message code="label.of" />&#x20;' + statistics.maxSectionScore[id] + '&#x20;<spring:message code="label.points" /> (' + roundToTwo(statistics.maxSectionScore[id] == 0 ? 0 : statistics.meanSectionScore[id] / statistics.maxSectionScore[id] * 100) + '%)');
@@ -193,7 +227,7 @@
 				if ($(chartwrapper).data("initial-chart-type") == 'None') {
 					addChart(this, null, "None", false);
 				} else {
-					loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
+					loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300, null);
 				}
 			});
 		}
@@ -208,6 +242,7 @@
 				$(controls).find(".chart-scheme-group").first().hide();
 				$(controls).find(".chart-size-group").first().hide();
 				$(controls).find(".chart-legend-group").first().hide();
+				$(controls).find(".chart-score-group").hide();
 				$(chartwrapper).hide();
 				return;
 			} else {
@@ -217,11 +252,12 @@
 			}
 			const scheme = $(controls).find(".chart-scheme").first().val();
 			const legend = $(controls).find(".chart-legend").first().is(":checked");
+			const score = $(controls).find(".chart-score").first().is(":checked");
 
 			const size = $(chartwrapper).closest(".elementwrapper, .statelement-wrapper").find(".chart-size").first().val();
 			const canvasWidth = getChartCanvasHeightAndWidth(size).width;
 
-			loadGraphDataInnerForResults(chartwrapper, addChart, chartType, scheme, legend, canvasWidth);
+			loadGraphDataInnerForResults(chartwrapper, addChart, chartType, scheme, legend, canvasWidth, score);
 		}
 
 		function getChartCanvasHeightAndWidth(size) {
@@ -355,6 +391,12 @@
 			} else {
 				$(elementWrapper).find(".chart-legend-group").hide();
 			}
+			
+			if (isDrawChart && $(elementWrapper).hasClass("ranking-chart") && chartType === "Bar") {
+				$(elementWrapper).find(".chart-score-group").show();
+			} else {
+				$(elementWrapper).find(".chart-score-group").hide();
+			}
 
 			if (!!chart) {
 				new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
@@ -364,13 +406,14 @@
 				$(controls).find(".chart-scheme-group").first().hide();
 				$(controls).find(".chart-size-group").first().hide();
 				$(controls).find(".chart-legend-group").first().hide();
+				$(controls).find(".chart-score-group").first().hide();
 				const chartDataType = $(elementWrapper).find(".chart-wrapper").data("chart-data-type");
 				if (chartDataType == "Textual") {
 					$(elementWrapper).find("option[data-type='numerical']").hide();
 					$(elementWrapper).find(".chart-scheme").first().val("Style B");
 				} else {
 					$(elementWrapper).find("option[data-type='textual']").hide();
-				}
+				}				
 				$(elementWrapper).find(".chart-wrapper").hide();
 			} else {
 				$(controls).find(".chart-scheme-group").first().show();
@@ -382,6 +425,31 @@
 				$(elementWrapper).find(".chart-controls").hide();
 			}
         }
+		
+		function sortRankingStatistics(button, descending) {
+ 			var index = $(button).closest("th").index();
+ 			var table = $(button).closest("table")[0];
+
+			var rows, switching, i, x, y, shouldSwitch;
+			switching = true;
+			while (switching) {
+			    switching = false;
+			    rows = table.rows;
+			    for (i = 1; i < (rows.length - 2); i++) {
+			      shouldSwitch = false;
+			      x = rows[i].getElementsByTagName("TD")[index].getElementsByTagName("SPAN")[0];
+			      y = rows[i + 1].getElementsByTagName("TD")[index].getElementsByTagName("SPAN")[0];
+			      if ((descending && parseFloat(x.innerText) < parseFloat(y.innerText)) || (!descending && parseFloat(x.innerText) > parseFloat(y.innerText))) {
+			        shouldSwitch = true;
+			        break;
+			      }
+			    }
+			    if (shouldSwitch) {
+			      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+			      switching = true;
+			    }
+			}
+		}
 
 	</script>
 </c:if>

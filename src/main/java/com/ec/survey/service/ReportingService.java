@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -30,19 +31,20 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
-import com.ec.survey.model.Form;
 import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.ResultFilter.ResultFilterSortKey;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.survey.ChoiceQuestion;
+import com.ec.survey.model.survey.ComplexTable;
+import com.ec.survey.model.survey.ComplexTableItem;
 import com.ec.survey.model.survey.DateQuestion;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.EmailQuestion;
 import com.ec.survey.model.survey.FreeTextQuestion;
+import com.ec.survey.model.survey.FormulaQuestion;
 import com.ec.survey.model.survey.GalleryQuestion;
 import com.ec.survey.model.survey.Matrix;
-import com.ec.survey.model.survey.MatrixOrTable;
 import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
 import com.ec.survey.model.survey.Question;
@@ -325,7 +327,7 @@ public class ReportingService extends BasicService {
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i, "%" + answerUid + "%");
-								} else if (question instanceof NumberQuestion) {
+								} else if (question instanceof NumberQuestion || question instanceof FormulaQuestion) {
 									double val = Double.parseDouble(answer);
 									where += columnname + " = :answer" + i;
 									values.put(Constants.ANSWER + i, val);
@@ -415,7 +417,7 @@ public class ReportingService extends BasicService {
 				columns++;
 			} else if (question instanceof EmailQuestion || question instanceof RegExQuestion) {
 				columns++;
-			} else if (question instanceof NumberQuestion) {
+			} else if (question instanceof NumberQuestion || question instanceof FormulaQuestion) {
 				columns++;	
 			} else if (question instanceof DateQuestion) {
 				columns++;
@@ -495,6 +497,12 @@ public class ReportingService extends BasicService {
 	    			{
 	    				visibleQuestions.put(question.getUniqueId(), question);	  
 	    			}
+	    		} else if (question instanceof ComplexTable)
+    			{
+	    			for (Element child : ((ComplexTable)question).getQuestionChildElements())
+    				{
+	    				visibleQuestions.put(child.getUniqueId(), child);
+		    		}
     			} else if (question.isUsedInResults()) {
 	    			visibleQuestions.put(question.getUniqueId(), question);	    		
 	    		}
@@ -529,8 +537,9 @@ public class ReportingService extends BasicService {
 	    {
 	    	visibleQuestions.put("SCORE", null);
 	    }
-	        
-	    String sql = "SELECT QCONTRIBUTIONID, QANSWERSETID";
+	    
+	    // QANSWERSETID is used in all tables (after 1000 columns a new table is created)
+	    String sql = "SELECT QCONTRIBUTIONID, " + getOLAPTableName(survey) + ".QANSWERSETID";
 	    for (String question : visibleQuestions.keySet())
 	    {
 	    	if (question.equals("CONTRIBUTIONID"))
@@ -711,6 +720,46 @@ public class ReportingService extends BasicService {
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
+							} else if (question instanceof FormulaQuestion) {
+								FormulaQuestion formulaQuestion = (FormulaQuestion)question;
+								if (formulaQuestion.getDecimalPlaces() != null) {
+									row.add(String.format(Locale.ROOT, "%." + formulaQuestion.getDecimalPlaces() + "f", item));
+								} else {
+									row.add(item.toString());
+								}
+							} else if (question instanceof ComplexTableItem) {
+								ComplexTableItem child = (ComplexTableItem) question;
+								if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+									String[] answerids = item.toString().split(";");						
+									String v = "";
+									for (String answerid : answerids)
+									{
+										if (v.length() > 0) v += ";";
+										Element answer = child.getPossibleAnswerByUniqueId(answerid);
+										if (answer != null)
+										{
+											if (doNotReplaceAnswerIDs)
+											{
+												v += answerid;
+											} else {
+												v += answer.getStrippedTitle();
+											}
+											
+											if (showShortnames) {
+												v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+											}
+										}							
+									}						
+									row.add(v.length() > 0 ? v : null);
+								} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
+									if (child.getDecimalPlaces() != null) {
+										row.add(String.format(Locale.ROOT, "%." + child.getDecimalPlaces() + "f", item));
+									} else {
+										row.add(item.toString());
+									}
+								} else {
+									row.add(item.toString());
+								}
 							} else {
 								row.add(item.toString());
 							}
@@ -946,6 +995,8 @@ public class ReportingService extends BasicService {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof NumberQuestion) {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DOUBLE");
+			} else if (question instanceof FormulaQuestion) {
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DOUBLE");
 			} else if (question instanceof DateQuestion) {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DATE");
 			} else if (question instanceof TimeQuestion) {
@@ -983,6 +1034,15 @@ public class ReportingService extends BasicService {
 				}
 			} else if (question instanceof RankingQuestion) {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
+			} else if (question instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) question;
+				for (ComplexTableItem child : table.getQuestionChildElements()) {
+					if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
+						putColumnNameAndType(columnNamesToType, child.getUniqueId(), "DOUBLE");
+					} else {
+						putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
+					}
+				}
 			}
 		}
 		return columnNamesToType;
@@ -1342,7 +1402,7 @@ public class ReportingService extends BasicService {
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());
 				parameters.put("value" + parameters.size(), !answers.isEmpty() ? shrink(answers.get(0).getValue()) : null);
-			} else if (question instanceof NumberQuestion) {
+			} else if (question instanceof NumberQuestion || question instanceof FormulaQuestion) {
 				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
 				Double num = null;
 				if (!answers.isEmpty())
@@ -1500,6 +1560,48 @@ public class ReportingService extends BasicService {
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());
 				parameters.put("value" + parameters.size(), d);	
+			} else if (question instanceof ComplexTable) {
+				
+				ComplexTable table = (ComplexTable) question;
+				
+				for(ComplexTableItem child: table.getQuestionChildElements()) {				
+					if (child.getCellType() == ComplexTableItem.CellType.FreeText)
+					{
+						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());
+						columns.add(child.getUniqueId());
+						values.add(":value" + parameters.size());
+						parameters.put("value" + parameters.size(), !answers.isEmpty() ? shrink(answers.get(0).getValue()) : null);
+					} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
+						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());				
+						Double num = null;
+						if (!answers.isEmpty())
+						{
+							try {
+								num = Double.parseDouble(answers.get(0).getValue());
+							} catch (Exception e) {
+								num = 0.0;
+							}
+						}											
+						columns.add(child.getUniqueId());
+						values.add(":value" + parameters.size());
+						parameters.put("value" + parameters.size(), num);			
+					} else if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());				
+						columns.add(child.getUniqueId());
+						String v = null;
+						if (!answers.isEmpty())
+						{
+							v = "'";
+							for (Answer answer : answers)
+							{
+								v += answer.getPossibleAnswerUniqueId();
+								if (child.getCellType() == ComplexTableItem.CellType.MultipleChoice) v += ";";
+							}
+							v += "'";
+						}
+						values.add(v);				
+					}					
+				}
 			}
 		}
 		
@@ -1651,7 +1753,6 @@ public class ReportingService extends BasicService {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
 	public int getCount(Survey survey) {
 		return this.getCountInternal(survey.getIsDraft(), survey.getUniqueId());
@@ -1766,6 +1867,40 @@ public class ReportingService extends BasicService {
 		}
 		return length;
 	}
+	
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public List<String> getAnswersByQuestionUIDInternal(Survey survey, String quid, String where, Map<String, Object> values) {
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		String sql = "SELECT Q" + quid.replace("-", "") + " FROM " + getOLAPTableName(survey);
+		
+		if (where != null) {
+			sql += where;
+		}
+
+		SQLQuery query = sessionReporting.createSQLQuery(sql);
+
+		if (where != null && values != null && !values.isEmpty()) {
+			for (String attrib : values.keySet()) {
+				Object value = values.get(attrib);
+				if (value instanceof String) {
+					query.setString(attrib, (String) values.get(attrib));
+				} else if (value instanceof Integer) {
+					query.setInteger(attrib, (Integer) values.get(attrib));
+				} else if (value instanceof Date) {
+					query.setTimestamp(attrib, (Date) values.get(attrib));
+				}
+			}
+		}
+		
+		List<String> result = new ArrayList<>();
+
+		for (Object answer : query.list()) {	
+			if (answer != null) {
+				result.add(answer.toString());
+			}
+		}
+		return result;
+	}
 
 	private String shrink(String input) {
 		if (input == null || input.length() < 5001) return input;
@@ -1776,7 +1911,6 @@ public class ReportingService extends BasicService {
 	public void addToDoInternal(ToDo todo, String uid, String code) { 
 		this.addToDoInternal(todo, uid, code, false);
 	}
-
 
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
 	public void addToDoInternal(ToDo todo, String uid, String code, boolean executeTodoSynchronously) {

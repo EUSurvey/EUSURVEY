@@ -23,9 +23,16 @@ import com.ec.survey.service.SurveyException;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +85,12 @@ public class ManagementController extends BasicController {
 	public @Value("${opc.department:@null}") String opcdepartments;
 	public @Value("${opc.template}") String opctemplatesurvey;
 	public @Value("${ecf.template}") String ecfTemplateSurvey;
+	public @Value("${codaCreateDashboardLink:#{null}}") String codaCreateDashboardLink;
+	public @Value("${codaApiKey:#{null}}") String codaApiKey;
+
+	private static final String[] KNOWN_RESULTTYPES = {
+			"content", "charts", "statistics", "ecf", "ecf2", "ecf3", "statistics-delphi", "statistics-quiz"
+	};
 
 	@InitBinder
 	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
@@ -341,8 +354,12 @@ public class ManagementController extends BasicController {
 			delete = Constants.FALSE;
 		}
 		User u = sessionService.getCurrentUser(request);
+		
+		sessionService.upgradePrivileges(survey, u, request);
+		
 		if (!u.getId().equals(survey.getOwner().getId())
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
 				&& (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1
 						|| answers != null && answers.equalsIgnoreCase("true"))) {
 			throw new ForbiddenURLException();
@@ -1011,7 +1028,7 @@ public class ManagementController extends BasicController {
 	/** when a particular Survey type has some conditions on properties, they are set here
 	 * @throws ValidationException 
 	*/
-	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation) throws ValidationException {
+	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation, Map<String, Translations> translationsToCreate) throws ValidationException {
 		if (survey.getIsDelphi()) {
 			survey.setChangeContribution(true); // should always be activated for delphi surveys
 			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
@@ -1039,11 +1056,68 @@ public class ManagementController extends BasicController {
 				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
 					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
 					template.copyElements(survey, surveyService, true);
+					
+					List<Translations> translations = translationService.getActiveTranslationsForSurvey(template.getId());
+					Map<String, Map<String, Translation>> oldTranslations = new HashMap<>();
+					
+					// copy published translations
+					for (Translations trans : translations) {
+						if (trans.getComplete() && !trans.getLanguage().getCode().equals(survey.getLanguage().getCode())) {
+							oldTranslations.put(trans.getLanguage().getCode(), trans.getTranslationsByKey());
+							Translations trans2 = new Translations();
+							trans2.setLanguage(trans.getLanguage());
+							translationsToCreate.put(trans2.getLanguage().getCode(), trans2);							
+							
+							String confirmation = resources.getMessage("message.confirmation", null, Survey.CONFIRMATIONTEXT,
+									new Locale(trans.getLanguage().getCode()));
+							trans2.getTranslations().add(new Translation(Survey.CONFIRMATIONPAGE, confirmation,
+									trans.getLanguage().getCode(), null, trans2));
+						
+							String escape = resources.getMessage("message.escape", null, Survey.ESCAPETEXT,
+									new Locale(trans.getLanguage().getCode()));
+							trans2.getTranslations().add(new Translation(Survey.ESCAPEPAGE, escape, trans.getLanguage().getCode(),
+									null, trans2));							
+						}
+					}
 
 					// recreate unique ids
 					for (Element elem : survey.getElementsRecursive(true)) {
 						String newUniqueId = UUID.randomUUID().toString();
+						String oldUniqueId = elem.getUniqueId();
+						
 						elem.setUniqueId(newUniqueId);
+						
+						Map<String, String> possibleKeys = new HashMap<>();
+						possibleKeys.put(oldUniqueId, newUniqueId);
+						possibleKeys.put(oldUniqueId + "help", newUniqueId + "help");
+						possibleKeys.put(oldUniqueId + Question.FEEDBACK, newUniqueId + Question.FEEDBACK);
+						possibleKeys.put(oldUniqueId + Section.TABTITLE, newUniqueId + Section.TABTITLE);
+						possibleKeys.put(oldUniqueId + NumberQuestion.UNIT, newUniqueId + NumberQuestion.UNIT);
+						possibleKeys.put(oldUniqueId + NumberQuestion.MINLABEL, newUniqueId + NumberQuestion.MINLABEL);
+						possibleKeys.put(oldUniqueId + NumberQuestion.MAXLABEL, newUniqueId + NumberQuestion.MAXLABEL);
+						possibleKeys.put(oldUniqueId + Confirmation.TEXT, newUniqueId + Confirmation.TEXT);
+						possibleKeys.put(oldUniqueId + Confirmation.LABEL, newUniqueId + Confirmation.LABEL);
+						possibleKeys.put(oldUniqueId + MatrixOrTable.FIRSTCELL, newUniqueId + MatrixOrTable.FIRSTCELL);
+						possibleKeys.put(oldUniqueId + GalleryQuestion.TEXT, newUniqueId + GalleryQuestion.TEXT);
+						possibleKeys.put(oldUniqueId + GalleryQuestion.TITLE, newUniqueId + GalleryQuestion.TITLE);
+						possibleKeys.put(oldUniqueId + "RESULTTEXT", newUniqueId + "RESULTTEXT");
+						
+						for (String languageCode : oldTranslations.keySet()) {
+							Map<String, Translation> translationsByKey = oldTranslations.get(languageCode);
+							Translations trans2 = translationsToCreate.get(languageCode);
+							
+							for (String possibleOldKey : possibleKeys.keySet()) {							
+								if (translationsByKey.containsKey(possibleOldKey)) {
+									Translation value = translationsByKey.get(possibleOldKey);
+									Translation value2 = new Translation();
+									value2.setKey(possibleKeys.get(possibleOldKey));
+									value2.setLabel(value.getLabel());
+									value2.setLanguage(value.getLanguage());
+									value2.setTranslations(trans2);
+									trans2.getTranslations().add(value2);
+								}							
+							}
+						}						
 					}
 				}
 			}		
@@ -1061,6 +1135,8 @@ public class ManagementController extends BasicController {
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 		Map<Integer, String[]> activitiesToLog = new HashMap<>();
 		Map<String, String> oldBackgroundDocuments = new HashMap<>();
+
+		List<String> keyTranslationsToAdd = new LinkedList<>();
 
 		File oldlogo = null;
 
@@ -1318,6 +1394,20 @@ public class ManagementController extends BasicController {
 
 		if (survey.getMultiPaging() != uploadedSurvey.getMultiPaging())
 			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getProgressBar(), uploadedSurvey.getProgressBar()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationPopup(), uploadedSurvey.getMotivationPopup()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationText(), uploadedSurvey.getMotivationText()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationTriggerProgress(), uploadedSurvey.getMotivationTriggerProgress()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationTriggerTime(), uploadedSurvey.getMotivationTriggerTime()))
+			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationType(), uploadedSurvey.getMotivationType()))
+			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getProgressDisplay(), uploadedSurvey.getProgressDisplay()))
+			hasPendingChanges = true;
 		if (survey.getValidatedPerPage() != uploadedSurvey.getValidatedPerPage())
 			hasPendingChanges = true;
 		if (survey.getPreventGoingBack() != uploadedSurvey.getPreventGoingBack())
@@ -1332,10 +1422,22 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (survey.getQuestionNumbering() != uploadedSurvey.getQuestionNumbering())
 			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getEscapePage(), uploadedSurvey.getEscapePage()))
+		if (!Tools.isEqual(survey.getEscapePage(), uploadedSurvey.getEscapePage())){
 			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getConfirmationPage(), uploadedSurvey.getConfirmationPage()))
+			keyTranslationsToAdd.add(Survey.ESCAPEPAGE);
+		}
+		if (!Tools.isEqual(survey.getEscapeLink(), uploadedSurvey.getEscapeLink())){
 			hasPendingChanges = true;
+			keyTranslationsToAdd.add(Survey.ESCAPELINK);
+		}
+		if (!Tools.isEqual(survey.getConfirmationPage(), uploadedSurvey.getConfirmationPage())){
+			hasPendingChanges = true;
+			keyTranslationsToAdd.add(Survey.CONFIRMATIONPAGE);
+		}
+		if (!Tools.isEqual(survey.getConfirmationLink(), uploadedSurvey.getConfirmationLink())){
+			hasPendingChanges = true;
+			keyTranslationsToAdd.add(Survey.CONFIRMATIONLINK);
+		}
 		if (!Tools.isEqualIgnoreEmptyString(survey.getQuizWelcomeMessage(), uploadedSurvey.getQuizWelcomeMessage()))
 			hasPendingChanges = true;
 		if (!Tools.isEqualIgnoreEmptyString(survey.getQuizResultsMessage(), uploadedSurvey.getQuizResultsMessage()))
@@ -1449,6 +1551,18 @@ public class ManagementController extends BasicController {
 						uploadedSurvey.getMultiPaging() ? "enabled" : "disabled" };
 				activitiesToLog.put(120, oldnew);
 			}
+			
+			if (uploadedSurvey.getProgressBar() != survey.getProgressBar()) {
+				String[] oldnew = { survey.getProgressBar() ? "enabled" : "disabled",
+						uploadedSurvey.getProgressBar() ? "enabled" : "disabled" };
+				activitiesToLog.put(124, oldnew);
+			}
+
+			if(uploadedSurvey.getMotivationPopup() != survey.getMotivationPopup()) {
+				String[] oldnew = { survey.getMotivationPopup() ? "enabled" : "disabled",
+						uploadedSurvey.getMotivationPopup() ? "enabled" : "disabled" };
+				activitiesToLog.put(128, oldnew);
+			}
 		}
 
 		if (!survey.getIsOPC()) {
@@ -1456,6 +1570,14 @@ public class ManagementController extends BasicController {
 		}
 		
 		survey.setMultiPaging(uploadedSurvey.getMultiPaging());
+		survey.setProgressBar(uploadedSurvey.getProgressBar());
+		survey.setProgressDisplay(uploadedSurvey.getProgressDisplay());
+
+		survey.setMotivationPopup(uploadedSurvey.getMotivationPopup());
+		survey.setMotivationText(uploadedSurvey.getMotivationText());
+		survey.setMotivationTriggerProgress(uploadedSurvey.getMotivationTriggerProgress());
+		survey.setMotivationTriggerTime(uploadedSurvey.getMotivationTriggerTime());
+		survey.setMotivationType(uploadedSurvey.getMotivationType());
 
 		survey.setConfirmationPageLink(uploadedSurvey.getConfirmationPageLink());
 		survey.setEscapePageLink(uploadedSurvey.getEscapePageLink());
@@ -1802,11 +1924,13 @@ public class ManagementController extends BasicController {
 			String logo = request.getParameter("logo");
 			if (logo != null && logo.length() > 0) {
 				if (logo.equalsIgnoreCase(Constants.DELETED)) {
-					String[] oldnew = { survey.getLogo().getName(), Constants.DELETED };
-					activitiesToLog.put(213, oldnew);
+					if (survey.getLogo() != null) {
+						String[] oldnew = {survey.getLogo().getName(), Constants.DELETED};
+						activitiesToLog.put(213, oldnew);
 
-					survey.setLogo(null);
-					hasPendingChanges = true;
+						survey.setLogo(null);
+						hasPendingChanges = true;
+					}
 				} else {
 					File f;
 					try {
@@ -1828,9 +1952,10 @@ public class ManagementController extends BasicController {
 			}
 			
 			survey.setLogoInInfo(uploadedSurvey.getLogoInInfo());
-			
+
 			if (!Objects.equals(uploadedSurvey.getLogoText(), survey.getLogoText())) {
 				hasPendingChanges = true;
+				keyTranslationsToAdd.add(Survey.LOGOTEXT);
 			}
 
 			survey.setLogoText(ConversionTools.escape(uploadedSurvey.getLogoText()));
@@ -1964,13 +2089,26 @@ public class ManagementController extends BasicController {
 		
 		}
 
-		ensurePropertiesDependingOnSurveyType(survey, creation);
+		Map<String, Translations> translationToCreate = new HashMap<>();
+		ensurePropertiesDependingOnSurveyType(survey, creation, translationToCreate);
 		
 		form.setSurvey(survey);
 		form.setLanguage(survey.getLanguage());
 
 		if (creation) {
 			surveyService.add(survey, u.getId());
+			if (!translationToCreate.isEmpty()) {
+				for (Translations trans : translationToCreate.values()) {
+					trans.setSurveyId(survey.getId());
+					trans.setSurveyUid(survey.getUniqueId());
+					
+					for (Translation t : trans.getTranslations()) {
+						t.setSurveyId(survey.getId());	
+					}
+					
+					translationService.add(trans);
+				}				
+			}
 			sessionService.updateSessionInfo(survey, u, request);
 			activityService.log(101, null, form.getSurvey().getId().toString(), u.getId(), survey.getUniqueId());
 
@@ -1978,6 +2116,20 @@ public class ManagementController extends BasicController {
 
 			return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit");
 		} else {
+
+			for (Translations t : translationService.getTranslationsForSurvey(survey.getId(), true)){
+				boolean changed = false;
+				if (languageChanged && t.getLanguage().getCode().equals(survey.getLanguage().getCode())){
+					t.setActive(true);
+					changed = true;
+				}
+
+				changed |= TranslationsHelper.includeNewKeyTranslations(survey, t, keyTranslationsToAdd);
+
+				if (changed)
+					translationService.save(t);
+			}
+
 			if (languageChanged) {
 				Translations translations = translationService.getTranslations(survey.getId(),
 						survey.getLanguage().getCode());
@@ -2229,7 +2381,11 @@ public class ManagementController extends BasicController {
 			if (editorredirect.startsWith(Constants.PATH_DELIMITER)) {
 				editorredirect = editorredirect.substring(1);
 				editorredirect = editorredirect.substring(editorredirect.indexOf('/') + 1);
+			} else if (editorredirect.contains("?")) {
+				editorredirect = editorredirect.substring(editorredirect.indexOf("?"));
+				editorredirect = form.getSurvey().getShortname() + "/management/edit?saved=true&" + editorredirect.substring(1);
 			}
+
 			request.getSession().setAttribute("surveyeditorsaved", survey.getId());
 			return new ModelAndView("redirect:/" + editorredirect);
 		}
@@ -3098,7 +3254,8 @@ public class ManagementController extends BasicController {
 		}
 
 		form.setLanguages(languages);
-
+		form.setCodaEnabled(settingsService.get("Coda").equals("true"));
+		
 		paging.setItems(answerSets);
 
 		ModelAndView result = new ModelAndView("management/results", "form", form);
@@ -3106,6 +3263,9 @@ public class ManagementController extends BasicController {
 		result.addObject("active", active);
 		result.addObject("allanswers", allanswers);
 		result.addObject("filtered", filtered);
+		if (user != null) {
+			result.addObject("userid", user.getId());
+		}
 		
 		if (columnDeleted) {
 			result.addObject("columnDeleted", true);
@@ -3161,12 +3321,7 @@ public class ManagementController extends BasicController {
 		resultType = resultType == null ? "content" : resultType;
 
 		// this is for security (prevent xss attack)
-		if (!resultType.equalsIgnoreCase("content") && !resultType.equalsIgnoreCase("charts")
-				&& !resultType.equalsIgnoreCase("statistics") 
-				&& !resultType.equalsIgnoreCase("ecf")
-				&& !resultType.equalsIgnoreCase("ecf2")
-				&& !resultType.equalsIgnoreCase("ecf3")
-				) {
+		if (!ArrayUtils.contains(KNOWN_RESULTTYPES, resultType.toLowerCase())){
 			resultType = "content";
 		}
 
@@ -3349,6 +3504,24 @@ public class ManagementController extends BasicController {
 								for (int c = 1; c < table.getAllColumns(); c++) {
 									result.add(ConversionTools.escape(answerSet.getTableAnswer(question, r, c, false)));
 								}
+							}
+						} else if (question instanceof ComplexTable) {
+							ComplexTable table = (ComplexTable) question;
+							for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
+								StringBuilder s = new StringBuilder();
+								for (Answer answer : answerSet.getAnswers(childQuestion.getId(),
+										childQuestion.getUniqueId())) {
+									if (s.length() > 0) {
+										s.append("<br />");
+									}
+									
+									if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+										s.append(form.getAnswerTitle(answer));
+									} else {
+										s.append(ConversionTools.escape(form.getAnswerTitle(answer)));
+									}
+								}
+								result.add(s.toString());
 							}
 						} else if (question instanceof GalleryQuestion) {
 							GalleryQuestion gallery = (GalleryQuestion) question;
@@ -4041,10 +4214,12 @@ public class ManagementController extends BasicController {
 		String order = request.getParameter("order");
 		
 		List<ResultAccess> result = surveyService.getResultAccesses(u.getResultAccess(), shortname, Integer.parseInt(page), Integer.parseInt(rows), name, order, locale);
-		
-		if (sessionService.userIsFormAdmin(survey, u, request))
+		sessionService.upgradePrivileges(survey, u, request);
+
+		if (sessionService.userIsFormAdmin(survey, u, request) || u.getLocalPrivileges().get(LocalPrivilege.FormManagement) >= 2)
 		{
 			//form admins can edit all filtered questions
+			//Privileged Users too
 			for (ResultAccess resultAccess : result) {
 				resultAccess.setReadonlyFilterQuestions("");
 			}
@@ -4462,7 +4637,7 @@ public class ManagementController extends BasicController {
 			List<String> replaceResults = new ArrayList<>();
 
 			for (Translation translation : translations.getTranslations()) {
-				if (translation.getLabel() != null && translation.getLabel().contains(search)) {
+				if (!translation.getLocked() && translation.getLabel() != null && translation.getLabel().contains(search)) {
 					searchResults.add(translation.getLabel().replace(search,
 							"<span style='background: #FFEDA8'>" + search + "</span>"));
 
@@ -4506,5 +4681,99 @@ public class ManagementController extends BasicController {
 		Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 		Map<Element, Integer> changes = surveyService.getPendingChanges(draft);
 		return !changes.isEmpty();
+	}
+
+	@PostMapping(value = "/requestCodaDashboard")
+	public @ResponseBody boolean requestCodaDashboard(@PathVariable String shortname, HttpServletRequest request) throws Exception {
+		User u = sessionService.getCurrentUser(request);
+
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
+
+		if (survey != null && survey.getOwner().getId().equals(u.getId())){
+
+			if (codaCreateDashboardLink == null || survey.getCodaWaiting() || (survey.getCodaLink() != null && survey.getCodaLink().length() > 0)){
+				return false;
+			}
+
+			HttpClient httpClient = HttpClients.createDefault();
+			HttpPost httpPost = new HttpPost(codaCreateDashboardLink);
+			if (codaApiKey != null){
+				httpPost.setHeader(HttpHeaders.AUTHORIZATION, codaApiKey);
+			}
+
+			Map<String, Object> jsonMap = new HashMap<>();
+			jsonMap.put("Alias", shortname);
+
+			String type = "Standard";
+			if (survey.getIsQuiz()){
+				type = "Quiz";
+			} else if (survey.getIsECF()){
+				type = "ECF";
+			} else if (survey.getIsDelphi()){
+				type = "Delphi";
+			}
+
+			jsonMap.put("Type", type);
+			jsonMap.put("DashboardType", "Standard");
+
+			List<Map<String, String>> users = new LinkedList<>();
+			List<Access> accesses = surveyService.getAccesses(survey.getId());
+
+			for (Access access : accesses){
+				//This decision code might have to be adjusted
+				if (!access.hasAnyPrivileges() || access.getUser() == null){
+					continue;
+				}
+				User user = access.getUser();
+				HashMap<String, String> userMap = new HashMap<>();
+				userMap.put("Username", user.getLogin());
+				if (access.getLocalPrivilegeValue("FormManagement") > 1){
+					userMap.put("Role", "Executive");
+				} else if (access.getLocalPrivilegeValue("AccessResults") >= 1) {
+					userMap.put("Role", "Analyst");
+				} else {
+					continue;
+				}
+
+				userMap.put("User_email", user.getEmail());
+				userMap.put("Firstname", user.getGivenName());
+				userMap.put("Surname", user.getSurName());
+				users.add(userMap);
+			}
+			User owner = survey.getOwner();
+			HashMap<String, String> ownerMap = new HashMap<>();
+			ownerMap.put("Username", owner.getLogin());
+			ownerMap.put("Role", "Executive");
+			ownerMap.put("User_email", owner.getEmail());
+			ownerMap.put("Firstname", owner.getGivenName());
+			ownerMap.put("Surname", owner.getSurName());
+			users.add(ownerMap);
+			jsonMap.put("Users", users);
+
+			ObjectMapper mapper = new ObjectMapper();
+			String stringResult = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
+
+			StringEntity jsonEntity = new StringEntity(stringResult);
+			jsonEntity.setContentType("application/json");
+			httpPost.setEntity(jsonEntity);
+
+			try {
+			
+				HttpResponse response = httpClient.execute(httpPost);
+
+				if (response != null) {
+					int code = response.getStatusLine().getStatusCode();
+					if (code >= 200 && code < 300){
+						surveyService.setCodaWaiting(survey.getUniqueId(), true);
+						return true;
+					}
+				}
+			
+			} catch (IOException e) {
+				logger.error(e.getLocalizedMessage(), e);				
+			}
+		}
+
+		return false;
 	}
 }

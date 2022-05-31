@@ -8,7 +8,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import com.ec.survey.tools.Tools;
 import java.util.Objects;
 
 /**
@@ -116,17 +115,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 			return true;
 
 		for (int i = 0; i < getPossibleAnswers().size(); i++) {
-			if (!getPossibleAnswers().get(i).getTitle().equals(single.getPossibleAnswers().get(i).getTitle()))
-				return true;
-			if (!getPossibleAnswers().get(i).getDependentElementsUIDString()
-					.equals(single.getPossibleAnswers().get(i).getDependentElementsUIDString()))
-				return true;
-			if (!Tools.isEqual(getPossibleAnswers().get(i).getShortname(),
-					single.getPossibleAnswers().get(i).getShortname()))
-				return true;
-
-			if (getPossibleAnswers().get(i).getScoring() != null && getPossibleAnswers().get(i).getScoring()
-					.differsFrom(single.getPossibleAnswers().get(i).getScoring())) {
+			if (getPossibleAnswers().get(i).differsFrom(single.getPossibleAnswers().get(i))) {
 				return true;
 			}
 		}

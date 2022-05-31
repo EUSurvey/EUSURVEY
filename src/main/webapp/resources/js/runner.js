@@ -169,6 +169,10 @@ function checkHasValue(element) {
 		if ($(element).closest('.matrix-cell').length > 0) {
 			return $(element).closest('.matrixtable').find("input:checked").length > 0;
 		}
+
+		if ($(element).closest('.cell[data-type="4"]').length > 0) {
+			return $(element).closest('.cell[data-type="4"]').find("input:checked").length > 0;
+		}
 		
 		return $(element).is(":checked");
 	}
@@ -177,12 +181,16 @@ function checkHasValue(element) {
 		if ($(element).closest('.matrix-cell').length > 0) {
 			return $(element).closest('.matrixtable').find("input:checked").length > 0;
 		}
+
+		if ($(element).closest('.cell[data-type="5"]').length > 0) {
+			return $(element).closest('.cell[data-type="5"]').find("input:checked").length > 0;
+		}
 		
 		return $(element).closest('.answers-table').find("input:checked").length > 0;
 	}
 	
-	if ($(element).is("a")) {
-		return $(element).closest(".listbox").find("input:checked").length > 0;
+	if ($(element).is("a") || $(element).is("li.possible-answer")) {
+		return $(element).closest(".listbox,.multiple-choice[role=listbox]").find("input:checked").length > 0;
 	}
 	
 	if ($(element).closest('.tabletable').length > 0) {
@@ -209,23 +217,95 @@ function propagateChange(element)
 		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
 		$(div).find(".explanation-file-upload-section").hide();
-		return;
+		$(element).closest(".forprogress").removeClass("answered");
+	} else {
+		const surveyElement = $(element).closest(".survey-element");
+		if ($(surveyElement).find(".slider-div").length) {
+			const questionUid = $(surveyElement).attr("data-uid");
+			const viewModel = modelsForSlider[questionUid];
+			viewModel.isAnswered(true);
+		}
+		
+		if ($(surveyElement).find("textarea.unique").length > 0) {
+			$(surveyElement).find(".validation-error-server").remove();
+		}	
+		
+		$(div).find(".explanation-section").show();
+		$(div).find(".explanation-file-upload-section").show();
+		$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
+		
+		$(element).closest(".forprogress").addClass("answered");
+	}
+	
+	updateProgress();
+	
+	if ($(div).hasClass("numberitem") || $(div).hasClass("formulaitem") || $(div).hasClass("regexitem") || $(element).hasClass("number") || $(element).hasClass("formula")) { //.number and .formula are for complex table cells
+		updateFormulas($(div).attr("id"), $(element).attr("data-shortname"));
+	}
+}
+
+function updateAllFormulas() {
+	for (let i = 0; i < modelsForFormula.length; i++) {
+		if (modelsForFormula[i].readonly()) {
+			modelsForFormula[i].refreshResult();
+		} else {
+			var value = getValueByQuestion(modelsForFormula[i].uniqueId());
+			if (value.length > 0) {
+				modelsForFormula[i].result(parseInt(value));
+			} else {
+				modelsForFormula[i].refreshResult();
+			}
+		}
+	}
+}
+
+function updateFormulas(id, alias) {
+	for (let i = 0; i < modelsForFormula.length; i++) {
+		if (id == null || modelsForFormula[i].id().toString() != id) { //check not to update itself
+			if (modelsForFormula[i].dependsOn(alias)) { //check that the change influences the formula
+				modelsForFormula[i].refreshResult();
+			}
+		}
+	}
+}
+
+function updateProgress() {
+
+	var percent = null;
+
+	// progressbar
+	if ($('#progressBar').length != 0) {
+		var totalForProgress = $('.forprogress').not(".untriggered").length;
+		var answered = $('.forprogress.answered').not(".untriggered").length;
+		percent = answered == 0 ? 0 : Math.round(answered / totalForProgress * 100);
+
+		$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);
+		$('#progressBarPercentage').html(percent + '%');
+		$('#progressBarRatio').html(answered + '/' + totalForProgress);
+		$('#progressBarContainer').show();
+
+		var totalwidth = $('#progressBarContainer').width();
+
+		if ((percent * totalwidth / 100) < 80) {
+			$('#progressBarLabel').addClass("blacktext");
+		} else {
+			$('#progressBarLabel').removeClass("blacktext");
+		}
 	}
 
-	const surveyElement = $(element).closest(".survey-element");
-	if ($(surveyElement).find(".slider-div").length) {
-		const questionUid = $(surveyElement).attr("data-uid");
-		const viewModel = modelsForSlider[questionUid];
-		viewModel.isAnswered(true);
+	// motivationprogress
+	if(!$("#motivationPopup").data("type") && $("#motivationPopup").data("popup") && $("#motivationPopup").hasClass("not-shown")){
+		if(percent == null) percent = calculateProgressPercentage(); //only calculate percent again when it hasnt been for the progressbar;
+		if(percent >= $("#motivationPopup").data("progress")){
+			showPopup();
+		}
 	}
-	
-	if ($(surveyElement).find("textarea.unique").length > 0) {
-		$(surveyElement).find(".validation-error-server").remove();
-	}	
-	
-	$(div).find(".explanation-section").show();
-	$(div).find(".explanation-file-upload-section").show();
-	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
+}
+
+function calculateProgressPercentage() {
+	var totalForProgress = $('.forprogress').not(".untriggered").length;
+	var answered = $('.forprogress.answered').not(".untriggered").length;
+	return answered == 0 ? 0 : Math.round(answered / totalForProgress * 100);
 }
 
 var downloadsurveypdflang;
@@ -318,8 +398,10 @@ function createUploader(instance, maxSize)
 			$(this.element).parent().find(".uploadinfo").hide();
 			updateFileList($(this.element), responseJSON);
 			enableDelphiSaveButtons($(this.element).closest(".survey-element"));
-	    	
-	    	if (responseJSON.wrongextension)
+			$(this.element).closest(".forprogress").addClass("answered");
+			updateProgress();
+
+			if (responseJSON.wrongextension)
 	    	{
 	    		 $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + getWrongExtensionMessage(fileName) + "</div>");
 	    	}
@@ -454,7 +536,7 @@ $(function() {
 
 function applyStandardWidths()
 {
-	$(".single-choice").each(function(){
+	$(".single-choice").not(".complex").each(function(){
 		var w = $(this).width();
 		if (w <= 215) {
 			$(this).css("width", "215px");
@@ -467,7 +549,7 @@ function applyStandardWidths()
 		}
 	});
 	
-	$(".multiple-choice").each(function(){
+	$(".multiple-choice").not(".complex").each(function(){
 		var w = $(this).width();
 		if (w <= 215) {
 			$(this).css("width", "215px");
@@ -939,6 +1021,7 @@ function checkDependenciesAsync(input, override) {
 			cachedIsTriggered = {};
 			try {
 				checkDependencies(input, override != null && override);
+				updateProgress();
 			} catch (e) {}
 			
 			$(input).closest(".elementwrapper").removeClass("waiting").find(".waitingdiv").remove();
@@ -1496,11 +1579,15 @@ function saveDraft(mode) {
 		showSessionError();
 	} else if (networkproblems) {
 		$("#networkproblemsdialog").modal('show');
-	} else {	
-		$("#runnerForm").attr("action", contextpath + "/runner/draft/" + mode);
+	} else {
+		let form = $("#runnerForm")
+		form.attr("action", contextpath + "/runner/draft/" + mode);
 		
 		$("#busydialog").modal('show');
-		$("#runnerForm").submit();
+
+		form.find("input[data-is-answered='false'].sliderbox").val('');
+
+		form.submit();
 	}
 }
 
@@ -1527,20 +1614,24 @@ function readCookiesForParent(parent)
 			if (value != null && value.length > 0 && ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'internal_captcha_response'))) {
 				if (type == "text") {
 					$(this).val(value);
+					$(this).closest(".forprogress").addClass("answered");
 				} else if (type == "hidden" && $(this).attr("data-id") && ($(this).attr("id") == null || !strStartsWith($(this).attr("id"), 'regex'))) {
 					$(this).val(value);		
 					
 					if ($(this).attr("data-type") == "rating")
 					{
 						updateRatingIcons(parseInt(value)-1, $(this).parent());
+						$(this).closest(".forprogress").addClass("answered");
 					}					
 				} else if (type == "radio" || type == "checkbox") {
 					if (value == "true") {
 						$(this).prop("checked","checked");
 						$(this).closest(".possible-answer").addClass("selected-choice");
 						checkDependencies(this);
+						$(this).closest(".forprogress").addClass("answered");
 					}
 				}
+			
 			}					
 		});
 		
@@ -1549,8 +1640,11 @@ function readCookiesForParent(parent)
 			{
 				var id = $(this).attr("data-id");
 				var s = readCookie(survey+id);
-				if (s != null && s.length > 0)
-				$(this).val(s);
+				if (s != null && s.length > 0) {
+					$(this).closest(".forprogress").addClass("answered");
+					$(this).val(s);
+				}
+				
 			}
 		});
 		
@@ -1562,6 +1656,7 @@ function readCookiesForParent(parent)
 				var s = readCookie(survey+id);
 				if (s != null && s.length > 0) {
 					$(this).val(s);
+					$(this).closest(".forprogress").addClass("answered");
 					checkDependencies(this);
 				}
 			}

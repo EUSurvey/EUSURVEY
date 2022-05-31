@@ -73,7 +73,7 @@
 			<div style="clear: both"></div>
 			
 		</div>
-		<div class="modal-footer"">
+		<div class="modal-footer">
 			<a onclick="saveConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 			<a onclick="cancelConfigure();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 		</div>	

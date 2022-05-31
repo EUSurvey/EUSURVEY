@@ -42,6 +42,7 @@ public class Form {
 	private String contextpath;
 	private Date startDate = new Date();
 	private Date currentDate = new Date();
+	private Boolean codaEnabled;
 
 	protected static final Logger logger = Logger.getLogger(Form.class);
 
@@ -160,6 +161,10 @@ public class Form {
 	public void setLanguageTitle(String languageTitle) {
 		this.languageTitle = languageTitle;
 	}
+
+	public Boolean getCodaEnabled() { return codaEnabled; }
+
+	public void setCodaEnabled(Boolean codaEnabled) { this.codaEnabled = codaEnabled; }
 
 	public String getAnswerTitleStripInvalidXML(Answer answer) {
 		return ConversionTools.removeInvalidHtmlEntities(getAnswerTitle(answer));
@@ -368,7 +373,7 @@ public class Form {
 			}
 		}
 		
-		return rankingQuestion.getChildElements();
+		return rankingQuestion.getOrderedChildElements();
 	}
 
 	private Set<String> passwordQuestions = null;

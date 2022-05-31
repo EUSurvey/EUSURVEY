@@ -28,7 +28,6 @@ public class FileFilter implements java.io.Serializable {
 	private boolean surveyUploads;
 	private boolean temporaryFiles;
 	private boolean archivedSurveys;
-	private boolean unknownFiles;
 	private boolean surveyFiles;
 	
 	private boolean onlyUnreferenced;
@@ -169,13 +168,6 @@ public class FileFilter implements java.io.Serializable {
 	}
 	public void setOnlyUnreferenced(boolean onlyUnreferenced) {
 		this.onlyUnreferenced = onlyUnreferenced;
-	}
-	
-	public boolean isUnknownFiles() {
-		return unknownFiles;
-	}
-	public void setUnknownFiles(boolean unknownFiles) {
-		this.unknownFiles = unknownFiles;
 	}
 	
 	public int getPage() {

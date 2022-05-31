@@ -632,3 +632,10 @@ body {
 #escapeMessageId, #divThanksInner {
 	font-size: 20px;
 }
+
+.progressBar {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 10px;
+	bottom: 30px;
+}

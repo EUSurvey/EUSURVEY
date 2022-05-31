@@ -228,7 +228,7 @@ public class ArchiveService extends BasicService {
 		}
 
 		if (filter.getSortKey() != null && filter.getSortKey().length() > 0) {
-			hql += " ORDER BY " + filter.getSortKey() + " " + filter.getSortOrder();
+			hql += " ORDER BY a." + filter.getSortKey() + " " + filter.getSortOrder();
 		}
 
 		Query query = session.createQuery(hql);

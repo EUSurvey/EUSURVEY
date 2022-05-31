@@ -19,6 +19,40 @@ var UndoProcessor = function() {
 		_actions.SaveEnabled(true);
 	}
 
+	this.elementFromStep = function(step){
+
+		let id = step[1]
+		_elementProperties.selectedelement = $("#content").find("li[id='" + id + "']").first();
+		let el = _elements[id];
+
+		if (el == null && _elementProperties.selectedelement.length === 0){
+
+			_elementProperties.selectedelement = $(".cell[data-id='" + id + "']");
+
+			if (_elementProperties.selectedelement.length > 0){
+				let parentId = _elementProperties.selectedelement.closest(".survey-element").first().attr("id");
+				let table = _elements[parentId];
+				el = table.getChildbyId(id);
+			} else {
+				//Instead of multiple if cases, this selector selects the correct element immediately
+				//:first to save performance
+				_elementProperties.selectedelement = $(
+					"td[data-id='" + id + "']:first," +
+					"div.answertext[data-id='" + id + "']:first," +
+					"td[data-uid='" + step[2] + "']:first," +
+					".ratingquestion[data-id='" + id + "']:first"
+				).first()
+			}
+
+			if (_elementProperties.selectedelement.length === 0) {
+				_elementProperties.selectedelement = $(".rankingitemtext[data-id='" + id + "']");
+				el = _elementProperties.selectedelement[0];
+			}
+		}
+
+		return el
+	}
+
 	this.undo = function()
 	{
 		if (this.undostack.length == 0) return;
@@ -26,35 +60,9 @@ var UndoProcessor = function() {
 		var step = this.undostack.pop();
 		
 		var id = step[1];
-		_elementProperties.selectedelement = $("#content").find("li[id='" + id + "']").first();
-		var element = _elements[id];
 		var position = step[2];
-		
-		if (element == null && $(_elementProperties.selectedelement).length == 0)
-		{
-			_elementProperties.selectedelement = $("td[data-id='" + id + "']");
-			
-			if ($(_elementProperties.selectedelement).length == 0)
-			{
-				_elementProperties.selectedelement = $("div.answertext[data-id='" + id + "']");
-			}
-			
-			if ($(_elementProperties.selectedelement).length == 0)
-			{
-				_elementProperties.selectedelement = $("td[data-uid='" + step[2] + "']");	
-			}
-			
-			if ($(_elementProperties.selectedelement).length == 0)
-			{
-				_elementProperties.selectedelement = $(".ratingquestion[data-id='" + id + "']");	
-			}
 
-			if ($(_elementProperties.selectedelement).length == 0)
-			{
-				_elementProperties.selectedelement = $(".rankingitemtext[data-id='" + id + "']");
-				element = _elementProperties.selectedelement[0];
-			}
-		}
+		var element = this.elementFromStep(step)
 		
 		var skipRedo = false;
 		
@@ -377,7 +385,7 @@ var UndoProcessor = function() {
 						element.useRadioButtons(false);
 						element.likert(true);
 					}
-					updateChoice();
+					updateChoice(element);
 				}
 				break;
 			case "Display":
@@ -409,11 +417,11 @@ var UndoProcessor = function() {
 					updateColumns(element, columns);
 				} else {
 					element.numColumns(step[2]);
-					updateChoice();
+					updateChoice(element);
 				}
 				break;
 			case "PossibleAnswers":
-				updatePossibleAnswers($(_elementProperties.selectedelement), step[3], true);
+				updatePossibleAnswers($(_elementProperties.selectedelement), step[3], true, getElement());
 				break;
 			case "Shortnames":
 				var ids = step[2];
@@ -434,20 +442,59 @@ var UndoProcessor = function() {
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "ADDCOLUMN":
-				element.answers.pop();
+				if (element.type === "ComplexTable"){
+					_elementProperties.deselectAll()
+					_elementProperties.showProperties(element, null, false);
+					for (let i = 0; i <= element.rows(); i++){
+						element.removeChildAt(element.columns(), i)
+					}
+
+					element.columns(element.columns() - 1)
+				} else {
+					element.answers.pop();
+				}
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "REMOVECOLUMN":
-				element.answers.push(step[2]);
+				if (element.type === "ComplexTable"){
+					_elementProperties.deselectAll()
+					_elementProperties.showProperties(element, null, false);
+					element.columns(element.columns() + 1);
+					step[2].forEach((el)=>{
+						element.childElements.push(el);
+					})
+
+				} else {
+					element.answers.push(step[2]);
+				}
 				addElementHandler($(_elementProperties.selectedelement));
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "ADDROW":
-				element.questions.pop();
+				if (element.type === "ComplexTable"){
+					_elementProperties.deselectAll()
+					_elementProperties.showProperties(element, null, false);
+					for (let i = 0; i <= element.columns(); i++){
+						element.removeChildAt(i, element.rows())
+					}
+
+					element.rows(element.rows() - 1)
+				} else {
+					element.questions.pop();
+				}
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "REMOVEROW":
-				element.questions.push(step[2]);
+				if (element.type === "ComplexTable"){
+					_elementProperties.deselectAll()
+					_elementProperties.showProperties(element, null, false);
+					element.rows(element.rows() + 1);
+					step[2].forEach((el)=>{
+						element.childElements.push(el);
+					})
+				} else {
+					element.questions.push(step[2]);
+				}
 				addElementHandler($(_elementProperties.selectedelement));
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
@@ -525,7 +572,12 @@ var UndoProcessor = function() {
 				
 				break;
 			case "DecimalPlaces":
-				$(_elementProperties.selectedelement).find("input[name^='decimalplaces']").first().val(step[3]);
+				if (element.type === "ComplexTableItem"){
+					element.decimalPlaces(step[3])
+				} else {
+					$(_elementProperties.selectedelement).find("input[name^='decimalplaces']").first().val(step[3]);
+				}
+
 				break;
 			case "NumberOfAnsweredRows":
 				if (step[5] == "min")
@@ -713,6 +765,21 @@ var UndoProcessor = function() {
 				addElementHandler($(_elementProperties.selectedelement));
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
+			case "Formula":
+				element.formula(step[3]);
+				break;
+			case "CellType":
+				element.cellType(step[3]);
+				break;
+			case "ColumnSpan":
+				element.columnSpan(step[3]);
+				break;
+			case "ResultText":
+				element.resultText(step[3]);
+				break;
+			case "ShowHeadersAndBorders":
+				element.showHeadersAndBorders(step[3]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -742,34 +809,8 @@ var UndoProcessor = function() {
 		var step = this.redostack.pop();
 		var id = step[1];
 		var position = step[2];
-		_elementProperties.selectedelement = $("#content").find("li[id='" + id + "']").first();
-		var element = _elements[id];
-		
-		if (element == null && $(_elementProperties.selectedelement).length == 0)
-		{
-			_elementProperties.selectedelement = $("td[data-id='" + id + "']");
-			
-			if ($(_elementProperties.selectedelement).length == 0)
-			{
-				_elementProperties.selectedelement = $("div.answertext[data-id='" + id + "']");
-			}
-			
-			if ($(_elementProperties.selectedelement).length == 0)
-			{
-				_elementProperties.selectedelement = $("td[data-uid='" + step[2] + "']");	
-			}
-			
-			if ($(_elementProperties.selectedelement).length == 0)
-			{
-				_elementProperties.selectedelement = $(".ratingquestion[data-id='" + id + "']");	
-			}
 
-			if ($(_elementProperties.selectedelement).length == 0)
-			{
-				_elementProperties.selectedelement = $(".rankingitemtext[data-id='" + id + "']");
-				element = _elementProperties.selectedelement[0];
-			}
-		}
+		var element = this.elementFromStep(step)
 		
 		switch (step[0]) {
 			case "CELLWIDTH":
@@ -944,7 +985,7 @@ var UndoProcessor = function() {
 						element.useRadioButtons(false);
 						element.likert(true);
 					}
-					updateChoice();
+					updateChoice(element);
 				}
 				break;
 			case "Display":
@@ -976,11 +1017,11 @@ var UndoProcessor = function() {
 					updateColumns(element, columns);
 				} else {
 					element.numColumns(step[3]);
-					updateChoice();
+					updateChoice(element);
 				}
 				break;
 			case "PossibleAnswers":
-				updatePossibleAnswers($(_elementProperties.selectedelement), step[4], true);
+				updatePossibleAnswers($(_elementProperties.selectedelement), step[4], true, getElement());
 				break;
 			case "Shortnames":
 				var ids = step[2];
@@ -1001,21 +1042,55 @@ var UndoProcessor = function() {
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "ADDCOLUMN":
-				element.answers.push(step[2]);
+				if (element.type === "ComplexTable"){
+					_elementProperties.deselectAll()
+					_elementProperties.showProperties(element, null, false);
+					element.columns(element.columns() + 1);
+					element.childElements.push(step[2]);
+				} else {
+					element.answers.push(step[2]);
+				}
 				addElementHandler($(_elementProperties.selectedelement));
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "REMOVECOLUMN":
-				element.answers.pop();
+				if (element.type === "ComplexTable"){
+					_elementProperties.deselectAll()
+					_elementProperties.showProperties(element, null, false);
+					for (let i = 0; i <= element.rows(); i++){
+						element.removeChildAt(element.columns(), i)
+					}
+
+					element.columns(element.columns() - 1)
+				} else {
+					element.answers.pop();
+				}
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "ADDROW":
-				element.questions.push(step[2]);
+				if (element.type === "ComplexTable") {
+					_elementProperties.deselectAll()
+					_elementProperties.showProperties(element, null, false);
+					element.rows(element.rows() + 1);
+					element.childElements.push(step[2]);
+				} else {
+					element.questions.push(step[2]);
+				}
 				addElementHandler($(_elementProperties.selectedelement));
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "REMOVEROW":
-				element.questions.pop();
+				if (element.type === "ComplexTable"){
+					_elementProperties.deselectAll()
+					_elementProperties.showProperties(element, null, false);
+					for (let i = 0; i <= element.columns(); i++){
+						element.removeChildAt(i, element.rows())
+					}
+
+					element.rows(element.rows() - 1)
+				} else {
+					element.questions.pop();
+				}
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 			case "Identifier":
@@ -1091,7 +1166,11 @@ var UndoProcessor = function() {
 				}
 				break;
 			case "DecimalPlaces":
-				$(_elementProperties.selectedelement).find("input[name^='decimalplaces']").first().val(step[4]);
+				if (element.type === "ComplexTableItem"){
+					element.decimalPlaces(step[4])
+				} else {
+					$(_elementProperties.selectedelement).find("input[name^='decimalplaces']").first().val(step[4]);
+				}
 				break;
 			case "NumberOfAnsweredRows":
 				if (step[5] == "min")
@@ -1257,6 +1336,21 @@ var UndoProcessor = function() {
 			case "REMOVERANKINGITEM":
 				element.rankingItems.pop();
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "Formula":
+				element.formula(step[4]);
+				break;
+			case "CellType":
+				element.cellType(step[4])
+				break;
+			case "ColumnSpan":
+				element.columnSpan(step[4]);
+				break;
+			case "ResultText":
+				element.resultText(step[4]);
+				break;
+			case "ShowHeadersAndBorders":
+				element.showHeadersAndBorders(step[4]);
 				break;
 		}
 		

@@ -218,10 +218,13 @@ public class ActivityService extends BasicService {
 		{
 			switch (filter.getObject()) {
 				case "Survey":
-					hql += " AND logID > 100 AND logID < 300";
+					hql += " AND logID > 100 AND logID < 200";
 					break;
 				case "DraftSurvey":
 					hql += " AND logID > 200 AND logID < 300";
+					break;
+				case "SurveyAndDraft":
+					hql += " AND logID > 100 AND logID < 300";
 					break;
 				case "Results":
 					hql += " AND logID > 300 AND logID < 400";
@@ -304,6 +307,8 @@ public class ActivityService extends BasicService {
 					hql += " AND logID = 213"; break;
 				case "MultiPaging":
 					hql += " AND logID = 120"; break;
+				case "ProgressBar":
+					hql += " AND logID = 124"; break;
 				case "n/a":
 					hql += " AND logID IN :logids"; 
 					Integer[] logids = {101,102,103,104,401,402,403,404,405,406,601,602,603,801,802};

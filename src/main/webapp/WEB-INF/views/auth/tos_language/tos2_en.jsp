@@ -148,11 +148,11 @@
 				repeat infringer of the copyrights or other intellectual property
 				rights of DIGIT or others.</li>
 			<li><b>Intellectual Property.</b> Built at DG DIGIT and funded
-				under the <a href="http://ec.europa.eu/isa/" target="_blank">ISA
-					programme</a>, EUSurvey is fully open-source and is published under the
-				<a href="https://joinup.ec.europa.eu/community/eupl/home"
-				target="_blank">EUPL licence</a>. The source code can be downloaded
-				from the Commission's Joinup pages.</li>
+				under the ISA and
+				<a href="https://ec.europa.eu/isa2/" target="_blank">ISA&sup2;</a>
+				programmes, EUSurvey is fully open-source and is published under the
+				<a href="https://joinup.ec.europa.eu/community/eupl/home" target="_blank">EUPL licence</a>.
+				The source code can be downloaded from the Commission's Joinup pages.</li>
 			<li><b>Changes.</b> DIGIT reserves the right, at its sole
 				discretion, to modify or replace any part of this agreement. Your
 				continued use of the service or access to the EUSurvey application

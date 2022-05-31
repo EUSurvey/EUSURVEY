@@ -465,10 +465,8 @@
 			$("#scrollarea").show();
 			
 			// Scrollareaheader
-			if ($('#tbllist-empty').is(":hidden"))
-			{
-				$("#scrollareaheader").css("overflow-x", "hidden");
-			}					
+			$("#scrollareaheader").css({ 'overflow-x' : 'hidden'});
+
 			$("#scrollareaheader").scrollLeft($("#scrollarea").scrollLeft());
 			
 			if ($('#scrollarea').hasScrollBar())
@@ -512,8 +510,9 @@
 					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 			
 			$("#results-charts").addClass('hidden');
-			$("#charts-export-buttons").addClass('hidden');			
-		
+			$("#charts-export-buttons").addClass('hidden');
+
+			$("#scrollareaheader").css({ 'overflow-x' : 'auto'})
 		
 			delphiPopulateAllGraphs($("#results-statistics"));
 			doResize();
@@ -532,7 +531,9 @@
 			$("#results-statistics-quiz-link").addClass("btn-primary");
 			$("#results-statistics-quiz").removeClass('hidden');
 			$("#statistics-quiz-export-buttons").removeClass('hidden');
-			
+
+			$("#scrollareaheader").css({ 'overflow-x' : 'auto'})
+
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
@@ -547,6 +548,8 @@
 		function showStatisticsDelphi() {
 			$("#results-statistics-delphi-link").addClass("btn-primary");
 			$("#results-statistics-delphi").removeClass('hidden');
+
+			$("#scrollareaheader").css({ 'overflow-x' : 'auto'})
 		}
 		
 		function hideStatisticsDelphi() {
@@ -560,7 +563,7 @@
 			$("#results-ecf").addClass("btn-primary");
 			$("#ecf-results").removeClass('hidden');
 			$("#ecf1-export-buttons").removeClass('hidden');
-			
+   
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');			
@@ -580,7 +583,7 @@
 			$("#results-ecf2").addClass("btn-primary");
 			$("#ecf-results2").removeClass('hidden');
 			$("#ecf2-export-buttons").removeClass('hidden');
-			
+   
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
@@ -600,7 +603,7 @@
 			$("#results-ecf3").addClass("btn-primary");
 			$("#ecf-results3").removeClass('hidden');
 			$("#ecf3-export-buttons").removeClass('hidden');
-			
+   
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
@@ -916,7 +919,28 @@
 				}
 			});
 		}
-		
+
+		function requestCodaDashboard(){
+			$("#request-coda-dashboard-dialog").modal("hide");
+			$("#coda-link-button").addClass("disabled");
+			$("#coda-link-button").attr("onclick", "");
+			$.ajax({
+				type: "POST",
+				url: "${contextpath}/${form.survey.shortname}/management/requestCodaDashboard",
+				beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+				success: function(data){
+					if (data === true) {
+						showSuccess("<spring:message code="message.CodaRequestSuccess" />")
+					} else {
+						showError("<spring:message code="message.CodaRequestError" />")
+					}
+				},
+				error: function () {
+					showError("<spring:message code="message.CodaRequestError" />")
+				}
+			});
+		}
+
 		$(document).ready(function() {
 			
 			<c:if test="${reloadScrollPosition != null}">
@@ -1002,6 +1026,21 @@
 						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results" />" id="results-ecf" class="btn btn-default btn-xs" onclick="switchTo('ecf');"><span class="glyphicon glyphicon-user" style="font-size: 19px; color: #333"></span></a>
 						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results2" />" id="results-ecf2" class="btn btn-default btn-xs" onclick="switchTo('ecf2');"><span class="glyphicon glyphicon-eye-open" style="font-size: 19px; color: #333"></span></a>
 						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results3" />" id="results-ecf3" class="btn btn-default btn-xs" onclick="switchTo('ecf3');"><span class="glyphicon glyphicon-globe" style="font-size: 19px; color: #333"></span></a>
+					</c:if>
+					<c:if test="${form.codaEnabled}">
+						<c:choose>
+						<c:when test="${form.survey.codaWaiting}" >
+							<button type="button" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="message.CodaRequestSuccess" />" id="coda-link-button" class="btn btn-default disabled" ><spring:message code="label.CodaCreateAnalytics" /></button>
+						</c:when>
+						<c:when test="${form.survey.codaLink != null && form.survey.codaLink.length() > 0}">
+							<a href="${form.survey.codaLink}" target="_blank" data-placement="bottom" id="coda-link-a" class="btn btn-default" ><spring:message code="label.CodaOpenAnalytics" /></a>
+						</c:when>
+						<c:otherwise>
+							<c:if test="${form.survey.owner.id == userid}">
+								<button type="button" onclick="$('#request-coda-dashboard-dialog').modal();" data-placement="bottom" id="coda-link-button" class="btn btn-default" ><spring:message code="label.CodaCreateAnalytics" /></button>
+							</c:if>
+						</c:otherwise>
+						</c:choose>
 					</c:if>
 				</div>
 				
@@ -1413,7 +1452,21 @@
 		</div>
 		</div>
 		</div>
-	</div>	
+	</div>
+
+	<div class="modal" id="request-coda-dashboard-dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<spring:message code="question.CodaDashboardRequest" />
+				</div>
+				<div class="modal-footer">
+					<a id="request-coda-dashboard-confirm" onclick="requestCodaDashboard()" class="btn btn-primary"><spring:message code="label.Imsure" /></a>
+					<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 </body>
 </html>

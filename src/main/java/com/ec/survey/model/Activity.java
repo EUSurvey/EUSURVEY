@@ -164,6 +164,8 @@ public class Activity implements java.io.Serializable {
 		if (logID == 121) return "PageWiseValidation";
 		if (logID == 122) return "WCAGCompliance";
 		if (logID == 123) return "Owner";
+		if (logID == 124) return "ProgressBar";
+		if (logID == 128) return "MotivationPopUp";
 		if (logID == 201) return "n/a";
 		if (logID == 202) return "Properties";
 		if (logID == 203) return "UsefulLink";

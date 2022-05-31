@@ -59,6 +59,8 @@ public class Setting {
 	public static final String AnswersAnonymWorkerInterval = "AnswersAnonymWorkerInterval";
 	public static final String AnswersAnonymWorkerEnabled = "AnswersAnonymWorkerEnabled";
 	
+	public static final String UseSMTService = "UseSMTService";
+	
 	@Id
 	@Column(name = "SETTINGS_ID")
 	@GeneratedValue

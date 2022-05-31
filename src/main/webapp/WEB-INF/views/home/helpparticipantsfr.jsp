@@ -56,6 +56,10 @@
 			margin-left: 0px;
 			text-decoration: none;
 		}
+
+		#ulContainer {
+			margin-bottom: 50px;
+		}
 	</style>
 	
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>

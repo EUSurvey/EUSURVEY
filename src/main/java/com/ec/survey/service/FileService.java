@@ -245,7 +245,7 @@ public class FileService extends BasicService {
 									counter.setValue(counter.getValue() + 1);
 								} else {
 									FileResult fileResult = getFileResult(file, null,
-											new java.io.File(archiveDir).toPath());
+											new java.io.File(archiveDir).toPath(), filter.getSurveyUid());
 									result.add(fileResult);
 								}
 								if (result.size() >= filter.getItemsPerPage()) {
@@ -295,8 +295,7 @@ public class FileService extends BasicService {
 			final MutableInteger counter = new MutableInteger(0);
 			final int skip = page > 1 ? (page - 1) * itemsperpage : 0;
 
-			if (filter.isSystemExports() || filter.isSurveyUploads() || filter.isTemporaryFiles()
-					|| filter.isUnknownFiles()) {
+			if (filter.isSystemExports() || filter.isSurveyUploads() || filter.isTemporaryFiles()) {
 				try {
 					Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
 
@@ -316,7 +315,7 @@ public class FileService extends BasicService {
 						@Override
 						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 							if (!file.toFile().isDirectory()) {
-								FileResult fileResult = getFileResult(file, null, archivedir);
+								FileResult fileResult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 								if (checkResult(fileResult, filter)) {
 									if (skip - counter.getValue() > 0) {
 										counter.setValue(counter.getValue() + 1);
@@ -347,7 +346,7 @@ public class FileService extends BasicService {
 						@Override
 						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 
-							FileResult fileResult = getFileResult(file, null, archivedir);
+							FileResult fileResult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 							if (checkResult(fileResult, filter)) {
 								if (skip - counter.getValue() > 0) {
 									counter.setValue(counter.getValue() + 1);
@@ -390,11 +389,6 @@ public class FileService extends BasicService {
 
 		if (!filter.isSurveyUploads() && fileResult.getFileType() != null
 				&& fileResult.getFileType().equals("uploaded file")) {
-			return false;
-		}
-
-		if (!filter.isUnknownFiles()
-				&& (fileResult.getSurveyUid() == null || fileResult.getSurveyUid().length() == 0)) {
 			return false;
 		}
 
@@ -532,7 +526,7 @@ public class FileService extends BasicService {
 						String filePath = exportService.getExportFilePath(export, null);
 						Path file = Paths.get(filePath);
 						if (file.toFile().exists() && filter.isValidExtension(export.getFormat().toString().toUpperCase())) {
-							FileResult fresult = getFileResult(file, export, archivedir);
+							FileResult fresult = getFileResult(file, export, archivedir, filter.getSurveyUid());
 							if (checkResult(fresult, filter)) {
 								if (skip - counter > 0) {
 									counter++;
@@ -575,7 +569,7 @@ public class FileService extends BasicService {
 
 						Path file = Paths.get(filePath);
 						if (file.toFile().exists()) {
-							FileResult fresult = getFileResult(file, null, archivedir);
+							FileResult fresult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 							if (checkResult(fresult, filter)) {
 								if (skip - counter > 0) {
 									counter++;
@@ -596,7 +590,7 @@ public class FileService extends BasicService {
 				String uid = survey.getLogo().getUid();
 				Path file = getSurveyFile(survey.getUniqueId(), uid).toPath();
 				if (file.toFile().exists()) {
-					FileResult fresult = getFileResult(file, null, archivedir);
+					FileResult fresult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 					if (checkResult(fresult, filter)) {
 						if (skip - counter > 0) {
 							counter++;
@@ -616,7 +610,7 @@ public class FileService extends BasicService {
 					Path file = getSurveyFile(survey.getUniqueId(), fileUID).toPath();
 
 					if (file.toFile().exists()) {
-						FileResult fresult = getFileResult(file, null, archivedir);
+						FileResult fresult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 						if (checkResult(fresult, filter)) {
 							if (skip - counter > 0) {
 								counter++;
@@ -639,7 +633,7 @@ public class FileService extends BasicService {
 							Path file = getSurveyFile(survey.getUniqueId(), f.getUid()).toPath();
 
 							if (file.toFile().exists()) {
-								FileResult fresult = getFileResult(file, null, archivedir);
+								FileResult fresult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 								if (checkResult(fresult, filter)) {
 									if (skip - counter > 0) {
 										counter++;
@@ -658,7 +652,7 @@ public class FileService extends BasicService {
 
 						Path file = getSurveyFile(survey.getUniqueId(), fileUID).toPath();
 						if (file.toFile().exists()) {
-							FileResult fresult = getFileResult(file, null, archivedir);
+							FileResult fresult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 							if (checkResult(fresult, filter)) {
 								if (skip - counter > 0) {
 									counter++;
@@ -676,7 +670,7 @@ public class FileService extends BasicService {
 							Path file = getSurveyFile(survey.getUniqueId(), f.getUid()).toPath();
 
 							if (file.toFile().exists()) {
-								FileResult fresult = getFileResult(file, null, archivedir);
+								FileResult fresult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 								if (checkResult(fresult, filter)) {
 									if (skip - counter > 0) {
 										counter++;
@@ -699,7 +693,7 @@ public class FileService extends BasicService {
 					String filePath = String.format("%s/survey%s%s.pdf", folder.getPath(), id, lang);
 					Path path = Paths.get(filePath);
 					if (path.toFile().exists()) {
-						FileResult fresult = getFileResult(path, null, archivedir);
+						FileResult fresult = getFileResult(path, null, archivedir, filter.getSurveyUid());
 						if (checkResult(fresult, filter)) {
 							if (skip - counter > 0) {
 								counter++;
@@ -731,7 +725,7 @@ public class FileService extends BasicService {
 					for (File f : files) {
 						Path file = getSurveyFile(survey.getUniqueId(), f.getUid()).toPath();
 						if (file.toFile().exists()) {
-							FileResult fresult = getFileResult(file, null, archivedir);
+							FileResult fresult = getFileResult(file, null, archivedir, filter.getSurveyUid());
 							fresult.setSurveyShortname(survey.getShortname());
 							fresult.setSurveyUid(survey.getUniqueId());
 							fresult.setFileType("uploaded file");
@@ -754,7 +748,7 @@ public class FileService extends BasicService {
 		return new ArrayList<>(result.values());
 	}
 
-	public FileResult getFileResult(Path file, Export export, Path archivedir) throws IOException {
+	public FileResult getFileResult(Path file, Export export, Path archivedir, String surveyUID) throws IOException {
 
 		FileResult fileResult = new FileResult();
 		fileResult.setFilePath(file.toAbsolutePath().toString());
@@ -902,7 +896,7 @@ public class FileService extends BasicService {
 				fileResult.setFileExtension(f.getName().substring(f.getName().lastIndexOf('.') + 1).toUpperCase());
 				fileResult.setFileUid(f.getUid());
 
-				String[] surveyData = surveyService.getSurveyForFile(f, contextpath, null);
+				String[] surveyData = surveyService.getSurveyForFile(f, contextpath, surveyUID);
 				if (surveyData != null) {
 					fileResult.setSurveyShortname(surveyData[1]);
 					fileResult.setSurveyUid(surveyData[0]);
@@ -1106,37 +1100,31 @@ public class FileService extends BasicService {
 		return result;
 	}
 
-	public int deleteFilesForSurveys(List<Integer> surveyIDs) throws Exception {
-		int deletecounter = 0;
-
-		Set<java.io.File> files = getFilesForSurveys(surveyIDs, false);
-		for (java.io.File file : files) {
-			if (file.exists() && file.delete()) {
-				deletecounter++;
+	public boolean deleteFilesForSurveys(String surveyUID) throws Exception {		
+		java.io.File folder = this.getSurveyFolder(surveyUID);
+		if (folder.exists()) {
+			try {
+				FileUtils.deleteDirectory(folder);
+				return true;
+			} catch (IOException e) {
+				logger.error(e.getLocalizedMessage(), e);
 			}
 		}
-
-		return deletecounter;
+		return false;
 	}
 
 	public int deleteFilesForArchivedSurveys() throws Exception {
-
-		logger.info("starting deleteFilesForArchivedSurveys: " + ConversionTools.getFullString(new Date()));
-
 		ArchiveFilter filter = new ArchiveFilter();
 		filter.setFinished(true);
 		List<Archive> archives = archiveService.getAllArchives(filter, 1, Integer.MAX_VALUE, false);
-		int deletecounter = 0;
-
+		int counter = 0;
 		for (Archive a : archives) {
-			List<Integer> surveyIDs = surveyService.getAllSurveyVersions(a.getSurveyShortname(), a.getSurveyUID());
-			deletecounter += deleteFilesForSurveys(surveyIDs);
+			if (deleteFilesForSurveys(a.getSurveyUID())) {
+				counter++;
+			}
 		}
-
-		logger.info("finish deleteFilesForArchivedSurveys: " + deletecounter + " files deleted "
-				+ ConversionTools.getFullString(new Date()));
-
-		return deletecounter;
+		
+		return counter;
 	}
 
 	public int deleteFilesForDeletedElements() throws Exception {
@@ -1382,7 +1370,7 @@ public class FileService extends BasicService {
 		Set<java.io.File> files = getFilesForSurveys(ids, true);
 		for (java.io.File f : files) {
 			if (!f.exists()) {
-				FileResult fresult = getFileResult(f.toPath(), null, archivedir);
+				FileResult fresult = getFileResult(f.toPath(), null, archivedir, uniqueId);
 				result.put(fresult.getFileName(), fresult.getFileType());
 			}
 		}

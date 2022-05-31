@@ -69,6 +69,7 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	
 	private @Value("${monitoring.recipient}") String monitoringEmail;
 	private @Value("${enablereportingdatabase}") String enablereportingdatabase;
+	private @Value("${enablecookieconsentkit:@null}") String enablecookieconsentkit;
 
 	private @Value("${contextpath}") String contextpath;	
 	
@@ -121,6 +122,7 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             modelAndView.getModelMap().addAttribute("contextpath", contextpath);
             modelAndView.getModelMap().addAttribute("monitoringEmail", monitoringEmail);
             modelAndView.getModelMap().addAttribute("enablereportingdatabase", enablereportingdatabase);
+            modelAndView.getModelMap().addAttribute("enablecookieconsentkit", enablecookieconsentkit);
             
             Device device = DeviceUtils.getCurrentDevice(request);
             if (!request.getRequestURI().endsWith("management/edit") && (device.isMobile() || device.isTablet()))

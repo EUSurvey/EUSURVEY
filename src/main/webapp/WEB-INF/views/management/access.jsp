@@ -147,7 +147,7 @@
 			<div id="action-bar" class="container action-bar">
 				<div class="row">
 					<div class="col-md-12" style="text-align: center;">
-					 	<ul class="nav nav-tabs" role="tablist">
+					 	<ul class="nav nav-tabs white" role="tablist">
 						    <li role="presentation" class="active"><a href="#global" aria-controls="global" role="tab" data-toggle="tab"><spring:message code="label.StandardPrivileges" /></a></li>
 						    <li role="presentation"><a href="#results" id="resultsTab" aria-controls="results" role="tab" data-toggle="tab"><spring:message code="label.DedicatedResultPrivileges" /></a></li>
 						</ul>

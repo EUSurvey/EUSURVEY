@@ -1961,6 +1961,30 @@
 
 				<b>Uploaded files are not available in that case.</b></p>
 
+			<h2>How the ranking question score are calculated?</h2>
+			<p>
+				Ranking questions are used to offer the possibility to your survey participants to rank a set of items per order of importance.
+				It is recommended to limit items to rank to 5.
+				If you ask more to your survey participants it might be hard for them to properly rank all the items.
+			</p>
+			<p>
+				Survey respondents' most preferred choice (which they rank first) get the highest weight, and the least preferred choice (which they rank last) get a weight of 1.
+				The weight is therefore proportionally reversed with respect to the ranking of the item.
+			</p>
+			<p>
+				For example, if a Ranking question is made of 5 items, weights are assigned as follows:
+			</p>
+			<ul>
+				<li>The top ranked item has a weight of 5</li>
+				<li>The second item has a weight of 4</li>
+				<li>The third item has a weight of 3</li>
+				<li>The fourth item has a weight of 2</li>
+				<li>The fifth item has a weight of 1</li>
+			</ul>
+			<p>
+				The score is calculated as being the average weight given by survey respondents.
+			</p>
+
 			<h1>
 				Design and layout
 			</h1>

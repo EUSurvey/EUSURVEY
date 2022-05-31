@@ -468,6 +468,7 @@
 	
 	function testTimeoutExpiration(restTime) {
 		lastEditDate.setDate(lastEditDate.getDate()-1);
+		let originalTimeout = sessiontimeout
 		sessiontimeout = 300;
 		if (Number.isInteger(restTime)) {
 			sessiontimeout = restTime;
@@ -475,6 +476,7 @@
 		refreshTimeout();
 		checkTimeout();
 		console.log("Function for testing purposes. Set Timeout to", timeoutTime);
+		sessiontimeout = originalTimeout
 	}
 
 </script>

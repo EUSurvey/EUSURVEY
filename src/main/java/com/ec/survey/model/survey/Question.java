@@ -136,12 +136,22 @@ public abstract class Question extends Element {
 		}		
 
 		if (!delphiQuestion && (delphiChartType == null || delphiChartType == DelphiChartType.None)) {
-			if (this instanceof ChoiceQuestion || this instanceof Matrix || this instanceof NumberQuestion || this instanceof RatingQuestion) {
+			if (this instanceof ChoiceQuestion || this instanceof Matrix || this instanceof NumberQuestion || this instanceof RatingQuestion || this instanceof FormulaQuestion) {
 				return DelphiChartType.Pie;
 			}
 
 			if (this instanceof FreeTextQuestion) {
 				return DelphiChartType.WordCloud;
+			}
+			
+			if (this instanceof RankingQuestion) {
+				return DelphiChartType.Bar;
+			}
+			
+			if (this instanceof ComplexTableItem) {
+				if (((ComplexTableItem)this).getCellType() == ComplexTableItem.CellType.FreeText) {
+					return DelphiChartType.WordCloud;
+				}
 			}
 		}
 
@@ -214,7 +224,6 @@ public abstract class Question extends Element {
 		copy.setUseAndLogic(getUseAndLogic());
 		copy.setShowExplanationBox(getShowExplanationBox());
 		copy.setDelphiChartType(getDelphiChartType());
-
 		
 		if (ecfCompetency != null) {
 			copy.setEcfCompetency(this.getEcfCompetency());

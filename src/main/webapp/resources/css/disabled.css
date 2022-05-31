@@ -228,7 +228,7 @@ font-size: 16px;
 	width: 215px;
 }
 
-#runner-content input.regex, textarea.regex {
+#runner-content input.regex, input.formula, textarea.regex {
 	width: 430px !important;
 }
 
@@ -397,4 +397,35 @@ font-size: 16px;
 	font-weight: normal;
 	margin-left: 10px;
 	margin-right: 5px;
+}
+
+.progressBarPlaceholder {
+	height: 20px;
+}
+
+.progressBar {
+	z-index: 1000;	
+	position: fixed;		
+	top: 40px;
+	width: 940px;
+	height: 22px;	
+}
+
+#progressBarLabel {
+	white-space: nowrap;
+	padding: 5px;
+}
+
+.blacktext {
+	color: #000;
+}
+
+.progressBar .progress {
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.progress-bar-success {
+   background-color: #009200;
 }

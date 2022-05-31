@@ -77,34 +77,27 @@ public class PublicationController extends BasicController {
 
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 
-				for (String questionId : publicationFilter.getVisibleQuestions()) {
-					userFilter.getVisibleQuestions().add(questionId);
+				if (survey.getPublication().isAllQuestions()) {
+					for (Element question : survey.getQuestionsAndSections()) {
+						userFilter.getVisibleQuestions().add(question.getId().toString());
+					}
+				} else {
+					for (String questionId : publicationFilter.getVisibleQuestions()) {
+						userFilter.getVisibleQuestions().add(questionId);
+					}
 				}
 
-				for (String key : publicationFilter.getFilterValues().keySet()) {
-					userFilter.getFilterValues().put(key, publicationFilter.getFilterValues().get(key));
+				if (!survey.getPublication().isAllContributions()) {
+					for (String key : publicationFilter.getFilterValues().keySet()) {
+						userFilter.getFilterValues().put(key, publicationFilter.getFilterValues().get(key));
+						String uid = key.substring(key.indexOf('|') + 1);
+						userFilter.getReadOnlyFilterQuestions().add(uid);
+					}
 				}
 
 				userFilter.setSurveyId(survey.getId());
 
-				for (Entry<String, String[]> entry : parameters.entrySet()) {
-					if (entry.getKey().startsWith(Constants.FILTER)) {
-						String questionId = entry.getKey().substring(6);
-						String[] values = entry.getValue();
-						String value = StringUtils.arrayToDelimitedString(values, ";");
-
-						if (value.replace(";", "").trim().length() > 0) {
-							if (userFilter.getFilterValues().containsKey(questionId)) {
-								userFilter.getFilterValues().put(questionId,
-										userFilter.getFilterValues().get(questionId) + ";" + value);
-							} else {
-								userFilter.getFilterValues().put(questionId, value);
-							}
-
-							filtered = true;
-						}
-					}
-				}
+				filtered = putParameterFilters(parameters, userFilter.getFilterValues());
 			}
 
 			if (survey != null && survey.getPublication() != null) {
@@ -176,6 +169,35 @@ public class PublicationController extends BasicController {
 				resources.getMessage("error.NoPublishedResults", null, "This survey has no published results", locale));
 		result.addObject("noMenu", true);
 		return result;
+	}
+
+	private boolean putParameterFilters(Map<String, String[]> parameters, Map<String, String> filterValues){
+		boolean filtered = false;
+		for (Entry<String, String[]> entry : parameters.entrySet()) {
+			if (entry.getKey().startsWith(Constants.FILTER)) {
+				String questionId = entry.getKey().substring(6);
+				String[] values = entry.getValue();
+				String value = StringUtils.arrayToDelimitedString(values, ";");
+
+				if (value.replace(";", "").trim().length() > 0) {
+					String uid = questionId.substring(questionId.indexOf('|') + 1);
+
+					boolean found = false;
+					for (String key : filterValues.keySet()) {
+						if (key.endsWith(uid)) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						filterValues.put(questionId, value);
+					}
+
+					filtered = true;
+				}
+			}
+		}
+		return filtered;
 	}
 
 	@GetMapping(value = "/auth/{shortname}")
@@ -350,6 +372,31 @@ public class PublicationController extends BasicController {
 									}
 								}
 							}
+						}  else if (question instanceof RankingQuestion) {
+
+							String[] answerSplit = answer.getValue().split(";");
+
+							Map<String, RankingItem> childs = ((RankingQuestion) question).getChildElementsByUniqueId();
+							for (int i = 0; i < answerSplit.length; i++){
+								answerSplit[i] = childs.get(answerSplit[i]).getTitle();
+							}
+
+							String answerReadable = String.join("; ", answerSplit);
+
+							if (result.containsKey(answer.getQuestionId().toString())) {
+								result.put(answer.getQuestionId().toString(),
+										result.get(answer.getQuestionId().toString()) + "<br />" + answerReadable);
+							} else {
+								result.put(answer.getQuestionId().toString(), answerReadable);
+							}
+
+							if (result.containsKey(answer.getQuestionUniqueId())) {
+								result.put(answer.getQuestionUniqueId(),
+										result.get(answer.getQuestionUniqueId()) + "<br />" + answerReadable);
+							} else {
+								result.put(answer.getQuestionUniqueId(), answerReadable);
+							}
+
 						} else if (question instanceof GalleryQuestion) {
 							GalleryQuestion gallery = (GalleryQuestion) question;
 							for (int i = 0; i < gallery.getFiles().size(); i++) {
@@ -379,6 +426,54 @@ public class PublicationController extends BasicController {
 
 							String uidString = row.toString() + answer.getQuestionUniqueId() + column.toString();
 							result.put(uidString, ConversionTools.escape(answer.getValue()));
+						} else if (question instanceof ComplexTableItem) {
+							ComplexTableItem item = (ComplexTableItem) question;
+							
+							if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+								String title = item.getPossibleAnswer(answer.getPossibleAnswerId()) != null
+												? item.getPossibleAnswer(answer.getPossibleAnswerId()).getTitle()
+												: "";
+
+								if (title.length() == 0) {
+									title = item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
+													? item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
+													.getTitle()
+													: "";
+								}
+
+								if (result.containsKey(answer.getQuestionId().toString())) {
+									result.put(answer.getQuestionId().toString(),
+											result.get(answer.getQuestionId().toString()) + "<br />" + title);
+								} else {
+									result.put(answer.getQuestionId().toString(), title);
+								}
+
+								if (result.containsKey(answer.getQuestionUniqueId())) {
+									result.put(answer.getQuestionUniqueId(),
+											result.get(answer.getQuestionUniqueId()) + "<br />" + title);
+								} else {
+									result.put(answer.getQuestionUniqueId(), title);
+								}
+							} else {
+								if (result.containsKey(answer.getQuestionId().toString())) {
+									result.put(answer.getQuestionId().toString(),
+											result.get(answer.getQuestionId().toString()) + "<br />"
+													+ ConversionTools.escape(answer.getValue()));
+								} else {
+									result.put(answer.getQuestionId().toString(),
+											ConversionTools.escape(answer.getValue()));
+								}
+
+								if (result.containsKey(answer.getQuestionUniqueId())) {
+									result.put(answer.getQuestionUniqueId(),
+											result.get(answer.getQuestionUniqueId()) + "<br />"
+													+ ConversionTools.escape(answer.getValue()));
+								} else {
+									result.put(answer.getQuestionUniqueId(),
+											ConversionTools.escape(answer.getValue()));
+								}
+							}
+							
 						} else {
 
 							if (answer.getPossibleAnswerId() != null && answer.getPossibleAnswerId() > 0) {
@@ -486,7 +581,9 @@ public class PublicationController extends BasicController {
 
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get(Constants.EMAIL)[0];
-				ResultFilter filter = survey.getPublication().getFilter();
+				ResultFilter filter = survey.getPublication().getFilter().copy();
+				putParameterFilters(parameters, filter.getFilterValues());
+
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
 				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "xls",
 						resources, locale, null);
@@ -520,7 +617,9 @@ public class PublicationController extends BasicController {
 
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get(Constants.EMAIL)[0];
-				ResultFilter filter = survey.getPublication().getFilter();
+				ResultFilter filter = survey.getPublication().getFilter().copy();
+				putParameterFilters(parameters, filter.getFilterValues());
+
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
 				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "ods",
 						resources, locale, null);

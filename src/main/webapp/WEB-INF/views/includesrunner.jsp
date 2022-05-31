@@ -75,12 +75,18 @@
 <script type="text/javascript" src="${contextpath}/resources/js/jquery.validate.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/scroll-sneak.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/system.js?version=<%@include file="version.txt" %>"></script>
-<script src="https://ec.europa.eu/wel/cookie-consent/consent.js" type="text/javascript"></script>
+<c:if test="${enablecookieconsentkit == 'true'}">
+	<script defer="defer" src="https://europa.eu/webtools/load.js" type="text/javascript"></script>
+	<script type="application/json">{
+  "utility": "cck"
+}</script>
+</c:if>
 <script type="text/javascript" src="${contextpath}/resources/js/bootstrap-slider.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/tinymce/jquery.tinymce.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/tinymce/tinymce.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/chartjs-plugin-colorschemes.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/math.js?version=<%@include file="version.txt" %>"></script>
  
 <script type="text/javascript">
 	//if (top != self) top.location=location;

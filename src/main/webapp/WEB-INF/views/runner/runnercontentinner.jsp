@@ -60,6 +60,42 @@
 			</c:choose>						
 				
 				<div class="left-area">
+					<c:if test="${form.survey.motivationPopup}">
+						<div class="modal motivation-popup-modal not-shown" id="motivationPopup" style="padding-top: 50px;" role="dialog" data-popup="${form.survey.motivationPopup}" data-type="${form.survey.motivationType}" data-progress="${form.survey.motivationTriggerProgress}" data-timer="${form.survey.motivationTriggerProgress}">
+							<div class="modal-dialog modal-sm">
+								<div class="modal-content">
+									<div class="modal-header" style="font-weight: bold;">
+										<spring:message code="label.MotivationPopup" />
+									</div>
+									<div class="modal-body">
+										<div class="modal-body">${form.survey.motivationText}</div>
+									</div>
+									<div class="modal-footer">
+										<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog('.motivation-popup-modal')"><spring:message code="label.Close" /></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:if>
+
+					<c:if test="${form.survey.progressBar}">
+						<div id="progressBarContainer" class="progressBar" style="display: none">							
+							<div class="progress">
+							  <div id="progressBar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+							  	 <span id="progressBarLabel">
+							  	 <c:if test="${form.survey.progressDisplay != 1}">
+									    	<span id="progressBarPercentage"></span>
+									  </c:if>
+									  <c:if test="${form.survey.progressDisplay == 2}"> (</c:if>
+									  <c:if test="${form.survey.progressDisplay != 0}"><span id="progressBarRatio"></span></c:if>
+									  <c:if test="${form.survey.progressDisplay == 2}">)</c:if> 
+								</span> 
+							  </div>						      
+							</div>
+						</div>
+						<div class="progressBarPlaceholder"></div>
+					</c:if>
+				
 					<c:if test="${!(form.survey.isDelphi)}">
 						<div id="nolocalstorage" class="hideme" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
 							<span class="alert-danger" style="padding: 10px;">${form.getMessage("info.LocalStorageDisabled")}</span>
@@ -83,13 +119,19 @@
 					<div class="surveytitle">${form.survey.title}</div><br />
 
 					<c:if test="${form.survey.containsMandatoryQuestion()}">
-						<div class="info-box" style="width: 400px; max-width: 100%">${form.getMessage("message.StarMandatory")}</div>
+						<div class="info-box" style="width: 400px; max-width: 100%;">
+							<div style="float: right; margin-top: -5px; margin-right: -5px;">
+								<a href="javascript:;" style="cursor: pointer" onclick="$(this).closest('.info-box').hide();" aria-label="${form.getMessage("label.CloseInfoMessage")}"><span class="glyphicon glyphicon-remove"></span></a>
+							</div>		
+						
+							${form.getMessage("message.StarMandatory")}
+						</div>
 					</c:if>
 					<c:if test="${(form.answerSets.size() == 0 || !form.answerSets[0].disclaimerMinimized)}">
 						<c:if test="${!oss}">
 							<c:if test="${(form.survey.owner.type == 'ECAS' && form.survey.owner.getGlobalPrivilegeValue('ECAccess') == 0) || form.survey.owner.type == 'SYSTEM'  }">
-								<div id="ecDisclaimer" class="surveyrunnerinfo focusborder">
-									<div tabindex="0" style="float: left">
+								<div id="ecDisclaimer" class="surveyrunnerinfo">
+									<div style="float: left; width: calc(100% - 18px)">
 										<b>${form.getMessage("label.Disclaimer")}</b>
 										<p>
 											${form.getMessage("info.Disclaimer")}
@@ -97,7 +139,7 @@
 									</div>
 									<div style="float: right; margin-top: -15px; margin-right: -15px;">
 										<input type="hidden" id="disclaimerMinimized" name="disclaimerMinimized" value="${disclaimerMinimized}" />
-										<a href="javascript:;" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+										<a href="javascript:;" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.CloseDisclaimer")}"><span class="glyphicon glyphicon-remove"></span></a>
 									</div>								
 									<div style="clear: both"></div>
 								</div>
@@ -106,7 +148,7 @@
 					</c:if>
 					<c:if test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
 						<div id="anonymousSurveyInfo" class="surveyrunnerinfo focusborder">
-							<div tabindex="0" style="float: left">
+							<div tabindex="0" style="float: left; width: calc(100% - 18px)">
 								<b>${form.getMessage("label.AnonymousMode")}</b>
 								<p>
 									${form.getMessage("info.AnonymousMode")}
@@ -661,7 +703,7 @@
 	 		filevalues = {};
 	 		validationMessages = {};
 	 		
-	 		<c:if test="${form.answerSets.size() >0}">
+	 		<c:if test="${form.answerSets.size() > 0}">
 	 		
 		 		<c:forEach items="${form.answerSets[0].answers}" var="answer" varStatus="rowCounter">	
 		 		
@@ -786,15 +828,34 @@
 	 	}
 	 	
 	 	var values = null;
-	 	function getValueByQuestion(uniqueId)
+	 	function getValueByQuestion(uniqueId, cellEl)
 	 	{
-	 		return typeof values[uniqueId] != 'undefined' ? values[uniqueId] : "";
+	 		if (typeof values[uniqueId] != 'undefined') {
+	 			if (cellEl != null && $(cellEl).is(".complex")){
+					$(cellEl).closest(".innercell").addClass("answered");
+				} else {
+					$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+					$('tr[data-uid="' + uniqueId + '"]').closest(".survey-element").addClass("answered");
+				}
+ 				return values[uniqueId];
+	 		}
+	 		
+	 		return "";
 	 	}
 	 	
 	 	var pavalues = null;
-	 	function getPAByQuestion(uniqueId)
+	 	function getPAByQuestion(uniqueId, cellEl)
 	 	{
-	 		return typeof pavalues[uniqueId] != 'undefined' ? pavalues[uniqueId] : "";
+	 		if (typeof pavalues[uniqueId] != 'undefined')
+	 		{
+	 			if (cellEl != null && $(cellEl).is(".complex")){
+					$(cellEl).closest(".innercell").addClass("answered");
+				} else {
+					$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+				}
+	 			return pavalues[uniqueId];
+	 		}
+	 		return "";
 	 	}
 	 	
 	 	var pavaluesid = null;
@@ -803,21 +864,33 @@
 	 		return typeof pavaluesid[uniqueId] != 'undefined' ? pavaluesid[uniqueId] : "";
 	 	}
 	 	
-	 	function getPAByQuestion2(parentuniqueId, uniqueId, id)
+	 	function getPAByQuestion2(parentuniqueId, uniqueId, id, cellEl)
 	 	{
 	 		if (getPAByQuestion(parentuniqueId).indexOf(uniqueId) > -1)
 	 		{
+	 			if (cellEl != null && $(cellEl).is(".complex, .multiple-choice li input")) {
+					$(cellEl).closest(".innercell").addClass("answered");
+				} else {
+					$('tr[data-uid="' + parentuniqueId + '"]').closest(".survey-element").addClass("answered");
+				}
+
 	 			return id.toString();
 	 		}
 	 		return "";
 	 	}
 	 	
-	 	function getPAByQuestion3(parentuniqueId)
+	 	function getPAByQuestion3(parentuniqueId, cellEl)
 	 	{
 	 		if (getPAByQuestion(parentuniqueId).length > 0)
 	 		{
 	 			var result = getIdForUniqueId(getPAByQuestion(parentuniqueId));
-	 			return typeof result != 'undefined' ? result : "";
+	 			if (typeof result != 'undefined')
+ 				{
+ 					if (cellEl != null && $(cellEl).is("select.complex")){
+						$(cellEl).closest(".innercell").addClass("answered");
+					}
+	 				return result;
+ 				}
 	 		}
 	 		return "";
 	 	}
@@ -830,7 +903,13 @@
 	 	var tablevalues = null;
 	 	function getTableAnswer(uniqueId, row, col)
 	 	{
-	 		return typeof tablevalues[uniqueId + "#" + row + "#" + col] != 'undefined' ? tablevalues[uniqueId + "#" + row + "#" + col] : "";
+	 		if (typeof tablevalues[uniqueId + "#" + row + "#" + col] != 'undefined')
+	 		{
+	 			$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+	 			return tablevalues[uniqueId + "#" + row + "#" + col];
+	 		}
+	 		
+	 		return "";
 	 	}
 	 	
 	 	var filevalues = null;
@@ -861,52 +940,88 @@
 	 	
 	 	initializeAnswerData();
 	 	initializeTriggers();
-	 	
-	 	<c:if test="${mode != 'editcontribution' && form.survey.timeLimit.length() > 0}">
-			var countdownTimerSeconds = ${form.survey.timeLimitInSeconds};			
-			var passedSeconds = ${form.getPassedTimeInSeconds()};			
+
+		<c:if test="${form.survey.timeLimit.length() > 0 || (form.survey.motivationPopup && form.survey.motivationType)}">
+
+			var passedSeconds = ${form.getPassedTimeInSeconds()};
 			var startDateJS = new Date();
-					
-			function updateCountdown() {
+
+			function updateCountdownCombined() {
+
+				var qtimedone = false;
+				var mtimedone = false;
 				var currentTime = new Date();
-				var rest = countdownTimerSeconds - passedSeconds - Math.floor((currentTime - startDateJS) / 1000); 
-				
-				if (rest < 1) {
-					//timeout
-					$('#countdowntimer').html("00:00:00")
-					$('#btnSubmit').remove();
-					$('.single-page').remove();
-					$('#quizTimeoutDialog').modal("show");
-					return;
-				} else if (rest < 61) {
-					//red color
-					$('#countdowntimer').addClass("lightred");
+
+
+				// Quiztimer
+
+				<c:if test="${mode != 'editcontribution' && form.survey.timeLimit.length() > 0}">
+					var countdownTimerSeconds = ${form.survey.timeLimitInSeconds};
+					var rest = countdownTimerSeconds - passedSeconds - Math.floor((currentTime - startDateJS) / 1000);
+
+					if (rest < 1) {
+						//timeout
+						qtimedone = true;
+						$('#countdowntimer').html("00:00:00")
+						$('#btnSubmit').remove();
+						$('.single-page').remove();
+						$('#quizTimeoutDialog').modal("show");
+						return;
+					} else if (rest < 61) {
+						//red color
+						$('#countdowntimer').addClass("lightred");
+					}
+
+					//update
+					var hours = Math.floor(rest / 3600);
+					rest = rest - (hours * 3600);
+					var minutes = Math.floor(rest / 60);
+					rest = rest - (minutes * 60);
+
+					var minuteSeparator = ":";
+					if (minutes < 10) {
+						minuteSeparator = ":0";
+					}
+
+					var secondSeparator = ":";
+					if (rest < 10) {
+						secondSeparator = ":0";
+					}
+
+					$('#countdowntimer').html(hours + minuteSeparator + minutes + secondSeparator + rest);
+				</c:if>
+
+
+
+				// Motivationtimer
+				if (${form.survey.motivationPopup} && ${form.survey.motivationType}) {
+					if($("#motivationPopup").hasClass("not-shown")){
+						var countdownTimerSeconds = ${form.survey.motivationTriggerTime} * 60;
+						var rest = countdownTimerSeconds - passedSeconds - Math.floor((currentTime - startDateJS) / 1000);
+
+						if (rest < 1) { // Timer has run down
+							mtimedone = true;
+							showPopup();
+						}
+					}
 				}
-				
-				//update
-				var hours = Math.floor(rest / 3600);
-				rest = rest - (hours * 3600);
-				var minutes = Math.floor(rest / 60);
-				rest = rest - (minutes * 60);
-				
-				var minuteSeparator = ":";			
-				if (minutes < 10) {
-					minuteSeparator = ":0";
-				}	
-				
-				var secondSeparator = ":";			
-				if (rest < 10) {
-					secondSeparator = ":0";
-				}	
-				
-				$('#countdowntimer').html(hours + minuteSeparator + minutes + secondSeparator + rest);
-				
-				window.setTimeout(function() {
-					updateCountdown();
-				}, 1000);
+
+				// rerun after 1 second in case not both timers ran out
+				if(!mtimedone || !qtimedone){
+					window.setTimeout(function() {
+						updateCountdownCombined();
+					}, 1000);
+				}
 			}
-			
-			updateCountdown();
-	
+
+			updateCountdownCombined();
+
 		</c:if>
+
+
+		// showPopup
+		function showPopup() {
+			$("#motivationPopup").modal('show');
+			$("#motivationPopup").removeClass('not-shown');
+		}
 	</script>

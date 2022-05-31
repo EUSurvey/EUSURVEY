@@ -157,7 +157,7 @@ public abstract class ExportCreator implements Runnable {
 			export.setState(ExportState.Finished);
 			if (export.getSurvey() != null)
 			{
-				activityService.log(310, null, export.getId().toString(), -1, export.getSurvey().getUniqueId());
+				activityService.log(310, null, export.getId().toString(), export.getUserId(), export.getSurvey().getUniqueId());
 			}
 									
 			if (export.getEmail() != null)

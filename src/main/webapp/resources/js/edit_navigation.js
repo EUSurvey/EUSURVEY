@@ -11,7 +11,7 @@ var NavigationItem = function(type, css, id, title) {
     
     this.hasChildren = function()
     {
-    	if (this.type == "section" || this.type== "matrix" || this.type== "table" || this.type == "choicequestion" || this.type == "ratingquestion" || this.type == "rankingquestion")
+    	if (this.type == "section" || this.type== "matrix" || this.type== "table" || this.type == "choicequestion" || this.type == "ratingquestion" || this.type == "rankingquestion" || this.type == "complextable")
     	{
     		return true;
     	}
@@ -51,6 +51,11 @@ var NavigationModel = function () {
     		ni.css = "navanswer";
     		ni.id = "navanswer" + $(e).attr("data-id");
     		ni.title = getLimitedText($(e).text());
+
+			//special case: complex table cells with no title
+			if (ni.title.length == 0) {
+				ni.title = "-";
+			}
     	} else  {
     		if ($(e).hasClass("matrix-question"))
     		{
@@ -99,7 +104,13 @@ var NavigationModel = function () {
     		} else if ($(e).hasClass("rankingitem")) {
     			ni.type = "rankingquestion";
     			ni.css = "navigationitemranking navquestion";
-    		} else {
+			} else if ($(e).hasClass("formulaitem")) {
+    			ni.type = "formulaquestion";
+    			ni.css = "navigationitemformula navquestion";
+    		} else if ($(e).hasClass("complextableitem")) {
+				ni.type = "complextable";
+				ni.css = "navigationitemcomplextable navquestion";
+			} else {
     			ni.css += " navquestion";
     		}
     		
@@ -146,6 +157,14 @@ var NavigationModel = function () {
 					$(table).find("tr").first().find(".table-header").each(function(){
 						niq.addItem(model.getNavigationItem(this, false, parentid));
 					});
+				}
+			});
+		} else if ($(element).hasClass("complextableitem"))
+		{
+			$(element).find(".children").find("textarea[name^=text]").each(function(){
+				var type = $(this).parent().find("input[name^='cellType']").val();
+				if (type != "0") {
+					ni.addItem(model.getNavigationItem(this, true));
 				}
 			});
 		} else if ($(element).hasClass("ratingitem"))
@@ -322,23 +341,28 @@ function getShortnedText(text)
 
 function getCombinedAnswerText(useparagraphs)
 {
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	
-	if ($(_elementProperties.selectedelement).hasClass("answertext"))
+	var selectedElement = $(_elementProperties.selectedelement);
+	if (selectedElement.hasClass("answertext"))
 	{
-		id = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		id = selectedElement.closest(".survey-element").attr("data-id");
 	}	
 	
-	var element = _elements[id];
+	var element = getElement();
 	
 	var result = "";
 	var arr = [];
+
+	let possAnswers = element.possibleAnswers()
+
+	if (element.possibleAnswersMatch && element.possibleAnswersMatch()){
+		possAnswers = element.possibleAnswersChildren()
+	}
 	
-	for (var i = 0; i < element.possibleAnswers().length; i++)
+	for (var i = 0; i < possAnswers.length; i++)
 	{
 		if (useparagraphs)
 		{
-			var title = element.possibleAnswers()[i].title();
+			var title = possAnswers[i].title();
 			if (title.indexOf("<p") == 0)
 			{
 				result += title;
@@ -346,7 +370,7 @@ function getCombinedAnswerText(useparagraphs)
 				result += "<p>" + title + "</p> ";
 			}
 		} else {
-			arr[arr.length] = element.possibleAnswers()[i].title();
+			arr[arr.length] = possAnswers[i].title();
 		}
 	}
 	
@@ -408,6 +432,11 @@ function goTo(id, event)
 		if ($(elem).length == 0)
 		{
 			elem = $("#content").find(".ratingquestion[data-id=" + id + "]").first();
+		}
+		
+		if ($(elem).length == 0)
+		{
+			elem = $("#content").find(".cell[data-id=" + id + "]").first();
 		}
 	}	
 	
@@ -508,7 +537,15 @@ function showHideElements(span)
 			$(ni).find(".navigationitem").show(400);
 			$(span).removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
 		}
-	} 
+	} else if ($(ni.hasClass("navigationitemcomplextable"))) {
+		if ($(span).hasClass("glyphicon-chevron-down")) {
+			$(ni).find(".navigationitem").hide(400);
+			$(span).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+		} else {
+			$(ni).find(".navigationitem").show(400);
+			$(span).removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
+		}
+	}
 }
 
 function collapseAll(close, button)

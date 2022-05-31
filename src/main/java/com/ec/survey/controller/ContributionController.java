@@ -435,6 +435,28 @@ public class ContributionController extends BasicController {
 					return new ModelAndView("close", "surveyprefix", origsurvey.getId() + ".");
 				}
 
+				if (origsurvey.getIsQuiz()) {
+
+					String lang = locale.getLanguage();
+					if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
+						lang = request.getParameter("language.code");
+					}
+
+					AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, u);
+					ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
+					Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+							translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+					sessionService.setFormStartDate(request, form, uniqueCode);
+					form.setSurvey(origsurvey);
+					form.getAnswerSets().add(answerSet);
+					result.addObject(form);
+					result.addObject("surveyprefix", origsurvey.getId() + ".");
+					result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
+					result.addObject("isquizresultpage", true);
+					result.addObject("invisibleElements", invisibleElements);
+					return result;
+				}
+
 				ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, oldAnswerSet.getUniqueCode());
 
 				if (origsurvey.getIsOPC()) {

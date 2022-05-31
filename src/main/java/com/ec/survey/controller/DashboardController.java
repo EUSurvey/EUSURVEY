@@ -348,6 +348,12 @@ public class DashboardController extends BasicController {
 					filter.setTitle(title);
 				}
 			}
+			if (request.getParameter("shortname") != null) {
+				String shortname = request.getParameter("shortname");
+				if (shortname.trim().length() > 0) {
+					filter.setShortname(shortname);
+				}
+			}
 			if (request.getParameter("createdfrom") != null) {
 				String createdfrom = request.getParameter("createdfrom");
 				if (createdfrom.trim().length() > 0) {

@@ -50,6 +50,7 @@
 		var labelPublish = "<spring:message code='label.Publish' />";
 		var labelUnpublish = "<spring:message code='label.Unpublish' />";
 		var languagecodes = ${languagecodes};
+		var labellocked = "<spring:message code='label.lockedTranslation' />";
 				
 		$(function() {					
 			$("#form-menu-tab").addClass("active");
@@ -394,7 +395,7 @@
 				<c:forEach items="${translations}" var="translation">
 					<tr id="${translation.id}" data-lang="${translation.language.code}" data-active="${translation.active}" data-complete="${translation.complete}" data-requested="${translation.requested}" >
 						<c:forEach items="${translation.translations}" var="trans">
-							<td id="${trans.id}" data-key="${trans.key.replace("\"","")}"><textarea><c:out value="${trans.label}" /></textarea></td>
+							<td id="${trans.id}" data-locked="${trans.locked}" data-label="${trans.label.replace("\"","\'")}" data-key="${trans.key.replace("\"","")}"><textarea><c:out value="${trans.label}" /></textarea></td>
 						</c:forEach>
 					</tr>
 				</c:forEach>

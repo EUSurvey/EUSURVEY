@@ -81,6 +81,9 @@
 			{
 				$("#additionalinfodiv").show();
 				$("#additionalsurveyinfodiv").show();
+			} else if ($("#highaudienceoption").is(":selected")){
+				$("#additionalinfodiv").hide();
+				$("#additionalsurveyinfodiv").show();
 			} else {
 				$("#additionalinfodiv").hide();
 				$("#additionalsurveyinfodiv").hide();
@@ -162,11 +165,6 @@
 			$(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 			$(".qq-upload-list").hide();
 			$(".qq-upload-drop-area").css("margin-left", "-1000px");
-			
-			<c:if test="${messagesent != null}">
-				showSuccess('<spring:message code="support.messagesent" />')
-			</c:if>
-			
 		});
 	</script>
 	
@@ -225,54 +223,44 @@
 				
 				<form:form id="supportForm" method="POST" action="${contextpath}/home/support?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
 					<label><span class="mandatory">*</span><spring:message code="support.ContactReason" /></label><br />
-					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 400px" name="contactreason" id="contactreason">
-						<c:choose>
-							<c:when test="${fromerrorpage != null}">
-								<option><spring:message code="support.GeneralQuestion" /></option>
-								<option id="erroroption" selected="selected"><spring:message code="support.TechnicalProblem" /></option>
-								<option><spring:message code="support.idea" /></option>
-								<option><spring:message code="support.assistance" /></option>
-								<option><spring:message code="support.Accessibility" /></option>
-								<option><spring:message code="support.DataProtection" /></option>
-								<option><spring:message code="support.otherreason" /></option>
-							</c:when>
-							<c:when test="${needassistance != null}">
-								<option><spring:message code="support.GeneralQuestion" /></option>
-								<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
-								<option><spring:message code="support.idea" /></option>
-								<option selected="selected"><spring:message code="support.assistance" /></option>
-								<option><spring:message code="support.Accessibility" /></option>
-								<option><spring:message code="support.DataProtection" /></option>
-								<option><spring:message code="support.otherreason" /></option>
-							</c:when>
-							<c:otherwise>
-								<option selected="selected"><spring:message code="support.GeneralQuestion" /></option>
-								<option id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
-								<option><spring:message code="support.idea" /></option>
-								<option><spring:message code="support.assistance" /></option>
-								<option><spring:message code="support.Accessibility" /></option>
-								<option><spring:message code="support.DataProtection" /></option>
-								<option><spring:message code="support.otherreason" /></option>
-							</c:otherwise>				
-						</c:choose>
+					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 425px" name="contactreason" id="contactreason">
+						<option value="generalquestion" id="generaloption"><spring:message code="support.GeneralQuestion" /></option>
+						<option value="technicalproblem" id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
+						<option value="idea"><spring:message code="support.idea" /></option>
+						<option value="assistance" id="assistanceoption"><spring:message code="support.assistance" /></option>
+						<option value="accessibility"><spring:message code="support.Accessibility" /></option>
+						<option value="dataprotection"><spring:message code="support.DataProtection" /></option>
+						<option value="highaudience" id="highaudienceoption"><spring:message code="support.HighAudience" /></option>
+						<option value="otherreason"><spring:message code="support.otherreason" /></option>						
 					</select><br /><br />
+					<script>
+						if (window.location.search.toLowerCase().includes("error")){
+							document.getElementById("erroroption").setAttribute("selected", "selected")
+						} else if (window.location.search.toLowerCase().includes("assistance")){
+							document.getElementById("assistanceoption").setAttribute("selected", "selected")
+						} else if (window.location.search.toLowerCase().includes("highaudience")){
+							document.getElementById("highaudienceoption").setAttribute("selected", "selected")
+						} else {
+							document.getElementById("generaloption").setAttribute("selected", "selected")
+						}
+					</script>
 					
 					<div id="additionalsurveyinfodiv">
-						<p><spring:message code="support.additionalsurveyinfo" />:</p>
+						<p><spring:message code="support.additionalsurveyinfonew" />:</p>
 						<label><spring:message code="skin.SurveyTitle" /></label><br />
-						<textarea class="form-control" rows="3" style="width: 400px" name="additionalsurveyinfotitle" id="additionalsurveyinfotitle" ></textarea><br />
+						<textarea class="form-control" rows="3" style="width: 425px" name="additionalsurveyinfotitle" id="additionalsurveyinfotitle" ></textarea><br />
 						<label><spring:message code="label.SurveyAlias" /></label><br />
-						<input type="text" class="form-control" name="additionalsurveyinfoalias" id="additionalsurveyinfoalias" /><br /><br />
+						<input type="text" class="form-control" style="width: 425px" name="additionalsurveyinfoalias" id="additionalsurveyinfoalias" /><br /><br />
 					</div>
 					
 					<label><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
-					<input type="text" class="form-control required" name="name" id="yourname" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
+					<input type="text" class="form-control required" style="width: 425px" name="name" id="yourname" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
 					
 					<label><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
-					<input type="text" class="form-control required email" id="supportemail" name="email" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
+					<input type="text" class="form-control required email" style="width: 425px" id="supportemail" name="email" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
 					
 					<label><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
-					<input type="text" class="form-control required" name="subject" id="supportsubject" /><br /><br />
+					<input type="text" class="form-control required" name="subject" style="width: 425px" id="supportsubject" /><br /><br />
 							
 					<label><span class="mandatory">*</span><spring:message code="support.yourmessagetous" /></label>
 					<div class="helptext"><spring:message code="support.yourmessagetoushelp" /></div>

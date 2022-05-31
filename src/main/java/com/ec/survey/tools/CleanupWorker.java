@@ -81,7 +81,8 @@ public class CleanupWorker implements Runnable {
 			{
 				switch (option) {
 					case "archived":
-						counter += fileService.deleteFilesForArchivedSurveys();
+						fileService.deleteFilesForArchivedSurveys();
+						counter += 1;
 						break;
 					case Constants.DELETED:
 						counter += fileService.deleteFilesForDeletedElements();

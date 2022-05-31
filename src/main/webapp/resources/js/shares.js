@@ -125,6 +125,13 @@
 			$("#configure-attributes-dialog").find(".selectedattrib").each(function(){
 				s += $(this).attr("name") + ";";
 			});
+
+			let ownerElement = document.querySelector("#configure-attributes-dialog #selectedDiv #owner");
+			let ownerSelected = false
+			if (ownerElement && ownerElement.checked) {
+				s += "&owner=selected"
+				ownerSelected = true
+			}
 						
 			$.ajax({
 				type:'GET',
@@ -171,7 +178,7 @@
 							th = document.createElement("th");
 							$(th).addClass("filtercell").addClass("attributefilter");
 							var input = document.createElement("input");
-							$(input).attr("name",list[i].id).addClass("filter").attr("type","text").attr("placeholder", "filter").attr("style","margin: 0px;").attr("onkeyup", "checkFilterCell($(this).closest('.filtercell'), false)");
+							$(input).attr("name",list[i].id == 1 && ownerSelected ? "owner" : list[i].id).addClass("filter").attr("type","text").attr("placeholder", "filter").attr("style","margin: 0px;").attr("onkeyup", "checkFilterCell($(this).closest('.filtercell'), false)");
 							$(th).append(input);
 							$("#participantsstaticheader").find("thead").find("tr").first().next().append(th);
 							
@@ -370,22 +377,26 @@
 					$(tr).append(td);
 					
 					$("#participantsstaticheader").find("thead").first().find(".attribute").each(function(){
-						var id = $(this).attr("data-id");
-						
-						td = document.createElement("td");
-						
-						for (var j = 0; j < paging.items[i].attributes.length; j++)
-						{
-							if (paging.items[i].attributes[j].attributeName.id == parseInt(id))
+						if ($(this).text() === "Owner") {
+							td = document.createElement("td");
+							$(td).text(paging.items[i].owner);
+						} else {
+							var id = $(this).attr("data-id");
+
+							td = document.createElement("td");
+
+							for (var j = 0; j < paging.items[i].attributes.length; j++)
 							{
-								if (paging.items[i].attributes[j].value != null)
+								if (paging.items[i].attributes[j].attributeName.id == parseInt(id))
 								{
-									$(td).html(paging.items[i].attributes[j].value.stripHtml());
+									if (paging.items[i].attributes[j].value != null)
+									{
+										$(td).html(paging.items[i].attributes[j].value.stripHtml());
+									}
+									break;
 								}
-								break;
 							}
 						}
-						
 						
 						$(tr).append(td);
 					});

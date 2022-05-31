@@ -294,7 +294,7 @@ a.ratingitem {
 	max-width: 95%;
 }
 
-.tabletable td, .tabletable th {border: 1px solid #bbb; padding: 0 4px 0 4px; word-wrap: break-word; }
+.tabletable td, .tabletable th, .complextable td, .complextable th {border: 1px solid #bbb; padding: 0 4px 0 4px; word-wrap: break-word; }
 
 .table-header {
 	background-color: #eee;
@@ -409,16 +409,18 @@ textarea.freetext {
 	top: -145px;
 }
 
-.freetext,
-.number,
+.freetext:not(.complex),
+.number:not(.complex),
 .date,
 .matrixtable,
 .tabletable,
 .dataTable,
 .regex,
+.formula:not(.complex),
 .alignment-div,
 .input-group,
-.ratingtable {
+.ratingtable,
+.complextable {
 	margin-left: 20px;
 }
 
@@ -435,7 +437,7 @@ textarea.freetext {
 	max-width: 420px;
 }
 
-input[type="text"].number {
+input[type="text"].number, input[type="text"].formula {
 	width: 215px;
 }
 
@@ -447,7 +449,7 @@ input[type="text"].time {
 	width: 177px;
 }
 
-input.regex, textarea.regex {
+input.regex, textarea.regex, input.formula:not(.complex) {
 	width: 430px !important;
 }
 
@@ -462,17 +464,20 @@ input.email {
 	padding: 5px !important;
 	max-height: 85px;
 	width: auto;
-	min-width: 200px;
 	overflow-x: auto;
 	cursor: pointer;
 	margin: 0px;
+}
+
+.multiple-choice:not(.complex) {
+	min-width: 200px;
 }
 
 .listbox a {
 	text-decoration: none;
 }
 
-.single-choice {
+.single-choice:not(.complex) {
 	border: 1px solid #ddd; 
 	display: inline-block;
 	background-color: #fff;
@@ -563,4 +568,35 @@ legend {
 .slider.slider-disabled .slider-handle {
 	background-color: #ccc !important;
 	background-image: none !important;
+}
+
+.progressBarPlaceholder {
+	height: 20px;
+}
+
+.progressBar {
+	z-index: 1000;	
+	position: fixed;		
+	top: 40px;
+	width: 960px;
+	height: 22px;	
+}
+
+#progressBarLabel {
+	white-space: nowrap;
+	padding: 5px;
+}
+
+.blacktext {
+	color: #000;
+}
+
+.progressBar .progress {
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.progress-bar-success {
+   background-color: #009200;
 }

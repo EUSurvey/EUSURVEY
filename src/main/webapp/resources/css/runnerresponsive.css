@@ -102,7 +102,7 @@
 .answertext {
 	color: #333;
 	margin-left: 5px;
-	word-break: break-all;
+	word-break: break-word;
 	word-wrap: break-word;
 }
 
@@ -247,7 +247,15 @@
 	max-width: 5000px;
 }
 
-.tabletable td, .tabletable th {border: 1px solid #bbb; padding: 0 4px 0 4px; font-size: 13px; }
+.tabletable td, .tabletable th, .complextable td, .complextable th {border: 1px solid #bbb; padding: 0 4px 0 4px; font-size: 13px; word-wrap: break-word; white-space: normal !important;}
+
+.complextable td {
+    position: relative;
+}
+
+.complextable td .validation-error, .complextable td .validation-error-server {
+	position: relative;
+}
 
 .tabletable input[type="text"] {
 	width: 100%;
@@ -347,7 +355,7 @@ textarea.freetext {
 	top: -125px;
 }
 
-.freetext, .email, .regex, .alignment-div, .text {
+.freetext, .email, .regex, .formula, .alignment-div, .text {
 	width: 100%;
 	max-width: 600px;
 }
@@ -412,10 +420,13 @@ a.active {
 	padding: 5px !important;
 	max-height: 85px;
 	width: auto;
-	min-width: 200px;
 	overflow-x: auto;
 	cursor: pointer;
 	margin: 0px;
+}
+
+.multiple-choice:not(.complex) {
+	min-width: 200px;
 }
 
 .single-choice {
@@ -550,4 +561,37 @@ legend {
 	width: 6px;
 	z-index: 0;
 	bottom: 11px;
+}
+
+.progressBarPlaceholder {
+	height: 20px;
+}
+
+.progressBar {
+	z-index: 1000;
+	position: fixed;
+	top: 40px;
+	bottom: 60px;
+	left: 10px;
+	right: 10px;
+	height: 22px;
+}
+
+.progressBar .progress {
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.progress-bar-success {
+   background-color: #009200;
+}
+
+#progressBarLabel {
+	white-space: nowrap;
+	padding: 5px;
+}
+
+.blacktext {
+	color: #000;
 }

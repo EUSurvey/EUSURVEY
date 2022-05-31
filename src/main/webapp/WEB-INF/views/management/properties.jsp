@@ -353,15 +353,15 @@
 								<form:radiobutton data-bind="click: function() {isUseMaxNumberContributionLink(false); return true;}" class="check" path="survey.isUseMaxNumberContributionLink" value="false"/><spring:message code="label.Text" />&nbsp;		
 								<form:radiobutton data-bind="click: function() {isUseMaxNumberContributionLink(true); return true;}" class="check" path="survey.isUseMaxNumberContributionLink" value="true"/><spring:message code="label.Link" />
 				
-								<div data-bind="hidden: isUseMaxNumberContributionLink">						
+								<div data-bind="hidden: isUseMaxNumberContributionLink">
 									<div class="preview">${form.survey.maxNumberContributionText} <a class="iconbutton" onclick="$('#tinymcelimit').show();$(this).closest('.preview').hide()" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil"></span></a></div>
 									<div id="tinymcelimit" style="display: none">
-										<form:textarea maxlength="255" class="tinymcealign required xhtml max255" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
+										<form:textarea maxlength="255" class="tinymcealign xhtml max255" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
 									</div>
 								</div>	
 								
-								<div data-bind="visible: isUseMaxNumberContributionLink">
-									<form:input htmlEscape="false" path="survey.maxNumberContributionLink" type="text" class="form-control" style="display: inline-block" />
+								<div data-bind="visible: isUseMaxNumberContributionLink" id="useMaxContributionLink">
+									<form:input htmlEscape="false" path="survey.maxNumberContributionLink" class="form-control" style="display: inline-block"/>
 								</div>
 							</div>
 						</td>
@@ -840,6 +840,93 @@
 					<tr>
 						<td>
 							<div style="float: left">
+								<spring:message code="label.ProgressBar" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.ProgressBar" /></div>	
+							</div>						
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.progressBar" class="onoffswitch-checkbox" id="myonoffswitchprogressBar" data-bind="checked: _properties.progressBar()" />
+									 <label class="onoffswitch-label" onclick="_properties.toggleProgressBar()">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: progressBar">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.DisplayProgress" />
+							</div>
+							<div style="float: right">							
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="0"/><spring:message code="label.percentage" />&#160;
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="1"/><spring:message code="label.ratio" />&#160;
+								<form:radiobutton class="required check" path="survey.progressDisplay" value="2"/><spring:message code="label.both" />	
+							</div>	
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MotivationPopup" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.MotivationPopup" /></div>
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.motivationPopup" class="onoffswitch-checkbox" id="myonoffswitchMotivationPopup" data-bind="checked: _properties.motivationPopup()" />
+									<label class="onoffswitch-label" onclick="_properties.toggleMotivationPopup()">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: motivationPopup">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MotivationPopupTrigger" />
+							</div>
+							<div style="float: right">
+								<form:radiobutton onclick="_properties.useMotivationTime(false)" class="required check" path="survey.motivationType" value="false"/><spring:message code="label.progress" />&#160;
+								<form:radiobutton onclick="_properties.useMotivationTime(true)" class="required check" path="survey.motivationType" value="true"/><spring:message code="label.timer" />&#160;
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: motivationPopup">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MotivationPopupThreshold" />
+							</div>
+							<div style="float: right">
+								<div data-bind="visible: !useMotivationTime()">
+									<input id='motivationtriggerprogress' class="form-control number min1 max99" type='number' name='survey.motivationTriggerProgress' min='1' max='99' value="<esapi:encodeForHTMLAttribute>${form.survey.motivationTriggerProgress}</esapi:encodeForHTMLAttribute>">
+								</div>
+								<div data-bind="visible: useMotivationTime()">
+									<input id='motivationtriggertimer' class="form-control number min5 max60" type='number' name='survey.motivationTriggerTime' min='5' max='60' value="<esapi:encodeForHTMLAttribute>${form.survey.motivationTriggerTime}</esapi:encodeForHTMLAttribute>">
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: motivationPopup">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MotivationPopupText" />
+							</div>
+							<div style="float: right; text-align: right;">
+								<div class="preview">${form.survey.motivationText} <a class="iconbutton" onclick="$('#tinymcemotivationpopup').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
+								<div id="tinymcemotivationpopup" style="display: none">
+									<form:textarea class="tinymce" id="edit-survey-motivation-popup" path="survey.motivationText"></form:textarea>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
 								<spring:message code="label.AccessibilityMode" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								<div class="help hideme"><spring:message code="help.AccessibilityMode" /></div>
@@ -871,7 +958,7 @@
 								
 								<input type="hidden" name="logo" id="logo" />
 					
-								<a id="removelogobutton" style="margin-bottom: 10px" class="btn btn-default" <c:if test="${form.survey.logo == null}">style="display: none"</c:if> onclick="$(this).closest('td').find('img').remove();$(this).closest('td').find('p').remove(); $('#logo').val('deleted'); $(this).addClass('disabled').hide(); $('#file-uploader-area-div').hide();"><spring:message code="label.Remove" /></a>
+								<a id="removelogobutton" style="margin-bottom: 10px; ${form.survey.logo == null ? "display: none" : ""}" class="btn btn-default" onclick="$(this).closest('td').find('img').remove();$(this).closest('td').find('p').remove(); $('#logo').val('deleted'); $(this).addClass('disabled').hide(); $('#file-uploader-area-div').hide();"><spring:message code="label.Remove" /></a>
 								
 								<div id="file-uploader-logo" style="margin-left: 90px;">
 									<noscript>
@@ -1112,11 +1199,11 @@
 								<div data-bind="visible: !useConfLink()">
 									<div class="preview">${form.survey.confirmationPage} <a class="iconbutton" onclick="$('#tinymceconfpage').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
 									<div id="tinymceconfpage" style="display: none">
-										<form:textarea class="tinymce required" path="survey.confirmationPage"></form:textarea>
+										<form:textarea class="tinymce" path="survey.confirmationPage"></form:textarea>
 									</div>		
 								</div>
-								<div data-bind="visible: useConfLink">	
-									<form:input class="targeturl form-control" path="survey.confirmationLink" ></form:input>
+								<div data-bind="visible: useConfLink" id="confLink">
+									<form:input class="form-control" path="survey.confirmationLink" ></form:input>
 								</div>
 							</div>
 						</td>
@@ -1128,18 +1215,18 @@
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
 								<div class="help hideme"><spring:message code="info.UnavailabilityPage" /></div>	
 							</div>
-							<div style="float: right; text-align: right; max-width: 500px;">
+							<div style="float: right; text-align: right;">
 								<form:radiobutton onclick="_properties.useEscapeLink(false)" class="check" path="survey.escapePageLink" value="false"/><spring:message code="label.Text" />&#160;
 								<form:radiobutton onclick="_properties.useEscapeLink(true)"  id="esclink" class="check" path="survey.escapePageLink" value="true"/><spring:message code="label.Link" />
 								<br />
 								<div data-bind="visible: !useEscapeLink()">
 									<div class="preview">${form.survey.escapePage} <a class="iconbutton" onclick="$('#tinymceescapepage').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
 									<div id="tinymceescapepage" style="display: none">
-										<form:textarea class="tinymce required" path="survey.escapePage"></form:textarea>
+										<form:textarea class="tinymce" path="survey.escapePage"></form:textarea>
 									</div>		
 								</div>
-								<div data-bind="visible: useEscapeLink">	
-									<form:input class="targeturl form-control" path="survey.escapeLink" ></form:input>
+								<div data-bind="visible: useEscapeLink" id="escapeLink">
+									<form:input class="form-control" path="survey.escapeLink" ></form:input>
 								</div>
 							</div>
 						</td>

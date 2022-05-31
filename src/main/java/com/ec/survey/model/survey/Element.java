@@ -41,6 +41,8 @@ public abstract class Element implements java.io.Serializable {
 	private String subType = "";
 	private Integer displayMode;
 	private Boolean useAndLogic = false;
+	private boolean editorRowsLocked = false; //Rows + Possible Answer
+	private boolean editorColumnsLocked = false; //Columns
 
 	private Map<Integer, String[]> activitiesToLog = new HashMap<>();
 
@@ -144,6 +146,24 @@ public abstract class Element implements java.io.Serializable {
 
 	public void setUseAndLogic(Boolean useAndLogic) {
 		this.useAndLogic = useAndLogic != null ? useAndLogic : false;
+	}
+
+	@Column(name = "EDIT_ROWS_LOCKED")
+	public Boolean getEditorRowsLocked() {
+		return editorRowsLocked;
+	}
+
+	public void setEditorRowsLocked(Boolean rowsLocked) {
+		this.editorRowsLocked = rowsLocked != null ? rowsLocked : false;
+	}
+
+	@Column(name = "EDIT_COLUMNS_LOCKED")
+	public Boolean getEditorColumnsLocked() {
+		return editorColumnsLocked;
+	}
+
+	public void setEditorColumnsLocked(Boolean columnsLocked) {
+		this.editorColumnsLocked = columnsLocked != null ? columnsLocked : false;
 	}
 
 	@Transient

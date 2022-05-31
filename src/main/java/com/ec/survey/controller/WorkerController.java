@@ -5,7 +5,6 @@ import com.ec.survey.model.Archive;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.Form;
-import com.ec.survey.model.StatisticsRequest;
 import com.ec.survey.model.WebserviceTask;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;

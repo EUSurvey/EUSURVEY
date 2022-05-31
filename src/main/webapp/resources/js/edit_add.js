@@ -41,6 +41,7 @@ function getNewElement(item)
 			getBasicElement("RankingItem", false, "Ranking Item 3", null, false),
 			];
 		element.isDelphiQuestion = isDelphi;
+		element.order = 0;
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
@@ -192,6 +193,17 @@ function getNewElement(item)
 		element.regex = "";
 		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
+	} else if (item.hasClass("formulaitem"))
+	{
+		element = getBasicElement("FormulaQuestion", true, "Calculated field", item.attr("id"), true);
+		element.css = "formula";
+		element.formula = "";
+		element.min = null;
+		element.minString = null;
+		element.max = null;
+		element.maxString = null;
+		element.readonly = true;
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("galleryitem"))
 	{
 		element = getBasicElement("GalleryQuestion", true, "Gallery", item.attr("id"), true);
@@ -272,6 +284,47 @@ function getNewElement(item)
 		    	});		   
 		    }
 		 });		
+	} else if (item.hasClass("complextableitem"))
+	{
+		element = getBasicElement("ComplexTable", true, "Complex Table", item.attr("id"), true);
+		element.rows = 3;
+		element.columns = 3;
+		element.size = 0;
+		element.showHeadersAndBorders = true;
+		
+		element.childElements = [
+			getBasicElement("ComplexTableItem", true, "", null, false),
+	        getBasicElement("ComplexTableItem", true, "A", null, false),
+	        getBasicElement("ComplexTableItem", true, "B", null, false),
+	        getBasicElement("ComplexTableItem", true, "C", null, false),
+	        getBasicElement("ComplexTableItem", true, "1", null, true),
+	        getBasicElement("ComplexTableItem", true, "2", null, true),
+	        getBasicElement("ComplexTableItem", true, "3", null, true)
+        ];
+
+		element.childElements[0].row = 0;
+		element.childElements[0].column = 0;
+		element.childElements[0].cellType = 1;
+		element.childElements[1].row = 0;
+		element.childElements[1].column = 1;
+		element.childElements[1].cellType = 1;
+		element.childElements[2].row = 0;
+		element.childElements[2].column = 2;
+		element.childElements[2].cellType = 1;
+		element.childElements[3].row = 0;
+		element.childElements[3].column = 3;
+		element.childElements[3].cellType = 1;
+		element.childElements[4].row = 1;
+		element.childElements[4].column = 0;
+		element.childElements[4].cellType = 1;
+		element.childElements[5].row = 2;
+		element.childElements[5].column = 0;
+		element.childElements[5].cellType = 1;
+		element.childElements[6].row = 3;
+		element.childElements[6].column = 0;
+		element.childElements[6].cellType = 1;
+
+		updateComplexityScore("addTableOrMatrixQuestion");	
 	}
 	
 	if (item.hasClass("quiz"))
@@ -298,18 +351,9 @@ function addNewElement(item, element)
 	
 	elemcounter++;
 	
-	var model = getElementViewModel(element);
+	var model = getElementViewModel(element, true);
 	var model = addElementToContainer(model, item, true, false);	
 	_elements[model.id()] = model;
-	
-	if (item.hasClass("confirmationitem")) {
-		item.find(".questiontitle").prepend("<input disabled='disabled' type='checkbox' />")
-	}
-	
-//	if (!element.optional)
-//	{
-//		item.find(".questiontitle").prepend("<span class='mandatory'>*</span>")
-//	}
 	
 	addElementHandler(item);
 	checkContent();
@@ -330,13 +374,20 @@ function addElementHandler(item)
 	$(item).find(".matrix-header, .table-header").dblclick(function(e){
 		_elementProperties.showProperties(this, e, true);
 	});
-	
+
 	$(item).find(".possibleanswerrow").find(".answertext").click(function(e){
 		_elementProperties.showProperties(this, e, false);
-	});	
+	});
 	$(item).find(".possibleanswerrow").find(".answertext").dblclick(function(e){
 		_elementProperties.showProperties(this, e, true);
-	});	
+	});
+
+	$(item).find("ul.multiple-choice").find(".answertext").click(function(e){
+		_elementProperties.showProperties(this, e, false);
+	});
+	$(item).find("ul.multiple-choice").find(".answertext").dblclick(function(e){
+		_elementProperties.showProperties(this, e, true);
+	});
 
 	$(item).find(".rankingitem-form-data").click(function(e) {
 		_elementProperties.showProperties($(this).find(".rankingitemtext")[0], e, false);
@@ -347,6 +398,10 @@ function addElementHandler(item)
     });
 	
 	$(item).find(".ratingtable").find(".ratingquestion").click(function(e) {
+		_elementProperties.showProperties(this, e, false);
+    });
+
+	$(item).find(".complextable th, .complextable td").click(function(e) {
 		_elementProperties.showProperties(this, e, false);
     });
 	
@@ -392,7 +447,15 @@ function addElementHandler(item)
 				    $(this).removeClass("survey-element-hovered");
 				  }
 				);
-	
+				
+	$(item).find(".complextable th, .complextable td").hover(
+			  function() {
+				  	$(this).closest(".survey-element").removeClass("survey-element-hovered");
+				    $(this).addClass("survey-element-hovered");
+				  }, function() {
+				    $(this).removeClass("survey-element-hovered");
+				  }
+				);	
 }
 
 function getMatrixAnswers(element)
@@ -417,8 +480,13 @@ function getMatrixQuestions(element)
 
 function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 {
+	var titleprefix = "";
+	if(type == "Confirmation"){
+		titleprefix = "<input disabled='disabled' type='checkbox'/> ";
+	}
+
 	var element = {
-			"title" : title,
+			"title" : titleprefix + title,
 			"type" : type,
 			"shortname" : getNewShortname(),
 			"uniqueId" : getNewId(),
@@ -469,11 +537,7 @@ function getNewShortname()
 {
 	if (usedIDs.length == 0)
 	{
-		$("input[name^='shortname']").each(function(){
-			usedIDs[usedIDs.length] = $(this).val();
-		});
-		
-		$("input[name^='pashortname']").each(function(){
+		$("input[name^='shortname'],input[name^='pashortname'],input[name^='rankingitemshortname']").each(function(){
 			usedIDs[usedIDs.length] = $(this).val();
 		});
 		
@@ -486,7 +550,7 @@ function getNewShortname()
 	//the 200000 are a security limit to prevent endless loops
 	for (var i = lastIdTried + 1; i < 200000; i++)
 	{
-		var s = "[ID" + i + "]";
+		var s = "ID" + i;
 		var found = false;
 		
 		if (usedIDs.indexOf(s) > -1)

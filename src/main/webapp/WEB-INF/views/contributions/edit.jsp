@@ -135,6 +135,8 @@
 						});
 				} else {
 					readCookies();
+					updateProgress();
+					updateAllFormulas();
 					$("#btnSubmit").removeClass("hidden");
 					$("#btnSaveDraft").removeClass("hidden");
 					$("#btnSaveDraftMobile").removeClass("hidden");

@@ -1,19 +1,9 @@
 package com.ec.survey.model.survey;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -38,11 +28,21 @@ public class RankingQuestion extends Question {
 
 	private List<RankingItem> childElements = new ArrayList<>();
 	private List<RankingItem> missingElements = new ArrayList<>();
+	private List<RankingItem> orderedChildElements;
+	private Integer order;
 
 	public RankingQuestion() {}
 	
 	public RankingQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
+	}
+
+	@Column(name = "CHOICEORDER")
+	public Integer getOrder() {
+		return order == null ? 0 : order;
+	}
+	public void setOrder(Integer order) {
+		this.order = (order == null ? 0 : order);
 	}
 
 	@OneToMany(targetEntity=RankingItem.class, cascade = CascadeType.ALL)
@@ -56,6 +56,31 @@ public class RankingQuestion extends Question {
 	}
 	public void setChildElements(List<RankingItem> childElements) {
 		this.childElements = childElements;	
+	}
+
+	@Transient
+	public List<RankingItem> getOrderedChildElements() {
+		if (orderedChildElements != null) {
+			return orderedChildElements;
+		}
+
+		switch (getOrder()) {
+			case 1:
+				// alphabetical
+				orderedChildElements = childElements.stream().sorted(Comparator.comparing(Element::getStrippedTitleNoEscape)).collect(Collectors.toList());
+				break;
+			case 2:
+				// random
+				orderedChildElements = new ArrayList<>(childElements);
+				Collections.shuffle(orderedChildElements);
+				break;
+			default:
+				// original
+				orderedChildElements = new ArrayList<>(childElements);
+				break;
+		}
+
+		return orderedChildElements;
 	}
 
 	@Transient
@@ -96,7 +121,7 @@ public class RankingQuestion extends Question {
 			return childElements;
 		}		
 		
-	}	
+	}
 	
 	@Transient
 	public RankingItem getChildElement(int id) {
@@ -148,6 +173,7 @@ public class RankingQuestion extends Question {
 	public RankingQuestion copy(String fileDir) throws ValidationException {
 		RankingQuestion copy = new RankingQuestion();
 		baseCopy(copy);
+		copy.setOrder(order);
 
 		for (RankingItem thatElement : getChildElements()) {
 			RankingItem elementCopy = thatElement.copy(fileDir);

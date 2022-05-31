@@ -11,8 +11,13 @@
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/form.css" rel="stylesheet" type="text/css" />
 		
-	<script type="text/javascript"> 
-		
+	<script type="text/javascript">
+
+		$(function() {
+			$("#form-menu-tab").addClass("active");
+			$("#overview-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
+		});
+
 		function showExportDialog(type, format)
 		{
 			exportType = type;

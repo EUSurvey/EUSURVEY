@@ -31,6 +31,7 @@
 			this.selectedQuestions = ko.observable(${!form.survey.publication.allQuestions});
 			this.selectedContributions = ko.observable(${!form.survey.publication.allContributions});
 			this.useConfLink =  ko.observable(${form.survey.confirmationPageLink});
+			this.useMotivationTime = ko.observable(${form.survey.motivationType});
 			this.useEscapeLink =  ko.observable(${form.survey.escapePageLink});
 			this.quiz = ko.observable(${form.survey.isQuiz});
 			this.delphi = ko.observable(${form.survey.isDelphi});
@@ -45,6 +46,9 @@
 			this.timeLimit = ko.observable("${form.survey.timeLimit}");
 			this.showCountdown = ko.observable(${form.survey.showCountdown});
 			this.preventGoingBack = ko.observable(${form.survey.preventGoingBack});
+			this.progressBar = ko.observable(${form.survey.progressBar});
+			this.motivationPopup = ko.observable(${form.survey.motivationPopup});
+			this.progressDisplay = ko.observable(${form.survey.progressDisplay});
 			
 			this.addLinksRow = function()
 			{
@@ -202,6 +206,16 @@
 				}
 			}
 			
+			this.toggleProgressBar = function()
+			{
+				this.self.progressBar(!this.self.progressBar());
+			}
+
+			this.toggleMotivationPopup = function()
+			{
+				this.self.motivationPopup(!this.self.motivationPopup());
+			}
+			
 			this.toggleQuiz = function()
 			{
 				this.self.quiz(!this.self.quiz());
@@ -288,7 +302,71 @@
 					$("#edit-survey-title").parent().append("<div class='validation-error'>" + texttoolongText + "</div>");
 					return;
 				}
-			
+
+				if(_properties.isUseMaxNumberContribution()){
+					if (_properties.isUseMaxNumberContributionLink()){
+						if(isPropEmpty("[name='survey.maxNumberContributionLink']")){
+							$("#useMaxContributionLink").append("<div class='validation-error'>" + requiredText + "</div>")
+							return
+						}
+						if(isURLNotValid("[name='survey.maxNumberContributionLink']")) {
+							$("#useMaxContributionLink").append("<div class='validation-error'>" +invalidURL + "</div>")
+							return
+						}
+					} else {
+						if(isPropEmpty("[name='survey.maxNumberContributionText']")){
+							$("#tinymcelimit").append("<div class='validation-error'>" + requiredText + "</div>")
+							return
+						}
+					}
+				}
+
+				if(_properties.motivationPopup()){
+					if(isPropEmpty("[name='survey.motivationText']")){
+						$("#tinymcemotivationpopup").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+
+					var motivation = $("#edit-survey-motivation-popup").text().length;
+					if (motivation > 255)
+					{
+						$("#tinymcemotivationpopup").append("<div class='validation-error'>" + texttoolongText + "</div>")
+						return;
+					}
+				}
+
+				if (_properties.useConfLink()){
+					if (isPropEmpty("[name='survey.confirmationLink']")){
+						$("#confLink").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+					if(isURLNotValid("[name='survey.confirmationLink']")) {
+						$("#confLink").append("<div class='validation-error'>" +invalidURL + "</div>")
+						return
+					}
+				} else {
+					if (isPropEmpty("[name='survey.confirmationPage']")){
+						$("#tinymceconfpage").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+				}
+
+				if (_properties.useEscapeLink()){
+					if (isPropEmpty("[name='survey.escapeLink']")){
+						$("#escapeLink").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+					if(isURLNotValid("[name='survey.escapeLink']")) {
+						$("#escapeLink").append("<div class='validation-error'>" +invalidURL + "</div>")
+						return
+					}
+				} else {
+					if (isPropEmpty("[name='survey.escapePage']")){
+						$("#tinymceescapepage").append("<div class='validation-error'>" + requiredText + "</div>")
+						return
+					}
+				}
+
 				if ($("#survey\\.start").val().length > 0 && $("#survey\\.end").val().length > 0)
 				{
 					var startdate = parseDateTime($("#survey\\.start").val(),$("#startHour").val());
@@ -359,7 +437,6 @@
 				});				
 				
 				if (invalid) return;
-				
 				if ($("#survey-contact-type").val() == "url") {
 					$("#survey\\.contact").removeClass("email").addClass("url");
 					result = validateInput($("#survey\\.contact").parent());
@@ -384,7 +461,7 @@
 				{
 					return;
 				}
-				
+
 				result = validateInput($("#maxContributionInput").parent());
 				
 				if (result == false)
@@ -489,6 +566,17 @@
 				$("#clearpublicationpassword").hide();
 				$("#survey\\.publication\\.password").show();
 			}
+		}
+
+		function isPropEmpty(select){
+			let elem = $(select)
+			return elem.text().trim().length <= 0 && elem.val().trim().length <= 0
+		}
+
+		function isURLNotValid(select){
+			let value = $(select).val();
+			var urlregex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+			return !urlregex.test( value  );
 		}
 		
 	</script>

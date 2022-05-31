@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -2356,4 +2353,57 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
+	@PutMapping(value = "/SetDashboardLink/{shortname}", produces = "text/plain")
+	public @ResponseBody String putDashboardLink(@PathVariable String shortname,
+												   HttpServletRequest request, HttpServletResponse response) {
+
+		KeyValue credentials = getLoginAndPassword(request, response);
+		if (credentials != null) {
+			User user = getUser(request, response, true);
+			if (user == null)
+				return ""; //Response code set in getUser
+
+			Survey survey = getSurvey(shortname, user, request, response, true, true);
+			if (survey == null)
+				return ""; //Response code set in getSurvey
+
+			boolean privileged = false;
+			if (survey.getOwner().getId().equals(user.getId()) || user.getFormPrivilege() == 2) {
+				privileged = true;
+			} else {
+				Access access = surveyService.getAccess(survey.getId(), user.getId());
+
+				if (access != null && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) >= 2) {
+					privileged = true;
+				}
+			}
+
+			if (!privileged){
+				response.setStatus(403);
+				return "";
+			}
+
+			StringBuilder content = new StringBuilder();
+
+			try (BufferedReader br = request.getReader()){
+
+				br.lines().forEach(content::append);
+
+			} catch (IOException e){
+				response.setStatus(500);
+				return "";
+			}
+
+			surveyService.updateCodaLink(survey.getUniqueId(), content.toString());
+			webserviceService.increaseServiceRequest(user.getId());
+
+			response.setStatus(204);
+
+		} else {
+			response.setStatus(403);
+
+		}
+
+		return "";
+	}
 }

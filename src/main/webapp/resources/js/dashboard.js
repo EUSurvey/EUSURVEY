@@ -227,6 +227,7 @@ function DashboardViewModel()
 				if (s == "archived")
 				{
 					$("#surveytypeselector").val(s);
+					$("#surveytypeselector").trigger("change")
 				}
 			}
 				
@@ -369,7 +370,7 @@ function DashboardViewModel()
 			var owner = $("#owner").val().trim();
 			if (owner.length > 0)
 			{
-				params = params + "&owner=" + owner;
+				params = params + "&owner=" + encodeURIComponent(owner);
 			}
 			var language = $("#language").val().trim();
 			if (language.length > 0)
