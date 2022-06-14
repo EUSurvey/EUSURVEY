@@ -223,7 +223,8 @@ public class DelphiController extends BasicController {
 			User user = sessionService.getCurrentUser(request);
 			
 			if (user != null) {
-				sessionService.upgradePrivileges(survey, user, request);
+				Survey draft = surveyService.getSurveyByShortname(survey.getShortname(), true, user, request, false, true, true, false);
+				sessionService.upgradePrivileges(draft, user, request);
 			}
 			
 			boolean resultsview = request.getParameter("resultsview") != null && request.getParameter("resultsview").equalsIgnoreCase("true"); 
