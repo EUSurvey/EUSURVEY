@@ -348,11 +348,12 @@ public class HomeController extends BasicController {
 			if (smtpAuth != null) {
 				httppost.addHeader("Authorization", "Basic " + smtpAuth);
 			}
+			httppost.addHeader("SOAPAction", "Create");
 
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
 			
-			logger.info(response.getStatusLine());
+			logger.info("HTTP Code: " + response.getStatusLine().getStatusCode());
 
 			if (entity != null) {
 				String strResponse = EntityUtils.toString(entity);
