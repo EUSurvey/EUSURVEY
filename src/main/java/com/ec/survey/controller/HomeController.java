@@ -339,6 +339,7 @@ public class HomeController extends BasicController {
 
 		try {
 
+			sessionService.initializeProxy();
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(incidentHost);
 
@@ -350,6 +351,8 @@ public class HomeController extends BasicController {
 
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
+			
+			logger.info(response.getStatusLine());
 
 			if (entity != null) {
 				String strResponse = EntityUtils.toString(entity);
