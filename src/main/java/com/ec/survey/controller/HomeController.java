@@ -343,20 +343,20 @@ public class HomeController extends BasicController {
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(incidentHost.trim());
 
-			httppost.setEntity(new StringEntity(createTemplate));
+			httppost.addHeader("Content-type", "text/xml;charset=UTF-8");
 			
 			if (smtpAuth != null) {
 				httppost.addHeader("Authorization", "Basic " + smtpAuth);
 			}
 			httppost.addHeader("SOAPAction", "Create");
-
+			
+			httppost.setEntity(new StringEntity(createTemplate));
+			
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
-			
-			logger.info("HTTP Code: " + response.getStatusLine().getStatusCode());
 
 			if (entity != null) {
-				String strResponse = EntityUtils.toString(entity);
+				String strResponse = EntityUtils.toString(entity, "UTF-8");
 				if (!strResponse.contains("message=\"success\"")) {
 					logger.error(strResponse);
 					throw new MessageException("Calling SMT web service failed.");
@@ -364,6 +364,9 @@ public class HomeController extends BasicController {
 				logger.info(strResponse);
 			}
 
+			logger.info("Mime Type: " + EntityUtils.getContentMimeType(entity));
+			logger.info("Char Set: " + EntityUtils.getContentCharSet(entity));
+			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			//fallback to email
