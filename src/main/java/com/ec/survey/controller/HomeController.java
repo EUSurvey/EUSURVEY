@@ -341,7 +341,7 @@ public class HomeController extends BasicController {
 
 			sessionService.initializeProxy();
 			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(incidentHost);
+			HttpPost httppost = new HttpPost(incidentHost.trim());
 
 			httppost.setEntity(new StringEntity(createTemplate));
 			
