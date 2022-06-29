@@ -363,6 +363,11 @@ public class HomeController extends BasicController {
 				}
 				logger.info(strResponse);
 			}
+			
+			org.apache.http.Header[] headers = response.getAllHeaders();
+	        for(org.apache.http.Header h:headers){
+	        	logger.info("Response Header " + h.getName() + ": " + h.getValue());
+	        }
 
 			logger.info("Mime Type: " + EntityUtils.getContentMimeType(entity));
 			logger.info("Char Set: " + EntityUtils.getContentCharSet(entity));
