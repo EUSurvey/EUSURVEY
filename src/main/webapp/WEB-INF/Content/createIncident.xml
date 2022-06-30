@@ -4,9 +4,9 @@
       <ns3:model>
         <ns3:keys updatecounter="0"/>
         <ns3:instance updatecounter="0">
-          <ns3:Severity mandatory="false" readonly="false" type="String">2</ns3:Severity>
+          <ns3:Severity mandatory="false" readonly="false" type="String">3</ns3:Severity>
           <ns3:PrimaryAssignmentGroup mandatory="false" readonly="false" type="String">DIGIT EUSURVEY SUPPORT</ns3:PrimaryAssignmentGroup>
-          <ns3:AffectedItem mandatory="false" readonly="false" type="String">SMT</ns3:AffectedItem>
+          <ns3:AffectedItem mandatory="false" readonly="false" type="String">SURVEYS</ns3:AffectedItem>
           <ns3:IncidentDescription type="Array">
             <ns3:IncidentDescription mandatory="false" readonly="false" type="String">[MESSAGE]</ns3:IncidentDescription>
             <ns3:IncidentDescription mandatory="false" readonly="false" type="String">User name: [ADDITIONALINFOUSERNAME]</ns3:IncidentDescription>
@@ -15,9 +15,7 @@
             <ns3:IncidentDescription mandatory="false" readonly="false" type="String">Survey title: [ADDITIONALINFOSURVEYTITLE]</ns3:IncidentDescription>
             <ns3:IncidentDescription mandatory="false" readonly="false" type="String">Survey alias: [ADDITIONALINFOSURVEYALIAS]</ns3:IncidentDescription>
           </ns3:IncidentDescription>
-          <ns3:Resolution type="Array"/>
           <ns3:Contact mandatory="false" readonly="false" type="String">ZZZ_EXTERNAL USER EXTERNE</ns3:Contact>
-          <ns3:JournalUpdates type="Array"/>
           <ns3:Company mandatory="false" readonly="false" type="String">EXTERNE</ns3:Company>
           <ns3:BriefDescription mandatory="false" readonly="false" type="String">[SUBJECT]</ns3:BriefDescription>
           <ns3:IMTicketStatus mandatory="false" readonly="false" type="String">Assigned</ns3:IMTicketStatus>
@@ -25,9 +23,8 @@
           <ns3:NotifyBy mandatory="false" readonly="false" type="String">E-MAIL</ns3:NotifyBy>
           <ns3:Explanation type="Array"/>
           <ns3:CallCode mandatory="false" readonly="false" type="String">OTHER</ns3:CallCode>
-          <ns3:Impact mandatory="false" readonly="false" type="String">2</ns3:Impact>
+          <ns3:Impact mandatory="false" readonly="false" type="String">3</ns3:Impact>
           <ns3:Workdesc type="Array"/>
-          <ns3:Category>INCIDENT</ns3:Category>
         </ns3:instance>
       </ns3:model>
     </ns3:CreateIncidentRequest>
