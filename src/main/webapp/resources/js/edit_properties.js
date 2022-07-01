@@ -211,8 +211,13 @@ var ElementProperties = function() {
 	
 	this.showProperties = function(e, event, doubleclick)
 	{
-		$('.activeproperty').each(function(){
-			update(this);
+		$('.activeproperty').each(function(){		
+			var attr = $(this).attr('data-child');
+			if (typeof attr !== 'undefined' && attr !== false) {
+			    changeChildren(this, null);
+			} else {
+				update(this);
+			}
 		})
 	
 		var advancedOpen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;

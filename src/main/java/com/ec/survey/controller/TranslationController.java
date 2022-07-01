@@ -722,7 +722,7 @@ public class TranslationController extends BasicController {
 				}
 
 				if (form.getSurvey().getConfirmationPage().equalsIgnoreCase(Survey.CONFIRMATIONTEXT)) {
-					String confirmation = resources.getMessage("message.confirmation", null, Survey.CONFIRMATIONTEXT,
+					String confirmation = resources.getMessage("message.confirmationWithTitle", null, Survey.CONFIRMATIONTEXT,
 							new Locale(language.getCode()));
 					newTranslation.getTranslations().add(new Translation(Survey.CONFIRMATIONPAGE, confirmation,
 							language.getCode(), form.getSurvey().getId(), newTranslation));

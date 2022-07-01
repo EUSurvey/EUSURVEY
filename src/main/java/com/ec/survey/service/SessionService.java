@@ -474,7 +474,7 @@ public class SessionService extends BasicService {
 		ResultFilter filter = null;
 
 		if (userid > 0 && surveyid > 0) {
-			filter = getResultFilter(userid, surveyid);
+			filter = getResultFilter(userid, surveyid, true);
 		} else {
 			filter = (ResultFilter) request.getSession().getAttribute("ResultFilter");
 		}
@@ -532,7 +532,8 @@ public class SessionService extends BasicService {
 		return filter;
 	}
 
-	public ResultFilter getResultFilter(int userid, int surveyid) {
+	@Transactional
+	public ResultFilter getResultFilter(int userid, int surveyid, boolean evict) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session
 				.createQuery(
@@ -542,7 +543,14 @@ public class SessionService extends BasicService {
 		List<ResultFilter> result = query.list();
 
 		if (!result.isEmpty()) {
-			return answerService.initialize(result.get(0));
+			ResultFilter filter = result.get(0);
+			filter = answerService.initialize(filter);
+			
+			if (evict) {
+				session.evict(filter);
+			}			
+			
+			return filter;
 		}
 
 		return null;
@@ -610,7 +618,7 @@ public class SessionService extends BasicService {
 		filter.setUserId(user);
 		filter.setSurveyId(survey);
 
-		ResultFilter existing = getResultFilter(user, survey);
+		ResultFilter existing = getResultFilter(user, survey, false);
 		if (existing == null) {
 			existing = new ResultFilter();
 		}
@@ -711,12 +719,12 @@ public class SessionService extends BasicService {
 		System.getProperties().setProperty("https.proxyUser", proxyUser);
 		System.getProperties().setProperty("https.proxyPassword", proxyPassword);
 
-		System.setProperty("nonProxyHosts", "localhost");
-
 		if (StringUtils.isEmpty(proxyNonProxyHosts)) {
 			proxyNonProxyHosts = "localhost";
 		}
 
+		System.setProperty("nonProxyHosts", proxyNonProxyHosts);
+		
 		logger.info("SessionService set Non proxy Host " + proxyNonProxyHosts);
 		System.getProperties().setProperty("http.nonProxyHosts", proxyNonProxyHosts);
 

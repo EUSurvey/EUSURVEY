@@ -14,6 +14,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,10 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import com.ec.survey.model.ECFProfile;
-import com.ec.survey.model.Language;
-import com.ec.survey.model.Publication;
-import com.ec.survey.model.Skin;
+import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyService;
@@ -75,7 +74,7 @@ final public class Survey implements java.io.Serializable {
 	public static final String QUIZWELCOMEMESSAGE = "QUIZWELCOMEMESSAGE";
 	public static final String QUIZRESULTSMESSAGE = "QUIZRESULTSMESSAGE";
 
-	public static final String CONFIRMATIONTEXT = "Thank you for your contribution";
+	public static final String CONFIRMATIONTEXT = "<span style=\"color: #4caf50; font-size: 200%; font-weight: bold;\">✓</span> <strong style=\"color: black; margin-left: 6px;\"> Contribution successfully submitted</strong><br /><br />Thank you for your contribution!";
 	public static final String ESCAPETEXT = "This survey has not yet been published or has already been unpublished in the meantime.";
 	public static final String RESULTSMESSAGETEXT = "Thank you for your contribution";
 
@@ -189,7 +188,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
 	private Boolean isDelphiShowAnswers = false;
 	private Integer minNumberDelphiStatistics = 1;
-	private String logoText;
+	private String logoText = "";
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
 	private boolean preventGoingBack = false;
@@ -200,6 +199,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean motivationPopup = false;
 	private Boolean motivationType = false;
 	private String motivationText = MOTIVATIONPOPUPTEXT;
+	private String motivationPopupTitle = "";
 	private Integer motivationTriggerProgress = MOTIVATIONPOPUPPROGRESS;
 	private Integer motivationTriggerTime = MOTIVATIONPOPUPTIME;
 	private String codaLink;
@@ -846,6 +846,22 @@ final public class Survey implements java.io.Serializable {
 				: MOTIVATIONPOPUPTEXT;
 	}
 
+	@Column(name = "MOTIVATIONTITLE")
+	public String getMotivationPopupTitle() {
+		if (this.motivationPopupTitle == null){
+			return "";
+		}
+		return this.motivationPopupTitle;
+	}
+
+	public void setMotivationPopupTitle(String motivationTitle) {
+		if (motivationTitle == null){
+			motivationTitle = "";
+		}
+		this.motivationPopupTitle = motivationTitle;
+	}
+
+
 	@Column(name = "MOTIVATIONTRIGGERPROGRESS")
 	public Integer getMotivationTriggerProgress() {
 		return this.motivationTriggerProgress != null && this.motivationTriggerProgress > 0
@@ -1148,10 +1164,19 @@ final public class Survey implements java.io.Serializable {
 		return result;
 	}
 
-	@Transient
-	public Map<String, Element> getQuestionMapByUniqueId() {
-		Map<String, Element> result = new HashMap<>();
-		for (Element element : elements) {
+    @Transient
+    public Map<String, Element> getQuestionMapByUniqueId() {
+        return getQuestionMapByUniqueId(false);
+    }
+
+    @Transient
+    public Map<String, Element> getQuestionMapByUniqueId(boolean includeMissing) {
+        Map<String, Element> result = new HashMap<>();
+        List<Element> elementsList = new ArrayList<>(elements);
+        if (includeMissing) {
+            elementsList.addAll(missingElements);
+        }
+		for (Element element : elementsList) {
 			if (element instanceof Question) {
 				result.put(element.getUniqueId(), element);
 			}
@@ -1274,7 +1299,60 @@ final public class Survey implements java.io.Serializable {
 		return result;
 	}
 
+	@Transient
+	public List<String> getValidMarkupIDs() {
+		List<Question> questions = getQuestions();
+		List<String> validIDs = new ArrayList<>();
+
+		for(Question q : questions){
+			switch(q.getType()){
+				case "Table":
+				case "Matrix":
+					for(Element e : ((MatrixOrTable) q).getQuestions()){
+						validIDs.add(e.getShortname());
+					}
+					break;
+				case "ComplexTable":
+					for(Element e : ((ComplexTable) q).getChildElements())     {
+						validIDs.add(e.getShortname());
+					}
+					break;
+				case "RatingQuestion":
+					for(Element e : ((RatingQuestion) q).getChildElements()){
+						validIDs.add(e.getShortname());
+					}
+					break;
+				case "Download":
+				case "Confirmation":
+				case "":
+					break;
+				default:
+					validIDs.add(q.getShortname()); 
+					break;
+			}
+		}
+
+		return validIDs;
+	}
+
 	protected static Comparator<Element> newElementByPositionComparator() {
+		return (first, second) -> {
+
+			int result = 0;
+			if (first.getPosition() != null && second.getPosition() != null) {
+				result = first.getPosition().compareTo(second.getPosition());
+			}
+
+			// if both elements have the same position, the older one should be first
+			if (result == 0) {
+				result = first.getId().compareTo(second.getId());
+			}
+
+			return result;
+		};
+	}
+	
+	protected static Comparator<File> newFileByPositionComparator() {
 		return (first, second) -> {
 			
 			int result = 0;
@@ -1653,6 +1731,9 @@ final public class Survey implements java.io.Serializable {
 			result.append(" confirmationLink: ").append(this.getConfirmationLink()).append(";");
 			result.append(" confirmationPageLink: ").append(confirmationPageLink).append(";");
 			result.append(" motivationText: ").append(this.getMotivationText()).append(";");
+			if (motivationPopupTitle != null){
+				result.append(" motivationPopupTitle: ").append(motivationPopupTitle).append(";");
+			}
 			result.append(" motivationTriggerProgress: ").append(motivationTriggerProgress).append(";");
 			result.append(" motivationTriggerTime: ").append(motivationTriggerTime).append(";");
 			result.append(" motivationPopup: ").append(motivationPopup).append(";");
@@ -1759,6 +1840,7 @@ final public class Survey implements java.io.Serializable {
 		copy.motivationText = Tools.filterHTML(motivationText);
 		copy.motivationTriggerProgress = motivationTriggerProgress;
 		copy.motivationTriggerTime = motivationTriggerTime;
+		copy.motivationPopupTitle = motivationPopupTitle;
 		copy.progressDisplay = progressDisplay;
 		copy.validatedPerPage = validatedPerPage;
 		copy.setWcagCompliance(wcagCompliance);
@@ -1904,6 +1986,15 @@ final public class Survey implements java.io.Serializable {
 				for (Element child : t.getChildElements()) {
 					elementsBySourceId.put(child.getSourceId(), child);
 				}
+			} else if (newElement instanceof ComplexTable) {
+				ComplexTable table = (ComplexTable) newElement;
+				for (ComplexTableItem item : table.getChildElements()){
+					if (item.isChoice()){
+						for (PossibleAnswer answer : item.getPossibleAnswers()) {
+							elementsBySourceId.put(answer.getSourceId(), answer);
+						}
+					}
+				}
 			}
 		}
 
@@ -2042,10 +2133,16 @@ final public class Survey implements java.io.Serializable {
 
 	@Column(name = "LOGOTEXT")
 	public String getLogoText() {
+		if (logoText == null){
+			return "";
+		}
 		return logoText;
 	}
 
 	public void setLogoText(String logoText) {
+		if (logoText == null){
+			logoText = "";
+		}
 		this.logoText = logoText;
 	}
 

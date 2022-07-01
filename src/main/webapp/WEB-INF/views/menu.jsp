@@ -326,6 +326,7 @@
 		$('#add-survey-dialog').find("#importbtn").hide();
 		$('#add-survey-dialog').find("#createbtn").show();
 		$('#add-survey-dialog').modal();
+
 	}
 	
 	function checkShortname(name)
@@ -349,6 +350,13 @@
 		return result == "false";
 	}
 
+	// Handle scrollability of multiple open modals in bootstrap
+	$('body').on('hidden.bs.modal', function () {
+		if($('.modal.in').length > 0)
+		{
+			$('body').addClass('modal-open');
+		}
+	});
 </script>
 
 <div class="modal" id="add-survey-dialog" data-backdrop="static">

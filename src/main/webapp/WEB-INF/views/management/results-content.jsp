@@ -295,8 +295,8 @@
 													  </a>
 													  
 													  <div class="overlaymenu hideme maxH">
-													  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
-													  	 <c:forEach items="${question.files}" var="file" varStatus="status">
+													  	<a style="margin-bottom: 5px;" onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
+													  	 <c:forEach items="${question.allFiles}" var="file" varStatus="status">
 													    	<div>
 														    	<c:choose>
 																	<c:when test="${filter.contains(question.id, question.uniqueId, status.index) }">
@@ -326,15 +326,14 @@
 												<c:when test="${question.getType() == 'Upload'}">
 													<div style="float: right">
 														<div style="display: inline-block; margin: 0px; margin-bottom: 8px;">
+															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
 															<a onclick="showOverlayMenu(this)" >
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
 															</a>
 															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
-																<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
-																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
-																</c:if>
+																<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
 														   </div>
+															</c:if>
 													   </div>		
 													</div>
 													
@@ -1324,7 +1323,7 @@ var closeOverlayDivsEnabled = false;
 					 						</c:when>
 					 						
 					 						<c:when test="${question.getType() == 'RatingQuestion'}">											
-												<c:forEach items="${question.childElements}" var="childQuestion">
+												<c:forEach items="${question.questions}" var="childQuestion">
 												
 													var td = document.createElement("td");
 													var div = document.createElement("div");

@@ -48,7 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Controller("homeController")
 public class HomeController extends BasicController {
 	
-	public @Value("${stresstests.createdata}") String createStressData;	
+	public @Value("${stresstests.createdata}") String createStressData;
 	private @Value("${server.prefix}") String host;
 	
 	private @Value("${support.recipient}") String supportEmail;
@@ -339,39 +339,27 @@ public class HomeController extends BasicController {
 
 		try {
 
-			sessionService.initializeProxy();
 			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(incidentHost.trim());
+			HttpPost httppost = new HttpPost(incidentHost);
 
-			httppost.addHeader("Content-type", "text/xml;charset=UTF-8");
-			
+			httppost.setEntity(new StringEntity(createTemplate));
+
 			if (smtpAuth != null) {
 				httppost.addHeader("Authorization", "Basic " + smtpAuth);
 			}
-			httppost.addHeader("SOAPAction", "Create");
-			
-			httppost.setEntity(new StringEntity(createTemplate));
-			
+
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
 
 			if (entity != null) {
-				String strResponse = EntityUtils.toString(entity, "UTF-8");
+				String strResponse = EntityUtils.toString(entity);
 				if (!strResponse.contains("message=\"success\"")) {
 					logger.error(strResponse);
 					throw new MessageException("Calling SMT web service failed.");
 				}
 				logger.info(strResponse);
 			}
-			
-			org.apache.http.Header[] headers = response.getAllHeaders();
-	        for(org.apache.http.Header h:headers){
-	        	logger.info("Response Header " + h.getName() + ": " + h.getValue());
-	        }
 
-			logger.info("Mime Type: " + EntityUtils.getContentMimeType(entity));
-			logger.info("Char Set: " + EntityUtils.getContentCharSet(entity));
-			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			//fallback to email

@@ -1068,7 +1068,7 @@ public class ManagementController extends BasicController {
 							trans2.setLanguage(trans.getLanguage());
 							translationsToCreate.put(trans2.getLanguage().getCode(), trans2);							
 							
-							String confirmation = resources.getMessage("message.confirmation", null, Survey.CONFIRMATIONTEXT,
+							String confirmation = resources.getMessage("message.confirmationWithTitle", null, Survey.CONFIRMATIONTEXT,
 									new Locale(trans.getLanguage().getCode()));
 							trans2.getTranslations().add(new Translation(Survey.CONFIRMATIONPAGE, confirmation,
 									trans.getLanguage().getCode(), null, trans2));
@@ -1400,6 +1400,8 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if(!Tools.isEqual(survey.getMotivationText(), uploadedSurvey.getMotivationText()))
 			hasPendingChanges = true;
+		if(!Tools.isEqual(survey.getMotivationPopupTitle(), uploadedSurvey.getMotivationPopupTitle()))
+			hasPendingChanges = true;
 		if(!Tools.isEqual(survey.getMotivationTriggerProgress(), uploadedSurvey.getMotivationTriggerProgress()))
 			hasPendingChanges = true;
 		if(!Tools.isEqual(survey.getMotivationTriggerTime(), uploadedSurvey.getMotivationTriggerTime()))
@@ -1575,6 +1577,7 @@ public class ManagementController extends BasicController {
 
 		survey.setMotivationPopup(uploadedSurvey.getMotivationPopup());
 		survey.setMotivationText(uploadedSurvey.getMotivationText());
+		survey.setMotivationPopupTitle(uploadedSurvey.getMotivationPopupTitle());
 		survey.setMotivationTriggerProgress(uploadedSurvey.getMotivationTriggerProgress());
 		survey.setMotivationTriggerTime(uploadedSurvey.getMotivationTriggerTime());
 		survey.setMotivationType(uploadedSurvey.getMotivationType());
@@ -2870,6 +2873,10 @@ public class ManagementController extends BasicController {
 		sessionService.setFormStartDate(request, form, uniqueCode);
 		form.setSurvey(survey);
 
+		if(!survey.getConfirmationPageLink()){
+			form.getAnswerSets().add(answerSet);
+		}
+
 		result.addObject(form);
 
 		if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
@@ -3489,7 +3496,7 @@ public class ManagementController extends BasicController {
 										answer.setTitle(form.getAnswerTitle(answer));
 									}
 									if (s.length() > 0) {
-										s.append(" - ");
+										s.append("; ");
 									}
 									s.append(answer.getTitle());
 									
@@ -3512,7 +3519,7 @@ public class ManagementController extends BasicController {
 								for (Answer answer : answerSet.getAnswers(childQuestion.getId(),
 										childQuestion.getUniqueId())) {
 									if (s.length() > 0) {
-										s.append("<br />");
+										s.append("; ");
 									}
 									
 									if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
@@ -3526,14 +3533,24 @@ public class ManagementController extends BasicController {
 						} else if (question instanceof GalleryQuestion) {
 							GalleryQuestion gallery = (GalleryQuestion) question;
 							StringBuilder s = new StringBuilder();
-							for (int counter = 0; counter < gallery.getFiles().size(); counter++) {
-								for (Answer answer : answerSet.getAnswers(question.getId(), question.getUniqueId())) {
-									if (answer.getValue().equalsIgnoreCase(Integer.toString(counter))) {
-										if (s.length() > 0) {
-											s.append(" - ");
-										}
-										s.append(gallery.getFiles().get(counter).getName());
+							
+							for (Answer answer : answerSet.getAnswers(question.getId(), question.getUniqueId())) {
+								File file = null;
+								if (!StringUtils.isEmpty(answer.getPossibleAnswerUniqueId())) {
+									file = gallery.getFileByUid(answer.getPossibleAnswerUniqueId());									
+								} else {
+									try {
+										file = gallery.getFiles().get(Integer.parseInt(answer.getValue()));
+									} catch (IndexOutOfBoundsException e) {
+										//ignore
 									}
+								}
+								
+								if (file != null) {
+									if (s.length() > 0) {
+										s.append("; ");
+									}
+									s.append(file.getName());
 								}
 							}
 							result.add(s.toString());
@@ -3558,12 +3575,12 @@ public class ManagementController extends BasicController {
 								result.add(s.toString());
 							}
 						} else if (question instanceof RatingQuestion) {
-							for (Element childQuestion : ((RatingQuestion) question).getChildElements()) {
+							for (Element childQuestion : ((RatingQuestion) question).getQuestions()) {
 								StringBuilder s = new StringBuilder();
 								for (Answer answer : answerSet.getAnswers(childQuestion.getId(),
 										childQuestion.getUniqueId())) {
 									if (s.length() > 0) {
-										s.append(" - ");
+										s.append("; ");
 									}
 									s.append(answer.getValue());
 								}
@@ -3576,7 +3593,7 @@ public class ManagementController extends BasicController {
 							StringBuilder s = new StringBuilder();
 							for (Answer answer : answerSet.getAnswers(question.getId(), question.getUniqueId())) {
 								if (s.length() > 0) {
-									s.append("<br />");
+									s.append("; ");
 								}
 
 								if (question instanceof ChoiceQuestion || question instanceof RankingQuestion) {

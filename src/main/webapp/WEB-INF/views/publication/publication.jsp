@@ -264,6 +264,13 @@
 		    		
 		    let url = null;
 		    let data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse, selectedContribution : ""};
+		    if ($('#captcha_token').length > 0) {
+			    data["captcha_token"] =  $('#captcha_token').val();
+				data["captcha_id"] =  $('#captcha_id').val();
+				data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+				data["captcha_original_cookies"] = $('#captcha_original_cookies').val();		    
+		    }
+		    
 		    let filterForm = $("#resultsForm")
 			if (filterForm.length > 0){
 				filterForm.serializeArray().forEach((inp) => {

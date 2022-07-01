@@ -619,7 +619,7 @@ public class ReportingService extends BasicService {
 								String v = "";
 								for (String answerid : answerids)
 								{
-									if (v.length() > 0) v += ";";
+									if (v.length() > 0) v += "; ";
 									Element answer = choicequestion.getPossibleAnswerByUniqueId(answerid);
 									if (answer != null)
 									{
@@ -631,7 +631,7 @@ public class ReportingService extends BasicService {
 										}
 										
 										if (showShortnames) {
-											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+											v += "<span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
 										}
 									}							
 								}						
@@ -642,7 +642,7 @@ public class ReportingService extends BasicService {
 								String v = "";
 								for (String answerid : answerids)
 								{
-									if (v.length() > 0) v += ";";							
+									if (v.length() > 0) v += "; ";
 									Element answer = matrix.getChildByUniqueId(answerid);
 									if (answer != null)
 									{
@@ -654,7 +654,7 @@ public class ReportingService extends BasicService {
 										}
 										
 										if (showShortnames) {
-											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+											v += "<span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
 										}
 									}							
 								}						
@@ -665,13 +665,21 @@ public class ReportingService extends BasicService {
 								String v = "";
 								for (String index : indexes)
 								{
-									if (v.length() > 0) v += ";";		
-									int i = Integer.parseInt(index);
-									File file = gallery.getFiles().get(i);
+									File file = null;
+									if (index.contains("-")) {
+										file = gallery.getFileByUid(index);
+									} else {									
+										int i = Integer.parseInt(index);
+										if (gallery.getFiles().size() > i) {
+											file = gallery.getFiles().get(i);											
+										}
+									}
+									
 									if (file != null)
 									{
+										if (v.length() > 0) v += "; ";
 										v += file.getName();
-									}							
+									}
 								}						
 								row.add(v.length() > 0 ? v : null);
 							}  else if (question instanceof Upload) {
@@ -680,8 +688,6 @@ public class ReportingService extends BasicService {
 								String v = "";
 								for (String fileuid : fileuids)
 								{
-									if (v.length() > 0) v += ";";		
-								
 									File file = fileService.get(fileuid);
 									if (file != null)
 									{
@@ -689,6 +695,7 @@ public class ReportingService extends BasicService {
 										{
 											v += "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + file.getUid() + "'>" + file.getNameForExport() + "</a><br />";
 										} else if (forexport) {
+											if (v.length() > 0) v += " ";	
 											v += file.getUid() + "|" + file.getNameForExport() + ";";
 										} else {
 											v += file.getNameForExport() + "<br />";
@@ -703,7 +710,7 @@ public class ReportingService extends BasicService {
 								String v = "";
 								for (String uniqueId : answerids)
 								{
-									if (v.length() > 0) v += ";";
+									if (v.length() > 0) v += "; ";
 									RankingItem child = children.get(uniqueId);
 									if (child != null)
 									{
@@ -715,7 +722,7 @@ public class ReportingService extends BasicService {
 										}
 										
 										if (showShortnames) {
-											v += " <span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
+											v += "<span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
 										}
 									}							
 								}						
@@ -734,7 +741,7 @@ public class ReportingService extends BasicService {
 									String v = "";
 									for (String answerid : answerids)
 									{
-										if (v.length() > 0) v += ";";
+										if (v.length() > 0) v += "; ";
 										Element answer = child.getPossibleAnswerByUniqueId(answerid);
 										if (answer != null)
 										{
@@ -746,7 +753,7 @@ public class ReportingService extends BasicService {
 											}
 											
 											if (showShortnames) {
-												v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+												v += "<span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
 											}
 										}							
 									}						
@@ -1029,7 +1036,7 @@ public class ReportingService extends BasicService {
 			} else if (question instanceof RatingQuestion) {
 				RatingQuestion rating = (RatingQuestion) question;
 
-				for (Element child : rating.getChildElements()) {
+				for (Element child : rating.getQuestions()) {
 					putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
 				}
 			} else if (question instanceof RankingQuestion) {
@@ -1533,7 +1540,11 @@ public class ReportingService extends BasicService {
 						v = "'";
 						for (Answer answer : answers)
 						{
-							v += answer.getValue() + ";";
+							if (!StringUtils.isEmpty(answer.getPossibleAnswerUniqueId())) {
+								v += answer.getPossibleAnswerUniqueId() + ";";
+							} else {							
+								v += answer.getValue() + ";";
+							}
 						}
 						v += "'";
 					}					
@@ -1805,7 +1816,7 @@ public class ReportingService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getCountInternal(Survey survey, String quid, String auid, boolean noPrefixSearch, boolean noPostfixSearch, String where, Map<String, Object> values) {
+	public int getCountInternal(Survey survey, String quid, String auid, boolean noPrefixSearch, boolean noPostfixSearch, boolean noUUIDs, String where, Map<String, Object> values) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(survey) + " WHERE Q" + quid.replace("-", "");
@@ -1817,6 +1828,10 @@ public class ReportingService extends BasicService {
 			sql += " LIKE '" + auid + "%'";
 		} else {
 			sql += " LIKE '%" + auid + "%'";
+		}
+		
+		if (noUUIDs) {
+			sql += " AND Q" + quid.replace("-", "") + " NOT LIKE '%-%'";			
 		}
 		
 		if (where != null)

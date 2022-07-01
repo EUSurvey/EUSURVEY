@@ -2,9 +2,11 @@ package com.ec.survey.model;
 
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
+import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Numbering;
 import com.ec.survey.tools.SurveyHelper;
+import com.ec.survey.tools.Tools;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -14,6 +16,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.persistence.Transient;
 
 @Configurable
 public class Form {
@@ -533,7 +539,7 @@ public class Form {
 			}
 
 			if (element instanceof Question && !(element instanceof Text) && !(element instanceof Image)
-					&& !(element instanceof Confirmation)) {
+					&& !(element instanceof Ruler) && !(element instanceof Confirmation)) {
 				counter++;
 				Question q = (Question) element;
 				if (q.getId().equals(question.getId())) {
@@ -765,5 +771,165 @@ public class Form {
 		
 		long milliSeconds = this.currentDate.getTime() - this.startDate.getTime();		
 		return milliSeconds / 1000;
+	}
+	
+	/**
+	 * Replaces the Hypertext Markup from the Confirmation Page text with the corresponding values at the end of a survey.
+	 * Possible Markups: {InvitationNumber} {ContributionID} {UserName} {CreationDate} {LastUpdate} {Language} Question - {IDs}
+	 * @return String with all Markups replaced
+	 */
+	public String replacedMarkupConfirmationPage() {
+
+		if(getAnswerSets().size() <= 0) {
+			return survey.getConfirmationPage();
+		}
+
+		String confPageText = survey.getConfirmationPage();
+		List<List<Element>> pages = getPages();
+
+		if(confPageText.length() <= 0)
+			return "";
+
+		Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(confPageText);
+		int lastIndex = 0;
+		StringBuilder replacedMsg = new StringBuilder();
+
+		while (m.find()) {
+			String match = m.group(1);
+			switch(match){
+				case "InvitationNumber":
+					replacedMsg.append(confPageText, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getInvitationId()));
+					break;
+				case "ContributionID":
+					replacedMsg.append(confPageText, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getUniqueCode()));
+					break;
+				case "UserName":
+					replacedMsg.append(confPageText, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getResponderEmail()));
+					break;
+				case "CreationDate":
+					replacedMsg.append(confPageText, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getDate(), ConversionTools.DateFormat));
+					break;
+				case "LastUpdate":
+					replacedMsg.append(confPageText, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getUpdateDate(), ConversionTools.DateFormat));
+					break;
+				case "Language":
+					replacedMsg.append(confPageText, lastIndex, m.start()).append(getAnswerSets().get(0).getLanguageCode());
+					break;
+				default:
+					// is ID?
+					for(List<Element> le : pages){
+						for(Element e : le){
+							switch(e.getType()){
+								case "Matrix":
+									for(Element c : ((Matrix) e).getQuestions()){
+										if(c.getShortname().equals(match))
+											replacedMsg.append(confPageText, lastIndex, m.start()).append(getQuestionResult(c, true));
+									}
+									break;
+								case "Table":
+									MatrixOrTable table = (MatrixOrTable) e;
+									List<Element> tableQuestions = (table.getQuestions());
+									for(int i = 0; i < tableQuestions.size(); i++){
+										if(tableQuestions.get(i).getShortname().equals(match)){
+											AnswerSet as =  getAnswerSets().get(0);
+											String res = "";
+											for(int l = 1; l < table.getColumns(); l++){
+												if(l > 1) res += "; ";
+												String cellAnswer = as.getTableAnswer(e,i+1, l, false);
+											    res += (cellAnswer == "" || cellAnswer == null) ? "-" : cellAnswer;
+											}
+											replacedMsg.append(confPageText, lastIndex, m.start()).append(res);    
+										}
+									}
+									break;
+								case "ComplexTable":
+									for(ComplexTableItem cti : ((ComplexTable) e).getChildElements()){
+										if(cti.getShortname().equals(match))
+											replacedMsg.append(confPageText, lastIndex, m.start()).append(getQuestionResult(cti, false));
+									}
+									break;
+								case "RatingQuestion":
+									for(Element rq : ((RatingQuestion) e).getChildElements()){
+										if(rq.getShortname().equals(match))
+											replacedMsg.append(confPageText, lastIndex, m.start()).append(getQuestionResult(rq, false));
+									}
+									break;
+								default:
+									if(e.getShortname().equals(match))
+										replacedMsg.append(confPageText, lastIndex, m.start()).append(getQuestionResult(e, false));
+									break;
+							}
+						}
+					}
+					break;
+			}
+			lastIndex = m.end();
+		}
+
+		// add text after last replacement
+		if(lastIndex <= confPageText.length());
+			replacedMsg.append(confPageText, lastIndex, confPageText.length());
+
+		return replacedMsg.toString();
+	}
+	
+	private String replaceNullByHyphen(String value) {
+		if (value == null) return "-";
+		return value;
+	}
+	
+	/**
+	 * Given an Element e, the answers from the user get returned in the correct format from the saved answerset.
+	 * @param e the survey element we retrieve the answer from.
+	 * @param f the form we retrieve the answers from.
+	 * @param isMatrix Element is a Matrix?
+	 * @return Result for a given Question Element in the correct format for the contribution page.
+	 */
+	private String getQuestionResult(Element e, Boolean isMatrix) {
+
+		List<Answer> as = getAnswerSets().get(0).getAnswers(e.getId(), e.getUniqueId());
+		String result = "";
+
+		switch(e.getType()){
+			case "SingleChoiceQuestion":
+			case "MultipleChoiceQuestion":
+			case "ComplexTableItem":
+				return as.size() > 0 ? ConversionTools.removeHTML(constructAnswerString(as, "; "), true) : "-";
+			case "Upload":
+				return as.size() > 0 ? as.get(0).getFiles().get(0).getName() : "-";
+			case "GalleryQuestion":
+				if(as.size() == 0) return "-";
+
+				List<File> files = ((GalleryQuestion) e).getFiles();
+				result = "";
+				for(int i = 0; i < as.size(); i++){
+					if(i > 0) result = result + "; ";
+					result = result + files.get(Integer.parseInt(getAnswerTitle(as.get(i)))).getName();
+				}
+				return ConversionTools.removeHTML(result, true);
+			case "Text":
+				// Matrix Question
+				if(isMatrix)
+					return as.size() > 0 ? constructAnswerString(as, "; ") : "-";
+
+				// Ranking Question
+				return as.size() > 0 ? as.get(0).getValue() : "-";
+			case "RankingQuestion":
+				if(as.size() <= 0) {
+					return "-";
+				}
+				return getAnswerTitle(as.get(0));
+			default:
+				return as.size() > 0 ? ConversionTools.removeHTML(getAnswerTitle(as.get(0)), true) : "-";
+		}
+	}
+
+	private String constructAnswerString(List<Answer> as, String separator) {
+		String res = "";
+		for(int i = 0; i < as.size(); i++){
+			if(i>0) res = res + separator;
+			res = res + getAnswerTitle(as.get(i));
+		}
+		return res;
 	}
 }

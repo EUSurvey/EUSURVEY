@@ -313,6 +313,75 @@
 
 		};
 
+    var myConfigSettingFull = {
+
+        // Location of TinyMCE script
+        script_url : '${contextpath}/resources/js/tinymce/tinymce.min.js',
+        theme : "modern",
+        entity_encoding : "raw",
+        element_format : "xhtml",
+        menubar : false,
+        statusbar: true,
+        toolbar : ["bold italic underline strikethrough | undo redo | bullist numlist | link code | fontsizeselect forecolor fontselect fullscreen"],
+        plugins : "paste link image code textcolor fullscreen",
+        font_formats:
+            "Sans Serif=FreeSans, Arial, Helvetica, Tahoma, Verdana, sans-serif;"+
+            "Serif=FreeSerif,Times,serif;"+
+            "Mono=FreeMono,Courier, mono;",
+        language : globalLanguage,
+        image_advtab: true,
+        width: "510",
+        entities: "",
+        content_css : "${contextpath}/resources/css/tinymce.css",
+        popup_css_add : "${contextpath}/resources/css/tinymcepopup.css",
+        forced_root_block : '',
+        resize: true,
+        browser_spellcheck: true,
+
+        paste_postprocess : function(pl, o) {
+            o.node.innerHTML = replaceBRs(strip_tags( o.node.innerHTML,'<p><br>' ));
+        },
+
+        init_instance_callback: function (editor) {
+            editor.on('Change', function (e) {
+                try {
+                    $('#savetextbutton').removeAttr('disabled');
+                    unsavedChanges = true;
+                } catch (e) {}
+            });
+        },
+
+        setup : function(ed) {
+            ed.on('FullscreenStateChanged', function(e) {
+                if (e.state)
+                {
+                	$('#tinymceconfpage').css("z-index", "10000");
+                    $("#editorheader").hide();
+                    if ($(".btn-primary1").length == 0)
+                    {
+                        $(".mce-i-fullscreen").closest("div").after("<a class='btn btn-primary1' onclick='closeFullScreen(this, true);'><spring:message code="label.Apply" /></a><a class='btn btn-default1' onclick='closeFullScreen(this, false);'><spring:message code="label.Cancel" /></a>")
+                    };
+                } else {
+                	$('#tinymceconfpage').css("z-index", "");
+                    $("#editorheader").show();
+                    $(".btn-primary1").remove();
+                    $(".btn-default1").remove();
+                }
+            });
+        },
+
+        relative_urls : false,
+        remove_script_host : false,
+        document_base_url : serverPrefix,
+        default_link_target: "_blank",
+        anchor_top: false,
+        anchor_bottom: false,
+        branding: false,
+        valid_classes: 'y',
+        invalid_elements : 'html,head,body'
+
+    };
+
 	var myConfigSetting2Editor = {
 			
 			// Location of TinyMCE script
@@ -393,7 +462,11 @@
 			$(this).tinymce(myConfigSetting2);
 		});
 
-		$('textarea.tinymcealign').each(function(){
+        $('textarea.tinymcefullscreen').each(function(){
+            $(this).tinymce(myConfigSettingFull);
+        });
+
+        $('textarea.tinymcealign').each(function(){
 			$(this).tinymce(myConfigSetting);
 		});
 		

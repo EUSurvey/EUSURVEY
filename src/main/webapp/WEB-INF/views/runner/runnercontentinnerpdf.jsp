@@ -583,21 +583,21 @@
 																							<c:forEach items="${child.orderedPossibleAnswers}" var="possibleanswer">															
 																								<c:choose>
 																									<c:when test="${form.getValues(child).contains(possibleanswer.id.toString()) || form.getValues(child).contains(possibleanswer.uniqueId)}">
-																										<li class="possible-answer trigger" id="trigger${possibleanswer.id}">
+																										<li class="possible-answer trigger selected-choice" id="trigger${possibleanswer.id}">
 																											<a>
 																												<span class="answertext">${possibleanswer.getStrippedTitleNoEscape()}</span>
 																											</a>
 																			 								<input id="${possibleanswer.id}" data-id="${child.id}${possibleanswer.id}" checked="checked" value="${possibleanswer.id}" style="display: none" type="checkbox" name="answer${child.id}" />
-																										</li>	
+																										</li>
 																									</c:when>
-																									<c:when test="${form.getValues(child).size() == 0}">
+																									<c:otherwise>
 																										<li class="possible-answer trigger" id="trigger${possibleanswer.id}">
 																											<a>
 																												<span class="answertext">${possibleanswer.getStrippedTitleNoEscape()}</span>
 																											</a>
 																			 								<input id="${possibleanswer.id}" data-id="${element.id}${possibleanswer.id}" value="${possibleanswer.id}" style="display: none" type="checkbox" name="answer${child.id}" />
-																										</li>	
-																									</c:when>												
+																										</li>
+																									</c:otherwise>
 																								</c:choose>																									
 																							</c:forEach>	
 																						</ul>			
@@ -808,21 +808,21 @@
 												<c:forEach items="${element.orderedPossibleAnswers}" var="possibleanswer">															
 													<c:choose>
 														<c:when test="${form.getValues(element).contains(possibleanswer.id.toString()) || form.getValues(element).contains(possibleanswer.uniqueId)}">
-															<li class="possible-answer trigger" id="trigger${possibleanswer.id}">
+															<li class="possible-answer trigger" id="trigger${possibleanswer.id}" style="background-color: #bbb;">
 																<a>
 																	<span class="answertext">${possibleanswer.getStrippedTitleNoEscape()}</span>
 																</a>
 								 								<input id="${possibleanswer.id}" data-id="${element.id}${possibleanswer.id}" checked="checked" data-dependencies="${possibleanswer.dependentElementsString}" value="${possibleanswer.id}" style="display: none" type="checkbox" name="answer${element.id}" />
 															</li>	
 														</c:when>
-														<c:when test="${form.getValues(element).size() == 0}">
+														<c:otherwise>
 															<li class="possible-answer trigger" id="trigger${possibleanswer.id}">
 																<a>
 																	<span class="answertext">${possibleanswer.getStrippedTitleNoEscape()}</span>
 																</a>
-								 								<input id="${possibleanswer.id}" data-id="${element.id}${possibleanswer.id}" data-dependencies="${possibleanswer.dependentElementsString}" value="${possibleanswer.id}" style="display: none" type="checkbox" name="answer${element.id}" />
+																<input id="${possibleanswer.id}" data-id="${element.id}${possibleanswer.id}" data-dependencies="${possibleanswer.dependentElementsString}" value="${possibleanswer.id}" style="display: none" type="checkbox" name="answer${element.id}" />
 															</li>	
-														</c:when>												
+														</c:otherwise>
 													</c:choose>																									
 												</c:forEach>	
 											</ul>			

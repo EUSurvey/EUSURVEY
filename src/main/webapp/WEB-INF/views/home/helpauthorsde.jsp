@@ -59,6 +59,13 @@
 		#ulContainer {
 			margin-bottom: 50px;
 		}
+
+		figcaption {
+			font-style: italic;
+			padding: 2px;
+			text-align: center;
+		}
+
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -722,7 +729,46 @@
 				</a>
 				.
 			</p>
-			<h1>
+			<h2>
+				Was ist das „Motivations-Popup“ und wie wird es verwendet?
+			</h2>
+			<p>
+				Das „Motivations-Popup“ ist ein Dialogfenster, welches dem Umfrageteilnehmer während des Ausfüllens
+				des Formulars angezeigt wird. Es zeigt eine Nachricht an, um den Teilnehmer zu motivieren, seine Arbeit
+				fortzusetzen. Diese Nachricht ist individuell gestaltbar, ebenso wie der Zeitpunkt, zu dem das
+				Popup-Fenster angezeigt wird.
+			</p>
+			<p>
+				Das „Motivations-Popup“/ „Motivation popup“ ist in den „Eigenschaften“ der Umfrage in dem Reiter
+				„Aussehen“ verfügbar.
+			</p>
+			<figure>
+				<img src="${contextpath}/resources/images/documentation/motivation_popup_1_DE.png" style="width: 75%"/>
+				<figcaption>Motivations-Popup in den „Eigenschaften“ der Umfrage</figcaption>
+			</figure>
+			<p>
+				Sobald der Schalter aktiviert wurde, erscheinen die Optionen.
+			</p>
+			<p>
+				Der „Trigger”, zur Anzeige des Popups, kann auf dem Fortschritt/ „progress” oder einem Zeitschalter/
+				„timer” basieren.
+			</p>
+			<p>
+				Der Fortschritt wird in Prozent angegeben, z.B. 50%. Das bedeutet, dass das „Motivations-Popup“
+				angezeigt wird, sobald der Umfrageteilnehmer 50% der Fragen beantwortet hat.
+			</p>
+			<p>
+				Falls die Option „timer” ausgewählt wurde, wird das „Motivations-Popup“ nach X Minuten angezeigt. X ist
+				die Anzahl der Minuten, die im Feld Schwellenwert/ „Threshold value“ angegeben wurde.
+			</p>
+			<p>
+				Schließlich kann der Text über das Feld „Motivationstext“/ „Motivation text“ angepasst werden.
+			</p>
+			<figure>
+				<img src="${contextpath}/resources/images/documentation/motivation_popup_2_DE.png" style="width: 75%"/>
+				<figcaption>Optionen des Motivations-Popups</figcaption>
+			</figure>
+		<h1>
 				Umfrage bearbeiten
 			</h1>
 			<h2>

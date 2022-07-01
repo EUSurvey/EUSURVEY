@@ -151,11 +151,11 @@ public class QuizHelper {
 						} else if (wrong)
 						{
 							result.getQuestionScores().put(question.getUniqueId(), 0);
-						} else if (defaultItem != null)
+						} else if (defaultItem != null && defaultItem.isCorrect())
 						{
-							score += defaultItem.getPoints();
-							currentSectionScore += defaultItem.getPoints();
-							result.getQuestionScores().put(question.getUniqueId(), defaultItem.getPoints());
+							score += question.getQuizPoints();
+							currentSectionScore += question.getQuizPoints();
+							result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
 							result.getQuestionScoringItems().put(element.getUniqueId(), defaultItem);
 						}
 					} else if (question instanceof DateQuestion)
@@ -191,11 +191,11 @@ public class QuizHelper {
 						} else if (wrong)
 						{
 							result.getQuestionScores().put(question.getUniqueId(), 0);
-						} else if (defaultItem != null)
+						} else if (defaultItem != null && defaultItem.isCorrect())
 						{
-							score += defaultItem.getPoints();
-							currentSectionScore += defaultItem.getPoints();
-							result.getQuestionScores().put(question.getUniqueId(), defaultItem.getPoints());
+							score += question.getQuizPoints();
+							currentSectionScore += question.getQuizPoints();
+							result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
 							result.getQuestionScoringItems().put(element.getUniqueId(), defaultItem);
 						}
 					} else if (question instanceof FreeTextQuestion)
@@ -231,7 +231,7 @@ public class QuizHelper {
 						} else if (wrong)
 						{
 							result.getQuestionScores().put(question.getUniqueId(), 0);
-						} else if (defaultItem != null)
+						} else if (defaultItem != null && defaultItem.isCorrect())
 						{
 							score += question.getQuizPoints();
 							currentSectionScore += question.getQuizPoints();
@@ -341,7 +341,7 @@ public class QuizHelper {
 							result.getQuestionScores().put(question.getUniqueId(), bestMatch.getPoints());
 							result.getQuestionScoringItems().put(element.getUniqueId(), bestMatch);
 						} else {
-							if (defaultItem != null)
+							if (defaultItem != null && defaultItem.isCorrect())
 							{
 								score += defaultItem.getPoints();
 								currentSectionScore += defaultItem.getPoints();
@@ -383,7 +383,7 @@ public class QuizHelper {
 							result.getQuestionScores().put(question.getUniqueId(), bestMatch.getPoints());
 							result.getQuestionScoringItems().put(element.getUniqueId(), bestMatch);
 						} else {
-							if (defaultItem != null)
+							if (defaultItem != null && defaultItem.isCorrect())
 							{
 								score += defaultItem.getPoints();
 								currentSectionScore += defaultItem.getPoints();
@@ -425,7 +425,7 @@ public class QuizHelper {
 							result.getQuestionScores().put(question.getUniqueId(), bestMatch.getPoints());
 							result.getQuestionScoringItems().put(element.getUniqueId(), bestMatch);
 						} else {
-							if (defaultItem != null)
+							if (defaultItem != null && defaultItem.isCorrect())
 							{
 								score += defaultItem.getPoints();
 								currentSectionScore += defaultItem.getPoints();

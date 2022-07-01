@@ -17,7 +17,7 @@ import com.kennycason.kumo.nlp.normalize.CharacterStrippingNormalizer;
 import com.kennycason.kumo.nlp.normalize.LowerCaseNormalizer;
 import com.kennycason.kumo.nlp.normalize.TrimToEmptyNormalizer;
 
-import javafx.util.Pair;
+import com.ec.survey.replacements.Pair;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -215,19 +215,29 @@ public class DelphiController extends BasicController {
 
 			String languageCode = request.getParameter("languagecode");
 			Survey survey = surveyService.getSurvey(sid, languageCode);
-
+			
 			if (survey == null) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
+			
+			boolean resultsview = request.getParameter("resultsview") != null && request.getParameter("resultsview").equalsIgnoreCase("true");
+			boolean allanswers = request.getSession().getAttribute("results-source-allanswers") != null && (boolean) request.getSession().getAttribute("results-source-allanswers");
 
+			ResultFilter filter = null;
 			User user = sessionService.getCurrentUser(request);
+			if (resultsview) {
+				if (user != null) {
+					filter = sessionService.getLastResultFilter(request, user.getId(), survey.getId());
+				}
+				if (allanswers && !survey.isMissingElementsChecked()) {
+					surveyService.checkAndRecreateMissingElements(survey, filter);
+				}
+			}
 			
 			if (user != null) {
 				Survey draft = surveyService.getSurveyByShortname(survey.getShortname(), true, user, request, false, true, true, false);
 				sessionService.upgradePrivileges(draft, user, request);
 			}
-			
-			boolean resultsview = request.getParameter("resultsview") != null && request.getParameter("resultsview").equalsIgnoreCase("true"); 
 			
 			boolean privileged = resultsview && (survey.getOwner().getId().equals(user.getId()) ||
 					(user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) ||
@@ -242,7 +252,7 @@ public class DelphiController extends BasicController {
 			}
 
 			String questionuid = request.getParameter("questionuid");
-			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+			Element element = survey.getQuestionMapByUniqueId(true).get(questionuid);
 
 			if (!(element instanceof Question)) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -257,13 +267,7 @@ public class DelphiController extends BasicController {
 			Statistics statistics = new Statistics();
 			statistics.setSurveyId(survey.getId());
 
-			ResultFilter filter = null;
-			
 			if (resultsview) {
-				if (user != null) {
-					filter = sessionService.getLastResultFilter(request, user.getId(), survey.getId());
-				}				
-				
 				if (survey.getDedicatedResultPrivileges()) {
 					ResultAccess resultAccess = surveyService.getResultAccess(survey.getUniqueId(), user.getId());
 					if (resultAccess != null && resultAccess.getResultFilter() != null) {
@@ -306,7 +310,7 @@ public class DelphiController extends BasicController {
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
-			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
+			Map<Integer, Map<String, Integer>> numberOfAnswersMapGallery = new HashMap<>();
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
 			Map<String, Integer> numberOfAnswersMapNumberQuestion = new HashMap<>();
 			Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion = new HashMap<>();
@@ -414,7 +418,7 @@ public class DelphiController extends BasicController {
 		result.setChartType(question.getDelphiChartType());
 		result.setQuestionType(DelphiQuestionType.Ranking);
 
-		for (RankingItem item : question.getChildElements()) {
+		for (RankingItem item : question.getAllChildElements()) {
 			DelphiGraphEntry entry = new DelphiGraphEntry();
 			entry.setLabel(item.getStrippedTitleNoEscape());
 			entry.setValue(statistics.getRequestedRecordsRankingPercentScore().get(item.getId().toString()));
@@ -566,7 +570,7 @@ public class DelphiController extends BasicController {
 		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
 		result.setChartType(question.showStatisticsForNumberQuestion() ? question.getDelphiChartType() : DelphiChartType.None);
 
-		result.setQuestionType(DelphiQuestionType.Number);
+		result.setQuestionType(DelphiQuestionType.Formula);
 		result.setLabel(question.getStrippedTitle());
 
 		Map<String, Integer> valuesMagnitude = numberQuestionStatistics.getValuesMagnitude();

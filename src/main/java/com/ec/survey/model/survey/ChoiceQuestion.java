@@ -42,7 +42,7 @@ public abstract class ChoiceQuestion extends Question {
 		this.order = order;
 	}	
 	
-	@OneToMany(targetEntity=PossibleAnswer.class, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity=PossibleAnswer.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	@Fetch(value = FetchMode.SELECT)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	@OrderBy(value = "position asc")

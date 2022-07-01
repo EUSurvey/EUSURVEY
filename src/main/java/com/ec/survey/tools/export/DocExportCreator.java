@@ -146,22 +146,22 @@ public class DocExportCreator extends ExportCreator {
 					
 					XWPFTable table = createTableForAnswer(cellValue);
 					GalleryQuestion galleryQuestion = (GalleryQuestion)question;
-					for (int i = 0; i < galleryQuestion.getFiles().size(); i++) {
+					for (com.ec.survey.model.survey.base.File file : galleryQuestion.getAllFiles()) {
 						XWPFTableRow row = table.createRow();				
 						
-						cellValue = ConversionTools.removeHTMLNoEscape(galleryQuestion.getFiles().get(i).getName());
+						cellValue = ConversionTools.removeHTMLNoEscape(file.getName());
 						
 						row.getCell(0).setText(cellValue);
 						
-						Double percent = statistics.getRequestedRecordsPercent().get(galleryQuestion.getId().toString() + "-" + i);
+						Double percent = statistics.getRequestedRecordsPercent().get(galleryQuestion.getId().toString() + "-" + file.getUid());
 						
 						if (percent > 0)
 						{						
 							drawChart(percent, row);
 						}
 						
-						row.getCell(2).setText(statistics.getRequestedRecords().get(galleryQuestion.getId().toString() + "-" + i).toString());
-						row.getCell(3).setText(df.format(statistics.getRequestedRecordsPercent().get(galleryQuestion.getId().toString() + "-" + i)) + "%");					
+						row.getCell(2).setText(statistics.getRequestedRecords().get(galleryQuestion.getId().toString() + "-" + file.getUid()).toString());
+						row.getCell(3).setText(df.format(statistics.getRequestedRecordsPercent().get(galleryQuestion.getId().toString() + "-" + file.getUid())) + "%");					
 					}
 					
 					//noanswers

@@ -398,6 +398,12 @@
 				$(elementWrapper).find(".chart-score-group").hide();
 			}
 
+			if (isDrawChart && $(elementWrapper).hasClass("choice-chart")) {
+				$(elementWrapper).find(".chart-hide-unanswered-group").show();
+			} else {
+				$(elementWrapper).find(".chart-hide-unanswered-group").hide();
+			}
+
 			if (!!chart) {
 				new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
 			}

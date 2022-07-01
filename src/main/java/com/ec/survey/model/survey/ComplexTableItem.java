@@ -323,7 +323,10 @@ public class ComplexTableItem extends Question {
 		ComplexTableItem row = parent.getChildAt(0, this.column);
 		ComplexTableItem column = parent.getChildAt(this.row, 0);
 		
-		return valueOrDash(parent.getStrippedTitle()) + " : " + valueOrDash(column.getStrippedTitle()) + " : " + valueOrDash(row.getStrippedTitle());		
+		String columnPart = column == null ? "-" : valueOrDash(column.getStrippedTitle());
+		String rowPart = row == null ? "-" : valueOrDash(row.getStrippedTitle());
+		
+		return valueOrDash(parent.getStrippedTitle()) + " : " + columnPart + " : " + rowPart;	
 	}
 	
 	private String valueOrDash(String value) {
@@ -394,7 +397,10 @@ public class ComplexTableItem extends Question {
 		if (!Tools.isEqual(minD, other.minD)) return true;
 		if (!Tools.isEqual(unit, other.unit)) return true;
 		if (!Tools.isEqual(formula, other.formula)) return true;
-		
+
+		if (getPossibleAnswers().size() != other.getPossibleAnswers().size())
+			return true;
+
 		for (int i = 0; i < getPossibleAnswers().size(); i++) {			
 			if (getPossibleAnswers().get(i).differsFrom(other.getPossibleAnswers().get(i))) {
 				return true;

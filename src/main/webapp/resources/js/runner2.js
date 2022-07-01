@@ -1152,7 +1152,11 @@ function checkMissingElementsAndScroll()
 
 function scrollToQuestionIfSet() {
 	const elementAnchorId = location.hash.substr(1);
-	document.getElementById(elementAnchorId).scrollIntoView();
+	try {
+		document.getElementById(elementAnchorId).scrollIntoView();
+	} catch (error) {
+		console.log(error);
+	}
 	$('#delphi-hide-survey').hide();
 }
 

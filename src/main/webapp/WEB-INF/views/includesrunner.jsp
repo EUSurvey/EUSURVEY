@@ -100,12 +100,14 @@
 		<c:when test="${form != null && form.getResources() != null && resultType == null}">
 			var unsavedChangesText = "${form.getMessage("message.UnsavedChanges")}";	
 			var requiredText = "${form.getMessage("validation.required")}";
+			var confirmationMarkupError = "${form.getMessage("validation.confirmationMarkupError")}";
 			var nomatchText =  "${form.getMessage("validation.nomatch")}";
 			var shortnameText = "${form.getMessage("validation.name2")}";
 			var shortnameText2 = "${form.getMessage("validation.shortname2")}";
 			var shortnameText3 = "${form.getMessage("validation.shortname3")}";
 			var textnotlongenoughText = "${form.getMessage("validation.textNotLongEnough")}";
 			var texttoolongText = "${form.getMessage("validation.textTooLong")}";
+			var bracketCountNotMatching = "${form.getMessage("validation.numberBracketsNotMatching")}";
 			var texttoolong5000Text = "${form.getMessage("validation.textTooLong5000")}";
 			var invalidnumberText = "${form.getMessage("validation.invalidNumber")}";
 			var invalidCharacter = "${form.getMessage("validation.invalidCharacter")}";
@@ -186,12 +188,14 @@
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
 			var requiredText = "<spring:message code='validation.required' />";
+			var confirmationMarkupError = "<spring:message code='validation.confirmationMarkupError' />";
 			var nomatchText =  "<spring:message code='validation.nomatch' />";
 			var shortnameText = "<spring:message code='validation.name2' />";
 			var shortnameText2 = "<spring:message code='validation.shortname2' />";
 			var shortnameText3 = "<spring:message code='validation.shortname3' />";
 			var textnotlongenoughText = "<spring:message code='validation.textNotLongEnough' />";
 			var texttoolongText = "<spring:message code='validation.textTooLong' />";
+			var bracketCountNotMatching = "<spring:message code='validation.numberBracketsNotMatching' />";
 			var texttoolong5000Text = "<spring:message code='validation.textTooLong5000' />";
 			var invalidnumberText = "<spring:message code='validation.invalidNumber' />";
 			var valuetoosmall = "<spring:message code='validation.valueTooSmall' />";
@@ -372,46 +376,43 @@
 		 
 		 var attr = $(input).attr('class');
 		 
-		 if (typeof attr !== typeof undefined && attr !== false) {
-			 var classes =attr.split(" ");
-			 var min = 0;
-			 var max = 0;
-				
-			 for ( var i = 0, l = classes.length; i<l; ++i ) {
-			 	if (strStartsWith(classes[i], 'min'))
-			 	{
-			 		min = parseInt(classes[i].substring(3));
-			 		
-			 	} else if (strStartsWith(classes[i], 'max'))
-			 	{
-			 		max = parseInt(classes[i].substring(3));
-			 	};	 	
-			 };
-			 
-			 $(input).closest(".survey-element").find(".charactercounter").text(cs);
+		 let el = $(input).closest(".survey-element, .innercell");
+		 
+		 if (attr != null) {
+			 let min = 0;
+			 let max = 0;
+			 attr.split(/\s+/).forEach((cla)=>{
+				if (cla.startsWith("min")){
+					min = parseInt(cla.substring(3));
+				} else if (cla.startsWith("max")){
+					max = parseInt(cla.substring(3));
+				}
+			 })
+
+			 el.find(".charactercounter").text(cs);
 			 
 			 if (max > 0 && max - cs < 5)
 			 {
-				 $(input).closest(".survey-element").find(".glyphicon-alert").show();
+				 el.find(".glyphicon-alert").show();
 			 } else {
-				 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
+				 el.find(".glyphicon-alert").hide();
 			 }
 			 
 			 if (max > 0 && max - cs < 0)
 			 {
-				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
+				 el.find(".charactercounterdiv").css("color", "#f00");
 			 } else {
-				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+				 el.find(".charactercounterdiv").css("color", "#777");
 			 }
 
 			 if(max > 0 && max - cs <= 0)
 			 {
-				 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
-				 $(input).closest(".survey-element").find(".characterlimitreached").show();
-				 $(input).closest(".survey-element").find(".charactersused").hide();
+				 el.find(".glyphicon-alert").hide();
+				 el.find(".characterlimitreached").show();
+				 el.find(".charactersused").hide();
 			 } else {
-				 $(input).closest(".survey-element").find(".characterlimitreached").hide();
-				 $(input).closest(".survey-element").find(".charactersused").show();
+				 el.find(".characterlimitreached").hide();
+				 el.find(".charactersused").show();
 			 }
 		 }
 	 }

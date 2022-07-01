@@ -32,6 +32,8 @@ import javax.annotation.Resource;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -1010,6 +1012,9 @@ public class SurveyService extends BasicService {
 			} else if (element instanceof RankingQuestion) {
 				RankingQuestion ranking = (RankingQuestion) element;
 				Hibernate.initialize(ranking.getChildElements());
+			} else if (element instanceof ComplexTable){
+				ComplexTable table = (ComplexTable) element;
+				Hibernate.initialize(table.getChildElements());
 			}
 		}
 	}
@@ -1158,7 +1163,7 @@ public class SurveyService extends BasicService {
 				survey.setIsPublished(true);
 				session.update(survey);
 			}
-			
+
 			Survey draft = null;
 			if (isDraft) {
 				draft = survey;
@@ -1171,8 +1176,8 @@ public class SurveyService extends BasicService {
 
 				draft = (Survey) session.get(Survey.class, id);
 			}
-
-			if (checkActive && !isDraft) {				
+			
+			if (checkActive && !isDraft) {
 				if (!draft.getIsActive())
 					return null;
 			}
@@ -1233,6 +1238,16 @@ public class SurveyService extends BasicService {
 			if (element instanceof ChoiceQuestion) {
 				for (PossibleAnswer pa : ((ChoiceQuestion) element).getPossibleAnswers()) {
 					pa.setQuestionId(element.getId());
+				}
+			}
+			if (element instanceof ComplexTable){
+				ComplexTable table = (ComplexTable) element;
+				for (ComplexTableItem item : table.getChildElements()){
+					if (item.isChoice()){
+						for (PossibleAnswer pa : item.getPossibleAnswers()) {
+							pa.setQuestionId(table.getId());
+						}
+					}
 				}
 			}
 		}
@@ -3004,6 +3019,8 @@ public class SurveyService extends BasicService {
 
 				if (oldToNewUniqueIds.containsKey(uid)) {
 					return oldToNewUniqueIds.get(uid) + GalleryQuestion.TITLE;
+				} else if (convertedFileUIDs.containsKey(uid)){
+					return convertedFileUIDs.get(uid) + GalleryQuestion.TITLE;
 				}
 				retVal = Integer.parseInt(uid);
 				if (elementsBySourceId.containsKey(retVal))
@@ -3012,6 +3029,8 @@ public class SurveyService extends BasicService {
 				uid = key.substring(0, key.indexOf(GalleryQuestion.TEXT));
 				if (oldToNewUniqueIds.containsKey(uid)) {
 					return oldToNewUniqueIds.get(uid) + GalleryQuestion.TEXT;
+				} else if (convertedFileUIDs.containsKey(uid)){
+					return convertedFileUIDs.get(uid) + GalleryQuestion.TEXT;
 				}
 				retVal = Integer.parseInt(uid);
 				if (elementsBySourceId.containsKey(retVal))
@@ -3347,7 +3366,7 @@ public class SurveyService extends BasicService {
 	public Map<Element, Integer> getPendingChanges(Survey draftSurvey) {
 		Map<Element, Integer> result = new HashMap<>();
 
-		Survey publishedSurvey = getSurvey(draftSurvey.getShortname(), false, false, false, false, null,
+		Survey publishedSurvey = getSurvey(draftSurvey.getShortname(), false, false, false, false, draftSurvey.getLanguage().getCode(),
 				true, true);
 
 		// Compare elements
@@ -3397,6 +3416,8 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			if(!Tools.isEqual(draftSurvey.getMotivationText(), publishedSurvey.getMotivationText()))
 				hasPendingChanges = true;
+			if(!Tools.isEqual(draftSurvey.getMotivationPopupTitle(), publishedSurvey.getMotivationPopupTitle()))
+				hasPendingChanges = true;
 			if (draftSurvey.getValidatedPerPage() != publishedSurvey.getValidatedPerPage())
 				hasPendingChanges = true;
 			if (draftSurvey.getPreventGoingBack() != publishedSurvey.getPreventGoingBack())
@@ -3419,6 +3440,7 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			if (!Tools.isEqual(draftSurvey.getConfirmationPageLink(), publishedSurvey.getConfirmationPageLink()))
 				hasPendingChanges = true;
+
 			if (!Tools.isEqual(draftSurvey.getConfirmationLink(), publishedSurvey.getConfirmationLink()))
 				hasPendingChanges = true;
 
@@ -3785,6 +3807,7 @@ public class SurveyService extends BasicService {
 		List<Element> surveyelements = survey.getElementsRecursive(true);
 		Map<String, Element> surveyelementsbyuid = new HashMap<>();
 		Map<String, Element> missingelementuids = new HashMap<>();
+		Map<String, File> missingfileuids = new HashMap<>();
 		Set<String> rankingQuestionUids = new HashSet<>();
 		for (Element element : surveyelements) {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
@@ -3963,6 +3986,7 @@ public class SurveyService extends BasicService {
 			if (possibleAnswerUID != null && possibleAnswerUID.length() > 0 && !possibleAnswerUID.contains("#")
 					&& !surveyelementsbyuid.containsKey(possibleAnswerUID)
 					&& !missingelementuids.containsKey(possibleAnswerUID)) {
+				
 				Element pa = getNewestElementByUid(possibleAnswerUID);
 
 				if (pa != null) {
@@ -4005,6 +4029,26 @@ public class SurveyService extends BasicService {
 								}
 							}
 						}
+					}
+				} else {
+					//try gallery file
+					Element parent = null;
+					if (surveyelementsbyuid.containsKey(questionUID)) {
+						parent = surveyelementsbyuid.get(questionUID);
+					} else if (missingelementuids.containsKey(questionUID)) {
+						parent = missingelementuids.get(questionUID);
+					}
+					if (parent != null && parent instanceof GalleryQuestion) {
+						GalleryQuestion gallery = (GalleryQuestion) parent;
+						try {							
+							if (gallery.getFileByUid(possibleAnswerUID) == null && !missingfileuids.containsKey(possibleAnswerUID)) {
+								File file = fileService.get(possibleAnswerUID);
+								((GalleryQuestion) parent).getMissingFiles().add(file);
+								missingfileuids.put(possibleAnswerUID, file);
+							}							
+						} catch (FileNotFoundException e) {
+							// ignore;
+						}						
 					}
 				}
 			}

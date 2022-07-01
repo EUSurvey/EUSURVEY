@@ -63,7 +63,7 @@
 								</div>
 							</td>
 						</tr>
-						 <c:forEach items="${question.files}" var="file" varStatus="status">
+						 <c:forEach items="${question.allFiles}" var="file" varStatus="status">
 							<tr class="cell${question.id}" data-position="${status.index}" data-value="${statistics.getRequestedRecordsPercentForGallery(question, status.index)}">
 								<td style="vertical-align: top; padding-right: 10px; padding-left: 50px;">
 									<esapi:encodeForHTML>${file.name}</esapi:encodeForHTML>

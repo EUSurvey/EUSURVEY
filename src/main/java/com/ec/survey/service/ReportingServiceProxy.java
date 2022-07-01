@@ -81,10 +81,10 @@ public class ReportingServiceProxy {
 		return reportingService.getCountInternal(survey, where, values);
 	}
 		
-	public int getCount(Survey survey, String quid, String auid, boolean noPrefixSearch, boolean noPostfixSearch, String where, Map<String, Object> values)
+	public int getCount(Survey survey, String quid, String auid, boolean noPrefixSearch, boolean noPostfixSearch, boolean noUUIDs, String where, Map<String, Object> values)
 	{
 		if (!isReportingDatabaseEnabled()) return -1;
-		return reportingService.getCountInternal(survey, quid, auid, noPrefixSearch, noPostfixSearch, where, values);
+		return reportingService.getCountInternal(survey, quid, auid, noPrefixSearch, noPostfixSearch, noUUIDs, where, values);
 	}
 	
 	public int getAnswerSetsByQuestionUID(Survey survey, String quid, Map<Integer, Set<String>> answersByAnswerSetID)

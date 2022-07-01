@@ -39,6 +39,7 @@ public class GalleryQuestion extends Question {
 	private boolean selection;
 	private boolean numbering;
 	private List<File> files = new ArrayList<>();
+	private List<File> missingFiles = new ArrayList<>();
 	
 	@Column(name = "COLS")
 	public Integer getColumns() {
@@ -85,6 +86,43 @@ public class GalleryQuestion extends Question {
 	public void setFiles(List<File> files) {
 		this.files = files;
 	}
+	
+	@Transient
+	public List<File> getMissingFiles() {
+		return missingFiles;
+	}
+	public void setMissingFiles(List<File> missingFiles) {
+		this.missingFiles = missingFiles;
+	}
+	
+	@Transient
+	public List<File> getAllFiles() {
+		
+		if (!missingFiles.isEmpty())
+		{
+			List<File> result = new ArrayList<>();
+			for (File f : missingFiles)
+			{
+				if (!result.contains(f))
+				{
+					result.add(f);
+				}
+			}
+			for (File f : files)
+			{
+				if (!result.contains(f))
+				{
+					result.add(f);
+				}
+			}
+			
+			result.sort(Survey.newFileByPositionComparator());
+			
+			return result;
+		} else {
+			return files;
+		}
+	}	
 	
 	public GalleryQuestion copy(String fileDir) throws ValidationException
 	{
@@ -170,6 +208,15 @@ public class GalleryQuestion extends Question {
 		}
 		
 		return false;
+	}
+
+	public File getFileByUid(String uid) {
+		for (File file : getAllFiles()) {
+			if (file.getUid().equals(uid)) {
+				return file;
+			}
+		}
+		return null;
 	}
 	
 }

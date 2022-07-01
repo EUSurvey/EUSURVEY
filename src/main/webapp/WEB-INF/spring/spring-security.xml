@@ -31,6 +31,7 @@
 
 		<security:intercept-url pattern="/"	access="permitAll" />
 		<security:intercept-url pattern="/captcha.html"	access="permitAll" />
+		<security:intercept-url pattern="/EuCaptchaApi/**"	access="permitAll" />
 		<security:intercept-url pattern="/editcontribution/**"	access="permitAll" />
 		<security:intercept-url pattern="/preparecontribution/**"	access="permitAll" />
 		<security:intercept-url pattern="/preparedraft/**"	access="permitAll" />

@@ -51,7 +51,7 @@
 									<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
 								</c:when>
 								<c:otherwise>
-										<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="$('#ask-email-dialog').modal('show');">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+									<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="showAskEmailDialog(this)">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
 								</c:otherwise>
 							</c:choose>
 							
@@ -66,7 +66,7 @@
 									<a href="javascript:;" class="btn btn-primary aSpaced" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</a>
 								</c:when>
 								<c:otherwise>
-									<a href="javascript:;" class="btn btn-primary aSpaced" onclick="showModalDialog($('#ask-email-dialog'), this);">${form.getMessage("label.SendLinkAsEmail")}</a>
+									<a href="javascript:;" class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);">${form.getMessage("label.SendLinkAsEmail")}</a>
 								</c:otherwise>
 							</c:choose>
 							
@@ -87,38 +87,63 @@
 			<div class="modal-dialog">
 		    <div class="modal-content">
 			<div class="modal-header">
-				<b><spring:message code="label.Info" /></b>
+				<b><spring:message code="label.Info" /></b>				
 			</div>
 			<div class="modal-body">
-				<p>
+				<div class="forexport">
+					<p>
+						<c:choose>
+							<c:when test="${runnermode == true}">
+								${form.getMessage("question.EmailForPDF")}
+							</c:when>
+							<c:otherwise>
+								<spring:message code="question.EmailForPDF" />
+							</c:otherwise>	
+						</c:choose>
+					</p>
+					
 					<c:choose>
-						<c:when test="${runnermode == true}">
-							${form.getMessage("question.EmailForPDF")}
+						<c:when test='${participantsemail != null && participantsemail.indexOf("@") > 0}'>
+							<input type="text" maxlength="255" name="email" id="email" value="${participantsemail}" />
 						</c:when>
 						<c:otherwise>
-							<spring:message code="question.EmailForPDF" />
-						</c:otherwise>	
+							<input type="text" maxlength="255" name="email" id="email" />
+						</c:otherwise>
 					</c:choose>
-				</p>
-				
-				<c:choose>
-					<c:when test='${participantsemail != null && participantsemail.indexOf("@") > 0}'>
-						<input type="text" maxlength="255" name="email" id="email" value="${participantsemail}" />
-					</c:when>
-					<c:otherwise>
-						<input type="text" maxlength="255" name="email" id="email" />
-					</c:otherwise>
-				</c:choose>
-				<span id="ask-export-dialog-error" class="validation-error hideme">
-					<c:choose>
-						<c:when test="${runnermode == true}">
-							${form.getMessage("message.ProvideEmail")}
-						</c:when>
-						<c:otherwise>
-							<spring:message code="message.ProvideEmail" />
-						</c:otherwise>	
-					</c:choose>
-				</span>
+					<span id="ask-export-dialog-error" class="validation-error hideme">
+						<c:choose>
+							<c:when test="${runnermode == true}">
+								${form.getMessage("message.ProvideEmail")}
+							</c:when>
+							<c:otherwise>
+								<spring:message code="message.ProvideEmail" />
+							</c:otherwise>	
+						</c:choose>
+					</span>
+				</div>
+				<div class="foremail">
+					<p>
+						<c:choose>
+							<c:when test="${runnermode == true}">
+								${form.getMessage("label.EmailAddress")}
+							</c:when>
+							<c:otherwise>
+								<spring:message code="label.EmailAddress" />
+							</c:otherwise>	
+						</c:choose>
+					</p>
+					<input type="text" maxlength="255" name="email" id="linkemail" />
+					<span id="ask-email-dialog-error" class="validation-error hideme">
+						<c:choose>
+							<c:when test="${runnermode == true}">
+								${form.getMessage("message.ProvideEmail")}
+							</c:when>
+							<c:otherwise>
+								<spring:message code="message.ProvideEmail" />
+							</c:otherwise>	
+						</c:choose>
+					</span>
+				</div>
 				<div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">						
 					<c:if test="${captchaBypass !=true}">
 					<%@ include file="captcha.jsp" %>					
@@ -136,79 +161,45 @@
 					</c:choose>
 		       		</c:if>
 		       	</span>
+	       		<span id="ask-email-dialog-error-captcha" class="validation-error hideme">
+					<spring:message code="message.captchawrongnew" />
+		       	</span>
 			</div>
 			<div class="modal-footer">
-				<c:choose>
-					<c:when test="${responsive != null}">
-						<a href="javascript:;" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-						<a href="javascript:;" style="text-decoration: none"  class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
-					</c:when>
-					<c:when test="${runnermode == true}">
-						<a href="javascript:;" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-						<a href="javascript:;" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
-					</c:when>
-					<c:otherwise>
-						<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-						<a href="javascript:;" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
-					</c:otherwise>	
-				</c:choose>				
-			</div>
-			</div>
-			</div>
-		</div>
-		
-		<div class="modal" id="ask-email-dialog" data-backdrop="static" role="dialog">
-			<div class="modal-dialog">
-	    		<div class="modal-content">
-					<div class="modal-header">
-						<b><spring:message code="label.Info" /></b>
-					</div>
-					<div class="modal-body">
-						<p>
-							<c:choose>
-								<c:when test="${runnermode == true}">
-									${form.getMessage("label.EmailAddress")}
-								</c:when>
-								<c:otherwise>
-									<spring:message code="label.EmailAddress" />
-								</c:otherwise>	
-							</c:choose>
-						</p>
-						<input type="text" maxlength="255" name="email" id="linkemail" />
-						<span id="ask-email-dialog-error" class="validation-error hideme">
-							<c:choose>
-								<c:when test="${runnermode == true}">
-									${form.getMessage("message.ProvideEmail")}
-								</c:when>
-								<c:otherwise>
-									<spring:message code="message.ProvideEmail" />
-								</c:otherwise>	
-							</c:choose>
-						</span>
-						<div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
-							<%@ include file="captcha.jsp" %>								
-				       	</div>
-				       	<span id="ask-email-dialog-error-captcha" class="validation-error hideme">
-							<spring:message code="message.captchawrongnew" />
-				       	</span>
-					</div>
-					<div class="modal-footer">
-						<c:choose>
-							<c:when test="${responsive != null}">
-								<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>	
-								<a href="javascript:;" style="text-decoration: none" class="btn btn-lg btn-default" onclick="hideModalDialog($('#ask-email-dialog'))">${form.getMessage("label.Cancel")}</a>		
-							</c:when>
-							<c:when test="${runnermode == true}">
-								<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>	
-								<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-email-dialog'))">${form.getMessage("label.Cancel")}</a>		
-							</c:when>
-							<c:otherwise>
-								<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink(false)"><spring:message code="label.OK" /></a>	
-								<a href="javascript:;" class="btn btn-default"  onclick="hideModalDialog($('#ask-email-dialog'))"><spring:message code="label.Cancel" /></a>		
-							</c:otherwise>	
-						</c:choose>				
-					</div>
+				<div class="forexport">
+					<c:choose>
+						<c:when test="${responsive != null}">
+							<a href="javascript:;" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
+							<a href="javascript:;" style="text-decoration: none"  class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+						</c:when>
+						<c:when test="${runnermode == true}">
+							<a href="javascript:;" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
+							<a href="javascript:;" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+						</c:when>
+						<c:otherwise>
+							<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
+							<a href="javascript:;" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+						</c:otherwise>	
+					</c:choose>
 				</div>
+				<div class="foremail">
+					<c:choose>
+						<c:when test="${responsive != null}">
+							<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>	
+							<a href="javascript:;" style="text-decoration: none" class="btn btn-lg btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+						</c:when>
+						<c:when test="${runnermode == true}">
+							<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>	
+							<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+						</c:when>
+						<c:otherwise>
+							<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink(false)"><spring:message code="label.OK" /></a>	
+							<a href="javascript:;" class="btn btn-default"  onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>		
+						</c:otherwise>	
+					</c:choose>	
+				</div>		
+			</div>
+			</div>
 			</div>
 		</div>
 		
@@ -251,24 +242,32 @@
 				    	$("#runner-captcha-empty-error").show();
 				    	return;
 				    }
+				    
+				    var data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
+					if ($('#captcha_token').length > 0) {
+						data["captcha_token"] =  $('#captcha_token').val();
+						data["captcha_id"] =  $('#captcha_id').val();
+						data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+						data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
+					}
 				
 					$.ajax({
 						type:'GET',
 						  url: "${contextpath}/runner/createdraftanswerpdf/${uniqueCode}",
-						  data: {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse},
+						  data: data,
 						  cache: false,
 						  success: function( data ) {
 							  
-							  if (data == "success") {
-									$('#ask-export-dialog').modal('hide');
-									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
-							  	} else if (data == "errorcaptcha") {
-							  		$("#runner-captcha-error").show();
-							  		reloadCaptcha();
-								} else {
-									showError(message_PublicationExportFailed);
-									reloadCaptcha();
-								};
+						  	if (data == "success") {
+								$('#ask-export-dialog').modal('hide');
+								showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
+						  	} else if (data == "errorcaptcha") {
+						  		$("#runner-captcha-error").show();
+							} else {
+								showError(message_PublicationExportFailed);
+							};
+							
+							reloadCaptcha();
 						}
 					});							
 				</c:when>
@@ -280,13 +279,14 @@
 						  cache: false,
 						  success: function( data ) {
 							  
-							  if (data == "success") {
-									$('#ask-export-dialog').modal('hide');
-									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
-								} else {
-									showError(message_PublicationExportFailed);
-									reloadCaptcha();
-								};
+						  	if (data == "success") {
+								$('#ask-export-dialog').modal('hide');
+								showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
+							} else {
+								showError(message_PublicationExportFailed);
+							};
+							
+							reloadCaptcha();
 						}
 					});							
 				</c:otherwise>
@@ -331,14 +331,14 @@
 		
 			function sendMailLink(skip)
 			{
-				$("#ask-email-dialog").find(".validation-error").hide();
-				$("#ask-email-dialog").find(".validation-error-keep").hide();
+				$("#ask-export-dialog").find(".validation-error").hide();
+				$("#ask-export-dialog").find(".validation-error-keep").hide();
 				
 				var mail = $("#linkemail").val();
 				var linkDraft = $("#copyme").attr("href");
 				
 				var challenge = getChallenge();
-			    var uresponse = getResponse($("#ask-email-dialog"));
+			    var uresponse = getResponse($("#ask-export-dialog"));
 			    
 			    var id = '${surveyID}';
 			    
@@ -352,33 +352,41 @@
 					
 					if (uresponse.trim().length == 0)
 				    {
-						$("#ask-email-dialog").find("#runner-captcha-empty-error").show();
+						$("#ask-export-dialog").find("#runner-captcha-empty-error").show();
 				    	return;
-				    }
-				
+				    }				
+				}
+			    
+			    var data = {email : mail, link: linkDraft, id : id, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
+				if ($('#captcha_token').length > 0) {
+					data["captcha_token"] =  $('#captcha_token').val();
+					data["captcha_id"] =  $('#captcha_id').val();
+					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
 				}
 	
 				$.ajax({
 					type:'GET',
 					  url: "${contextpath}/runner/sendmaillink",
-					  data: {email : mail, link: linkDraft, id : id, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse},
+					  data: data,
 					  cache: false,
 					  success: function( data ) {
 				  
 						if (data == "success") {
 							$('#successMailLinkMessage').show();
 							$('#failureMailLinkMessage').hide();
-							$('#ask-email-dialog').modal('hide');
+							$('#ask-export-dialog').modal('hide');
 						}
 						else if(data == "errorcaptcha")
 						{
-							$("#ask-email-dialog").find("#runner-captcha-error").show();
-							reloadCaptcha();
+							$("#ask-export-dialog").find("#runner-captcha-error").show();
 						}
 						else {
 							$('#successMailLinkMessage').hide();
 							$('#failureMailLinkMessage').show();
 						}
+						
+						reloadCaptcha();
 					}
 				});				
 				

@@ -120,6 +120,7 @@ public class ContributionController extends BasicController {
 		form.setSurvey(translated);
 		form.setLanguage(surveyService.getLanguage(lang));
 
+
 		form.getAnswerSets().add(answerSet);
 		result.addObject(form);
 		result.addObject("surveyprefix", answerSet.getSurvey().getId() + ".");
@@ -470,6 +471,10 @@ public class ContributionController extends BasicController {
 						translationService.getActiveTranslationsForSurvey(origsurvey.getId()), contextpath);
 				form.setSurvey(origsurvey);
 
+				if(!origsurvey.getConfirmationPageLink()){
+					form.getAnswerSets().add(oldAnswerSet);
+				}
+
 				result.addObject("form", form);
 				result.addObject("text", origsurvey.getConfirmationPage());
 
@@ -480,6 +485,7 @@ public class ContributionController extends BasicController {
 						&& oldAnswerSet.getInvitationId() == null) {
 					result.addObject("asklogout", true);
 				}
+
 				result.addObject("surveyprefix", origsurvey.getId() + ".");
 				return result;
 			} else {
@@ -583,7 +589,6 @@ public class ContributionController extends BasicController {
 			AnswerSet answerSet;
 			try {
 				answerSet = answerService.get(code);
-
 				if (answerSet != null) {
 					Form form = new Form(resources);
 					String lang = answerSet.getLanguageCode();

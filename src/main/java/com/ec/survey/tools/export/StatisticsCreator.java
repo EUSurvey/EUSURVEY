@@ -16,7 +16,6 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizHelper;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
-import org.hibernate.mapping.Formula;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,7 +90,7 @@ public class StatisticsCreator implements Runnable {
 		Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
 		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
 		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
-		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
+		Map<Integer, Map<String, Integer>> numberOfAnswersMapGallery = new HashMap<>();
 		Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
 		Map<String, Integer> numberOfNumberAnswersMap = new HashMap<>();
 		Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion = new HashMap<>();
@@ -149,7 +148,7 @@ public class StatisticsCreator implements Runnable {
 				ComplexTable table = (ComplexTable) element;
 
 				for (ComplexTableItem child : table.getQuestionChildElements()) {
-					if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+					if (child.isChoice()) {
 						addChoiceStatistics(survey, child, statistics, numberOfAnswersMap,
 								multipleChoiceSelectionsByAnswerset);
 					} else if ((child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) && child.showStatisticsForNumberQuestion()) {
@@ -352,16 +351,16 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	private void addReportingAnswers4Statistics(Question q, Map<Integer, Integer> map,
-			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
+			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<String, Integer>> mapGallery,
 			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Object> values, String where, Map<String, Integer> mapNumberQuestion, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset, Map<String, Map<Integer, Integer>> mapRankingQuestion) {
 		if (q instanceof ChoiceQuestion) {
 			ChoiceQuestion choice = (ChoiceQuestion) q;
 			for (PossibleAnswer a : choice.getAllPossibleAnswers()) {
-				int count = reportingService.getCount(survey, choice.getUniqueId(), a.getUniqueId(), false, false, where,
+				int count = reportingService.getCount(survey, choice.getUniqueId(), a.getUniqueId(), false, false, false, where,
 						values);
 				map.put(a.getId(), count);
 			}
-			int count = reportingService.getCount(survey, choice.getUniqueId(), null, false, false, where, values);
+			int count = reportingService.getCount(survey, choice.getUniqueId(), null, false, false, false, where, values);
 			map.put(q.getId(), count);
 			if (q instanceof MultipleChoiceQuestion) {
 				Set<String> paUIDs = new HashSet<>();
@@ -385,12 +384,25 @@ public class StatisticsCreator implements Runnable {
 			if (!mapGallery.containsKey(g.getId())) {
 				mapGallery.put(g.getId(), new HashMap<>());
 			}
-			for (int i = 0; i < g.getFiles().size(); i++) {
-				int count = reportingService.getCount(survey, g.getUniqueId(), Integer.toString(i), false, false, where,
-						values);
-				mapGallery.get(g.getId()).put(i, count);
+			for (com.ec.survey.model.survey.base.File file : g.getAllFiles()) {
+				int countbyuid = reportingService.getCount(survey, g.getUniqueId(), file.getUid(), false, false, false, where,
+						values);				
+				mapGallery.get(g.getId()).put(file.getUid(), countbyuid);
 			}
-			int count = reportingService.getCount(survey, g.getUniqueId(), null, false, false, where, values);
+			
+			//also add "old" answers (without file uid in answers)
+			for (int i = 0; i < g.getFiles().size(); i++) {
+				com.ec.survey.model.survey.base.File file = g.getFiles().get(i);
+				int count =  reportingService.getCount(survey, g.getUniqueId(), Integer.toString(i), false, false, true, where,
+						values);
+
+				if (count > 0) {
+					int oldcount = mapGallery.get(g.getId()).get(file.getUid());
+					mapGallery.get(g.getId()).put(file.getUid(), count + oldcount);
+				}
+			}			
+			
+			int count = reportingService.getCount(survey, g.getUniqueId(), null, false, false, false, where, values);
 			map.put(q.getId(), count);
 		} else if (q instanceof Matrix) {
 			Matrix matrix = (Matrix) q;
@@ -399,10 +411,10 @@ public class StatisticsCreator implements Runnable {
 					if (!mapMatrix.containsKey(matrixQuestion.getId()))
 						mapMatrix.put(matrixQuestion.getId(), new HashMap<>());
 					int count = reportingService.getCount(survey, matrixQuestion.getUniqueId(),
-							matrixAnswer.getUniqueId(), false, false, where, values);
+							matrixAnswer.getUniqueId(), false, false, false, where, values);
 					mapMatrix.get(matrixQuestion.getId()).put(matrixAnswer.getId(), count);
 				}
-				int count = reportingService.getCount(survey, matrixQuestion.getUniqueId(), null, false, false, where, values);
+				int count = reportingService.getCount(survey, matrixQuestion.getUniqueId(), null, false, false, false, where, values);
 				map.put(matrixQuestion.getId(), count);
 			}
 		} else if (q instanceof RatingQuestion) {
@@ -412,19 +424,19 @@ public class StatisticsCreator implements Runnable {
 					if (!mapRatingQuestion.containsKey(childQuestion.getId()))
 						mapRatingQuestion.put(childQuestion.getId(), new HashMap<>());
 					int count = reportingService.getCount(survey, childQuestion.getUniqueId(),
-							Integer.toString(i) + Constants.PATH_DELIMITER, true, false, where, values);
+							Integer.toString(i) + Constants.PATH_DELIMITER, true, false, false, where, values);
 					mapRatingQuestion.get(childQuestion.getId()).put(i, count);
 				}
-				int count = reportingService.getCount(survey, childQuestion.getUniqueId(), null, false, false, where, values);
+				int count = reportingService.getCount(survey, childQuestion.getUniqueId(), null, false, false, false, where, values);
 				map.put(childQuestion.getId(), count);
 			}
 		} else if (q instanceof RankingQuestion) {
 			RankingQuestion ranking = (RankingQuestion) q;
-			int size = ranking.getChildElements().size();
+			int size = ranking.getAllChildElements().size();
 			
 			List<String> answers = reportingService.getAnswersByQuestionUID(survey, ranking.getUniqueId(), where, values);
 			
-			for (Element childQuestion : ranking.getChildElements()) {
+			for (Element childQuestion : ranking.getAllChildElements()) {
 				if (!mapRankingQuestion.containsKey(childQuestion.getUniqueId())) {
 					HashMap<Integer, Integer> childMap = new HashMap<>();
 					for (int i = 0; i < size; i++) {
@@ -449,40 +461,40 @@ public class StatisticsCreator implements Runnable {
 			NumberQuestion number = (NumberQuestion) q;
 			if (number.showStatisticsForNumberQuestion()) {
 				for (String answer : number.getAllPossibleAnswers()) {
-					int count = reportingService.getCount(survey, number.getUniqueId(), answer, true, true, where, values);
+					int count = reportingService.getCount(survey, number.getUniqueId(), answer, true, true, false, where, values);
 					mapNumberQuestion.put(number.getUniqueId() + answer, count);
 				}
 			}
-			int count = reportingService.getCount(survey, number.getUniqueId(), null, false, false, where, values);
+			int count = reportingService.getCount(survey, number.getUniqueId(), null, false, false, false, where, values);
 			map.put(q.getId(), count);
 		} else if (q instanceof FormulaQuestion) {
 			FormulaQuestion formula = (FormulaQuestion) q;
 			if (formula.showStatisticsForNumberQuestion()) {
 				for (String answer : formula.getAllPossibleAnswers()) {
-					int count = reportingService.getCount(survey, formula.getUniqueId(), answer, true, true, where, values);
+					int count = reportingService.getCount(survey, formula.getUniqueId(), answer, true, true, false, where, values);
 					mapNumberQuestion.put(formula.getUniqueId() + answer, count);
 				}
 			}
-			int count = reportingService.getCount(survey, formula.getUniqueId(), null, false, false, where, values);
+			int count = reportingService.getCount(survey, formula.getUniqueId(), null, false, false, false, where, values);
 			map.put(q.getId(), count);
 		} else if (q instanceof ComplexTable) {
 			ComplexTable table = (ComplexTable) q;
 			for (ComplexTableItem child : table.getQuestionChildElements()) {
 				if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
 					for (PossibleAnswer a : child.getPossibleAnswers()) {
-						int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, where,
+						int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, false, where,
 								values);
 						map.put(a.getId(), count);
 					}
-					int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, where, values);
+					int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, false, where, values);
 					map.put(child.getId(), count);
 				} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
 					if (child.showStatisticsForNumberQuestion()) {
 						for (String answer : child.getPossibleNumberAnswers()) {
-							int count = reportingService.getCount(survey, child.getUniqueId(), answer, true, true, where, values);
+							int count = reportingService.getCount(survey, child.getUniqueId(), answer, true, true, false, where, values);
 							mapNumberQuestion.put(child.getUniqueId() + answer, count);
 						}
-						int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, where, values);
+						int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, false, where, values);
 						map.put(child.getId(), count);
 					}			
 				}
@@ -492,19 +504,19 @@ public class StatisticsCreator implements Runnable {
 			ComplexTableItem child = (ComplexTableItem) q;			
 			if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
 				for (PossibleAnswer a : child.getPossibleAnswers()) {
-					int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, where,
+					int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, false, where,
 							values);
 					map.put(a.getId(), count);
 				}
-				int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, where, values);
+				int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, false, where, values);
 				map.put(child.getId(), count);
 			} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
 				if (child.showStatisticsForNumberQuestion()) {
 					for (String answer : child.getPossibleNumberAnswers()) {
-						int count = reportingService.getCount(survey, child.getUniqueId(), answer, true, true, where, values);
+						int count = reportingService.getCount(survey, child.getUniqueId(), answer, true, true, false, where, values);
 						mapNumberQuestion.put(child.getUniqueId() + answer, count);
 					}
-					int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, where, values);
+					int count = reportingService.getCount(survey, child.getUniqueId(), null, false, false, false, where, values);
 					map.put(child.getId(), count);
 				}			
 			}
@@ -512,7 +524,7 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	private void addMainAnswers4Statistics(Question q, Map<Integer, Integer> map,
-			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
+			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<String, Integer>> mapGallery,
 			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> counts,
 			Map<String, Integer> countsUID, Map<String, Integer> gallerycounts,
 			Map<String, Set<Integer>> answerSetQuestion, Map<String, Integer> matrixcounts,
@@ -534,8 +546,17 @@ public class StatisticsCreator implements Runnable {
 			if (!mapGallery.containsKey(g.getId())) {
 				mapGallery.put(g.getId(), new HashMap<>());
 			}
+			for (com.ec.survey.model.survey.base.File file : g.getAllFiles()) {
+				mapGallery.get(g.getId()).put(file.getUid(), countsUID.getOrDefault(file.getUid() + "#" + g.getUniqueId(), 0));
+			}
+			//also add "old" answers (without file uid in answers)
 			for (int i = 0; i < g.getFiles().size(); i++) {
-				mapGallery.get(g.getId()).put(i, gallerycounts.getOrDefault(g.getUniqueId() + "-" + i, 0));
+				com.ec.survey.model.survey.base.File file = g.getFiles().get(i);
+				int count = gallerycounts.getOrDefault(g.getUniqueId() + "-" + i, 0);
+				if (count > 0) {
+					int oldcount = mapGallery.get(g.getId()).get(file.getUid());
+					mapGallery.get(g.getId()).put(file.getUid(), count + oldcount);
+				}
 			}
 			map.put(q.getId(),
 					answerSetQuestion.get(q.getUniqueId()) != null ? answerSetQuestion.get(q.getUniqueId()).size() : 0);
@@ -580,8 +601,8 @@ public class StatisticsCreator implements Runnable {
 			}
 		} else if (q instanceof RankingQuestion) {
 			RankingQuestion ranking = (RankingQuestion) q;
-			int size = ranking.getChildElements().size();
-			for (Element childQuestion : ranking.getChildElements()) {
+			int size = ranking.getAllChildElements().size();
+			for (Element childQuestion : ranking.getAllChildElements()) {
 				if (!mapRankingQuestion.containsKey(childQuestion.getUniqueId())) {
 					HashMap<Integer, Integer> childMap = new HashMap<>();
 					for (int i = 0; i < size; i++) {
@@ -613,8 +634,8 @@ public class StatisticsCreator implements Runnable {
 				
 				if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
 					for (PossibleAnswer a : child.getPossibleAnswers()) {
-						if (countsUID.containsKey(a.getUniqueId() + "#" + q.getUniqueId())) {
-							map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + q.getUniqueId()));
+						if (countsUID.containsKey(a.getUniqueId() + "#" + child.getUniqueId())) {
+							map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + child.getUniqueId()));
 						} else {
 							map.put(a.getId(), counts.getOrDefault(a.getId().toString(), 0));
 						}
@@ -714,7 +735,9 @@ public class StatisticsCreator implements Runnable {
 					counts.put(key, 1);
 				}
 			} else {
-				if (value != null && org.apache.commons.lang3.StringUtils.isNumeric(value)) {
+				if (pauid == null && value != null && org.apache.commons.lang3.StringUtils.isNumeric(value)) {
+					//gallery				
+					//"old" style
 					String galleryKey = qid.toString() + "-" + value;
 					if (gallerycounts.containsKey(galleryKey)) {
 						gallerycounts.put(galleryKey, gallerycounts.get(galleryKey) + 1);
@@ -748,6 +771,7 @@ public class StatisticsCreator implements Runnable {
 				}
 			} else {
 				if (value != null && org.apache.commons.lang3.StringUtils.isNumeric(value) && quid != null) {
+					//gallery										
 					String galleryKey = quid + "-" + value;
 					if (gallerycounts.containsKey(galleryKey)) {
 						gallerycounts.put(galleryKey, gallerycounts.get(galleryKey) + 1);
@@ -860,7 +884,7 @@ public class StatisticsCreator implements Runnable {
 
 	@Transactional
 	public int getAnswers4Statistics(Survey survey, Question question, Map<Integer, Integer> map,
-			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
+			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<String, Integer>> mapGallery,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
 			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> mapNumberQuestion, Map<String, Map<Integer, Integer>> mapRankingQuestion) throws TooManyFiltersException {
 
@@ -981,7 +1005,7 @@ public class StatisticsCreator implements Runnable {
 
 	@Transactional
 	public int getAnswers4Statistics(Survey survey, ResultFilter filter, Map<Integer, Integer> map,
-			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
+			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<String, Integer>> mapGallery,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
 			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> mapNumberQuestion, Map<String, Map<Integer, Integer>> mapRankingQuestion, Map<String, List<String>> rankingQuestionAnswers) throws TooManyFiltersException {
 
@@ -1122,39 +1146,41 @@ public class StatisticsCreator implements Runnable {
 	}
 	
 	public void addStatistics4RankingQuestion(Survey survey, RankingQuestion ranking, Statistics statistics, Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion) {
-		int size = ranking.getChildElements().size();
+		int size = ranking.getAllChildElements().size();
 		int total = survey.getNumberOfAnswerSets();
-		int answered = 0;
-		boolean firstChild = true;
-		for (Element child : ranking.getChildElements()) {
+		int maxAnswered = 0;
+		List<RankingItem> rankingItems = ranking.getAllChildElements();
+		for (int j = 0; j < size; j++) {
+			Element child = rankingItems.get(j);
 			int score = 0;
+			int answered = 0;
 			for (int i = 0; i < size; i++) {
 				int value = numberOfAnswersMapRankingQuestion.get(child.getUniqueId()).get(i);
 				statistics.getRequestedRecordsRankingScore().put(child.getId() + "-" + i, value);
 				score += (size - i) * value;
 				
-				if (firstChild) {
-					answered += value;
-				}
+				answered += value;
 			}
-			
+
+			maxAnswered = Math.max(answered, maxAnswered);
+
 			statistics.getRequestedRecordsRankingScore().put(child.getId().toString(), score);
-			firstChild = false;
 		}
-		
-		for (Element child : ranking.getChildElements()) {
+
+		for (int j = 0; j < size; j++) {
+			Element child = rankingItems.get(j);
 			for (int i = 0; i < size; i++) {
 				int value = statistics.getRequestedRecordsRankingScore().get(child.getId() + "-" + i);
-				statistics.getRequestedRecordsRankingPercentScore().put(child.getId() + "-" + i, divideToPercent(value, answered));
+				statistics.getRequestedRecordsRankingPercentScore().put(child.getId() + "-" + i, divideToPercent(value, maxAnswered));
 			}
 			int score = statistics.getRequestedRecordsRankingScore().get(child.getId().toString());
-			statistics.getRequestedRecordsRankingPercentScore().put(child.getId().toString(), divide(score, answered));
-		}		
-		
-		statistics.getRequestedRecordsRankingScore().put(ranking.getId().toString(), answered);
-		
-		statistics.getRequestedRecords().put(ranking.getId().toString(), total - answered);
-		double percent = total == 0 ? 0 : (double) (total - answered) / (double) total * 100;
+			statistics.getRequestedRecordsRankingPercentScore().put(child.getId().toString(), divide(score, maxAnswered));
+		}
+
+		statistics.getRequestedRecordsRankingScore().put(ranking.getId().toString(), maxAnswered);
+
+		statistics.getRequestedRecords().put(ranking.getId().toString(), total - maxAnswered);
+		double percent = total == 0 ? 0 : (double) (total - maxAnswered) / (double) total * 100;
 		statistics.getRequestedRecordsPercent().put(ranking.getId().toString(), percent);
 	}
 	
@@ -1252,21 +1278,21 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	private void addStatistics4Gallery(Survey survey, GalleryQuestion question, Statistics statistics,
-			Map<Integer, Map<Integer, Integer>> numberOfAnswersMap, Map<Integer, Integer> numberOfAnswersMap2) {
+			Map<Integer, Map<String, Integer>> numberOfAnswersMap, Map<Integer, Integer> numberOfAnswersMap2) {
 		int total = survey.getNumberOfAnswerSets();
 
-		for (int i = 0; i < question.getFiles().size(); i++) {
+		for (com.ec.survey.model.survey.base.File file: question.getAllFiles()) {
 
 			int numberOfAnswers = 0;
 			if (numberOfAnswersMap.containsKey(question.getId())
-					&& numberOfAnswersMap.get(question.getId()).containsKey(i)) {
-				numberOfAnswers = numberOfAnswersMap.get(question.getId()).get(i);
+					&& numberOfAnswersMap.get(question.getId()).containsKey(file.getUid())) {
+				numberOfAnswers = numberOfAnswersMap.get(question.getId()).get(file.getUid());
 			}
 			double percent = total == 0 ? 0 : (double) numberOfAnswers / (double) total * 100;
 
-			statistics.getRequestedRecords().put(question.getId() + "-" + i, numberOfAnswers);
-			statistics.getRequestedRecordsPercent().put(question.getId() + "-" + i, percent);
-			statistics.getTotalsPercent().put(question.getId() + "-" + i, percent);
+			statistics.getRequestedRecords().put(question.getId() + "-" + file.getUid(), numberOfAnswers);
+			statistics.getRequestedRecordsPercent().put(question.getId() + "-" + file.getUid(), percent);
+			statistics.getTotalsPercent().put(question.getId() + "-" + file.getUid(), percent);
 		}
 
 		int answered = numberOfAnswersMap2.get(question.getId());

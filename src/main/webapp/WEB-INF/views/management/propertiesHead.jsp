@@ -345,10 +345,23 @@
 						return
 					}
 				} else {
-					if (isPropEmpty("[name='survey.confirmationPage']")){
-						$("#tinymceconfpage").append("<div class='validation-error'>" + requiredText + "</div>")
+					let confirmationText = $("#edit-survey-confirmation-page").text();
+					if (confirmationText.length > 3000)
+					{
+						$("#tinymceconfpage").append("<div class='validation-error'>" + texttoolongText + "</div>")
+						return;
+					}
+
+					if(!isNumberOpenClosedBracketsEqual(confirmationText)){
+						$("#tinymceconfpage").append("<div class='validation-error'>" + bracketCountNotMatching + "</div>")
 						return
 					}
+
+					const confirmationCheckResult = isConfirmationPageMarkupValid("[name='survey.confirmationPage']");
+					if(confirmationCheckResult != '') {
+						$("#tinymceconfpage").append("<div class='validation-error'>" + confirmationMarkupError.replace('{0}', confirmationCheckResult) + "</div>")
+						return
+					};
 				}
 
 				if (_properties.useEscapeLink()){
@@ -573,10 +586,57 @@
 			return elem.text().trim().length <= 0 && elem.val().trim().length <= 0
 		}
 
+		function isConfirmationPageMarkupValid(select){
+			// get all strings inside curly brackets
+			let markupRegex = /{([^}]+)}/g;
+
+			const markups = [...$(select).text().match(markupRegex)];
+			if(markups.length <= 0)
+				return '';
+
+			const validIDs = "${form.survey.getValidMarkupIDs()}";
+
+			// check if all markups are valid
+			for(const mark of markups){
+				let markNoBrackets = mark.slice(1,-1);
+				switch(markNoBrackets) {
+					case 'InvitationNumber':
+					case 'ContributionID':
+					case 'UserName':
+					case 'CreationDate':
+					case 'LastUpdate':
+					case 'Language':
+						break;
+					default:
+						// is element in question Ids?
+						if(validIDs.includes(markNoBrackets))
+							break;
+
+						// invalid markup
+						return mark;
+				}
+			}
+
+			return '';	// all markup valid
+		}
+
 		function isURLNotValid(select){
 			let value = $(select).val();
 			var urlregex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 			return !urlregex.test( value  );
+		}
+
+		function isNumberOpenClosedBracketsEqual(text){
+			let openBrackets = 0;
+			let closedBrackets = 0;
+			for(let i = 0; i < text.length; i++){
+				let c = text.charAt(i);
+				if(c === '{')
+					openBrackets++;
+				if(c === '}')
+					closedBrackets++;
+			}
+			return openBrackets == closedBrackets;
 		}
 		
 	</script>

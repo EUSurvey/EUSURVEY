@@ -378,7 +378,7 @@
 	  	<spring:message code="label.RequestTranslationHeader" /><span id="current-lang-request" name ="current-lang-request"></span> 
 	  </div>
 	  <div class="modal-body">
-	  	<b><spring:message code="label.MachineTranslationInstructions"/></b>
+	  	<spring:message code="label.MachineTranslationInstructions"/>
 	  	<br />
 	  	<select id="pivotlangs" name="pivotlangs" style="margin-top: 6px; width: auto" class="form-control">
 				<c:forEach items="${completedTranslations}" var="trans">				

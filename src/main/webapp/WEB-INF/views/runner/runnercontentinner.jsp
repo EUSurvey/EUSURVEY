@@ -65,7 +65,14 @@
 							<div class="modal-dialog modal-sm">
 								<div class="modal-content">
 									<div class="modal-header" style="font-weight: bold;">
-										<spring:message code="label.MotivationPopup" />
+										<c:choose>
+											<c:when test="${form.survey.motivationPopupTitle != null && form.survey.motivationPopupTitle.length() > 0}">
+												${form.survey.motivationPopupTitle}
+											</c:when>
+											<c:otherwise>
+												<spring:message code="label.MotivationPopup" />
+											</c:otherwise>
+										</c:choose>
 									</div>
 									<div class="modal-body">
 										<div class="modal-body">${form.survey.motivationText}</div>

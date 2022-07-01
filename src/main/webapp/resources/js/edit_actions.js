@@ -52,7 +52,7 @@ var Actions = function() {
     		$(".navigation").show();
     		$(".toolbox").css("left","180px");
     		$("#shownavigationbutton").addClass("selected");
-    		createNavigation(false);
+    		createNavigation(true);
     	}
     	setContentMargin();
     };

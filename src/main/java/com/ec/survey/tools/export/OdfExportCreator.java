@@ -14,6 +14,8 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SqlQueryService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.mysql.jdbc.StringUtils;
+
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -756,21 +758,28 @@ public class OdfExportCreator extends ExportCreator {
 									cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
 									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
 								}
-
 							} else {
 								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 
 								StringBuilder cellValue = new StringBuilder();
 								boolean first = true;
+								GalleryQuestion gallery = (GalleryQuestion) question;
 								for (Answer answer : answers) {
-
-									if (answer.getValue() != null && answer.getValue().length() > 0) {
-										int index = Integer.parseInt(answer.getValue());
-										if (!first)
-											cellValue.append(", ");
-										cellValue.append(((GalleryQuestion) question).getFiles().get(index).getName())
-												.append(" ");
+									
+									File file = null;
+									if (!StringUtils.isNullOrEmpty(answer.getPossibleAnswerUniqueId())) {
+										file = gallery.getFileByUid(answer.getPossibleAnswerUniqueId());								
+									} else if (!StringUtils.isNullOrEmpty(answer.getValue())) {
+										file = gallery.getAllFiles().get(Integer.parseInt(answer.getValue()));
+									}
+									
+									if (!first)
+										cellValue.append(", ");
+									try {
+										cellValue.append(file.getName());
 										first = false;
+									} catch (Exception e) {
+										logger.error(e.getLocalizedMessage(), e);
 									}
 								}
 
@@ -1221,10 +1230,10 @@ public class OdfExportCreator extends ExportCreator {
 
 					CreateTableForAnswerStat(cellValue);
 					GalleryQuestion galleryQuestion = (GalleryQuestion) question;
-					for (int i = 0; i < galleryQuestion.getFiles().size(); i++) {
+					for (File file : galleryQuestion.getAllFiles()) {
 						rowIndex++;
 
-						cellValue = ConversionTools.removeHTMLNoEscape(galleryQuestion.getFiles().get(i).getName());
+						cellValue = ConversionTools.removeHTMLNoEscape(file.getName());
 
 						cell = sheet.getCellByPosition(0, rowIndex);
 						cell.setStringValue(cellValue);
@@ -1232,7 +1241,7 @@ public class OdfExportCreator extends ExportCreator {
 						cell.setValueType(Constants.STRING);
 
 						Double percent = statistics.getRequestedRecordsPercent()
-								.get(galleryQuestion.getId().toString() + "-" + i);
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid());
 
 						cell = sheet.getCellByPosition(1, rowIndex);
 						cell.removeContent();
@@ -1243,15 +1252,15 @@ public class OdfExportCreator extends ExportCreator {
 
 						cell = sheet.getCellByPosition(2, rowIndex);
 						cell.setDoubleValue((double) statistics.getRequestedRecords()
-								.get(galleryQuestion.getId().toString() + "-" + i));
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid()));
 						cell.setDisplayText(statistics.getRequestedRecords()
-								.get(galleryQuestion.getId().toString() + "-" + i).toString());
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid()).toString());
 
 						cell = sheet.getCellByPosition(3, rowIndex);
 						cell.setPercentageValue(statistics.getRequestedRecordsPercent()
-								.get(galleryQuestion.getId().toString() + "-" + i));
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid()));
 						cell.setDisplayText(df.format(statistics.getRequestedRecordsPercent()
-								.get(galleryQuestion.getId().toString() + "-" + i)) + "%");
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid())) + "%");
 					}
 
 					rowIndex++;
@@ -1810,24 +1819,24 @@ public class OdfExportCreator extends ExportCreator {
 
 					org.odftoolkit.simple.table.Table table = CreateTableForAnswer(document, cellValue);
 					GalleryQuestion galleryQuestion = (GalleryQuestion) question;
-					for (int i = 0; i < galleryQuestion.getFiles().size(); i++) {
+					for (File file : galleryQuestion.getAllFiles()) {
 						Row row = table.appendRow();
 
-						cellValue = ConversionTools.removeHTMLNoEscape(galleryQuestion.getFiles().get(i).getName());
+						cellValue = ConversionTools.removeHTMLNoEscape(file.getName());
 
 						row.getCellByIndex(0).setStringValue(cellValue);
 
 						Double percent = statistics.getRequestedRecordsPercent()
-								.get(galleryQuestion.getId().toString() + "-" + i);
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid());
 
 						if (percent > 0) {
 							drawChart(percent, row);
 						}
 
 						row.getCellByIndex(2).setDoubleValue((double) statistics.getRequestedRecords()
-								.get(galleryQuestion.getId().toString() + "-" + i));
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid()));
 						row.getCellByIndex(2).setStringValue(Integer.toString(
-								statistics.getRequestedRecords().get(galleryQuestion.getId().toString() + "-" + i)));
+								statistics.getRequestedRecords().get(galleryQuestion.getId().toString() + "-" + file.getUid())));
 
 						row.getCellByIndex(3).setStringValue(df.format(percent) + "%");
 

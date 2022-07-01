@@ -9,6 +9,7 @@ public enum DelphiQuestionType {
     Rating,
     FreeText,
     Number,
+    Formula,
     Date,
     Time,
     RegEx,
@@ -38,6 +39,10 @@ public enum DelphiQuestionType {
 
         if (question instanceof NumberQuestion) {
             return Number;
+        }
+
+        if (question instanceof FormulaQuestion) {
+            return Formula;
         }
 
         if (question instanceof DateQuestion) {
