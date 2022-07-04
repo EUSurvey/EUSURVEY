@@ -100,13 +100,5 @@
 		
 		<%@ include file="includes2.jsp" %>
 		
-		<c:if test='${param.surveylanguage != null}'>
-			<script type="text/javascript">
-				$("#footer-content-languages").find("a").each(function(){
-					$(this).attr("href", $(this).attr("href") + "&surveylanguage=${param.surveylanguage}");
-				});
-			</script>
-		</c:if>
-		
 	</c:otherwise>
 </c:choose>
