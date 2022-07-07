@@ -338,21 +338,23 @@ public class HomeController extends BasicController {
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
 
 		try {
-
+			
+			sessionService.initializeProxy();
 			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(incidentHost);
-
-			httppost.setEntity(new StringEntity(createTemplate));
-
+			HttpPost httppost = new HttpPost(incidentHost.trim());
+			httppost.addHeader("Content-type", "text/xml;charset=UTF-8");
+			httppost.addHeader("SOAPAction", "Create");
 			if (smtpAuth != null) {
 				httppost.addHeader("Authorization", "Basic " + smtpAuth);
 			}
 
+			httppost.setEntity(new StringEntity(createTemplate));
+			
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
 
 			if (entity != null) {
-				String strResponse = EntityUtils.toString(entity);
+				String strResponse = EntityUtils.toString(entity, "UTF-8");
 				if (!strResponse.contains("message=\"success\"")) {
 					logger.error(strResponse);
 					throw new MessageException("Calling SMT web service failed.");

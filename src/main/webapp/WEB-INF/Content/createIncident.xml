@@ -18,13 +18,14 @@
           <ns3:Resolution type="Array"/>
           <ns3:Contact mandatory="false" readonly="false" type="String">ZZZ_EXTERNAL USER EXTERNE</ns3:Contact>
           <ns3:JournalUpdates type="Array"/>
+          <ns3:Company mandatory="false" readonly="false" type="String">EXTERNE</ns3:Company>
           <ns3:BriefDescription mandatory="false" readonly="false" type="String">[SUBJECT]</ns3:BriefDescription>
           <ns3:IMTicketStatus mandatory="false" readonly="false" type="String">Assigned</ns3:IMTicketStatus>
           <ns3:ProblemType mandatory="false" readonly="false" type="String">[REASON]</ns3:ProblemType>
           <ns3:NotifyBy mandatory="false" readonly="false" type="String">E-MAIL</ns3:NotifyBy>
           <ns3:Explanation type="Array"/>
           <ns3:CallCode mandatory="false" readonly="false" type="String">OTHER</ns3:CallCode>
-          <ns3:Impact mandatory="false" readonly="false" type="String">2</ns3:Impact>
+          <ns3:Impact mandatory="false" readonly="false" type="String">3</ns3:Impact>
           <ns3:Workdesc type="Array"/>
         </ns3:instance>
       </ns3:model>
