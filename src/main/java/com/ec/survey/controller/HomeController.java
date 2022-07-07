@@ -229,14 +229,14 @@ public class HomeController extends BasicController {
 	private String GetSmtLabelForReason(String reason) {
 		switch (reason) {
 			case "technicalproblem":
-				return "Incident";
+				return "INCIDENT";
 			case "idea":
-				return "Request for change";
+				return "REQUESTFORCHANGE";
 			case "assistance":
 			case "highaudience":
-				return "Request for service";
+				return "REQUESTFORSERVICE";
 			default:
-				return "Request for information";
+				return "REQUESTFORINFORMATION";
 		}		
 	}
 
