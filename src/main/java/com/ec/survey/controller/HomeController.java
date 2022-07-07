@@ -355,7 +355,7 @@ public class HomeController extends BasicController {
 
 			if (entity != null) {
 				String strResponse = EntityUtils.toString(entity, "UTF-8");
-				if (!strResponse.contains("message=\"success\"")) {
+				if (!strResponse.toLowerCase().contains("message=\"success\"")) {
 					logger.error(strResponse);
 					throw new MessageException("Calling SMT web service failed.");
 				}
