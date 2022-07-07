@@ -6,7 +6,7 @@
         <ns3:instance updatecounter="0">
           <ns3:Severity mandatory="false" readonly="false" type="String">2</ns3:Severity>
           <ns3:PrimaryAssignmentGroup mandatory="false" readonly="false" type="String">DIGIT EUSURVEY SUPPORT</ns3:PrimaryAssignmentGroup>
-          <ns3:AffectedItem mandatory="false" readonly="false" type="String">SMT</ns3:AffectedItem>
+          <ns3:AffectedItem mandatory="false" readonly="false" type="String">SURVEYS</ns3:AffectedItem>
           <ns3:IncidentDescription type="Array">
             <ns3:IncidentDescription mandatory="false" readonly="false" type="String">[MESSAGE]</ns3:IncidentDescription>
             <ns3:IncidentDescription mandatory="false" readonly="false" type="String">User name: [ADDITIONALINFOUSERNAME]</ns3:IncidentDescription>
