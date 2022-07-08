@@ -4714,7 +4714,7 @@ public class ManagementController extends BasicController {
 
 			sessionService.initializeProxy();
 			HttpClient httpClient = HttpClients.createDefault();
-			HttpPost httpPost = new HttpPost(codaCreateDashboardLink);
+			HttpPost httpPost = new HttpPost(codaCreateDashboardLink.trim());
 			if (codaApiKey != null){
 				httpPost.setHeader(HttpHeaders.AUTHORIZATION, codaApiKey);
 			}
@@ -4773,6 +4773,7 @@ public class ManagementController extends BasicController {
 
 			StringEntity jsonEntity = new StringEntity(stringResult);
 			jsonEntity.setContentType("application/json");
+			httpPost.addHeader("Content-type", "application/json");
 			httpPost.setEntity(jsonEntity);
 
 			try {
