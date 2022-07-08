@@ -27,12 +27,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -4784,6 +4786,15 @@ public class ManagementController extends BasicController {
 
 				if (response != null) {
 					int code = response.getStatusLine().getStatusCode();
+					logger.info("CODA response code: " + code);
+					
+					HttpEntity entity = response.getEntity();
+
+					if (entity != null) {
+						String strResponse = EntityUtils.toString(entity, "UTF-8");
+						logger.info(strResponse);
+					}					
+					
 					if (code >= 200 && code < 300){
 						surveyService.setCodaWaiting(survey.getUniqueId(), true);
 						return true;
