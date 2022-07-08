@@ -4771,6 +4771,8 @@ public class ManagementController extends BasicController {
 			ObjectMapper mapper = new ObjectMapper();
 			String stringResult = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
 
+			logger.info(stringResult);
+			
 			StringEntity jsonEntity = new StringEntity(stringResult);
 			jsonEntity.setContentType("application/json");
 			httpPost.addHeader("Content-type", "application/json");
