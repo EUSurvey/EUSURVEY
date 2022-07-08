@@ -4713,7 +4713,7 @@ public class ManagementController extends BasicController {
 			}
 
 			sessionService.initializeProxy();
-			HttpClient httpClient = HttpClients.createDefault();
+			HttpClient httpClient = HttpClients.createSystem();
 			HttpPost httpPost = new HttpPost(codaCreateDashboardLink.trim());
 			if (codaApiKey != null){
 				httpPost.setHeader(HttpHeaders.AUTHORIZATION, codaApiKey);
