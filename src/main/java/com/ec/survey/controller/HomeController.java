@@ -340,7 +340,7 @@ public class HomeController extends BasicController {
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
 		
 		String contact = "";
-		String company = "";
+		String company = "EXTERNE";
 		User user = null;
 		try {
 			user = sessionService.getCurrentUser(request, false, false);
@@ -363,18 +363,17 @@ public class HomeController extends BasicController {
 		}
 		if (email.toLowerCase().endsWith("ec.europa.eu")) {
 			// we keep the user's login
-			company = "EC";
+			//company = "EC";
 		} else if (email.toLowerCase().endsWith(".europa.eu")) {
 			//institution
 			String institution = email.substring(email.indexOf("@") + 1);
 			institution = institution.substring(0, institution.indexOf("."));
 			contact = "ZZZ_EXTERNAL USER " + institution;
-			company = institution.toUpperCase();
+			//company = institution.toUpperCase();
 		} else {
 			//external
 			contact = "ZZZ_EXTERNAL USER EXTERNE";
-			company = "EXTERNE";
-			
+			//company = "EXTERNE";			
 		}
 		createTemplate = createTemplate.replace("[CONTACT]", contact);
 		createTemplate = createTemplate.replace("[COMPANY]", company);
