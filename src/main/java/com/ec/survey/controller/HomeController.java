@@ -3,14 +3,18 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.AnswerExecutor;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
+import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizExecutor;
 import com.ec.survey.tools.Ucs2Utf8;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -195,10 +199,8 @@ public class HomeController extends BasicController {
 			return "home/support";
 		}
 		
-		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
-		
 		String SMTServiceEnabled = settingsService.get(Setting.UseSMTService);
-		if (email.toLowerCase().endsWith("ec.europa.eu") && SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
+		if (SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
 			return sendSupportSmt(request, locale, model);
 		} else {
 			return sendSupportEmail(request, locale, model);
@@ -336,6 +338,40 @@ public class HomeController extends BasicController {
 		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
 		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
+		
+		String contact = "";
+		User user = null;
+		try {
+			user = sessionService.getCurrentUser(request, false, false);
+		} catch (Exception e1) {
+			// ignore
+		}
+		
+		if (user != null) {
+			createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", user.getGivenName());
+			createTemplate = createTemplate.replace("[CONTACTLASTNAME]", user.getSurName());
+			contact = user.getLogin();
+		} else if (name != null && name.length() > 0)  {
+			if (name.contains(" ")) {
+				String[] firstLastName = name.split(" ");
+				createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", firstLastName[0]);
+				createTemplate = createTemplate.replace("[CONTACTLASTNAME]", firstLastName[1]);
+			} else {
+				createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", name);
+			}
+		}
+		if (email.toLowerCase().endsWith("ec.europa.eu")) {
+			// we keep the user's login
+		} else if (email.toLowerCase().endsWith(".europa.eu")) {
+			//institution
+			String institution = email.substring(email.indexOf("@") + 1);
+			institution = institution.substring(0, institution.indexOf("."));
+			contact = "ZZZ_EXTERNAL USER " + institution;
+		} else {
+			//external
+			contact = "ZZZ_EXTERNAL USER EXTERNE";
+		}
+		createTemplate = createTemplate.replace("[CONTACT]", contact);	
 
 		try {
 			

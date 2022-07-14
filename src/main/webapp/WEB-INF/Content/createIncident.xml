@@ -18,9 +18,10 @@
 	            <ns:IncidentDescription mandatory="false" readonly="false" type="String">Survey alias: [ADDITIONALINFOSURVEYALIAS]</ns:IncidentDescription>
                </ns:IncidentDescription>
                <ns:Resolution type="Array"/>
-               <ns:Contact type="String" mandatory="false" readonly="false">ZZZ_EXTERNAL USER EXTERNE</ns:Contact>
+               <ns:Contact type="String" mandatory="false" readonly="false">[CONTACT]</ns:Contact>
+               <ns:ContactFirstName type="String" mandatory="false" readonly="false">[CONTACTFIRSTNAME]</ns:ContactFirstName>
+               <ns:ContactLastName type="String" mandatory="false" readonly="false">[CONTACTLASTNAME]</ns:ContactLastName>
                <ns:JournalUpdates type="Array"/>
-               <ns:Company type="String" mandatory="false" readonly="false">EXTERNE</ns:Company>
                <ns:BriefDescription type="String" mandatory="false" readonly="false">[SUBJECT]</ns:BriefDescription>
                <ns:IMTicketStatus type="String" mandatory="false" readonly="false">Assigned</ns:IMTicketStatus>
                <ns:NotifyBy type="String" mandatory="false" readonly="false">E-MAIL</ns:NotifyBy>
