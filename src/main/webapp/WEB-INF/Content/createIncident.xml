@@ -22,6 +22,7 @@
                <ns:ContactFirstName type="String" mandatory="false" readonly="false">[CONTACTFIRSTNAME]</ns:ContactFirstName>
                <ns:ContactLastName type="String" mandatory="false" readonly="false">[CONTACTLASTNAME]</ns:ContactLastName>
                <ns:JournalUpdates type="Array"/>
+               <ns:Company type="String" mandatory="false" readonly="false">[COMPANY]</ns:Company>
                <ns:BriefDescription type="String" mandatory="false" readonly="false">[SUBJECT]</ns:BriefDescription>
                <ns:IMTicketStatus type="String" mandatory="false" readonly="false">Assigned</ns:IMTicketStatus>
                <ns:NotifyBy type="String" mandatory="false" readonly="false">E-MAIL</ns:NotifyBy>
