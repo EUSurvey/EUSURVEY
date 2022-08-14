@@ -274,30 +274,17 @@ public class PublicationController extends BasicController {
 
 					AnswerSet answerSet = answerSets.get(0);
 
-					Map<Integer, Question> questionMap = survey.getQuestionMap();
-					Map<String, Element> questionMapByUid = survey.getQuestionMapByUniqueId();
+					//Map<Integer, Question> questionMap = survey.getQuestionMap();
+					Map<String, Question> questionMapByUid = survey.getQuestionMapByUniqueId();
 
-					Map<Integer, Element> matrixMap = survey.getMatrixMap();
+					//Map<Integer, Element> matrixMap = survey.getMatrixMap();
 					Map<String, Element> matrixMapByUid = survey.getMatrixMapByUid();
 
 					for (Answer answer : answerSet.getAnswers()) {
-						Question question = questionMap.get(answer.getQuestionId());
-
-						if (question == null && questionMapByUid.containsKey(answer.getQuestionUniqueId())) {
-							question = (Question) questionMapByUid.get(answer.getQuestionUniqueId());
-						}
-
+						Question question = (Question) questionMapByUid.get(answer.getQuestionUniqueId());
+						
 						if (question instanceof Text
 								&& matrixMapByUid.containsKey(answer.getPossibleAnswerUniqueId())) {
-							if (result.containsKey(answer.getQuestionId().toString())) {
-								result.put(answer.getQuestionId().toString(),
-										result.get(answer.getQuestionId().toString()) + "<br />"
-												+ matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
-							} else {
-								result.put(answer.getQuestionId().toString(),
-										matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
-							}
-
 							if (result.containsKey(answer.getQuestionUniqueId())) {
 								result.put(answer.getQuestionUniqueId(), result.get(answer.getQuestionUniqueId())
 										+ "<br />" + matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
@@ -305,45 +292,21 @@ public class PublicationController extends BasicController {
 								result.put(answer.getQuestionUniqueId(),
 										matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
 							}
-						} else if (question == null && matrixMap.containsKey(answer.getPossibleAnswerId())) {
-							if (result.containsKey(answer.getQuestionId().toString())) {
-								result.put(answer.getQuestionId().toString(),
-										result.get(answer.getQuestionId().toString()) + "<br />"
-												+ matrixMap.get(answer.getPossibleAnswerId()).getTitle());
-							} else {
-								result.put(answer.getQuestionId().toString(),
-										matrixMap.get(answer.getPossibleAnswerId()).getTitle());
-							}
-
+						} else if (question == null && matrixMapByUid.containsKey(answer.getPossibleAnswerUniqueId())) {
 							if (result.containsKey(answer.getQuestionUniqueId())) {
 								result.put(answer.getQuestionUniqueId(), result.get(answer.getQuestionUniqueId())
-										+ "<br />" + matrixMap.get(answer.getPossibleAnswerId()).getTitle());
+										+ "<br />" + matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
 							} else {
 								result.put(answer.getQuestionUniqueId(),
-										matrixMap.get(answer.getPossibleAnswerId()).getTitle());
+										matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
 							}
 						} else if (question instanceof ChoiceQuestion) {
 							String title = ((ChoiceQuestion) question)
-									.getPossibleAnswer(answer.getPossibleAnswerId()) != null
-											? ((ChoiceQuestion) question)
-													.getPossibleAnswer(answer.getPossibleAnswerId()).getTitle()
-											: "";
-
-							if (title.length() == 0) {
-								title = ((ChoiceQuestion) question)
-										.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
-												? ((ChoiceQuestion) question)
-														.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
-														.getTitle()
-												: "";
-							}
-
-							if (result.containsKey(answer.getQuestionId().toString())) {
-								result.put(answer.getQuestionId().toString(),
-										result.get(answer.getQuestionId().toString()) + "<br />" + title);
-							} else {
-								result.put(answer.getQuestionId().toString(), title);
-							}
+								.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
+										? ((ChoiceQuestion) question)
+												.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
+												.getTitle()
+										: "";
 
 							if (result.containsKey(answer.getQuestionUniqueId())) {
 								result.put(answer.getQuestionUniqueId(),
@@ -356,13 +319,6 @@ public class PublicationController extends BasicController {
 								for (File file : answer.getFiles()) {
 									String name = "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + "/" + file.getUid()
 											+ "'>" + file.getName() + "</a><br />";
-
-									if (result.containsKey(answer.getQuestionId().toString())) {
-										result.put(answer.getQuestionId().toString(),
-												result.get(answer.getQuestionId().toString()) + "<br />" + name);
-									} else {
-										result.put(answer.getQuestionId().toString(), name);
-									}
 
 									if (result.containsKey(answer.getQuestionUniqueId())) {
 										result.put(answer.getQuestionUniqueId(),
@@ -383,13 +339,6 @@ public class PublicationController extends BasicController {
 
 							String answerReadable = String.join("; ", answerSplit);
 
-							if (result.containsKey(answer.getQuestionId().toString())) {
-								result.put(answer.getQuestionId().toString(),
-										result.get(answer.getQuestionId().toString()) + "<br />" + answerReadable);
-							} else {
-								result.put(answer.getQuestionId().toString(), answerReadable);
-							}
-
 							if (result.containsKey(answer.getQuestionUniqueId())) {
 								result.put(answer.getQuestionUniqueId(),
 										result.get(answer.getQuestionUniqueId()) + "<br />" + answerReadable);
@@ -403,13 +352,6 @@ public class PublicationController extends BasicController {
 								if (answer.getValue().equals(Integer.toString(i))) {
 									String name = gallery.getFiles().get(i).getName() + "<br />";
 
-									if (result.containsKey(answer.getQuestionId().toString())) {
-										result.put(answer.getQuestionId().toString(),
-												result.get(answer.getQuestionId().toString()) + "<br />" + name);
-									} else {
-										result.put(answer.getQuestionId().toString(), name);
-									}
-
 									if (result.containsKey(answer.getQuestionUniqueId())) {
 										result.put(answer.getQuestionUniqueId(),
 												result.get(answer.getQuestionUniqueId()) + "<br />" + name);
@@ -421,8 +363,6 @@ public class PublicationController extends BasicController {
 						} else if (question instanceof Table) {
 							Integer row = answer.getRow();
 							Integer column = answer.getColumn();
-							String idString = row.toString() + answer.getQuestionId() + column.toString();
-							result.put(idString, ConversionTools.escape(answer.getValue()));
 
 							String uidString = row.toString() + answer.getQuestionUniqueId() + column.toString();
 							result.put(uidString, ConversionTools.escape(answer.getValue()));
@@ -430,23 +370,10 @@ public class PublicationController extends BasicController {
 							ComplexTableItem item = (ComplexTableItem) question;
 							
 							if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
-								String title = item.getPossibleAnswer(answer.getPossibleAnswerId()) != null
-												? item.getPossibleAnswer(answer.getPossibleAnswerId()).getTitle()
+								String title = item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
+												? item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
+												.getTitle()
 												: "";
-
-								if (title.length() == 0) {
-									title = item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
-													? item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
-													.getTitle()
-													: "";
-								}
-
-								if (result.containsKey(answer.getQuestionId().toString())) {
-									result.put(answer.getQuestionId().toString(),
-											result.get(answer.getQuestionId().toString()) + "<br />" + title);
-								} else {
-									result.put(answer.getQuestionId().toString(), title);
-								}
 
 								if (result.containsKey(answer.getQuestionUniqueId())) {
 									result.put(answer.getQuestionUniqueId(),
@@ -455,15 +382,6 @@ public class PublicationController extends BasicController {
 									result.put(answer.getQuestionUniqueId(), title);
 								}
 							} else {
-								if (result.containsKey(answer.getQuestionId().toString())) {
-									result.put(answer.getQuestionId().toString(),
-											result.get(answer.getQuestionId().toString()) + "<br />"
-													+ ConversionTools.escape(answer.getValue()));
-								} else {
-									result.put(answer.getQuestionId().toString(),
-											ConversionTools.escape(answer.getValue()));
-								}
-
 								if (result.containsKey(answer.getQuestionUniqueId())) {
 									result.put(answer.getQuestionUniqueId(),
 											result.get(answer.getQuestionUniqueId()) + "<br />"
@@ -476,25 +394,15 @@ public class PublicationController extends BasicController {
 							
 						} else {
 
-							if (answer.getPossibleAnswerId() != null && answer.getPossibleAnswerId() > 0) {
+							if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0) {
 								// probably a deleted question / answer
 							} else {
 
 								if (question instanceof FreeTextQuestion
 										&& ((FreeTextQuestion) question).getIsPassword()
 										&& answer.getValue().length() > 0) {
-									result.put(answer.getQuestionId().toString(), "********");
 									result.put(answer.getQuestionUniqueId(), "********");
 								} else {
-									if (result.containsKey(answer.getQuestionId().toString())) {
-										result.put(answer.getQuestionId().toString(),
-												result.get(answer.getQuestionId().toString()) + "<br />"
-														+ ConversionTools.escape(answer.getValue()));
-									} else {
-										result.put(answer.getQuestionId().toString(),
-												ConversionTools.escape(answer.getValue()));
-									}
-
 									if (result.containsKey(answer.getQuestionUniqueId())) {
 										result.put(answer.getQuestionUniqueId(),
 												result.get(answer.getQuestionUniqueId()) + "<br />"

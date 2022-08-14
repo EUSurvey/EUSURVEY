@@ -48,7 +48,7 @@
 					formInputs.each(function(){
 						let element = $(this);
 						let id = element.attr("id")
-						if (id){
+						if (id != null && !element.is("#captchadiv *, [type='hidden']")){
 							saveObject[id] = element.val()
 						}
 					});

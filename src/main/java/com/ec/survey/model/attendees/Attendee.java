@@ -33,7 +33,7 @@ public class Attendee {
 	
 	@Id
 	@Column(name = "ATTENDEE_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

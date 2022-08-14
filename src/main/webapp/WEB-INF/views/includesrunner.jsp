@@ -167,6 +167,8 @@
 			var message_PublicationExportSuccess2 = "${form.getMessage("message.PublicationExportSuccess2")}";
 			var message_ExportFailed = "${form.getMessage("message.ExportFailed")}";
 			var message_PublicationExportFailed = "${form.getMessage("message.PublicationExportFailed")}";
+			var message_SuccessMailLinkDraft = "${form.getMessage("message.mail.successMailLinkDraft")}";
+			var message_FailedMailLinkDraft = "${form.getMessage("message.mail.failMailLinkDraft")}";
 			var atmost3Selections = "${form.getMessage("validation.atmost3Selections")}";
 			var varExceptionDuringSave = "${form.getMessage("error.ExceptionDuringSave")}";
 			var varwaitfordependencies = "${form.getMessage("info.WaitForDependencies")}";
@@ -253,6 +255,8 @@
 			var message_PublicationExportSuccess2 = "<spring:message code='message.PublicationExportSuccess2' />";
 			var message_ExportFailed = "<spring:message code='message.ExportFailed' />";
 			var message_PublicationExportFailed = "<spring:message code='message.PublicationExportFailed' />";
+			var message_SuccessMailLinkDraft = "<spring:message code='message.mail.successMailLinkDraft' />";
+			var message_FailedMailLinkDraft = "<spring:message code='message.mail.failMailLinkDraft' />";
 			var atmost3Selections =  "<spring:message code='validation.atmost3Selections' />";
 			var varExceptionDuringSave = "<spring:message code='error.ExceptionDuringSave' />";
 			var varwaitfordependencies = "<spring:message code='info.WaitForDependencies' />";

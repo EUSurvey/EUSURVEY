@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +25,9 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.UUID;
 
-//Both two config webapp specify the root where find configuration 
-@SuppressWarnings("deprecation")
+//Both two config webapp specify the root where find configuration
 @WebAppConfiguration("src/test/resources")
 @ContextConfiguration("/WEB-INF/spring/mvc-dispatcher-servlet.xml")
-@TransactionConfiguration()
 @PersistenceContext()
 @Transactional(propagation=Propagation.NESTED)
 @Test(groups={"broken"})

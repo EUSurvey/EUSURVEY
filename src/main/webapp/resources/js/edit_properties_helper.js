@@ -1838,8 +1838,25 @@ function addPossibleAnswer(noundo)
 	var selectedElement = $(_elementProperties.selectedelement);
 	var id = selectedElement.attr("data-id");
 	var element = getElement();
-	
-	text = "Answer " + (element.possibleAnswers().length + 1);
+
+	const possAns = element.possibleAnswers();
+
+	let answerNum = 0
+
+	possAns.forEach(ans => {
+		if (/Answer \d+/.test(ans.title())){
+			let num = parseInt(ans.title().split(" ")[1]) + 1
+			if (num > answerNum){
+				answerNum = num
+			}
+		}
+	})
+
+	if (answerNum === 0){
+		answerNum = possAns.length + 1
+	}
+
+	text = "Answer " + answerNum
 
 	var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text);
 	element.possibleAnswers.push(newanswer);	
@@ -1895,6 +1912,33 @@ function removePossibleAnswer()
 	addElementHandler(selectedElement);
 	
 	updateNavigation(selectedElement, id);
+}
+
+function removeSpecificPossibleAnswer(element, domElement, paid, noundo)
+{
+
+	let answerPos = element.possibleAnswers().findIndex(pa => paid == pa.id())
+	let answer = element.possibleAnswers.splice(answerPos, 1)[0]
+
+	if (isQuiz)
+	{
+		quizanswersrow.ContentItems.remove(answer);
+		initQuizElements(element);
+	}
+
+	if (!noundo)
+		_undoProcessor.addUndoStep(["REMOVESPECIFICANSWER", element.id(), answer, answerPos]);
+
+	$('[data-triggers]').each(function(){
+		if ($(this).attr("data-triggers").indexOf(answer.id() + ";") > -1) {
+			$(this).attr("data-triggers", $(this).attr("data-triggers").replace(answer.id() + ";", ""));
+		}
+	});
+
+	updateDependenciesView();
+	addElementHandler(domElement);
+
+	updateNavigation(domElement, domElement.attr("data-id"));
 }
 
 function addPossibleAnswerChildren(){
@@ -1987,6 +2031,20 @@ function removeRankingEntry()
 	addElementHandler($(_elementProperties.selectedelement));
 
 	updateNavigation($(_elementProperties.selectedelement), id);
+}
+
+function removeSpecificRankingEntry(element, domElement, rid, noundo)
+{
+
+	let itemPos = element.rankingItems().findIndex(r => rid == r.id())
+	let item = element.rankingItems.splice(itemPos, 1)[0]
+
+	if (!noundo)
+		_undoProcessor.addUndoStep(["REMOVESPECIFICRANKINGITEM", element.id(), item, itemPos]);
+	updateDependenciesView();
+	addElementHandler($(_elementProperties.selectedelement));
+
+	updateNavigation($(_elementProperties.selectedelement), domElement.attr("data-id"));
 }
 
 function addColumn(noundo)
@@ -2212,6 +2270,16 @@ function removeRow(noundo)
 	if (row != null && !noundo)
 	_undoProcessor.addUndoStep(["REMOVEROW", element.id(), row]);
 	updateNavigation($(_elementProperties.selectedelement), id);
+}
+
+function removeSpecificRating(element, domElement, qid, noundo){
+
+	let rowPos = element.childElements().findIndex(q => qid == q.id())
+	let row = element.childElements.splice(rowPos, 1)[0]
+
+	if (!noundo)
+		_undoProcessor.addUndoStep(["REMOVESPECIFICRATING", element.id(), row, rowPos]);
+	updateNavigation(domElement, domElement.attr("data-id"));
 }
 
 function cancel(button)

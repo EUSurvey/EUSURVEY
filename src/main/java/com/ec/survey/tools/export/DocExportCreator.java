@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Set;
 
+import com.ec.survey.model.survey.*;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.Document;
@@ -15,24 +16,12 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Statistics;
-import com.ec.survey.model.survey.ChoiceQuestion;
-import com.ec.survey.model.survey.ComplexTable;
-import com.ec.survey.model.survey.ComplexTableItem;
-import com.ec.survey.model.survey.Element;
-import com.ec.survey.model.survey.GalleryQuestion;
-import com.ec.survey.model.survey.Matrix;
-import com.ec.survey.model.survey.NumberQuestion;
-import com.ec.survey.model.survey.PossibleAnswer;
-import com.ec.survey.model.survey.RankingQuestion;
-import com.ec.survey.model.survey.RatingQuestion;
-import com.ec.survey.model.survey.Section;
-import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 
@@ -375,7 +364,7 @@ public class DocExportCreator extends ExportCreator {
 
 					for (Element childQuestion : ranking.getChildElements()) {
 						row = table.createRow();
-						cellValue = childQuestion.getTitle();
+						cellValue = ConversionTools.removeHTMLNoEscape(childQuestion.getTitle());
 						if (export.getShowShortnames()) {
 							cellValue += " (" + childQuestion.getShortname() + ")";
 						}
@@ -396,8 +385,64 @@ public class DocExportCreator extends ExportCreator {
 						}
 						row.getCell(size+1).setText(String.valueOf(total));
 					}
-				} else if (question instanceof NumberQuestion)
-				{
+
+					row = table.createRow();
+					row.getCell(0).setText("No Answer");
+					row.getCell(1).setText(df.format(statistics.getRequestedRecordsPercent().get(ranking.getId().toString())) + "%");
+					CTHMerge hMerge = CTHMerge.Factory.newInstance();
+					hMerge.setVal(STMerge.RESTART);
+					CTHMerge hMerge1 = CTHMerge.Factory.newInstance();
+					hMerge1.setVal(STMerge.CONTINUE);
+					CTTcPr pr = row.getCell(1).getCTTc().getTcPr();
+					if (pr == null) {
+						pr = row.getCell(1).getCTTc().addNewTcPr();
+					}
+					pr.setHMerge(hMerge);
+					for (int i = 2; i <= size; i++) {
+						pr = row.getCell(i).getCTTc().getTcPr();
+						if (pr == null) {
+							pr = row.getCell(i).getCTTc().addNewTcPr();
+						}
+						pr.setHMerge(hMerge1);
+						pr = row.getCell(i+1).getCTTc().getTcPr();
+						if (pr == null) {
+							pr = row.getCell(i+1).getCTTc().addNewTcPr();
+						}
+						pr.setHMerge(hMerge);
+					}
+					pr = row.getCell(size+1).getCTTc().getTcPr();
+					if (pr == null) {
+						pr = row.getCell(size+1).getCTTc().addNewTcPr();
+					}
+					pr.setHMerge(hMerge1);
+
+					row = table.createRow();
+					row.getCell(1).setText(statistics.getRequestedRecords().get(ranking.getId().toString()).toString());
+					pr = row.getCell(1).getCTTc().getTcPr();
+					if (pr == null) {
+						pr = row.getCell(1).getCTTc().addNewTcPr();
+					}
+					pr.setHMerge(hMerge);
+					for (int i = 2; i <= size; i++) {
+						pr = row.getCell(i).getCTTc().getTcPr();
+						if (pr == null) {
+							pr = row.getCell(i).getCTTc().addNewTcPr();
+						}
+						pr.setHMerge(hMerge1);
+						pr = row.getCell(i+1).getCTTc().getTcPr();
+						if (pr == null) {
+							pr = row.getCell(i+1).getCTTc().addNewTcPr();
+						}
+						pr.setHMerge(hMerge);
+					}
+					pr = row.getCell(size+1).getCTTc().getTcPr();
+					if (pr == null) {
+						pr = row.getCell(size+1).getCTTc().addNewTcPr();
+					}
+					pr.setHMerge(hMerge1);
+
+					document.createParagraph();
+				} else if (question instanceof NumberQuestion) {
 					NumberQuestion numberQuestion = (NumberQuestion)question;
 					if (numberQuestion.showStatisticsForNumberQuestion()) {
 					
@@ -439,6 +484,50 @@ public class DocExportCreator extends ExportCreator {
 						row.getCell(2).setText(statistics.getRequestedRecords().get(question.getId().toString()).toString());
 						row.getCell(3).setText(df.format(statistics.getRequestedRecordsPercent().get(question.getId().toString())) + "%");
 						
+						document.createParagraph();
+					}
+				} else if (question instanceof FormulaQuestion) {
+					FormulaQuestion formulaQuestion = (FormulaQuestion)question;
+					if (formulaQuestion.showStatisticsForNumberQuestion()) {
+
+						cellValue = question.getTitle();
+						if (export.getShowShortnames())
+						{
+							cellValue += " (" + question.getShortname() + ")";
+						}
+
+						XWPFTable table = createTableForAnswer(cellValue);
+
+						for (String answer : formulaQuestion.getAllPossibleAnswers()) {
+							XWPFTableRow row = table.createRow();
+
+							cellValue = answer;
+							row.getCell(0).setText(cellValue);
+
+							Double percent = statistics.getRequestedRecordsPercent().get(formulaQuestion.getAnswerWithPrefix(answer));
+
+							if (percent > 0)
+							{
+								drawChart(percent, row);
+							}
+
+							row.getCell(2).setText(statistics.getRequestedRecords().get(formulaQuestion.getAnswerWithPrefix(answer)).toString());
+							row.getCell(3).setText(df.format(percent) + "%");
+						}
+
+						//noanswers
+						XWPFTableRow row = table.createRow();
+						row.getCell(0).setText("No Answer");
+
+						Double percent = statistics.getRequestedRecordsPercent().get(question.getId().toString());
+
+						if (percent > 0)
+						{
+							drawChart(percent, row);
+						}
+						row.getCell(2).setText(statistics.getRequestedRecords().get(question.getId().toString()).toString());
+						row.getCell(3).setText(df.format(statistics.getRequestedRecordsPercent().get(question.getId().toString())) + "%");
+
 						document.createParagraph();
 					}
 				}

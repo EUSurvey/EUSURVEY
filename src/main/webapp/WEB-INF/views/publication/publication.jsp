@@ -175,12 +175,8 @@
 					  }
 				  
 				  $("#individuals-table").find(".questioncell").each(function(){
-					var key = $(this).attr("data-id");
 					var ukey = $(this).attr("data-uid");
-					if (answers.hasOwnProperty(key))
-					{
-						$(this).html(answers[key]);
-					} else if (answers.hasOwnProperty(ukey))
+					if (answers.hasOwnProperty(ukey))
 					{
 						$(this).html(answers[ukey]);
 					} else {
@@ -189,12 +185,8 @@
 				  });
 				  
 				  $("#individuals-table").find(".tablequestioncell").each(function(){
-					var key = $(this).attr("data-row") + $(this).attr("data-id") + $(this).attr("data-column");
 					var ukey = $(this).attr("data-row") + $(this).attr("data-uid") + $(this).attr("data-column");
-					if (answers.hasOwnProperty(key))
-					{
-						$(this).html(answers[key]);
-					} else if (answers.hasOwnProperty(ukey))
+					if (answers.hasOwnProperty(ukey))
 					{
 						$(this).html(answers[ukey]);
 					} else {
@@ -274,7 +266,7 @@
 		    let filterForm = $("#resultsForm")
 			if (filterForm.length > 0){
 				filterForm.serializeArray().forEach((inp) => {
-					if (inp.name.includes("filter")){
+					if (inp.value.length > 0 && inp.name.includes("filter")){
 						data[inp.name] = inp.value
 					}
 				})

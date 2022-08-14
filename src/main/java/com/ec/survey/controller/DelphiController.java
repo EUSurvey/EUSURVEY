@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.GlobalPrivilege;
@@ -74,7 +75,7 @@ public class DelphiController extends BasicController {
 				if (element instanceof SingleChoiceQuestion) {
 					SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)element;
 					if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() >= 0) {						
-						List<Answer> answers = answerSet.getAnswers(singleChoiceQuestion.getId(), singleChoiceQuestion.getUniqueId());
+						List<Answer> answers = answerSet.getAnswers(singleChoiceQuestion.getUniqueId());
 						if (!answers.isEmpty())
 						{
 							median = answerService.getMedian(answerSet.getSurvey(), singleChoiceQuestion, answers.get(0), null);							
@@ -85,7 +86,7 @@ public class DelphiController extends BasicController {
 				if (element instanceof NumberQuestion) {
 					NumberQuestion numberQuestion = (NumberQuestion)element;
 					if (numberQuestion.isSlider() && numberQuestion.getMaxDistance() >= 0) {						
-						List<Answer> answers = answerSet.getAnswers(numberQuestion.getId(), numberQuestion.getUniqueId());
+						List<Answer> answers = answerSet.getAnswers(numberQuestion.getUniqueId());
 						if (!answers.isEmpty())
 						{
 							median = answerService.getMedian(answerSet.getSurvey(), numberQuestion, answers.get(0), null);
@@ -469,7 +470,7 @@ public class DelphiController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiFreetextQuestion(Survey survey, Question question, StatisticsCreator creator) throws TooManyFiltersException {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiFreetextQuestion(Survey survey, Question question, StatisticsCreator creator) throws TooManyFiltersException, MessageException {
 		final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
 		frequencyAnalyzer.setWordFrequenciesToReturn(200);
 		frequencyAnalyzer.addNormalizer(new LowerCaseNormalizer());
@@ -692,7 +693,7 @@ public class DelphiController extends BasicController {
 								Matrix matrix = (Matrix)question;
 						
 								for (Element matrixQuestions : matrix.getQuestions()) {
-									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getId(), matrixQuestions.getUniqueId());
+									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getUniqueId());
 									
 									for (Answer answer: answers) {
 										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
@@ -705,7 +706,7 @@ public class DelphiController extends BasicController {
 								RatingQuestion rating = (RatingQuestion)question;
 
 								for (Element ratingQuestions : rating.getQuestions()) {
-									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getId(), ratingQuestions.getUniqueId());
+									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getUniqueId());
 									
 									for (Answer answer: answers) {
 										result += answer.getValue() + " ";
@@ -715,7 +716,7 @@ public class DelphiController extends BasicController {
 								delphiQuestion.setAnswer(result);
 							} else if (question instanceof RankingQuestion)
 							{
-								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+								List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
@@ -723,7 +724,7 @@ public class DelphiController extends BasicController {
 									}
 								}
 							} else {
-								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+								List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
@@ -789,7 +790,7 @@ public class DelphiController extends BasicController {
 								MatrixOrTable matrix = (MatrixOrTable)question;
 						
 								for (Element matrixQuestions : matrix.getQuestions()) {
-									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getId(), matrixQuestions.getUniqueId());
+									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getUniqueId());
 									if (!answers.isEmpty()) {
 										found = true;
 										break;
@@ -804,7 +805,7 @@ public class DelphiController extends BasicController {
 								RatingQuestion rating = (RatingQuestion)question;
 								boolean found = false;
 								for (Element ratingQuestions : rating.getQuestions()) {
-									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getId(), ratingQuestions.getUniqueId());
+									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getUniqueId());
 									if (!answers.isEmpty()) {
 										found = true;
 										break;
@@ -815,7 +816,7 @@ public class DelphiController extends BasicController {
 									structure.setUnansweredMandatoryQuestions(true);
 								}
 							} else {
-								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+								List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 								if (answers.isEmpty()) {
 									structure.setUnansweredMandatoryQuestions(true);
 								}
@@ -926,7 +927,7 @@ public class DelphiController extends BasicController {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 		
-		List<Answer> answerList = answerSet.getAnswers(-1, questionuid);
+		List<Answer> answerList = answerSet.getAnswers(questionuid);
 		if (answerList.isEmpty()) {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}

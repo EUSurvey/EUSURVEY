@@ -590,7 +590,12 @@
 			// get all strings inside curly brackets
 			let markupRegex = /{([^}]+)}/g;
 
-			const markups = [...$(select).text().match(markupRegex)];
+			let matchMarkupRegex = $(select).text().match(markupRegex);
+			if (matchMarkupRegex === null) {
+				return '';
+			}
+
+			const markups = [...matchMarkupRegex];
 			if(markups.length <= 0)
 				return '';
 

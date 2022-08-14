@@ -127,7 +127,7 @@
 						 						</td>
 						 					</tr>				 				
 								 				
-						 					<c:set var="answers" value="${form.answerSets[0].getAnswers(element.id, element.uniqueId)}" />
+						 					<c:set var="answers" value="${form.answerSets[0].getAnswers(element.uniqueId)}" />
 						 					
 						 					<tr class="scorerow">
 								 				<td><spring:message code="label.YourAnswer" /></td>

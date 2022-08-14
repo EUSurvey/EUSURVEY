@@ -248,7 +248,7 @@
 					
 			<div style="position: fixed; top: 0px; left: 0px; height: 30px; width: 100%; z-index: 1010; background-color: #666;"></div>				
 					
-			<form:form id="big-skin-form" method="POST" action="${contextpath}/settings/skin/save" commandName="skin">
+			<form:form id="big-skin-form" method="POST" action="${contextpath}/settings/skin/save" modelAttribute="skin">
 			
 				<form:hidden path="id" />
 					

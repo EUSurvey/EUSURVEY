@@ -23,28 +23,28 @@
 			<c:choose>
 				<c:when test='${captcha == "eucaptcha"}'>
 					<div class="internalcaptcha">
-					  <div style="margin-bottom: 10px;">
-					    <img style="max-width: 100%; margin-bottom: 10px" alt="Captcha Loading" src="${contextpath}/resources/images/ajax-loader.gif" id="captchaImg" captchaId="">
-					    <audio controls autostart="1" src="" id="audioCaptcha" onplay="onPlayAudio()"></audio>
-					  </div>
-					  
-					  <input type="hidden" name="captcha_token" id="captcha_token" />
-					  <input type="hidden" name="captcha_id" id="captcha_id" />
-					  <input type="hidden" name="captcha_useaudio" id="captcha_useaudio" />
-					  <input type="hidden" name="captcha_original_cookies" id="captcha_original_cookies" />
-					  
-					    <c:choose>
+						<div style="margin-bottom: 10px;">
+							<img style="max-width: 100%; margin-bottom: 10px" alt="Captcha Loading" src="${contextpath}/resources/images/ajax-loader.gif" id="captchaImg" captchaId="">
+							<audio controls autostart="1" src="" id="audioCaptcha" onplay="onPlayAudio()"></audio>
+						</div>
+
+						<input type="hidden" name="captcha_token" id="captcha_token" />
+						<input type="hidden" name="captcha_id" id="captcha_id" />
+						<input type="hidden" name="captcha_useaudio" id="captcha_useaudio" />
+						<input type="hidden" name="captcha_original_cookies" id="captcha_original_cookies" />
+
+						<c:choose>
 							<c:when test="${form != null}">
-								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="${form.getMessage("info.entertext")}" style="width: 260px">								 
-						
+								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="${form.getMessage("info.entertext")}" style="width: 260px">
+
 								<a title='${form.getMessage("label.ReloadCaptcha")}' data-toggle="tooltip" href="javascript:;" class="btn btn-primary btn-sm" id="captchaReload"><span class="glyphicon glyphicon-refresh"></span></a>
-						
+
 							</c:when>
 							<c:otherwise>
-								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="<spring:message code="info.entertext" />" style="width: 260px">								
-							
+								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="<spring:message code="info.entertext" />" style="width: 260px">
+
 								<a title='<spring:message code="label.ReloadCaptcha" />' href="javascript:;" class="btn btn-primary btn-sm" id="captchaReload"><span class="glyphicon glyphicon-refresh"></span></a>
-							
+
 							</c:otherwise>
 						</c:choose>
 

@@ -136,12 +136,7 @@
 			</div>
 			</div>
 		</div>
-		
-		<div id="successMailLinkMessage" class="alert alert-success user-info" style="display: none; position: fixed; top: 5px; right: 5px; padding: 10px; z-index: 10001; ">
-			<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span></a></div>
-			<spring:message code="message.mail.successMailLinkDraft" />
-		</div>
-		
+
 		<div id="successCopyClipboardLinkMessage" class="alert alert-success user-info" style="display: none; position: fixed; top: 5px; right: 5px; padding: 10px; z-index: 10001; ">
 			<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span></a></div>
 			<spring:message code="message.copy.successCopyClipboardLink" />
@@ -302,19 +297,17 @@
 					  data: data,
 					  cache: false,
 					  success: function( data ) {
-				  
+
 						if (data == "success") {
-							$('#successMailLinkMessage').show();
-							$('#failureMailLinkMessage').hide();
 							$('#ask-export-dialog').modal('hide');
+							showSuccess(message_SuccessMailLinkDraft);
 						}
 						else if(data == "errorcaptcha")
 						{
 							$("#ask-export-dialog").find("#runner-captcha-error").show();
 						}
 						else {
-							$('#successMailLinkMessage').hide();
-							$('#failureMailLinkMessage').show();
+							showError(message_FailedMailLinkDraft);
 						}
 						
 						reloadCaptcha();
@@ -360,7 +353,8 @@
 	    	        {
 			        	event.preventDefault();
 						// Select the email link anchor text  
-						var emailLink = document.querySelector('#draftLinkFromThanksDraft');  
+						var emailLink = document.querySelector('#draftLinkFromThanksDraft');
+						window.getSelection().removeAllRanges();
 						var range = document.createRange();  
 						range.selectNode(emailLink);  
 						window.getSelection().addRange(range);  
@@ -383,7 +377,7 @@
 						// Remove the selections - NOTE: Should use   
 						// removeRange(range) when it is supported  
 						window.getSelection().removeAllRanges();  
-			        	
+						$('#copyme').focus();
 	        		}
 		        	else
 	        		{

@@ -49,7 +49,9 @@ public class Matrix extends MatrixOrTable {
 	}	
 	
 	@OneToMany(targetEntity=DependencyItem.class, cascade=CascadeType.ALL, orphanRemoval = true)
-	@JoinTable(name = "MATRIX_DEP")
+	@JoinTable(name = "MATRIX_DEP", foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			inverseJoinColumns = @JoinColumn(name = "dependentElements_ID"),
+			joinColumns = @JoinColumn(name = "ELEMENTS_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@javax.persistence.OrderColumn(name="MATDEP_ID")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

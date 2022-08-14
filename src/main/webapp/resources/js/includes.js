@@ -1198,9 +1198,13 @@ function initModals(item)
 							} else if ($(this).closest(".confirmationitem").length > 0)
 							{
 								addValidationError.afterElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent().parent(), requiredText);
+							} else 	if ($(this).attr("name") == "radio-new-survey-dpa")
+							{
+								addValidationError.toElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent().parent(), requiredText);
 							} else {							
 								addValidationError.toElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent(), requiredText);
 							}
+							
 							result = false;
 						};
 					}

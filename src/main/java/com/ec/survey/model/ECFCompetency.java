@@ -6,16 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.ec.survey.model.survey.Question;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -77,7 +68,7 @@ public class ECFCompetency implements Serializable, Comparable<ECFCompetency>{
 
 	@Id
 	@Column(name = "COMPETENCY_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

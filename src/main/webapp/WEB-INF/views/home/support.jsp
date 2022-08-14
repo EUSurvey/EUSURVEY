@@ -39,7 +39,7 @@
 			formInputs.each(function(){
 				let element = $(this);
 				let id = element.attr("id")
-				if (id){
+				if (id != null && !element.is("#captchadiv *, [type='hidden']")){
 					saveObject[id] = element.val()
 				}
 			});
@@ -229,7 +229,7 @@
 						<option value="idea"><spring:message code="support.idea" /></option>
 						<option value="assistance" id="assistanceoption"><spring:message code="support.assistance" /></option>
 						<option value="accessibility"><spring:message code="support.Accessibility" /></option>
-						<option value="dataprotection"><spring:message code="support.DataProtection" /></option>
+						<option value="dataprotection" id="dataprotectionoption"><spring:message code="support.DataProtection" /></option>
 						<option value="highaudience" id="highaudienceoption"><spring:message code="support.HighAudience" /></option>
 						<option value="otherreason"><spring:message code="support.otherreason" /></option>						
 					</select><br /><br />
@@ -240,6 +240,8 @@
 							document.getElementById("assistanceoption").setAttribute("selected", "selected")
 						} else if (window.location.search.toLowerCase().includes("highaudience")){
 							document.getElementById("highaudienceoption").setAttribute("selected", "selected")
+						} else if (window.location.search.toLowerCase().includes("dataprotection")) {
+							document.getElementById("dataprotectionoption").setAttribute("selected", "selected")
 						} else {
 							document.getElementById("generaloption").setAttribute("selected", "selected")
 						}

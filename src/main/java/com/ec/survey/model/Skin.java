@@ -63,7 +63,7 @@ public class Skin implements java.io.Serializable {
 		
 	@Id
 	@Column(name = "SKIN_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	
@@ -148,7 +148,10 @@ public class Skin implements java.io.Serializable {
 		return "";
 	}
 	
-	@OneToMany(targetEntity=SkinElement.class, cascade = CascadeType.ALL  )  
+	@OneToMany(targetEntity=SkinElement.class, cascade = CascadeType.ALL  )
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			joinColumns = @JoinColumn(name = "SKINS_SKIN_ID"),
+			inverseJoinColumns = @JoinColumn(name = "elements_SE_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "name asc")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

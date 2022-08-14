@@ -2,15 +2,7 @@ package com.ec.survey.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
@@ -44,7 +36,7 @@ public class Archive implements java.io.Serializable {
 		
 	@Id
 	@Column(name = "ARCHIVE_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

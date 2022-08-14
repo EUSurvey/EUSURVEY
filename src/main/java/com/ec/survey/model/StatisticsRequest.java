@@ -15,7 +15,7 @@ public class StatisticsRequest {
 	
 	@Id
 	@Column(name = "REQID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

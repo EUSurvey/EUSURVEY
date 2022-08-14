@@ -11,6 +11,9 @@ public class SqlPagination {
     }
     
     public int getFirstResult() {
+        if (currentPage < 1) {
+            return 0;
+        }
         return (currentPage - 1) * rowsPerPage;
     }
     

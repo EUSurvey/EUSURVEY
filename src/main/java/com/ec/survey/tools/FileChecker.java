@@ -1,6 +1,7 @@
 package com.ec.survey.tools;
 
 import com.ec.survey.model.survey.Element;
+import com.ec.survey.model.survey.Question;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
 
@@ -13,7 +14,7 @@ public class FileChecker {
 		if (!survey.getIsDelphi()) {
 			return false;
 		}
-		final Map<String, Element> questions = survey.getQuestionMapByUniqueId();
+		final Map<String, Question> questions = survey.getQuestionMapByUniqueId();
 		final String questionUid = file.getQuestionUid();
 		final Element question = questions.get(questionUid);
 		return question != null && question.isDelphiElement();

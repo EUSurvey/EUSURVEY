@@ -3,18 +3,14 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.AnswerExecutor;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.NotAgreedToPsException;
-import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizExecutor;
 import com.ec.survey.tools.Ucs2Utf8;
-import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -199,8 +195,10 @@ public class HomeController extends BasicController {
 			return "home/support";
 		}
 		
+		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
+		
 		String SMTServiceEnabled = settingsService.get(Setting.UseSMTService);
-		if (SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
+		if (email.toLowerCase().endsWith("ec.europa.eu") && SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
 			return sendSupportSmt(request, locale, model);
 		} else {
 			return sendSupportEmail(request, locale, model);
@@ -223,6 +221,8 @@ public class HomeController extends BasicController {
 				return resources.getMessage("support.DataProtection", null, reason, locale);
 			case "highaudience":
 				return resources.getMessage("support.HighAudience", null, reason, locale);
+			case "protection":
+				return resources.getMessage("support.Protection", null, reason, locale);
 			default:
 				return resources.getMessage("support.otherreason", null, reason, locale);
 		}			
@@ -233,12 +233,12 @@ public class HomeController extends BasicController {
 			case "technicalproblem":
 				return "INCIDENT";
 			case "idea":
-				return "REQUESTFORCHANGE";
+				return "REQUEST FOR CHANGE";
 			case "assistance":
 			case "highaudience":
-				return "REQUESTFORSERVICE";
+				return "REQUEST FOR SERVICE";
 			default:
-				return "REQUESTFORINFORMATION";
+				return "REQUEST FOR INFORMATION";
 		}		
 	}
 
@@ -338,53 +338,15 @@ public class HomeController extends BasicController {
 		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
 		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
-		
-		String contact = "";
-		String company = "EXTERNE";
-		User user = null;
-		try {
-			user = sessionService.getCurrentUser(request, false, false);
-		} catch (Exception e1) {
-			// ignore
-		}
-		
-		if (user != null) {
-			createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", user.getGivenName());
-			createTemplate = createTemplate.replace("[CONTACTLASTNAME]", user.getSurName());
-			contact = user.getLogin();
-		} else if (name != null && name.length() > 0)  {
-			if (name.contains(" ")) {
-				String[] firstLastName = name.split(" ");
-				createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", firstLastName[0]);
-				createTemplate = createTemplate.replace("[CONTACTLASTNAME]", firstLastName[1]);
-			} else {
-				createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", name);
-			}
-		}
-		if (email.toLowerCase().endsWith("ec.europa.eu")) {
-			// we keep the user's login
-			//company = "EC";
-		} else if (email.toLowerCase().endsWith(".europa.eu")) {
-			//institution
-			String institution = email.substring(email.indexOf("@") + 1);
-			institution = institution.substring(0, institution.indexOf("."));
-			contact = "ZZZ_EXTERNAL USER " + institution;
-			//company = institution.toUpperCase();
-		} else {
-			//external
-			contact = "ZZZ_EXTERNAL USER EXTERNE";
-			//company = "EXTERNE";			
-		}
-		createTemplate = createTemplate.replace("[CONTACT]", contact);
-		createTemplate = createTemplate.replace("[COMPANY]", company);
 
 		try {
-			
+
 			sessionService.initializeProxy();
 			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(incidentHost.trim());
+			HttpPost httppost = new HttpPost(incidentHost);
 			httppost.addHeader("Content-type", "text/xml;charset=UTF-8");
 			httppost.addHeader("SOAPAction", "Create");
+
 			if (smtpAuth != null) {
 				httppost.addHeader("Authorization", "Basic " + smtpAuth);
 			}
@@ -589,27 +551,37 @@ public class HomeController extends BasicController {
 	
 	@RequestMapping(value = "/home/privacystatement", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String privacystatement(HttpServletRequest request, Locale locale, Model model) {
-		return privacystatementinternal(request, locale, model, false);
+		return privacystatementinternal(request, locale, model, "ps");
 	}
 	
 	@RequestMapping(value = "/home/privacystatement/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String privacystatementrunner(HttpServletRequest request, Locale locale, Model model) {
 		model.addAttribute("runnermode", true);		
-		return privacystatementinternal(request, locale, model, false);
+		return privacystatementinternal(request, locale, model, "ps");
 	}
 	
 	@RequestMapping(value = "/home/tos", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String tos(HttpServletRequest request, Locale locale, Model model) {
-		return privacystatementinternal(request, locale, model, true);
+		return privacystatementinternal(request, locale, model, "tos");
 	}
 	
 	@RequestMapping(value = "/home/tos/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String tosrunner(HttpServletRequest request, Locale locale, Model model) {
 		model.addAttribute("runnermode", true);		
-		return privacystatementinternal(request, locale, model, true);
+		return privacystatementinternal(request, locale, model, "tos");
+	}
+
+	@RequestMapping(value = "/home/dpa", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String dpa(HttpServletRequest request, Locale locale, Model model) {
+		return privacystatementinternal(request, locale, model, "dpa");
+	}
+
+	@RequestMapping(value = "/home/dpa/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String dparunner(HttpServletRequest request, Locale locale, Model model) {
+		return privacystatementinternal(request, locale, model, "dpa");
 	}
 	
-	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model, boolean tos) {
+	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model, String internal) {
 		if (request.getParameter("language") != null)
 		{
 			String lang = request.getParameter("language");
@@ -636,13 +608,17 @@ public class HomeController extends BasicController {
 		model.addAttribute("readonly", true);
 		model.addAttribute("user",request.getSession().getAttribute("USER"));
 		model.addAttribute("oss",super.isOss());
-		
-		if (tos)
-		{
-			return "auth/tos";
-		} else {
-			return "auth/ps";
-		}		
+
+		switch(internal) {
+			case "ps":
+				return "auth/ps";
+			case "tos":
+				return "auth/tos";
+			case "dpa":
+				return "home/dpa";
+			default:
+				return "error/info";
+		}
 	}
 	
 	@RequestMapping(value = "/home/welcome", method = {RequestMethod.GET, RequestMethod.HEAD})

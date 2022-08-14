@@ -2486,7 +2486,7 @@
 				as the primary language for any new surveys you create.
 			</p>
 			<h1>
-				Privacy
+				Data Protection and Privacy
 			</h1>
 			<h2>
 				This system uses cookies. What information is saved there?    
@@ -2662,7 +2662,19 @@
 						'Privacy Statement template for surveys and consultations'
 					</a>
 				</u>
-			</p>		
+			</p>
+			<h2>
+				We need a Data Processing Agreement, where is the EUSurvey DPA?
+			</h2>
+			<p>
+				The EUSurvey Data Processing Agreement (DPA) is available for all entities that are considered as
+				Data Controller while we are processing your data through the EUSurvey platform. EUSurvey DPA
+				is available <a href = "${contextpath}/home/dpa">here</a>.
+			</p>
+			<p>
+				If you have any questions, please feel free to
+				<a href="${contextpath}/home/support?dataprotection=1">contact us</a>.
+			</p>
 	</div> <!-- faqcontent -->
 	</div>
 	</div>

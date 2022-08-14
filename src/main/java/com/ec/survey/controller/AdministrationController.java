@@ -93,8 +93,10 @@ public class AdministrationController extends BasicController {
 		{
 			password = Tools.newSalt();
 		}
-				
-		Security.addProvider(new BouncyCastleProvider());
+
+		if (Security.getProvider("BC") == null) {
+			Security.addProvider(new BouncyCastleProvider());
+		}
 		StandardPBEStringEncryptor mySecondEncryptor = new StandardPBEStringEncryptor();
 		mySecondEncryptor.setProviderName("BC");
 		mySecondEncryptor.setAlgorithm("PBEWITHSHA256AND256BITAES-CBC-BC");

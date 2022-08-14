@@ -33,7 +33,7 @@ public class File implements java.io.Serializable {
 	
 	@Id
 	@Column(name = "FILE_ID", nullable = false)
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

@@ -3,7 +3,7 @@ package com.ec.survey;
 import com.ec.survey.service.ExportService;
 import com.ec.survey.service.ParticipationService;
 import com.ec.survey.service.WebserviceService;
-import com.mysql.jdbc.AbandonedConnectionCleanupThread;
+import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -31,7 +31,7 @@ public class ShutdownListener implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent sce) {	
 		logger.info("Context destroyed.");
 		try {
-			AbandonedConnectionCleanupThread.shutdown();
+			AbandonedConnectionCleanupThread.checkedShutdown();
 		} catch (Exception e) {
 		}
 		deregisterJdbcDrivers();

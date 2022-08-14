@@ -441,6 +441,10 @@ var UndoProcessor = function() {
 				element.possibleAnswers.push(step[2]);
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
+			case "REMOVESPECIFICANSWER":
+				element.possibleAnswers.splice(step[3], 0, step[2]) //Insert at index
+				updateNavigation($("#" + step[1]), step[1]);
+				break;
 			case "ADDCOLUMN":
 				if (element.type === "ComplexTable"){
 					_elementProperties.deselectAll()
@@ -497,6 +501,10 @@ var UndoProcessor = function() {
 				}
 				addElementHandler($(_elementProperties.selectedelement));
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "REMOVESPECIFICRATING":
+				element.childElements.splice(step[3], 0, step[2]) //Insert at index
+				updateNavigation($("#" + step[1]), step[1]);
 				break;
 			case "Identifier":
 				updateIdentifier(element, id, step[3], true);		
@@ -764,6 +772,10 @@ var UndoProcessor = function() {
 				element.rankingItems.push(step[2]);
 				addElementHandler($(_elementProperties.selectedelement));
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "REMOVESPECIFICRANKINGITEM":
+				element.rankingItems.splice(step[3], 0, step[2]) //Insert at index
+				updateNavigation($("#" + step[1]), step[1]);
 				break;
 			case "Formula":
 				element.formula(step[3]);
@@ -1041,6 +1053,9 @@ var UndoProcessor = function() {
 				element.possibleAnswers.pop();
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
+			case "REMOVESPECIFICANSWER":
+				removeSpecificPossibleAnswer(element, $("#" + element.id()), step[2].id(), true)
+				break;
 			case "ADDCOLUMN":
 				if (element.type === "ComplexTable"){
 					_elementProperties.deselectAll()
@@ -1092,6 +1107,9 @@ var UndoProcessor = function() {
 					element.questions.pop();
 				}
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "REMOVESPECIFICRATING":
+				removeSpecificRating(element, $("#" + element.id()), step[2].id(), true)
 				break;
 			case "Identifier":
 				updateIdentifier(element, id, step[4], true);	
@@ -1336,6 +1354,9 @@ var UndoProcessor = function() {
 			case "REMOVERANKINGITEM":
 				element.rankingItems.pop();
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "REMOVESPECIFICRANKINGITEM":
+				removeSpecificRankingEntry(element, $("#" + element.id()), step[2].id(), true)
 				break;
 			case "Formula":
 				element.formula(step[4]);

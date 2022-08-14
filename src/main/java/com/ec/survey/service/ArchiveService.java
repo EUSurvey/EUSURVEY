@@ -235,7 +235,7 @@ public class ArchiveService extends BasicService {
 		sqlQueryService.setParameters(query, params);
 
 		@SuppressWarnings("unchecked")
-		List<Archive> result = query.setFirstResult((page - 1) * rowsPerPage).setMaxResults(rowsPerPage).list();
+		List<Archive> result = query.setFirstResult((page > 1 ? page - 1 : 0) * rowsPerPage).setMaxResults(rowsPerPage).list();
 		return result;
 	}
 

@@ -13,6 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +58,7 @@ public class ParticipationGroup {
 	
 	@Id
 	@Column(name = "PARTICIPATION_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	
@@ -148,6 +149,9 @@ public class ParticipationGroup {
 	}
 	
 	@ManyToMany()
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			inverseJoinColumns = @JoinColumn(name = "attendees_ATTENDEE_ID"),
+			joinColumns = @JoinColumn(name = "PARTICIPANTS_PARTICIPATION_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@LazyCollection(LazyCollectionOption.EXTRA)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -159,6 +163,9 @@ public class ParticipationGroup {
 	}
 	
 	@ManyToMany()
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			inverseJoinColumns = @JoinColumn(name = "ecasUsers_USER_ID"),
+			joinColumns = @JoinColumn(name = "PARTICIPANTS_PARTICIPATION_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@LazyCollection(LazyCollectionOption.EXTRA)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

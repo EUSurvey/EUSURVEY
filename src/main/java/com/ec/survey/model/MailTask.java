@@ -41,7 +41,7 @@ public class MailTask implements java.io.Serializable {
 	
 	@Id
 	@Column(name = "MAILTASK_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

@@ -43,6 +43,10 @@ public abstract class ChoiceQuestion extends Question {
 	}	
 	
 	@OneToMany(targetEntity=PossibleAnswer.class, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			name = "ELEMENTS_ELEMENTS",
+			joinColumns = @JoinColumn(name = "ELEMENTS_ID"),
+			inverseJoinColumns = @JoinColumn(name = "possibleAnswers_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	@OrderBy(value = "position asc")

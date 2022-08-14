@@ -675,13 +675,13 @@ public class BasicController implements BeanFactoryAware {
 
 		if (question instanceof RatingQuestion) {
 			for (Element childQuestion : ((RatingQuestion) question).getChildElements()) {
-				if (!answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId()).isEmpty()) {
+				if (!answerSet.getAnswers(childQuestion.getUniqueId()).isEmpty()) {
 					return true;
 				}
 			}
 			return false;
 		}
 		
-		return !answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty();
+		return !answerSet.getAnswers(question.getUniqueId()).isEmpty();
 	}
 }

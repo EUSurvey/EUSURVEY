@@ -635,7 +635,7 @@ public class SessionService extends BasicService {
 		Survey survey = surveyService.getSurvey(filter.getSurveyId());
 
 		Map<Integer, Question> qIdMap = survey.getQuestionMap();
-		Map<String, Element> qUidMap = survey.getQuestionMapByUniqueId();
+		Map<String, Question> qUidMap = survey.getQuestionMapByUniqueId();
 
 		for (Map.Entry<String, String> entry : filterValues.entrySet()){
 			String[] split = entry.getKey().split("\\|");

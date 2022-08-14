@@ -54,7 +54,7 @@ public class Translation implements java.io.Serializable, Comparable {
 	
 	@Id
 	@Column(name = "TRANSLATION_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

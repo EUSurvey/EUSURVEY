@@ -198,11 +198,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			status = schemaService.getStatus();
 		}
 		
-		if (status.getDbversion() < 18)
-		{				
-			schemaService.step18();
-			status = schemaService.getStatus();
-		}
+		// step 18 removed as not needed anymore
 		
 		if (status.getDbversion() < 19)
 		{
@@ -221,13 +217,9 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 		{
 			schemaService.step21();
 			status = schemaService.getStatus();
-		}	
-		
-		if (status.getDbversion() < 22)
-		{
-			schemaService.step22();
-			status = schemaService.getStatus();
 		}
+
+		//step 22 removed
 		
 		if (status.getDbversion() < 23)
 		{
@@ -385,12 +377,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			status = schemaService.getStatus();
 		}
 		
-		if (status.getDbversion() < 48)
-		{
-			logger.info("starting upgrade step 48");
-			schemaService.step48();
-			status = schemaService.getStatus();
-		}
+		// step 48 removed as not needed anymore
 		
 		if (status.getDbversion() < 49)
 		{

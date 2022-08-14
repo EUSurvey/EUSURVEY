@@ -3,13 +3,7 @@ package com.ec.survey.model;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import com.ec.survey.model.administration.User;
@@ -37,7 +31,7 @@ public class OneTimePasswordResetCode {
 	
 	@Id
 	@Column(name = "PR_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	
@@ -74,7 +68,7 @@ public class OneTimePasswordResetCode {
 		return userId;
 	}	
 	public void setUserId(Integer userId) {
-		this.userId = userId;
+		this.userId = userId != null ? userId : 0;
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)

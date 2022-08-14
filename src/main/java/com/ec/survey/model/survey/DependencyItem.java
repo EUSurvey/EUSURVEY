@@ -29,7 +29,7 @@ public class DependencyItem implements java.io.Serializable {
 		
 	@Id
 	@Column(name = "ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	
@@ -46,7 +46,10 @@ public class DependencyItem implements java.io.Serializable {
 	}
 	
 	@ManyToMany(targetEntity=Element.class)
-	@JoinTable(name = "POSSIBLEANSWER_ELEMENT")
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			name = "POSSIBLEANSWER_ELEMENT",
+			joinColumns = @JoinColumn(name = "DEPITEMS_ID"),
+			inverseJoinColumns = @JoinColumn(name = "dependentElements_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	public List<Element> getDependentElements() {

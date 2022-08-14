@@ -25,7 +25,7 @@
 				<h1><spring:message code="contribution.edit" /></h1>
 			</div>
 			
-			<form:form id="form" method="POST" action="editcontribution" commandName="form">	
+			<form:form id="form" method="POST" action="editcontribution" modelAttribute="form">
 				<div>
 					<h5><spring:message code="label.ContributionId" />:</h5>
 					<input type="text" class="required uuid" name="uniqueCode" maxlength="36" value="${uniqueid}" />

@@ -1030,7 +1030,7 @@ public class ManagementController extends BasicController {
 	/** when a particular Survey type has some conditions on properties, they are set here
 	 * @throws ValidationException 
 	*/
-	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation, Map<String, Translations> translationsToCreate) throws ValidationException {
+	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation, Map<String, Translations> translationsToCreate) throws ValidationException, IOException {
 		if (survey.getIsDelphi()) {
 			survey.setChangeContribution(true); // should always be activated for delphi surveys
 			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
@@ -1081,6 +1081,12 @@ public class ManagementController extends BasicController {
 									null, trans2));							
 						}
 					}
+
+					//Create and set ids and uids
+					surveyService.add(survey, false, survey.getOwner().getId());
+
+					//Copy files eg for Gallery Question
+					surveyService.copyFiles(survey, new HashMap<>(), true, new HashMap<String, String>(), opctemplatesurvey);
 
 					// recreate unique ids
 					for (Element elem : survey.getElementsRecursive(true)) {
@@ -3492,7 +3498,7 @@ public class ManagementController extends BasicController {
 						if (question instanceof Matrix) {
 							for (Element matrixQuestion : ((Matrix) question).getQuestions()) {
 								StringBuilder s = new StringBuilder();
-								for (Answer answer : answerSet.getAnswers(matrixQuestion.getId(),
+								for (Answer answer : answerSet.getAnswers(
 										matrixQuestion.getUniqueId())) {
 									if (surveyExists) {
 										answer.setTitle(form.getAnswerTitle(answer));
@@ -3518,8 +3524,7 @@ public class ManagementController extends BasicController {
 							ComplexTable table = (ComplexTable) question;
 							for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
 								StringBuilder s = new StringBuilder();
-								for (Answer answer : answerSet.getAnswers(childQuestion.getId(),
-										childQuestion.getUniqueId())) {
+								for (Answer answer : answerSet.getAnswers(childQuestion.getUniqueId())) {
 									if (s.length() > 0) {
 										s.append("; ");
 									}
@@ -3536,7 +3541,7 @@ public class ManagementController extends BasicController {
 							GalleryQuestion gallery = (GalleryQuestion) question;
 							StringBuilder s = new StringBuilder();
 							
-							for (Answer answer : answerSet.getAnswers(question.getId(), question.getUniqueId())) {
+							for (Answer answer : answerSet.getAnswers(question.getUniqueId())) {
 								File file = null;
 								if (!StringUtils.isEmpty(answer.getPossibleAnswerUniqueId())) {
 									file = gallery.getFileByUid(answer.getPossibleAnswerUniqueId());									
@@ -3559,7 +3564,7 @@ public class ManagementController extends BasicController {
 						} else if (question instanceof Upload) {
 							if (showuploadedfiles) {
 								StringBuilder s = new StringBuilder();
-								for (Answer answer : answerSet.getAnswers(question.getId(), question.getUniqueId())) {
+								for (Answer answer : answerSet.getAnswers(question.getUniqueId())) {
 									for (File file : answer.getFiles()) {
 										if (isOwner || user == null || user.getFormPrivilege() > 1
 												|| user.getLocalPrivilegeValue("AccessResults") > 1
@@ -3579,8 +3584,7 @@ public class ManagementController extends BasicController {
 						} else if (question instanceof RatingQuestion) {
 							for (Element childQuestion : ((RatingQuestion) question).getQuestions()) {
 								StringBuilder s = new StringBuilder();
-								for (Answer answer : answerSet.getAnswers(childQuestion.getId(),
-										childQuestion.getUniqueId())) {
+								for (Answer answer : answerSet.getAnswers(childQuestion.getUniqueId())) {
 									if (s.length() > 0) {
 										s.append("; ");
 									}
@@ -3593,7 +3597,7 @@ public class ManagementController extends BasicController {
 							// these elements are not displayed
 						} else {
 							StringBuilder s = new StringBuilder();
-							for (Answer answer : answerSet.getAnswers(question.getId(), question.getUniqueId())) {
+							for (Answer answer : answerSet.getAnswers(question.getUniqueId())) {
 								if (s.length() > 0) {
 									s.append("; ");
 								}
@@ -4772,9 +4776,9 @@ public class ManagementController extends BasicController {
 
 			ObjectMapper mapper = new ObjectMapper();
 			String stringResult = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
-
-			logger.info(stringResult);
 			
+			logger.info(stringResult);
+
 			StringEntity jsonEntity = new StringEntity(stringResult);
 			jsonEntity.setContentType("application/json");
 			httpPost.addHeader("Content-type", "application/json");
@@ -4793,7 +4797,7 @@ public class ManagementController extends BasicController {
 					if (entity != null) {
 						String strResponse = EntityUtils.toString(entity, "UTF-8");
 						logger.info(strResponse);
-					}					
+					}
 					
 					if (code >= 200 && code < 300){
 						surveyService.setCodaWaiting(survey.getUniqueId(), true);

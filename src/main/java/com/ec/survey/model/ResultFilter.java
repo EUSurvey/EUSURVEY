@@ -268,7 +268,7 @@ public class ResultFilter implements java.io.Serializable {
 
 	@Id
 	@Column(name = "RESFILTER_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

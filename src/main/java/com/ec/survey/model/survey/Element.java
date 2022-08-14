@@ -48,7 +48,7 @@ public abstract class Element implements java.io.Serializable {
 
 	@Id
 	@Column(name = "ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

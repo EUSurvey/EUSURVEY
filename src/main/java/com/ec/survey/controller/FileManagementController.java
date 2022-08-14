@@ -300,7 +300,7 @@ public class FileManagementController extends BasicController {
 		paging.setItems(resultfiles);
 		if (paging.getItems().size() < paging.getItemsPerPage())
 		{
-			paging.setNumberOfItems((page - 1) * paging.getItemsPerPage() + paging.getItems().size());
+			paging.setNumberOfItems((page > 1 ? page - 1 : 0) * paging.getItemsPerPage() + paging.getItems().size());
 		} else {
 			paging.setNumberOfItems(Integer.MAX_VALUE);
 		}

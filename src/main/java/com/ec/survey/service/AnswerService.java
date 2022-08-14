@@ -70,49 +70,49 @@ public class AnswerService extends BasicService {
 			user.setValidated(false);
 			user.setComment("Self Registered");
 
-			int nameQuestion = 0;
-			int emailQuestion = 0;
+			String nameQuestion = null;
+			String emailQuestion = null;
 			Element emailElement = null;
-			int passwordQuestion = 0;
-			int languageQuestion = 0;
-			int firstNameQuestion = 0;
-			int lastNameQuestion = 0;
+			String passwordQuestion = null;
+			String languageQuestion = null;
+			String firstNameQuestion = null;
+			String lastNameQuestion = null;
 			SingleChoiceQuestion languageQuestionElement = null;
 
 			for (Element element : answerSet.getSurvey().getElements()) {
 				if (element.getShortname().equalsIgnoreCase("name"))
-					nameQuestion = element.getId();
+					nameQuestion = element.getUniqueId();
 				else if (element.getShortname().equalsIgnoreCase(Constants.EMAIL)) {
-					emailQuestion = element.getId();
+					emailQuestion = element.getUniqueId();
 					emailElement = element;
 				} else if (element.getShortname().equalsIgnoreCase("password")) {
-					passwordQuestion = element.getId();
+					passwordQuestion = element.getUniqueId();
 				} else if (element.getShortname().equalsIgnoreCase("language")) {
-					languageQuestion = element.getId();
+					languageQuestion = element.getUniqueId();
 					languageQuestionElement = (SingleChoiceQuestion) element;
 				} else if (element.getShortname().equalsIgnoreCase("firstname")) {
-					firstNameQuestion = element.getId();
+					firstNameQuestion = element.getUniqueId();
 				} else if (element.getShortname().equalsIgnoreCase("lastname")) {
-					lastNameQuestion = element.getId();
+					lastNameQuestion = element.getUniqueId();
 				}
 			}
 
-			if (nameQuestion == 0 || emailQuestion == 0 || passwordQuestion == 0 || languageQuestion == 0) {
+			if (nameQuestion == null || emailQuestion == null || passwordQuestion == null || languageQuestion == null) {
 				throw new MessageException("Not all needed registration questions found!");
 			}
 
 			for (Answer answer : answerSet.getAnswers()) {
-				if (answer.getQuestionId() == nameQuestion) {
+				if (answer.getQuestionUniqueId() == nameQuestion) {
 					user.setLogin(answer.getValue());
-				} else if (answer.getQuestionId() == emailQuestion) {
+				} else if (answer.getQuestionUniqueId() == emailQuestion) {
 					user.setEmail(answer.getValue());
-				} else if (answer.getQuestionId() == firstNameQuestion) {
+				} else if (answer.getQuestionUniqueId() == firstNameQuestion) {
 					user.setGivenName(answer.getValue());
-				} else if (answer.getQuestionId() == lastNameQuestion) {
+				} else if (answer.getQuestionUniqueId() == lastNameQuestion) {
 					user.setSurName(answer.getValue());
-				} else if (answer.getQuestionId() == passwordQuestion) {
+				} else if (answer.getQuestionUniqueId() == passwordQuestion) {
 					user.setPassword(Tools.hash(answer.getValue() + user.getPasswordSalt()));
-				} else if (answer.getQuestionId() == languageQuestion) {
+				} else if (answer.getQuestionUniqueId() == languageQuestion) {
 					for (PossibleAnswer possibleAnswer : languageQuestionElement.getPossibleAnswers()) {
 						if (possibleAnswer.getId().toString().equalsIgnoreCase(answer.getValue())) {
 							user.setLanguage(possibleAnswer.getShortname().toUpperCase());
@@ -152,13 +152,13 @@ public class AnswerService extends BasicService {
 						if (element instanceof FreeTextQuestion) {
 							FreeTextQuestion q = (FreeTextQuestion) element;
 							if (q.getIsPassword()) {
-								List<Answer> originalAnswers = draft.getAnswerSet().getAnswers(q.getId());
+								List<Answer> originalAnswers = draft.getAnswerSet().getAnswers(q.getUniqueId());
 								if (!originalAnswers.isEmpty()) {
-									List<Answer> currentPasswordAnswers = answerSet.getAnswers(q.getId());
+									List<Answer> currentPasswordAnswers = answerSet.getAnswers(q.getUniqueId());
 									if (!currentPasswordAnswers.isEmpty()) {
 										String currentAnswer = currentPasswordAnswers.get(0).getValue();
 										if (currentAnswer != null && currentAnswer.equalsIgnoreCase("********")) {
-											answerSet.getAnswers(q.getId()).get(0)
+											answerSet.getAnswers(q.getUniqueId()).get(0)
 													.setValue(originalAnswers.get(0).getValue());
 										}
 									}
@@ -167,10 +167,6 @@ public class AnswerService extends BasicService {
 						}
 					}
 				}
-			}
-
-			for (Answer answer : answerSet.getAnswers()) {
-				answer.setIsDraft(answerSet.getIsDraft());
 			}
 
 			answerSet.setUpdateDate(new Date());
@@ -244,10 +240,10 @@ public class AnswerService extends BasicService {
 				attendee.setOwnerId(answerSet.getSurvey().getOwner().getId());
 				attendee.setRegFormId(answerSet.getSurvey().getId());
 
-				Map<Integer, Question> questionsById = answerSet.getSurvey().getQuestionMap();
+				Map<String, Question> questionsByUniqueId = answerSet.getSurvey().getQuestionMapByUniqueId();
 
 				for (Answer answer : answerSet.getAnswers()) {
-					Question question = questionsById.get(answer.getQuestionId());
+					Question question = questionsByUniqueId.get(answer.getQuestionUniqueId());
 
 					if (question != null && question.getIsAttribute()) {
 						if (question.getAttributeName().equalsIgnoreCase("name"))
@@ -273,7 +269,7 @@ public class AnswerService extends BasicService {
 								// replace ID by label of the answer
 								ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
 								PossibleAnswer possibleAnswer = choiceQuestion
-										.getPossibleAnswer(answer.getPossibleAnswerId());
+										.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId());
 								a.setValue(possibleAnswer.getTitle());
 							} else {
 								a.setValue(answer.getValue());
@@ -485,7 +481,7 @@ public class AnswerService extends BasicService {
 	}
 
 	public String getSql(String prefix, int surveyId, ResultFilter filter, Map<String, Object> values,
-			boolean searchallsurveys) throws TooManyFiltersException {
+			boolean searchallsurveys) throws TooManyFiltersException, MessageException {
 		if (prefix == null || prefix.length() == 0) {
 			prefix = "SELECT DISTINCT ans.ANSWER_SET_ID";
 		}
@@ -661,7 +657,8 @@ public class AnswerService extends BasicService {
 
 			Map<String, String> filterValues = filter.getFilterValues();
 			if (filterValues != null && filterValues.size() > 0) {
-				Set<String> rankingQuestionUids = surveyId > -1 ? surveyService.getRankingQuestionUids(surveyId) : new HashSet<>();				
+				Set<String> rankingQuestionUids = surveyId > -1 ? surveyService.getRankingQuestionUids(surveyId) : new HashSet<>();	
+				Set<String> galleryQuestionUids = surveyId > -1 ? surveyService.getGalleryQuestionUids(surveyId) : new HashSet<>();	
 				
 				int i = 0;
 				for (Entry<String, String> item : filterValues.entrySet()) {
@@ -711,6 +708,13 @@ public class AnswerService extends BasicService {
 											.append(i).append(" AND ").append(answerPart).append(")");
 									values.put("questionUid" + i, questionUid);
 									values.put(Constants.ANSWER + i, answer);
+								} else if (galleryQuestionUids.contains(questionUid)) {									
+									String answerUid = answer;
+									String answerPart = "(a" + joincounter + ".PA_UID like :answerUid" + i + ")";
+									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
+									.append(i).append(" AND ").append(answerPart).append(")");
+									values.put("questionUid" + i, questionUid);
+									values.put("answerUid" + i, answerUid);									
 								} else {
 
 									String answerPart = "a" + joincounter + ".VALUE like :answer" + i;
@@ -739,21 +743,14 @@ public class AnswerService extends BasicService {
 										if (questionUid.length() > 0) {
 											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row")
 													.append(i).append(" AND a").append(joincounter)
-													.append(".ANSWER_COL = :col").append(i).append(" AND (a")
-													.append(joincounter).append(".QUESTION_ID = :questionId").append(i)
-													.append(" OR a").append(joincounter)
+													.append(".ANSWER_COL = :col").append(i).append(" AND (a").append(joincounter)
 													.append(".QUESTION_UID = :questionUid").append(i).append(") AND ")
 													.append(answerPart).append(")");
 											values.put("questionUid" + i, questionUid);
 										} else {
-											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row")
-													.append(i).append(" AND a").append(joincounter)
-													.append(".ANSWER_COL = :col").append(i).append(" AND a")
-													.append(joincounter).append(".QUESTION_ID = :questionId").append(i)
-													.append(" AND ").append(answerPart).append(")");
+											throw new MessageException("question UID missing");
 										}
 
-										values.put("questionId" + i, data[0]);
 										values.put("row" + i, data[1]);
 										values.put("col" + i, data[2]);
 
@@ -764,9 +761,7 @@ public class AnswerService extends BasicService {
 													.append(answerPart).append(")");
 											values.put("questionUid" + i, questionUid);
 										} else {
-											where.append("( a").append(joincounter).append(".QUESTION_ID = :questionId")
-													.append(i).append(" AND ").append(answerPart).append(")");
-											values.put("questionId" + i, questionId);
+											throw new MessageException("question UID missing");
 										}
 									}
 								}
@@ -903,7 +898,7 @@ public class AnswerService extends BasicService {
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
-		List res = query.setFirstResult((page - 1) * rowsPerPage).setMaxResults(rowsPerPage).list();
+		List res = query.setFirstResult((page > 1 ? page - 1 : 0) * rowsPerPage).setMaxResults(rowsPerPage).list();
 
 		Set<String> result = new HashSet<>();
 
@@ -945,7 +940,7 @@ public class AnswerService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 
 		String answersetsql = getSql(null, surveyId, filter, parameters, true);
-		String sql = "select a1.AS_ID, a1.QUESTION_ID, a1.QUESTION_UID, a1.VALUE, a1.ANSWER_COL, a1.ANSWER_ID, a1.ANSWER_ROW, a1.PA_ID, a1.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a1 JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID WHERE ans.ANSWER_SET_ID IN ("
+		String sql = "select a1.AS_ID, a1.QUESTION_UID, a1.VALUE, a1.ANSWER_COL, a1.ANSWER_ID, a1.ANSWER_ROW, a1.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a1 JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID WHERE ans.ANSWER_SET_ID IN ("
 				+ answersetsql + ")";
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -960,14 +955,12 @@ public class AnswerService extends BasicService {
 			Object[] a = (Object[]) o;
 			Answer answer = new Answer();
 			answer.setAnswerSetId(ConversionTools.getValue(a[0]));
-			answer.setQuestionId(ConversionTools.getValue(a[1]));
-			answer.setQuestionUniqueId((String) a[2]);
-			answer.setValue((String) a[3]);
-			answer.setColumn(ConversionTools.getValue(a[4]));
-			answer.setId(ConversionTools.getValue(a[5]));
-			answer.setRow(ConversionTools.getValue(a[6]));
-			answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
-			answer.setPossibleAnswerUniqueId((String) a[8]);
+			answer.setQuestionUniqueId((String) a[1]);
+			answer.setValue((String) a[2]);
+			answer.setColumn(ConversionTools.getValue(a[3]));
+			answer.setId(ConversionTools.getValue(a[4]));
+			answer.setRow(ConversionTools.getValue(a[5]));
+			answer.setPossibleAnswerUniqueId((String) a[6]);
 
 			if (result.containsKey(answer.getAnswerSetId())) {
 				result.get(answer.getAnswerSetId()).addAnswer(answer);
@@ -975,12 +968,12 @@ public class AnswerService extends BasicService {
 				AnswerSet answerSet = new AnswerSet();
 				answerSet.setId(answer.getAnswerSetId());
 				answerSet.getAnswers().add(answer);
-				answerSet.setUniqueCode((String) a[9]);
-				answerSet.setDate((Date) a[10]);
-				answerSet.setUpdateDate((Date) a[11]);
-				answerSet.setInvitationId((String) a[12]);
-				answerSet.setResponderEmail((String) a[13]);
-				answerSet.setLanguageCode((String) a[14]);
+				answerSet.setUniqueCode((String) a[7]);
+				answerSet.setDate((Date) a[8]);
+				answerSet.setUpdateDate((Date) a[9]);
+				answerSet.setInvitationId((String) a[10]);
+				answerSet.setResponderEmail((String) a[11]);
+				answerSet.setLanguageCode((String) a[12]);
 				result.put(answerSet.getId(), answerSet);
 			}
 		}
@@ -1592,7 +1585,7 @@ public class AnswerService extends BasicService {
 			String answerSetUniqueCode) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery(
-				"select count(*) from ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID INNER JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID where s.ISDRAFT = :isdraft AND ans.UNIQUECODE != :ansuid AND ((a.QUESTION_ID= :questionId and a.VALUE= :value and ans.ISDRAFT=0) or (a.QUESTION_UID= :questionUid and a.VALUE= :value and ans.ISDRAFT=0))")
+				"select count(*) from ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID INNER JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID where s.ISDRAFT = :isdraft AND ans.UNIQUECODE != :ansuid AND (a.QUESTION_UID= :questionUid and a.VALUE= :value and ans.ISDRAFT=0)")
 				.setBoolean("isdraft", surveyIsDraft).setString("value", value).setString("ansuid", answerSetUniqueCode)
 				.setString("questionUid", questionUid).setInteger("questionId", questionId);
 		return ConversionTools.getValue(query.uniqueResult());

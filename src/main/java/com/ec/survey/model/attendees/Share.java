@@ -2,16 +2,7 @@ package com.ec.survey.model.attendees;
 
 import java.util.List;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -35,7 +26,7 @@ public class Share {
 	
 	@Id
 	@Column(name = "SHARE_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	
@@ -69,6 +60,9 @@ public class Share {
 	}
 	
 	@ManyToMany()
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			inverseJoinColumns = @JoinColumn(name = "attendees_ATTENDEE_ID"),
+			joinColumns = @JoinColumn(name = "SHARES_SHARE_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	public List<Attendee> getAttendees() {

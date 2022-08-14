@@ -60,7 +60,7 @@ public class Export implements java.io.Serializable {
 	
 	@Id
 	@Column(name = "EXPORT_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

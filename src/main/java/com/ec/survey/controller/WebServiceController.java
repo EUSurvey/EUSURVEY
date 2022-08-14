@@ -1214,7 +1214,6 @@ public class WebServiceController extends BasicController {
 							|| question instanceof NumberQuestion || question instanceof RegExQuestion) {
 						Answer answer = new Answer();
 						answer.setAnswerSet(answerSet);
-						answer.setQuestionId(question.getId());
 						answer.setQuestionUniqueId(question.getUniqueId());
 						answer.setValue(entry.getValue());
 						answerSet.addAnswer(answer);
@@ -1229,7 +1228,6 @@ public class WebServiceController extends BasicController {
 
 						Answer answer = new Answer();
 						answer.setAnswerSet(answerSet);
-						answer.setQuestionId(question.getId());
 						answer.setQuestionUniqueId(question.getUniqueId());
 						answer.setValue(dateval);
 						answerSet.addAnswer(answer);
@@ -1243,7 +1241,6 @@ public class WebServiceController extends BasicController {
 
 						Answer answer = new Answer();
 						answer.setAnswerSet(answerSet);
-						answer.setQuestionId(question.getId());
 						answer.setQuestionUniqueId(question.getUniqueId());
 						answer.setValue(timeval);
 						answerSet.addAnswer(answer);
@@ -1253,11 +1250,8 @@ public class WebServiceController extends BasicController {
 							Integer paid = elementsByAlias.get(alias).getId();
 							Answer answer = new Answer();
 							answer.setAnswerSet(answerSet);
-							answer.setQuestionId(question.getId());
 							answer.setQuestionUniqueId(question.getUniqueId());
 							answer.setValue(paid.toString());
-
-							answer.setPossibleAnswerId(paid);
 
 							ChoiceQuestion cq = (ChoiceQuestion) question;
 							answer.setPossibleAnswerUniqueId(cq.getPossibleAnswer(paid).getUniqueId());
@@ -1269,7 +1263,6 @@ public class WebServiceController extends BasicController {
 						for (String value : arrvalues) {
 							Answer answer = new Answer();
 							answer.setAnswerSet(answerSet);
-							answer.setQuestionId(question.getId());
 							answer.setQuestionUniqueId(question.getUniqueId());
 							answer.setValue(value);
 							answerSet.addAnswer(answer);
@@ -1285,11 +1278,8 @@ public class WebServiceController extends BasicController {
 
 								Answer answer = new Answer();
 								answer.setAnswerSet(answerSet);
-								answer.setQuestionId(matrixQuestionsByAlias.get(questionalias).getId());
 								answer.setQuestionUniqueId(matrixQuestionsByAlias.get(questionalias).getUniqueId());
 								answer.setValue(paid.toString());
-
-								answer.setPossibleAnswerId(paid);
 
 								Element pa = matrixQuestions.get(paid);
 								if (pa != null) {
@@ -1311,7 +1301,6 @@ public class WebServiceController extends BasicController {
 
 					Answer answer = new Answer();
 					answer.setAnswerSet(answerSet);
-					answer.setQuestionId(table.getId());
 					answer.setQuestionUniqueId(table.getUniqueId());
 
 					Element tablequestion = table.getQuestions().get(row - 1);

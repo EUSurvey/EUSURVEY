@@ -40,7 +40,7 @@ public class ActivityFilter implements java.io.Serializable {
 	
 	@Id
 	@Column(name = "ACFILTER_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

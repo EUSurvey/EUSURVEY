@@ -9,8 +9,9 @@
 	<packaging>war</packaging>
 	<version>1.5.2.9</version>
 	<properties>
-		<java-version>1.8</java-version>
-		<org.springframework-version>4.3.20.RELEASE</org.springframework-version>
+		<java-version>11</java-version>
+		<org.springframework-version>5.3.20</org.springframework-version>
+		<org.springframework.security-version>5.7.1</org.springframework.security-version>
 		<org.aspectj-version>1.8.8</org.aspectj-version>
 		<org.slf4j-version>1.5.10</org.slf4j-version>
 		<version.number>444</version.number>
@@ -102,14 +103,8 @@
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt</artifactId>
-			<version>1.9.2</version>
+			<version>1.9.3</version>
 			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jasypt</groupId>
-			<artifactId>jasypt-spring31</artifactId>
-			<version>1.9.2</version>
 		</dependency>
 
 		<dependency>
@@ -137,7 +132,7 @@
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
 			<artifactId>spring-retry</artifactId>
-			<version>1.1.2.RELEASE</version>
+			<version>1.3.3</version>
 		</dependency>
 
 		<dependency>
@@ -294,21 +289,21 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>4.2.9.RELEASE</version>
+			<version>${org.springframework.security-version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>4.2.9.RELEASE</version>
+			<version>${org.springframework.security-version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>4.2.9.RELEASE</version>
+			<version>${org.springframework.security-version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -432,7 +427,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.47</version>
+			<version>8.0.26</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -456,7 +451,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.3.11.Final</version>
+			<version>5.6.8.Final</version>
 			<type>jar</type>
 			<scope>compile</scope>
 			<exclusions>
@@ -476,7 +471,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
-			<version>4.3.11.Final</version>
+			<version>5.6.8.Final</version>
 		</dependency>
 
 		<dependency>
@@ -491,11 +486,20 @@
 			<version>3.13</version>
 		</dependency>
 
+		<!-- Hibernate Jcache -->
 		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>2.10.6</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jcache</artifactId>
+			<version>5.6.8.Final</version>
 		</dependency>
+
+		<!-- Ehcache 3.x -->
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>3.3.1</version>
+		</dependency>
+
 
 		<!-- Added for ehcache replication used when load balancer is setup -->
 		<dependency>
@@ -508,18 +512,6 @@
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-jgroupsreplication</artifactId>
 			<version>1.7</version>
-		</dependency>
-
-		<!-- <dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
-			<version>2.5.2</version>
-		</dependency> -->
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-ehcache</artifactId>
-			<version>4.3.11.Final</version>
 		</dependency>
 
 		<dependency>
@@ -579,12 +571,6 @@
 			<artifactId>selenium-java</artifactId>
 			<version>2.53.0</version>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>23.0</version>
 		</dependency>
 
 		<dependency>
@@ -687,7 +673,7 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.7</version>
 				<executions>
-					<!-- Generates the footer version number -->
+					<!-- Generates the footer version number -->					
 					<execution>
 						<id>preparePackageAntCreateSvnVersionPropertiesForALl</id>
 						<phase>prepare-package</phase>
@@ -698,6 +684,7 @@
 								</tstamp>
 								<property name="version.footer.build"
 									value="v${project.version} ${buildNumber} (${touch.time})" />
+								<!-->
 								<scriptdef name="updatescmbranch"
 									language="javascript">
 									<![CDATA[
@@ -709,7 +696,7 @@
                                         }
                                     ]]>
 								</scriptdef>
-								<updatescmbranch />
+								<updatescmbranch />-->
 								<echo>Version footer value = ${version.footer.build}</echo>
 								<property name="verfilename"
 									value="${basedir}/src/main/webapp/WEB-INF/views/versionfooter.txt" />
@@ -721,7 +708,7 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
-
+				
 					<!-- Generates the text file version -->
 					<execution>
 						<id>preparePackageAntCreateRevisionVersionPropertiesForALl</id>

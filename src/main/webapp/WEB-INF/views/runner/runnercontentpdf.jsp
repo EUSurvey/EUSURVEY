@@ -9,7 +9,7 @@
 		
 		<div id="runner-content" class="runner-content">
 
-			<form:form action="${action}" id="runnerForm" method="POST" commandName="form">
+			<form:form action="${action}" id="runnerForm" method="POST" modelAttribute="form">
 			
 				<form:hidden path="survey.id" />
 				<form:hidden path="language.code" />

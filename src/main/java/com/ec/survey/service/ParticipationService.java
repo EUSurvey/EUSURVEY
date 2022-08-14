@@ -130,7 +130,7 @@ public class ParticipationService extends BasicService {
 		query.setInteger("id", groupId);
 		
 		@SuppressWarnings("rawtypes")
-		List res = query.setFirstResult((page - 1)*rowsPerPage).setMaxResults(rowsPerPage).list();
+		List res = query.setFirstResult((page > 1 ? page - 1 : 0)*rowsPerPage).setMaxResults(rowsPerPage).list();
 		
 		List<String> result = new ArrayList<>();
 		

@@ -85,7 +85,7 @@ public class Request implements java.io.Serializable {
 	 
 	@Id
 	@Column(name = "ID", nullable = false)
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

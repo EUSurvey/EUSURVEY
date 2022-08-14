@@ -30,7 +30,7 @@ public class SkinElement implements java.io.Serializable {
 	
 	@Id
 	@Column(name = "SE_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

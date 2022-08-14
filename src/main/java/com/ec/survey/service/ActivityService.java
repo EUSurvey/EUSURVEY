@@ -498,7 +498,7 @@ public class ActivityService extends BasicService {
 			}
 		}
 		
-		return query.setFirstResult((page - 1)*rowsPerPage).setMaxResults(rowsPerPage).list();
+		return query.setFirstResult((page > 1 ? page - 1 : 0)*rowsPerPage).setMaxResults(rowsPerPage).list();
 	}
 
 	@Transactional(readOnly = true)

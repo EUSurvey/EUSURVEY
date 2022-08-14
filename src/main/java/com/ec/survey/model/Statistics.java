@@ -33,7 +33,7 @@ public class Statistics {
 	
 	@Id
 	@Column(name = "ACCESS_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

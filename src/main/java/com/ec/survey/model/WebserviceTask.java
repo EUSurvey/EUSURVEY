@@ -45,7 +45,7 @@ public class WebserviceTask {
 	
 	@Id
 	@Column(name = "WST_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

@@ -2,12 +2,7 @@ package com.ec.survey.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "VALIDCODE", uniqueConstraints = {@UniqueConstraint(columnNames={"VALIDCODE_CODE"},name="VALIDCODE_CODE")})
@@ -28,7 +23,7 @@ public class ValidCode {
 	
 	@Id
 	@Column(name = "VALIDCODE_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

@@ -21,7 +21,7 @@ public class AttendeeFilter {
 	
 	@Id
 	@Column(name = "AFILTER_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

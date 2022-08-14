@@ -61,7 +61,7 @@ public class AnswerSet implements java.io.Serializable {
 	
 	@Id
 	@Column(name = "ANSWER_SET_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}
@@ -188,10 +188,10 @@ public class AnswerSet implements java.io.Serializable {
 	}
 
 	@Transient
-	public List<Answer> getAnswers(int questionId) {
+	public List<Answer> getAnswers(String questionUniqueId) {
 		List<Answer> result = new ArrayList<>();
 		for (Answer answer : answers) {
-			if (answer.getQuestionId().equals(questionId)) {
+			if (answer.getQuestionUniqueId().equals(questionUniqueId)) {
 				result.add(answer);
 			}
 		}
@@ -216,30 +216,6 @@ public class AnswerSet implements java.io.Serializable {
 	}
 
 	@Transient
-	public List<Answer> getAnswers(int questionId, String questionUid) {
-		List<Answer> result = new ArrayList<>();
-		for (Answer answer : answers) {
-			if (answer.getQuestionId().equals(questionId)
-					|| (answer.getQuestionUniqueId() != null && answer.getQuestionUniqueId().equals(questionUid))) {
-				result.add(answer);
-			}
-		}
-
-		return result;
-	}
-
-	@Transient
-	public String getMatrixAnswer(int questionId, int answerId) {
-		for (Answer answer : answers) {
-			if (answer.getQuestionId().equals(questionId) && answer.getPossibleAnswerId().equals(answerId)) {
-				return answer.getValue();
-			}
-		}
-
-		return null;
-	}
-
-	@Transient
 	public String getMatrixAnswer(String questionUid, String answerUid) {
 		for (Answer answer : answers) {
 			if (answer.getQuestionUniqueId() != null && answer.getPossibleAnswerUniqueId() != null
@@ -255,7 +231,7 @@ public class AnswerSet implements java.io.Serializable {
 	@Transient
 	public String getTableAnswer(Element question, int row, int col, boolean escape) {
 		for (Answer answer : answers) {
-			if ((answer.getQuestionId().equals(question.getId()) || (answer.getQuestionUniqueId() != null
+			if (((answer.getQuestionUniqueId() != null
 					&& answer.getQuestionUniqueId().equals(question.getUniqueId()))) && answer.getRow().equals(row)
 					&& answer.getColumn().equals(col)) {
 				if (escape) {
@@ -272,12 +248,12 @@ public class AnswerSet implements java.io.Serializable {
 	@Transient
 	public List<Answer> getRatingAnswers(RatingQuestion rating) {
 		List<Answer> result = new ArrayList<>();
-		Set<Integer> questionIds = new HashSet<>();
+		Set<String> questionUniqueIds = new HashSet<>();
 		for (Element question : rating.getChildElements()) {
-			questionIds.add(question.getId());
+			questionUniqueIds.add(question.getUniqueId());
 		}
 		for (Answer answer : answers) {
-			if (questionIds.contains(answer.getQuestionId())) {
+			if (questionUniqueIds.contains(answer.getQuestionUniqueId())) {
 				result.add(answer);
 			}
 		}
@@ -287,7 +263,7 @@ public class AnswerSet implements java.io.Serializable {
 
 	@Transient
 	public void clearAnswers(Element question) {
-		List<Answer> matchinganswers = getAnswers(question.getId());
+		List<Answer> matchinganswers = getAnswers(question.getUniqueId());
 
 		answers.removeAll(matchinganswers);
 

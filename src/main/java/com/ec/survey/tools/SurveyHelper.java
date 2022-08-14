@@ -8,7 +8,7 @@ import com.ec.survey.model.survey.ComplexTableItem.CellType;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.lowagie.text.pdf.BaseFont;
-import com.mysql.jdbc.StringUtils;
+import com.mysql.cj.util.StringUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
@@ -104,7 +104,6 @@ public class SurveyHelper {
 
 					Answer answer = new Answer();
 					answer.setAnswerSet(answerSet);
-					answer.setQuestionId(table.getId());
 					answer.setQuestionUniqueId(table.getUniqueId());
 
 					Element tablequestion = table.getQuestions().get(row - 1);
@@ -136,7 +135,6 @@ public class SurveyHelper {
 								checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), answer.getFiles());
 
 								if (!answer.getFiles().isEmpty()) {
-									answer.setQuestionId(question.getId());
 									answer.setQuestionUniqueId(question.getUniqueId());
 									answer.setValue("files");
 									answerSet.addAnswer(answer);
@@ -158,21 +156,18 @@ public class SurveyHelper {
 
 								Answer answer = new Answer();
 								answer.setAnswerSet(answerSet);
-								answer.setQuestionId(question.getId());
 								answer.setQuestionUniqueId(question.getUniqueId());
 								answer.setValue(value);
 
 								if (question instanceof ChoiceQuestion) {
 									int paid = Integer.parseInt(value);
-									answer.setPossibleAnswerId(paid);
-
+									
 									ChoiceQuestion cq = (ChoiceQuestion) question;
 									answer.setPossibleAnswerUniqueId(cq.getPossibleAnswer(paid).getUniqueId());
 								} else if (question instanceof ComplexTableItem) {
 									ComplexTableItem item = (ComplexTableItem) question;
 									if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
 										int paid = Integer.parseInt(value);
-										answer.setPossibleAnswerId(paid);
 										answer.setPossibleAnswerUniqueId(item.getPossibleAnswer(paid).getUniqueId());
 									}
 								} else if (question instanceof GalleryQuestion) {
@@ -196,13 +191,10 @@ public class SurveyHelper {
 								}
 								Answer answer = new Answer();
 								answer.setAnswerSet(answerSet);
-								answer.setQuestionId(element.getId());
 								answer.setQuestionUniqueId(element.getUniqueId());
 								answer.setValue(value);
 
 								int paid = Integer.parseInt(value);
-
-								answer.setPossibleAnswerId(paid);
 
 								Element pa = matrixQuestions.get(paid);
 								if (pa != null) {
@@ -242,7 +234,6 @@ public class SurveyHelper {
 					if (q.getShortname().equalsIgnoreCase("firstName")) {
 						Answer answer = new Answer();
 						answer.setAnswerSet(answerSet);
-						answer.setQuestionId(q.getId());
 						answer.setQuestionUniqueId(q.getUniqueId());
 						answer.setValue(user.getGivenName());
 
@@ -251,7 +242,6 @@ public class SurveyHelper {
 					} else if (q.getShortname().equalsIgnoreCase("surname")) {
 						Answer answer = new Answer();
 						answer.setAnswerSet(answerSet);
-						answer.setQuestionId(q.getId());
 						answer.setQuestionUniqueId(q.getUniqueId());
 						answer.setValue(user.getSurName());
 
@@ -260,7 +250,6 @@ public class SurveyHelper {
 					} else if (q.getShortname().equalsIgnoreCase(Constants.EMAIL)) {
 						Answer answer = new Answer();
 						answer.setAnswerSet(answerSet);
-						answer.setQuestionId(q.getId());
 						answer.setQuestionUniqueId(q.getUniqueId());
 						answer.setValue(user.getEmail());
 
@@ -340,10 +329,10 @@ public class SurveyHelper {
 				} else if (element instanceof RatingQuestion) {
 					RatingQuestion rating = (RatingQuestion) element;
 					for (Element child : rating.getChildElements()) {
-						answers.addAll(answerSet.getAnswers(child.getId()));
+						answers.addAll(answerSet.getAnswers(child.getUniqueId()));
 					}
 				} else {
-					answers = answerSet.getAnswers(element.getId());
+					answers = answerSet.getAnswers(element.getUniqueId());
 				}
 
 				for (Answer answer : answers) {
@@ -427,7 +416,7 @@ public class SurveyHelper {
 				if (question instanceof Matrix) {
 					answers = answerSet.getMatrixAnswers((Matrix) question);
 				} else {
-					answers = answerSet.getAnswers(question.getId());
+					answers = answerSet.getAnswers(question.getUniqueId());
 				}
 
 				// check dependency
@@ -470,7 +459,7 @@ public class SurveyHelper {
 												.get(candidate.getPosition() / (m.getColumns() - 1));
 										Element matrixAnswer = m.getAnswers()
 												.get(candidate.getPosition() % (m.getColumns() - 1));
-										if ((answerSet.getMatrixAnswer(matrixQuestion.getId(), matrixAnswer.getId()) != null
+										if ((answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null
 											|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId()) && !invisibleElements.contains(m.getUniqueId())) {
 											found = true;
 										} else {
@@ -482,11 +471,10 @@ public class SurveyHelper {
 								if (trigger instanceof PossibleAnswer) {
 									PossibleAnswer possibleAnswer = (PossibleAnswer) trigger;
 									boolean paFound = false;
-									for (Answer answer : answerSet.getAnswers(possibleAnswer.getQuestionId(),
+									for (Answer answer : answerSet.getAnswers(
 											answerSet.getSurvey().getElementsById().get(possibleAnswer.getQuestionId())
 													.getUniqueId())) {
-										if ((answer.getPossibleAnswerId().equals(trigger.getId())
-												|| (answer.getPossibleAnswerUniqueId() != null && answer
+										if (((answer.getPossibleAnswerUniqueId() != null && answer
 														.getPossibleAnswerUniqueId().equals(trigger.getUniqueId())))
 												&& !invisibleElements.contains(answer.getQuestionUniqueId())) {
 											found = true;
@@ -521,7 +509,7 @@ public class SurveyHelper {
 					} else if (element instanceof RatingQuestion && !found) {
 						RatingQuestion rating = (RatingQuestion) element;
 						for (Element child : rating.getChildElements()) {
-							List<Answer> childanswers = answerSet.getAnswers(child.getId());
+							List<Answer> childanswers = answerSet.getAnswers(child.getUniqueId());
 							for (Answer answer : childanswers) {
 								answerSet.getAnswers().remove(answer);
 							}
@@ -570,10 +558,10 @@ public class SurveyHelper {
 						String second = request.getParameter("secondanswer" + freeTextQuestion.getId());
 
 						if (draft != null) {
-							List<Answer> originalAnswers = draft.getAnswerSet().getAnswers(freeTextQuestion.getId());
+							List<Answer> originalAnswers = draft.getAnswerSet().getAnswers(freeTextQuestion.getUniqueId());
 							if (!originalAnswers.isEmpty()) {
 								String first = originalAnswers.get(0).getValue();
-								List<Answer> currentPasswordAnswers = answerSet.getAnswers(freeTextQuestion.getId());
+								List<Answer> currentPasswordAnswers = answerSet.getAnswers(freeTextQuestion.getUniqueId());
 								if (!currentPasswordAnswers.isEmpty()) {
 									String currentAnswer = currentPasswordAnswers.get(0).getValue();
 									if (currentAnswer != null && currentAnswer.equalsIgnoreCase("********")
@@ -779,9 +767,7 @@ public class SurveyHelper {
 												.get(candidate.getPosition() / (m.getColumns() - 1));
 										Element matrixAnswer = m.getAnswers()
 												.get(candidate.getPosition() % (m.getColumns() - 1));
-										if (answerSet.getMatrixAnswer(matrixQuestion.getId(),
-												matrixAnswer.getId()) != null
-												|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(),
+										if (answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(),
 														matrixAnswer.getUniqueId()) != null) {
 											found = true;
 										}
@@ -791,11 +777,10 @@ public class SurveyHelper {
 						} else {
 							if (trigger instanceof PossibleAnswer) {
 								PossibleAnswer possibleAnswer = (PossibleAnswer) trigger;
-								for (Answer answer : answerSet.getAnswers(possibleAnswer.getQuestionId(),
+								for (Answer answer : answerSet.getAnswers(
 										answerSet.getSurvey().getElementsById().get(possibleAnswer.getQuestionId())
 												.getUniqueId())) {
-									if (answer.getPossibleAnswerId().equals(trigger.getId())
-											|| answer.getPossibleAnswerUniqueId().equals(trigger.getUniqueId())) {
+									if (answer.getPossibleAnswerUniqueId().equals(trigger.getUniqueId())) {
 										found = true;
 									}
 								}
@@ -878,29 +863,29 @@ public class SurveyHelper {
 			if (element instanceof FreeTextQuestion) {
 				FreeTextQuestion q = (FreeTextQuestion) element;
 				if (q.getIsPassword()) {
-					List<Answer> answers = answerSet.getAnswers(q.getId(), q.getUniqueId());
+					List<Answer> answers = answerSet.getAnswers(q.getUniqueId());
 					if (!answers.isEmpty()) {
 						passwordValues.put(q.getUniqueId(), answers.get(0).getValue());
 					}
 				} else if (survey.getIsOPC() && q.getShortname().equalsIgnoreCase("firstName")) {
-					List<Answer> answers = answerSet.getAnswers(q.getId(), q.getUniqueId());
+					List<Answer> answers = answerSet.getAnswers(q.getUniqueId());
 					if (!answers.isEmpty()) {
 						user.setGivenName(answers.get(0).getValue());
 					}
 				} else if (survey.getIsOPC() && q.getShortname().equalsIgnoreCase("surname")) {
-					List<Answer> answers = answerSet.getAnswers(q.getId(), q.getUniqueId());
+					List<Answer> answers = answerSet.getAnswers(q.getUniqueId());
 					if (!answers.isEmpty()) {
 						user.setSurName(answers.get(0).getValue());
 					}
 				} else if (survey.getIsOPC() && q.getShortname().equalsIgnoreCase(Constants.EMAIL)) {
-					List<Answer> answers = answerSet.getAnswers(q.getId(), q.getUniqueId());
+					List<Answer> answers = answerSet.getAnswers(q.getUniqueId());
 					if (!answers.isEmpty()) {
 						user.setEmail(answers.get(0).getValue());
 					}
 				}
 			} else if (element instanceof Upload) {
 				Upload d = (Upload) element;
-				List<Answer> answers = answerSet.getAnswers(d.getId(), d.getUniqueId());
+				List<Answer> answers = answerSet.getAnswers(d.getUniqueId());
 				for (Answer answer : answers) {
 					if (answer.getFiles() != null) {
 						for (File f : answer.getFiles()) {
@@ -958,7 +943,7 @@ public class SurveyHelper {
 
 		//remove all answers for questions that were answered here
 		for (Answer answer : parsedAnswerSet.getAnswers()) {
-			List<Answer> oldAnswers = answerSet.getAnswers(answer.getQuestionId(),  answer.getQuestionUniqueId());
+			List<Answer> oldAnswers = answerSet.getAnswers(answer.getQuestionUniqueId());
 			for (Answer oldAnswer: oldAnswers) {
 				answerSet.getAnswers().remove(oldAnswer);
 			}
@@ -968,7 +953,7 @@ public class SurveyHelper {
 			if (question instanceof Matrix) {
 				Matrix parent = (Matrix) question;
 				for (Element childQuestion : parent.getQuestions()) {
-					List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+					List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getUniqueId());
 					for (Answer oldAnswer : oldAnswers) {
 						answerSet.getAnswers().remove(oldAnswer);
 					}
@@ -977,13 +962,13 @@ public class SurveyHelper {
 				RatingQuestion parent = (RatingQuestion) question;
 				for (Element childQuestion : parent.getQuestions())
 				{
-					List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+					List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getUniqueId());
 					for (Answer oldAnswer: oldAnswers) {
 						answerSet.getAnswers().remove(oldAnswer);
 					}
 				}
 			} else {
-				List<Answer> oldAnswers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+				List<Answer> oldAnswers = answerSet.getAnswers(question.getUniqueId());
 				for (Answer oldAnswer: oldAnswers) {
 					answerSet.getAnswers().remove(oldAnswer);
 				}
@@ -1071,7 +1056,7 @@ public class SurveyHelper {
 					java.io.File folder = fileService.getSurveyFilesFolder(answerSet.getSurvey().getUniqueId());
 					in = new FileInputStream(folder.getPath() + Constants.PATH_DELIMITER + file.getUid());
 
-					int questionId = answer.getQuestionId();
+					int questionId = 0;
 
 					if (answer.getQuestionUniqueId() != null && answer.getQuestionUniqueId().length() > 0
 							&& elementsByUniqueId.containsKey(answer.getQuestionUniqueId())) {
@@ -4899,13 +4884,15 @@ public class SurveyHelper {
 
 			Set<String> backdocstodelete = new HashSet<>();
 			changes = new HashMap<>();
-			for (String key : survey.getBackgroundDocuments().keySet()) {
-				String newkey = key + "#backgrounddocument";
+			for (String filename : survey.getBackgroundDocuments().keySet()) {
+				String url = survey.getBackgroundDocuments().get(filename);
+				String uid = BasicService.getFileUIDFromUrl(url);
+				String newkey = uid + "#backgrounddocument";
 
 				if (translationsByKey.get(newkey) != null && translationsByKey.get(newkey).getLabel().length() > 0
-						&& !translationsByKey.get(newkey).getLabel().equals(key)) {
-					changes.put(translationsByKey.get(newkey).getLabel(), survey.getBackgroundDocuments().get(key));
-					backdocstodelete.add(key);
+						&& !translationsByKey.get(newkey).getLabel().equals(filename)) {
+					changes.put(translationsByKey.get(newkey).getLabel(), url);
+					backdocstodelete.add(filename);
 				}
 			}
 			for (Entry<String, String> entry : changes.entrySet()) {
@@ -5374,22 +5361,18 @@ public class SurveyHelper {
 
 				Element question = null;
 
-				Map<Integer, Question> questionMap = survey.getQuestionMap();
+				Map<String, Question> questionMap = survey.getQuestionMapByUniqueId();
 
 				if (questionMap != null) {
-					question = questionMap.get(answer.getQuestionId());
+					question = questionMap.get(answer.getQuestionUniqueId());
 				}
 
 				if (question == null) {
-					question = survey.getMatrixMap().get(answer.getQuestionId());
+					question = survey.getMatrixMapByUid().get(answer.getQuestionUniqueId());
 				}
 
 				if (question == null) {
-					question = survey.getQuestionMapByUniqueId().get(answer.getQuestionUniqueId());
-				}
-
-				if (question == null) {
-					question = survey.getMissingElementsById().get(answer.getQuestionId());
+					question = survey.getMissingElementsByUniqueId().get(answer.getQuestionUniqueId());
 				}
 
 				if (question == null && answer.getQuestionUniqueId() != null
@@ -5397,7 +5380,7 @@ public class SurveyHelper {
 					question = survey.getMissingElementsByUniqueId().get(answer.getQuestionUniqueId());
 				}
 
-				if (question == null && answer.getPossibleAnswerId() > 0) {
+				if (question == null && answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0) {
 					int possibleAnswerId = Integer.parseInt(answerValue);
 					if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
 						return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitleNoEscape2();

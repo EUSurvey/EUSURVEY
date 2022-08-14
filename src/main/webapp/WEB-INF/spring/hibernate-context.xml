@@ -7,36 +7,37 @@
         xmlns:util="http://www.springframework.org/schema/util"
         xsi:schemaLocation="
    http://www.springframework.org/schema/beans 
-   http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+   http://www.springframework.org/schema/beans/spring-beans.xsd
    http://www.springframework.org/schema/tx 
-   http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+   http://www.springframework.org/schema/tx/spring-tx.xsd
    http://www.springframework.org/schema/context
-   http://www.springframework.org/schema/context/spring-context-3.2.xsd
-   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+   http://www.springframework.org/schema/context/spring-context.xsd
+   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
       ">
      
     <!-- Enable annotation style of managing transactions -->
- <tx:annotation-driven transaction-manager="transactionManager" /> 
-    
- <bean name="sessionFactory" id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+ <tx:annotation-driven transaction-manager="transactionManager" />
+
+ <bean name="sessionFactory" id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
      p:packagesToScan="com.ec.survey.model, com.ec.survey.model.survey, com.ec.survey.model.administration, com.ec.survey.service, com.ec.survey.tools">
      
     	<property name="dataSource" ref="dataSource" /> 
 		<property name="hibernateProperties"> 
 			<props> 
 			 	<prop key="hibernate.connection.driver_class">net.bull.javamelody.JdbcDriver</prop>
-   				<prop key="hibernate.connection.driver">com.mysql.jdbc.Driver</prop>
-   				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+   				<prop key="hibernate.connection.driver">com.mysql.cj.jdbc.Driver</prop>
+   				<prop key="hibernate.dialect">#{${mysql.majorversion} == 5 ? "org.hibernate.dialect.MySQL55Dialect" : "com.ec.survey.tools.CustomMySQL8Dialect"}</prop>
+				<prop key="hibernate.dialect.storage_engine">innodb</prop>
 				<prop key="hibernate.connection.url">${app.jdbc.url}</prop>
 				<prop key="hibernate.connection.username">${app.jdbc.username}</prop>
 				<prop key="hibernate.connection.password">${app.jdbc.password}</prop>
 				<prop key="hibernate.connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</prop>
-				<prop key="hibernate.cache.provider_class">org.hibernate.cache.ehcache.SingletonEhCacheProvider</prop>
+				<prop key="hibernate.javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</prop>
 				<prop key="hibernate.cache.use_query_cache">true</prop>
 				<prop key="hibernate.cache.use_structured_entries">true</prop>
 				<prop key="hibernate.cache.provider_configuration_file_resource_path">/ehcache.xml</prop>
 	    		<prop key="hibernate.cache.use_second_level_cache">true</prop>
-				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.JCacheRegionFactory</prop>
 				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
 				<prop key="hibernate.jdbc.batch_size">50</prop>
 			    <prop key="hibernate.hbm2ddl.auto">update</prop>
@@ -53,7 +54,8 @@
 			    <prop key="hibernate.c3p0.idle_test_period">100</prop>
 			    <prop key="hibernate.jdbc.factory_class">net.bull.javamelody.HibernateBatcherFactory</prop>
 			    <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
-			</props> 
+			    <prop key="hibernate.allow_update_outside_transaction">true</prop>
+			</props>
 		</property> 
      </bean>
   
@@ -67,28 +69,29 @@
 </bean>
    
  <!-- Declare a transaction manager-->
- <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+ <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager"
           p:sessionFactory-ref="sessionFactory" />
           
- <bean name="sessionFactoryReporting" id="sessionFactoryReporting" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+ <bean name="sessionFactoryReporting" id="sessionFactoryReporting" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
    p:packagesToScan="com.ec.survey.servicereporting">
    
  	<property name="dataSource" ref="dataSource2" /> 
 	<property name="hibernateProperties"> 
 		<props> 
 		 		<prop key="hibernate.connection.driver_class">net.bull.javamelody.JdbcDriver</prop>
-   				<prop key="hibernate.connection.driver">com.mysql.jdbc.Driver</prop>
-  				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+   				<prop key="hibernate.connection.driver">com.mysql.cj.jdbc.Driver</prop>
+  				<prop key="hibernate.dialect">#{${mysql.majorversion} == 5 ? "org.hibernate.dialect.MySQL55Dialect" : "com.ec.survey.tools.CustomMySQL8Dialect"}</prop>
+				<prop key="hibernate.dialect.storage_engine">innodb</prop>
 				<prop key="hibernate.connection.url">${app.jdbc.urlReporting}</prop>
 				<prop key="hibernate.connection.username">${app.jdbc.usernameReporting}</prop>
 				<prop key="hibernate.connection.password">${app.jdbc.passwordReporting}</prop>
 				<prop key="hibernate.connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</prop>
-				<prop key="hibernate.cache.provider_class">org.hibernate.cache.ehcache.SingletonEhCacheProvider</prop>
+				<prop key="hibernate.javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</prop>
 				<prop key="hibernate.cache.use_query_cache">false</prop>
 				<prop key="hibernate.cache.use_structured_entries">true</prop>
 				<prop key="hibernate.cache.provider_configuration_file_resource_path">/ehcache.xml</prop>
 	    		<prop key="hibernate.cache.use_second_level_cache">true</prop>
-				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.JCacheRegionFactory</prop>
 				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
 				<prop key="hibernate.jdbc.batch_size">50</prop>
 			    <prop key="hibernate.hbm2ddl.auto">none</prop>
@@ -104,7 +107,8 @@
 			    <prop key="hibernate.c3p0.idle_test_period">100</prop>
 				<prop key="hibernate.jdbc.factory_class">net.bull.javamelody.HibernateBatcherFactory</prop>
 			    <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
-			    <prop key="hibernate.c3p0.preferredTestQuery">${hibernate.c3p0.preferredTestQuery}</prop> 
+			    <prop key="hibernate.c3p0.preferredTestQuery">${hibernate.c3p0.preferredTestQuery}</prop>
+				<prop key="hibernate.allow_update_outside_transaction">true</prop>
 		</props> 
 	</property> 
 </bean>
@@ -116,7 +120,7 @@
 	<property name="password" value="${app.jdbc.usernameReporting}" />
 </bean>
 
- <bean id="transactionManagerReporting" class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+ <bean id="transactionManagerReporting" class="org.springframework.orm.hibernate5.HibernateTransactionManager"
          p:sessionFactory-ref="sessionFactoryReporting" />
  
 </beans>

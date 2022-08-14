@@ -795,8 +795,8 @@
 				} else if (type == 2)
 				{
 					myArray.sort(function (a, b) {
-					    a = parseInt($(a).attr("data-value"), 10);
-					    b = parseInt($(b).attr("data-value"), 10);
+					    a = parseFloat($(a).attr("data-value"));
+					    b = parseFloat($(b).attr("data-value"));
 					    if(a > b) {
 					        return -1;
 					    } else if(a < b) {

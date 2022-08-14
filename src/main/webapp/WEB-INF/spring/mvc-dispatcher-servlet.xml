@@ -7,27 +7,23 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:task="http://www.springframework.org/schema/task"
-       xmlns:encryption="http://www.jasypt.org/schema/encryption"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/mvc
-		http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/tx 
-  		http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+  		http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/task
-   		http://www.springframework.org/schema/task/spring-task-4.2.xsd
+   		http://www.springframework.org/schema/task/spring-task.xsd
    		http://www.springframework.org/schema/util
-   		http://www.springframework.org/schema/util/spring-util-4.2.xsd
+   		http://www.springframework.org/schema/util/spring-util.xsd
    		http://www.springframework.org/schema/aop 
-   		http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
-   		http://www.jasypt.org/schema/encryption
-        http://www.jasypt.org/schema/encryption/jasypt-spring31-encryption-1.xsd
+   		http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/context
-		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/context/spring-context.xsd
 		http://camel.apache.org/schema/spring
 		http://camel.apache.org/schema/spring/camel-spring.xsd">
-	
 	<context:annotation-config /> 
 
 	<context:component-scan base-package="com.ec.survey" />
@@ -44,22 +40,8 @@
 		<property name="limit" value="5"/>
 	</bean>
 
-
-	<bean id="propertyPlaceholderConfigurer" class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
-	  <constructor-arg ref="configurationEncryptor" />
+	<bean id="propertyPlaceholderConfigurer" class="com.ec.survey.replacements.DecryptingPropertyPlaceholderConfigurer">
 	  <property name="location" value="/WEB-INF/spring.properties" />
-	</bean>
-	
-	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
-	  <property name="config" ref="environmentVariablesConfiguration" />
-	</bean>
-
-	<bean id="environmentVariablesConfiguration"
-	      class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
-	  <property name="algorithm" value="PBEWITHSHA256AND256BITAES-CBC-BC" />
-	  <property name="passwordEnvName" value="CAS_PBE_PASSWORD" />
- 	  <property name="providerClassName" value="org.bouncycastle.jce.provider.BouncyCastleProvider"/>
-      <property name="providerName" value="BC"/>
 	</bean>
 
 	<bean id="systemPrereqs"
@@ -73,8 +55,6 @@
 	        </util:properties>
 	    </property>
 	</bean>
-
-	<encryption:encryptable-properties id="propertyConfigurer" encryptor="configurationEncryptor" /> 
       
 	<task:annotation-driven executor="executorWithPoolSizeRange" scheduler="taskScheduler"/>
 	

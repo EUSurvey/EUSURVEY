@@ -33,7 +33,7 @@ public class AnswerExplanation implements java.io.Serializable {
 
 	@Id
 	@Column(name = "ANSWER_EXPLANATION_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}
@@ -68,6 +68,9 @@ public class AnswerExplanation implements java.io.Serializable {
 	}
 
 	@OneToMany(targetEntity=File.class, cascade = CascadeType.ALL  )
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			inverseJoinColumns = @JoinColumn(name = "files_FILE_ID"),
+			joinColumns = @JoinColumn(name = "ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "name asc")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

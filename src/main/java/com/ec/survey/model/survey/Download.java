@@ -32,7 +32,10 @@ public class Download extends Question {
 		setShortname(shortname);
 	}
 	
-	@ManyToMany(targetEntity=File.class, cascade = CascadeType.ALL  )  
+	@ManyToMany(targetEntity=File.class, cascade = CascadeType.ALL  )
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			inverseJoinColumns = @JoinColumn(name = "files_FILE_ID"),
+			joinColumns = @JoinColumn(name = "ELEMENTS_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "position asc")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

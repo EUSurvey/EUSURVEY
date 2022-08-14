@@ -16,7 +16,7 @@ src/test/resources/META-INF/context.xml
 src/test/resources/log4j.xml
 src/test/resources/WEB-INF/spring.properties
 src/main/webapp/WEB-INF/views/version.txt
-src/main/webapp/WEB-INF/views/versionfooter.txt
+#src/main/webapp/WEB-INF/views/versionfooter.txt
 
 
 #### VS CODE ###

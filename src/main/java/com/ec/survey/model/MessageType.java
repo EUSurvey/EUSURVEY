@@ -1,10 +1,6 @@
 package com.ec.survey.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "MESSAGE_TYPES")
@@ -19,7 +15,7 @@ public class MessageType{
 	
 	@Id
 	@Column(name = "MT_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

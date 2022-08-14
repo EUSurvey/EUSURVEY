@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.persistence.PersistenceException;
 import javax.servlet.ServletContext;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -332,7 +333,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE SETTINGS MODIFY SETTINGS.SETTINGS_VALUE TEXT");
+		SQLQuery query = session.createSQLQuery("ALTER TABLE SETTINGS MODIFY SETTINGS_VALUE TEXT");
 		query.executeUpdate();
 
 		String newReportText = "<p>The following survey:<br />" + "<table>"
@@ -946,7 +947,12 @@ public class SchemaService extends BasicService {
 			final String dropcolumn = "ALTER TABLE ARCHIVE DROP COLUMN ACTIVITY_ERROR, DROP COLUMN ACTIVITY_FINISHED, DROP COLUMN ACTIVITY_SLANGS, DROP COLUMN ACTIVITY_SOWNER, DROP COLUMN ACTIVITY_SREPLIES, DROP COLUMN ACTIVITY_SSHORTNAME, DROP COLUMN ACTIVITY_STITLE, DROP COLUMN ACTIVITY_SUID, DROP COLUMN ACTIVITY_USER;";
 
 			session.doWork(con -> con.createStatement().execute(dropcolumn));
-		} catch (SQLGrammarException se) {
+		} catch (SQLGrammarException e) {
+			// Hibernate 4
+			// this means the wrong columns do not exist (probably because it's a new
+			// database)
+		} catch (PersistenceException e) {
+			// Hibernate 5
 			// this means the wrong columns do not exist (probably because it's a new
 			// database)
 		}
@@ -1223,24 +1229,7 @@ public class SchemaService extends BasicService {
 		status.setUpdateDate(new Date());
 		session.saveOrUpdate(status);
 	}
-
-	@Transactional
-	public void step48() {
-		Session session = sessionFactory.getCurrentSession();
-		Status status = getStatus();
-
-		SQLQuery query = session.createSQLQuery(
-				"update ANSWERS a join ELEMENTS e on e.ID = a.QUESTION_ID set a.QUESTION_UID = e.ELEM_UID where a.QUESTION_UID is null and e.ELEM_UID is not null");
-		query.executeUpdate();
-		query = session.createSQLQuery(
-				"update ANSWERS a join ELEMENTS e on e.ID = a.PA_ID set a.PA_UID = e.ELEM_UID where a.PA_UID is null and e.ELEM_UID is not null");
-		query.executeUpdate();
-
-		status.setDbversion(48);
-		status.setUpdateDate(new Date());
-		session.saveOrUpdate(status);
-	}
-
+	
 	@Transactional
 	public void step47() {
 		Session session = sessionFactory.getCurrentSession();
@@ -1613,7 +1602,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ATTRIBUTE MODIFY ATTRIBUTE.ATTRIBUTE_VALUE LONGTEXT");
+		SQLQuery query = session.createSQLQuery("ALTER TABLE ATTRIBUTE MODIFY ATTRIBUTE_VALUE LONGTEXT");
 		query.executeUpdate();
 
 		// create indexes
@@ -1763,7 +1752,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		final String index = "create index idx_quid_v_d on ANSWERS(QUESTION_UID, VALUE(10), ANSWER_ISDRAFT);";
+		final String index = "create index idx_quid_v_d on ANSWERS(QUESTION_UID, VALUE(10));";
 		session.doWork(con -> con.createStatement().execute(index));
 
 		status.setDbversion(25);
@@ -1836,17 +1825,18 @@ public class SchemaService extends BasicService {
 		session.saveOrUpdate(status);
 	}
 
+	/* Redundant
 	@Transactional
 	public void step22() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		final String index = "create index idx_q_v_d on ANSWERS(QUESTION_ID, VALUE(10), ANSWER_ISDRAFT);";
+		final String index = "create index idx_q_v_d on ANSWERS(QUESTION_ID, VALUE(10));";
 		session.doWork(con -> con.createStatement().execute(index));
 
 		status.setDbversion(22);
 		session.saveOrUpdate(status);
-	}
+	} */
 
 	@Transactional
 	public void step21() {
@@ -1917,24 +1907,7 @@ public class SchemaService extends BasicService {
 		status.setDbversion(19);
 		session.saveOrUpdate(status);
 	}
-
-	@Transactional
-	public void step18() {
-		Session session = sessionFactory.getCurrentSession();
-		Status status = getStatus();
-
-		final String index1 = "ALTER TABLE ANSWERS ADD INDEX PA_UID_IDX (PA_UID ASC, PA_ID ASC, AS_ID ASC);";
-		final String index2 = "ALTER TABLE ANSWERS ADD INDEX Q_UID_IDX (QUESTION_UID ASC, QUESTION_ID ASC, AS_ID ASC);";
-
-		session.doWork(con -> {
-			con.createStatement().execute(index1);
-			con.createStatement().execute(index2);
-		});
-
-		status.setDbversion(18);
-		session.saveOrUpdate(status);
-	}
-
+	
 	@Transactional
 	public void step17() {
 		Session session = sessionFactory.getCurrentSession();
@@ -2031,10 +2004,10 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE PARTICIPANTS MODIFY PARTICIPANTS.TEMPL1 LONGTEXT");
+		SQLQuery query = session.createSQLQuery("ALTER TABLE PARTICIPANTS MODIFY TEMPL1 LONGTEXT");
 		query.executeUpdate();
 
-		query = session.createSQLQuery("ALTER TABLE PARTICIPANTS MODIFY PARTICIPANTS.TEMPL2 LONGTEXT");
+		query = session.createSQLQuery("ALTER TABLE PARTICIPANTS MODIFY TEMPL2 LONGTEXT");
 		query.executeUpdate();
 
 		status.setDbversion(8);
@@ -2058,7 +2031,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ELEMENTS MODIFY ELEMENTS.QHELP LONGTEXT");
+		SQLQuery query = session.createSQLQuery("ALTER TABLE ELEMENTS MODIFY QHELP LONGTEXT");
 		query.executeUpdate();
 
 		status.setDbversion(6);
@@ -2082,7 +2055,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ANSWERS MODIFY ANSWERS.VALUE LONGTEXT");
+		SQLQuery query = session.createSQLQuery("ALTER TABLE ANSWERS MODIFY VALUE LONGTEXT");
 		query.executeUpdate();
 
 		query = session.createSQLQuery("ALTER TABLE SURACCESS MODIFY ACCESS_DEPARTMENT VARCHAR(255)");
@@ -2348,6 +2321,11 @@ public class SchemaService extends BasicService {
 			SQLQuery query = session.createSQLQuery(sqlQueryString);
 			query.executeUpdate();
 		} catch (SQLGrammarException e) {
+			// Hibernate 4
+			logger.error(e);
+			// can happen if constraint already exists
+		} catch (PersistenceException e) {
+			// Hibernate 5
 			logger.error(e);
 			// can happen if constraint already exists
 		}

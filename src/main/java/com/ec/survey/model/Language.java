@@ -30,7 +30,7 @@ public class Language implements java.io.Serializable {
 	
 	@Id
 	@Column(name = "LANGUAGE_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

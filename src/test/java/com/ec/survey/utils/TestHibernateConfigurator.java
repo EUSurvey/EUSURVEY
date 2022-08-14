@@ -2,14 +2,13 @@ package com.ec.survey.utils;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
 
 import java.net.URL;
 import java.net.URLClassLoader;
 
-@SuppressWarnings("deprecation")
 public final class TestHibernateConfigurator {
 	
 	private static SessionFactory sessionFactory; 
@@ -32,8 +31,8 @@ public final class TestHibernateConfigurator {
 		Configuration config = new Configuration();
 		
 		config.configure(HibConfig);		
-		ServiceRegistry sr= new ServiceRegistryBuilder().applySettings(
-				config.getProperties()).buildServiceRegistry();
+		ServiceRegistry sr= new StandardServiceRegistryBuilder().applySettings(
+				config.getProperties()).build();
 				
 		sessionFactory = config.buildSessionFactory(sr);		
 	}

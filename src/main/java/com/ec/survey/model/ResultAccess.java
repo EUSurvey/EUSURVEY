@@ -36,7 +36,7 @@ public class ResultAccess {
 
 	@Id
 	@Column(name = "RESACC_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

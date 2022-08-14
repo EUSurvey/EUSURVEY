@@ -63,7 +63,7 @@ public class Setting {
 	
 	@Id
 	@Column(name = "SETTINGS_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}

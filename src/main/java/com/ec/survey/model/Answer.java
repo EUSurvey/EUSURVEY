@@ -19,7 +19,7 @@ import java.util.Map;
  * an AnswerSet
  */
 @Entity
-@Table(name = "ANSWERS", indexes = {@Index(name = "PA_ID_IDX", columnList = "PA_ID")})
+@Table(name = "ANSWERS", indexes = {@Index(name = "PA_UID_IDX", columnList = "PA_UID, AS_ID ASC"), @Index(name = "Q_UID_IDX", columnList = "QUESTION_UID, AS_ID ASC")})
 public class Answer implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class Answer implements java.io.Serializable {
 	
 	@Id
 	@Column(name = "ANSWER_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}
@@ -75,12 +75,13 @@ public class Answer implements java.io.Serializable {
 		this.questionUniqueId = questionUniqueId;
 	}
 
-	@Column(name = "QUESTION_ID")
+	//this property is not used anymore but we keep it in order not to break the import/export feature (backwards compatibility)
+	@Transient
 	public Integer getQuestionId() {
 		return questionId;
 	}
 	public void setQuestionId(Integer questionId) {
-		this.questionId = questionId;
+		this.questionId = questionId != null ? questionId : 0;
 	}
 	
 	@Column(name = "PA_UID")
@@ -91,20 +92,22 @@ public class Answer implements java.io.Serializable {
 		this.possibleAnswerUniqueId = possibleAnswerUniqueId;
 	}
 	
-	@Column(name = "PA_ID")
+	//this property is not used anymore but we keep it in order not to break the import/export feature (backwards compatibility)
+	@Transient
 	public Integer getPossibleAnswerId() {
 		return possibleAnswerId;
 	}
-	public void setPossibleAnswerId(Integer possibleAnswerId) {
-		this.possibleAnswerId = possibleAnswerId;
+	public void setPossibleAnswerIdWeg(Integer possibleAnswerId) {
+		this.possibleAnswerId = possibleAnswerId != null ?  possibleAnswerId : 0;
 	}
 	
-	@Column(name = "SOURCE_QUESTION_ID")
+	//this property is not used anymore but we keep it in order not to break the import/export feature (backwards compatibility)
+	@Transient
 	public Integer getSourceQuestionId() {
 		return sourceQuestionId;
 	}
 	public void setSourceQuestionId(Integer sourceQuestionId) {
-		this.sourceQuestionId = sourceQuestionId;
+		this.sourceQuestionId = sourceQuestionId != null ?  sourceQuestionId : 0;
 	}
 	
 	@Transient
@@ -122,7 +125,10 @@ public class Answer implements java.io.Serializable {
 	public AnswerSet getAnswerSet() {return answerSet;}  
 	public void setAnswerSet(AnswerSet s) {this.answerSet = s;}  
 
-	@OneToMany(targetEntity=File.class, cascade = CascadeType.ALL  )  
+	@OneToMany(targetEntity=File.class, cascade = CascadeType.ALL  )
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			inverseJoinColumns = @JoinColumn(name = "files_FILE_ID"),
+			joinColumns = @JoinColumn(name = "ANSWERS_ANSWER_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "name asc")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -138,7 +144,7 @@ public class Answer implements java.io.Serializable {
 		return row;
 	}
 	public void setRow(Integer row) {
-		this.row = row;
+		this.row = row != null ? row : 0;
 	}
 
 	@Column(name = "ANSWER_COL")
@@ -146,10 +152,11 @@ public class Answer implements java.io.Serializable {
 		return column;
 	}
 	public void setColumn(Integer column) {
-		this.column = column;
+		this.column = column != null ? column : 0;
 	}
 
-	@Column(name = "ANSWER_ISDRAFT")
+	//this property is not used anymore but we keep it in order not to break the import/export feature (backwards compatibility)
+	@Transient
 	public Boolean getIsDraft() {
 		return isDraft;
 	}
@@ -161,9 +168,7 @@ public class Answer implements java.io.Serializable {
 		Answer bn = new Answer();
 		bn.answerSet = b;
 		bn.setColumn(getColumn());
-		bn.setPossibleAnswerId(getPossibleAnswerId());
 		bn.possibleAnswerUniqueId = possibleAnswerUniqueId;
-		bn.setQuestionId(getQuestionId());
 		bn.questionUniqueId = questionUniqueId;
 		bn.setRow(getRow());
 		bn.setSourceQuestionId(getSourceQuestionId());

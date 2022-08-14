@@ -26,7 +26,7 @@
 									<th><spring:message code="label.Name" /></th>
 									<th><spring:message code="label.Email" /></th>
 									<c:forEach items="${attributeNames}" var="attributeName">
-										<th class="attribute" data-id="<esapi:encodeForHTMLAttribute>${attributeName.id}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${attributeName.name}</esapi:encodeForHTML></th>
+										<th class="attribute" data-id="<esapi:encodeForHTMLAttribute>${"Owner".equals(attributeName.name) ? "owner" : attributeName.id}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${attributeName.name}</esapi:encodeForHTML></th>
 									</c:forEach>
 								</tr>
 								<tr class="table-styled-filter">
@@ -39,7 +39,7 @@
 									</th>
 									<c:forEach items="${attributeNames}" var="attributeName" varStatus="rowCounter">
 										<th class="attributefilter filtercell">
-											<input  onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" class="filter" type="text" name="<esapi:encodeForHTMLAttribute>${attributeName.id}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${filter[attributeName.id.toString()]}</esapi:encodeForHTMLAttribute>" style="margin:0px;" />
+											<input  onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" class="filter" type="text" name="<esapi:encodeForHTMLAttribute>${"Owner".equals(attributeName.name) ? "owner" : attributeName.id}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${filter[attributeName.id.toString()]}</esapi:encodeForHTMLAttribute>" style="margin:0px;" />
 										</th>
 									</c:forEach>
 								</tr>

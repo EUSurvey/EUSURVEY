@@ -644,7 +644,7 @@
 							
 							<div class="uploaded-files">										
 								<c:if test="${form.answerSets.size() > 0}">
-									<c:set var="answers" value="${form.answerSets[0].getAnswers(element.id, element.uniqueId)}" />
+									<c:set var="answers" value="${form.answerSets[0].getAnswers(element.uniqueId)}" />
 									<c:if test="${answers.size() > 0}">												
 										<c:forEach items="${answers}" var="answer">	
 											<c:forEach items="${answer.files}" var="file" varStatus="rowCounter">		

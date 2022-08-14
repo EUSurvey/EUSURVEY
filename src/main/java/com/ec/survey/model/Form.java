@@ -185,14 +185,10 @@ public class Form {
 
 		try {
 
-			Element question = survey.getQuestionMap().get(answer.getQuestionId());
+			Element question = survey.getQuestionMapByUniqueId().get(answer.getQuestionUniqueId());
 
 			if (question == null) {
-				question = survey.getMatrixMap().get(answer.getQuestionId());
-			}
-
-			if (question == null) {
-				question = survey.getQuestionMapByUniqueId().get(answer.getQuestionUniqueId());
+				question = survey.getMatrixMapByUid().get(answer.getQuestionUniqueId());
 			}
 
 			if (question instanceof FreeTextQuestion) {
@@ -324,7 +320,7 @@ public class Form {
 
 	public int getRatingValue(Element question) {
 		if (!answerSets.isEmpty()) {
-			List<Answer> answers = answerSets.get(0).getAnswers(question.getId(), question.getUniqueId());
+			List<Answer> answers = answerSets.get(0).getAnswers(question.getUniqueId());
 			if (!answers.isEmpty()) {
 				String result = answers.get(0).getValue();
 				result = result.substring(0, result.indexOf('/'));
@@ -337,7 +333,7 @@ public class Form {
 
 	public String getValue(Element question) {
 		if (!answerSets.isEmpty()) {
-			List<Answer> answers = answerSets.get(0).getAnswers(question.getId(), question.getUniqueId());
+			List<Answer> answers = answerSets.get(0).getAnswers(question.getUniqueId());
 			if (!answers.isEmpty()) {
 
 				String result = answers.get(0).getValue();
@@ -398,7 +394,7 @@ public class Form {
 
 	public List<String> getValues(Element question) {
 		if (!answerSets.isEmpty()) {
-			List<Answer> answers = answerSets.get(0).getAnswers(question.getId(), question.getUniqueId());
+			List<Answer> answers = answerSets.get(0).getAnswers(question.getUniqueId());
 			List<String> result = new ArrayList<>();
 			for (Answer answer : answers) {
 				result.add(answer.getValue());
@@ -498,7 +494,7 @@ public class Form {
 			title = "";
 
 		if (question instanceof Confirmation) {
-			if (!answerSets.isEmpty() && !answerSets.get(0).getAnswers(question.getId()).isEmpty()) {
+			if (!answerSets.isEmpty() && !answerSets.get(0).getAnswers(question.getUniqueId()).isEmpty()) {
 				if (forPDF) {
 					titlePrefix.append("<img align='middle' style='margin-right: 7px;' src='").append(contextpath)
 							.append("/resources/images/checkboxchecked.png' />");
@@ -887,7 +883,7 @@ public class Form {
 	 */
 	private String getQuestionResult(Element e, Boolean isMatrix) {
 
-		List<Answer> as = getAnswerSets().get(0).getAnswers(e.getId(), e.getUniqueId());
+		List<Answer> as = getAnswerSets().get(0).getAnswers(e.getUniqueId());
 		String result = "";
 
 		switch(e.getType()){

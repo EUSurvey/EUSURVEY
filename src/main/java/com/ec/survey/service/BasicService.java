@@ -197,7 +197,7 @@ public class BasicService implements BeanFactoryAware {
 		return fileDir;
 	}	
 
-	public String getFileUIDFromUrl(String url)
+	public static String getFileUIDFromUrl(String url)
 	{
 		return url.substring(url.lastIndexOf('/')+1);
 	}

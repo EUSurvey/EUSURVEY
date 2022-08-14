@@ -3457,7 +3457,7 @@
 				enquêtes.
 			</p>
 			<h1>
-				Protection de la vie privée
+				Accord de traitement des données et protection de la vie privée
 			</h1>
 			<h2>
 				Ce système utilise des cookies. Quelles informations y sont enregistrées?
@@ -3642,6 +3642,18 @@
 						enquêtes et les consultations»
 					</a>
 				</u>
+			</p>
+			<h2>
+				Nous avons besoin d'un accord de traitement des données, où se trouve le DPA de EUSurvey ?
+			</h2>
+			<p>
+				L’accord de traitement des données EUSurvey (DPA) est disponible pour toutes les entités qui sont
+				considérées comme des contrôleurs de données lorsque nous traitons vos données par le biais de la
+				plate-forme EUSurvey. Le DPA EUSurvey est disponible <a href = "${contextpath}/home/dpa">ici</a>.
+			</p>
+			<p>
+				Si vous avez des questions, n'hésitez pas à
+				<a href="${contextpath}/home/support?dataprotection=1">nous contacter</a>.
 			</p>
 
 		</div>

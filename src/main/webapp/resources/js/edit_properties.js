@@ -507,7 +507,7 @@ var ElementProperties = function() {
 				}
 			} else if ($(e).hasClass("rankingitemtext"))
 			{
-				_actions.DeleteEnabled(false);
+				_actions.DeleteEnabled(true);
 
 				var id = $(e).attr("data-id");
 				var text = $("textarea[name^='rankingitemtitle'][data-id='" + id + "']")
@@ -535,9 +535,12 @@ var ElementProperties = function() {
 				{
 					$("#lockedElementInfo").show();
 				} else {
-				
-					var cell = $(e).closest("td").prev();
-					_actions.DeleteEnabled(false);
+
+					if (parent != null && (parent.type === "MultipleChoiceQuestion" || parent.type === "SingleChoiceQuestion")){
+						_actions.DeleteEnabled(true)
+					} else {
+						_actions.DeleteEnabled(false);
+					}
 					
 					var id = $(e).attr("data-id");
 					var text = $("textarea[name^='answer'][data-id='" + id + "']").first().text();
@@ -1037,7 +1040,7 @@ var ElementProperties = function() {
 					$("#lockedElementInfo").show();
 				} else {
 				
-					_actions.DeleteEnabled(false);
+					_actions.DeleteEnabled(true);
 					
 					var id = $(e).attr("data-id");
 					var text = $("textarea[name^='question'][data-id='" + id + "']").first().text();

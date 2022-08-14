@@ -53,7 +53,7 @@ public class QuizHelper {
 				Question question = (Question)element;
 				if (question.getScoring() == 0) continue;
 				
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 				
 				if (question.getScoring() == 1) //global points
 				{

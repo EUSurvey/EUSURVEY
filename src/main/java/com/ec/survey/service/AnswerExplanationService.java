@@ -220,7 +220,7 @@ public class AnswerExplanationService extends BasicService {
 		String contributionsQueryText = "" + "SELECT\n" + "    aset.ANSWER_SET_ID answerSetId,\n"
 				+ "    aset.UNIQUECODE answerSetUniqueCode,\n" + "    aset.ANSWER_SET_UPDATE `update`,\n"
 				+ "    a.VALUE value,\n" + "    a.PA_UID answerUid,\n" + "    a.QUESTION_UID questionUid,\n"
-				+ "    a.ANSWER_COL `column`,\n" + "    a.ANSWER_ROW row,\n"
+				+ "    a.ANSWER_COL `column`,\n" + "    a.ANSWER_ROW `row`,\n"
 				+ "    COALESCE(ex.TEXT, main_explanation.TEXT) explanation\n" + "FROM ANSWERS a\n" + "JOIN (\n" +
 				// select all answers sets that are relevant for this query
 				"    SELECT\n" + "        aset.ANSWER_SET_ID,\n" + "        aset.UNIQUECODE,\n"
@@ -241,7 +241,7 @@ public class AnswerExplanationService extends BasicService {
 				// filter by question
 				"WHERE a.QUESTION_UID IN :questionUids\n" +
 				// sort data as required
-				"ORDER BY " + orderByClauseOuter + ", row, `column`";
+				"ORDER BY " + orderByClauseOuter + ", `row`, `column`";
 
 		Session session = sessionFactory.getCurrentSession();
 		SQLQuery contributionsQuery = session.createSQLQuery(contributionsQueryText);
@@ -310,7 +310,7 @@ public class AnswerExplanationService extends BasicService {
 					RatingQuestion rating = (RatingQuestion) question;
 					answers = answerSet.getRatingAnswers(rating);
 				} else {
-					answers = answerSet.getAnswers(question.getId(), questionUid);
+					answers = answerSet.getAnswers(questionUid);
 				}
 
 				AnswerExplanation explanation;
@@ -432,7 +432,7 @@ public class AnswerExplanationService extends BasicService {
 						continue;
 					}
 				} else {
-					if (!answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty()) {
+					if (!answerSet.getAnswers(question.getUniqueId()).isEmpty()) {
 						continue;
 					}
 				}

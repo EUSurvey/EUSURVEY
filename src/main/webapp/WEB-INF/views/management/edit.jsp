@@ -334,7 +334,7 @@
 		</div>
 	</div>
 	
-	<form:form id="frmEdit" method="POST" action="edit" commandName="survey" modelAttribute="form">
+	<form:form id="frmEdit" method="POST" action="edit" modelAttribute="form">
 		<input type="hidden" name="elements" id="elements" value="" />
 		<input type="hidden" name="editorredirect" id="editorredirect" value="" />
 		<input type="hidden" id="sectionNumbering" value="${form.survey.sectionNumbering}" />

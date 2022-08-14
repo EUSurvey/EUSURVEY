@@ -367,7 +367,7 @@ public class ECFService extends BasicService {
 
 			// Pass through his answers
 			for (Question question : ecfQuestions) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 				if (answers.size() == 0)
 					continue;
 				Answer answer = answers.get(0);
@@ -447,7 +447,7 @@ public class ECFService extends BasicService {
 
 			// Pass through his answers
 			for (Question question : ecfQuestions) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 				if (answers.size() == 0)
 					continue;
 				Answer answer = answers.get(0);
@@ -748,7 +748,7 @@ public class ECFService extends BasicService {
 		for (Element element : survey.getElements()) {
 			if (element instanceof Question) {
 				Question question = (Question) element;
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 
 				if (question instanceof SingleChoiceQuestion) {
 					if (answers.size() == 0)

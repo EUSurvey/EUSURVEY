@@ -675,7 +675,32 @@ var Actions = function() {
     			var position = $(this).index();
     			idsandpositions = idsandpositions + uid + "|" + position + ";";
     			ids[ids.length] = uid;
-    		} else {    			    		
+    		} else if ($(this).hasClass("answertext")){
+    			let parentElement = $(this).closest(".survey-element")
+				let parent = _elements[parentElement.attr("data-id")];
+
+				if (parent != null){
+					removeSpecificPossibleAnswer(parent, parentElement, $(this).attr("data-id"), noundo)
+					noundo = true // It uses a custom undo step
+				}
+
+			} else if ($(this).hasClass("rankingitemtext")){
+				let parentElement = $(this).closest(".survey-element")
+				let parent = _elements[parentElement.attr("data-id")];
+
+				if (parent != null){
+					removeSpecificRankingEntry(parent, parentElement, $(this).attr("data-id"), noundo)
+					noundo = true // It uses a custom undo step
+				}
+			} else if ($(this).hasClass("ratingquestion")){
+				let parentElement = $(this).closest(".survey-element")
+				let parent = _elements[parentElement.attr("data-id")];
+
+				if (parent != null){
+					removeSpecificRating(parent, parentElement, $(this).attr("data-id"), noundo)
+					noundo = true // It uses a custom undo step
+				}
+			} else {
     			if ($(this).hasClass("matrixitem"))
     			{
     				$(this).find(".trigger").each(function(){

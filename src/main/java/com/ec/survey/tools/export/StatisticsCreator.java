@@ -1,5 +1,6 @@
 package com.ec.survey.tools.export;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.ResultFilter;
@@ -525,9 +526,9 @@ public class StatisticsCreator implements Runnable {
 
 	private void addMainAnswers4Statistics(Question q, Map<Integer, Integer> map,
 			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<String, Integer>> mapGallery,
-			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> counts,
+			Map<Integer, Map<Integer, Integer>> mapRatingQuestion,
 			Map<String, Integer> countsUID, Map<String, Integer> gallerycounts,
-			Map<String, Set<Integer>> answerSetQuestion, Map<String, Integer> matrixcounts,
+			Map<String, Set<Integer>> answerSetQuestion,
 			Map<String, Integer> matrixcountsUID, Map<String, Integer> ratingquestioncounts,
 			Map<String, Integer> ratingquestioncountsUID, Map<String, Integer> mapNumberQuestion, Map<String, Map<Integer, Integer>> mapRankingQuestion, Map<String, List<String>> rankingQuestionAnswers) {
 		if (q instanceof ChoiceQuestion) {
@@ -535,8 +536,6 @@ public class StatisticsCreator implements Runnable {
 			for (PossibleAnswer a : choice.getAllPossibleAnswers()) {
 				if (countsUID.containsKey(a.getUniqueId() + "#" + q.getUniqueId())) {
 					map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + q.getUniqueId()));
-				} else {
-					map.put(a.getId(), counts.getOrDefault(a.getId().toString(), 0));
 				}
 			}
 			map.put(q.getId(),
@@ -569,10 +568,6 @@ public class StatisticsCreator implements Runnable {
 						mapMatrix.put(matrixQuestion.getId(), new HashMap<>());
 					if (matrixcountsUID.containsKey(key)) {
 						mapMatrix.get(matrixQuestion.getId()).put(matrixAnswer.getId(), matrixcountsUID.get(key));
-					} else {
-						key = matrixAnswer.getId() + "#" + matrixQuestion.getId();
-						mapMatrix.get(matrixQuestion.getId()).put(matrixAnswer.getId(),
-								matrixcounts.getOrDefault(key, 0));
 					}
 				}
 				map.put(matrixQuestion.getId(),
@@ -636,8 +631,6 @@ public class StatisticsCreator implements Runnable {
 					for (PossibleAnswer a : child.getPossibleAnswers()) {
 						if (countsUID.containsKey(a.getUniqueId() + "#" + child.getUniqueId())) {
 							map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + child.getUniqueId()));
-						} else {
-							map.put(a.getId(), counts.getOrDefault(a.getId().toString(), 0));
 						}
 					}
 				}
@@ -652,8 +645,6 @@ public class StatisticsCreator implements Runnable {
 				for (PossibleAnswer a : child.getPossibleAnswers()) {
 					if (countsUID.containsKey(a.getUniqueId() + "#" + q.getUniqueId())) {
 						map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + q.getUniqueId()));
-					} else {
-						map.put(a.getId(), counts.getOrDefault(a.getId().toString(), 0));
 					}
 				}
 			}
@@ -666,16 +657,14 @@ public class StatisticsCreator implements Runnable {
 	private void parseAnswers4Statistics(ScrollableResults results, Set<Integer> resultSets, boolean quiz,
 			Set<String> multipleChoiceQuestionUids,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
-			Map<String, Set<Integer>> answerSetQuestion, Map<String, Integer> counts, Map<String, Integer> countsUID, Map<String, Integer> matrixcounts, Map<String, Integer> matrixcountsUID,
-			Map<String, Integer> ratingquestioncounts, Map<String, Integer> ratingquestioncountsUID, Map<String, Integer> gallerycounts, Map<Integer, String> uniqueIdsById, Set<String> numberQuestionUids, Map<String, Integer> mapNumberQuestion, Map<String, List<String>> rankingQuestionAnswers) {
+			Map<String, Set<Integer>> answerSetQuestion, Map<String, Integer> countsUID, Map<String, Integer> matrixcountsUID,
+			Map<String, Integer> ratingquestioncountsUID, Map<String, Integer> gallerycounts, Map<Integer, String> uniqueIdsById, Set<String> numberQuestionUids, Map<String, Integer> mapNumberQuestion, Map<String, List<String>> rankingQuestionAnswers) {
 		Object[] a = results.get();
 
-		Integer paid = ConversionTools.getValue(a[0]);
-		String pauid = (String) a[1];
-		Integer qid = ConversionTools.getValue(a[2]);
-		String quid = (String) a[3];
-		String value = (String) a[4];
-		Integer asId = ConversionTools.getValue(a[5]);
+		String pauid = (String) a[0];
+		String quid = (String) a[1];
+		String value = (String) a[2];
+		Integer asId = ConversionTools.getValue(a[3]);
 
 		if (!resultSets.contains(asId)) {
 			resultSets.add(asId);
@@ -703,23 +692,15 @@ public class StatisticsCreator implements Runnable {
 				answerSetQuestion.get(quid).add(asId);
 			}
 
-			// scan
-			String key = paid.toString() + "#" + qid.toString();
-			if (matrixcounts.containsKey(key)) {
-				matrixcounts.put(key, matrixcounts.get(key) + 1);
-			} else {
-				matrixcounts.put(key, 1);
-			}
-
 			if (value.indexOf('/') > 0) {
-				String key2 = value.substring(0, value.indexOf('/')) + "%" + qid.toString();
-				if (ratingquestioncounts.containsKey(key2)) {
-					ratingquestioncounts.put(key2, ratingquestioncounts.get(key2) + 1);
-				} else {
-					ratingquestioncounts.put(key2, 1);
-				}
+//				String key2 = value.substring(0, value.indexOf('/')) + "%" + qid.toString();
+//				if (ratingquestioncounts.containsKey(key2)) {
+//					ratingquestioncounts.put(key2, ratingquestioncounts.get(key2) + 1);
+//				} else {
+//					ratingquestioncounts.put(key2, 1);
+//				}
 
-				key2 = value.substring(0, value.indexOf('/')) + "%" + quid;
+				String key2 = value.substring(0, value.indexOf('/')) + "%" + quid;
 				if (ratingquestioncountsUID.containsKey(key2)) {
 					ratingquestioncountsUID.put(key2, ratingquestioncountsUID.get(key2) + 1);
 				} else {
@@ -727,36 +708,36 @@ public class StatisticsCreator implements Runnable {
 				}
 			}
 
-			key = paid.toString();
-			if (paid != 0) {
-				if (counts.containsKey(key)) {
-					counts.put(key, counts.get(key) + 1);
-				} else {
-					counts.put(key, 1);
-				}
-			} else {
-				if (pauid == null && value != null && org.apache.commons.lang3.StringUtils.isNumeric(value)) {
-					//gallery				
-					//"old" style
-					String galleryKey = qid.toString() + "-" + value;
-					if (gallerycounts.containsKey(galleryKey)) {
-						gallerycounts.put(galleryKey, gallerycounts.get(galleryKey) + 1);
-					} else {
-						gallerycounts.put(galleryKey, 1);
-					}
-				}
-			}
+//			key = paid.toString();
+//			if (paid != 0) {
+//				if (counts.containsKey(key)) {
+//					counts.put(key, counts.get(key) + 1);
+//				} else {
+//					counts.put(key, 1);
+//				}
+//			} else {
+//				if (pauid == null && value != null && org.apache.commons.lang3.StringUtils.isNumeric(value)) {
+//					//gallery				
+//					//"old" style
+//					String galleryKey = qid.toString() + "-" + value;
+//					if (gallerycounts.containsKey(galleryKey)) {
+//						gallerycounts.put(galleryKey, gallerycounts.get(galleryKey) + 1);
+//					} else {
+//						gallerycounts.put(galleryKey, 1);
+//					}
+//				}
+//			}
 
-			if (uniqueIdsById.containsKey(paid)) {
-				pauid = uniqueIdsById.get(paid);
-			}
+//			if (uniqueIdsById.containsKey(paid)) {
+//				pauid = uniqueIdsById.get(paid);
+//			}
 
-			if (uniqueIdsById.containsKey(qid)) {
-				quid = uniqueIdsById.get(qid);
-			}
+//			if (uniqueIdsById.containsKey(qid)) {
+//				quid = uniqueIdsById.get(qid);
+//			}
 
 			if (pauid != null) {
-				key = pauid + "#" + quid;
+				String key = pauid + "#" + quid;
 				if (countsUID.containsKey(key)) {
 					countsUID.put(key, countsUID.get(key) + 1);
 				} else {
@@ -782,7 +763,7 @@ public class StatisticsCreator implements Runnable {
 			}
 			
 			if (numberQuestionUids.contains(quid)) {
-				key = quid + Double.valueOf(value).intValue();
+				String key = quid + Double.valueOf(value).intValue();
 				if (mapNumberQuestion.containsKey(key)) {
 					mapNumberQuestion.put(key, mapNumberQuestion.get(key) + 1);
 				} else {
@@ -797,13 +778,13 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	@Transactional
-	public NumberQuestionStatistics getAnswers4NumberQuestionStatistics(Survey survey, Question question) throws TooManyFiltersException {
+	public NumberQuestionStatistics getAnswers4NumberQuestionStatistics(Survey survey, Question question) throws TooManyFiltersException, MessageException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		NumberQuestionStatistics numberQuestionStats = new NumberQuestionStatistics();
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
-		String sql = "SELECT a.VALUE, a.QUESTION_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+		String sql = "SELECT a.VALUE FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
 		sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
 		values.put("questionuid", question.getUniqueId());
 
@@ -827,14 +808,11 @@ public class StatisticsCreator implements Runnable {
 		while (results != null && results.next()) {
 			Object[] a = results.get();
 			String value = (String) a[0];
-			Integer qid = ConversionTools.getValue(a[1]);
+			//Integer qid = ConversionTools.getValue(a[1]);
 
 			Integer count = map.getOrDefault(value, 0);
 			map.put(value, count+1);
 			numberQuestionStats.incrementNumberVotes();
-			if (qid.equals(question.getId())) {
-				numberQuestionStats.setQuestionFound(true);
-			}
 		}
 		if (null != results) {
 			results.close();
@@ -844,13 +822,13 @@ public class StatisticsCreator implements Runnable {
 	}
 	
 	@Transactional
-	public List<String> getAnswers4FreeTextStatistics(Survey survey, Question question) throws TooManyFiltersException {
+	public List<String> getAnswers4FreeTextStatistics(Survey survey, Question question) throws TooManyFiltersException, MessageException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		List<String> answers = new ArrayList<>();
 		
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
-		String sql = "SELECT a.VALUE, a.QUESTION_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+		String sql = "SELECT a.VALUE FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
 		sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
 		values.put("questionuid", question.getUniqueId());
 
@@ -886,7 +864,7 @@ public class StatisticsCreator implements Runnable {
 	public int getAnswers4Statistics(Survey survey, Question question, Map<Integer, Integer> map,
 			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<String, Integer>> mapGallery,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
-			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> mapNumberQuestion, Map<String, Map<Integer, Integer>> mapRankingQuestion) throws TooManyFiltersException {
+			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> mapNumberQuestion, Map<String, Map<Integer, Integer>> mapRankingQuestion) throws TooManyFiltersException, MessageException {
 
 		boolean quiz = survey.getIsQuiz();
 		Set<String> multipleChoiceQuestionUids = new HashSet<>();
@@ -941,7 +919,7 @@ public class StatisticsCreator implements Runnable {
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
 
-		String sql = "select a.PA_ID, a.PA_UID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+		String sql = "select a.PA_UID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
 		
 		if (question instanceof Matrix || question instanceof RatingQuestion)
 		{
@@ -979,9 +957,7 @@ public class StatisticsCreator implements Runnable {
 		query.setFetchSize(Integer.MIN_VALUE);
 		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
-		Map<String, Integer> counts = new HashMap<>();
 		Map<String, Integer> countsUID = new HashMap<>();
-		Map<String, Integer> matrixcounts = new HashMap<>();
 		Map<String, Integer> matrixcountsUID = new HashMap<>();
 		Map<String, Integer> ratingquestioncounts = new HashMap<>();
 		Map<String, Integer> ratingquestioncountsUID = new HashMap<>();
@@ -990,14 +966,13 @@ public class StatisticsCreator implements Runnable {
 		Map<String, Set<Integer>> answerSetQuestion = new HashMap<>();		
 
 		while (results != null && results.next()) {
-			parseAnswers4Statistics(results, resultSets, quiz, multipleChoiceQuestionUids, multipleChoiceSelectionsByAnswerset, answerSetQuestion, counts, countsUID, matrixcounts, matrixcountsUID,
-					ratingquestioncounts, ratingquestioncountsUID, gallerycounts, uniqueIdsById, numberQuestionUids, mapNumberQuestion, rankingQuestionAnswers);
-
+			parseAnswers4Statistics(results, resultSets, quiz, multipleChoiceQuestionUids, multipleChoiceSelectionsByAnswerset, answerSetQuestion, countsUID, matrixcountsUID,
+					ratingquestioncountsUID, gallerycounts, uniqueIdsById, numberQuestionUids, mapNumberQuestion, rankingQuestionAnswers);
 		}
 		results.close();
 
-		addMainAnswers4Statistics(question, map, mapMatrix, mapGallery, mapRatingQuestion, counts, countsUID,
-				gallerycounts, answerSetQuestion, matrixcounts, matrixcountsUID, ratingquestioncounts,
+		addMainAnswers4Statistics(question, map, mapMatrix, mapGallery, mapRatingQuestion, countsUID,
+				gallerycounts, answerSetQuestion, matrixcountsUID, ratingquestioncounts,
 				ratingquestioncountsUID, mapNumberQuestion, mapRankingQuestion, rankingQuestionAnswers);		
 
 		return resultSets.size();
@@ -1007,7 +982,7 @@ public class StatisticsCreator implements Runnable {
 	public int getAnswers4Statistics(Survey survey, ResultFilter filter, Map<Integer, Integer> map,
 			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<String, Integer>> mapGallery,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
-			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> mapNumberQuestion, Map<String, Map<Integer, Integer>> mapRankingQuestion, Map<String, List<String>> rankingQuestionAnswers) throws TooManyFiltersException {
+			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> mapNumberQuestion, Map<String, Map<Integer, Integer>> mapRankingQuestion, Map<String, List<String>> rankingQuestionAnswers) throws TooManyFiltersException, MessageException {
 
 		boolean quiz = survey.getIsQuiz();
 		Set<String> multipleChoiceQuestionUids = new HashSet<>();
@@ -1062,7 +1037,7 @@ public class StatisticsCreator implements Runnable {
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
 
-		String sql = "select a.PA_ID, a.PA_UID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
+		String sql = "select a.PA_UID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 				+ where + ")";
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -1081,9 +1056,7 @@ public class StatisticsCreator implements Runnable {
 		query.setFetchSize(Integer.MIN_VALUE);
 		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
-		Map<String, Integer> counts = new HashMap<>();
 		Map<String, Integer> countsUID = new HashMap<>();
-		Map<String, Integer> matrixcounts = new HashMap<>();
 		Map<String, Integer> matrixcountsUID = new HashMap<>();
 		Map<String, Integer> ratingquestioncounts = new HashMap<>();
 		Map<String, Integer> ratingquestioncountsUID = new HashMap<>();
@@ -1092,15 +1065,15 @@ public class StatisticsCreator implements Runnable {
 		Map<String, Set<Integer>> answerSetQuestion = new HashMap<>();
 		
 		while (results != null && results.next()) {
-			parseAnswers4Statistics(results, resultSets, quiz, multipleChoiceQuestionUids, multipleChoiceSelectionsByAnswerset, answerSetQuestion, counts, countsUID, matrixcounts, matrixcountsUID,
-					ratingquestioncounts, ratingquestioncountsUID, gallerycounts, uniqueIdsById, numberQuestionUids, mapNumberQuestion, rankingQuestionAnswers);
+			parseAnswers4Statistics(results, resultSets, quiz, multipleChoiceQuestionUids, multipleChoiceSelectionsByAnswerset, answerSetQuestion, countsUID, matrixcountsUID,
+					ratingquestioncountsUID, gallerycounts, uniqueIdsById, numberQuestionUids, mapNumberQuestion, rankingQuestionAnswers);
 
 		}
 		results.close();
 
 		for (Question q : survey.getQuestions()) {
-			addMainAnswers4Statistics(q, map, mapMatrix, mapGallery, mapRatingQuestion, counts, countsUID,
-					gallerycounts, answerSetQuestion, matrixcounts, matrixcountsUID, ratingquestioncounts,
+			addMainAnswers4Statistics(q, map, mapMatrix, mapGallery, mapRatingQuestion, countsUID,
+					gallerycounts, answerSetQuestion, matrixcountsUID, ratingquestioncounts,
 					ratingquestioncountsUID, mapNumberQuestion, mapRankingQuestion, rankingQuestionAnswers);
 		}
 

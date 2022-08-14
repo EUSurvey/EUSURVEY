@@ -13,10 +13,11 @@ import com.ec.survey.tools.*;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.query.NativeQuery;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -1725,43 +1726,6 @@ public class SurveyService extends BasicService {
 		}
 	}
 
-	public void updateAnswerUids(int id, String uid, boolean pa) throws InterruptedException {
-		boolean saved = false;
-
-		int counter = 1;
-
-		while (!saved) {
-			try {
-				internalUpdateAnswerUids(id, uid, pa);
-				saved = true;
-			} catch (org.hibernate.exception.LockAcquisitionException ex) {
-				logger.info("lock on answerSet table catched; retry counter: " + counter);
-				counter++;
-
-				if (counter > 60) {
-					logger.error(ex.getLocalizedMessage(), ex);
-					throw ex;
-				}
-
-				Thread.sleep(1000);
-			}
-		}
-	}
-
-	private void internalUpdateAnswerUids(int id, String uid, boolean pa) {
-		Session session = sessionFactory.getCurrentSession();
-		Query query;
-
-		if (pa) {
-			query = session.createSQLQuery("UPDATE ANSWERS SET PA_UID = :uid WHERE PA_UID IS NULL AND PA_ID = :id");
-		} else {
-			query = session.createSQLQuery(
-					"UPDATE ANSWERS SET QUESTION_UID = :uid WHERE QUESTION_UID IS NULL AND QUESTION_ID = :id");
-		}
-		query.setInteger("id", id).setString("uid", uid);
-		query.executeUpdate();
-	}
-
 	@Transactional
 	public int applyChanges(Survey draftSurvey, boolean deactivateAutoPublishing, int userId, boolean resetSurey)
 			throws Exception {
@@ -2087,29 +2051,29 @@ public class SurveyService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		if (deleteAnswers) {
-			Query query0 = session.createSQLQuery(
+			NativeQuery query0 = session.createSQLQuery(
 					"SELECT fi.FILE_UID from FILES fi JOIN ANSWERS_FILES f ON fi.FILE_ID = f.files_FILE_ID JOIN ANSWERS a ON f.ANSWERS_ANSWER_ID = a.ANSWER_ID JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
 			@SuppressWarnings("unchecked")
-			List<String> fileuids = query0.setInteger("id", id).list();
+			List<String> fileuids = query0.setParameter("id", id).list();
 
-			Query query = session.createSQLQuery(
+			NativeQuery query = session.createSQLQuery(
 					"DELETE d.* from DRAFTS d INNER JOIN ANSWERS_SET an ON d.answerSet_ANSWER_SET_ID = an.ANSWER_SET_ID where an.SURVEY_ID = :id");
-			query.setInteger("id", id).executeUpdate();
+			query.setParameter("id", id).executeUpdate();
 
-			Query query1 = session.createSQLQuery(
+			NativeQuery query1 = session.createSQLQuery(
 					"DELETE f.* from ANSWERS_FILES f JOIN ANSWERS a ON f.ANSWERS_ANSWER_ID = a.ANSWER_ID JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
-			query1.setInteger("id", id).executeUpdate();
+			query1.setParameter("id", id).executeUpdate();
 
-			Query query2 = session.createSQLQuery(
+			NativeQuery query2 = session.createSQLQuery(
 					"DELETE a.* from ANSWERS a JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
-			query2.setInteger("id", id).executeUpdate();
+			query2.setParameter("id", id).executeUpdate();
 
 			answerExplanationService.deleteExplanationFilesOfSurvey(id);
 			answerExplanationService.deleteCommentsOfSurvey(id);
 			answerExplanationService.deleteExplanationsOfSurvey(id);
 
 			Query query3 = session.createQuery("DELETE from AnswerSet a where a.surveyId = :id");
-			query3.setInteger("id", id).executeUpdate();
+			query3.setParameter("id", id).executeUpdate();
 
 			for (String fileuid : fileuids) {
 				java.io.File file = fileService.getSurveyFile(uid, fileuid);
@@ -2118,10 +2082,10 @@ public class SurveyService extends BasicService {
 				}
 			}
 
-			Query query4 = session
+			NativeQuery query4 = session
 					.createSQLQuery("SELECT v.VALIDCODE_CODE FROM VALIDCODE v WHERE v.VALIDCODE_SURVEYUID = :uid");
 			@SuppressWarnings("unchecked")
-			List<String> codes = query4.setString("uid", uid).list();
+			List<String> codes = query4.setParameter("uid", uid).list();
 			for (String code : codes) {
 				java.io.File folder = fileService.getSurveyFile(uid, code);
 				if (folder.exists() && folder.isDirectory()) {
@@ -2133,16 +2097,16 @@ public class SurveyService extends BasicService {
 				}
 			}
 
-			Query query5 = session.createSQLQuery("DELETE FROM VALIDCODE WHERE VALIDCODE_SURVEYUID = :uid");
-			query5.setString("uid", uid).executeUpdate();
+			NativeQuery query5 = session.createSQLQuery("DELETE FROM VALIDCODE WHERE VALIDCODE_SURVEYUID = :uid");
+			query5.setParameter("uid", uid).executeUpdate();
 			
 		}
 
-		List<Translations> translations = translationService.getTranslationsForSurvey(id, false);
-		for (Translations translation : translations) {
-			if (translation.getId() > 0)
-				session.delete(translation);
-		}
+		NativeQuery query = session.createSQLQuery("DELETE FROM TRANSLATION WHERE SURVEY_ID = :id");
+		query.setParameter("id", id).executeUpdate();
+
+		query = session.createSQLQuery("DELETE FROM TRANSLATIONS WHERE SURVEY_ID = :id");
+		query.setParameter("id", id).executeUpdate();
 
 		if (deleteAccesses) {
 			List<Access> accesses = getAccesses(id);
@@ -2161,7 +2125,7 @@ public class SurveyService extends BasicService {
 		List<ParticipationGroup> groups = participationService.getAll(id);
 		for (ParticipationGroup group : groups) {
 			Query query6 = session.createSQLQuery("DELETE FROM INVITATIONS WHERE PARTICIPATIONGROUP_ID = :id");
-			query6.setInteger("id", group.getId()).executeUpdate();
+			query6.setParameter("id", group.getId()).executeUpdate();
 
 			session.delete(group);
 		}
@@ -2541,10 +2505,6 @@ public class SurveyService extends BasicService {
 				importSurveyData(result, false, copyActive, oldToNewUniqueIds, result.getActiveSurvey().getId(), convertedUIDs);
 			}
 
-			for (String fileuid : convertedUIDs.keySet()) {
-				fileService.deleteIfNotReferenced(fileuid, copy.getUniqueId());
-			}
-
 			if (missingfiles.size() > 0) {
 				Locale locale = new Locale(user.getLanguage().toLowerCase());
 
@@ -2638,17 +2598,9 @@ public class SurveyService extends BasicService {
 		if (answerSets != null && !answerSets.isEmpty()) {
 			logger.info("starting import of answers");
 
-			Map<String, Integer> keys = new HashMap<>();
 			Set<String> rankingQuestions = new HashSet<>();
 			for (Element element : survey.getElementsRecursive()) {
-				keys.put(element.getSourceId().toString(), element.getId());
-				if (element instanceof ChoiceQuestion) {
-					for (PossibleAnswer answer : ((ChoiceQuestion) element).getPossibleAnswers()) {
-						if (answer.getSourceId() != null) {
-							keys.put(answer.getSourceId().toString(), answer.getId());
-						}
-					}
-				} else if (element instanceof RankingQuestion) {
+				if (element instanceof RankingQuestion) {
 					rankingQuestions.add(element.getUniqueId());
 				}
 			}
@@ -2685,18 +2637,17 @@ public class SurveyService extends BasicService {
 				AnswerSet b = a.copy(survey, files);
 
 				for (Answer an : b.getAnswers()) {
-					if (keys.containsKey(an.getQuestionId().toString())) {
-						an.setQuestionId(keys.get(an.getQuestionId().toString()));
+					if (!oldToNewUniqueIds.containsKey(an.getQuestionUniqueId())) {
+						//If the old unique id is not available it probably belongs to a deleted question
+						//Make up a new id and save it to avoid problems
+						oldToNewUniqueIds.put(an.getQuestionUniqueId(), UUID.randomUUID().toString());
 					}
-
 					an.setQuestionUniqueId(oldToNewUniqueIds.get(an.getQuestionUniqueId()));
 
-					if (an.getPossibleAnswerId() > 0) {
-						if (keys.containsKey(an.getPossibleAnswerId().toString())) {
-							an.setValue(keys.get(an.getPossibleAnswerId().toString()).toString());
-							an.setPossibleAnswerId(keys.get(an.getPossibleAnswerId().toString()));
+					if (an.getPossibleAnswerUniqueId() != null) {
+						if (!oldToNewUniqueIds.containsKey(an.getPossibleAnswerUniqueId())) {
+							oldToNewUniqueIds.put(an.getPossibleAnswerUniqueId(), UUID.randomUUID().toString());
 						}
-
 						an.setPossibleAnswerUniqueId(oldToNewUniqueIds.get(an.getPossibleAnswerUniqueId()));
 					}
 					
@@ -3177,7 +3128,7 @@ public class SurveyService extends BasicService {
 			query.setString("name", "%" + name + "%");
 		}
 		
-		List<ResultAccess> accesses = query.setFirstResult((page - 1) * rows).setMaxResults(rows).list();
+		List<ResultAccess> accesses = query.setFirstResult((page > 1 ? page - 1 : 0) * rows).setMaxResults(rows).list();
 		
 		for (ResultAccess access : accesses) {
 			String userName = administrationService.getUser(access.getUser()).getFirstLastName();
@@ -5593,6 +5544,11 @@ public class SurveyService extends BasicService {
 		} else {
 			stringBuilder.append(" (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)");
 		}
+		
+		if (archiveFilter == null) {
+			stringBuilder.append(" AND (s.ISDRAFT = 1)");
+		}
+		
 		String sql = stringBuilder.toString();
 
 		HashMap<String, Object> parameters = new HashMap<>();
@@ -5688,6 +5644,18 @@ public class SurveyService extends BasicService {
 		Set<String> result = new HashSet<>();
 		for (Element element : survey.getElements()) {
 			if (element instanceof RankingQuestion) {
+				result.add(element.getUniqueId());
+			}
+		}
+		return result;
+	}
+	
+	@Transactional
+	public Set<String> getGalleryQuestionUids(int surveyId) {
+		Survey survey = getSurvey(surveyId);
+		Set<String> result = new HashSet<>();
+		for (Element element : survey.getElements()) {
+			if (element instanceof GalleryQuestion) {
 				result.add(element.getUniqueId());
 			}
 		}

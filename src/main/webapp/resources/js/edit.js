@@ -405,22 +405,36 @@ function getIcon(element)
 
 function getDeleteElementRow(element, addignorebutton)
 {
-	var title = $(element).find("textarea[name^='text']").first().text();
-	var id = $(element).attr("id");
+
+	element = $(element)
+
+	let title = element.find("textarea[name^='text']").first().text();
+	let id = element.attr("id");
+
+	let parent = element.is(".answertext, .rankingitemtext, .ratingquestion") ? _elements[element.closest(".survey-element").attr("data-id")] : null;
+
+
+	let isChoiceAnswer = parent != null && (parent.type === "MultipleChoiceQuestion" || parent.type === "SingleChoiceQuestion")
+	let isRankingAnswer = parent != null && parent.type === "RankingQuestion"
+	let isRatingQuestion = parent != null && parent.type === "RatingQuestion"
 	
-	if ($(element).hasClass("table-header"))
+	if (element.hasClass("table-header"))
 	{
-		title = $(element).find("textarea").first().text();
+		title = element.find("textarea").first().text();
 	}
 	
-	if ($(element).hasClass("matrix-header"))
+	if (element.hasClass("matrix-header"))
 	{
 		title = $("textarea[name^='text" + id + "']").first().text();
+	}
+
+	if (isChoiceAnswer || isRankingAnswer || isRatingQuestion){
+		title = element.text().trim()
 	}
 	
 	if (title.length == 0)
 	{
-		title = $(element).find("input[name^='type']").first().val();
+		title = element.find("input[name^='type']").first().val();
 	}
 	
 	if (typeof title == 'undefined')
@@ -436,17 +450,17 @@ function getDeleteElementRow(element, addignorebutton)
 	td = document.createElement("td");
 	$(td).addClass("deleteinfotd");
 	
-	if ($(element).hasClass("sectionitem")) {
+	if (element.hasClass("sectionitem")) {
 		$(td).append("<b>" + sectionTitleLabel + "</b>:");
-	} else if ($(element).hasClass("textitem")) {
+	} else if (element.hasClass("textitem")) {
 		$(td).append("<b>" + alternativeTextLabel + "</b>:");
-	} else if ($(element).hasClass("imageitem")) {
+	} else if (element.hasClass("imageitem")) {
 		$(td).append("<b>" + alternativeTextLabel + "</b>:");
-	} else if ($(element).hasClass("ruleritem")) {
+	} else if (element.hasClass("ruleritem")) {
 		$(td).append("<b>" + alternativeTextLabel + "</b>:");
-	} else if ($(element).hasClass("uploaditem")) {
+	} else if (element.hasClass("uploaditem")) {
 		$(td).append("<b>" + alternativeTextLabel + "</b>:");
-	} else if ($(element).hasClass("downloaditem")) {
+	} else if (element.hasClass("downloaditem")) {
 		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else {
 		$(td).append("<b>" + questionTextLabel + "</b>:");
@@ -478,21 +492,21 @@ function getDeleteElementRow(element, addignorebutton)
 	}		
 	
 	var stop = false;
-	if ($(element).hasClass("matrix-header") || $(element).hasClass("table-header"))
+	if (element.hasClass("matrix-header") || element.hasClass("table-header"))
 	{
-		var isAnswer = $(element).closest("thead").length > 0 || ($(element).hasClass("table-header") &&  $(element).closest("tr").index() == 0);
+		var isAnswer = element.closest("thead").length > 0 || (element.hasClass("table-header") &&  element.closest("tr").index() == 0);
 		if (isAnswer)
 		{
-			var remainingAnswers = $(element).closest("tr").find("th").length - 1 - $(element).closest("tr").find("th.selectedquestion").length;
+			var remainingAnswers = element.closest("tr").find("th").length - 1 - element.closest("tr").find("th.selectedquestion").length;
 			if (remainingAnswers < 1)
 			{
 				stop = true;
-				$(element).removeClass("selectedquestion");
+				element.removeClass("selectedquestion");
 			}
 		} else {
 			var remainingQuestions = 0;
-			$(element).closest("tbody").find("tr").each(function(index){
-				if ($(element).hasClass("matrix-header") || index > 0)
+			element.closest("tbody").find("tr").each(function(index){
+				if (element.hasClass("matrix-header") || index > 0)
 				{				
 					if (!$(this).find("th").first().hasClass("selectedquestion"))
 					{
@@ -503,18 +517,36 @@ function getDeleteElementRow(element, addignorebutton)
 			if (remainingQuestions < 1)
 			{
 				stop = true;
-				$(element).removeClass("selectedquestion");
+				element.removeClass("selectedquestion");
 			}
 		}
 		if (stop)
 		{
-			if ($(element).hasClass("matrix-header"))
+			if (element.hasClass("matrix-header"))
 			{
 				$(td).append("<div class='validation-error'>" + getPropertyLabel("invalidMatrixChildren") + "</div>");
 			} else {
 				$(td).append("<div class='validation-error'>" + getPropertyLabel("invalidTableChildren") + "</div>");
 			}
 		}			
+	} else if (isChoiceAnswer){
+		if (parent.possibleAnswers().length <= 2) {
+			element.removeClass("selectedquestion");
+			stop = true;
+			$(td).append("<div class='validation-error'>" + getPropertyLabel("invalidPaDeletion") + "</div>");
+		}
+	} else if (isRankingAnswer){
+		if (parent.rankingItems().length <= 2){
+			element.removeClass("selectedquestion");
+			stop = true;
+			$(td).append("<div class='validation-error'>" + getPropertyLabel("invalidRankItemDeletion") + "</div>");
+		}
+	} else if (isRatingQuestion){
+		if (parent.childElements().length <= 1){
+			element.removeClass("selectedquestion");
+			stop = true;
+			$(td).append("<div class='validation-error'>" + getPropertyLabel("invalidRatingDeletion") + "</div>");
+		}
 	}
 	
 	if (addignorebutton)

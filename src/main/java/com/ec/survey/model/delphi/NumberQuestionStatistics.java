@@ -5,18 +5,15 @@ import java.util.Map;
 
 public class NumberQuestionStatistics {
 	private int numberVotes = 0;
-	private boolean questionFound = false;
 	private Map<String, Integer> valuesMagnitude = new HashMap<>();
 	
 	public NumberQuestionStatistics() {
 		this.numberVotes = 0;
-		this.questionFound = false;
 		this.valuesMagnitude = new HashMap<>();
 	}
 	
-	public NumberQuestionStatistics(int numberVotes, boolean questionFound) {
+	public NumberQuestionStatistics(int numberVotes) {
 		this.numberVotes = numberVotes;
-		this.questionFound = questionFound;
 		this.valuesMagnitude = new HashMap<>();
 	}
 	
@@ -28,13 +25,6 @@ public class NumberQuestionStatistics {
 	}
 	public void incrementNumberVotes() {
 		this.numberVotes += 1;
-	}
-	
-	public boolean isQuestionFound() {
-		return questionFound;
-	}
-	public void setQuestionFound(boolean questionFound) {
-		this.questionFound = questionFound;
 	}
 
 	public Map<String, Integer> getValuesMagnitude() {

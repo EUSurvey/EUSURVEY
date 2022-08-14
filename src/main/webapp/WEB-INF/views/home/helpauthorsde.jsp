@@ -3390,7 +3390,7 @@
 				erstellten Umfrage die konfigurierte Sprache als Hauptsprache vor.
 			</p>
 			<h1>
-				Datenschutz
+				Datenschutz und Privatsphäre
 			</h1>
 			<h2>
 				Dieses System verwendet Cookies. Welche Informationen werden dabei
@@ -3571,7 +3571,17 @@
 					</a>
 				</u>
 			</p>
-			
+			<h2>
+				Es wird eine Vereinbarung zur Datenverarbeitung benötigt. Wo finde ich die DPA von EUSurvey?
+			</h2>
+			<p>Die EUSurvey Vereinbarung zur Datenverarbeitung (EUSurvey Data Processing Agreement, DPA) ist für
+				alle Personen oder Organisationen verfügbar, die als Datenverantwortliche gelten, während wir Ihre
+				Daten über die EUSurvey-Plattform verarbeiten. Die DPA von EUSurvey ist
+				<a href = "${contextpath}/home/dpa">hier</a> verfügbar.
+			</p>
+			<p><a href="${contextpath}/home/support?dataprotection=1">Kontaktieren Sie uns</a>‚
+				wenn Sie Fragen haben.</p>
+
 			</div>
 			</div>
 			</div>

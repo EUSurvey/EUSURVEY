@@ -33,7 +33,7 @@ public class Translations implements java.io.Serializable {
 
 	@Id
 	@Column(name = "TRANSLATIONS_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	

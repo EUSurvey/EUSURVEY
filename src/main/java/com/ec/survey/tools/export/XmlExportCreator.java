@@ -480,7 +480,7 @@ public class XmlExportCreator extends ExportCreator {
 			Map<Integer, Map<String, String>> explanations = answerExplanationService.getAllExplanations(form.getSurvey());
 			Map<Integer, Map<String, String>> discussions = answerExplanationService.getAllDiscussions(form.getSurvey());
 					
-			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
+			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(),
 							export == null ? null : export.getResultFilter(), values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
@@ -498,14 +498,12 @@ public class XmlExportCreator extends ExportCreator {
 				Object[] a = results.get();
 				Answer answer = new Answer();
 				answer.setAnswerSetId(ConversionTools.getValue(a[0]));
-				answer.setQuestionId(ConversionTools.getValue(a[1]));
-				answer.setQuestionUniqueId((String) a[2]);
-				answer.setValue((String) a[3]);
-				answer.setColumn(ConversionTools.getValue(a[4]));
-				answer.setId(ConversionTools.getValue(a[5]));
-				answer.setRow(ConversionTools.getValue(a[6]));
-				answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
-				answer.setPossibleAnswerUniqueId((String) a[8]);
+				answer.setQuestionUniqueId((String) a[1]);
+				answer.setValue((String) a[2]);
+				answer.setColumn(ConversionTools.getValue(a[3]));
+				answer.setId(ConversionTools.getValue(a[4]));
+				answer.setRow(ConversionTools.getValue(a[5]));
+				answer.setPossibleAnswerUniqueId((String) a[6]);
 
 				if (lastAnswerSet == answer.getAnswerSetId()) {
 					answerSet.addAnswer(answer);
@@ -522,13 +520,13 @@ public class XmlExportCreator extends ExportCreator {
 					answerSet.setId(answer.getAnswerSetId());
 					lastAnswerSet = answer.getAnswerSetId();
 					answerSet.getAnswers().add(answer);
-					answerSet.setUniqueCode((String) a[9]);
-					answerSet.setDate((Date) a[10]);
-					answerSet.setUpdateDate((Date) a[11]);
-					answerSet.setInvitationId((String) a[12]);
-					answerSet.setResponderEmail((String) a[13]);
-					answerSet.setLanguageCode((String) a[14]);
-					Integer ilist = ConversionTools.getValue(a[15]);
+					answerSet.setUniqueCode((String) a[7]);
+					answerSet.setDate((Date) a[8]);
+					answerSet.setUpdateDate((Date) a[9]);
+					answerSet.setInvitationId((String) a[10]);
+					answerSet.setResponderEmail((String) a[11]);
+					answerSet.setLanguageCode((String) a[12]);
+					Integer ilist = ConversionTools.getValue(a[13]);
 					list = ilist.toString();
 
 					if (answerSet.getLanguageCode() == null
@@ -536,7 +534,7 @@ public class XmlExportCreator extends ExportCreator {
 						answerSet.setLanguageCode(questionlists.keySet().toArray()[0].toString());
 					}
 
-					answerSet.setScore(ConversionTools.getValue(a[16]));
+					answerSet.setScore(ConversionTools.getValue(a[14]));
 				}
 			}
 			if (lastAnswerSet > 0)
@@ -677,7 +675,7 @@ public class XmlExportCreator extends ExportCreator {
 		} else {
 
 			HashMap<String, Object> values = new HashMap<>();
-			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
+			String sql = "select ans.ANSWER_SET_ID, ans.UNIQUECODE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), export == null ? null : export.getResultFilter(),
 							values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
@@ -688,11 +686,10 @@ public class XmlExportCreator extends ExportCreator {
 			while (results.next()) {
 				Object[] a = results.get();
 				if (!exportedUniqueCodes.containsKey(ConversionTools.getValue(a[0]))) {
-					exportedUniqueCodes.put(ConversionTools.getValue(a[0]), (String) a[9]);
+					exportedUniqueCodes.put(ConversionTools.getValue(a[0]), (String) a[1]);
 				}
 			}
-			results.close();
-		
+			results.close();		
 		}
 	}
 
@@ -789,8 +786,7 @@ public class XmlExportCreator extends ExportCreator {
 								}
 							}
 						} else {
-							List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(),
-									matrixQuestion.getUniqueId());
+							List<Answer> answers = answerSet.getAnswers(matrixQuestion.getUniqueId());
 
 							for (Answer answer : answers) {
 								writer.writeStartElement(ANSWER);
@@ -828,8 +824,7 @@ public class XmlExportCreator extends ExportCreator {
 								}								
 							}
 						} else {
-							List<Answer> answers = answerSet.getAnswers(childQuestion.getId(),
-									childQuestion.getUniqueId());
+							List<Answer> answers = answerSet.getAnswers(childQuestion.getUniqueId());
 							if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice)
 							{
 								for (Answer answer : answers) {
@@ -863,8 +858,7 @@ public class XmlExportCreator extends ExportCreator {
 								writer.writeEndElement(); // Answer
 							}
 						} else {
-							List<Answer> answers = answerSet.getAnswers(childQuestion.getId(),
-									childQuestion.getUniqueId());
+							List<Answer> answers = answerSet.getAnswers(childQuestion.getUniqueId());
 
 							if (!answers.isEmpty()) {
 								writer.writeStartElement(ANSWER);
@@ -960,7 +954,7 @@ public class XmlExportCreator extends ExportCreator {
 							}
 						}
 					} else {
-						List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+						List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 						for (Answer answer : answers) {
 							writer.writeStartElement(ANSWER);
 							writer.writeAttribute("qid", question.getUniqueId());

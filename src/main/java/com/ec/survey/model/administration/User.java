@@ -90,7 +90,7 @@ public class User implements java.io.Serializable {
 
 	@Id
 	@Column(name = "USER_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}
@@ -220,6 +220,9 @@ public class User implements java.io.Serializable {
 	}
 
 	@ManyToMany(targetEntity = Role.class)
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			joinColumns = @JoinColumn(name = "USERS_USER_ID"),
+			inverseJoinColumns = @JoinColumn(name = "roles_ROLE_ID"))
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	public List<Role> getRoles() {
 		return roles;
@@ -241,6 +244,9 @@ public class User implements java.io.Serializable {
 	}
 
 	@ManyToMany(targetEntity = AttributeName.class)
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			joinColumns = @JoinColumn(name = "USERS_USER_ID"),
+			inverseJoinColumns = @JoinColumn(name = "selectedAttributes_AN_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	public List<AttributeName> getSelectedAttributes() {

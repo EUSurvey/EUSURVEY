@@ -17,20 +17,12 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
+import javax.persistence.*;
 import javax.persistence.Table;
+import com.ec.survey.model.ECFProfile;
+import com.ec.survey.model.Language;
+import com.ec.survey.model.Publication;
+import com.ec.survey.model.Skin;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -207,7 +199,7 @@ final public class Survey implements java.io.Serializable {
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}
@@ -579,6 +571,9 @@ final public class Survey implements java.io.Serializable {
 	}
 
 	@OneToMany(targetEntity = Element.class, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			joinColumns = @JoinColumn(name = "SURVEYS_SURVEY_ID"),
+			inverseJoinColumns = @JoinColumn(name = "elements_ID"))
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "position asc")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -1165,37 +1160,37 @@ final public class Survey implements java.io.Serializable {
 	}
 
     @Transient
-    public Map<String, Element> getQuestionMapByUniqueId() {
+    public Map<String, Question> getQuestionMapByUniqueId() {
         return getQuestionMapByUniqueId(false);
     }
 
     @Transient
-    public Map<String, Element> getQuestionMapByUniqueId(boolean includeMissing) {
-        Map<String, Element> result = new HashMap<>();
+    public Map<String, Question> getQuestionMapByUniqueId(boolean includeMissing) {
+        Map<String, Question> result = new HashMap<>();
         List<Element> elementsList = new ArrayList<>(elements);
         if (includeMissing) {
             elementsList.addAll(missingElements);
         }
 		for (Element element : elementsList) {
 			if (element instanceof Question) {
-				result.put(element.getUniqueId(), element);
+				result.put(element.getUniqueId(), (Question)element);
 			}
 			if (element instanceof MatrixOrTable) {
 				MatrixOrTable matrix = (MatrixOrTable) element;
 				for (Element child : matrix.getChildElements()) {
 					if (!(child instanceof EmptyElement))
-						result.put(child.getUniqueId(), child);
+						result.put(child.getUniqueId(), (Question)child);
 				}
 			}
 			if (element instanceof RatingQuestion) {
 				RatingQuestion rating = (RatingQuestion) element;
 				for (Element child : rating.getChildElements()) {
-					result.put(child.getUniqueId(), child);
+					result.put(child.getUniqueId(), (Question)child);
 				}
 			}
 			if (element instanceof ComplexTable) {
 				ComplexTable table = (ComplexTable) element;
-				for (Element child : table.getQuestionChildElements()) {
+				for (ComplexTableItem child : table.getQuestionChildElements()) {
 					result.put(child.getUniqueId(), child);
 				}
 			}
@@ -1419,7 +1414,7 @@ final public class Survey implements java.io.Serializable {
 		this.isPublished = isPublished;
 	}
 
-	@Column(name = "numberOfAnswerSets")
+	@Transient
 	public int getNumberOfAnswerSets() {
 		return numberOfAnswerSets;
 	}
@@ -1446,7 +1441,7 @@ final public class Survey implements java.io.Serializable {
 		this.numberOfInvitations = numberOfInvitations;
 	}
 
-	@Column(name = "numberOfAnswerSetsPublished")
+	@Transient
 	public int getNumberOfAnswerSetsPublished() {
 		return numberOfAnswerSetsPublished > 0 ? numberOfAnswerSetsPublished : 0;
 	}

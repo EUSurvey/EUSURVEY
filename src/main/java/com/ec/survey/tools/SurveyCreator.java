@@ -808,7 +808,6 @@ public class SurveyCreator {
 			if (question instanceof FreeTextQuestion) {
 				Answer answer = new Answer();
 				answer.setAnswerSet(answerSet);
-				answer.setQuestionId(question.getId());
 				answer.setQuestionUniqueId(question.getUniqueId());
 				answer.setValue("Hello FreeText");
 				answerSet.addAnswer(answer);
@@ -822,10 +821,8 @@ public class SurveyCreator {
 					}					
 					Answer answer = new Answer();
 					answer.setAnswerSet(answerSet);
-					answer.setQuestionId(question.getId());
 					answer.setQuestionUniqueId(question.getUniqueId());
 					answer.setValue(possibleAnswer.getId().toString());
-					answer.setPossibleAnswerId(possibleAnswer.getId());
 					answer.setPossibleAnswerUniqueId(possibleAnswer.getUniqueId());
 					answerSet.addAnswer(answer);
 					counter++;
@@ -833,12 +830,10 @@ public class SurveyCreator {
 			} else if (question instanceof SingleChoiceQuestion) {
 				Answer answer = new Answer();
 				answer.setAnswerSet(answerSet);
-				answer.setQuestionId(question.getId());
 				answer.setQuestionUniqueId(question.getUniqueId());
 				List<PossibleAnswer> possibleAnswers = ((SingleChoiceQuestion) question).getPossibleAnswers();				
 				int index = random.nextInt(possibleAnswers.size());
 				answer.setValue(possibleAnswers.get(index).getId().toString());
-				answer.setPossibleAnswerId(possibleAnswers.get(index).getId());
 				answer.setPossibleAnswerUniqueId(possibleAnswers.get(index).getUniqueId());
 				answerSet.addAnswer(answer);
 			} else if (question instanceof Matrix) {
@@ -848,18 +843,15 @@ public class SurveyCreator {
 				for (Element matrixquestion : matrix.getQuestions()) {
 					Answer answer = new Answer();
 					answer.setAnswerSet(answerSet);
-					answer.setQuestionId(matrixquestion.getId());
 					answer.setQuestionUniqueId(matrixquestion.getUniqueId());
 				
 					answer.setValue(firstAnswer.getId().toString());
-					answer.setPossibleAnswerId(firstAnswer.getId());
 					answer.setPossibleAnswerUniqueId(firstAnswer.getUniqueId());
 					answerSet.addAnswer(answer);
 				}
 			} else if (question instanceof NumberQuestion) {
 				Answer answer = new Answer();
 				answer.setAnswerSet(answerSet);
-				answer.setQuestionId(question.getId());
 				answer.setQuestionUniqueId(question.getUniqueId());
 				answer.setValue("42");
 				answerSet.addAnswer(answer);

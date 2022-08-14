@@ -299,11 +299,11 @@
 													  	 <c:forEach items="${question.allFiles}" var="file" varStatus="status">
 													    	<div>
 														    	<c:choose>
-																	<c:when test="${filter.contains(question.id, question.uniqueId, status.index) }">
-																		<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${status.index}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></input>
+																	<c:when test="${filter.contains(question.id, question.uniqueId, file.uid) }">
+																		<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></input>
 																	</c:when>
 																	<c:otherwise>
-																		<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${status.index}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></input>
+																		<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></input>
 																	</c:otherwise>
 																</c:choose>
 													    	</div>

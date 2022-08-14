@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -63,6 +64,7 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
 import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.query.NativeQuery;
 
 @Service("reportingService")
 public class ReportingService extends BasicService {
@@ -113,7 +115,7 @@ public class ReportingService extends BasicService {
 	public static String getWhereClause(ResultFilter filter, Map<String, Object> values, Survey survey) throws TooManyFiltersException
 	{
 		String where = "";
-		Map<String, Element> elementsByUniqueID = survey.getQuestionMapByUniqueId();
+		Map<String, Question> elementsByUniqueID = survey.getQuestionMapByUniqueId();
 		
 		if (filter != null) {
 			
@@ -912,14 +914,10 @@ public class ReportingService extends BasicService {
 
 	@Transactional(transactionManager = "transactionManagerReporting")
 	public boolean OLAPTableExistsInternal(String uid, boolean draft) {	
-		try {
-			Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-			SQLQuery queryreporting = sessionReporting.createSQLQuery("SELECT 1 FROM  T" + (draft ? "D" : "") + uid.replace("-", "") + " LIMIT 1");
-			queryreporting.uniqueResult();
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		NativeQuery query = sessionReporting.createSQLQuery("SELECT count(*) AS totalTables FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = database() AND TABLE_NAME = 'T" + (draft ? "D" : "") + uid.replace("-", "") + "';");
+	 
+		return ConversionTools.getValue(query.uniqueResult()) > 0;
 	}
 	
 	@Transactional(transactionManager = "transactionManagerReporting")
@@ -1405,12 +1403,12 @@ public class ReportingService extends BasicService {
 		{
 			if (question instanceof FreeTextQuestion || question instanceof EmailQuestion || question instanceof RegExQuestion)
 			{
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());
 				parameters.put("value" + parameters.size(), !answers.isEmpty() ? shrink(answers.get(0).getValue()) : null);
 			} else if (question instanceof NumberQuestion || question instanceof FormulaQuestion) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());				
 				Double num = null;
 				if (!answers.isEmpty())
 				{
@@ -1424,7 +1422,7 @@ public class ReportingService extends BasicService {
 				values.add(":value" + parameters.size());
 				parameters.put("value" + parameters.size(), num);			
 			} else if (question instanceof DateQuestion) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());				
 				Date d = null;
 				if (!answers.isEmpty())
 				{
@@ -1434,7 +1432,7 @@ public class ReportingService extends BasicService {
 				values.add(":value" + parameters.size());
 				parameters.put("value" + parameters.size(), d);
 			} else if (question instanceof TimeQuestion) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());				
 				String d = null;
 				if (!answers.isEmpty())
 				{
@@ -1447,7 +1445,7 @@ public class ReportingService extends BasicService {
 				values.add(":value" + parameters.size());
 				parameters.put("value" + parameters.size(), d);			
 			} else if (question instanceof ChoiceQuestion) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());				
 				columns.add(question.getUniqueId());
 				String v = null;
 				if (!answers.isEmpty())
@@ -1464,7 +1462,7 @@ public class ReportingService extends BasicService {
 			} else if (question instanceof Matrix) {
 				Matrix matrix = (Matrix) question;				
 				for(Element matrixQuestion: matrix.getQuestions()) {
-					List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());
+					List<Answer> answers = answerSet.getAnswers(matrixQuestion.getUniqueId());
 					String v = null;
 					if (!answers.isEmpty())
 					{
@@ -1512,7 +1510,7 @@ public class ReportingService extends BasicService {
 				}
 				
 			} else if (question instanceof Upload) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 				String v = null; 
 				if (!answers.isEmpty())
 				{
@@ -1533,7 +1531,7 @@ public class ReportingService extends BasicService {
 				GalleryQuestion gallery = (GalleryQuestion) question;
 				if (gallery.getSelection())
 				{
-					List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+					List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 					String v = null; 
 					if (!answers.isEmpty())
 					{
@@ -1557,12 +1555,12 @@ public class ReportingService extends BasicService {
 				RatingQuestion rating = (RatingQuestion) question;
 				
 				for(Element ratingQuestion: rating.getChildElements()) {
-					List<Answer> answers = answerSet.getAnswers(ratingQuestion.getId(), ratingQuestion.getUniqueId());
+					List<Answer> answers = answerSet.getAnswers(ratingQuestion.getUniqueId());
 					columns.add(ratingQuestion.getUniqueId());		
 					values.add(answers.isEmpty() ? null : "'" + answers.get(0).getValue() + "'");
 				}
 			} else if (question instanceof RankingQuestion) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());				
 				String d = null;
 				if (!answers.isEmpty())
 				{
@@ -1578,12 +1576,12 @@ public class ReportingService extends BasicService {
 				for(ComplexTableItem child: table.getQuestionChildElements()) {				
 					if (child.getCellType() == ComplexTableItem.CellType.FreeText)
 					{
-						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());
+						List<Answer> answers = answerSet.getAnswers(child.getUniqueId());
 						columns.add(child.getUniqueId());
 						values.add(":value" + parameters.size());
 						parameters.put("value" + parameters.size(), !answers.isEmpty() ? shrink(answers.get(0).getValue()) : null);
 					} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
-						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());				
+						List<Answer> answers = answerSet.getAnswers(child.getUniqueId());				
 						Double num = null;
 						if (!answers.isEmpty())
 						{
@@ -1597,7 +1595,7 @@ public class ReportingService extends BasicService {
 						values.add(":value" + parameters.size());
 						parameters.put("value" + parameters.size(), num);			
 					} else if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
-						List<Answer> answers = answerSet.getAnswers(child.getId(), child.getUniqueId());				
+						List<Answer> answers = answerSet.getAnswers(child.getUniqueId());				
 						columns.add(child.getUniqueId());
 						String v = null;
 						if (!answers.isEmpty())
@@ -1875,6 +1873,9 @@ public class ReportingService extends BasicService {
 			Object[] rowEntrys = (Object[])row;
 			int answerSetID= ConversionTools.getValue(rowEntrys[0]);
 			String answerUIDsStringly = (String)rowEntrys[1];
+			if (answerUIDsStringly == null) {
+				continue;
+			}
 			String[] answerUIDsA = answerUIDsStringly.split(";");
 			Set<String> answerUIDs = new HashSet<>(Arrays.asList(answerUIDsA));
 			answersByAnswerSetID.put(answerSetID, answerUIDs);
@@ -2048,6 +2049,18 @@ public class ReportingService extends BasicService {
 				try {
 					updateOLAPTableInternal(todo.UID, false, true);
 				} catch (SQLGrammarException e) {
+					// Hibernate 4
+					if (this.validateOLAPTablesInternal(todo.UID, false)) {
+						throw e;
+					} else {
+						deleteOLAPTableInternal(todo.UID, false, true);
+						createOLAPTableInternal(todo.UID, false, true);
+
+						// retry
+						updateOLAPTableInternal(todo.UID, false, true);
+					}
+				} catch (PersistenceException e) {
+					// Hibernate 5
 					if (this.validateOLAPTablesInternal(todo.UID, false)) {
 						throw e;
 					} else {
@@ -2063,6 +2076,18 @@ public class ReportingService extends BasicService {
 				try {
 					removeFromOLAPTableInternal(todo.UID, todo.Code, true);
 				} catch (SQLGrammarException e) {
+					// Hibernate 4
+					if (this.validateOLAPTablesInternal(todo.UID, false)) {
+						throw e;
+					} else {
+						deleteOLAPTableInternal(todo.UID, false, true);
+						createOLAPTableInternal(todo.UID, false, true);
+
+						// retry
+						removeFromOLAPTableInternal(todo.UID, todo.Code, true);
+					}
+				} catch (PersistenceException e) {
+					// Hibernate 5
 					if (this.validateOLAPTablesInternal(todo.UID, false)) {
 						throw e;
 					} else {
@@ -2090,6 +2115,18 @@ public class ReportingService extends BasicService {
 				try {
 					updateOLAPTableInternal(todo.UID, true, false);
 				} catch (SQLGrammarException e) {
+					// Hibernate 4
+					if (this.validateOLAPTablesInternal(todo.UID, true)) {
+						throw e;
+					} else {
+						deleteOLAPTableInternal(todo.UID, true, false);
+						createOLAPTableInternal(todo.UID, true, false);
+
+						// retry
+						updateOLAPTableInternal(todo.UID, true, false);
+					}
+				} catch (PersistenceException e) {
+					// Hibernate 5
 					if (this.validateOLAPTablesInternal(todo.UID, true)) {
 						throw e;
 					} else {
@@ -2105,6 +2142,17 @@ public class ReportingService extends BasicService {
 				try {
 					removeFromOLAPTableInternal(todo.UID, todo.Code, false);
 				} catch (SQLGrammarException e) {
+					// Hibernate 4
+					if (this.validateOLAPTablesInternal(todo.UID, true)) {
+						throw e;
+					} else {
+						deleteOLAPTableInternal(todo.UID, true, false);
+						createOLAPTableInternal(todo.UID, true, false);
+						// retry
+						removeFromOLAPTableInternal(todo.UID, todo.Code, false);
+					}
+				} catch (PersistenceException e) {
+					// Hibernate 5
 					if (this.validateOLAPTablesInternal(todo.UID, true)) {
 						throw e;
 					} else {

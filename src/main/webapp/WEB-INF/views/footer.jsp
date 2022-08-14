@@ -99,6 +99,6 @@
 		</div>
 		
 		<%@ include file="includes2.jsp" %>
-		
+				
 	</c:otherwise>
 </c:choose>

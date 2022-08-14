@@ -197,7 +197,7 @@ public class LdapDBService extends BasicService {
 		}
 	
 		@SuppressWarnings("unchecked")
-		List<EcasUser> res = query.setFirstResult((page - 1)*rowsPerPage).setMaxResults(rowsPerPage).list();
+		List<EcasUser> res = query.setFirstResult((page > 1 ? page - 1 : 0)*rowsPerPage).setMaxResults(rowsPerPage).list();
 				
 		return res;
 	}

@@ -2,13 +2,7 @@ package com.ec.survey.model;
 
 import java.util.Date;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -34,7 +28,7 @@ public class WrongAttempts {
 	
 	@Id
 	@Column(name = "ATTEMPTS_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}
@@ -55,7 +49,7 @@ public class WrongAttempts {
 		return counter;
 	}
 	public void setCounter(Integer counter) {
-		this.counter = counter;
+		this.counter = counter != null ? counter : 0;
 	}
 	
 	@Column(name = "ATTEMPTS_DATE")

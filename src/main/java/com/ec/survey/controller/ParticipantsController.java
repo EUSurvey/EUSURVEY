@@ -213,7 +213,7 @@ public class ParticipantsController extends BasicController {
 		Map<Integer, Invitation> invitationsByAttendee = attendeeService
 				.getInvitationsByAttendeeForParticipationGroup(g.getId());
 
-		int first = (newPage - 1) * itemsPerPage;
+		int first = (newPage > 1 ? newPage - 1 : 0) * itemsPerPage;
 		int counter = 0;
 		if (g.getType() == ParticipationGroupType.Static) {
 			List<Attendee> result = new ArrayList<>();

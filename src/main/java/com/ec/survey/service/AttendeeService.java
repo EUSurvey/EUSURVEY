@@ -83,7 +83,7 @@ public class AttendeeService extends BasicService {
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
-		List res = query.setFirstResult((page - 1) * rowsPerPage).setMaxResults(rowsPerPage).list();
+		List res = query.setFirstResult((page > 1 ? page - 1 : 0) * rowsPerPage).setMaxResults(rowsPerPage).list();
 
 		List<Attendee> attendees = new ArrayList<>();
 
@@ -338,6 +338,7 @@ public class AttendeeService extends BasicService {
 					.setParameter("id", attendee.getId()).setParameter("origId", attendee.getOriginalId());
 			query.executeUpdate();
 		}
+
 	}
 
 	@Transactional(readOnly = false)

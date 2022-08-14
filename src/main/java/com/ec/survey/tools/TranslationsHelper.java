@@ -6,6 +6,7 @@ import com.ec.survey.model.Language;
 import com.ec.survey.model.Translation;
 import com.ec.survey.model.Translations;
 import com.ec.survey.model.survey.*;
+import com.ec.survey.service.BasicService;
 import com.ec.survey.service.FileService;
 import com.ec.survey.service.SurveyService;
 import org.apache.log4j.Logger;
@@ -129,8 +130,10 @@ public class TranslationsHelper {
 			}
 		}
 
-		for (String key : survey.getBackgroundDocuments().keySet()) {
-			translations.getTranslations().add(new Translation(key + "#backgrounddocument", key,
+		for (String filename : survey.getBackgroundDocuments().keySet()) {
+			String url = survey.getBackgroundDocuments().get(filename);
+			String uid = BasicService.getFileUIDFromUrl(url);
+			translations.getTranslations().add(new Translation(uid + "#backgrounddocument", filename,
 					survey.getLanguage().getCode(), survey.getId(), translations));
 		}
 
@@ -379,8 +382,10 @@ public class TranslationsHelper {
 			result.add(new KeyValue(data[0] + "#usefullink", "UL"));
 		}
 
-		for (String key : survey.getBackgroundDocuments().keySet()) {
-			result.add(new KeyValue(key + "#backgrounddocument", "BD"));
+		for (String filename : survey.getBackgroundDocuments().keySet()) {
+			String url = survey.getBackgroundDocuments().get(filename);
+			String uid = BasicService.getFileUIDFromUrl(url);
+			result.add(new KeyValue(uid + "#backgrounddocument", "BD"));
 		}
 
 		for (Element element : survey.getElements()) {
@@ -549,8 +554,10 @@ public class TranslationsHelper {
 					resources.getMessage("label.UsefulLink", null, "Useful Link", locale)));
 		}
 
-		for (String key : survey.getBackgroundDocuments().keySet()) {
-			result.add(new KeyValue(key + "#backgrounddocument",
+		for (String filename : survey.getBackgroundDocuments().keySet()) {
+			String url = survey.getBackgroundDocuments().get(filename);
+			String uid = BasicService.getFileUIDFromUrl(url);
+			result.add(new KeyValue(uid + "#backgrounddocument",
 					resources.getMessage("label.BackgroundDocument", null, "Background Document", locale)));
 		}
 
@@ -1123,8 +1130,10 @@ public class TranslationsHelper {
 				rootElement.appendChild(usefulLink);
 			}
 
-			for (String key : survey.getBackgroundDocuments().keySet()) {
-				String newkey = key + "#backgrounddocument";
+			for (String filename : survey.getBackgroundDocuments().keySet()) {
+				String url = survey.getBackgroundDocuments().get(filename);
+				String uid = BasicService.getFileUIDFromUrl(url);
+				String newkey = uid + "#backgrounddocument";
 				org.w3c.dom.Element backgroundDocument = doc.createElement("BackgroundDocument");
 				String label = "";
 				if (translationByKey.containsKey(newkey))
@@ -1294,9 +1303,11 @@ public class TranslationsHelper {
 			addTextCell(row, 2, translationsByKey.get(newkey) != null ? translationsByKey.get(newkey) : "");
 		}
 
-		for (String key : survey.getBackgroundDocuments().keySet()) {
+		for (String filename : survey.getBackgroundDocuments().keySet()) {
+			String url = survey.getBackgroundDocuments().get(filename);
+			String uid = BasicService.getFileUIDFromUrl(url);
 			row = creator.nextRow();
-			String newkey = key + "#backgrounddocument";
+			String newkey = uid + "#backgrounddocument";
 			addTextCell(row, 0, newkey);
 			addTextCell(row, 1, descriptions.get(newkey));
 			addTextCell(row, 2, translationsByKey.get(newkey) != null ? translationsByKey.get(newkey) : "");
@@ -2062,19 +2073,21 @@ public class TranslationsHelper {
 
 		Set<String> backdocstodelete = new HashSet<>();
 		Map<String, String> newbackdocs = new HashMap<>();
-		for (String key : survey.getBackgroundDocuments().keySet()) {
-			if (translationsByKey.containsKey(key + "#backgrounddocument")
-					&& notNullOrEmpty(translationsByKey.get(key + "#backgrounddocument").getLabel())
-					&& !translationsByKey.get(key + "#backgrounddocument").getLabel().equals(key)) {
-				newbackdocs.put(translationsByKey.get(key + "#backgrounddocument").getLabel(),
-						survey.getBackgroundDocuments().get(key));
+		for (String filename : survey.getBackgroundDocuments().keySet()) {
+			String url = survey.getBackgroundDocuments().get(filename);
+			String uid = BasicService.getFileUIDFromUrl(url);
+			if (translationsByKey.containsKey(uid + "#backgrounddocument")
+					&& notNullOrEmpty(translationsByKey.get(uid + "#backgrounddocument").getLabel())
+					&& !translationsByKey.get(uid + "#backgrounddocument").getLabel().equals(filename)) {
+				newbackdocs.put(translationsByKey.get(uid + "#backgrounddocument").getLabel(),
+						survey.getBackgroundDocuments().get(filename));
 				translations.getTranslations()
 						.add(new Translation(
-								translationsByKey.get(key + "#backgrounddocument").getLabel() + "#backgrounddocument",
-								translationsByKey.get(key + "#backgrounddocument").getLabel(),
-								translations.getLanguage().getCode(), survey.getId(), translations, translationsByKey.get(key + "#backgrounddocument").getLocked()));
-				translations.getTranslations().remove(translationsByKey.get(key + "#backgrounddocument"));
-				backdocstodelete.add(key);
+								translationsByKey.get(uid + "#backgrounddocument").getLabel() + "#backgrounddocument",
+								translationsByKey.get(uid + "#backgrounddocument").getLabel(),
+								translations.getLanguage().getCode(), survey.getId(), translations, translationsByKey.get(uid + "#backgrounddocument").getLocked()));
+				translations.getTranslations().remove(translationsByKey.get(uid + "#backgrounddocument"));
+				backdocstodelete.add(filename);
 			}
 		}
 		for (Entry<String, String> doc : newbackdocs.entrySet()) {

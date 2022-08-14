@@ -47,7 +47,7 @@ public class EcasUser {
 
 	@Id
 	@Column(name = "USER_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}	
