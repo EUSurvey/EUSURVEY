@@ -13,7 +13,7 @@
 		<org.springframework-version>5.3.20</org.springframework-version>
 		<org.springframework.security-version>5.7.1</org.springframework.security-version>
 		<org.aspectj-version>1.8.8</org.aspectj-version>
-		<org.slf4j-version>1.5.10</org.slf4j-version>
+		<org.slf4j-version>1.7.5</org.slf4j-version>
 		<version.number>444</version.number>
 		<svnName>1.1.9</svnName>
 		<camel.version>2.22.1</camel.version>
@@ -576,7 +576,7 @@
 		<dependency>
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>buildnumber-maven-plugin</artifactId>
-			<version>1.4</version>
+			<version>3.0.0</version>
 		</dependency>
 
 		<dependency>
