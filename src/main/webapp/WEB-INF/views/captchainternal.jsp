@@ -31,6 +31,7 @@
 					  <input type="hidden" name="captcha_token" id="captcha_token" />
 					  <input type="hidden" name="captcha_id" id="captcha_id" />
 					  <input type="hidden" name="captcha_useaudio" id="captcha_useaudio" />
+					  <input type="hidden" name="captcha_original_cookies" id="captcha_original_cookies" />
 					  
 					    <c:choose>
 							<c:when test="${form != null}">
@@ -45,10 +46,11 @@
 								<a title='<spring:message code="label.ReloadCaptcha" />' href="javascript:;" class="btn btn-primary btn-sm" id="captchaReload"><span class="glyphicon glyphicon-refresh"></span></a>
 							
 							</c:otherwise>
-						</c:choose>					
-					    
-			
-					
+						</c:choose>
+
+						<c:if test="${captchaDynatraceSrc != null && captchaDynatraceSrc.length() > 0}">
+							<script type="text/javascript" src="${captchaDynatraceSrc}" crossorigin="anonymous"></script>
+						</c:if>
 					</div>
 				</c:when>
 				<c:when test='${captcha == "internal"}'>

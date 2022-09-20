@@ -59,6 +59,13 @@
 		#ulContainer {
 			margin-bottom: 50px;
 		}
+
+		figcaption {
+			font-style: italic;
+			padding: 2px;
+			text-align: center;
+		}
+
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -753,6 +760,39 @@
 				</a>
 				.
 			</p>
+			<h2>
+				Qu'est-ce que la «popup de motivation» et comment l'utiliser ?
+			</h2>
+			<p>
+				La «popup de motivation» est une fenêtre pop-up qui s'ouvre au participant à l'enquête pendant qu'il
+				remplit le formulaire. Elle affiche un message pour motiver le participant à continuer à remplir le
+				formulaire. Ce message est personnalisable et l'heure à laquelle la popup s'affiche peut également
+				être configurée.
+			</p>
+			<p>
+				La «popup de motivation» est disponible dans les propriétés de l'enquête sous l'onglet Apparence.
+			</p>
+			<figure>
+				<img src="${contextpath}/resources/images/documentation/motivation_popup_1_FR.png" style="width: 75%"/>
+				<figcaption>Motivation popup dans les propriétés de l’enquête</figcaption>
+			</figure>
+			<p>
+				Une fois l'interrupteur activé, les options apparaissent :
+			</p>
+			<p>
+				Le déclencheur peut être basé sur la progression ou sur une minuterie. La progression est exprimée en
+				pourcentage. Par exemple, 50%. Cela signifie que le popup s'affichera dès que le participant à
+				l'enquête aura répondu à 50% des questions. Si l'option Minuterie a été sélectionnée, la fenêtre
+				contextuelle s'affichera après X minutes. X étant le nombre de minutes spécifié dans le champ de
+				valeur Seuil.
+			</p>
+			<p>
+				Enfin, le texte est personnalisable à l'aide du dernier champ.
+			</p>
+			<figure>
+				<img src="${contextpath}/resources/images/documentation/motivation_popup_2_FR.png" style="width: 75%"/>
+				<figcaption>Configuration de la «popup de motivation»</figcaption>
+			</figure>
 			<h1>
 				Modifier une enquête
 			</h1>

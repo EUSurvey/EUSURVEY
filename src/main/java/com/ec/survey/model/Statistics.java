@@ -218,17 +218,17 @@ public class Statistics {
 	}
 	
 	@Transient
-	public int getRequestedRecordsForGallery(Element question, int index)
+	public int getRequestedRecordsForGallery(Element question, String fileUid)
 	{
-		String id = question.getId().toString() + "-" + index;
+		String id = question.getId().toString() + "-" + fileUid;
 		Object result = requestedRecords.get(id);
 		return (int) (result != null ? result : 0);
 	}
 	
 	@Transient
-	public double getRequestedRecordsPercentForGallery(Element question, int index)
+	public double getRequestedRecordsPercentForGallery(Element question, String fileUid)
 	{
-		String id = question.getId().toString() + "-" + index;
+		String id = question.getId().toString() + "-" + fileUid;
 		Object result = requestedRecordsPercent.get(id);
 		return (double) (result != null ? result : 0);
 	}

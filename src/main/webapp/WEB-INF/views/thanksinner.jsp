@@ -1,14 +1,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
-<div style="text-align: center;" id="divThanksInner" name="${uniqueCode}">
+<div style="width: 730px; max-width:100%; margin-left: auto; margin-right:auto;" id="divThanksInner" name="${uniqueCode}">
 
 	<c:choose>
 		<c:when test="${form.survey.isECF}">
-			<div style="text-align: center; margin-top: 20px;" id="divThanksInner" name="${uniqueCode}">
+			<div style="text-align: center; margin-top: 20px;">
 			<!--  no text -->
 		</c:when>
 		<c:when test="${text != null}">
-			${text}
+			${form.replacedMarkupConfirmationPage()}
 		</c:when>
 		<c:when test="${runnermode == true}">
 			${form.getMessage("label.Thanks")}
@@ -45,34 +45,58 @@
 	</c:if>	
 		
 	<br /><br />
-	<spring:message code="label.ContributionId" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
+	<div id="contribution-id-save-hint" style="color: #777; margin: 6px 0 0px 0;">
+		<spring:message code="label.ContributionSavingHint" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
+		<a href="javascript:;" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText(uniqueCode);" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
+			<i class="glyphicon glyphicon-copy copy-icon"></i>
+		</a>
+		<br />
+		<spring:message code="label.ContributionSavingExplanation" />
+	</div>
 	
-	<br /><br />
+	<br />
 	
 	<c:if test="${form.survey.downloadContribution}">
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<a style="text-decoration: none" id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-lg btn-default">${form.getMessage("label.Print")}</a>
+				<a style="text-decoration: none" id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-lg btn-primary">${form.getMessage("label.Print")}</a>
 			</c:when>
 			<c:when test="${runnermode == true}">
-				<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-default">${form.getMessage("label.Print")}</a>
+				<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-primary">${form.getMessage("label.Print")}</a>
 			</c:when>
 			<c:otherwise>
-				<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-default"><spring:message code="label.Print" /></a>
+				<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-primary"><spring:message code="label.Print" /></a>
 			</c:otherwise>	
 		</c:choose>
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<a href="javascript:;" style="text-decoration: none" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-lg btn-default">${form.getMessage("label.GetPDF")}</a>		
+				<a href="javascript:;" style="text-decoration: none" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-lg btn-primary">${form.getMessage("label.GetPDF")}</a>
 			</c:when>
 			<c:when test="${runnermode == true}">
-				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
+				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-primary">${form.getMessage("label.GetPDF")}</a>
 			</c:when>
 			<c:otherwise>
-				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default"><spring:message code="label.GetPDF" /></a>
+				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-primary"><spring:message code="label.GetPDF" /></a>
 			</c:otherwise>	
 		</c:choose>
 	</c:if>
+
+	<c:if test="${form.survey.changeContribution}">
+		<c:choose>
+			<c:when test="${responsive != null}">
+				<a href="${contextpath}/editcontribution/${uniqueCode}" style="text-decoration: none" id="contributionEditInner" class="btn btn-lg btn-primary">${form.getMessage("label.Edit")}</a>
+			</c:when>
+			<c:when test="${runnermode == true}">
+				<a href="${contextpath}/editcontribution/${uniqueCode}" class="btn btn-primary">${form.getMessage("label.Edit")}</a>
+			</c:when>
+			<c:otherwise>
+				<a href="${contextpath}/editcontribution/${uniqueCode}" id="contributionEditInner" class="btn btn-primary"><spring:message code="label.Edit" /></a>
+			</c:otherwise>
+		</c:choose>
+	</c:if>
+
+
+
 
 	<c:if test="${asklogout != null}">
 		<div id="ask-logout-div" style="margin-top: 30px;">
@@ -169,6 +193,10 @@
 	var contextpath = "${contextpath}";
 	var surveyShortname = "${surveyShortname}";
 
+	$(function() {
+		$('[data-toggle="tooltip"]').ApplyCustomTooltips();
+	});
+
 	function startExport()
 	{
 		$("#ask-export-dialog").find(".validation-error").hide();
@@ -191,11 +219,19 @@
 			    	$("#runner-captcha-empty-error").show();
 			    	return;
 			    }
+
+				var data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
+				if ($('#captcha_token').length > 0) {
+					data["captcha_token"] =  $('#captcha_token').val();
+					data["captcha_id"] =  $('#captcha_id').val();
+					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
+				}
 			
 				$.ajax({
 					type:'GET',
 					  url: "${contextpath}/runner/createanswerpdf/${uniqueCode}",
-					  data: {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse},
+					  data: data,
 					  cache: false,
 					  success: function( data ) {
 						  

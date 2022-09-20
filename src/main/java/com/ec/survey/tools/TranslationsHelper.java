@@ -647,7 +647,7 @@ public class TranslationsHelper {
 				Table table = (Table) element;
 
 				result.add(new KeyValue(element.getUniqueId() + MatrixOrTable.FIRSTCELL,
-						resources.getMessage("label.MatrixText", null, "Matrix Text", locale)));
+						resources.getMessage("label.TableText", null, "Table Text", locale)));
 
 				for (Element child : table.getChildElements()) {
 					if (child instanceof Text) {

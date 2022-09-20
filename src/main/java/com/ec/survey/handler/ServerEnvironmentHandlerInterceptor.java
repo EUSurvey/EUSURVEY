@@ -38,7 +38,10 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public @Value("${captcha.key}") String captchakey;	
 	
 	public static final String APPLICATION_CAPTCHA_SERVERPREFIX = "captchaServerPrefix";
-	public @Value("${captcha.serverprefix}") String captchaserverprefix;	
+	public @Value("${captcha.serverprefix}") String captchaserverprefix;
+
+	public static final String APPLICATION_CAPTCHA_DYNATRACE_SRC = "captchaDynatraceSrc";
+	public @Value("${captcha.dynatracesrc:#{null}}") String captchaDynatraceSrc;
 	
 	public static final String APPLICATION_ARCHIVING = "enablearchiving";
 	public @Value("${ui.enablearchiving}") String enablearchiving;
@@ -106,7 +109,8 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
         	
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_BYPASS, isByPassCaptcha());
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_KEY, captchakey);
-            modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_SERVERPREFIX, captchaserverprefix);
+			modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_SERVERPREFIX, captchaserverprefix);
+			modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_DYNATRACE_SRC, captchaDynatraceSrc);
             
             modelAndView.getModelMap().addAttribute(APPLICATION_ARCHIVING, enablearchiving != null && enablearchiving.equalsIgnoreCase("true"));
 			modelAndView.getModelMap().addAttribute(APPLICATION_DELPHI, enabledelphi != null && enabledelphi.equalsIgnoreCase("true"));

@@ -13,7 +13,7 @@
 			<c:if test="${redirect != null}">
 				setTimeout(function(){ window.location = "${redirect}"; }, 10000);				
 			</c:if>		
-		});			
+		});
 	</script>
 		
 	<c:if test='${form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>

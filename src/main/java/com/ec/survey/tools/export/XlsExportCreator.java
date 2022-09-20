@@ -19,6 +19,8 @@ import com.ec.survey.model.survey.ecf.ECFProfileResult;
 import com.ec.survey.service.ExportService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.mysql.jdbc.StringUtils;
+
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -810,6 +812,7 @@ public class XlsExportCreator extends ExportCreator {
 				} else if (question instanceof GalleryQuestion) {
 
 					Cell cell = checkColumnsParseAnswerSet();
+					GalleryQuestion gallery = (GalleryQuestion) question;
 
 					if (answerSet == null) {
 						String v = answerrow.get(answerrowcounter++);
@@ -823,17 +826,20 @@ public class XlsExportCreator extends ExportCreator {
 						StringBuilder cellValue = new StringBuilder();
 						boolean first = true;
 						for (Answer answer : answers) {
-
-							if (answer.getValue() != null && answer.getValue().length() > 0) {
-								int index = Integer.parseInt(answer.getValue());
-								if (!first)
-									cellValue.append(", ");
-								try {
-									cellValue.append(((GalleryQuestion) question).getFiles().get(index).getName());
-									first = false;
-								} catch (Exception e) {
-									logger.error(e.getLocalizedMessage(), e);
-								}
+							File file = null;
+							if (!StringUtils.isNullOrEmpty(answer.getPossibleAnswerUniqueId())) {
+								file = gallery.getFileByUid(answer.getPossibleAnswerUniqueId());								
+							} else if (!StringUtils.isNullOrEmpty(answer.getValue())) {
+								file = gallery.getAllFiles().get(Integer.parseInt(answer.getValue()));
+							}
+							
+							if (!first)
+								cellValue.append(", ");
+							try {
+								cellValue.append(file.getName());
+								first = false;
+							} catch (Exception e) {
+								logger.error(e.getLocalizedMessage(), e);
 							}
 						}
 						cell.setCellValue(cellValue.toString());
@@ -1273,26 +1279,26 @@ public class XlsExportCreator extends ExportCreator {
 
 					CreateTableForAnswer(cellValue, boldstyle);
 					GalleryQuestion galleryQuestion = (GalleryQuestion) question;
-					for (int i = 0; i < galleryQuestion.getFiles().size(); i++) {
+					for (File file : galleryQuestion.getAllFiles()) {
 						row = sheet.createRow(rowIndex++);
 
-						cellValue = ConversionTools.removeHTMLNoEscape(galleryQuestion.getFiles().get(i).getName());
+						cellValue = ConversionTools.removeHTMLNoEscape(file.getName());
 
 						row.createCell(0).setCellValue(cellValue);
 
 						Double percent = statistics.getRequestedRecordsPercent()
-								.get(galleryQuestion.getId().toString() + "-" + i);
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid());
 
 						if (percent > 0) {
 							drawChart(percent, helper, drawing);
 						}
 
 						row.createCell(2).setCellValue(
-								statistics.getRequestedRecords().get(galleryQuestion.getId().toString() + "-" + i));
+								statistics.getRequestedRecords().get(galleryQuestion.getId().toString() + "-" + file.getUid()));
 
 						Cell pcell = row.createCell(3);
 						pcell.setCellValue(statistics.getRequestedRecordsPercent()
-								.get(galleryQuestion.getId().toString() + "-" + i) / 100);
+								.get(galleryQuestion.getId().toString() + "-" + file.getUid()) / 100);
 						pcell.setCellStyle(percentStyle);
 					}
 

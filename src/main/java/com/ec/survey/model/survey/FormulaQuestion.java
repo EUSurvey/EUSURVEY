@@ -170,4 +170,9 @@ public class FormulaQuestion extends Question {
 
 		return answers;
 	}
+
+	@Transient
+	public String getAnswerWithPrefix(String answer) {
+		return getId() + answer;
+	}
 }

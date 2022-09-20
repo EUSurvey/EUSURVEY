@@ -148,7 +148,8 @@ public class BasicController implements BeanFactoryAware {
 	protected ECFService ecfService;
 	
 	public @Value("${captcha.secret}") String captchasecret;
-	public @Value("${captcha.serverprefix}") String captchaserverprefix;	
+	public @Value("${captcha.serverprefix}") String captchaserverprefix;
+	public @Value("${captcha.serverprefixtarget}") String captchaserverprefixtarget;
 	public @Value("${ui.enableresponsive}") String enableresponsive;
 	private @Value("${ecaslogout}") String ecaslogout;
 	public @Value("${showecas}") String showecas;
@@ -544,6 +545,7 @@ public class BasicController implements BeanFactoryAware {
 					String token = request.getParameter("captcha_token");
 					String id = request.getParameter("captcha_id");
 					String useaudio = request.getParameter("captcha_useaudio");
+					String originalcookies = request.getParameter("captcha_original_cookies");
 					
 					if (token == null) {
 						String challenge = request.getParameter("recaptcha_challenge_field");
@@ -561,11 +563,16 @@ public class BasicController implements BeanFactoryAware {
 					}
 					
 					sessionService.initializeProxy();
-					URL url = new URL(captchaserverprefix + "validateCaptcha/" + id);
+					URL url = new URL(captchaserverprefixtarget + "validateCaptcha/" + id);
 					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 					conn.setRequestMethod("POST");
 					conn.setRequestProperty("x-jwtString", token);
 					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+					
+					String[] cookies = originalcookies.split("#");			
+					for (String cookie : cookies) {
+						conn.addRequestProperty("Cookie", cookie);
+					}	
 										
 					String postData = "captchaAnswer="  + str + "&useAudio=" + ("true".equalsIgnoreCase(useaudio));
 					byte[] postDataBytes = postData.getBytes("UTF-8");

@@ -92,7 +92,8 @@
 			                xhr.crossDomain = true;
 			            },
 			            success: function (data, textStatus, request) {
-			                EuCaptchaToken = getCaptchaUrl.getResponseHeader("x-jwtString");  //"token");
+			            	EuCaptchaCookies = getCaptchaUrl.getResponseHeader("original-cookie");
+			            	EuCaptchaToken = getCaptchaUrl.getResponseHeader("x-jwtString");  //"token");
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
 			                $("#captchaImg").attr("captchaId", jsonData.captchaId);
@@ -100,6 +101,7 @@
 			                $('#captcha_token').val(EuCaptchaToken);
 			                $('#captcha_id').val(jsonData.captchaId);
 			                $('#captcha_useaudio').val(false);
+			                $('#captcha_original_cookies').val(EuCaptchaCookies);
 			            }
 			        });
 				</c:when>
@@ -124,6 +126,7 @@
 			                xhr.setRequestHeader("Accept", "application/json");
 			                xhr.setRequestHeader("Content-Type", "application/json");
 			                xhr.setRequestHeader("x-jwtString", EuCaptchaToken);
+			                xhr.setRequestHeader("original-cookie", EuCaptchaCookies);
 			                xhr.withCredentials = true;
 			            },
 			            success: function (data) {
@@ -204,6 +207,7 @@
 			let language = "Change Language ...";
 			let useAudio = false;
 			let EuCaptchaToken;
+			let EuCaptchaCookies;
 	
 			let serverprefix = "<c:out value="${captchaServerPrefix}"/>";
 	

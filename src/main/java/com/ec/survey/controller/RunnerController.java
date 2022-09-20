@@ -672,6 +672,8 @@ public class RunnerController extends BasicController {
 			
 			survey = surveyService.getSurvey(survey.getId(), lang);
 
+
+
 			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 				result.addObject("participantsemail", answerSet.getResponderEmail());
 			}
@@ -681,6 +683,10 @@ public class RunnerController extends BasicController {
 			Form form = new Form(resources, surveyService.getLanguage(lang),
 					translationService.getActiveTranslationsForSurvey(survey.getId()), contextpath);
 			form.setSurvey(survey);
+
+			if(!survey.getConfirmationPageLink()){
+				form.getAnswerSets().add(answerSet);
+			}
 
 			result.addObject("form", form);
 			result.addObject("text", survey.getConfirmationPage());
@@ -801,7 +807,10 @@ public class RunnerController extends BasicController {
 			throw new InvalidURLException();
 		}
 
-		return new ModelAndView("runner/contactForm", Constants.SURVEY, survey);
+		ModelAndView model = new ModelAndView("runner/contactForm", Constants.SURVEY, survey);
+		model.addObject("USER", request.getSession().getAttribute("USER"));
+		return model;
+
 	}
 
 	@PostMapping(value = "/contactform/{uidorshortname}")
@@ -881,6 +890,7 @@ public class RunnerController extends BasicController {
 		mailService.SendHtmlMail(owneremail, sender, sender, subject, text, attachment1, attachment2, null, true);
 
 		model.put("messagesent", true);
+		model.put("survey", survey);
 		return "runner/contactForm";
 	}
 
@@ -2119,6 +2129,10 @@ public class RunnerController extends BasicController {
 			sessionService.setFormStartDate(request, form, uniqueCode);
 			form.setSurvey(survey);
 
+			if(!survey.getConfirmationPageLink()){
+				form.getAnswerSets().add(answerSet);
+			}
+
 			result.addObject("form", form);
 			result.addObject("text", survey.getConfirmationPage());
 			if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
@@ -2127,6 +2141,7 @@ public class RunnerController extends BasicController {
 			} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null) {
 				result.addObject("asklogout", true);
 			}
+
 			result.addObject("surveyprefix", survey.getId() + ".");
 			request.getSession().removeAttribute("ECASSURVEY");
 

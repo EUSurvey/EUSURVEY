@@ -377,8 +377,17 @@
 	
 	function showExportDialogAndFocusEmail(caller)
 	{
+		$('#ask-export-dialog').find(".foremail").hide();
+		$('#ask-export-dialog').find(".forexport").show();
 		showModalDialog($('#ask-export-dialog'), caller);		
 		setTimeout(function() { $('#email').focus(); }, 1000);
+	}
+	
+	function showAskEmailDialog(caller)
+	{
+		$('#ask-export-dialog').find(".foremail").show();
+		$('#ask-export-dialog').find(".forexport").hide();
+		showModalDialog($('#ask-export-dialog'), caller);
 	}
 	
 	var sessiontimeout = ${uisessiontimeout * 60};

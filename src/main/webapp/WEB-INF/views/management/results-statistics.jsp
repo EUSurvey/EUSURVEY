@@ -111,7 +111,7 @@
 								
 							</div>
 	
-	                        <div class="statelement-wrapper">
+	                        <div class="statelement-wrapper choice-chart">
 	                        	<div class="chart-controls"></div>
 	                            <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
 	                                 <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
@@ -149,22 +149,22 @@
 										</tr>
 									</thead>						
 									<tbody>
-										<c:forEach items="${question.files}" var="file" varStatus="status">
-											<tr data-position="${status.index}" data-value="${statistics.getRequestedRecordsPercentForGallery(question, status.index)}">
+										<c:forEach items="${question.allFiles}" var="file" varStatus="status">
+											<tr data-position="${status.index}" data-value="${statistics.getRequestedRecordsPercentForGallery(question, file.uid)}">
 												<td>${file.name}</td>
 												<td>
 													<div class="progress" style="width: 200px; margin-bottom: 2px;">
-													  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}-${status.index}" style="width: ${statistics.getRequestedRecordsPercentForGallery(question, status.index)}%;"></div>
+													  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}-${file.uid}" style="width: ${statistics.getRequestedRecordsPercentForGallery(question, file.uid)}%;"></div>
 													</div>
 												</td>					
 												<c:choose>
 													<c:when test="${statistics != null}">						
-														<td class="statRequestedRecords" data-id="${question.id}-${status.index}">${statistics.getRequestedRecordsForGallery(question, status.index)}</td>			
-														<td class="statRequestedRecordsPercent" data-id="${question.id}-${status.index}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForGallery(question, status.index)}"/> %</td>		
+														<td class="statRequestedRecords" data-id="${question.id}-${file.uid}">${statistics.getRequestedRecordsForGallery(question, file.uid)}</td>			
+														<td class="statRequestedRecordsPercent" data-id="${question.id}-${file.uid}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForGallery(question, file.uid)}"/> %</td>		
 													</c:when>
 													<c:otherwise>
-														<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
-														<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}-${status.index}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+														<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}-${file.uid}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+														<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}-${file.uid}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 													</c:otherwise>
 												</c:choose>		
 											</tr>
@@ -338,7 +338,7 @@
 						
 							<div class="cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
 							
-								<c:forEach items="${question.childElements}" var="childQuestion">
+								<c:forEach items="${question.questions}" var="childQuestion">
 								
 									<div class="statelement">
 								
@@ -543,7 +543,7 @@
 										<tr>								
 											<th style="width: 300px">&#160;</th>
 											
-											<c:forEach items="${question.childElements}" var="child" varStatus="status">
+											<c:forEach items="${question.getAllChildElements()}" var="child" varStatus="status">
 												<th>
 													<div style="float: right">
 														<a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></a>
@@ -566,11 +566,11 @@
 													
 									<tbody>
 							
-									 <c:forEach items="${question.childElements}" var="child" varStatus="loop">
+									 <c:forEach items="${question.getAllChildElements()}" var="child" varStatus="loop">
 									
 										<tr data-position="${loop.index}" data-value="${statistics == null ? "" : statistics.requestedRecordsRankingPercentScore[child.id.toString()]}">
 											<td>${child.getStrippedTitleNoEscape()}</td>
-											<c:forEach items="${question.childElements}" varStatus="status">
+											<c:forEach items="${question.getAllChildElements()}" varStatus="status">
 											
 												<c:choose>
 													<c:when test="${statistics != null}">						
@@ -717,7 +717,7 @@
 												
 											</div>
 					
-					                        <div class="statelement-wrapper">
+					                        <div class="statelement-wrapper choice-chart">
 					                        	<div class="chart-controls"></div>
 					                            <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${child.uniqueId}" data-uid="${child.uniqueId}" data-language-code="${form.getSurvey().language.code}">
 					                                 <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
@@ -987,8 +987,12 @@
     <div class="chart-legend-group" style="float: left; display: none; margin-bottom: 10px; margin-right: 10px;">
 		<input class="chart-legend" onchange="changeChart(this)" type="checkbox" checked="checked" /> <spring:message code="label.Legend" />
     </div>
-    
-    <div class="chart-score-group" style="float: left; display: none; margin-bottom: 10px;">
+
+	<div class="chart-score-group" style="float: left; display: none; margin-bottom: 10px;">
 		<input class="chart-score" onchange="changeChart(this)" type="checkbox" checked="checked" /> <spring:message code="label.ShowScore" />
-    </div>
+	</div>
+
+	<div class="chart-hide-unanswered-group" style="float: left; display: none; margin-bottom: 10px;">
+		<input class="chart-hide-unanswered" onchange="changeChart(this)" type="checkbox" /> <spring:message code="label.HideUnusedAnswers" />
+	</div>
 </div>

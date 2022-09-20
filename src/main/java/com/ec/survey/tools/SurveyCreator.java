@@ -228,9 +228,14 @@ public class SurveyCreator {
 		
 		Matrix matrix = new Matrix("This is a matrix", "matrix1", UUID.randomUUID().toString());
 		matrix.setPosition(position);
+		matrix.setOptional(true);
 		matrix.setColumns(4);
 		matrix.setRows(3);
 		matrix.setIsSingleChoice(true);
+		matrix.setMinRows(1);
+		matrix.setMaxRows(2);
+		matrix.setIsInterdependent(false);
+		matrix.setHelp("This is the help message");
 		EmptyElement dummy = new EmptyElement("empty", "empty");
 		dummy.setPosition(0);
 		matrix.getChildElements().add(dummy);
@@ -238,6 +243,7 @@ public class SurveyCreator {
 		{
 			Text text = new Text("Text" + i, UUID.randomUUID().toString());
 			text.setPosition(i);
+			text.setOptional(true);
 			matrix.getChildElements().add(text);
 		}
 		survey.getElements().add(matrix);

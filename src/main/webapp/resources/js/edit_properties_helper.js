@@ -1884,6 +1884,13 @@ function removePossibleAnswer()
 	}
 	
 	_undoProcessor.addUndoStep(["REMOVEANSWER", element.id(), answer]);
+	
+	$('[data-triggers]').each(function(){
+		if ($(this).attr("data-triggers").indexOf(answer.id() + ";") > -1) {
+			$(this).attr("data-triggers", $(this).attr("data-triggers").replace(answer.id() + ";", ""));
+		}
+	});
+	
 	updateDependenciesView();
 	addElementHandler(selectedElement);
 	
@@ -2746,8 +2753,10 @@ function adaptDelphiControls(element) {
 function adaptDelphiChildControls(element, parent) {
 	const mandatoryPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Mandatory');
 	if (parent.isDelphiQuestion()) {
-		mandatoryPropertyRow.Disabled(true);
-		mandatoryPropertyRow.Value(false);
+		if (mandatoryPropertyRow != null) {
+			mandatoryPropertyRow.Disabled(true);
+			mandatoryPropertyRow.Value(false);
+		}
 	} else {
 		mandatoryPropertyRow.Disabled(false);
 	}

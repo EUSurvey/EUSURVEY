@@ -3,14 +3,18 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.AnswerExecutor;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
+import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizExecutor;
 import com.ec.survey.tools.Ucs2Utf8;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -48,7 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Controller("homeController")
 public class HomeController extends BasicController {
 	
-	public @Value("${stresstests.createdata}") String createStressData;	
+	public @Value("${stresstests.createdata}") String createStressData;
 	private @Value("${server.prefix}") String host;
 	
 	private @Value("${support.recipient}") String supportEmail;
@@ -195,10 +199,8 @@ public class HomeController extends BasicController {
 			return "home/support";
 		}
 		
-		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
-		
 		String SMTServiceEnabled = settingsService.get(Setting.UseSMTService);
-		if (email.toLowerCase().endsWith("ec.europa.eu") && SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
+		if (SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
 			return sendSupportSmt(request, locale, model);
 		} else {
 			return sendSupportEmail(request, locale, model);
@@ -229,14 +231,14 @@ public class HomeController extends BasicController {
 	private String GetSmtLabelForReason(String reason) {
 		switch (reason) {
 			case "technicalproblem":
-				return "Incident";
+				return "INCIDENT";
 			case "idea":
-				return "Request for change";
+				return "REQUESTFORCHANGE";
 			case "assistance":
 			case "highaudience":
-				return "Request for service";
+				return "REQUESTFORSERVICE";
 			default:
-				return "Request for information";
+				return "REQUESTFORINFORMATION";
 		}		
 	}
 
@@ -336,24 +338,65 @@ public class HomeController extends BasicController {
 		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
 		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
+		
+		String contact = "";
+		String company = "EXTERNE";
+		User user = null;
+		try {
+			user = sessionService.getCurrentUser(request, false, false);
+		} catch (Exception e1) {
+			// ignore
+		}
+		
+		if (user != null) {
+			createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", user.getGivenName());
+			createTemplate = createTemplate.replace("[CONTACTLASTNAME]", user.getSurName());
+			contact = user.getLogin();
+		} else if (name != null && name.length() > 0)  {
+			if (name.contains(" ")) {
+				String[] firstLastName = name.split(" ");
+				createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", firstLastName[0]);
+				createTemplate = createTemplate.replace("[CONTACTLASTNAME]", firstLastName[1]);
+			} else {
+				createTemplate = createTemplate.replace("[CONTACTFIRSTNAME]", name);
+			}
+		}
+		if (email.toLowerCase().endsWith("ec.europa.eu")) {
+			// we keep the user's login
+			//company = "EC";
+		} else if (email.toLowerCase().endsWith(".europa.eu")) {
+			//institution
+			String institution = email.substring(email.indexOf("@") + 1);
+			institution = institution.substring(0, institution.indexOf("."));
+			contact = "ZZZ_EXTERNAL USER " + institution;
+			//company = institution.toUpperCase();
+		} else {
+			//external
+			contact = "ZZZ_EXTERNAL USER EXTERNE";
+			//company = "EXTERNE";			
+		}
+		createTemplate = createTemplate.replace("[CONTACT]", contact);
+		createTemplate = createTemplate.replace("[COMPANY]", company);
 
 		try {
-
-			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(incidentHost);
-
-			httppost.setEntity(new StringEntity(createTemplate));
 			
+			sessionService.initializeProxy();
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost(incidentHost.trim());
+			httppost.addHeader("Content-type", "text/xml;charset=UTF-8");
+			httppost.addHeader("SOAPAction", "Create");
 			if (smtpAuth != null) {
 				httppost.addHeader("Authorization", "Basic " + smtpAuth);
 			}
 
+			httppost.setEntity(new StringEntity(createTemplate));
+			
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
 
 			if (entity != null) {
-				String strResponse = EntityUtils.toString(entity);
-				if (!strResponse.contains("message=\"success\"")) {
+				String strResponse = EntityUtils.toString(entity, "UTF-8");
+				if (!strResponse.toLowerCase().contains("message=\"success\"")) {
 					logger.error(strResponse);
 					throw new MessageException("Calling SMT web service failed.");
 				}

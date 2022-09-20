@@ -924,6 +924,16 @@
 							</div>
 						</td>
 					</tr>
+					<tr class="subelement noborder" data-bind="visible: motivationPopup">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MotivationPopupTitle" />
+							</div>
+							<div style="float: right">
+								<form:input class="form-control" style="width: 500px" type="text" id="edit-survey-motivation-popup-title" path="survey.motivationPopupTitle"/>
+							</div>
+						</td>
+					</tr>
 					<tr>
 						<td>
 							<div style="float: left">
@@ -1190,7 +1200,7 @@
 							<div style="float: left">
 								<span class="mandatory">*</span><spring:message code="label.ConfirmationPage" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
-								<div class="help hideme"><spring:message code="info.ConfirmationPage" /></div>	
+								<div class="help hideme"><spring:message code="info.ConfirmationMarkUpPage" /></div>
 							</div>
 							<div style="float: right; text-align: right;">
 								<form:radiobutton onclick="_properties.useConfLink(false)" class="check" path="survey.confirmationPageLink" value="false"/><spring:message code="label.Text" />&#160;
@@ -1198,8 +1208,8 @@
 								<br />
 								<div data-bind="visible: !useConfLink()">
 									<div class="preview">${form.survey.confirmationPage} <a class="iconbutton" onclick="$('#tinymceconfpage').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
-									<div id="tinymceconfpage" style="display: none">
-										<form:textarea class="tinymce" path="survey.confirmationPage"></form:textarea>
+									<div id="tinymceconfpage" style="display: none; position: relative;">
+										<form:textarea id="edit-survey-confirmation-page" class="tinymcefullscreen" path="survey.confirmationPage"></form:textarea>
 									</div>		
 								</div>
 								<div data-bind="visible: useConfLink" id="confLink">

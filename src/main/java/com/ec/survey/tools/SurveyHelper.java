@@ -175,6 +175,11 @@ public class SurveyHelper {
 										answer.setPossibleAnswerId(paid);
 										answer.setPossibleAnswerUniqueId(item.getPossibleAnswer(paid).getUniqueId());
 									}
+								} else if (question instanceof GalleryQuestion) {
+									GalleryQuestion gallery = (GalleryQuestion)question;
+									int index = Integer.parseInt(value);
+									File file = gallery.getFiles().get(index);
+									answer.setPossibleAnswerUniqueId(file.getUid());
 								}
 																					
 								answerSet.addAnswer(answer);

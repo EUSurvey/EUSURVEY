@@ -58,6 +58,13 @@
 		#ulContainer {
 			margin-bottom: 50px;
 		}
+
+		figcaption {
+			font-style: italic;
+			padding: 2px;
+			text-align: center;
+		}
+
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -568,6 +575,42 @@
 				</a>
 				.
 			</p>
+			<h2>
+				What is the 'Motivation popup' and how to use it?
+			</h2>
+			<p>
+				The 'Motivation popup' is a dialog window which opens to the survey participant during the completion
+				of the form. It displays a message to motivate the participant to continue his progress. This message
+				is customisable as well as the time at which the popup is displayed.
+			</p>
+			<p>
+				'Motivation popup' is available in the survey's 'Properties' under the 'Appearance' tab.
+			</p>
+			<figure>
+				<img src="${contextpath}/resources/images/documentation/motivation_popup_1.png" style="width: 75%"/>
+				<figcaption>Motivation popup in the survey's 'Properties'</figcaption>
+			</figure>
+			<p>
+				Once the switch has been activated, the options appear.
+			</p>
+			<p>
+				The 'Trigger' can be based on the progress or a timer.
+			</p>
+			<p>
+				'Progress' is expressed as a percentage. For instance, 50%. This means that the popup will be displayed
+				as soon as the survey participant answered 50% of the questions.
+			</p>
+			<p>
+				In case the 'timer' option has been selected, the popup will be displayed after X minutes. X being the
+				number of minutes specified in the 'Threshold value' field.
+			</p>
+			<p>
+				Finally, the text is customizable using the 'Motivation text' field.
+			</p>
+			<figure>
+				<img src="${contextpath}/resources/images/documentation/motivation_popup_2.png" style="width: 75%"/>
+				<figcaption>Motivation popup configuration fields</figcaption>
+			</figure>
 			<h1>
 				Editing a survey
 			</h1>

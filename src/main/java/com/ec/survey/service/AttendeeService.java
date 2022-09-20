@@ -198,8 +198,15 @@ public class AttendeeService extends BasicService {
 						&& !entry.getKey().equalsIgnoreCase("owner") && !entry.getKey().equalsIgnoreCase("_csrf")
 						&& !entry.getKey().startsWith("visibleAttendee") && entry.getValue() != null
 						&& entry.getValue().trim().length() > 0) {
-					sql.append(" LEFT OUTER JOIN ATTRIBUTE at ON at.ATTE_ID = a.ATTENDEE_ID ");
-					break;
+					
+					if (org.apache.commons.lang3.StringUtils.isNumeric(entry.getKey())) {
+						//LEFT OUTER JOIN ATTRIBUTE at<n> ON at<n>.ATTE_ID = a.ATTENDEE_ID
+						sql.append(" LEFT OUTER JOIN ATTRIBUTE at")
+								.append(entry.getKey())
+								.append(" ON at")
+								.append(entry.getKey())
+								.append(".ATTE_ID = a.ATTENDEE_ID ");
+					}
 				}
 			}
 			if (attributeFilter.containsKey("owner") && attributeFilter.get("owner") != null
@@ -233,9 +240,9 @@ public class AttendeeService extends BasicService {
 						String value = entry.getValue().trim();
 
 						if (value.length() > 0) {
-							sql.append(
-									" AND at.attributeName_AN_ID IN (SELECT AN_ID FROM ATTRIBUTENAME WHERE AN_NAME IN (SELECT AN_NAME FROM ATTRIBUTENAME WHERE AN_ID = :aid")
-									.append(counter).append(")) AND at.ATTRIBUTE_VALUE like :av").append(counter);
+							sql.append(" AND at").append(intKey)
+									.append(".attributeName_AN_ID IN (SELECT AN_ID FROM ATTRIBUTENAME WHERE AN_NAME IN (SELECT AN_NAME FROM ATTRIBUTENAME WHERE AN_ID = :aid")
+									.append(counter).append(")) AND at").append(intKey).append(".ATTRIBUTE_VALUE like :av").append(counter);
 							oQueryParameters.put("aid" + counter, intKey);
 							oQueryParameters.put("av" + counter++, "%" + value + "%");
 						}
@@ -324,6 +331,12 @@ public class AttendeeService extends BasicService {
 		for (Attribute attribute : attendee.getAttributes()) {
 			attribute.setAttendeeId(attendee.getId());
 			session.update(attribute);
+		}
+
+		if (attendee.getOriginalId() != null) {
+			Query query = session.createSQLQuery("UPDATE SHARES_ATTENDEE SET attendees_ATTENDEE_ID = :id WHERE attendees_ATTENDEE_ID = :origId")
+					.setParameter("id", attendee.getId()).setParameter("origId", attendee.getOriginalId());
+			query.executeUpdate();
 		}
 	}
 

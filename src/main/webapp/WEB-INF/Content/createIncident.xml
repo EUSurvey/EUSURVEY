@@ -1,33 +1,36 @@
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://schemas.hp.com/SM/7">
-  <soap:Body>
-    <ns3:CreateIncidentRequest attachmentData="false" attachmentInfo="false" ignoreEmptyElements="true" updateconstraint="0">
-      <ns3:model>
-        <ns3:keys updatecounter="0"/>
-        <ns3:instance updatecounter="0">
-          <ns3:Severity mandatory="false" readonly="false" type="String">2</ns3:Severity>
-          <ns3:PrimaryAssignmentGroup mandatory="false" readonly="false" type="String">DIGIT EUSURVEY SUPPORT</ns3:PrimaryAssignmentGroup>
-          <ns3:AffectedItem mandatory="false" readonly="false" type="String">SMT</ns3:AffectedItem>
-          <ns3:IncidentDescription type="Array">
-            <ns3:IncidentDescription mandatory="false" readonly="false" type="String">[MESSAGE]</ns3:IncidentDescription>
-            <ns3:IncidentDescription mandatory="false" readonly="false" type="String">User name: [ADDITIONALINFOUSERNAME]</ns3:IncidentDescription>
-            <ns3:IncidentDescription mandatory="false" readonly="false" type="String">User email: [ADDITIONALINFOEMAIL]</ns3:IncidentDescription>
-			<ns3:IncidentDescription mandatory="false" readonly="false" type="String">[ADDITIONALINFO]</ns3:IncidentDescription>
-            <ns3:IncidentDescription mandatory="false" readonly="false" type="String">Survey title: [ADDITIONALINFOSURVEYTITLE]</ns3:IncidentDescription>
-            <ns3:IncidentDescription mandatory="false" readonly="false" type="String">Survey alias: [ADDITIONALINFOSURVEYALIAS]</ns3:IncidentDescription>
-          </ns3:IncidentDescription>
-          <ns3:Resolution type="Array"/>
-          <ns3:Contact mandatory="false" readonly="false" type="String">ZZZ_EXTERNAL USER EXTERNE</ns3:Contact>
-          <ns3:JournalUpdates type="Array"/>
-          <ns3:BriefDescription mandatory="false" readonly="false" type="String">[SUBJECT]</ns3:BriefDescription>
-          <ns3:IMTicketStatus mandatory="false" readonly="false" type="String">Assigned</ns3:IMTicketStatus>
-          <ns3:ProblemType mandatory="false" readonly="false" type="String">[REASON]</ns3:ProblemType>
-          <ns3:NotifyBy mandatory="false" readonly="false" type="String">E-MAIL</ns3:NotifyBy>
-          <ns3:Explanation type="Array"/>
-          <ns3:CallCode mandatory="false" readonly="false" type="String">OTHER</ns3:CallCode>
-          <ns3:Impact mandatory="false" readonly="false" type="String">2</ns3:Impact>
-          <ns3:Workdesc type="Array"/>
-        </ns3:instance>
-      </ns3:model>
-    </ns3:CreateIncidentRequest>
-  </soap:Body>
-</soap:Envelope>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://schemas.hp.com/SM/7" xmlns:com="http://schemas.hp.com/SM/7/Common" xmlns:xm="http://www.w3.org/2005/05/xmlmime">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:CreateIncidentv2Request attachmentInfo="false" attachmentData="false" ignoreEmptyElements="true" updateconstraint="0">
+         <ns:model>
+            <ns:keys updatecounter="0"/>
+            <ns:instance updatecounter="0">
+               <ns:ProblemType type="String" mandatory="false" readonly="false">[REASON]</ns:ProblemType>
+               <ns:Severity type="String" mandatory="false" readonly="false">2</ns:Severity>
+               <ns:PrimaryAssignmentGroup type="String" mandatory="false" readonly="false">DIGIT EUSURVEY SUPPORT</ns:PrimaryAssignmentGroup>
+               <ns:AffectedItem type="String" mandatory="false" readonly="false">SURVEYS</ns:AffectedItem>
+               <ns:IncidentDescription type="Array">
+                <ns:IncidentDescription mandatory="false" readonly="false" type="String">[MESSAGE]</ns:IncidentDescription>
+	            <ns:IncidentDescription mandatory="false" readonly="false" type="String">User name: [ADDITIONALINFOUSERNAME]</ns:IncidentDescription>
+	            <ns:IncidentDescription mandatory="false" readonly="false" type="String">User email: [ADDITIONALINFOEMAIL]</ns:IncidentDescription>
+				<ns:IncidentDescription mandatory="false" readonly="false" type="String">[ADDITIONALINFO]</ns:IncidentDescription>
+	            <ns:IncidentDescription mandatory="false" readonly="false" type="String">Survey title: [ADDITIONALINFOSURVEYTITLE]</ns:IncidentDescription>
+	            <ns:IncidentDescription mandatory="false" readonly="false" type="String">Survey alias: [ADDITIONALINFOSURVEYALIAS]</ns:IncidentDescription>
+               </ns:IncidentDescription>
+               <ns:Resolution type="Array"/>
+               <ns:Contact type="String" mandatory="false" readonly="false">[CONTACT]</ns:Contact>
+               <ns:ContactFirstName type="String" mandatory="false" readonly="false">[CONTACTFIRSTNAME]</ns:ContactFirstName>
+               <ns:ContactLastName type="String" mandatory="false" readonly="false">[CONTACTLASTNAME]</ns:ContactLastName>
+               <ns:JournalUpdates type="Array"/>
+               <ns:Company type="String" mandatory="false" readonly="false">[COMPANY]</ns:Company>
+               <ns:BriefDescription type="String" mandatory="false" readonly="false">[SUBJECT]</ns:BriefDescription>
+               <ns:IMTicketStatus type="String" mandatory="false" readonly="false">Assigned</ns:IMTicketStatus>
+               <ns:NotifyBy type="String" mandatory="false" readonly="false">E-MAIL</ns:NotifyBy>
+               <ns:CallCode type="String" mandatory="false" readonly="false">OTHER</ns:CallCode>
+               <ns:Impact type="String" mandatory="false" readonly="false">2</ns:Impact>
+               <ns:Workdesc type="Array"/>
+            </ns:instance>
+         </ns:model>
+      </ns:CreateIncidentv2Request>
+   </soapenv:Body>
+</soapenv:Envelope>

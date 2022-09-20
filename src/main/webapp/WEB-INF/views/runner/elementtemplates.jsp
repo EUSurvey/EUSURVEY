@@ -602,15 +602,17 @@
 	
 		<!-- /ko -->
 	
-		<!-- ko if: maxCharacters() > 0 -->	
+		<!-- ko if: maxCharacters() > 0 -->
 			<textarea class="data" data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}"  onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea class="data">
-			<div class="charactercounterdiv" style="max-width: 645px; text-align: right; color: #777; margin-left: 20px;" aria-live="polite" aria-atomic="true">
-				<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title="${form.getMessage("info.charactercounter")}" aria-label="${form.getMessage("info.charactercounter")}"></span>
-				<span class="charactersused">
-					<span data-bind="html: getCharacterCountInfo(maxCharacters()), attr: {id: 'countinfo' + id()}"></span>
-				</span>
-				<span class="characterlimitreached" style="..." data-toggle="tooltip" aria-label="${form.getMessage("info.AllCharactersUsed")}">${form.getMessage("info.AllCharactersUsed")}</span>
-			</div>
+			<!-- ko if: !foreditor -->
+				<div class="charactercounterdiv limits" style="max-width: 645px; text-align: right; margin-left: 20px;" aria-live="polite" aria-atomic="true">
+					<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title="${form.getMessage("info.charactercounter")}" aria-label="${form.getMessage("info.charactercounter")}"></span>
+					<span class="charactersused">
+						<span data-bind="html: getCharacterCountInfo(maxCharacters()), attr: {id: 'countinfo' + id()}"></span>
+					</span>
+					<span class="characterlimitreached" data-toggle="tooltip" aria-label="${form.getMessage("info.AllCharactersUsed")}">${form.getMessage("info.AllCharactersUsed")}</span>
+				</div>
+			<!-- /ko -->
 		<!-- /ko -->
 		<!-- ko if: maxCharacters() == 0 -->	
 			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
@@ -1568,14 +1570,26 @@
 								<!-- ko if: child.minCharacters() > 0 && child.maxCharacters() > 0 -->
 									<div class='limits' data-bind="html: getMinMaxCharacters(child.minCharacters(), child.maxCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->
-								<!-- ko if: child.minCharacters() > 0 && child.maxCharacters() == 0 -->
+								<!-- ko if: child.minCharacters() > 0 && (child.maxCharacters() == 0 || child.maxCharacters() == null)-->
 									<div class='limits' data-bind="html: getMinCharacters(child.minCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->
-								<!-- ko if: child.minCharacters() == 0 && child.maxCharacters() > 0 -->
+								<!-- ko if: (child.minCharacters() == 0 || child.minCharacters() == null) && child.maxCharacters() > 0 -->
 									<div class='limits' data-bind="html: getMaxCharacters(child.maxCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->							
 
-								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : ''}"></textarea>
+								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : '', onkeyup: child.maxCharacters() > 0 ? 'countChar(this);' : ''}"></textarea>
+
+								<!-- ko if: child.maxCharacters() > 0 && !$parent.foreditor -->
+									<div class="charactercounterdiv limits" style="max-width: 645px; text-align: right; margin-left: 20px;" aria-live="polite" aria-atomic="true">
+										<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title="${form.getMessage("info.charactercounter")}" aria-label="${form.getMessage("info.charactercounter")}"></span>
+										<span class="charactersused">
+											<span data-bind="html: getCharacterCountInfo(child.maxCharacters()), attr: {id: 'countinfo' + child.id()}"></span>
+										</span>
+										<span class="characterlimitreached" data-toggle="tooltip" aria-label="${form.getMessage("info.AllCharactersUsed")}">${form.getMessage("info.AllCharactersUsed")}</span>
+									</div>
+								<!-- /ko -->
+
+
 								<!-- /ko -->
 		
 								<!-- ko if: child && child.cellType() == 3 -->

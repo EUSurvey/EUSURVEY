@@ -376,11 +376,11 @@ input[type="text"].freetext {
 
 .tabletable textarea {
 	width: 100% !important;
-	/*height: 100% !important;*/
 	margin: 0px !important;
 	display: block;
 	padding: 0px;
 	border: none;
+	border-color: #fff;
 	 -webkit-box-sizing: border-box; /* <=iOS4, <= Android  2.3 */
        -moz-box-sizing: border-box; /* FF1+ */
             box-sizing: border-box; /* Chrome, IE8, Opera, Safari 5.1*/
@@ -388,10 +388,6 @@ input[type="text"].freetext {
 
 textarea.freetext {
 	width: 645px;
-}
-
-.dataTable {
-
 }
 
 .survey-element {
@@ -599,4 +595,12 @@ legend {
 
 .progress-bar-success {
    background-color: #009200;
+}
+
+textarea:disabled, input:disabled {
+    cursor: default;
+    background-color: #FAFAFA;
+    border-style: solid;
+    border-width: 1px;
+  	border-radius: 2px;
 }

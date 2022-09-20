@@ -343,9 +343,10 @@ public class PDFController extends BasicController {
 						&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
 						&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
 						&& user.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 2
+						&& user.getResultAccess() == null
 						&& (!(answerSet.getResponderEmail() != null && user.getEmail() != null
 								&& (answerSet.getResponderEmail().equalsIgnoreCase(user.getEmail()) || answerSet
-										.getResponderEmail().equalsIgnoreCase(Tools.md5hash(user.getEmail())))))) {
+										.getResponderEmail().equalsIgnoreCase(Tools.md5hash(user.getEmail())))))) {					
 					throw new ForbiddenURLException();
 				}
 

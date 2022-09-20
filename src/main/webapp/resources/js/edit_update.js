@@ -651,7 +651,7 @@ function update(input)
 				return;
 			}
 			
-			if (element.display() === "Slider") {
+			if (element.type == "NumberQuestion" && element.display() === "Slider") {
 				if (element.min() == null || element.min().length == 0)
 				{
 					$(input).val("0");

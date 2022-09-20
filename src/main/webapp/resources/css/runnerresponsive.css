@@ -595,3 +595,11 @@ legend {
 .blacktext {
 	color: #000;
 }
+
+textarea:disabled, input:disabled {
+    background-color: #FAFAFA;
+    border-color: rgba(118, 118, 118, 0.3);
+    border-style: solid;
+    border-width: 1px;
+  	border-radius: 2px;
+}

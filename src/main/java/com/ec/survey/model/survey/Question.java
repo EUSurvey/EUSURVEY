@@ -136,7 +136,11 @@ public abstract class Question extends Element {
 		}		
 
 		if (!delphiQuestion && (delphiChartType == null || delphiChartType == DelphiChartType.None)) {
-			if (this instanceof ChoiceQuestion || this instanceof Matrix || this instanceof NumberQuestion || this instanceof RatingQuestion || this instanceof FormulaQuestion) {
+			if (this instanceof ChoiceQuestion ||
+					this instanceof Matrix ||
+					this instanceof NumberQuestion ||
+					this instanceof RatingQuestion ||
+					this instanceof FormulaQuestion) {
 				return DelphiChartType.Pie;
 			}
 
@@ -149,7 +153,11 @@ public abstract class Question extends Element {
 			}
 			
 			if (this instanceof ComplexTableItem) {
-				if (((ComplexTableItem)this).getCellType() == ComplexTableItem.CellType.FreeText) {
+				ComplexTableItem item = (ComplexTableItem) this;
+				if (item.isChoice() || item.getCellType() == ComplexTableItem.CellType.Formula || item.getCellType() == ComplexTableItem.CellType.Number){
+					return DelphiChartType.Pie;
+				}
+				else if (item.getCellType() == ComplexTableItem.CellType.FreeText) {
 					return DelphiChartType.WordCloud;
 				}
 			}

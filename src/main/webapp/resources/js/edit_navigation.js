@@ -148,16 +148,15 @@ var NavigationModel = function () {
 		} else if ($(element).hasClass("mytableitem"))
 		{
 			var table = element;
-			$(table).find("tr").each(function(index){
-				if (index > 0)
-				{
-					var parentid = $(this).find("td").first().attr("data-id");
-					var niq = model.getNavigationItem($(this).find("td").first(), false);
-					ni.addItem(niq);
-					$(table).find("tr").first().find(".table-header").each(function(){
-						niq.addItem(model.getNavigationItem(this, false, parentid));
-					});
-				}
+			$(table).find(".tabletable .table-header[scope=row]").each(function(){
+
+				let parentId = this.getAttribute("data-id")
+				let niq = model.getNavigationItem(this, false);
+				ni.addItem(niq);
+				$(table).find(".tabletable .table-header[scope=col]").each(function(){
+					niq.addItem(model.getNavigationItem(this, false, parentId));
+				});
+
 			});
 		} else if ($(element).hasClass("complextableitem"))
 		{
@@ -182,7 +181,7 @@ var NavigationModel = function () {
 		return ni;
     }
     
-    this.createNavigation = function(first)
+    this.createNavigation = function(binding)
     {    	
     	//save closed items
     	var closedids = [];
@@ -203,7 +202,7 @@ var NavigationModel = function () {
     		} 
     	});
     	
-    	if (first)
+    	if (binding && !ko.dataFor($("#navigation")[0]))
     	ko.applyBindings(this, $("#navigation")[0]);
     	
     	for (var i = 0; i < closedids.length; i++)

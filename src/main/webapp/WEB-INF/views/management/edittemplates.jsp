@@ -72,7 +72,7 @@
 		<!--  ko if: ContentType() == 'number' -->
 			<td class="propertycontent">
 				<form autocomplete="off">
-					<input class="spinner" type="number" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id}" />
+					<input class="spinner" type="number" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id}" onfocus='markActiveProperty(this)' onblur='update(this)'/>
 				</form>
 			</td>
 		<!-- /ko -->
@@ -83,11 +83,11 @@
 					<table class="minmaxtable">
 						<tr>
 							<td><spring:message code="label.min" />&nbsp;</td>
-							<td><input class="spinner" style="min-width:60px" type="number" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+							<td><input class="spinner" style="min-width:60px" type="number" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 						<tr>
 							<td><spring:message code="label.max" />&nbsp;</td>
-							<td><input class="spinner" style="min-width:60px" type="number" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+							<td><input class="spinner" style="min-width:60px" type="number" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 					</table>
 				</form>
@@ -101,11 +101,11 @@
 					<table class="minmaxtable">
 						<tr>
 							<td><spring:message code="label.MinValue" />&nbsp;</td>
-							<td><input class="spinner" style="min-width:60px" type="number" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+							<td><input class="spinner" style="min-width:60px" type="number" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 						<tr>
 							<td><spring:message code="label.MaxValue" />&nbsp;</td>
-							<td><input class="spinner" style="min-width:60px" type="number" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+							<td><input class="spinner" style="min-width:60px" type="number" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 					</table>
 				</form>
@@ -134,11 +134,11 @@
 					<table class="minmaxtable">
 						<tr>
 							<td><spring:message code="label.after" />&nbsp;</td>
-							<td><input class="" style="min-width:60px" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+							<td><input class="" style="min-width:60px" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 						<tr>
 							<td><spring:message code="label.before" />&nbsp;</td>
-							<td><input class="" style="min-width:60px" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+							<td><input class="" style="min-width:60px" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 					</table>
 				</form>
@@ -469,7 +469,7 @@
 			<spring:message code="label.Unit" />
 		</td>
 		<td class="propertycontent">
-			<input type='text' data-label="Unit" data-bind="value: Cell().unitChildren()" onblur="changeChildren(this, event)" />
+			<input type='text' data-label="Unit" data-child="true" data-bind="value: Cell().unitChildren()" onblur="changeChildren(this, event)" onfocus='markActiveProperty(this)' />
 		</td>
 	</tr>
 	<!-- Number / -->
@@ -710,7 +710,7 @@
 			<spring:message code="label.Unit" />
 		</td>
 		<td class="propertycontent">
-			<input type='text' data-label="Unit" data-bind="value: Cell().unit()" onblur="update(this)" />
+			<input type='text' data-label="Unit" data-bind="value: Cell().unit()" onblur="update(this)" onfocus='markActiveProperty(this)' />
 		</td>
 	</tr>
 
@@ -745,11 +745,11 @@
 				<table class="minmaxtable">
 					<tr>
 						<td><spring:message code="label.min" />&nbsp;</td>
-						<td><input class="spinner" data-label="Values" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().min() > 0 ? Cell().min() : '', attr: {id: Cell().id() + 'minValue', 'data-to' : Cell().id() + 'maxValue'}" onchange="update(this)" role="spinbutton" /></td>
+						<td><input class="spinner" data-label="Values" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().min() > 0 ? Cell().min() : '', attr: {id: Cell().id() + 'minValue', 'data-to' : Cell().id() + 'maxValue'}" onfocus='markActiveProperty(this)' onblur='update(this)' role="spinbutton" /></td>
 					</tr>
 					<tr>
 						<td><spring:message code="label.max" />&nbsp;</td>
-						<td><input class="spinner" data-label="Values" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().max() > 0 ? Cell().max() : '', attr: {id: Cell().id() + 'maxValue', 'data-from' : Cell().id() + 'minValue'}" onchange="update(this)" role="spinbutton" /></td>
+						<td><input class="spinner" data-label="Values" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().max() > 0 ? Cell().max() : '', attr: {id: Cell().id() + 'maxValue', 'data-from' : Cell().id() + 'minValue'}" onfocus='markActiveProperty(this)' onblur='update(this)' role="spinbutton" /></td>
 					</tr>
 				</table>
 			</form>
@@ -831,11 +831,11 @@
 					<table class="minmaxtable">
 						<tr>
 							<td><spring:message code="label.min" />&nbsp;</td>
-							<td><input class="spinner" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChoices(), attr: {id: Cell().id() + 'minC', 'data-to' : Cell().id() + 'maxC'}" /></td>
+							<td><input class="spinner" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChoices(), attr: {id: Cell().id() + 'minC', 'data-to' : Cell().id() + 'maxC'}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 						<tr>
 							<td><spring:message code="label.max" />&nbsp;</td>
-							<td><input class="spinner" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChoices(), attr: {id: Cell().id() + 'maxC', 'data-from' : Cell().id() + 'minC'}" /></td>
+							<td><input class="spinner" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChoices(), attr: {id: Cell().id() + 'maxC', 'data-from' : Cell().id() + 'minC'}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 					</table>
 				</form>
@@ -850,7 +850,7 @@
 		</td>
 		<td class="propertycontent">
 			<form autocomplete="off">
-				<input type="text" data-label="ResultText" data-bind="value: Cell().resultText()" onblur="update(this)" />
+				<input type="text" data-label="ResultText" data-bind="value: Cell().resultText()" onblur="update(this)" onfocus='markActiveProperty(this)' />
 			</form>
 		</td>
 	</tr>
@@ -899,11 +899,11 @@
 				<table class="minmaxtable">
 					<tr>
 						<td><spring:message code="label.min" />&nbsp;</td>
-						<td><input class="spinner" data-forcell="true" data-label="AcceptedNumberOfCharacters" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minCharacters() > 0 ? Cell().minCharacters() : '', attr: {id: Cell().id() + 'min', 'data-to' : Cell().id() + 'max'}" /></td>
+						<td><input class="spinner" data-forcell="true" data-label="AcceptedNumberOfCharacters" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minCharacters() > 0 ? Cell().minCharacters() : '', attr: {id: Cell().id() + 'min', 'data-to' : Cell().id() + 'max'}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 					</tr>
 					<tr>
 						<td><spring:message code="label.max" />&nbsp;</td>
-						<td><input class="spinner" data-forcell="true" data-label="AcceptedNumberOfCharacters" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxCharacters() > 0 ? Cell().maxCharacters() : '', attr: {id: Cell().id() + 'max', 'data-from' : Cell().id() + 'min'}" /></td>
+						<td><input class="spinner" data-forcell="true" data-label="AcceptedNumberOfCharacters" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxCharacters() > 0 ? Cell().maxCharacters() : '', attr: {id: Cell().id() + 'max', 'data-from' : Cell().id() + 'min'}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 					</tr>
 				</table>
 			</form>

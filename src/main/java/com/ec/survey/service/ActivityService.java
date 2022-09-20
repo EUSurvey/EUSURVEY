@@ -353,7 +353,7 @@ public class ActivityService extends BasicService {
 				case "Token/Contacts/Department":
 					hql += " AND logID > 500 AND logID < 506"; break;
 				case "Translation":
-					hql += " AND (logID > 220 AND logID < 225) OR logID = 227 OR logID = 228"; break;
+					hql += " AND ((logID > 220 AND logID < 225) OR logID = 227 OR logID = 228)"; break;
 				case "UsefulLink":
 					hql += " AND (logID = 203 OR logID = 204)"; break;
 				case "DeleteColumn":

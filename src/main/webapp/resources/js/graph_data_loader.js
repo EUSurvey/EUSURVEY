@@ -107,8 +107,46 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 				$(elementWrapper).find("option[data-type='textual']").hide();
 				$(elementWrapper).find("option[data-type='numerical']").show();
 
+				if (elementWrapper.find(".chart-hide-unanswered:checked").length > 0 && result.data != null){
+					result.data = result.data.filter(el => el.value > 0)
+				}
+
 				var showLegendBox = result.questionType === "Matrix" || result.questionType === "Rating" || chartType === "Pie";
 				legend = legend == undefined ? showLegendBox : showLegendBox && legend;
+
+				if (chartType === "Pie" && legend && result.data != null){
+					let dataSize = result.data.length
+					let sizeSelect = elementWrapper.find(".chart-size")
+
+					let sizeChanged = false
+
+					let selectedOption = sizeSelect.find(":selected")
+					if (selectedOption.attr("value") == "small" && dataSize > 10){
+						selectedOption.removeAttr("selected")
+						selectedOption = sizeSelect.find("[value=medium]")
+						selectedOption.attr("selected", "selected")
+						sizeChanged = true;
+					}
+
+					if (selectedOption.attr("value") == "medium" && dataSize > 20){
+						selectedOption.removeAttr("selected")
+						selectedOption = sizeSelect.find("[value=large]")
+						selectedOption.attr("selected", "selected")
+						sizeChanged = true;
+					}
+
+					if (sizeChanged) {
+						canvasWidth = getChartCanvasHeightAndWidth(sizeSelect.find(":selected").attr("value")).width;
+					}
+
+					let legendCheck = elementWrapper.find(".chart-legend")
+					if (dataSize > 30 && !legendCheck.prop("auto-uncheck")){
+						legend = false
+
+						legendCheck.removeAttr("checked")
+						legendCheck.prop("auto-uncheck", true)
+					}
+				}
 			}
 
 			var chartData = {};
@@ -160,6 +198,7 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 				case "MultipleChoice":
 				case "SingleChoice":
 				case "Number":
+				case "Formula":
 				case "Ranking":
 					var graphData = result.data;
 
@@ -370,7 +409,7 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 								return [result.label].concat(titleLines_);
 							}
 						}
-						if (result.questionType === "SingleChoice" || result.questionType === "MultipleChoice"  || result.questionType === "Number" || result.questionType === "Ranking") {
+						if (result.questionType === "SingleChoice" || result.questionType === "MultipleChoice"  || result.questionType === "Number"  || result.questionType === "Formula" || result.questionType === "Ranking") {
 							return [result.label];
 						}
 						return titleLines_;
