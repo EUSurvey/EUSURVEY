@@ -11,8 +11,8 @@ import com.ec.survey.tools.Tools;
 
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -261,7 +261,7 @@ public class AdministrationService extends BasicService {
 	@Transactional
 	public List<Integer> getUserAccountsForDeletion() {
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery query = session.createSQLQuery("SELECT USER_ID FROM USERS WHERE USER_DELETED = 1 AND USER_DELDATE < NOW() - INTERVAL 7 DAY");
+		NativeQuery query = session.createSQLQuery("SELECT USER_ID FROM USERS WHERE USER_DELETED = 1 AND USER_DELDATE < NOW() - INTERVAL 7 DAY");
 		
 		@SuppressWarnings("rawtypes")
 		List users = query.list();

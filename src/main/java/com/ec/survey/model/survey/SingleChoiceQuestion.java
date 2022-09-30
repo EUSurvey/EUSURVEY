@@ -1,13 +1,13 @@
 package com.ec.survey.model.survey;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.owasp.esapi.errors.ValidationException;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Objects;
 
 /**
@@ -31,27 +31,65 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 		super(title, shortname, uid);
 	}
 
+	//These two are only used by the Serializer
 	private boolean useRadioButtons;
 	private Boolean useLikert;
+
 	private int numColumns = 1;
 	private Integer maxDistance = -1;
+	//Defaults to Selectbox because of the old RADIO and LIKERT columns that defined SELECT with both false
+	private SingleChoiceStyle singleChoiceStyle = SingleChoiceStyle.SELECT;
 
 	@Column(name = "RADIO")
+	@JsonIgnore
+	@Deprecated
 	public boolean getUseRadioButtons() {
-		return useRadioButtons;
+		return singleChoiceStyle == SingleChoiceStyle.RADIO;
 	}
 
+	@Deprecated
 	public void setUseRadioButtons(boolean useRadioButtons) {
-		this.useRadioButtons = useRadioButtons;
+		if (useRadioButtons){
+			singleChoiceStyle = SingleChoiceStyle.RADIO;
+		}
 	}
 	
 	@Column(name = "LIKERT")
+	@JsonIgnore
+	@Deprecated
 	public Boolean getUseLikert() {
-		return useLikert != null && useLikert && getIsDelphiQuestion();
+		return singleChoiceStyle == SingleChoiceStyle.LIKERT;
 	}
-	
+
+	@Deprecated
 	public void setUseLikert(Boolean useLikert) {
-		this.useLikert = useLikert != null ? useLikert : false;
+		if (useLikert != null && useLikert){
+			singleChoiceStyle = SingleChoiceStyle.LIKERT;
+		}
+	}
+
+	@Column(name = "SINGLE_CHOICE_STYLE")
+	@JsonIgnore
+	public SingleChoiceStyle getSingleChoiceStyle(){
+		return singleChoiceStyle;
+	}
+
+	public void setSingleChoiceStyle(SingleChoiceStyle singleChoiceStyle){
+		if (singleChoiceStyle != null){
+			this.singleChoiceStyle = singleChoiceStyle;
+		} //Otherwise defaults to SELECT or is set via setUseLikert or setUseRadioButtons
+	}
+
+	@Transient
+	public String getChoiceType(){
+		return singleChoiceStyle.getText();
+	}
+
+	public void setChoiceType(String choiceType){
+		singleChoiceStyle = SingleChoiceStyle.getFromText(choiceType);
+		if (singleChoiceStyle == null){
+			singleChoiceStyle = SingleChoiceStyle.RADIO;
+		}
 	}
 
 	@Column(name = "NUMCOLUMNS")
@@ -76,8 +114,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 		SingleChoiceQuestion copy = new SingleChoiceQuestion();
 		baseCopy(copy);
 		copy.numColumns = numColumns;
-		copy.useRadioButtons = useRadioButtons;
-		copy.useLikert = useLikert;
+		copy.singleChoiceStyle = singleChoiceStyle;
 		copy.setOrder(getOrder());
 		copy.maxDistance = maxDistance;
 		
@@ -99,16 +136,14 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 
 		SingleChoiceQuestion single = (SingleChoiceQuestion) element;
 
-		if (useRadioButtons != single.useRadioButtons)
-			return true;
-		if (useLikert != single.useLikert)
+		if (singleChoiceStyle != single.singleChoiceStyle)
 			return true;
 		if (numColumns != single.numColumns)
 			return true;
 		if (getPossibleAnswers().size() != single.getPossibleAnswers().size())
 			return true;
 		
-		if (maxDistance != single.maxDistance)
+		if (!maxDistance.equals(single.maxDistance)) //Integer objects don't compare with != just like Strings
 			return true;
 
 		if (!Objects.equals(getOrder(), single.getOrder()))
@@ -121,6 +156,16 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 		}
 
 		return false;
+	}
+
+	//This method is called by Javas Serializer API
+	//https://docs.oracle.com/javase/7/docs/api/java/io/ObjectInputStream.html#readObject()
+	private void readObject(ObjectInputStream inStream) throws ClassNotFoundException, IOException {
+		inStream.defaultReadObject(); //Read all properties
+
+		//Use the setters to patch the deprecated properties
+		setUseRadioButtons(useRadioButtons);
+		setUseLikert(useLikert);
 	}
 
 }

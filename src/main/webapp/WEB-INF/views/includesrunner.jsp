@@ -94,7 +94,10 @@
 	var contextpath = "${contextpath}";
 	var isresponsive = ${responsive != null};
 	var isdelphi = ${form != null && form.survey.getIsDelphi()};
+	var isevote = ${form != null && form.survey.getIsEVote()};
 	var delphiStartPageUrl = '${pageContext.request.getAttribute("javax.servlet.forward.request_uri")}?${pageContext.request.getQueryString().replace("startDelphi=true&", "").replace("startDelphi=true", "?")}';
+
+	var maxEVoteCandidates = "${form.survey.maxPrefVotes}"
 
 	<c:choose>
 		<c:when test="${form != null && form.getResources() != null && resultType == null}">
@@ -186,6 +189,8 @@
 			var timeLimitNotZero = "${form.getMessage("error.timeLimitNotZero")}";
 			var infolabeluploadbutton = "${form.getMessage("info.uploadbutton")}";
 			var infoNoData = "${form.getMessage("info.NoData")}";
+			var validationTooManyCandidates = "${form.getMessage("validation.TooManyCandidates")}";
+			var validationTooManyListVotes = "${form.getMessage("validation.TooManyListVotes")}";
 		</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
@@ -274,6 +279,8 @@
 			var timeLimitNotZero = "<spring:message code='error.timeLimitNotZero' />";
 			var infolabeluploadbutton = "<spring:message code='info.uploadbutton' />";
 			var infoNoData = "<spring:message code='info.NoData' />";
+			var validationTooManyCandidates = "<spring:message code='validation.TooManyCandidates'/>";
+			var validationTooManyListVotes = "<spring:message code='validation.TooManyListVotes'/>";
 		</c:otherwise>
 	</c:choose>
 	

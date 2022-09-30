@@ -9,6 +9,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -248,7 +249,7 @@ public class TranslationController extends BasicController {
 				}
 
 				result = "{\"success\": true}";
-				activityService.log(222, translations.getLanguage().getCode(), null,
+				activityService.log(ActivityRegistry.ID_TRANSLATION_REMOVED, translations.getLanguage().getCode(), null,
 						sessionService.getCurrentUser(request).getId(), survey.getUniqueId());
 			}
 		} catch (Exception ex) {
@@ -340,7 +341,7 @@ public class TranslationController extends BasicController {
 						}
 
 						success = translationService.deleteTranslations(Integer.parseInt(id));
-						activityService.log(222, translations.getLanguage().getCode(), null,
+						activityService.log(ActivityRegistry.ID_TRANSLATION_REMOVED, translations.getLanguage().getCode(), null,
 								sessionService.getCurrentUser(request).getId(), translations.getSurveyUid());
 
 						if (!success)
@@ -449,7 +450,7 @@ public class TranslationController extends BasicController {
 
 			int translationId = Integer.parseInt(id);
 			Translations translations = translationService.getTranslations(translationId);
-			activityService.log(223, null, translations.getLanguage().getCode(),
+			activityService.log(ActivityRegistry.ID_TRANSLATION_ENABLED, null, translations.getLanguage().getCode(),
 					sessionService.getCurrentUser(request).getId(), translations.getSurveyUid());
 
 		} else {
@@ -480,7 +481,7 @@ public class TranslationController extends BasicController {
 
 			int translationId = Integer.parseInt(id);
 			Translations translations = translationService.getTranslations(translationId);
-			activityService.log(224, translations.getLanguage().getCode(), null,
+			activityService.log(ActivityRegistry.ID_TRANSLATION_DISABLED, translations.getLanguage().getCode(), null,
 					sessionService.getCurrentUser(request).getId(), translations.getSurveyUid());
 
 		} else {
@@ -648,7 +649,7 @@ public class TranslationController extends BasicController {
 				}
 
 				translationService.save(t);
-				activityService.logTranslations(227, t.getLanguage().getCode(), oldInfos.get(t.getId()), t.getInfo(),
+				activityService.logTranslations(ActivityRegistry.ID_TRANSLATION_MODIFIED, t.getLanguage().getCode(), oldInfos.get(t.getId()), t.getInfo(),
 						sessionService.getCurrentUser(request).getId(), surveyByID.getUniqueId());
 			}
 
@@ -753,7 +754,7 @@ public class TranslationController extends BasicController {
 						User user = sessionService.getCurrentUser(request);
 						try {
 							if (machineTranslationService.translateTranlations(ids, user, isUseECMT())) {
-								activityService.log(228, null, language.getCode(),
+								activityService.log(ActivityRegistry.ID_MACHINE_TRANSLATION, null, language.getCode(),
 										sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
 							} else {
 								ModelAndView result = translations(shortname, request, locale);
@@ -769,7 +770,7 @@ public class TranslationController extends BasicController {
 						}
 					}
 				}
-				activityService.log(221, null, language.getCode(), sessionService.getCurrentUser(request).getId(),
+				activityService.log(ActivityRegistry.ID_TRANSLATION_ADDED, null, language.getCode(), sessionService.getCurrentUser(request).getId(),
 						form.getSurvey().getUniqueId());
 
 				if (translationRequested && isUseECMT() && !language.isOfficial()) {
@@ -996,7 +997,7 @@ public class TranslationController extends BasicController {
 					TranslationsHelper.synchronizePivot(form.getSurvey(), translations);
 					surveyService.update(form.getSurvey(), true, true, true,
 							sessionService.getCurrentUser(request).getId());
-					activityService.logTranslations(227, translations.getLanguage().getCode(), oldInfo,
+					activityService.logTranslations(ActivityRegistry.ID_TRANSLATION_MODIFIED, translations.getLanguage().getCode(), oldInfo,
 							translations.getInfo(), sessionService.getCurrentUser(request).getId(),
 							form.getSurvey().getUniqueId());
 
@@ -1004,7 +1005,7 @@ public class TranslationController extends BasicController {
 				} else if (existingTranslations == null) {
 					// save it
 					translationService.add(translations);
-					activityService.log(221, null, translations.getLanguage().getCode(),
+					activityService.log(ActivityRegistry.ID_TRANSLATION_ADDED, null, translations.getLanguage().getCode(),
 							sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
 
 					if (translations.getActive()) {
@@ -1023,7 +1024,7 @@ public class TranslationController extends BasicController {
 					if (dirty) {
 						surveyService.makeDirty(form.getSurvey().getId());
 					}
-					activityService.logTranslations(227, existingTranslations.getLanguage().getCode(), oldInfo,
+					activityService.logTranslations(ActivityRegistry.ID_TRANSLATION_MODIFIED, existingTranslations.getLanguage().getCode(), oldInfo,
 							existingTranslations.getInfo(), sessionService.getCurrentUser(request).getId(),
 							form.getSurvey().getUniqueId());
 

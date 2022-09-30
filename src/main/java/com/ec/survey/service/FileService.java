@@ -17,7 +17,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -1349,8 +1349,8 @@ public class FileService extends BasicService {
 					return;
 				}
 			}
-		} catch (Exception fnf) {
-			// file does not exist
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
 		}
 
 		java.io.File file = fileService.getSurveyFile(surveyuid, fileuid);

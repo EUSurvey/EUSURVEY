@@ -26,6 +26,7 @@ import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.WeakAuthenticationException;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -657,10 +658,10 @@ public class ContributionController extends BasicController {
 		}
 
 		if (answerSet.getSurvey().getIsDraft()) {
-			this.activityService.log(405, answerSet.getUniqueCode(), null, currentUser.getId(),
+			this.activityService.log(ActivityRegistry.ID_TEST_DELETE, answerSet.getUniqueCode(), null, currentUser.getId(),
 					answerSet.getSurvey().getUniqueId());
 		} else {
-			this.activityService.log(402, null, answerSet.getUniqueCode(), currentUser.getId(),
+			this.activityService.log(ActivityRegistry.ID_CONTRIBUTION_DELETE, null, answerSet.getUniqueCode(), currentUser.getId(),
 					answerSet.getSurvey().getUniqueId());
 		}
 		return "success";

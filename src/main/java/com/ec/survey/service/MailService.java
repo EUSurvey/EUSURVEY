@@ -4,7 +4,7 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.MailTask;
 import com.ec.survey.tools.InvitationMailCreator;
 import com.ec.survey.tools.MailSender;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

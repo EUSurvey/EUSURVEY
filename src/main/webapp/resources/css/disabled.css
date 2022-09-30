@@ -71,7 +71,7 @@ a.btn-primary {
 	margin-top: 14px;
 }
 
-#runner-content .answertext {
+#runner-content .answertext:not(.choice-button-label) {
 	color: #000;
 	margin-left: 5px;
 	font-weight: normal;
@@ -428,4 +428,17 @@ font-size: 16px;
 
 .progress-bar-success {
    background-color: #009200;
+}
+
+.choice-button-label{
+	border-radius: 0;
+	margin: 0;
+	width: auto;
+}
+
+.choice-button-label:first-of-type{
+	border-radius: 4px 0 0 4px;
+}
+.choice-button-label:last-of-type{
+	border-radius: 0 4px 4px 0;
 }

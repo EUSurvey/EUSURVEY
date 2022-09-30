@@ -25,7 +25,7 @@
 					<div class="internalcaptcha">
 						<div style="margin-bottom: 10px;">
 							<img style="max-width: 100%; margin-bottom: 10px" alt="Captcha Loading" src="${contextpath}/resources/images/ajax-loader.gif" id="captchaImg" captchaId="">
-							<audio controls autostart="1" src="" id="audioCaptcha" onplay="onPlayAudio()"></audio>
+							<audio class="focussable" controls autostart="1" src="" id="audioCaptcha" onplay="onPlayAudio()"></audio>
 						</div>
 
 						<input type="hidden" name="captcha_token" id="captcha_token" />

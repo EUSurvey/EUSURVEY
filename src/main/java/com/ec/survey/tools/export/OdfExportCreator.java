@@ -22,6 +22,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.hibernate.*;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.odftoolkit.odfdom.dom.style.props.OdfParagraphProperties;
 import org.odftoolkit.odfdom.dom.style.props.OdfTableProperties;
 import org.odftoolkit.odfdom.type.Color;
@@ -401,7 +403,7 @@ public class OdfExportCreator extends ExportCreator {
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, parameters, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
 
-			SQLQuery query = session.createSQLQuery(sql);
+			NativeQuery query = session.createSQLQuery(sql);
 
 			query.setReadOnly(true);
 			sqlQueryService.setParameters(query, parameters);
@@ -908,7 +910,10 @@ public class OdfExportCreator extends ExportCreator {
 					}
 
 					if (!explanation.isEmpty()) {
-						cell.addParagraph(explanation);
+						cell.setStringValue(ConversionTools.removeHTMLNoEscape(explanation, true));
+						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(explanation, true));
+						cell.setTextWrapped(true);
+						cell.setValueType(Constants.STRING);
 					}
 					final List<File> files = explanationFilesToExport.getFiles(answerSetUid, questionUid);
 					if (!files.isEmpty()) {
@@ -939,8 +944,8 @@ public class OdfExportCreator extends ExportCreator {
 					}
 
 					if (!discussion.isEmpty()) {
-						cell.setStringValue(ConversionTools.removeInvalidHtmlEntities(discussion));
-						cell.setDisplayText(ConversionTools.removeInvalidHtmlEntities(discussion));
+						cell.setStringValue(ConversionTools.removeHTMLNoEscape(discussion, true));
+						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(discussion, true));
 						cell.setTextWrapped(true);
 					} else {
 						cell.setStringValue("");

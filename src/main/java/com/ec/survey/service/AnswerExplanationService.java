@@ -9,8 +9,8 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.owasp.esapi.ESAPI;
@@ -244,7 +244,7 @@ public class AnswerExplanationService extends BasicService {
 				"ORDER BY " + orderByClauseOuter + ", `row`, `column`";
 
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery contributionsQuery = session.createSQLQuery(contributionsQueryText);
+		NativeQuery contributionsQuery = session.createSQLQuery(contributionsQueryText);
 		contributionsQuery.setResultTransformer(Transformers.aliasToBean(DelphiContribution.class));
 		contributionsQuery.setParameterList("questionUids", questionUids);
 		contributionsQuery.setBoolean("isDraft", isDraft);
@@ -264,7 +264,7 @@ public class AnswerExplanationService extends BasicService {
 	public List<String> getDelphiDependentAnswers(String dependentElementUid, int answerSetId) {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "SELECT VALUE FROM ANSWERS a WHERE a.QUESTION_UID = :questionUid AND a.AS_ID = :answerSetId";
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		query.setString("questionUid", dependentElementUid);
 		query.setInteger("answerSetId", answerSetId);
 		
@@ -282,7 +282,7 @@ public class AnswerExplanationService extends BasicService {
 				+ "WHERE a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
 
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery totalCountQuery = session.createSQLQuery(totalCountQueryText);
+		NativeQuery totalCountQuery = session.createSQLQuery(totalCountQueryText);
 		totalCountQuery.setParameterList("questionUids", questionUids);
 		totalCountQuery.setBoolean("isDraft", isDraft);
 		return ((BigInteger) totalCountQuery.uniqueResult()).intValue();

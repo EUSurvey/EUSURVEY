@@ -77,7 +77,7 @@
  								<c:set var="openSection" value="false"/>
 							</c:if>
 						
-							<div class="sectiontitle section${element.getLevel()}" data-id="${element.uniqueId}" style="margin-top: 20px;">${form.getSectionTitle(element)}</div>
+							<div class="sectiontitle section${element.getLevel()}" data-id="${element.uniqueId}" style="margin-top: 20px;">${form.getCleanSectionTitle(element)}</div>
 							
 							<table style="margin-bottom: 15px">
 								<tr>

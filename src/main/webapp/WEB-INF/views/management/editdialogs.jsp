@@ -172,6 +172,8 @@
 		var isECF = ${form.survey.isECF};
 		var isOPC = ${form.survey.isOPC};
 		var isDelphi = ${form.survey.isDelphi};
+		var isEVote = ${form.survey.isEVote};
+		var eVoteTemplate = "${form.survey.eVoteTemplate}";
 		var automaticNumbering = ${form.survey.sectionNumbering != 0 || form.survey.questionNumbering != 0};
 		
 		var lowLevel = '<spring:message code="label.Complexity.low" />';
@@ -511,6 +513,7 @@
 		strings["RadioButton"] = "<spring:message code="html.RadioButton" />";
 		strings["SelectBox"] = "<spring:message code="html.SelectBox" />";
 		strings["LikertScale"] = "<spring:message code="html.LikertScale" />";
+		strings["Buttons"] = "<spring:message code="html.Button" />";
 		strings["Original"] = "<spring:message code="label.OriginalOrder" />";
 		strings["Alphabetical"] = "<spring:message code="label.AlphabeticalOrder" />";
 		strings["Random"] = "<spring:message code="label.RandomOrder" />";
@@ -519,6 +522,11 @@
 		strings["NumberOfChoices"] = "<spring:message code="label.NumberOfChoices" />";
 		strings["CheckBox"] = "<spring:message code="html.CheckBox" />";
 		strings["ListBox"] = "<spring:message code="html.ListBox" />";
+		strings["EVoteList"] = "<spring:message code="html.EVoteList" />";
+		strings["EVoteProcedure"] = "<spring:message code="label.EVoteProcedure" />";
+		strings["evote-brussels"] = "<spring:message code="label.Brussels" />";
+		strings["evote-luxembourg"] = "<spring:message code="label.Luxembourg" />";
+		strings["evote-outside"] = "<spring:message code="label.OutsideCommunity" />";
 		strings["Unit"] = "<spring:message code="label.Unit" />";
 		strings["DecimalPlaces"] = "<spring:message code="label.DecimalPlacesNew" />";
 		strings["DisplaySlider"] = "<spring:message code="label.Display" />";

@@ -3,7 +3,7 @@ package com.ec.survey.service;
 import com.ec.survey.model.ValidCode;
 import com.ec.survey.model.survey.Survey;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,19 +14,18 @@ import java.util.List;
 
 @Service("validCodesService")
 public class ValidCodesService extends BasicService {
-	
-	@SuppressWarnings("unchecked")
+
 	@Transactional(readOnly = true)
 	public List<ValidCode> getAll() {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM ValidCode");
+		Query<ValidCode> query = session.createQuery("FROM ValidCode", ValidCode.class);
 		return query.list();
 	}
 	
 	@Transactional(readOnly = true)
 	public ValidCode get( Integer id ) {
 		Session session = sessionFactory.getCurrentSession();
-		return (ValidCode) session.get(ValidCode.class, id);
+		return session.get(ValidCode.class, id);
 	}
 	
 	@Transactional
@@ -44,7 +43,8 @@ public class ValidCodesService extends BasicService {
 	@Transactional
 	public void delete(String uniqueCode) {
 		Session session = sessionFactory.getCurrentSession();	
-		Query query = session.createQuery("DELETE FROM ValidCode WHERE code = :code").setString("code", uniqueCode);
+		@SuppressWarnings("unchecked")
+		Query<ValidCode> query = session.createQuery("DELETE FROM ValidCode WHERE code = :code").setParameter("code", uniqueCode);
 		query.executeUpdate();
 	}
 
@@ -53,23 +53,24 @@ public class ValidCodesService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
-		Query query = session.createQuery("FROM ValidCode WHERE code = :code AND (surveyUid is null OR surveyUid = :surveyUid) AND created  > :yesterday").setString("surveyUid", surveyUid).setString("code", uniqueCode).setDate("yesterday", cal.getTime());
+		Query<ValidCode> query = session.createQuery("FROM ValidCode WHERE code = :code AND (surveyUid is null OR surveyUid = :surveyUid) AND created  > :yesterday", ValidCode.class).setParameter("surveyUid", surveyUid).setParameter("code", uniqueCode).setParameter("yesterday", cal.getTime());
 		return query.list().size() == 1;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public void revalidate(String uniqueCode, Survey survey)
 	{
 		Session session = sessionFactory.getCurrentSession();	
 		session.evict(survey);
-		Query query = session.createQuery("FROM ValidCode WHERE code = :code AND (surveyUid is null OR surveyUid = :surveyUid)").setString("surveyUid", survey.getUniqueId()).setString("code", uniqueCode);
+		Query<ValidCode> query = session.createQuery("FROM ValidCode WHERE code = :code AND (surveyUid is null OR surveyUid = :surveyUid)", ValidCode.class).setParameter("surveyUid", survey.getUniqueId()).setParameter("code", uniqueCode);
 		int numcodes = query.list().size();
 		
 		if (numcodes == 0)
 		{
 			this.add(uniqueCode, survey);	
 		} else {	
-			query = session.createQuery("UPDATE ValidCode SET created = :created WHERE code = :code").setString("code", uniqueCode).setTimestamp("created", new Date());
+			query = session.createQuery("UPDATE ValidCode SET created = :created WHERE code = :code").setParameter("code", uniqueCode).setParameter("created", new Date());
 			query.executeUpdate();
 		}
 		session.flush();
@@ -81,7 +82,8 @@ public class ValidCodesService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();	
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MONTH, -2);
-		Query query = session.createQuery("UPDATE ValidCode SET created = :created WHERE code = :code").setString("code", uniqueCode).setTimestamp("created", cal.getTime());
+		@SuppressWarnings("unchecked")
+		Query<ValidCode> query = session.createQuery("UPDATE ValidCode SET created = :created WHERE code = :code").setParameter("code", uniqueCode).setParameter("created", cal.getTime());
 		query.executeUpdate();		
 	}
 
@@ -90,7 +92,8 @@ public class ValidCodesService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MONTH, -1);
-		Query query = session.createQuery("DELETE FROM ValidCode WHERE created < :lastmonth").setDate("lastmonth", cal.getTime());
+		@SuppressWarnings("unchecked")
+		Query<ValidCode> query = session.createQuery("DELETE FROM ValidCode WHERE created < :lastmonth").setParameter("lastmonth", cal.getTime());
 		query.executeUpdate();
 	}
 }

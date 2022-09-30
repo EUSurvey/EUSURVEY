@@ -24,7 +24,7 @@ function getNewElement(item)
 		element = getBasicElement("SingleChoiceQuestion", true, "Single Choice Question", item.attr("id"), true);
 		element.maxChoices = 0;
 		element.minChoices = 0;
-		element.useRadioButtons = true;
+		element.choiceType = "radio";
 		element.numColumns = 1;
 		element.order = 0;
 		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
@@ -48,7 +48,7 @@ function getNewElement(item)
 		element = getBasicElement("MultipleChoiceQuestion", true, "Multiple Choice Question", item.attr("id"), true);
 		element.maxChoices = 0;
 		element.minChoices = 0;
-		element.useCheckboxes = true;
+		element.choiceType = "checkbox";
 		element.noNegativeScore = false;
 		element.numColumns = 1;
 		element.order = 0;

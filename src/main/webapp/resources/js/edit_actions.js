@@ -171,7 +171,7 @@ var Actions = function() {
     {
     	var ids = "";
     	var copiedItems = [];
-    	var dict = [];
+    	var dict = {};
     	$(this.copiedElements).each(function(){
     		var copiedmodel = this;
     		dict[copiedmodel.originalId] = copiedmodel.id();
@@ -235,7 +235,7 @@ var Actions = function() {
     		});    		
     		
 			_elements[copiedmodel.id()] = copiedmodel;
-			copiedItems[copiedItems.length] = copy;
+			copiedItems.push(copy);
     		ids = ids + copiedmodel.id() + ";";
     		addElementHandler($(newitem));
     		

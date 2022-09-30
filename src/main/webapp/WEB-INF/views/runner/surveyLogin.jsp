@@ -63,7 +63,10 @@
 				<div id="ecasPanel" class="authenticationdiv" style="margin-bottom: 20px;">
 					<div id="ecasPanelContent">
 						<form:form action="${ecasurl}">
-							<input type="hidden" name="service" value="${serviceurl}"/>							
+							<input type="hidden" name="service" value="${serviceurl}"/>
+							<c:if test="${require2fa}">
+								<input type="hidden" name="acceptStrength" value="PASSWORD_SMS" />
+							</c:if>
 							
 							<c:choose>
 								<c:when test="${casoss !=null}">

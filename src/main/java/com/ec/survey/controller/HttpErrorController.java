@@ -61,6 +61,9 @@ public class HttpErrorController extends BasicController {
 	@RequestMapping(value = "/2fa.html")
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ModelAndView handle2fa(HttpServletRequest request){
+		if (require2fa){
+			return new ModelAndView("error/always2fa",Constants.ERROR,"exception" );
+		}
 		return new ModelAndView("error/2fa",Constants.ERROR,"exception" );
 	}
 	

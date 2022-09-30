@@ -17,8 +17,8 @@ import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
@@ -559,12 +558,13 @@ public class ReportingService extends BasicService {
 	    		sql += ", Q" + question.replace("-", "");
 	    	}
 	    }
+
+	    String tableName = getOLAPTableName(survey);
+	    sql += " FROM " + tableName;
 	    
-	    sql += " FROM " + getOLAPTableName(survey);
-	    
-	    if (isSecondTableUsed(survey))
-		{
-			sql += ", " + getOLAPTableName(survey) + "_1";
+	    if (isSecondTableUsed(survey)){
+	    	String secondTable = tableName + "_1";
+			sql += " LEFT JOIN " + secondTable + " ON " + tableName + ".QANSWERSETID = " + secondTable + ".QANSWERSETID";
 		}		
 		
 		if (where.length() > 10)
@@ -572,7 +572,7 @@ public class ReportingService extends BasicService {
 			sql += where;
 		}
 		
-		SQLQuery query = session.createSQLQuery(sql);		
+		NativeQuery query = session.createSQLQuery(sql);		
 		sqlQueryService.setParameters(query, values);
 		
 		try {
@@ -635,7 +635,12 @@ public class ReportingService extends BasicService {
 										if (showShortnames) {
 											v += "<span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
 										}
-									}							
+									} else if ("EVOTE-ALL".equals(answerid)){
+										String languageCode = survey.getLanguage().getCode();
+										if (languageCode == null)
+											languageCode = "en";
+										v += resources.getMessage("label.EntireList", new Object[0], "Entire List", new Locale(languageCode));
+									}
 								}						
 								row.add(v.length() > 0 ? v : null);
 							} else if (question instanceof Matrix) {
@@ -864,7 +869,7 @@ public class ReportingService extends BasicService {
 			sql += where;
 		}
 		
-		SQLQuery query = session.createSQLQuery(sql);		
+		NativeQuery query = session.createSQLQuery(sql);		
 		sqlQueryService.setParameters(query, values);
 
 		List<Integer> res;
@@ -899,7 +904,7 @@ public class ReportingService extends BasicService {
 			sql.append("SELECT 1 FROM ");
 			sql.append(this.getOLAPTableName(!isDraft, surveyUid, counter));
 			sql.append(" LIMIT 1");
-			SQLQuery queryreporting = sessionReporting.createSQLQuery(sql.toString());
+			NativeQuery queryreporting = sessionReporting.createSQLQuery(sql.toString());
 			queryreporting.uniqueResult();
 			return true;
 		} catch (Exception e) {
@@ -923,7 +928,7 @@ public class ReportingService extends BasicService {
 	@Transactional(transactionManager = "transactionManagerReporting")
 	public void deleteOLAPTableInternal(String uid, boolean draftversion, boolean publishedversion) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		SQLQuery query;
+		NativeQuery query;
 		int counter = 1;
 		if (publishedversion)
 		{
@@ -974,7 +979,7 @@ public class ReportingService extends BasicService {
 		}
 	}
 
-	private Map<String, String> getColumnNamesAndTypes(Survey survey) throws MessageException {
+	private Map<String, String> getColumnNamesAndTypes(Survey survey) {
 		if (survey == null) {
 			throw new IllegalArgumentException("survey is not null");
 		}
@@ -1053,15 +1058,15 @@ public class ReportingService extends BasicService {
 		return columnNamesToType;
 	}
 	
-	private void putColumnNameAndType(Map<String, String> columnNamesToType, String uid, String type) throws MessageException {
+	private void putColumnNameAndType(Map<String, String> columnNamesToType, String uid, String type) {
 		if (columnNamesToType.containsKey(uid)) {
-			throw new MessageException("key already exists");
+			return; //Ignore
 		}
 		
 		columnNamesToType.put(uid, type);
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey, Integer counter) throws MessageException {
+	public boolean validateOLAPTableInternal(Survey survey, Integer counter) {
 		logger.info("starting reporting table validation for survey UID" + survey.getUniqueId()
 		+ (survey.getIsDraft() ? " (draft)" : ""));
 
@@ -1090,7 +1095,7 @@ public class ReportingService extends BasicService {
 			sql.append(",");
 		}
 		String sqlString = sql.substring(0, sql.length() - 1) + ")";
-		SQLQuery queryReporting = sessionReporting.createSQLQuery(sqlString);
+		NativeQuery queryReporting = sessionReporting.createSQLQuery(sqlString);
 		queryReporting.setString("tableName", getOLAPTableName(survey, counter));
 
 		List<Object[]> actualColumnNamesAndType = (List<Object[]>) queryReporting.list();
@@ -1129,13 +1134,13 @@ public class ReportingService extends BasicService {
 		return true;
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey) throws MessageException {
+	public boolean validateOLAPTableInternal(Survey survey) {
 		return this.validateOLAPTableInternal(survey, null);
 	}
 
-	public boolean validateOLAPTablesInternal(Survey survey) throws MessageException {
+	public boolean validateOLAPTablesInternal(Survey survey){
 		if (survey == null) {
-			throw new IllegalArgumentException("survey is not null");
+			throw new IllegalArgumentException("survey is null");
 		}
 
 		Map<String, String> columnNamesToType = this.getColumnNamesAndTypes(survey);
@@ -1156,7 +1161,7 @@ public class ReportingService extends BasicService {
 	}
 
 
-	public boolean validateOLAPTablesInternal(String surveyUID, boolean isDraft) throws MessageException {
+	public boolean validateOLAPTablesInternal(String surveyUID, boolean isDraft) {
 		if (surveyUID == null || surveyUID.isEmpty()) {
 			throw new IllegalArgumentException("surveyUID is not null and not empty");
 		}
@@ -1297,7 +1302,7 @@ public class ReportingService extends BasicService {
 	
 	private void updateOLAPTable(Survey survey) throws Exception {		
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		SQLQuery queryreporting = sessionReporting.createSQLQuery("SELECT MAX(QUPDATED) FROM " + getOLAPTableName(survey));
+		NativeQuery queryreporting = sessionReporting.createSQLQuery("SELECT MAX(QUPDATED) FROM " + getOLAPTableName(survey));
 		Date lastReportDate = (Date) queryreporting.uniqueResult();
 		Date lastAnswerDate = survey.getIsDraft() ? answerService.getNewestTestAnswerDate(survey.getId()) : answerService.getNewestAnswerDate(survey.getId());
 		
@@ -1351,7 +1356,7 @@ public class ReportingService extends BasicService {
 	private void executeInternal(String sql) {
 		lastQuery = sql;
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		SQLQuery createQuery = sessionReporting.createSQLQuery(sql);
+		NativeQuery createQuery = sessionReporting.createSQLQuery(sql);
 		createQuery.executeUpdate();		
 	}
 
@@ -1624,7 +1629,7 @@ public class ReportingService extends BasicService {
 			row.append(" WHERE QANSWERSETID = ");
 			row.append(answerSet.getId());
 			
-			SQLQuery deleteQuery = sessionReporting.createSQLQuery(row.toString());
+			NativeQuery deleteQuery = sessionReporting.createSQLQuery(row.toString());
 			deleteQuery.executeUpdate();
 			row = new StringBuilder(); 
 			
@@ -1678,7 +1683,7 @@ public class ReportingService extends BasicService {
 				row.append(" );");
 				
 				lastQuery = row.toString();
-				SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
+				NativeQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 				sqlQueryService.setParameters(createQuery, parameters);
 				createQuery.executeUpdate();
 				
@@ -1709,7 +1714,7 @@ public class ReportingService extends BasicService {
 			row.append(" );");
 			
 			lastQuery = row.toString();
-			SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
+			NativeQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 			sqlQueryService.setParameters(createQuery, parameters);
 			createQuery.executeUpdate();
 		}
@@ -1728,7 +1733,7 @@ public class ReportingService extends BasicService {
 			query.append(getOLAPTableName(publishedSurvey, surveyUID));
 			query.append(" WHERE QCONTRIBUTIONID = '");
 			query.append(code).append("'");
-			SQLQuery selectQuery = sessionReporting.createSQLQuery(query.toString());
+			NativeQuery selectQuery = sessionReporting.createSQLQuery(query.toString());
 			Object result = selectQuery.uniqueResult();
 			if (result == null)
 			{
@@ -1742,7 +1747,7 @@ public class ReportingService extends BasicService {
 			query.append(" WHERE QANSWERSETID = ");
 			query.append(answerSetId);
 			
-			SQLQuery deleteQuery = sessionReporting.createSQLQuery(query.toString());
+			NativeQuery deleteQuery = sessionReporting.createSQLQuery(query.toString());
 			deleteQuery.executeUpdate();
 			
 			//also remove from additional tables
@@ -1785,7 +1790,7 @@ public class ReportingService extends BasicService {
 			sql += where;
 		}
 
-		SQLQuery query = sessionReporting.createSQLQuery(sql);
+		NativeQuery query = sessionReporting.createSQLQuery(sql);
 
 		if (where != null && values != null && !values.isEmpty()) {
 			for (String attrib : values.keySet()) {
@@ -1837,7 +1842,7 @@ public class ReportingService extends BasicService {
 			sql += " AND QANSWERSETID IN (SELECT QANSWERSETID FROM " + getOLAPTableName(survey) + " " + where + ")";
 		}
 		
-		SQLQuery query = sessionReporting.createSQLQuery(sql);
+		NativeQuery query = sessionReporting.createSQLQuery(sql);
 		
 		if (where != null)
 		{
@@ -1864,7 +1869,7 @@ public class ReportingService extends BasicService {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		String sql = "SELECT QANSWERSETID, Q" + quid.replace("-", "") + " FROM " + getOLAPTableName(survey) + " ORDER BY QCREATED DESC";
 
-		SQLQuery query = sessionReporting.createSQLQuery(sql);
+		NativeQuery query = sessionReporting.createSQLQuery(sql);
 		int length = 0;
 		for (Object row : query.list()) {
 			if (!(row instanceof Object[])) {
@@ -1893,7 +1898,7 @@ public class ReportingService extends BasicService {
 			sql += where;
 		}
 
-		SQLQuery query = sessionReporting.createSQLQuery(sql);
+		NativeQuery query = sessionReporting.createSQLQuery(sql);
 
 		if (where != null && values != null && !values.isEmpty()) {
 			for (String attrib : values.keySet()) {
@@ -1934,15 +1939,15 @@ public class ReportingService extends BasicService {
 		
 		//check if table exists
 		try {
-			SQLQuery querytodoexists = sessionReporting.createSQLQuery("SELECT 1 FROM TODO LIMIT 1");
+			NativeQuery querytodoexists = sessionReporting.createSQLQuery("SELECT 1 FROM TODO LIMIT 1");
 			querytodoexists.uniqueResult();
 			//table exists
 		} catch (Exception e) {
 			//table does not exist: create it:
-			SQLQuery querycreate = sessionReporting.createSQLQuery("CREATE TABLE TODO (ID INT NOT NULL AUTO_INCREMENT, TYPE INT, UID VARCHAR(36), CODE VARCHAR(36), PRIMARY KEY (ID))");
+			NativeQuery querycreate = sessionReporting.createSQLQuery("CREATE TABLE TODO (ID INT NOT NULL AUTO_INCREMENT, TYPE INT, UID VARCHAR(36), CODE VARCHAR(36), PRIMARY KEY (ID))");
 			querycreate.executeUpdate();
 			
-			SQLQuery queryindex = sessionReporting.createSQLQuery("CREATE UNIQUE INDEX IDXUNIQUE ON TODO (TYPE, UID, CODE)");
+			NativeQuery queryindex = sessionReporting.createSQLQuery("CREATE UNIQUE INDEX IDXUNIQUE ON TODO (TYPE, UID, CODE)");
 			queryindex.executeUpdate();
 		}
 
@@ -1950,7 +1955,7 @@ public class ReportingService extends BasicService {
 		
 		if (todo == ToDo.NEWCONTRIBUTION || todo == ToDo.NEWTESTCONTRIBUTION) {		
 			//check if there is a similar entry
-			SQLQuery querytodoexists = sessionReporting.createSQLQuery("SELECT ID FROM TODO WHERE TYPE = :type AND UID = :uid LIMIT 1");
+			NativeQuery querytodoexists = sessionReporting.createSQLQuery("SELECT ID FROM TODO WHERE TYPE = :type AND UID = :uid LIMIT 1");
 			querytodoexists.setInteger("type", todo.getValue());
 			querytodoexists.setString("uid", uid);
 			@SuppressWarnings("rawtypes")
@@ -1962,7 +1967,7 @@ public class ReportingService extends BasicService {
 		}
 
 		if (!similarEntryPresent) {
-			SQLQuery queryinsert = sessionReporting.createSQLQuery("INSERT INTO TODO (ID, TYPE, UID, CODE) VALUES (null, :type, :uid, :code)");
+			NativeQuery queryinsert = sessionReporting.createSQLQuery("INSERT INTO TODO (ID, TYPE, UID, CODE) VALUES (null, :type, :uid, :code)");
 			queryinsert.setInteger("type", todo.getValue());
 			queryinsert.setString("uid", uid);
 			queryinsert.setString("code", code);
@@ -1993,14 +1998,14 @@ public class ReportingService extends BasicService {
 		
 		//check if TODO table exists
 		try {
-			SQLQuery querytodoexists = sessionReporting.createSQLQuery("SELECT 1 FROM TODO LIMIT 1");
+			NativeQuery querytodoexists = sessionReporting.createSQLQuery("SELECT 1 FROM TODO LIMIT 1");
 			querytodoexists.uniqueResult();
 			//table exists
 		} catch (Exception e) {
 			return todos;
 		}		
 	
-		SQLQuery query = sessionReporting.createSQLQuery("SELECT ID, TYPE, UID, CODE FROM TODO ORDER BY ID ASC");
+		NativeQuery query = sessionReporting.createSQLQuery("SELECT ID, TYPE, UID, CODE FROM TODO ORDER BY ID ASC");
 		
 		@SuppressWarnings("rawtypes")
 		List results;
@@ -2024,7 +2029,7 @@ public class ReportingService extends BasicService {
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
 	public ToDoItem getToDoInternal(int id) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		SQLQuery query = sessionReporting.createSQLQuery("SELECT ID, TYPE, UID, CODE FROM TODO WHERE ID = :id");
+		NativeQuery query = sessionReporting.createSQLQuery("SELECT ID, TYPE, UID, CODE FROM TODO WHERE ID = :id");
 		@SuppressWarnings("rawtypes")
 		List result = query.setInteger("id", id).list();
 		
@@ -2171,7 +2176,7 @@ public class ReportingService extends BasicService {
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
 	public int getNumberOfToDosInternal() {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		SQLQuery query = sessionReporting.createSQLQuery("SELECT COUNT(*) FROM TODO");
+		NativeQuery query = sessionReporting.createSQLQuery("SELECT COUNT(*) FROM TODO");
 		
 		try {		
 			return ConversionTools.getValue(query.uniqueResult());
@@ -2184,7 +2189,7 @@ public class ReportingService extends BasicService {
 	public int getNumberOfTablesInternal()
 	{
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		SQLQuery query = sessionReporting.createSQLQuery("SELECT count(*) AS totalTables FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = database() AND TABLE_NAME != 'todo' AND NOT TABLE_NAME LIKE '%\\_%';");
+		NativeQuery query = sessionReporting.createSQLQuery("SELECT count(*) AS totalTables FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = database() AND TABLE_NAME != 'todo' AND NOT TABLE_NAME LIKE '%\\_%';");
 		
 		try {		 
 			return ConversionTools.getValue(query.uniqueResult());
@@ -2204,7 +2209,7 @@ public class ReportingService extends BasicService {
 			} else {
 				sql += " AND Code = :code";
 			}
-			SQLQuery query = sessionReporting.createSQLQuery(sql);
+			NativeQuery query = sessionReporting.createSQLQuery(sql);
 			query.setInteger("type", todo.Type.value);
 			query.setString("uid", todo.UID);
 			if (todo.Code != null) {
@@ -2227,7 +2232,7 @@ public class ReportingService extends BasicService {
 			ids.add(todo.Id);
 		}
 		
-		SQLQuery queryremove = sessionReporting.createSQLQuery("DELETE FROM TODO WHERE ID IN (:ids)");
+		NativeQuery queryremove = sessionReporting.createSQLQuery("DELETE FROM TODO WHERE ID IN (:ids)");
 		queryremove.setParameterList("ids", ids);
 		queryremove.executeUpdate();
 	}
@@ -2241,7 +2246,7 @@ public class ReportingService extends BasicService {
 			return;
 		}
 		
-		SQLQuery queryremove = sessionReporting.createSQLQuery("DELETE FROM TODO");
+		NativeQuery queryremove = sessionReporting.createSQLQuery("DELETE FROM TODO");
 		queryremove.executeUpdate();
 	}
 		
@@ -2249,7 +2254,7 @@ public class ReportingService extends BasicService {
 	public Date getLastUpdateInternal(Survey survey) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
-		SQLQuery query = sessionReporting.createSQLQuery("SELECT COUNT(*) FROM TODO WHERE UID = :uid");
+		NativeQuery query = sessionReporting.createSQLQuery("SELECT COUNT(*) FROM TODO WHERE UID = :uid");
 		query.setString("uid", survey.getUniqueId());
 		int result = ConversionTools.getValue(query.uniqueResult());
 		

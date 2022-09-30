@@ -5,6 +5,13 @@ div.validation-error:focus, div.validation-error-server:focus, div.validation-er
 	z-index: 10000;
 }
 
+input[type=radio]:focus + .choice-button-label {
+	outline: 2px solid #FFD617 !important;
+	outline-offset: 0px;
+	border-color: black;
+	z-index: 10000;
+}
+
  .focusborder:focus-within input, .matrix-cell:focus-within input, .galleryinfo:focus-within input, .confirmationelement:focus-within input {
  	outline: 0 !important;
  }

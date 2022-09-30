@@ -361,6 +361,13 @@
 			for (var i = 0; i < list.length; i++ )
 			  {
 				var row = document.createElement("tr");
+				if (list[i].error != null && list[i].error.length > 0) {
+					$(row).attr("style", "background-color: rgba(255, 96, 96, 0.57)");
+				} else if (!(list[i].finished)) {
+					$(row).attr("style", "background-color: #FFC6A3");
+				} else {
+					$(row).attr("style", "");
+				}
 				
 				var td = document.createElement("td");				
 				$(td).append(list[i].surveyUID);		

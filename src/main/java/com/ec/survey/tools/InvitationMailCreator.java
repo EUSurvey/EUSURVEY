@@ -10,6 +10,7 @@ import com.ec.survey.model.attendees.Attribute;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,7 +152,7 @@ public class InvitationMailCreator implements Runnable {
 			
 			if (task.getState().equalsIgnoreCase(MailTask.FINISHED))
 			{
-				activityService.log(506, null, participationGroup.getId().toString(), user.getId(), survey.getUniqueId(), participationGroup.getNiceType());
+				activityService.log(ActivityRegistry.ID_GUEST_LIST_EMAIL, null, participationGroup.getId().toString(), user.getId(), survey.getUniqueId(), participationGroup.getNiceType());
 			}			
 			
 		} catch (Exception e) {

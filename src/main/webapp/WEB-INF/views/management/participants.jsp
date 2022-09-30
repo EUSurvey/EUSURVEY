@@ -93,7 +93,7 @@
 		  	position: fixed;
 		  	left: 0;
 		  	right: 0;
-		  	top: 110px;
+		  	top: 0px;
 		  	bottom: 0;
 		  	background-color: #cccccce6;
 		  	text-align: center;
@@ -168,13 +168,13 @@
 			<div id="wait-dialog-inner">
 				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif" />
 			</div>												
-		</div>				
+		</div>
 		
-		<div id="participants" data-bind="visible: Page() == 1">		
+		<div id="participants" data-bind="visible: Page() == 1">
 			<div id="action-bar" class="container action-bar" data-bind="visible: DataLoaded() && Guestlists().length > 0">
 				<div class="row">
 					<div class="col-md-12" style="text-align:center">
-						<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
+						<c:if test="${!form.survey.isEVote && (USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1)}">
 							
 						<span style="margin-right: 20px"><spring:message code="label.CreateNew" /></span>
 						<a onclick="_participants.newContactList()" class="btn btn-success"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.ContactList" /></a>
@@ -524,29 +524,130 @@
 							</div>
 						</div>
 					</div> <!-- row -->
+					<div class="row">
+						<div class="col-md-12">
+							<div data-bind="visible: VoterFiles().length > 0">
+							<h2><spring:message code="label.VoterFile" /></h2>
+							<table id="participantstablevoterfiles" class="table table-bordered table-styled table-striped" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+								<thead>
+									<tr>
+										<th style="width: 20%"><spring:message code="label.Created" /></th>
+										<th style="width: 17%"><spring:message code="label.Voters" /></th>
+										<th style="width: 17%"><spring:message code="label.Voted" /></th>						
+										<th style="width: 29%"><spring:message code="label.Actions" /></th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- ko foreach: VoterFiles() -->
+										<tr>
+											<td data-bind="text: created"></td>								
+											<td data-bind="text: children"></td>
+											<td data-bind="text: invited"></td>
+											<td>
+												<!-- ko if: $parent.Access() == 2 -->
+													<!-- ko if: activateEnabled() -->
+														<a id="btnActivateFromParticipant" class="iconbutton" data-bind="click: activate" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class='glyphicon glyphicon-play'></span></a>
+													<!-- /ko -->
+													<!-- ko if: deactivateEnabled() -->
+														<a id="btnDeactivateFromParticipant" class="iconbutton" data-bind="click: deactivate" data-class="deactivatebutton" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
+													<!-- /ko -->
+													<!-- ko if: !activateEnabled() && !deactivateEnabled() -->
+														<a id="btnDeactivateFromParticipant" class="iconbutton disabled" data-class="deactivatebutton" onclick="return false;" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
+													<!-- /ko -->
+														<!-- ko if: editEnabled() -->
+														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: edit"><span class='glyphicon glyphicon-pencil'></span></a>
+													<!-- /ko -->
+													<!-- ko if: !editEnabled() -->
+														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
+													<!-- /ko -->
+													<!-- ko if: exportEnabled() && type() == 'Token' -->
+														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+														<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+													<!-- /ko -->
+													<!-- ko if: deleteEnabled() -->
+														<a id="btnDeleteEnabledFromParticipant" data-bind="click: deleteList" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>										
+													<!-- /ko -->
+													<!-- ko if: !deleteEnabled() -->
+														<a id="btnDeleteDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>
+													<!-- /ko -->
+												<!-- /ko -->
+												<!-- ko if: $parent.Access() == 1 -->
+													<!-- ko if: !activateEnabled() -->
+														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
+													<!-- /ko -->
+													<!-- ko if: activateEnabled() -->
+														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
+													<!-- /ko -->
+													<!-- ko if: type() != 'Token' -->
+													<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+													<!-- /ko -->
+													<!-- ko if: editEnabled() -->
+														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+													<!-- /ko -->
+													<!-- ko if: !editEnabled() -->
+														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
+													<!-- /ko -->
+													<!-- ko if: exportEnabled() && type() == 'Token' -->
+														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+														<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+													<!-- /ko -->
+													<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+												<!-- /ko -->
+												<!-- ko if: $parent.Access() == 0 -->
+													<!-- ko if: !activateEnabled() -->
+														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
+													<!-- /ko -->
+													<!-- ko if: activateEnabled() -->
+														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
+													<!-- /ko -->
+													<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>		
+													
+													<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+												<!-- /ko -->
+											</td>
+										</tr>					
+									<!-- /ko -->					
+								</tbody>
+							</table>
+							
+							</div>
+						</div> <!-- col md 12 -->	
+					</div> <!-- row -->	
 					<div class="row lastRowBeforeFooter"></div>
 				</div> <!-- container -->	
 			</div>
 			<div style="text-align: center;" data-bind="visible: DataLoaded() && Guestlists().length == 0">
-				<h1 style="margin-bottom: 20px;"><spring:message code="message.noguestlistyet" /></h1>
-				<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
-					<spring:message code="label.createguestlist" /><br />
-					<a onclick="_participants.newContactList()" class="btn btn-success createlist">
-						<span class="glyphicon glyphicon-book"></span><br />
-						<spring:message code="label.ContactList" /><br /><br />
-						<span class="info"><spring:message code="info.ContactList" /></span>
-					</a>
-					<a onclick="_participants.newEUList()" class="btn btn-success createlist">
-						<span class="glyphicon glyphicon-user"></span><br />
-						<spring:message code="label.EUList" /><br /><br />
-						<span class="info"><spring:message code="info.EUList" /></span>
-					</a>
-					<a onclick="_participants.newTokenList()" class="btn btn-success createlist">
-						<span class="glyphicon glyphicon-barcode"></span><br />
-						<spring:message code="label.TokenList" /><br /><br />
-						<span class="info"><spring:message code="info.TokenList" /></span>
-					</a>						
-				</c:if>
+				<c:choose>
+					<c:when test="${form.survey.isEVote}">
+						<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
+							<a onclick="$('#import-voter-file-dialog').modal('show');" class="btn btn-success">
+								<span class="glyphicon glyphicon-file"></span>
+								<spring:message code="label.ImportVoterFile" />
+							</a>
+						</c:if>
+					</c:when>
+					<c:otherwise>
+						<h1 style="margin-bottom: 20px;"><spring:message code="message.noguestlistyet" /></h1>
+							<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
+								<spring:message code="label.createguestlist" /><br />
+								<a onclick="_participants.newContactList()" class="btn btn-success createlist">
+									<span class="glyphicon glyphicon-book"></span><br />
+									<spring:message code="label.ContactList" /><br /><br />
+									<span class="info"><spring:message code="info.ContactList" /></span>
+								</a>
+								<a onclick="_participants.newEUList()" class="btn btn-success createlist">
+									<span class="glyphicon glyphicon-user"></span><br />
+									<spring:message code="label.EUList" /><br /><br />
+									<span class="info"><spring:message code="info.EUList" /></span>
+								</a>
+								<a onclick="_participants.newTokenList()" class="btn btn-success createlist">
+									<span class="glyphicon glyphicon-barcode"></span><br />
+									<spring:message code="label.TokenList" /><br /><br />
+									<span class="info"><spring:message code="info.TokenList" /></span>
+								</a>						
+							</c:if>
+					</c:otherwise>
+				</c:choose>
 			</div>
 			<div style="text-align: center" data-bind="visible: !DataLoaded()">
 				<img src="${contextpath}/resources/images/ajax-loader.gif" />
@@ -1289,7 +1390,10 @@
 					</div> 	<!-- container -->	
 				</div>
 			</div>
-		</div> <!-- tokenlist --> 
+		</div> <!-- tokenlist -->
+		
+		<%@ include file="voterfile.jsp" %>	
+	
 	</div>
 
 	<%@ include file="../footer.jsp" %>	

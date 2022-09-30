@@ -1,6 +1,6 @@
 package com.ec.survey.model;
 
 public enum ParticipationGroupType {
-	Dynamic, Static, ECMembers, Token
+	Dynamic, Static, ECMembers, Token, VoterFile
 }
 

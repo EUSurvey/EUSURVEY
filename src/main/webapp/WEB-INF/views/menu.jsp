@@ -135,20 +135,27 @@
 	
 	window.setTimeout("checkNewMailTasks()", 10000);
 	
-	function checkSurveyTypes()
-	{
-		if ($("#new-survey-type-opc:checked").length == 0)
-		{
-			$("#new-survey-security-open").prop("checked", "checked");
-			$("#new-survey-security-secured").removeAttr("disabled");
-			$("#new-survey-security-open").removeAttr("disabled");
-		} else {
+	function checkSurveyTypes(){
+		let surveyType = $("[name='new-survey-type']:checked").val()
+		if (surveyType == "opc" || surveyType == "evote"){
 			$("#new-survey-security-secured").prop("checked", "checked");
 			$("#new-survey-security-secured").attr("disabled", "disabled");
 			$("#new-survey-security-open").attr("disabled", "disabled");
-			
+		} else {
+			$("#new-survey-security-open").prop("checked", "checked");
+			$("#new-survey-security-secured").removeAttr("disabled");
+			$("#new-survey-security-open").removeAttr("disabled");
+		}
+
+		if (surveyType == "opc"){
 			$("#new-survey-contact-type").val("email");
 			checkNewSurveyContactType();
+		}
+		
+		if (surveyType == "evote") {
+			$("#evote-template").show();
+		} else {
+			$("#evote-template").hide();
 		}
 	}
 	
@@ -197,10 +204,9 @@
 					  } else {
 						  window.setTimeout("checkNewMailTasks()", 60000);
 					  }
-				  }, error: function(jqXHR, textStatus, errorThrown)
-					  {
-						  showError(textStatus);
-					  }
+				  }, error: function (data) {
+						showAjaxError(data.status)
+					}
 				});	
 
 		</c:if>
@@ -253,7 +259,7 @@
 		$('#add-survey-dialog').modal();
 	}
 	
-	function copySurvey(id, title, lang, security, isQuiz, isDelphi)
+	function copySurvey(id, title, lang, security, isQuiz, isDelphi, isEVote)
 	{
 		var login = '${USER.login}';
 		var contact = "${USER.email}";
@@ -285,24 +291,33 @@
 		{
 			$("#new-survey-type-normal").closest("label").removeClass("active");
 			$("#new-survey-type-delphi").closest("label").removeClass("active");
+			$("#new-survey-type-evote").closest("label").removeClass("active");
 			$("#new-survey-type-quiz").closest("label").addClass("active");
 			$("#new-survey-type-quiz").attr("checked", "checked");
+		} else  if (isDelphi == 'true') {
+			$("#new-survey-type-normal").closest("label").removeClass("active");
+			$("#new-survey-type-quiz").closest("label").removeClass("active");
+			$("#new-survey-type-evote").closest("label").removeClass("active");
+			$("#new-survey-type-delphi").closest("label").addClass("active");
+			$("#new-survey-type-delphi").attr("checked", "checked");
+		} else if (isEVote == "true") {
+			$("#new-survey-type-normal").closest("label").removeClass("active");
+			$("#new-survey-type-quiz").closest("label").removeClass("active");
+			$("#new-survey-type-delphi").closest("label").removeClass("active");
+			$("#new-survey-type-evote").closest("label").addClass("active");
+			$("#new-survey-type-evote").attr("checked", "checked");
+			$("#new-survey-security-secured").prop("checked", "checked");
+			$("#new-survey-security-secured").attr("disabled", "disabled");
+			$("#new-survey-security-open").attr("disabled", "disabled");
+			$("#evote-template").show();
 		} else {
-			if (isDelphi == 'true')
-			{
-				$("#new-survey-type-normal").closest("label").removeClass("active");
-				$("#new-survey-type-quiz").closest("label").removeClass("active");
-				$("#new-survey-type-delphi").closest("label").addClass("active");
-				$("#new-survey-type-delphi").attr("checked", "checked");
-			} else {
-				$("#new-survey-type-normal").closest("label").addClass("active");
-				$("#new-survey-type-quiz").closest("label").removeClass("active");
-				$("#new-survey-type-delphi").closest("label").removeClass("active");
-				$("#new-survey-type-normal").attr("checked", "checked");
-			}	
-			
+			$("#new-survey-type-quiz").closest("label").removeClass("active");
+			$("#new-survey-type-delphi").closest("label").removeClass("active");
+			$("#new-survey-type-evote").closest("label").removeClass("active");
+			$("#new-survey-type-normal").closest("label").addClass("active");
+			$("#new-survey-type-normal").attr("checked", "checked");
 		}
-		
+
 		$('#add-survey-dialog').modal();
 	}
 	
@@ -400,13 +415,27 @@
 									<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-delphi" value="delphi" />&#160;<spring:message code="label.Delphi" />
 								</label>
 					      </c:if>
+					      <c:if test="${enableevote}">
+								<label style="height: auto" class="btn btn-default" title="<spring:message code="info.eVote" />" aria-label="<spring:message code="info.eVote" />" data-toggle='tooltip'>
+									<span class="glyphicon glyphicon-ok" style="font-size: 11px; border: 2px solid #555; padding: 3px;"></span>
+									<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-evote" value="evote" />&#160;<spring:message code="label.eVote" />
+								</label>
+					      </c:if>
 						</div>
 					</td>
 				</tr>
+				<tr id="evote-template" style="display: none">
+					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Template" /></td>
+					<td>
+						<input type="radio" name="new-survey-template" checked="checked" value="b" />&#160;<spring:message code="label.Brussels" />
+						<input type="radio" name="new-survey-template" value="l" style="margin-left: 20px;" />&#160;<spring:message code="label.Luxembourg" />
+						<input type="radio" name="new-survey-template" value="o" style="margin-left: 20px;" />&#160;<spring:message code="label.OutsideCommunity" />
+					</td>
+				</tr>				
 				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.UniqueIdentifier" /></td>
 					<td>
-						<input id="new-survey-shortname" maxlength="255" class="required freetext max255 form-control" type="text" value="" style="width: 300px; margin-bottom: 10px;" placeholder="<spring:message code="message.SpecifyShortname" />" />
+						<input id="new-survey-shortname" maxlength="255" class="required freetext max255 form-control" type="text" value="" style="width: 300px; margin-bottom: 10px; margin-left: 0;" placeholder="<spring:message code="message.SpecifyShortname" />" />
 						<span style="color: #777;"><spring:message code="message.MeaningfulShortname" /><spring:message code="message.MeaningfulShortname2" /></span>&nbsp;
 						<div id="new-survey-shortname-exists" class="hideme alert-danger"><spring:message code="message.ShortnameAlreadyExists" /></div>
 					</td>
@@ -515,6 +544,8 @@
 	<input type="hidden" name="opc" id="create-survey-opc" value="" />
 	<input type="hidden" name="delphi" id="create-survey-delphi" value="" />
 	<input type="hidden" name="ecf" id="create-survey-ecf" value="" />
+	<input type="hidden" name="evote" id="create-survey-evote" value="" />
+	<input type="hidden" name="evotetemplate" id="create-survey-template" value="" />
 	<input type="hidden" name="contact" id="create-survey-contact" value="" />
 	<input type="hidden" name="contactlabel" id="create-survey-contact-label" value="" />
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />

@@ -4,19 +4,29 @@ import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.Export.ExportType;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.administration.Voter;
 import com.ec.survey.model.attendees.*;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
+
+import com.ec.survey.tools.activity.ActivityRegistry;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,15 +34,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.ImageIcon;
+
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/{shortname}/management")
@@ -45,6 +67,9 @@ public class ParticipantsController extends BasicController {
 
 	@Resource(name = "mailService")
 	private MailService mailService;
+	
+	@Resource(name = "eVoteService")
+	private EVoteService eVoteService;
 
 	@RequestMapping(value = "/participants", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView participants(@PathVariable String shortname, HttpServletRequest request, Locale locale)
@@ -99,6 +124,12 @@ public class ParticipantsController extends BasicController {
 		}
 
 		List<KeyValue> domains = ldapDBService.getDomains(false, false, resources, locale);
+
+		if (survey.getIsEVote()){
+			//Remove all domains that don't start with ec.europa
+			domains = domains.stream().filter(kV -> kV.getKey().startsWith("ec.europa")).collect(Collectors.toList());
+		}
+
 		result.addObject("domains", domains);
 
 		return result;
@@ -149,16 +180,20 @@ public class ParticipantsController extends BasicController {
 			case "activate":
 				g.setActive(true);
 				participationService.update(g);
-				activityService.log(504, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
+				activityService.log(ActivityRegistry.ID_GUEST_LIST_STARTED, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
 				break;
 			case "deactivate":
 				g.setActive(false);
 				participationService.update(g);
-				activityService.log(503, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
+				activityService.log(ActivityRegistry.ID_GUEST_LIST_PAUSED, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
 				break;
 			case "delete":
+				if (g.getType() == ParticipationGroupType.VoterFile) {
+					eVoteService.deleteAllVoters(survey.getUniqueId());
+				}
+				
 				participationService.delete(g);
-				activityService.log(502, g.getId().toString(), null, u.getId(), survey.getUniqueId(), g.getNiceType());
+				activityService.log(ActivityRegistry.ID_GUEST_LIST_REMOVED, g.getId().toString(), null, u.getId(), survey.getUniqueId(), g.getNiceType());
 				break;
 			default:
 				throw new InvalidURLException();
@@ -352,11 +387,11 @@ public class ParticipantsController extends BasicController {
 			}
 
 			if (id > 0) {
-				activityService.log(505, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
+				activityService.log(ActivityRegistry.ID_GUEST_LIST_MODIFIED, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
 						participationGroup.getNiceType());
 				return "successsaved";
 			} else {
-				activityService.log(501, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
+				activityService.log(ActivityRegistry.ID_GUEST_LIST_CREATED, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
 						participationGroup.getNiceType());
 				return "successcreated";
 			}
@@ -732,6 +767,9 @@ public class ParticipantsController extends BasicController {
 			} else if (group.getType() == ParticipationGroupType.Static) {
 				group.setChildren(group.getAttendees().size());
 				group.setAttendees(null);
+			} else if (group.getType() == ParticipationGroupType.VoterFile) {
+				group.setChildren((int) eVoteService.getVoterCount(form.getSurvey().getUniqueId(), null));
+				group.setInvited((int) eVoteService.getVoterCount(form.getSurvey().getUniqueId(), true));
 			} else {
 				group.setChildren(group.getAll());
 			}
@@ -785,6 +823,9 @@ public class ParticipantsController extends BasicController {
 		String domain = "";
 		if (parameters.containsKey("domain"))
 			domain = parameters.get("domain")[0];
+		String login = "";
+		if (parameters.containsKey("login"))
+			login = parameters.get("login")[0];
 
 		String newPage = request.getParameter("newPage");
 		newPage = newPage == null ? "1" : newPage;
@@ -792,12 +833,15 @@ public class ParticipantsController extends BasicController {
 
 		if (domain.length() == 0)
 			return null;
+		if (form.getSurvey().getIsEVote() && !domain.startsWith("ec.europa")){
+			return null;
+		}
 
 		Paging<EcasUser> paging = new Paging<>();
 		paging.setItemsPerPage(itemsPerPage);
 		paging.setCurrentPage(Integer.parseInt(newPage));
 
-		List<EcasUser> users = ldapDBService.getECASUsers(name, department, email, domain, Integer.parseInt(newPage),
+		List<EcasUser> users = ldapDBService.getECASUsers(name, login, department, email, domain, Integer.parseInt(newPage),
 				itemsPerPage);
 		paging.setItems(users);
 
@@ -1120,5 +1164,247 @@ public class ParticipantsController extends BasicController {
 		}
 
 		return newtokens;
+	}	
+	
+	@RequestMapping(value = "/votersJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody List<Voter> votersJSON(@PathVariable String shortname, HttpServletRequest request) {
+
+		try {
+			String page = request.getParameter("page");
+
+			if (page == null) {
+				return null;
+			}
+			
+			String user = request.getParameter("user");
+			String first = request.getParameter("first");
+			String last = request.getParameter("last");
+			String svoted = request.getParameter("voted");
+			Boolean voted = svoted == null ? null : Boolean.parseBoolean(svoted);
+			
+			request.getSession().setAttribute("VotersUserFilter", user);
+			request.getSession().setAttribute("VotersFirstFilter", first);
+			request.getSession().setAttribute("VotersLastFilter", last);
+			request.getSession().setAttribute("VotersVotedFilter", voted);
+			
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations) < 1) {
+				throw new ForbiddenURLException();
+			}
+
+			int itemsPerPage = 20;
+			
+			List<Voter> result = eVoteService.getVoters(form.getSurvey().getUniqueId(), Integer.parseInt(page), itemsPerPage, user, first, last, voted);
+			
+			return result;
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return null;
 	}
+	
+	@RequestMapping(value = "/totalVotersJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody int totalVotersJSON(@PathVariable String shortname, HttpServletRequest request) {
+		try {
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations) < 1) {
+				throw new ForbiddenURLException();
+			}
+			
+			String user = request.getParameter("user");
+			String first = request.getParameter("first");
+			String last = request.getParameter("last");
+			String svoted = request.getParameter("voted");
+			Boolean voted = svoted == null ? null : Boolean.parseBoolean(svoted);
+			
+			int result = (int) eVoteService.getVoterCount(form.getSurvey().getUniqueId(), user, first, last, voted);
+			
+			return result;
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return 0;
+	}
+	
+	@PostMapping(value = "/uploadvoterfile")
+	public @ResponseBody List<Voter> uploadvoterfile(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response) {
+		InputStream is = null;
+		
+		try {
+
+			if (request instanceof DefaultMultipartHttpServletRequest) {
+				DefaultMultipartHttpServletRequest r = (DefaultMultipartHttpServletRequest) request;
+				is = r.getFile("qqfile").getInputStream();
+			} else {
+				is = request.getInputStream();
+			}
+
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations) < 2) {
+				throw new ForbiddenURLException();
+			}
+			
+			ArrayList<Voter> voters = eVoteService.importVoterFile(form.getSurvey().getUniqueId(), is);
+			if (voters.size() > 0) {
+				eVoteService.addVoters(voters, u);
+				List<Voter> firstVoterPage = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 20, null, null, null, null);
+				response.setStatus(HttpServletResponse.SC_OK);
+				return firstVoterPage;
+			}
+			
+			response.setStatus(HttpServletResponse.SC_NO_CONTENT);			
+		
+		} catch (Exception ex) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			logger.error(ex.getMessage(), ex);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException ignored) {
+				// ignore
+			}
+		}
+
+		return null;
+	}
+	
+	@RequestMapping(value = "/exportvoterfile", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@ResponseBody
+	public ResponseEntity<byte[]> exportvoterfile(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		final HttpHeaders headers = new HttpHeaders();
+
+		try {
+
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations) < 2) {
+				throw new ForbiddenURLException();
+			}
+			
+			String user = (String) request.getSession().getAttribute("VotersUserFilter");
+			String first = (String) request.getSession().getAttribute("VotersFirstFilter");
+			String last = (String) request.getSession().getAttribute("VotersLastFilter");
+			Boolean voted = (Boolean) request.getSession().getAttribute("VotersVotedFilter");
+			
+			byte[] file = eVoteService.exportVoterFile(form.getSurvey().getUniqueId(), user, first, last, voted);
+
+			response.setContentType("application/vnd.ms-excel");
+			response.setHeader("Content-Disposition", "attachment;filename=voterfile.xlsx");
+			response.setContentLength(file.length);
+			response.getOutputStream().write(file);			
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			headers.setContentType(MediaType.TEXT_PLAIN);
+			return new ResponseEntity<>(e.getLocalizedMessage().getBytes(), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return null;
+	}
+	
+	@PostMapping(value = "/deleteVoter")
+	public @ResponseBody String deleteVoter(@PathVariable String shortname, @RequestParam  String id, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations) < 2) {
+				throw new ForbiddenURLException();
+			}			
+			
+			if (eVoteService.deleteVoter(Integer.parseInt(id), form.getSurvey().getUniqueId(), u)) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				return "success";
+			}
+		} catch (Exception ex) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			logger.error(ex.getMessage(), ex);
+		}
+			
+		return "error";
+	}
+
+	@PostMapping(value = "/addVoters")
+	public @ResponseBody List<Voter> addVoters(@PathVariable String shortname, @RequestParam(name = "voters[]") List<Integer> voters, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations) < 2) {
+				throw new ForbiddenURLException();
+			}
+
+			if (voters.size() > 0) {
+				String uid = form.getSurvey().getUniqueId();
+
+				List<EcasUser> users = ldapDBService.getExclusiveECASVoteUsersWithIds(uid, voters);
+				//The query already ignores duplicate voters
+				LinkedList<Voter> votersList = new LinkedList<>();
+
+				for (EcasUser user : users){
+					if (user.getOrganisation().startsWith("ec.europa")){
+						Voter voter = new Voter();
+						voter.setEcMoniker(user.getEcMoniker());
+						voter.setGivenName(user.getGivenName());
+						voter.setSurname(user.getSurname());
+						voter.setSurveyUid(uid);
+						voter.setCreated(new Date());
+						votersList.add(voter);
+					}
+				}
+
+				if (votersList.size() > 0) {
+					eVoteService.addMoreVoters(votersList, u);
+				}
+				List<Voter> firstVoterPage = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 20, null, null, null, null);
+				response.setStatus(HttpServletResponse.SC_OK);
+				return firstVoterPage;
+			}
+
+			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+		}
+
+		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		return null;
+	}
+	
 }

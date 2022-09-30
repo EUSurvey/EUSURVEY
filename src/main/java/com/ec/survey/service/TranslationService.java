@@ -5,7 +5,7 @@ import com.ec.survey.model.Translations;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.TranslationsHelper;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,17 +20,16 @@ public class TranslationService extends BasicService {
 	@Transactional(readOnly = true)
 	public Translations getTranslations(int surveyId, String language) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("SELECT t.id FROM Translations t LEFT JOIN t.language as l WHERE t.surveyId = :surveyId AND l.code = :language");
+		Query<Integer> query = session.createQuery("SELECT t.id FROM Translations t LEFT JOIN t.language as l WHERE t.surveyId = :surveyId AND l.code = :language", Integer.class);
 		query.setParameter("surveyId", surveyId);
 		query.setParameter("language", language);
 
 		// Retrieve all
-		@SuppressWarnings("unchecked")
 		List<Integer> list = query.list();
 				
 		if (list.isEmpty()) return null;
 		
-		return (Translations) session.get(Translations.class, list.get(0));
+		return session.get(Translations.class, list.get(0));
 	}	
 
 	@Transactional
@@ -72,7 +71,7 @@ public class TranslationService extends BasicService {
 	{
 		List<Translations> result = new ArrayList<>();
 		Session session = sessionFactory.getCurrentSession();		
-		Survey survey = (Survey) session.get(Survey.class, surveyId);
+		Survey survey = session.get(Survey.class, surveyId);
 		if (survey == null) return result;
 				
 		if (!survey.getIsDraft())
@@ -80,16 +79,15 @@ public class TranslationService extends BasicService {
 			session.setReadOnly(survey, true);
 		}
 		
-		Query query = session.createQuery("SELECT t.id FROM Translations t WHERE t.surveyId = :surveyId ORDER BY t.language asc");
+		Query<Integer> query = session.createQuery("SELECT t.id FROM Translations t WHERE t.surveyId = :surveyId ORDER BY t.language asc", Integer.class);
 		query.setParameter("surveyId", surveyId);
 
 		// Retrieve all
-		@SuppressWarnings("unchecked")
 		List<Integer> list = query.list();	
 
 		for (Integer id : list) {
 			
-			Translations translations = (Translations) session.get(Translations.class, id);
+			Translations translations = session.get(Translations.class, id);
 			
 			if (translations != null)
 			{
@@ -126,19 +124,18 @@ public class TranslationService extends BasicService {
 	public List<Translations> getActiveTranslationsForSurvey(int surveyId) {
 		List<Translations> result = new ArrayList<>();
 		Session session = sessionFactory.getCurrentSession();		
-		Survey survey = (Survey) session.get(Survey.class, surveyId);
+		Survey survey = session.get(Survey.class, surveyId);
 		if (survey == null) return result;		
 				
-		Query query = session.createQuery("SELECT t.id FROM Translations t WHERE t.surveyId = :surveyId AND t.active = true ORDER BY t.language asc");
+		Query<Integer> query = session.createQuery("SELECT t.id FROM Translations t WHERE t.surveyId = :surveyId AND t.active = true ORDER BY t.language asc", Integer.class);
 		query.setParameter("surveyId", surveyId);
 	
 		// Retrieve all
-		@SuppressWarnings("unchecked")
 		List<Integer> list = query.list();	
 	
 		for (Integer id : list) {		
 			
-			Translations translations = (Translations) session.get(Translations.class, id);
+			Translations translations = session.get(Translations.class, id);
 			
 			if (!translations.getComplete())
 			{
@@ -164,20 +161,17 @@ public class TranslationService extends BasicService {
 		
 		if (onlyActive) squery += " AND t.active = true";
 		
-		Query query = session.createQuery(squery).setCacheable(true);
+		Query<String> query = session.createQuery(squery, String.class).setCacheable(true);
 		query.setParameter("surveyId", surveyId);
 
-		@SuppressWarnings("unchecked")
-		List<String> list = query.list();	
-		
-		return list;
+		return query.list();
 	}
 	
 	@Transactional(readOnly = true)
 	public Translations getTranslations(int id)
 	{
 		Session session = sessionFactory.getCurrentSession();
-		return (Translations) session.get(Translations.class, id);
+		return session.get(Translations.class, id);
 	}
 	
 	@Transactional(readOnly = false)
@@ -201,7 +195,7 @@ public class TranslationService extends BasicService {
 	@Transactional(readOnly = false)
 	public boolean deleteTranslations(int id) {
 		Session session = sessionFactory.getCurrentSession();
-		Translations translations = (Translations) session.get(Translations.class, id);
+		Translations translations = session.get(Translations.class, id);
 		if (translations == null) return false;
 		session.delete(translations);
 		return true;

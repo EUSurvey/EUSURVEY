@@ -203,11 +203,6 @@
 			</div>
 		</div>
 
-		<div id="successCopyClipboardLinkMessage" class="alert alert-success user-info" style="display: none; position: fixed; top: 5px; right: 5px; padding: 10px; z-index: 10001; ">
-			<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span></a></div>
-			${form.getMessage("message.copy.successCopyClipboardLink")}
-		</div>
-		
 		<div id="failureMailLinkMessage" class="alert alert-danger user-info" style="display: none; position: fixed; top: 5px; right: 5px; padding: 10px; z-index: 10001; ">
 			<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span></a></div>
 			${form.getMessage("message.mail.failMailLinkDraft")}
@@ -313,8 +308,13 @@
 			}
 			
 			try 
-			{  
-				document.execCommand('copy');  
+			{
+				var result = document.execCommand('copy');
+
+				if(result)
+				{
+					showSuccess('<spring:message code="message.copy.successCopyClipboardLink" />');
+				}
 			} 
 			catch(err) 
 			{  
@@ -429,8 +429,8 @@
 						try {  
 						  // Now that we've selected the anchor text, execute the copy command  
 						  document.execCommand('copy');
-						  
-						  $("#successCopyClipboardLinkMessage").show();
+
+						  showSuccess('<spring:message code="message.copy.successCopyClipboardLink" />');
 						  
 						} catch(err) {  
 						  //console.log('Oops, unable to copy');

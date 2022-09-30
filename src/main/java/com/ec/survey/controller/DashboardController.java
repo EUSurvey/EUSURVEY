@@ -6,15 +6,13 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.evote.QuorumContributions;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.dashboard.Contributions;
 import com.ec.survey.model.survey.dashboard.EndDates;
-import com.ec.survey.tools.Constants;
-import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.NotAgreedToPsException;
-import com.ec.survey.tools.NotAgreedToTosException;
-import com.ec.survey.tools.WeakAuthenticationException;
+import com.ec.survey.tools.*;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -133,6 +131,51 @@ public class DashboardController extends BasicController {
 				contributions.setContributionStates(cs);
 				contributions.setSurveyIndex(index);
 			}
+
+			return contributions;
+		} catch (Exception ex) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			logger.error(ex.getMessage(), ex);
+		}
+
+		return null;
+	}
+
+	@RequestMapping(value = "/dashboard/quorumContributions", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody QuorumContributions quorumContributions(HttpServletRequest request, HttpServletResponse response,
+													 Locale locale, Model model) {
+		try {
+			int surveyid = Integer.parseInt(request.getParameter("surveyid"));
+			
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+				throw new ForbiddenURLException();
+			}
+			
+			QuorumContributions contributions = new QuorumContributions();
+			contributions.setNumberOfContributions(answerService.getNumberOfAnswerSetsPublished(form.getSurvey().getUniqueId()));
+
+			String span = request.getParameter("span");
+			
+			contributions.setSurveyId(surveyid);
+
+			int[] cs = answerService.getAnswerStatistics(surveyid);
+			contributions.setContributionStates(cs);
+
+			Map<Date, Integer> answersPerDay = answerService.getQuorumAnswers(surveyid, span);
+			contributions.setAnswersPerTimeUnit(answersPerDay, span);
+
+			String uid = form.getSurvey().getUniqueId();
+
+			contributions.setVoters(eVoteService.getVoterCount(uid, null));
+
+			activityService.log(ActivityRegistry.ID_OPEN_QUORUM, null, null, u.getId(), uid);
 
 			return contributions;
 		} catch (Exception ex) {

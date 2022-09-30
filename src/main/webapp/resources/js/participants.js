@@ -116,6 +116,9 @@ var Guestlist = function() {
 			case "ECMembers":
 				_participants.Page(4);
 				break;
+			case "VoterFile":
+				_participants.Page(6);
+				break;
 		}		
 		
 		_participants.Step(1);
@@ -384,9 +387,31 @@ var Participants = function() {
 	this.selectedGroup = ko.observable(null);
 	this.Attendees = ko.observableArray().extend({ deferred: true });
 	this.Users = ko.observableArray();
+	this.Voters = ko.observableArray();
+	this.voterPage = ko.observable(1);
+	this.firstVoter = ko.observable(0);
+	this.lastVoter = ko.observable(0);
+	this.lastVoterReached = ko.observable(false);
+	this.totalVoters = ko.observable(0);
 	this.attributeNames = ko.observableArray();
 	this.Domain = ko.observable("");
-	
+	this.EVoteUsers = ko.observableArray();
+	this.VotersSearchPage = ko.observable(1);
+	this.VotersSearchStart = ko.observable(0);
+	this.VotersSearchEnd = ko.observable(0);
+
+	function recalcStartEnd(){
+		let start = (self.VotersSearchPage() - 1) * votersSearchPageSize + 1
+		let end = start + self.EVoteUsers().length - 1
+		if (self.EVoteUsers().length === 0){
+			start = end = votersSearchPageSize * (self.VotersSearchPage() - 1)
+		}
+		self.VotersSearchStart(start)
+		self.VotersSearchEnd(end)
+	}
+	this.VotersSearchPage.subscribe(recalcStartEnd)
+	this.EVoteUsers.subscribe(recalcStartEnd)
+
 	for (var i = 0; i < attributeNames.length; i++)
 	{
 		var attname = new AttributeName();
@@ -464,6 +489,20 @@ var Participants = function() {
 		for (var i = 0; i < self.Guestlists().length; i++)
 		{
 			if (self.Guestlists()[i].type() == "ECMembers")
+			{
+				result[result.length] = self.Guestlists()[i];
+			}
+		}
+		
+		return result;
+	});
+	
+	this.VoterFiles =  ko.computed(function()
+	{
+		var result = [];
+		for (var i = 0; i < self.Guestlists().length; i++)
+		{
+			if (self.Guestlists()[i].type() == "VoterFile")
 			{
 				result[result.length] = self.Guestlists()[i];
 			}
@@ -821,7 +860,9 @@ $(function() {
 	ko.applyBindings(_participants, $("#newcontactlist")[0]);
 	ko.applyBindings(_participants, $("#neweclist")[0]);
 	ko.applyBindings(_participants, $("#newtokenlist")[0]);
+	ko.applyBindings(_participants, $("#newvoterfile")[0]);
 	ko.applyBindings(_participants, $("#wait-dialog")[0]);
+	ko.applyBindings(_participants, $("#add-voter-dialog")[0]);
 	_participants.loadGuestlists();	
 	
 	var $col = $("#contactsdiv");
@@ -1068,4 +1109,8 @@ function checkFinishedGuestlists()
 		
 		window.setTimeout("checkFinishedGuestlists()", 60000);
 	};	
+}
+
+function showGenericError() {
+	showError("Operation not possible");
 }

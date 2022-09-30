@@ -64,7 +64,7 @@ public class SurveyCreator {
 		profileScQuestion.setPosition(position++);
 		profileScQuestion.setHelp("Please choose your profile");
 		profileScQuestion.setOptional(false);
-		profileScQuestion.setUseRadioButtons(true);
+		profileScQuestion.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 
 		// generating one answer per profile
 		int answerPosition = 0;
@@ -92,7 +92,7 @@ public class SurveyCreator {
 				 UUID.randomUUID().toString());
 				singleChoiceQuestion.setPosition(ecfCompetency.getOrderNumber() + position);
 				singleChoiceQuestion.setOptional(false);
-				singleChoiceQuestion.setUseRadioButtons(true);
+				singleChoiceQuestion.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 				singleChoiceQuestion.setEcfCompetency(ecfCompetency);
 				for (int i = 0; i < 5; i++) {
 					PossibleAnswer possibleAnswer = new PossibleAnswer();
@@ -215,7 +215,7 @@ public class SurveyCreator {
 		choice.setPosition(position++);
 		choice.setHelp("This is a help message");
 		choice.setOptional(false);
-		choice.setUseRadioButtons(true);
+		choice.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 		for (int i = 1; i < 5; i++) {
 			PossibleAnswer a = new PossibleAnswer();
 			a.setUniqueId(UUID.randomUUID().toString());
@@ -298,7 +298,7 @@ public class SurveyCreator {
 		
 		mc = new MultipleChoiceQuestion("Multiple Choice between 2 and 4 answers - Checkboxes", "MultipleChoice2", UUID.randomUUID().toString());
 		mc.setOptional(false);
-		mc.setUseCheckboxes(true);
+		mc.setMultipleChoiceStyle(MultipleChoiceStyle.CHECKBOX);
 		mc.setPosition(counter++);
 		mc.setMinChoices(2);
 		mc.setMaxChoices(4);
@@ -327,7 +327,7 @@ public class SurveyCreator {
 		
 		sc = new SingleChoiceQuestion("Single Choice - Radio Buttons", "SingleChoice", UUID.randomUUID().toString());
 		sc.setOptional(false);
-		sc.setUseRadioButtons(true);
+		sc.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 		sc.setPosition(counter++);
 		for (int i = 0; i < 10; i++) {
 			PossibleAnswer a = new PossibleAnswer();
@@ -550,7 +550,7 @@ public class SurveyCreator {
 		
 		SingleChoiceQuestion sc = new SingleChoiceQuestion("Question " + counter, "q" + counter, UUID.randomUUID().toString());
 		sc.setPosition(counter);
-		sc.setUseRadioButtons(true);
+		sc.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 		PossibleAnswer p = new PossibleAnswer();
 		p.setUniqueId(UUID.randomUUID().toString());
 		p.setPosition(1);
@@ -568,7 +568,7 @@ public class SurveyCreator {
 		
 		SingleChoiceQuestion sc1b = new SingleChoiceQuestion("Question " + counter, "q" + counter, UUID.randomUUID().toString());
 		sc1b.setPosition(counter);
-		sc1b.setUseRadioButtons(true);
+		sc1b.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 		PossibleAnswer p1b = new PossibleAnswer();
 		p1b.setUniqueId(UUID.randomUUID().toString());
 		p1b.setPosition(1);
@@ -587,7 +587,7 @@ public class SurveyCreator {
 		
 		SingleChoiceQuestion sc2 = new SingleChoiceQuestion("Question " + counter, "q" + counter, UUID.randomUUID().toString());
 		sc2.setPosition(counter);
-		sc2.setUseRadioButtons(true);
+		sc2.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 		PossibleAnswer pa = new PossibleAnswer();
 		pa.setUniqueId(UUID.randomUUID().toString());
 		pa.setPosition(1);
@@ -606,7 +606,7 @@ public class SurveyCreator {
 		
 		SingleChoiceQuestion sc3 = new SingleChoiceQuestion("Question " + counter, "q" + counter, UUID.randomUUID().toString());
 		sc3.setPosition(counter);
-		sc3.setUseRadioButtons(true);
+		sc3.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 		PossibleAnswer pb = new PossibleAnswer();
 		pb.setUniqueId(UUID.randomUUID().toString());
 		pb.setPosition(1);
@@ -672,7 +672,7 @@ public class SurveyCreator {
 		if (questions == null)
 		{
 			SingleChoiceQuestion question = new SingleChoiceQuestion("Your institution or agency?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
-			question.setUseRadioButtons(true);
+			question.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 			String[] answers = {"European Parliament", "European Economic and Social Committee", "Council", "Committee of Regions", "Commission", "Other", "Court of Justice", "European Agency", "Court of Auditors"};
 			for (String answerText : answers) {
 				PossibleAnswer answer = new PossibleAnswer();
@@ -730,7 +730,7 @@ public class SurveyCreator {
 				if (elementcounter % 5 == 0)
 				{
 					SingleChoiceQuestion question = new SingleChoiceQuestion("Your institution or agency?", "[ID" + idCounter++ + "]", UUID.randomUUID().toString());
-					question.setUseRadioButtons(true);
+					question.setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 					String[] answers = {"European Parliament", "European Economic and Social Committee", "Council", "Committee of Regions", "Commission", "Other", "Court of Justice", "European Agency", "Court of Auditors"};
 					for (String answerText : answers) {
 						PossibleAnswer answer = new PossibleAnswer();
@@ -803,59 +803,121 @@ public class SurveyCreator {
 		
 		Random random = new Random();
 		
-		for (Question question : survey.getQuestions()) {
-
-			if (question instanceof FreeTextQuestion) {
-				Answer answer = new Answer();
-				answer.setAnswerSet(answerSet);
-				answer.setQuestionUniqueId(question.getUniqueId());
-				answer.setValue("Hello FreeText");
-				answerSet.addAnswer(answer);
-			} else if (question instanceof MultipleChoiceQuestion) {
-				List<PossibleAnswer> possibleAnswers = ((MultipleChoiceQuestion) question).getPossibleAnswers();
-				int index = random.nextInt(possibleAnswers.size());
-				int counter = 0;
-				for (PossibleAnswer possibleAnswer : ((MultipleChoiceQuestion) question).getPossibleAnswers()) {
-					if (counter == index) {
-						continue;
-					}					
+		if (survey.getIsEVote()) {
+			
+			boolean blankVote = random.nextInt(100) % 7 == 0;
+			boolean spoiltVote = !blankVote && random.nextInt(100) % 7 == 0;
+			boolean listVote = survey.geteVoteTemplate().equals("l") ? false : random.nextInt(100) % 2 == 0;
+			
+			List<MultipleChoiceQuestion> lists = new ArrayList<>();
+						
+			for (Question question : survey.getQuestions()) {
+				if (question instanceof SingleChoiceQuestion) {
 					Answer answer = new Answer();
 					answer.setAnswerSet(answerSet);
 					answer.setQuestionUniqueId(question.getUniqueId());
-					answer.setValue(possibleAnswer.getId().toString());
-					answer.setPossibleAnswerUniqueId(possibleAnswer.getUniqueId());
+					PossibleAnswer pa;
+					if (blankVote) {
+						pa = ((SingleChoiceQuestion) question).getPossibleAnswers().get(1);						
+					} else if (spoiltVote) {
+						pa = ((SingleChoiceQuestion) question).getPossibleAnswers().get(2);
+					} else {
+						pa = ((SingleChoiceQuestion) question).getPossibleAnswers().get(0);
+					}
+					answer.setValue(pa.getId().toString());
+					answer.setPossibleAnswerUniqueId(pa.getUniqueId());
 					answerSet.addAnswer(answer);
-					counter++;
+					
+					if (blankVote || spoiltVote) {
+						return answerSet;
+					}
+				}				
+				
+				if (question instanceof MultipleChoiceQuestion) {
+					lists.add((MultipleChoiceQuestion)question);
 				}
-			} else if (question instanceof SingleChoiceQuestion) {
+			}
+			
+			int index = random.nextInt(lists.size());
+			MultipleChoiceQuestion question = lists.get(index);
+			
+			if (listVote) {			
 				Answer answer = new Answer();
 				answer.setAnswerSet(answerSet);
 				answer.setQuestionUniqueId(question.getUniqueId());
-				List<PossibleAnswer> possibleAnswers = ((SingleChoiceQuestion) question).getPossibleAnswers();				
-				int index = random.nextInt(possibleAnswers.size());
-				answer.setValue(possibleAnswers.get(index).getId().toString());
-				answer.setPossibleAnswerUniqueId(possibleAnswers.get(index).getUniqueId());
+				answer.setValue("EVOTE-ALL");
 				answerSet.addAnswer(answer);
-			} else if (question instanceof Matrix) {
-				
-				Matrix matrix = (Matrix) question;
-				Element firstAnswer = matrix.getAnswers().get(0);
-				for (Element matrixquestion : matrix.getQuestions()) {
+				return answerSet;
+			} else {
+				for (PossibleAnswer pa : question.getPossibleAnswers()) {
 					Answer answer = new Answer();
 					answer.setAnswerSet(answerSet);
-					answer.setQuestionUniqueId(matrixquestion.getUniqueId());
-				
-					answer.setValue(firstAnswer.getId().toString());
-					answer.setPossibleAnswerUniqueId(firstAnswer.getUniqueId());
+					answer.setQuestionUniqueId(question.getUniqueId());
+					answer.setValue(pa.getId().toString());
+					answer.setPossibleAnswerUniqueId(pa.getUniqueId());
 					answerSet.addAnswer(answer);
+					if (answerSet.getAnswers().size() == 10) {
+						return answerSet;
+					}
 				}
-			} else if (question instanceof NumberQuestion) {
-				Answer answer = new Answer();
-				answer.setAnswerSet(answerSet);
-				answer.setQuestionUniqueId(question.getUniqueId());
-				answer.setValue("42");
-				answerSet.addAnswer(answer);
-			}	
+				return answerSet;
+			}
+			
+		} else {		
+			for (Question question : survey.getQuestions()) {
+	
+				if (question instanceof FreeTextQuestion) {
+					Answer answer = new Answer();
+					answer.setAnswerSet(answerSet);
+					answer.setQuestionUniqueId(question.getUniqueId());
+					answer.setValue("Hello FreeText");
+					answerSet.addAnswer(answer);
+				} else if (question instanceof MultipleChoiceQuestion) {
+					List<PossibleAnswer> possibleAnswers = ((MultipleChoiceQuestion) question).getPossibleAnswers();
+					int index = random.nextInt(possibleAnswers.size());
+					int counter = 0;
+					for (PossibleAnswer possibleAnswer : ((MultipleChoiceQuestion) question).getPossibleAnswers()) {
+						if (counter == index) {
+							continue;
+						}					
+						Answer answer = new Answer();
+						answer.setAnswerSet(answerSet);
+						answer.setQuestionUniqueId(question.getUniqueId());
+						answer.setValue(possibleAnswer.getId().toString());
+						answer.setPossibleAnswerUniqueId(possibleAnswer.getUniqueId());
+						answerSet.addAnswer(answer);
+						counter++;
+					}
+				} else if (question instanceof SingleChoiceQuestion) {
+					Answer answer = new Answer();
+					answer.setAnswerSet(answerSet);
+					answer.setQuestionUniqueId(question.getUniqueId());
+					List<PossibleAnswer> possibleAnswers = ((SingleChoiceQuestion) question).getPossibleAnswers();				
+					int index = random.nextInt(possibleAnswers.size());
+					answer.setValue(possibleAnswers.get(index).getId().toString());
+					answer.setPossibleAnswerUniqueId(possibleAnswers.get(index).getUniqueId());
+					answerSet.addAnswer(answer);
+				} else if (question instanceof Matrix) {
+					
+					Matrix matrix = (Matrix) question;
+					Element firstAnswer = matrix.getAnswers().get(0);
+					for (Element matrixquestion : matrix.getQuestions()) {
+						Answer answer = new Answer();
+						answer.setAnswerSet(answerSet);
+						answer.setQuestionUniqueId(matrixquestion.getUniqueId());
+					
+						answer.setValue(firstAnswer.getId().toString());
+						answer.setPossibleAnswerUniqueId(firstAnswer.getUniqueId());
+						answerSet.addAnswer(answer);
+					}
+				} else if (question instanceof NumberQuestion) {
+					Answer answer = new Answer();
+					answer.setAnswerSet(answerSet);
+					answer.setQuestionUniqueId(question.getUniqueId());
+					answer.setValue("42");
+					answerSet.addAnswer(answer);
+				}	
+			}
 		}
 		return answerSet;
 	}

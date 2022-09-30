@@ -43,6 +43,12 @@
 		.progressBarPlaceholder {
 			height: 0px;
 		}
+		.evote-voter-overview {
+			top: 120px;
+		}
+		.evote-overview-placeholder{
+			height: 0px;
+		}
 	</style>
 
 	<script type="text/javascript" src="${contextpath}/resources/js/fileuploader.js?version=<%@include file="../version.txt" %>"></script>
@@ -97,6 +103,7 @@
 				updateAllFormulas();
 				readCookies();
 				updateProgress();
+				updateEVoteStatus();
 				$("#btnSubmit").removeClass("hidden");
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");

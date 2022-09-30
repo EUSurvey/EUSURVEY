@@ -104,8 +104,8 @@
 							showError("<spring:message code="error.OperationFailed" />");
 						}
 				 },
-				error: function(jqXHR, textStatus, errorThrown) {
-					  alert(jqXHR.responseText);
+				error: function(jqXHR) {
+					  showAjaxError(jqXHR.status);
 				}});
 		}
 		
@@ -127,8 +127,8 @@
 				data: s,
 				cache: false,
 				success: refreshContributions,
-				error: function(jqXHR, textStatus, errorThrown) {
-					  alert(jqXHR.responseText);
+				error: function(jqXHR) {
+					showAjaxError(jqXHR.status);
 				}});
 		}
 		
@@ -398,7 +398,7 @@
 											</c:choose>
 											
 											<c:choose>
-												<c:when test="${!answerSet.isDraft && answerSet.uniqueCode.length() > 0}">
+												<c:when test="${!answerSet.isDraft && answerSet.uniqueCode.length() > 0 && !answerSet.survey.getIsEVote()}">
 													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" target="_blank" href="<c:url value='/editcontribution/'/>${answerSet.uniqueCode}?mode=dialog" ><span class="glyphicon glyphicon-pencil"></span></a>
 												</c:when>
 												<c:otherwise>

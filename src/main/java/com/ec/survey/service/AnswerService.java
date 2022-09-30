@@ -24,12 +24,13 @@ import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import com.ec.survey.tools.export.StatisticsCreator;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -381,7 +382,7 @@ public class AnswerService extends BasicService {
 			parameters.put(Constants.EMAIL, filter.getUser());
 		}
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -435,7 +436,7 @@ public class AnswerService extends BasicService {
 			sql = getSql(null, survey == null ? -1 : survey.getId(), filter, parameters, true);
 		}
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -828,7 +829,7 @@ public class AnswerService extends BasicService {
 
 		String sql = getSql("select DISTINCT ans.UNIQUECODE", surveyId, filter, parameters, true);
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("unchecked")
@@ -894,7 +895,7 @@ public class AnswerService extends BasicService {
 
 		String sql = getSql("select DISTINCT ans.UNIQUECODE", surveyId, filter, parameters, searchallsurveys);
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -919,7 +920,7 @@ public class AnswerService extends BasicService {
 
 		String sql = getSql(null, surveyId, filter, parameters, true);
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -943,7 +944,7 @@ public class AnswerService extends BasicService {
 		String sql = "select a1.AS_ID, a1.QUESTION_UID, a1.VALUE, a1.ANSWER_COL, a1.ANSWER_ID, a1.ANSWER_ROW, a1.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a1 JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID WHERE ans.ANSWER_SET_ID IN ("
 				+ answersetsql + ")";
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -1011,7 +1012,7 @@ public class AnswerService extends BasicService {
 					+ getSql(null, surveyId, filter, parameters, true) + ")";
 		}
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -1050,7 +1051,7 @@ public class AnswerService extends BasicService {
 					+ getSql(null, surveyId, filter, parameters, true) + ")";
 		}
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -1093,7 +1094,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, af.ANSWERS_ANSWER_ID, a.QUESTION_UID FROM FILES f JOIN ANSWERS_FILES af ON f.FILE_ID = af.files_FILE_ID JOIN ANSWERS a ON af.ANSWERS_ANSWER_ID = a.ANSWER_ID WHERE a.AS_ID = :id";
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		query.setInteger("id", answersetId);
 
 		@SuppressWarnings("rawtypes")
@@ -1125,7 +1126,7 @@ public class AnswerService extends BasicService {
 			if (q instanceof ChoiceQuestion) {
 				ChoiceQuestion choice = (ChoiceQuestion) q;
 				for (PossibleAnswer a : choice.getPossibleAnswers()) {
-					SQLQuery query = session
+					NativeQuery query = session
 							.createSQLQuery("SELECT NUM FROM LIVESTATISTICS WHERE PAID = :possibleAnswerId");
 					query.setInteger("possibleAnswerId", a.getId());
 					Object num = query.uniqueResult();
@@ -1144,7 +1145,7 @@ public class AnswerService extends BasicService {
 				Matrix matrix = (Matrix) q;
 				for (Element matrixQuestion : matrix.getQuestions()) {
 					for (Element matrixAnswer : matrix.getAnswers()) {
-						SQLQuery query = session.createSQLQuery(
+						NativeQuery query = session.createSQLQuery(
 								"SELECT NUM FROM LIVESTATISTICS WHERE PAID = :possibleAnswerId AND QID = :questionId");
 						query.setInteger("possibleAnswerId", matrixAnswer.getId());
 						query.setInteger("questionId", matrixQuestion.getId());
@@ -1182,13 +1183,13 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		if (uid != null && uid.length() > 0) {
 
-			SQLQuery query = session.createSQLQuery(
+			NativeQuery query = session.createSQLQuery(
 					"SELECT count(ANSWERS_SET.ANSWER_SET_ID) FROM ANSWERS_SET inner join SURVEYS s on  ANSWERS_SET.SURVEY_ID = s.SURVEY_ID where ANSWERS_SET.ISDRAFT = 0 AND s.SURVEY_UID = :uid AND s.ISDRAFT = 0");
 			query.setString("uid", uid);
 
 			return ConversionTools.getValue(query.uniqueResult());
 		} else {
-			SQLQuery query = session.createSQLQuery(
+			NativeQuery query = session.createSQLQuery(
 					"SELECT count(ANSWERS_SET.ANSWER_SET_ID) FROM ANSWERS_SET inner join SURVEYS s on  ANSWERS_SET.SURVEY_ID = s.SURVEY_ID where ANSWERS_SET.ISDRAFT = 0 AND  s.SURVEYNAME = :surveyname AND s.ISDRAFT = 0");
 			query.setString("surveyname", surveyname);
 
@@ -1201,7 +1202,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		String queryString = "SELECT count(ans.ANSWER_SET_ID) from ANSWERS_SET ans inner join SURVEYS s on ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID = :uid AND s.ISDRAFT = 0 AND ans.ISDRAFT = 0 AND (ans.RESPONDER_EMAIL = :mail1 OR ans.RESPONDER_EMAIL = :mail2)";
-		SQLQuery query = session.createSQLQuery(queryString);
+		NativeQuery query = session.createSQLQuery(queryString);
 		query.setString("uid", survey.getUniqueId()).setString("mail1", user.getEmail()).setString("mail2",
 				Tools.md5hash(user.getEmail()));
 
@@ -1213,7 +1214,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		String queryString = "SELECT ans.ANSWER_SET_ID from ANSWERS_SET ans inner join SURVEYS s on ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID = :uid AND s.ISDRAFT = 0 AND ans.ISDRAFT = 0 AND (ans.RESPONDER_EMAIL = :mail1 OR ans.RESPONDER_EMAIL = :mail2)";
-		SQLQuery query = session.createSQLQuery(queryString);
+		NativeQuery query = session.createSQLQuery(queryString);
 		query.setString("uid", survey.getUniqueId()).setString("mail1", user.getEmail()).setString("mail2",
 				Tools.md5hash(user.getEmail()));
 
@@ -1242,7 +1243,7 @@ public class AnswerService extends BasicService {
 
 		queryString = getSql("SELECT count(DISTINCT a1.AS_ID)", survey.getId(), filter, parameters, true);
 
-		SQLQuery query = session.createSQLQuery(queryString);
+		NativeQuery query = session.createSQLQuery(queryString);
 		sqlQueryService.setParameters(query, parameters);
 
 		return ConversionTools.getValue(query.uniqueResult());
@@ -1712,7 +1713,7 @@ public class AnswerService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<String[]> getFilesForQuestion(String uid, boolean draft) {
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery query = session.createSQLQuery(
+		NativeQuery query = session.createSQLQuery(
 				"SELECT ans.UNIQUECODE, f.FILE_UID, f.FILE_NAME FROM FILES f JOIN ANSWERS_FILES af ON f.FILE_ID = af.files_FILE_ID JOIN ANSWERS a ON af.ANSWERS_ANSWER_ID = a.ANSWER_ID JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID AND ans.ISDRAFT = 0 JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE a.QUESTION_UID = :uid AND s.ISDRAFT = :draft");
 		query.setString("uid", uid).setInteger("draft", draft ? 1 : 0);
 		return query.list();
@@ -1733,7 +1734,7 @@ public class AnswerService extends BasicService {
 		}
 
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery query = session.createSQLQuery(
+		NativeQuery query = session.createSQLQuery(
 				"SELECT DISTINCT a.QUESTION_UID FROM ANSWERS a LEFT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID LEFT JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE ans.ISDRAFT = 0 AND s.ISDRAFT = :draft AND a.QUESTION_UID In ("
 						+ StringUtils.collectionToCommaDelimitedString(uids) + ")");
 		query.setInteger("draft", survey.getIsDraft() ? 1 : 0);
@@ -1867,7 +1868,7 @@ public class AnswerService extends BasicService {
 	@Transactional(readOnly = true)
 	public boolean getHasPublishedAnswers(String uid) {
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery query = session.createSQLQuery(
+		NativeQuery query = session.createSQLQuery(
 				"SELECT ANSWERS_SET.ANSWER_SET_ID FROM ANSWERS_SET inner join SURVEYS s on ANSWERS_SET.SURVEY_ID = s.SURVEY_ID where ANSWERS_SET.ISDRAFT = 0 AND s.SURVEY_UID = :uid AND s.ISDRAFT = 0 LIMIT 1");
 		query.setString("uid", uid);
 
@@ -1882,7 +1883,7 @@ public class AnswerService extends BasicService {
 
 		String sql = "select DISTINCT ANSWER_SET_ID from ANSWERS_SET where SURVEY_ID = :surveyId";
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		query.setInteger("surveyId", surveyId);
 
 		@SuppressWarnings("rawtypes")
@@ -1903,7 +1904,7 @@ public class AnswerService extends BasicService {
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "SELECT d.DRAFT_UID FROM DRAFTS d JOIN ANSWERS_SET a ON d.answerSet_ANSWER_SET_ID = a.ANSWER_SET_ID WHERE (a.RESPONDER_EMAIL = :email or a.RESPONDER_EMAIL = :email2) AND a.SURVEY_ID IN (:ids)";
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		User user = sessionService.getCurrentUser(request, false, false);
 
 		if (user == null)
@@ -1963,7 +1964,7 @@ public class AnswerService extends BasicService {
 				+ StringUtils.collectionToCommaDelimitedString(allVersions)
 				+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY DATE(ANSWER_SET_DATE) ORDER BY DATE(ANSWER_SET_DATE)";
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		query.setDate("start", cal.getTime());
 
 		@SuppressWarnings("rawtypes")
@@ -1998,6 +1999,98 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 
+	public Map<Date, Integer> getQuorumAnswers(int surveyId, String span) {
+		Session session = sessionFactory.getCurrentSession();
+
+		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(surveyId);
+
+		if(allVersions.size() <= 0) return generateGenericQuorumResult(span);
+
+		Calendar cal = Calendar.getInstance();
+
+		String sql = "SELECT DATE(ANSWER_SET_DATE), count(*) FROM ANSWERS_SET WHERE SURVEY_ID IN ("
+				+ StringUtils.collectionToCommaDelimitedString(allVersions)
+				+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY DATE(ANSWER_SET_DATE) ORDER BY DATE(ANSWER_SET_DATE)";
+
+		if (span.equalsIgnoreCase("quorumDays")) {
+			cal.setTime(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH));
+			cal.add(Calendar.DATE, -10);
+		} else if (span.equalsIgnoreCase("quorumHours")){
+			cal.setTime(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY));
+			cal.add(Calendar.HOUR_OF_DAY, -10);
+			sql = "SELECT DATE(ANSWER_SET_DATE), count(*), HOUR(ANSWER_SET_DATE) FROM ANSWERS_SET WHERE SURVEY_ID IN ("
+					+ StringUtils.collectionToCommaDelimitedString(allVersions)
+					+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY HOUR(ANSWER_SET_DATE) ORDER BY ANSWER_SET_DATE";
+		} else {
+			cal.add(Calendar.YEAR, -20);
+		}
+
+		Date firstDay = cal.getTime();
+
+		NativeQuery query = session.createSQLQuery(sql);
+		query.setParameter("start", firstDay);
+
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+
+		Map<Date, Integer> result = new TreeMap<>();
+
+		if(res.size() <= 0) return generateGenericQuorumResult(span);
+
+		Date first = null;
+		Date last = null;
+		int counter = 0;
+		for (Object o : res) {
+			Object[] a = (Object[]) o;
+			cal.setTime((Date) a[0]);
+			if(span.equalsIgnoreCase("quorumHours")) {
+				cal.set(Calendar.HOUR_OF_DAY, ConversionTools.getValue(a[2]));
+			}
+			last = cal.getTime();
+			counter += ConversionTools.getValue(a[1]);
+			result.put(last, counter);
+
+			if (first == null) {
+				first = last;
+			}
+		}
+
+		if (span.equalsIgnoreCase("quorumDays")) {
+			Date lastDay = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+			System.out.println(lastDay);
+			if (first == null || first.after(firstDay)) result.put(firstDay, 0);
+
+			if (last == null || last.before(lastDay)) result.put(lastDay, 0);
+		}
+
+		if (span.equalsIgnoreCase("quorumHours")) {
+			Date lastHour = DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY);
+			if (first == null || first.after(firstDay)) result.put(firstDay, 0);
+
+			if (last == null || last.before(lastHour)) result.put(lastHour, 0);
+		}
+
+		return result;
+	}
+
+	private Map<Date, Integer> generateGenericQuorumResult(String span){
+		Map<Date, Integer> result = new TreeMap<>();
+		Calendar cal = Calendar.getInstance();
+
+		if(span.equalsIgnoreCase("quorumDays")){
+			cal.setTime(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH));
+			result.put(cal.getTime(), 0);
+			cal.add(Calendar.DATE, -10);
+			result.put(cal.getTime(), 0);
+		} else if(span.equalsIgnoreCase("quorumHours")) {
+			cal.setTime(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY));
+			result.put(cal.getTime(), 0);
+			cal.add(Calendar.HOUR_OF_DAY, -10);
+			result.put(cal.getTime(), 0);
+		}
+		return result;
+	}
+
 	public int[] getContributionStatisticsForUser(Integer id) {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -2017,7 +2110,7 @@ public class AnswerService extends BasicService {
 				" UNION SELECT i.INVITATION_ID, i.ATTENDEE_INVITED FROM INVITATIONS i JOIN ECASUSERS a ON i.ATTENDEE_ID = a.USER_ID JOIN PARTICIPANTS_ECASUSERS pa ON pa.ecasUsers_USER_ID = a.USER_ID JOIN PARTICIPANTS p ON p.PARTICIPATION_ID = pa.PARTICIPANTS_PARTICIPATION_ID WHERE ");
 		sqlb.append("p.PARTICIPATION_TYPE = 2 AND a.USER_EMAIL IN (:emails) AND i.ATTENDEE_ANSWERS = 0 ) AS d");
 
-		SQLQuery query = session.createSQLQuery(sqlb.toString());
+		NativeQuery query = session.createSQLQuery(sqlb.toString());
 		query.setParameterList("emails", allemails);
 		result[0] = ConversionTools.getValue(query.uniqueResult());
 
@@ -2260,9 +2353,9 @@ public class AnswerService extends BasicService {
 		//blank answers in reporting database
 		reportingService.clearAnswersForQuestionInReportingDatabase(survey, filter, questionUID, childUID);
 		
-		deleteContributionPDFs(survey);		
+		deleteContributionPDFs(survey);
 		
-		activityService.log(315, null, questionUID, userId, survey.getUniqueId());
+		activityService.log(ActivityRegistry.ID_BLANK_ANSWERS, null, questionUID, userId, survey.getUniqueId());
 	}
 	
 	public AnswerSet automaticParseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
@@ -2304,7 +2397,7 @@ public class AnswerService extends BasicService {
 		
 		sql += "GROUP BY a.PA_UID";
 		
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 		
 		query.setString("surveyUid", survey.getUniqueId());
@@ -2387,7 +2480,7 @@ public class AnswerService extends BasicService {
 		
 		sql += "GROUP BY a.VALUE";
 		
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 		
 		query.setString("surveyUid", survey.getUniqueId());
@@ -2472,12 +2565,15 @@ public class AnswerService extends BasicService {
 		}
 	}
 	
-	private Map<String, String> createCompletionRatesResult(Survey survey, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, int totalNumberOfContributions, int completedContributions) {
+	private Map<String, String> createCompletionRatesResult(Survey survey, ResultFilter filter, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, int totalNumberOfContributions, int completedContributions) {
 		Map<String, String> result = new HashMap<>();
+		int nonCountingElement = 0;
 		for (Element element : survey.getElements()) {
 			if (element instanceof Section) {
 				String section = element.getUniqueId();
+				nonCountingElement++;
 				int counter = 0;
+				int filterQuestions = 0;
 				int numberOfQuestionsInSection = questionsBySection.get(section).size();
 				Map<String, List<String>> questionUidsPerAnswer = questionUidsPerAnswerAndSection.get(section);
 				
@@ -2486,16 +2582,35 @@ public class AnswerService extends BasicService {
 					if (questionUidsPerAnswer.get(answerSetUniqueCode).size() == numberOfQuestionsInSection) {
 						counter++;
 					}
-				}			
+				}
+				for (Element sectionElement : survey.getElements()) {
+					if (sectionElement.isDelphiElement() && filter.getVisibleQuestions().contains(sectionElement.getId().toString()) && questionsBySection.get(section).contains(sectionElement.getUniqueId())) {
+						filterQuestions++;
+					}
+				}
 		
-				result.put(element.getUniqueId(), getPercentage(counter / (double)totalNumberOfContributions));
+				if (filterQuestions == numberOfQuestionsInSection) {
+					result.put(element.getUniqueId(), getPercentage(counter / (double)totalNumberOfContributions));
+				} else {
+					result.put(element.getUniqueId(), "");
+				}
 				
 			} else if (element.isDelphiElement()) {
-				result.put(element.getUniqueId(), getPercentage(answersByQuestion.get(element.getUniqueId()) / (double)totalNumberOfContributions));
+				if (filter.getVisibleQuestions().contains(element.getId().toString())) {
+					result.put(element.getUniqueId(), getPercentage(answersByQuestion.get(element.getUniqueId()) / (double)totalNumberOfContributions));
+				} else {
+					result.put(element.getUniqueId(), "");
+				}
+			} else {
+				nonCountingElement++;
 			}
 		}		
-				
-		result.put("0", getPercentage(completedContributions / (double)totalNumberOfContributions));
+
+		if (filter.getVisibleQuestions().size() == (survey.getElements().size() - nonCountingElement)) {
+			result.put("0", getPercentage(completedContributions / (double)totalNumberOfContributions));
+		} else {
+			result.put("0", "");
+		}
 		
 		return result;
 	}
@@ -2628,7 +2743,7 @@ public class AnswerService extends BasicService {
 			completedContributions = parseAnswerSetsForCompletionRates(answers, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
 		}		
 		
-		return createCompletionRatesResult(survey, questionsBySection, answersByQuestion, questionUidsPerAnswerAndSection, totalNumberOfContributions, completedContributions);
+		return createCompletionRatesResult(survey, filter, questionsBySection, answersByQuestion, questionUidsPerAnswerAndSection, totalNumberOfContributions, completedContributions);
 	}
 	
 	private String getPercentage(double value) {

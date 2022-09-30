@@ -13,10 +13,11 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Text;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.FileUtils;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import com.ec.survey.tools.export.*;
 
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
@@ -136,13 +137,13 @@ public class ExportService extends BasicService {
 			switch (export.getType())
 			{
 				case Statistics:
-					activityService.log(307, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
+					activityService.log(ActivityRegistry.ID_STATISTICS_EXPORT, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
 					break;
 				case Content:
-					activityService.log(308, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
+					activityService.log(ActivityRegistry.ID_CONTENT_EXPORT, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
 					break;
 				case Activity:
-					activityService.log(312, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
+					activityService.log(ActivityRegistry.ID_ACTIVITY_EXPORT, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
 					break;
 			default:
 				break;					

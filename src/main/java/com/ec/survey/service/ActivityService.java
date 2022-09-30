@@ -5,7 +5,9 @@ import com.ec.survey.model.ActivityFilter;
 import com.ec.survey.model.Setting;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
-import org.hibernate.Query;
+import com.ec.survey.tools.activity.ActivityRegistry;
+import org.apache.commons.lang3.Range;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -216,211 +218,32 @@ public class ActivityService extends BasicService {
 		
 		if (filter.getObject() != null)
 		{
-			switch (filter.getObject()) {
-				case "Survey":
-					hql += " AND logID > 100 AND logID < 200";
-					break;
-				case "DraftSurvey":
-					hql += " AND logID > 200 AND logID < 300";
-					break;
-				case "SurveyAndDraft":
-					hql += " AND logID > 100 AND logID < 300";
-					break;
-				case "Results":
-					hql += " AND logID > 300 AND logID < 400";
-					break;
-				case "Contribution":
-					hql += " AND logID > 400 AND logID < 500";
-					break;
-				case "GuestList":
-					hql += " AND logID > 500 AND logID < 600";
-					break;
-				case "Privileges":
-					hql += " AND logID > 600 AND logID < 700";
-					break;
-				case "Messages":
-					hql += " AND logID > 700 AND logID < 800";
-					break;
-				case "Comment":
-					hql += " AND logID > 800 AND logID < 900";
-					break;
-				default:
-					break;
+			Range<Integer> range = ActivityRegistry.getObjectRange(filter.getObject());
+
+			if (range.getMaximum() > 0){
+				hql += " AND logID >= :rangemin AND logID <= :rangemax";
+				params.put("rangemin", range.getMinimum());
+				params.put("rangemax", range.getMaximum());
 			}
 		}
 		
 		if (filter.getProperty() != null)
 		{
-			switch(filter.getProperty())
-			{
-				case "Alias":
-					hql += " AND logID = 109"; break;
-				case "Anonymity":
-					hql += " AND logID = 116"; break;
-				case "AutoNumberingQuestions":
-					hql += " AND logID = 216"; break;
-				case "AutoNumberingSections":
-					hql += " AND logID = 215"; break;
-				case "Autopublish":
-					hql += " AND logID = 210"; break;
-				case "BackgroundDocument":
-					hql += " AND (logID = 205 OR logID = 206)"; break;
-				case "Captcha":
-					hql += " AND logID = 118"; break;
-				case "ConfirmationPage":
-					hql += " AND logID = 225"; break;
-				case "Contact":
-					hql += " AND logID = 209"; break;
-				case "ContactCreation":
-					hql += " AND logID = 113"; break;
-				case "EditContribution":
-					hql += " AND logID = 119"; break;
-				case "ElementOrder":
-					hql += " AND logID = 217"; break;
-				case "EndDate":
-					hql += " AND logID = 212"; break;
-				case "EndNotificationMessage":
-					hql += " AND logID = 701"; break;
-				case "EndNotificationReach":
-					hql += " AND logID = 112"; break;
-				case "EndNotificationState":
-					hql += " AND logID = 110"; break;
-				case "EndNotificationValue":
-					hql += " AND logID = 111"; break;
-				case "WCAGCompliance":
-					hql += " AND logID = 122"; break;
-				case "EscapePage":
-					hql += " AND logID = 226"; break;
-				case "Export":
-					hql += " AND (logID = 310 OR logID = 311)"; break;
-				case "ExportCharts":
-					hql += " AND logID = 309"; break;
-				case "ExportContent":
-					hql += " AND logID = 308"; break;
-				case "ExportStatistics":
-					hql += " AND logID = 307"; break;
-				case "ExportActivities":
-					hql += " AND logID = 312"; break;
-				case "Invitations":
-					hql += " AND logID = 506"; break;
-				case "Logo":
-					hql += " AND logID = 213"; break;
-				case "MultiPaging":
-					hql += " AND logID = 120"; break;
-				case "ProgressBar":
-					hql += " AND logID = 124"; break;
-				case "n/a":
-					hql += " AND logID IN :logids"; 
-					Integer[] logids = {101,102,103,104,401,402,403,404,405,406,601,602,603,801,802};
-					params.put("logids", logids);
-					break;
-				case "PageWiseValidation":
-					hql += " AND logID = 121"; break;
-				case "Password":
-					hql += " AND logID = 115"; break;
-				case "PendingChanges":
-					hql += " AND (logID = 107 OR logID = 108)"; break;
-				case "PivotLanguage":
-					hql += " AND logID = 208"; break;
-				case "Privacy":
-					hql += " AND logID = 117"; break;
-				case "Properties":
-					hql += " AND logID = 202"; break;
-				case "PublicSearch":
-					hql += " AND logID = 304"; break;
-				case "PublishAnswerSelection":
-					hql += " AND logID = 306"; break;
-				case "PublishCharts":
-					hql += " AND logID = 302"; break;
-				case "PublishIndividual":
-					hql += " AND logID = 301"; break;
-				case "PublishQuestionSelection":
-					hql += " AND logID = 305"; break;
-				case "PublishStatistics":
-					hql += " AND logID = 303"; break;
-				case "Security":
-					hql += " AND logID = 114"; break;
-				case "Skin":
-					hql += " AND logID = 214"; break;
-				case "StartDate":
-					hql += " AND logID = 211"; break;
-				case "State":
-					hql += " AND (logID = 105 OR logID = 106)"; break;
-				case "SurveyElement":
-					hql += " AND (logID = 218 OR logID = 219 OR logID = 220)"; break;
-				case "Title":
-					hql += " AND logID = 207"; break;
-				case "Token/Contacts/Department":
-					hql += " AND logID > 500 AND logID < 506"; break;
-				case "Translation":
-					hql += " AND ((logID > 220 AND logID < 225) OR logID = 227 OR logID = 228)"; break;
-				case "UsefulLink":
-					hql += " AND (logID = 203 OR logID = 204)"; break;
-				case "DeleteColumn":
-					hql += " AND (logID = 315)"; break;
-				default:
-					break;
-			}			
+			Integer[] logIds = ActivityRegistry.getPropertyIds(filter.getProperty());
+
+			if (logIds.length > 0) {
+				hql += " AND logID IN :logids";
+				params.put("logids", logIds);
+			}
 		}
 		
 		if (filter.getEvent() != null)
 		{
-			switch(filter.getEvent())
-			{
-				case "Added":
-					hql += " AND logID IN :logids2"; 
-					Integer[] logids2 = {203,205,218,221,601};
-					params.put("logids2", logids2);
-					break;
-				case "Applied":
-					hql += " AND logID = 107"; break;
-				case "Created":
-					hql += " AND logID IN :logids3"; 
-					Integer[] logids3 = {101,102,103,501};
-					params.put("logids3", logids3);
-					break;
-				case "Deleted":
-					hql += " AND logID IN :logids4"; 
-					Integer[] logids4 = {104,219,222,311,315,402,405,502,802};
-					params.put("logids4", logids4);
-					break;
-				case "Disabled":
-					hql += " AND logID = 224"; break;
-				case "Discarded":
-					hql += " AND logID = 108"; break;
-				case "Enabled":
-					hql += " AND logID = 223"; break;
-				case "Modified":
-					hql += " AND logID IN :logids5"; 
-					Integer[] logids5 = {602,105,106,109,110,111,112,113,114,115,116,117,118,119,120,121,122,207,208,209,210,211,212,213,214,215,216,217,220,225,226,301,302,303,304,305,306,403,505,801};
-					params.put("logids5", logids5);
-					break;
-				case "Opened":
-					hql += " AND logID = 201"; break;
-				case "Paused":
-					hql += " AND logID = 503"; break;
-				case "Removed":
-					hql += " AND logID IN :logids6"; 
-					Integer[] logids6 = {204,206,603};
-					params.put("logids6", logids6);
-					break;
-				case "Returned":
-					hql += " AND logID = 310"; break;
-				case "Requested":
-					hql += " AND logID = 228"; break;
-				case "Saved":
-					hql += " AND logID = 202"; break;
-				case "Sent":
-					hql += " AND (logID = 506 OR logID = 701)"; break;
-				case "Started":
-					hql += " AND logID IN :logids7"; 
-					Integer[] logids7 = {307,308,309,312,504};
-					params.put("logids7", logids7);
-					break;
-				case "Submitted":
-					hql += " AND logID = 401"; break;
-				default:
-					break;
+			Integer[] logIds2 = ActivityRegistry.getEventIds(filter.getEvent());
+
+			if (logIds2.length > 0) {
+				hql += " AND logID IN :logids2";
+				params.put("logids2", logIds2);
 			}
 		}
 		

@@ -103,6 +103,7 @@
 				}
 
 				updateProgress();
+				updateEVoteStatus();
 				updateAllFormulas();
 			}
 		}

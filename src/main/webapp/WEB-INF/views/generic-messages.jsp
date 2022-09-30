@@ -273,6 +273,7 @@
 		}
 		
 		this.addSuccessMessage = function (text) {
+			text = self.sanitizeErrorPageText(text);
 			var message = new Message();
 			message.Type("success");
 			message.Content(text);
@@ -280,6 +281,7 @@
 		}
 		
 		this.addInfoMessage = function (text) {
+			text = self.sanitizeErrorPageText(text);
 			var message = new Message();
 			message.Type("info");
 			message.Content(text);
@@ -287,6 +289,7 @@
 		}
 		
 		this.addErrorMessage = function (text) {
+			text = self.sanitizeErrorPageText(text);
 			var message = new Message();
 			message.Type("error");
 			message.Content(text);
@@ -297,11 +300,22 @@
 		{
 			var message = new Message();
 			message.Type("system");
-			message.Content(m.text);
+			message.Content(self.sanitizeErrorPageText(m.text));
 			message.Icon(m.icon)
 			this.systemMessages.splice(0, 0, message);
 			
 			window.setTimeout("showMessages()", 100);
+		}
+
+		this.sanitizeErrorPageText = function (text){
+			//Tomcat error responses always start with <!doctype html>
+			//Like this they can't be added to the notifications
+			if (text.toLowerCase().startsWith("<!doctype html>")){
+				let sanitizerNode = document.createElement("div")
+				sanitizerNode.innerHTML = text
+				return sanitizerNode.innerText.substr(0, 60) + "..."
+			}
+			return text
 		}
 		
 		try
@@ -402,6 +416,8 @@
 		
 	function checkTimeout()
 	{
+		if (sessiontimeout == 0) return;
+		
 		var diffTimeMilliseconds = getTimeoutMilliseconds();
 		if (diffTimeMilliseconds < 5 * 60 * 1000) {
 			$('#timeout-dialog').modal('show');

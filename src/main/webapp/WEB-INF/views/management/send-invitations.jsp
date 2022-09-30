@@ -144,9 +144,8 @@
 					  }
 					  $('#deletetextdialog').modal('hide')			
 				  },
-				  error: function(e)
-				  {
-					  alert(e);
+				  error: function (data) {
+					  showAjaxError(data.status)
 				  }
 			});
 		}

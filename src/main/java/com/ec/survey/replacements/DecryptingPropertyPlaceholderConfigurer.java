@@ -28,20 +28,35 @@ import java.util.Properties;
 public class DecryptingPropertyPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
 
     private final StandardPBEStringEncryptor encryptor;
+    private final boolean enabled;
 
     private boolean didConvert = false;
 
     public DecryptingPropertyPlaceholderConfigurer(){
-        EnvironmentStringPBEConfig config = new EnvironmentStringPBEConfig();
-        config.setAlgorithm("PBEWITHSHA256AND256BITAES-CBC-BC");
-        config.setPasswordEnvName("CAS_PBE_PASSWORD");
-        if (Security.getProvider("BC") == null){
-            Security.addProvider(new BouncyCastleProvider());
+        String envPw = null;
+        try {
+            envPw = System.getenv("CAS_PBE_PASSWORD");
+        } catch (RuntimeException ex){ //eg. SecurityException, NullPointer Exception
+            //Can't access enviornment
         }
-        config.setProviderName("BC");
 
-        this.encryptor = new StandardPBEStringEncryptor();
-        this.encryptor.setConfig(config);
+        enabled = envPw != null;
+
+        if (enabled) {
+            EnvironmentStringPBEConfig config = new EnvironmentStringPBEConfig();
+            config.setAlgorithm("PBEWITHSHA256AND256BITAES-CBC-BC");
+
+            config.setPassword(envPw);
+            if (Security.getProvider("BC") == null) {
+                Security.addProvider(new BouncyCastleProvider());
+            }
+            config.setProviderName("BC");
+
+            this.encryptor = new StandardPBEStringEncryptor();
+            this.encryptor.setConfig(config);
+        } else {
+            encryptor = null;
+        }
     }
 
     @Override
@@ -55,7 +70,7 @@ public class DecryptingPropertyPlaceholderConfigurer extends PropertySourcesPlac
     @Override
     protected String convertPropertyValue(String originalValue) {
         //Checks whether the properties looks like ENC(.+)
-        if (!PropertyValueEncryptionUtils.isEncryptedValue(originalValue)){
+        if (!enabled || !PropertyValueEncryptionUtils.isEncryptedValue(originalValue)){
             return originalValue;
         }
         return PropertyValueEncryptionUtils.decrypt(originalValue, encryptor);

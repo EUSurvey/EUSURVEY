@@ -7,8 +7,13 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.*;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,7 +37,7 @@ public class AttendeeService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 		String sql = "SELECT a.ATTENDEE_EMAIL " + getSql(ownerId, new HashMap<>(), parameters, false);
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -79,7 +84,7 @@ public class AttendeeService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 		String sql = "SELECT a.ATTENDEE_ID " + getSql(ownerId, attributeFilter, parameters, false);
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -128,7 +133,7 @@ public class AttendeeService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 		String sql = "SELECT a.ATTENDEE_ID " + getSql(ownerId, filterValues, parameters, false);
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -152,7 +157,7 @@ public class AttendeeService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 		String sql = "UPDATE ATTENDEE SET ATTENDEE_HIDDEN = 1, ATT_UPDATED = NOW(), ATTENDEE_ORIGID = ATTENDEE_ID WHERE ATTENDEE_ID IN (SELECT c.ATTENDEE_ID FROM (SELECT a.ATTENDEE_ID "
 				+ getSql(ownerId, filterValues, parameters, true) + ") as c)";
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		return query.executeUpdate();
@@ -165,7 +170,7 @@ public class AttendeeService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 		String sql = getSql(ownerId, attributeFilter, parameters, false);
 
-		SQLQuery query = session.createSQLQuery("SELECT count(*) " + sql);
+		NativeQuery query = session.createSQLQuery("SELECT count(*) " + sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		return ConversionTools.getValue(query.uniqueResult());
@@ -179,7 +184,7 @@ public class AttendeeService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 		String sql = getSql(ownerId, attributeFilter, parameters, false);
 
-		SQLQuery query = session.createSQLQuery("SELECT a.ATTENDEE_ID " + sql);
+		NativeQuery query = session.createSQLQuery("SELECT a.ATTENDEE_ID " + sql);
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("rawtypes")
@@ -790,7 +795,7 @@ public class AttendeeService extends BasicService {
 	@Transactional
 	public List<Integer> getAttendeesForUser(int userid) {
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery query = session.createSQLQuery("SELECT ATTENDEE_ID FROM ATTENDEE WHERE OWNER_ID = :id");
+		NativeQuery query = session.createSQLQuery("SELECT ATTENDEE_ID FROM ATTENDEE WHERE OWNER_ID = :id");
 
 		@SuppressWarnings("rawtypes")
 		List attendees = query.setInteger("id", userid).list();

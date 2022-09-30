@@ -319,7 +319,7 @@ public class SurveySearchController extends BasicController {
 
 		List<Archive> archives = null;
 
-		archives = archiveService.getAllArchives(filter, page, itemsPerPage, false);
+		archives = archiveService.getAllArchives(filter, page, itemsPerPage, true);
 
 		return archives;
 	}

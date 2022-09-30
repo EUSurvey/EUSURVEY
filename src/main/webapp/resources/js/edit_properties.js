@@ -402,13 +402,8 @@ var ElementProperties = function() {
 				let editenabled = !element.editorRowsLocked()
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
-			
-				if (isDelphi)
-				{
-					getChoosePropertiesRow("Style", "RadioButton,SelectBox,LikertScale", false, false, $(e).find("input[name^='choicetype']").val() == 'likert' ? "LikertScale" : ($(e).find("input[name^='choicetype']").val() == 'radio' ? "RadioButton" : "SelectBox"));
-				} else {
-					getChoosePropertiesRow("Style", "RadioButton,SelectBox", false, false, $(e).find("input[name^='choicetype']").val() == 'radio' ? "RadioButton" : "SelectBox");
-				}
+
+				getChoosePropertiesRow("Style", "RadioButton,SelectBox,Buttons" + (isDelphi ? ",LikertScale" : ""), false, false, element.styleType());
 				
 				var subType = $(e).find("input[name^='subType']").val()
 				if (subType === "euCountries" || subType === "unCountries")
@@ -416,7 +411,7 @@ var ElementProperties = function() {
 					getChoosePropertiesRow("Display", "CountryOnly,ISOOnly,ISO+Country,Country+ISO", false, false, parseInt($(e).find("input[name^='displayMode']").val()));
 				}	 		
 			
-				if (isDelphi && $(e).find("input[name^='choicetype']").val() == 'likert')
+				if (isDelphi && element.likert())
 				{
 					getChoosePropertiesRow("MaxDistanceToMedian", "Ignore,0,1,2,3,4,5", false, false, $(e).find("input[name^='maxDistance']").val());
 				} else {				
@@ -461,8 +456,12 @@ var ElementProperties = function() {
 				let editenabled = !element.editorRowsLocked()
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
-				getChoosePropertiesRow("Style", "CheckBox,ListBox", false, false, $(e).find("input[name^='choicetype']").val() == 'checkbox' ? "CheckBox" : "ListBox");
-				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false,  parseInt($(e).find("input[name^='order']").val()));
+				getChoosePropertiesRow("Style", "CheckBox,ListBox" + (isEVote ? ",EVoteList" : ""), false, false, element.styleType());
+				if (element.isEVoteList()) {
+					getChoosePropertiesRow("EVoteProcedure", "evote-brussels,evote-luxembourg,evote-outside", false, false, element.choiceType());
+				} else {
+					getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
+				}
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
 				getMinMaxPropertiesRow("NumberOfChoices", 0, 500, $(e).find("input[name^='choicemin']").val(), $(e).find("input[name^='choicemax']").val())
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);

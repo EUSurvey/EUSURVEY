@@ -19,8 +19,9 @@ import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -363,7 +364,7 @@ public class SessionService extends BasicService {
 		SessionInfo info = (SessionInfo) request.getSession().getAttribute("sessioninfo");
 
 		if (info != null && info.getSurvey() != survey.getId()) {
-			activityService.log(201, null, null, user.getId(), survey.getUniqueId());
+			activityService.log(ActivityRegistry.ID_SURVEY_LOADED, null, null, user.getId(), survey.getUniqueId());
 		}
 		request.getSession().setAttribute("sessioninfo", new SessionInfo(survey.getId(), user.getId(),
 				survey.getOwner().getId(), survey.getLanguage().getCode(), survey.getShortname()));
@@ -535,11 +536,11 @@ public class SessionService extends BasicService {
 	@Transactional
 	public ResultFilter getResultFilter(int userid, int surveyid, boolean evict) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session
+		Query<ResultFilter> query = session
 				.createQuery(
-						"FROM ResultFilter r WHERE r.userId = :userid and r.surveyId = :surveyid ORDER BY r.id DESC")
-				.setInteger("userid", userid).setInteger("surveyid", surveyid);
-		@SuppressWarnings("unchecked")
+						"FROM ResultFilter r WHERE r.userId = :userid and r.surveyId = :surveyid ORDER BY r.id DESC", ResultFilter.class)
+				.setParameter("userid", userid).setParameter("surveyid", surveyid);
+
 		List<ResultFilter> result = query.list();
 
 		if (!result.isEmpty()) {
@@ -568,12 +569,10 @@ public class SessionService extends BasicService {
 
 	public List<ResultFilter> getAllUserResultFilter(int surveyid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM ResultFilter r WHERE r.surveyId = :surveyid and r.userId is not null")
-				.setInteger("surveyid", surveyid);
-		@SuppressWarnings("unchecked")
-		List<ResultFilter> result = query.list();
+		Query<ResultFilter> query = session.createQuery("FROM ResultFilter r WHERE r.surveyId = :surveyid and r.userId is not null", ResultFilter.class)
+				.setParameter("surveyid", surveyid);
 
-		return result;
+		return query.list();
 	}
 
 	@Transactional

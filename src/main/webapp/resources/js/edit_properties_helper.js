@@ -1031,8 +1031,8 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 	var rowcontent = "";
 	var options = content.split(",");
 	var name = getNewId();
-	if (label == "Style" || label == "Order" || label == "OrderSection" || label == "Display" || label == "DisplaySlider" || label == "InitialSliderPosition")
-	{
+	const radioLabels = ["Style", "Order", "OrderSection", "Display", "DisplaySlider", "InitialSliderPosition", "EVoteProcedure"]
+	if (radioLabels.includes(label)){
 		row.ContentType("radio");
 		row.Content(options);
 		for (var i = 0; i < options.length; i++)
@@ -1361,12 +1361,13 @@ function getActionRow(label, l1, action, l2, action2, editenabled)
 		_elementProperties.propertyRows.push(row);
 	}
 
-	var input = $("#" + "btnAdd" + label);
+	var input = $("#btnAdd" + label);
 	$(input).click(function() {
 		update(this)
 	});
 
-	input = $("#" + "btnRemove" + label);
+	//The Remove Button has an Tooltip Wrapper which also needs the click event
+	input = $("#btnRemove" + label + ", .tooltip-wrapper:has(#btnRemove" + label +")");
 	$(input).click(function() {
 		update(this)
 	});
@@ -2881,10 +2882,3 @@ function clearFormula(id) {
 	$(formulaElement).val("");
 	$(formulaElement).blur();
 }
-
-ko.bindingHandlers.indeterminateValue = { //This knockout binding, makes checkboxes show as indeterminate
-	update: function (element, valueAccessor) {
-		let value = ko.utils.unwrapObservable(valueAccessor());
-		element.indeterminate = value;
-	}
-};

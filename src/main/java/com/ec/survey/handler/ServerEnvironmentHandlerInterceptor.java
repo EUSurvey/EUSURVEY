@@ -49,6 +49,9 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public static final String APPLICATION_DELPHI = "enabledelphi";
 	public @Value("${ui.enabledelphi}") String enabledelphi;
 	
+	public static final String APPLICATION_EVOTE = "enableevote";
+	public @Value("${ui.enableevote:null}") String enableevote;
+	
 	public static final String APPLICATION_FILEMANAGEMENT = "enablefilemanagement";
 	public @Value("${ui.enablefilemanagement}") String enablefilemanagement;
 	
@@ -114,6 +117,7 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             
             modelAndView.getModelMap().addAttribute(APPLICATION_ARCHIVING, enablearchiving != null && enablearchiving.equalsIgnoreCase("true"));
 			modelAndView.getModelMap().addAttribute(APPLICATION_DELPHI, enabledelphi != null && enabledelphi.equalsIgnoreCase("true"));
+			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE, enableevote != null && enableevote.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_ECF, enableecf != null && enableecf.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_PUBLICSURVEYS, enablepublicsurveys != null && enablepublicsurveys.equalsIgnoreCase("true"));

@@ -8,6 +8,7 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Ucs2Utf8;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -166,7 +167,7 @@ public class ActivityController extends BasicController {
 		sessionService.setLastActivityFilter(request, filter);
 		
 		ModelAndView result = new ModelAndView("management/activity", "paging", paging);
-		result.addObject("allActivityIds", Setting.ActivityLoggingIds());
+		result.addObject("allActivityIds", ActivityRegistry.getAllActivityIds());
 		
 		result.addObject(Constants.FILTER, filter);
 		result.addObject("filtered", filtered);

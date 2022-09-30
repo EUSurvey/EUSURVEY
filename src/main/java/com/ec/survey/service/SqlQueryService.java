@@ -1,10 +1,8 @@
 package com.ec.survey.service;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import org.hibernate.Query;
+import java.util.*;
+
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.ec.survey.exception.MessageException;
@@ -12,26 +10,25 @@ import com.ec.survey.exception.MessageException;
 @Service
 public class SqlQueryService {
 
-	public void setParameters(Query query, Map<String, Object> parameters) throws Exception {
-		List<String> params = Arrays.asList(query.getNamedParameters());
+	public <T> void setParameters(Query query, Map<String, Object> parameters) throws Exception {
+		Set<String> params = query.getParameterMetadata().getNamedParameterNames();
 		for (String key : parameters.keySet()) {
-			if (params.contains(key))
-			{
+			if (params.contains(key)){
 				setParameter(parameters, key, query);
 			}
 		}
 	}
 
-	private void setParameter(Map<String, Object> parameters, String key, Query query) throws MessageException {
+	private <T> void setParameter(Map<String, Object> parameters, String key, Query query) throws MessageException {
 		Object parameter = parameters.get(key);
 		if (parameter instanceof String) {
-			query.setString(key, (String) parameter);
+			query.setParameter(key, (String) parameter);
 		} else if (parameter instanceof String[]) {
 			query.setParameterList(key, (String[]) parameter);
 		} else if (parameter instanceof Integer) {
-			query.setInteger(key, (Integer) parameter);
+			query.setParameter(key, (Integer) parameter);
 		} else if (parameter instanceof Double) {
-			query.setDouble(key, (Double) parameter);
+			query.setParameter(key, (Double) parameter);
 		} else if (parameter instanceof Integer[]) {
 			query.setParameterList(key, (Integer[]) parameter);
 		} else if (parameter instanceof Date) {

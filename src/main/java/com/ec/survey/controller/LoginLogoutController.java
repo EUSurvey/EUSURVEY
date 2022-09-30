@@ -86,6 +86,7 @@ public class LoginLogoutController extends BasicController {
 		}
 		
 		model.put("ecasurl", ecashost);
+		model.put("require2fa", require2fa);
 		model.put("serviceurl", host + "auth/ecaslogin");
 
 		if (request.getSession().getAttribute("ticket") != null) model.put("ticket", request.getSession().getAttribute("ticket"));

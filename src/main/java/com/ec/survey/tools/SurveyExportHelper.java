@@ -1349,7 +1349,7 @@ public class SurveyExportHelper {
 		if (questionElement.getElementsByTagName("RadioButton").getLength() > 0)
 		{
 			question = new SingleChoiceQuestion();
-			((SingleChoiceQuestion)question).setUseRadioButtons(true);
+			((SingleChoiceQuestion)question).setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 			org.w3c.dom.Element RadioButton = (Element) questionElement.getElementsByTagName("RadioButton").item(0);
 			
 			if (RadioButton.getAttribute("NberOfColumns").length() > 0)
@@ -1363,7 +1363,7 @@ public class SurveyExportHelper {
 		} else if (questionElement.getElementsByTagName("SelectBox").getLength() > 0)
 		{
 			question = new SingleChoiceQuestion();
-			((SingleChoiceQuestion)question).setUseRadioButtons(false);
+			((SingleChoiceQuestion)question).setSingleChoiceStyle(SingleChoiceStyle.RADIO);
 			
 			org.w3c.dom.Element SelectBox = (Element) questionElement.getElementsByTagName("SelectBox").item(0);
 			
@@ -1371,7 +1371,7 @@ public class SurveyExportHelper {
 		} else if (questionElement.getElementsByTagName("CheckBox").getLength() > 0)
 		{
 			question = new MultipleChoiceQuestion();
-			((MultipleChoiceQuestion)question).setUseCheckboxes(true);
+			((MultipleChoiceQuestion)question).setMultipleChoiceStyle(MultipleChoiceStyle.CHECKBOX);
 			org.w3c.dom.Element CheckBox = (Element) questionElement.getElementsByTagName("CheckBox").item(0);
 			
 			if (CheckBox.getAttribute("NberOfColumns").length() > 0)
@@ -1396,7 +1396,7 @@ public class SurveyExportHelper {
 		} else if (questionElement.getElementsByTagName("ListBox").getLength() > 0)
 		{
 			question = new MultipleChoiceQuestion();
-			((MultipleChoiceQuestion)question).setUseCheckboxes(false);
+			((MultipleChoiceQuestion)question).setMultipleChoiceStyle(MultipleChoiceStyle.LIST);
 			
 			org.w3c.dom.Element ListBox = (Element) questionElement.getElementsByTagName("ListBox").item(0);
 			

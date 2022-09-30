@@ -26,7 +26,7 @@ function addIconToHelp(help)
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width, desc)
 {
-	var viewModel = [];
+	var viewModel = {};
 	viewModel.uid =  ko.observable(uid == "null" ? "" : uid);
 	viewModel.name = ko.observable(name == "null" ? "" : name);
 	viewModel.comment = ko.observable(comment == "null" ? "" : comment);
@@ -37,7 +37,7 @@ function newFileViewModel(uid, name, comment, longdesc, cleanComment, width, des
 		
 	viewModel.copy = function()
 	{
-		var copy = [];
+		var copy = {};
 		
 	    for (var prop in this) {
 	        var propVal = this[prop];
@@ -180,7 +180,7 @@ function newPossibleAnswersByColumnsViewModel(list)
 
 function newScoringWrapper(element)
 {
-	var viewModel = [];
+	var viewModel = {};
 	
 	viewModel.isViewModel = true;
 	viewModel.id = ko.observable(element.id());
@@ -193,13 +193,13 @@ function newScoringWrapper(element)
 
 function newScoringViewModel(element)
 {
-	var viewModel = [];
+	var viewModel = {};
 	
 	viewModel.isViewModel = true;
 	
 	if (element != null)
 	{
-		if (element.hasOwnProperty("isViewModel"))
+		if (element.hasOwnProperty("isViewModel") && element.isViewModel)
 		{
 			viewModel.id = ko.observable(element.id());
 			viewModel.type = ko.observable(element.type());
@@ -385,232 +385,105 @@ function newBasicViewModel(element)
 	
 	viewModel.copy = function()
 	{
-		var copy = [];
-		
-		if (this.type == "ComplexTable") {
-			copy = newComplexTableViewModel(this, true);
-			copy.foreditor = true;
-			
-			for (var i = 0; i < copy.childElements().length; i++)
-	    	{
-				var childCopy = copy.childElements()[i];
-	    		childCopy.id(getNewId());
-			    childCopy.uniqueId(getNewId());
-			    childCopy.shortname(getNewShortname());
-			    childCopy.originalId = this.id();
-			    childCopy.locked(false);
-				childCopy.foreditor = true;
-				
-				for (var j = 0; j < childCopy.possibleAnswers().length; j++)
-	    		{
-					var pa = childCopy.possibleAnswers()[j];
-					pa.id(getNewId());
-				    pa.uniqueId(getNewId());
-				    pa.shortname(getNewShortname());
-				    pa.originalId = this.id();			
+		//Create a deep clone that transforms all observables to default js values
+		let copy = ko.toJS(viewModel);
+
+		function notAViewModel(el){
+			//Set all .isViewModel properties of this el all childs to false
+			if (el != null && typeof el == "object"){
+				if (el.isViewModel){
+					el.isViewModel = false;
 				}
-	    	}			
-		} else {
-		
-		    for (var prop in this) {
-		        var propVal = this[prop];
-		        if (ko.isObservable(propVal)) {
-		            var val = propVal();
-		            if (prop == "dependentElementsStrings")
-		            {
-		            	copy[prop] = ko.observableArray();
-		            	for (var i = 0; i < this.dependentElementsStrings().length; i++)
-				    	{
-				    		var deps = this.dependentElementsStrings()[i]();
-				    		copy[prop].push(ko.observable(deps));
-				    	}
-		            	continue;
-		            } else if (prop == "questions")
-		            {
-		            	copy[prop] = ko.observableArray();
-		            	for (var i = 0; i < this.questions().length; i++)
-				    	{
-				    		var copiedquestion = this.questions()[i];
-				    		var newmatrixquestion = newMatrixItemViewModel(getNewId(), getNewId(), copiedquestion.optional(), getNewShortname(), copiedquestion.readonly(), copiedquestion.title(), copiedquestion.originalTitle(), copiedquestion.isDependentMatrixQuestion(), copiedquestion.css(), i);
-				    		newmatrixquestion.originalId = copiedquestion.id();
-				    		copy[prop].push(newmatrixquestion);
-				    	}
-		            	continue;
-		            } else if (prop == "answers")
-		            {
-		            	copy[prop] = ko.observableArray();
-		            	for (var i = 0; i < this.answers().length; i++)
-				    	{
-				    		var copiedanswer = this.answers()[i];
-				    		var newanswer = newMatrixItemViewModel(getNewId(), getNewId(), copiedanswer.optional(), getNewShortname(), copiedanswer.readonly(), copiedanswer.title(), copiedanswer.originalTitle(), copiedanswer.isDependentMatrixQuestion(), copiedanswer.css(), i)
-				    		newanswer.originalId = copiedanswer.id();
-				    		copy[prop].push(newanswer);
-				    	}
-		            	continue;
-		            } else if (prop == "childElements")
-		            {
-		            	copy[prop] = ko.observableArray();
-		            	for (var i = 0; i < this.childElements().length; i++)
-				    	{
-				    		var copiedquestion = this.childElements()[i];
-							var newquestion = newRatingItemViewModel(getNewId(), getNewId(), copiedquestion.optional(), getNewShortname(), copiedquestion.title(), copiedquestion.originalTitle(), copiedquestion.css())
-		
-				    		newquestion.originalId = copiedquestion.id();
-				    		copy[prop].push(newquestion);
-				    	}
-		            	continue;
-		            } else if (prop == "possibleAnswers")
-		            {
-		            	copy[prop] = ko.observableArray();
-		            	for (var i = 0; i < this.possibleAnswers().length; i++)
-				    	{
-				    		var copiedanswer = this.possibleAnswers()[i];
-				    		var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), copiedanswer.dependentElementsString(), copiedanswer.title(), copiedanswer.scoring, copiedanswer.ecfScore(), copiedanswer.ecfProfile());
-				    		newanswer.originalId = copiedanswer.id();
-				    		copy[prop].push(newanswer);
-				    	}
-		            	continue;
-		            } else if (prop == "scoringItems")
-		            {
-		            	copy[prop] = ko.observableArray();
-		            	for (var i = 0; i < this.scoringItems().length; i++)
-				    	{
-				    		var copieditem = this.scoringItems()[i];
-				    		var newitem = newScoringViewModel(copieditem);
-				    		newitem.originalId = copieditem.id();
-				    		copy[prop].push(newitem);
-				    	}
-		            	continue;
-		            } else if (prop == "rankingItems")
-		            {
-		            	copy[prop] = ko.observableArray();
-		            	for (var i = 0; i < this.rankingItems().length; i++)
-				    	{
-				    		var copieditem = this.rankingItems()[i];
-				    		var newitem = newRankingItemViewModel(getNewId(), getNewId(), getNewShortname(), copieditem.title());
-				    		newitem.originalId = copieditem.id();
-				    		copy[prop].push(newitem);
-				    	}
-		            	continue;
-	 				} else if (prop == "initialOrder")
-		            {
-		            	copy[prop] = null;
-		            	continue;
-		            } else if (prop == "orderedRankingItems") {
-						copy[prop] = ko.computed(function() {
-							let result = copy.rankingItems.slice();
-	
-							if (copy.order() === 1) {
-								result = result.sort((e1, e2) => e1.title().stripHtml().localeCompare(e2.title().stripHtml()));
-							} else if (copy.order() === 2) {
-								shuffle(result);
-							}
-	
-							return result;
-						});
-						continue;
-		            }
-		            
-		            copy[prop] = ko.observable(val);
-		        } else {
-		        	copy[prop] = propVal;
-		        }
-		    }
+				for (let propKey in el) {
+					notAViewModel(el[propKey]);
+				}
+			}
 		}
-		
-	    copy.id(getNewId());
-	    copy.uniqueId(getNewId());
-	    copy.shortname(getNewShortname());
-	    copy.originalId = this.id();
-	    copy.locked(false);
-	    
-	    if (this.type == "GalleryQuestion")
-	    {
-	    	for (var i = 0; i < copy.files().length; i++)
-	    	{
-	    		copy.files()[i] = copy.files()[i].copy();
-	    	}
-	    	
-	    	copy.rows = ko.dependentObservable(function() {
-	    	    var result = [],
-	    	        colLength = parseInt(copy.columns(), 10),
-	    	        row;
+		notAViewModel(copy);
 
-	    	    //loop through items and push each item to a row array that gets pushed to the final result
-	    	    for (var i = 0, j = copy.files().length; i < j; i++) {
-	    	        if (i % colLength === 0) {
-	    	            if (row) {
-	    	              result.push(row);     
-	    	            }
-	    	            row = [];
-	    	        }
-	    	        row.push(copy.files()[i]);
-	    	    }
+		//Use the viewmodels constructor to create a new viewmodel of the same type
+		let created = viewModel.creator(copy, true);
 
-	    	    //push the final row  
-	    	    if (row) {
-	    	        result.push(row);
-	    	    }
+		function copyValues(el){
 
-	    	    return result;
-	    	}, viewModel);
-	    }
-	    
-	    copy.replaceTriggers = function(dict)
-		{			
+			el.originalId = el.id();
+			el.foreditor = true
+
+			//Only set if the respective observables are present
+			if (el.id) el.id(getNewId());
+			if (el.uniqueId) el.uniqueId(getNewId());
+			if (el.shortname) el.shortname(getNewShortname());
+			if (el.locked) el.locked(false);
+
+			for (let propKey in el) {
+				//Go through all properties
+				let propVal = el[propKey];
+
+				if (ko.isObservable(propVal)){
+					propVal = propVal(); //If prop is an observable retrieve the value
+				}
+				//If prop is an array go through all childs
+				if (Array.isArray(propVal)){
+					for (let i = 0; i < propVal.length; i++) {
+						let childEl = propVal[i];
+						if (childEl?.isViewModel){
+							copyValues(childEl);
+						}
+					}
+				} else {
+					if (propVal?.isViewModel){
+						copyValues(propVal);
+					}
+				}
+			}
+		}
+
+		copyValues(created);
+
+		created.replaceTriggers = function(dict)
+		{
+			function mapDependency(dependencyObservable){
+				let deps = dependencyObservable();
+
+				if (deps.length > 0){
+					let dependentIds = deps.split(";");
+					let mappedIds = dependentIds.map((oldId) => {
+						if (oldId.length > 0 && dict.hasOwnProperty(oldId)){
+							return dict[oldId]; //This id was also copied
+						}
+						return -1; //Mark all non copied elements for removal
+
+					}).filter(id => id !== -1); //Filter out non copied ids
+
+					let newDeps = "";
+					if (mappedIds.length > 0){
+						newDeps = mappedIds.join(";") + ";";
+					}
+					if (deps != newDeps) {
+						dependencyObservable(newDeps);
+					}
+				}
+			}
+
 			if (this.type.indexOf("ChoiceQuestion") > 0)
-		    {
-				for (var i = 0; i < this.possibleAnswers().length; i++)
-		    	{
-					var deps = this.possibleAnswers()[i].dependentElementsString();
-					var changed = false;
-					if (deps.length > 0)
-					{
-						var dependentIds = deps.split(";");
-						for (var j = 0; j < dependentIds.length; j++)
-						{
-							var id = dependentIds[j];
-							if (id.length > 0 && dict.hasOwnProperty(id))
-							{
-								deps = deps.replace(id + ";", dict[id] + ";");
-								changed = true;
-							}
-						}					
-					}
-					if (changed)
-					{
-						this.possibleAnswers()[i].dependentElementsString(deps);
-					}
-		    	}				
-		    } else if (this.type == "Matrix")
-		    {
-		    	for (var i = 0; i < this.dependentElementsStrings().length; i++)
-		    	{
-		    		var deps = this.dependentElementsStrings()[i]();
-		    		if (deps.length > 0)
-					{
-						var dependentIds = deps.split(";");
-						for (var j = 0; j < dependentIds.length; j++)
-						{
-							var id = dependentIds[j];
-							if (id.length > 0 && dict.hasOwnProperty(id))
-							{
-								deps = deps.replace(id + ";", dict[id] + ";");
-								changed = true;
-							}
-						}					
-					}
-					if (changed)
-					{
-						this.dependentElementsStrings()[i](deps);
-					}
-		    	}
-		    }
-		};	    
-	    
-		return copy;
+			{
+				this.possibleAnswers().forEach((posAns) => {
+					mapDependency(posAns.dependentElementsString);
+				})
+			}
+			else if (this.type == "Matrix") {
+
+				this.dependentElementsStrings().forEach((dependencyObservable) => {
+					mapDependency(dependencyObservable);
+				});
+			}
+		};
+
+		return created;
 	}
-	
+
+	viewModel.creator = newBasicViewModel;
+
 	return viewModel;
 }
 
@@ -619,16 +492,20 @@ function newSectionViewModel(element)
 	var viewModel = newBasicViewModel(element)
 	viewModel.level = ko.observable(element.level);	
 	viewModel.tabTitle = ko.observable(element.tabTitle);
-	viewModel.order = ko.observable(element.order);	
-	
+	viewModel.order = ko.observable(element.order);
+
+	viewModel.creator = newSectionViewModel;
+
 	return viewModel;
 }
 
 function newTextViewModel(element)
 {
 	var viewModel = newBasicViewModel(element)
-	viewModel.optional = ko.observable(element.optional);	
-	
+	viewModel.optional = ko.observable(element.optional);
+
+	viewModel.creator = newTextViewModel;
+
 	return viewModel;
 }
 
@@ -657,7 +534,9 @@ function newImageViewModel(element)
 			return this.width();
 		}
 	}
-	
+
+	viewModel.creator = newImageViewModel;
+
 	return viewModel;
 }
 
@@ -668,6 +547,8 @@ function newRulerViewModel(element)
 	viewModel.style = ko.observable(element.style);	
 	viewModel.color = ko.observable(element.color);	
 	viewModel.optional = true;	
+
+	viewModel.creator = newRulerViewModel;
 
 	return viewModel;
 }
@@ -697,7 +578,11 @@ function newChoiceViewModel(element)
 	viewModel.orderedPossibleAnswers = function(mobile, responsive)
 	{
 		var usecolumns = !mobile && (this.choiceType() == 'radio' || this.choiceType() == 'checkbox');
-		if (this.order() != null && this.order() == 1)
+		//If it has the isEVoteList function and it is true
+		let useInitial = viewModel.isEVoteList && viewModel.isEVoteList()
+		useInitial |= this.order() == null
+
+		if (!useInitial && this.order() == 1)
 		{
 			var dic = [];
 			for (var i = 0; i < this.possibleAnswers().length; i++)
@@ -717,7 +602,7 @@ function newChoiceViewModel(element)
 			}
 
 			return usecolumns ? sortByColumn(answers, responsive ? 3 : this.numColumns()) : answers;			
-		} else if (this.order() != null && this.order() == 2)
+		} else if (!useInitial && this.order() == 2)
 		{
 			var answers = this.possibleAnswers().slice();
 			answers = shuffle(answers);
@@ -779,6 +664,8 @@ function newChoiceViewModel(element)
 			}
 		}		
 	}
+
+	viewModel.creator = newChoiceViewModel;
 	
 	return viewModel;
 }
@@ -804,14 +691,52 @@ function newSingleChoiceViewModel(element)
 	var viewModel = newChoiceViewModel(element)
 	
 	viewModel.single = true;
-	viewModel.useRadioButtons = ko.observable(element.useRadioButtons);	
 	viewModel.minChoices = ko.observable(0);
 	viewModel.maxChoices = ko.observable(0);
-	viewModel.choiceType = ko.observable(element.useLikert ? "likert" : (element.useRadioButtons ? "radio" : "select"));
-	viewModel.likert = ko.observable(element.useLikert);
+	viewModel.choiceType = ko.observable(element.choiceType);
 	viewModel.ecfCompetency = ko.observable(element.ecfCompetency);
 	viewModel.maxDistance = ko.observable(element.maxDistance);
-	
+
+	viewModel.useRadioButtons = ko.pureComputed(function() {
+		return viewModel.choiceType() === "radio"
+	});
+	viewModel.likert = ko.pureComputed(function() {
+		return viewModel.choiceType() === "likert"
+	});
+	viewModel.useSelectBox = ko.pureComputed(function() {
+		return viewModel.choiceType() === "select"
+	});
+	viewModel.useButtons = ko.pureComputed(function() {
+		return viewModel.choiceType() === "buttons"
+	});
+
+
+	viewModel.styleType = ko.pureComputed(function() {
+		switch (viewModel.choiceType()){
+			case "radio":
+				return "RadioButton";
+			case "select":
+				return "SelectBox";
+			case "likert":
+				return "LikertScale";
+			case "buttons":
+				return "Buttons"
+		}
+	});
+
+	//Knockout when so this is not just a one time if but a constant rule
+	//This rules removes the choice type likert if this is not a delphi
+	ko.when(
+		function (){
+			return viewModel.likert() && !isdelphi
+		}, //Then
+		function (){
+			viewModel.choiceType("radio")
+		}
+	)
+
+	viewModel.creator = newSingleChoiceViewModel;
+
 	return viewModel;
 }
 
@@ -820,12 +745,44 @@ function newMultipleChoiceViewModel(element)
 	var viewModel = newChoiceViewModel(element)
 	
 	viewModel.single = false;
-	viewModel.useCheckboxes = ko.observable(element.useCheckboxes);	
 	viewModel.minChoices = ko.observable(element.minChoices);
-	viewModel.maxChoices = ko.observable(element.maxChoices);	
-	viewModel.choiceType = ko.observable(element.useCheckboxes ? "checkbox" : "list");
-	viewModel.noNegativeScore = ko.observable(element.noNegativeScore);	
-	
+	viewModel.maxChoices = ko.observable(element.maxChoices);
+	viewModel.choiceType = ko.observable(element.choiceType);
+	viewModel.noNegativeScore = ko.observable(element.noNegativeScore);
+
+	viewModel.useCheckboxes = ko.pureComputed(function() {
+		return viewModel.choiceType() === "checkbox"
+	});
+
+	viewModel.useListBox = ko.pureComputed(function() {
+		return viewModel.choiceType() === "list"
+	});
+
+	viewModel.isEVoteList = ko.pureComputed(function() {
+		return viewModel.choiceType().startsWith("evote")
+	});
+
+	viewModel.styleType = ko.pureComputed(function() {
+		if (viewModel.choiceType() === "checkbox")
+			return "CheckBox";
+		if (viewModel.choiceType() === "list")
+			return "ListBox";
+		return "EVoteList";
+	});
+
+	//Knockout when so this is not just a one time if but a constant rule
+	//This rules removes the choice type evote-... if this is not an eVote
+	ko.when(
+		function (){
+			return viewModel.isEVoteList() && !isevote
+		}, //Then
+		function (){
+			viewModel.choiceType("checkbox")
+		}
+	)
+
+	viewModel.creator = newMultipleChoiceViewModel;
+
 	return viewModel;
 }
 
@@ -977,6 +934,9 @@ function newRankingViewModel(element)
 		});
 		$(domElement).disableSelection();
 	};
+
+	viewModel.creator = newRankingViewModel;
+
 	return viewModel;
 }
 
@@ -1060,6 +1020,8 @@ function newRankingItemViewModel(id, uniqueId, shortname, title, parent)
 		return viewModel.onKeyDownMoveItem(data, event, 1);
 	}
 
+	viewModel.creator = newRankingItemViewModel;
+
 	return viewModel;
 }
 
@@ -1107,13 +1069,18 @@ function newFreeTextViewModel(element)
 		}
 	};
 
+	viewModel.creator = newFreeTextViewModel;
+
 	return viewModel;
 }
 
 function newRegExViewModel(element)
 {
 	var viewModel = newFreeTextViewModel(element);
-	viewModel.regex = ko.observable(element.regex);	
+	viewModel.regex = ko.observable(element.regex);
+
+	viewModel.creator = newRegExViewModel;
+
 	return viewModel;
 }
 
@@ -1158,7 +1125,9 @@ function newFormulaViewModel(element)
 	viewModel.refreshResult = function() {
 		refreshResult(this);
 	}
-	
+
+	viewModel.creator = newFormulaViewModel;
+
 	return viewModel;
 }
 
@@ -1223,7 +1192,9 @@ function newConfirmationViewModel(element)
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);
-	
+
+	viewModel.creator = newConfirmationViewModel;
+
 	return viewModel;
 }
 
@@ -1254,7 +1225,9 @@ function newRatingViewModel(element)
 			}
 		}		
 	}
-	
+
+	viewModel.creator = newRatingViewModel;
+
 	return viewModel;
 }
 
@@ -1415,6 +1388,8 @@ function newNumberViewModel(element)
 		
 		return this.min();
 	};
+
+	viewModel.creator = newNumberViewModel;
 	
 	return viewModel;
 }
@@ -1429,8 +1404,10 @@ function newEmailViewModel(element)
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
-	viewModel.css = ko.observable(element.css);	
-	
+	viewModel.css = ko.observable(element.css);
+
+	viewModel.creator = newEmailViewModel;
+
 	return viewModel;
 }
 
@@ -1450,8 +1427,10 @@ function newDateViewModel(element)
 	viewModel.min = ko.observable(element.min);	
 	viewModel.minString = ko.observable(element.minString);	
 	viewModel.max = ko.observable(element.max);	
-	viewModel.maxString = ko.observable(element.maxString);	
-	
+	viewModel.maxString = ko.observable(element.maxString);
+
+	viewModel.creator = newDateViewModel;
+
 	return viewModel;
 }
 
@@ -1469,8 +1448,10 @@ function newTimeViewModel(element)
 	viewModel.min = ko.observable(element.min);	
 	viewModel.minString = ko.observable(element.minString);	
 	viewModel.max = ko.observable(element.max);	
-	viewModel.maxString = ko.observable(element.maxString);	
-	
+	viewModel.maxString = ko.observable(element.maxString);
+
+	viewModel.creator = newTimeViewModel;
+
 	return viewModel;
 }
 
@@ -1487,7 +1468,9 @@ function newUploadViewModel(element)
 	viewModel.css = ko.observable(element.css);
 	viewModel.extensions = ko.observable(element.extensions);
 	viewModel.maxFileSize = ko.observable(element.maxFileSize);
-	
+
+	viewModel.creator = newUploadViewModel;
+
 	return viewModel;
 }
 
@@ -1503,7 +1486,9 @@ function newDownloadViewModel(element)
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);
 	viewModel.files = newFilesViewModel(element.files);
-	
+
+	viewModel.creator = newDownloadViewModel;
+
 	return viewModel;
 }
 
@@ -1555,7 +1540,9 @@ function newGalleryViewModel(element)
 
 	    return result;
 	}, viewModel);
-	
+
+	viewModel.creator = newGalleryViewModel;
+
 	return viewModel;
 }
 
@@ -1666,7 +1653,9 @@ function newMatrixViewModel(element)
 			}
 		}		
 	}
-	
+
+	viewModel.creator = newMatrixViewModel;
+
 	return viewModel;
 }
 
@@ -1704,7 +1693,9 @@ function newTableViewModel(element)
 			}
 		}
 	}
-	
+
+	viewModel.creator = newTableViewModel;
+
 	return viewModel;
 }
 
@@ -1836,8 +1827,9 @@ function newComplexTableViewModel(element, foreditor)
 		}
 		return result;
 	}
-	
-	
+
+	viewModel.creator = newComplexTableViewModel;
+
 	return viewModel;
 }
 
@@ -1881,7 +1873,7 @@ function newComplexTableItemViewModel(element)
 			viewModel.useRadioButtons = ko.observable(element.useRadioButtons());
 			viewModel.useCheckboxes = ko.observable(element.useCheckboxes());	
 			viewModel.numColumns = ko.observable(element.numColumns());
-			viewModel.order = ko.observable(element.order());	
+			viewModel.order = ko.observable(element.order() == null ? 0 : element.order());
 			viewModel.resultText = ko.observable(element.resultText());
 			viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces() : 0);	
 			viewModel.unit = ko.observable(element.unit());	
@@ -1910,7 +1902,7 @@ function newComplexTableItemViewModel(element)
 			viewModel.useRadioButtons = ko.observable(element.useRadioButtons);
 			viewModel.useCheckboxes = ko.observable(element.useCheckboxes);	
 			viewModel.numColumns = ko.observable(element.numColumns == null || element.numColumns < 1 ? 1 : element.numColumns);
-			viewModel.order = ko.observable(element.order);	
+			viewModel.order = ko.observable(element.order == null ? 0 : element.order);
 			viewModel.resultText = ko.observable(element.resultText);
 			viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces : 0);	
 			viewModel.unit = ko.observable(element.unit);	

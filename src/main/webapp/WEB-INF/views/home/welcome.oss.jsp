@@ -93,6 +93,9 @@
 			
 			<div id="loginPlaceHolder" style="margin-bottom:80px">
 				<form id="welcomeOssLoginForm" action="${ecasurl}" style="margin: 0px">
+					<c:if test="${require2fa}">
+						<input type="hidden" name="acceptStrength" value="PASSWORD_SMS" />
+					</c:if>
 					<input type="hidden" name="service" value="${serviceurl}"/>
 					
 					<div id="loginAnchor" style="max-width:400px; text-align: center; float:left; margin-left:100px">

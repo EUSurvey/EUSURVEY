@@ -17,6 +17,7 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizHelper;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.hibernate.query.NativeQuery;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -788,7 +789,7 @@ public class StatisticsCreator implements Runnable {
 		sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
 		values.put("questionuid", question.getUniqueId());
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		query.setReadOnly(true);
 
 		for (Entry<String, Object> entry : values.entrySet()) {
@@ -832,7 +833,7 @@ public class StatisticsCreator implements Runnable {
 		sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
 		values.put("questionuid", question.getUniqueId());
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		query.setReadOnly(true);
 
 		for (Entry<String, Object> entry : values.entrySet()) {
@@ -941,7 +942,7 @@ public class StatisticsCreator implements Runnable {
 			values.put("questionuid", question.getUniqueId());
 		}	
 	
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		query.setReadOnly(true);
 
 		for (Entry<String, Object> entry : values.entrySet()) {
@@ -1040,7 +1041,7 @@ public class StatisticsCreator implements Runnable {
 		String sql = "select a.PA_UID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 				+ where + ")";
 
-		SQLQuery query = session.createSQLQuery(sql);
+		NativeQuery query = session.createSQLQuery(sql);
 		query.setReadOnly(true);
 
 		for (Entry<String, Object> entry : values.entrySet()) {

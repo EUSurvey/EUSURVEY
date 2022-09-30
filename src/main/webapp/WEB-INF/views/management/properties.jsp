@@ -25,6 +25,7 @@
 		<form:form id="save-form" style="width: 730px; margin-left: auto; margin-right: auto;" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/properties?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
 			<form:hidden path="survey.id" />
 			<input type="hidden" id="survey-security" name="survey.security" value="" />
+			<form:input type="hidden" path="survey.eVoteTemplate" />
 			
 			<div class="actions">
 				<div style="width: 950px; margin-left: auto; margin-right: auto;">
@@ -147,7 +148,7 @@
 								<c:choose>
 									<c:when test="${form.survey.isOPC}">
 										<div class="onoffswitch">
-											<input data-bind="checked: automaticPublishing; enabled: false" type="checkbox" name="survey.automaticPublishing" class="onoffswitch-checkbox" id="myonoffswitch" />
+											<input data-bind="checked: automaticPublishing; enable: false" type="checkbox" name="survey.automaticPublishing" class="onoffswitch-checkbox" id="myonoffswitch" />
 											 <label class="onoffswitch-label" for="myonoffswitch">
 										        <span class="onoffswitch-inner"></span>
 										        <span class="onoffswitch-switch"></span>
@@ -320,8 +321,8 @@
 							</div>
 							<div style="float: right; text-align: right">										
 								<div class="onoffswitch">
-									<form:checkbox path="survey.isUseMaxNumberContribution" data-bind="checked: isUseMaxNumberContribution" class="onoffswitch-checkbox" id="myonoffswitchlimitmaxcont" />
-									 <label class="onoffswitch-label" for="myonoffswitchlimitmaxcont">
+									<form:checkbox path="survey.isUseMaxNumberContribution" data-bind="checked: isUseMaxNumberContribution, enable: !_properties.eVote()" class="onoffswitch-checkbox" id="myonoffswitchlimitmaxcont" />
+									 <label data-bind='class: "onoffswitch-label"+ (_properties.eVote() ? " disabled" : "")' for="myonoffswitchlimitmaxcont">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -468,8 +469,8 @@
 							</div>
 							<div style="float: right">
 								<div class="onoffswitch">
-									<form:checkbox path="survey.dedicatedResultPrivileges" class="onoffswitch-checkbox" id="myonoffswitchdedicatedResultPrivileges" />
-									<label class="onoffswitch-label" for="myonoffswitchdedicatedResultPrivileges">
+									<form:checkbox path="survey.dedicatedResultPrivileges" class="onoffswitch-checkbox" id="myonoffswitchdedicatedResultPrivileges" data-bind="enable: !_properties.eVote()"/>
+									<label data-bind='class: "onoffswitch-label"+ (_properties.eVote() ? " disabled" : "")' for="myonoffswitchdedicatedResultPrivileges">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -501,8 +502,8 @@
 								    		</label>
 										</c:when>
 										<c:otherwise>
-											<input data-bind="checked: secured" type="checkbox" name="radio-new-survey-security" class="onoffswitch-checkbox" id="myonoffswitchsecured">
-											<label class="onoffswitch-label" for="myonoffswitchsecured">
+											<input data-bind="checked: secured, enable: !_properties.eVote()" type="checkbox" name="radio-new-survey-security" class="onoffswitch-checkbox" id="myonoffswitchsecured">
+											<label data-bind='class: "onoffswitch-label"+ (_properties.eVote() ? " disabled" : "")' for="myonoffswitchsecured">
 												<span class="onoffswitch-inner"></span>
 								    			<span class="onoffswitch-switch"></span>
 								    		</label>
@@ -527,12 +528,12 @@
 											<input class="check" type="checkbox" disabled="disabled" /><spring:message code="label.ShowPassword" />
 										</c:when>
 										<c:when test="${form.survey.password != null && form.survey.password.length() > 0}">
-											<form:password class="form-control" maxlength="255" autocomplete="off" value="********" path="survey.password" style="margin: 0px;" onchange="$('#clearpassword').val($(this).val())" />
+											<form:password class="form-control" data-bind="enable: !_properties.eVote()" maxlength="255" autocomplete="off" value="********" path="survey.password" style="margin: 0px;" onchange="$('#clearpassword').val($(this).val())" />
 											<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpassword" readonly="readonly" disabled="disabled" value="${form.survey.password}" />
 											<input class="check" type="checkbox" onclick="checkShowPassword(this)" /><spring:message code="label.ShowPassword" />
 										</c:when>
 										<c:otherwise>
-											<form:password class="form-control" maxlength="255" autocomplete="off" path="survey.password" style="margin: 0px;" onchange="$('#clearpassword').val($(this).val())" />
+											<form:password class="form-control" data-bind="enable: !_properties.eVote()" maxlength="255" autocomplete="off" path="survey.password" style="margin: 0px;" onchange="$('#clearpassword').val($(this).val())" />
 											<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpassword" readonly="readonly" disabled="disabled" />
 											<input class="check" type="checkbox" onclick="checkShowPassword(this)" /><spring:message code="label.ShowPassword" />
 										</c:otherwise>
@@ -556,8 +557,8 @@
 											    </label>
 											</c:when>
 											<c:otherwise>
-												<input data-bind="checked: ecasSecurity" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
-												<label class="onoffswitch-label" for="myonoffswitchecas">
+												<input data-bind="checked: ecasSecurity, enable: !_properties.eVote()" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
+												<label for="myonoffswitchecas" data-bind='class: "onoffswitch-label"+ (_properties.eVote() ? " disabled" : "")'>
 											        <span class="onoffswitch-inner"></span>
 											        <span class="onoffswitch-switch"></span>
 											    </label>
@@ -581,8 +582,8 @@
 											<form:hidden path="survey.ecasMode" name="ecas-mode" />
 										</c:when>
 										<c:otherwise>
-											<form:radiobutton path="survey.ecasMode" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.everybody" /><br />
-											<form:radiobutton path="survey.ecasMode" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
+											<form:radiobutton path="survey.ecasMode" data-bind="enable: !_properties.eVote()" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.everybody" /><br />
+											<form:radiobutton path="survey.ecasMode"  data-bind="enable: !_properties.eVote()" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
 										</c:otherwise>
 									</c:choose>													
 								</div>
@@ -597,7 +598,7 @@
 										<div class="help hideme"><spring:message code="info.ContributionsPerUser" /></div>
 									</div>
 									<div style="float: right">
-										<form:input htmlEscape="false" path="survey.allowedContributionsPerUser" type="text" class="form-control spinner required number min1 integer" maxlength="10" style="width: 50px" />
+										<form:input htmlEscape="false" data-bind="enable: !_properties.eVote()" path="survey.allowedContributionsPerUser" type="text" class="form-control spinner required number min1 integer" maxlength="10" style="width: 50px" />
 									</div>
 									<div style="clear: both"></div>																						
 								</td>
@@ -636,13 +637,13 @@
 										<div class="onoffswitch">
 											<c:choose>
 												<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
-													<input type="checkbox" checked="checked" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
+													<input type="checkbox" checked="checked" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy" data-bind="enable: !_properties.eVote()">
 												</c:when>
 												<c:otherwise>
-													<input type="checkbox" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
+													<input type="checkbox" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy" data-bind="enable: !_properties.eVote()">
 												</c:otherwise>
 											</c:choose>		
-											 <label class="onoffswitch-label" for="myonoffswitchprivacy">
+											 <label data-bind='class: "onoffswitch-label"+ (_properties.eVote() ? " disabled" : "")' for="myonoffswitchprivacy">
 										        <span class="onoffswitch-inner"></span>
 										        <span class="onoffswitch-switch"></span>
 										    </label>
@@ -721,7 +722,7 @@
 							<div style="float: right">							
 								<div class="onoffswitch">
 									<form:checkbox path="survey.saveAsDraft" class="onoffswitch-checkbox" id="myonoffswitchdraft" data-bind="checked: _properties.saveAsDraft()"  />
-									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi() || _properties.timeLimit().length > 0 || _properties.preventGoingBack()) ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi() || _properties.eVote() || _properties.timeLimit().length > 0 || _properties.preventGoingBack()) ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -747,7 +748,7 @@
 							<div style="float: right">							
 								<div class="onoffswitch">
 									<form:checkbox path="survey.changeContribution" class="onoffswitch-checkbox" data-bind="checked: _properties.changeContribution()" />
-									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.delphi() || _properties.timeLimit().length > 0 || _properties.preventGoingBack()) ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
+									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.delphi() || _properties.eVote() || _properties.timeLimit().length > 0 || _properties.preventGoingBack()) ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -772,7 +773,7 @@
 							<div style="float: right">
 								<div class="onoffswitch">
 									<form:checkbox path="survey.downloadContribution" class="onoffswitch-checkbox" data-bind="checked: _properties.downloadContribution()" />
-									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+(_properties.delphi() ? " disabled" : "")' onclick="_properties.toggleDownloadContribution()">
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+(_properties.delphi() || _properties.eVote() ? " disabled" : "")' onclick="_properties.toggleDownloadContribution()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -828,11 +829,23 @@
 							</div>
 							<div style="float: right">							
 								<div class="onoffswitch">
-									<form:checkbox path="survey.preventGoingBack" class="onoffswitch-checkbox" id="myonoffswitchPreventGoingBack" data-bind="checked: _properties.preventGoingBack()" />
-									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi()) ? " disabled" : "")' onclick="_properties.togglePreventGoingBack()">
-								        <span class="onoffswitch-inner"></span>
-								        <span class="onoffswitch-switch"></span>
-								    </label>
+									<c:choose>
+										<c:when test="${form.survey.getIsEVote() || form.survey.getIsDelphi()}">
+											<form:checkbox path="survey.preventGoingBack" class="onoffswitch-checkbox" id="myonoffswitchPreventGoingBack" data-bind="checked: _properties.preventGoingBack()" />
+											<label class="onoffswitch-label disabled">
+												<span class="onoffswitch-inner"></span>
+												<span class="onoffswitch-switch"></span>
+											</label>
+										</c:when>
+										<c:otherwise>
+											<form:checkbox path="survey.preventGoingBack" class="onoffswitch-checkbox" id="myonoffswitchPreventGoingBack" data-bind="checked: _properties.preventGoingBack()" />
+											<label class="onoffswitch-label" onclick="_properties.togglePreventGoingBack()">
+												<span class="onoffswitch-inner"></span>
+												<span class="onoffswitch-switch"></span>
+											</label>
+										</c:otherwise>
+									</c:choose>
+
 								</div>
 							</div>	
 						</td>
@@ -847,7 +860,7 @@
 							<div style="float: right">
 								<div class="onoffswitch">
 									<form:checkbox path="survey.progressBar" class="onoffswitch-checkbox" id="myonoffswitchprogressBar" data-bind="checked: _properties.progressBar()" />
-									 <label class="onoffswitch-label" onclick="_properties.toggleProgressBar()">
+									 <label data-bind='class: "onoffswitch-label"+ (_properties.eVote() ? " disabled" : "")' onclick="_properties.toggleProgressBar()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -891,8 +904,8 @@
 								<spring:message code="label.MotivationPopupTrigger" />
 							</div>
 							<div style="float: right">
-								<form:radiobutton onclick="_properties.useMotivationTime(false)" class="required check" path="survey.motivationType" value="false"/><spring:message code="label.progress" />&#160;
-								<form:radiobutton onclick="_properties.useMotivationTime(true)" class="required check" path="survey.motivationType" value="true"/><spring:message code="label.timer" />&#160;
+								<form:radiobutton onclick='_properties.useMotivationTime(false);document.getElementById("motivationtriggertimer").value="${form.survey.motivationTriggerTime}";checkProperties(false,false);' class="required check" path="survey.motivationType" value="false"/><spring:message code="label.progress" />&#160;
+								<form:radiobutton onclick='_properties.useMotivationTime(true);document.getElementById("motivationtriggerprogress").value="${form.survey.motivationTriggerProgress}";checkProperties(false,false);' class="required check" path="survey.motivationType" value="true"/><spring:message code="label.timer" />&#160;
 							</div>
 						</td>
 					</tr>
@@ -1069,7 +1082,7 @@
 				<div class="propertiesbox">
 					<a class="anchor" id="publishresults"></a>
 					<label><spring:message code="label.PublishResults" /></label>
-					<table class="table table-bordered">
+					<table class="table table-bordered" data-bind="visible: !_properties.eVote()">
 						<tr>
 							<td style="padding-bottom: 20px">
 								<spring:message code="label.PublishingURLnew" />: 
@@ -1185,6 +1198,13 @@
 										</c:otherwise>
 									</c:choose>
 								</div>								
+							</td>
+						</tr>
+					</table>
+					<table class="table table-bordered" data-bind="visible: _properties.eVote()">
+						<tr>
+							<td style="padding-bottom: 20px">
+								<spring:message code="label.DisabledForEVoteSurvey" />
 							</td>
 						</tr>
 					</table>
@@ -1537,6 +1557,87 @@
 							</td>
 						</tr>
 					</c:if>
+
+					<c:if test="${enableevote || form.survey.isEVote}">
+						<tr data-bind="visible: !opc()">
+							<td>
+								<div style="float: left"><spring:message code="label.EnableEVote" /></div>
+								<div style="float: right">
+									<div class="onoffswitch">
+										<c:choose>
+											<c:when test="${form.survey.isOPC}">
+												<input type="radio" disabled="disabled" name="survey.isEVote" class="onoffswitch-checkbox" id="myonoffswitchevote" />
+												<label class="onoffswitch-label disabled" for="myonoffswitchevote">
+													<span class="onoffswitch-inner"></span>
+													<span class="onoffswitch-switch"></span>
+												</label>
+											</c:when>
+											<c:otherwise>
+												<form:checkbox path="survey.isEVote" onclick="_properties.toggleEVote(this)" class="onoffswitch-checkbox" data-bind="enable: (_properties.isNormalSurvey()||_properties.eVote())" id="myonoffswitchevote" />
+												<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.isNormalSurvey()||_properties.eVote()) ? "" : " disabled")' for="myonoffswitchevote">
+													<span class="onoffswitch-inner"></span>
+													<span class="onoffswitch-switch"></span>
+												</label>
+											</c:otherwise>
+										</c:choose>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr class="subelement" data-bind="visible: eVote">
+							<td>
+								<div style="float: left; max-width: 500px;">
+									<spring:message code="label.Quorum" />
+								</div>
+								<div style="float: right; text-align: right">
+									<div>
+										<input id='quorum' class="form-control number max1000000000" type='number' name='survey.quorum' min='0' max='1000000000' value="<esapi:encodeForHTMLAttribute>${form.survey.quorum}</esapi:encodeForHTMLAttribute>">
+									</div>
+								</div>
+							</td>
+						</tr>
+
+						<tr class="subelement" data-bind="visible: eVote">
+							<td>
+								<div style="float: left; max-width: 500px;">
+									<spring:message code="label.EligibleLists" />
+								</div>
+								<div style="float: right; text-align: right">
+									<div>
+										<input id='minListPercent' class="form-control number min0 max100" type='number' name='survey.minListPercent' min='0' max='100' value="<esapi:encodeForHTMLAttribute>${form.survey.minListPercent}</esapi:encodeForHTMLAttribute>">
+									</div>
+								</div>
+							</td>
+						</tr>
+
+						<tr class="subelement" data-bind="visible: eVote">
+							<td>
+								<div style="float: left; max-width: 500px;">
+									<spring:message code="label.MaximumPreferentialVotes" />
+								</div>
+								<div style="float: right; text-align: right">
+									<div>
+										<input id='maxPrefVotes' class="form-control number min1 max1000" type='number' name='survey.maxPrefVotes' min='1' max='1000' value="<esapi:encodeForHTMLAttribute>${form.survey.maxPrefVotes}</esapi:encodeForHTMLAttribute>">
+									</div>
+								</div>
+							</td>
+						</tr>
+						
+						<tr class="subelement" data-bind="visible: eVote">
+							<td>
+								<div style="float: left; max-width: 500px;">
+									<spring:message code="label.NumberOfSeatsToAllocate" />
+								</div>
+								<div style="float: right; text-align: right">
+									<div>
+										<input id='seatsToAllocate' class="form-control number min1 max1000" type='number' name='survey.seatsToAllocate' min='1' max='1000' value="<esapi:encodeForHTMLAttribute>${form.survey.seatsToAllocate}</esapi:encodeForHTMLAttribute>">
+									</div>
+								</div>
+							</td>
+						</tr>
+
+					</c:if>
+
 				</table>	
 			</div>			
 			

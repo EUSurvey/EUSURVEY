@@ -1,6 +1,7 @@
 package com.ec.survey.model;
 
 import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -229,89 +230,22 @@ public class ActivityFilter implements java.io.Serializable {
 	}
 	
 	@Transient
-	public String[] getAllObjects()
-	{
-		String[] result = {"Survey","DraftSurvey","SurveyAndDraft","Results","Contribution","GuestList","Privileges","Messages","Comment"};
+	public String[] getAllObjects(){
+		String[] result = ActivityRegistry.getAllObjects();
 		Arrays.sort(result);
 		return result;
 	}
 	
 	@Transient
-	public String[] getAllEvents()
-	{
-		String[] result = {"Created",
-		"Deleted",
-		"Modified",
-		"Applied",
-		"Discarded",
-		"Opened",
-		"Saved",
-		"Added",
-		"Removed",
-		"Enabled",
-		"Disabled",
-		"Started",
-		"Requested",
-		"Returned",
-		"Submitted",
-		"Paused",
-		"Sent"};
+	public String[] getAllEvents(){
+		String[] result = ActivityRegistry.getAllEvents();
 		Arrays.sort(result);
 		return result;
 	}
 	
 	@Transient
-	public String[] getAllProperties()
-	{
-		String[] result = {"n/a","State","PendingChanges",
-		"Alias",
-		"EndNotificationState",
-		"EndNotificationValue",
-		"EndNotificationReach",
-		"ContactCreation",
-		"Security",
-		"Password",
-		"Anonymity",
-		"Privacy",
-		"Captcha",
-		"EditContribution",
-		"MultiPaging",
-		"ProgressBar",
-				"MotivationPopup",
-		"PageWiseValidation",
-		"Properties",
-		"UsefulLink",
-		"BackgroundDocument",
-		"Title",
-		"PivotLanguage",
-		"Contact",
-		"Autopublish",
-		"StartDate",
-		"EndDate",
-		"Logo",
-		"Skin",
-		"AutoNumberingSections",
-		"AutoNumberingQuestions",
-		"ElementOrder",
-		"SurveyElement",
-		"Translation",
-		"ConfirmationPage",
-		"EscapePage",
-		"PublishIndividual",
-		"PublishCharts",
-		"PublishStatistics",
-		"PublicSearch",
-		"PublishQuestionSelection",
-		"PublishAnswerSelection",
-		"ExportStatistics",
-		"ExportContent",
-		"ExportCharts",
-		"Export",
-		"Token/Contacts/Department",
-		"Invitations",
-		"WCAGCompliance",
-		"EndNotificationMessage",
-		"DeleteColumn"};
+	public String[] getAllProperties(){
+		String[] result = ActivityRegistry.getAllProperties();
 		Arrays.sort(result);
 		return result;
 	}

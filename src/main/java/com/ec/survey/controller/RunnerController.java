@@ -1059,6 +1059,7 @@ public class RunnerController extends BasicController {
 
 					if (survey.getEcasSecurity()) {
 						modelReturn.addObject("ecasurl", ecashost);
+						modelReturn.addObject("require2fa", require2fa);
 						modelReturn.addObject("ecassecurity", true);
 
 						String serviceurl = serverPrefix + "auth/surveylogin?survey=" + uidorshortname;
@@ -1787,6 +1788,7 @@ public class RunnerController extends BasicController {
 					if (survey.getEcasSecurity()) {
 						model.addObject("ecasurl", ecashost);
 						model.addObject("ecassecurity", true);
+						model.addObject("require2fa", require2fa);
 
 						if (draftid != null && draftid.length() > 0) {
 							model.addObject("serviceurl",

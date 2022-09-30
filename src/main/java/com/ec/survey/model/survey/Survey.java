@@ -157,6 +157,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isDelphi;
 	private Boolean isOPC;
 	private Boolean isECF;
+	private Boolean isEVote;
 	private Boolean showQuizIcons;
 	private Boolean showTotalScore;
 	private Boolean scoresByQuestion;
@@ -196,6 +197,11 @@ final public class Survey implements java.io.Serializable {
 	private Integer motivationTriggerTime = MOTIVATIONPOPUPTIME;
 	private String codaLink;
 	private boolean codaWaiting = false;
+	private String eVoteTemplate = "";
+	private Integer quorum = 6666;
+	private Integer minListPercent = 5;
+	private Integer maxPrefVotes;
+	private Integer seatsToAllocate;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1700,6 +1706,25 @@ final public class Survey implements java.io.Serializable {
 		this.minNumberDelphiStatistics = minNumberDelphiStatistics != null ? Math.max(minNumberDelphiStatistics, 1) : 5;
 	}
 
+	@Column(name = "EVOTE")
+	public Boolean getIsEVote() {
+		return isEVote != null ? isEVote : false;
+	}
+
+	public void setIsEVote(Boolean isEVote) {
+		this.isEVote = isEVote != null ? isEVote : false;
+	}
+	
+	@Column(name = "EVOTETEMPLATE")
+	public String geteVoteTemplate() {
+		return eVoteTemplate;
+	}
+
+	public void seteVoteTemplate(String eVoteTemplate) {
+		this.eVoteTemplate = eVoteTemplate;
+	}
+	
+	
 	@Transient
 	public String serialize(boolean elementOrderOnly) {
 		StringBuilder result = new StringBuilder();
@@ -1858,6 +1883,12 @@ final public class Survey implements java.io.Serializable {
 		copy.showDocsOnUnavailabilityPage = showDocsOnUnavailabilityPage;
 		copy.isOPC = isOPC;
 		copy.isECF = isECF;
+		copy.isEVote = isEVote;
+		copy.eVoteTemplate = eVoteTemplate;
+		copy.quorum = quorum;
+		copy.minListPercent = minListPercent;
+		copy.maxPrefVotes = maxPrefVotes;
+		copy.seatsToAllocate = seatsToAllocate;
 		copy.setAllowedContributionsPerUser(allowedContributionsPerUser);
 		copy.setIsUseMaxNumberContribution(isUseMaxNumberContribution);
 		copy.setIsUseMaxNumberContributionLink(isUseMaxNumberContributionLink);
@@ -2666,6 +2697,27 @@ final public class Survey implements java.io.Serializable {
 		String[] arr = timeLimit.split(":");
 		return Integer.parseInt(arr[0]) * 3600 + Integer.parseInt(arr[1]) * 60 + Integer.parseInt(arr[2]);		
 	}
+	
+	@Transient
+	public int getMaxCandidatesCount()
+	{
+		if (!getIsEVote()) {
+			return 0;
+		}
+		
+		int result = 0;
+		
+		for (Question q : getQuestions()) {
+			if (q instanceof MultipleChoiceQuestion) {
+				int size = ((MultipleChoiceQuestion) q).getPossibleAnswers().size();
+				if (size > result) {
+					result = size;
+				}
+			}
+		}
+		
+		return result;
+	}
 
 	@Column(name = "PROGRESSBAR")
 	public Boolean getProgressBar() {
@@ -2719,5 +2771,57 @@ final public class Survey implements java.io.Serializable {
 
 	public void setCodaWaiting(Boolean codaWaiting) {
 		this.codaWaiting = codaWaiting != null ? codaWaiting : false;
+	}
+
+	@Column(name = "QUORUM")
+	public Integer getQuorum() {
+		return quorum;
+	}
+
+	public void setQuorum(Integer quorum) {
+		this.quorum = quorum != null ? quorum : 20000;
+	}
+
+	@Column(name = "MINLISTPER")
+	public Integer getMinListPercent() {
+		return minListPercent;
+	}
+
+	public void setMinListPercent(Integer minListPercent) {
+		this.minListPercent = minListPercent != null ? minListPercent : 5;
+	}
+
+	public Integer getMaxPrefVotes() {
+		if (maxPrefVotes == null) {
+			if (eVoteTemplate != null) {
+				if (eVoteTemplate.equals("b")) {
+					maxPrefVotes = 27;
+				} else {
+					maxPrefVotes = 20;
+				}
+			}
+		}
+		return maxPrefVotes;
+	}
+
+	public void setMaxPrefVotes(Integer maxPrefVotes) {
+		this.maxPrefVotes = maxPrefVotes;
+	}
+
+	public Integer getSeatsToAllocate() {
+		if (seatsToAllocate == null) {
+			if (eVoteTemplate != null) {
+				if (eVoteTemplate.equals("b")) {
+					seatsToAllocate = 27;
+				} else {
+					seatsToAllocate = 20;
+				}
+			}
+		}
+		return seatsToAllocate;
+	}
+
+	public void setSeatsToAllocate(Integer seatsToAllocate) {
+		this.seatsToAllocate = seatsToAllocate;
 	}
 }

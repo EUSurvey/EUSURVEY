@@ -32,6 +32,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.hibernate.*;
+import org.hibernate.query.NativeQuery;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -409,7 +410,7 @@ public class XlsExportCreator extends ExportCreator {
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
 
-			SQLQuery query = session.createSQLQuery(sql);
+			NativeQuery query = session.createSQLQuery(sql);
 
 			query.setReadOnly(true);
 

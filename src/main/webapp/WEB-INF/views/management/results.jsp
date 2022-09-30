@@ -115,6 +115,17 @@
 	<script type="text/javascript"> 
 		$(function() {
 			
+			$("#form-menu-tab").addClass("active");
+			$("#results-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
+
+			<c:if test="${form.survey.isEVote}">
+				$(window).on('resize', doResize);
+				sneaky = new ScrollSneak(location.hostname);
+				$("#results-table").addClass('hidden');
+				$('[data-toggle="tooltip"]').tooltip();
+				return;
+			</c:if>
+
 			loadMore();
 			
 			<c:if test="${active eq true}">	
@@ -156,9 +167,6 @@
 			<c:if test="${columnDeleted != null}">
 				showSuccess('<spring:message code="message.ColumnDeleted" />');
 			</c:if>
-			
-			$("#form-menu-tab").addClass("active");
-			$("#results-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
 			
 			if ('${resultType}' != 'content')
 			{
@@ -206,7 +214,8 @@
 			$(window).on('resize', doResize);
 			
 			initCheckAll();
-			$('[data-toggle="tooltip"]').tooltip(); 
+
+			$('[data-toggle="tooltip"]').tooltip();
 
 		});
 		
@@ -426,8 +435,7 @@
 					hideECF2();
 					hideECF3();
 					showECF();
-					break;
-					
+					break;					
 				case 'ecf2':
 					hideECF();
 					hideECF3();
@@ -436,16 +444,39 @@
 					hideContent();
 					hideStatistics();
 					showECF2();
-					break;
-				
+					break;				
 				case 'ecf3':
 					hideECF();
 					hideECF2();
-					hideStatistics();
 					hideContent();
+					hideStatistics();
 					hideStatisticsQuiz();
 					hideStatisticsDelphi();
 					showECF3();
+					break;
+				case 'quorum':
+					$('#results-quorum').show();
+					$('#results-seats').hide();
+					$('#results-test').hide();
+					$('#results-statistics-quorum-link').removeClass("btn-default").addClass("btn-primary");
+					$('#results-statistics-seats-link').addClass("btn-default").removeClass("btn-primary");
+					$('#results-statistics-test-link').addClass("btn-default").removeClass("btn-primary");
+					break;
+				case 'seats':
+					$('#results-quorum').hide();
+					$('#results-seats').show();
+					$('#results-test').hide();
+					$('#results-statistics-seats-link').removeClass("btn-default").addClass("btn-primary");
+					$('#results-statistics-quorum-link').addClass("btn-default").removeClass("btn-primary");
+					$('#results-statistics-test-link').addClass("btn-default").removeClass("btn-primary");
+					break;
+				case 'test':
+					$('#results-test').show();
+					$('#results-quorum').hide();
+					$('#results-seats').hide();
+					$('#results-statistics-seats-link').addClass("btn-default").removeClass("btn-primary");
+					$('#results-statistics-quorum-link').addClass("btn-default").removeClass("btn-primary");
+					$('#results-statistics-test-link').removeClass("btn-default").addClass("btn-primary");
 					break;
 			}
 			
@@ -603,12 +634,12 @@
 			$("#results-ecf3").addClass("btn-primary");
 			$("#ecf-results3").removeClass('hidden');
 			$("#ecf3-export-buttons").removeClass('hidden');
-   
+
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
 		}
-		
+
 		function hideECF3() {
 			console.log('hideECF3');
 			$("#results-table").removeClass('hidden');
@@ -960,7 +991,6 @@
 			</c:if>
 			
 			$("#resultsForm").on("submit",function() {
-				
 				var scrollLeft = $("#scrollarea").scrollLeft();
 				if (scrollLeft == 0) scrollLeft = $("#scrollareaheader").scrollLeft();
 				if (localStorage != null)
@@ -1013,147 +1043,170 @@
 		<div class="fixedtitleform" style="padding-left: 10px; padding-right: 10px; padding-bottom:7px; border-bottom: 0px solid #ddd;">
 					
 			<div style="vertical-align: middle; margin-left: auto; margin-right: auto; margin-top: 10px;">		
-				<div style="float: left; margin-top: 0px; margin-bottom: 0px;">		
-					<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Results" />" id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
-					<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Statistics" />" id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
-					<c:if test="${form.survey.isQuiz}">
-						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.QuizResultPage" />" id="results-statistics-quiz-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
-					</c:if>
-					<c:if test="${form.survey.isDelphi}">
-						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.CompletionRate" />" id="results-statistics-delphi-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-delphi');"><img src="${contextpath}/resources/images/icons/24/delphi.png" /></a>
-					</c:if>
-					<c:if test="${form.survey.isECF}">
-						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results" />" id="results-ecf" class="btn btn-default btn-xs" onclick="switchTo('ecf');"><span class="glyphicon glyphicon-user" style="font-size: 19px; color: #333"></span></a>
-						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results2" />" id="results-ecf2" class="btn btn-default btn-xs" onclick="switchTo('ecf2');"><span class="glyphicon glyphicon-eye-open" style="font-size: 19px; color: #333"></span></a>
-						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results3" />" id="results-ecf3" class="btn btn-default btn-xs" onclick="switchTo('ecf3');"><span class="glyphicon glyphicon-globe" style="font-size: 19px; color: #333"></span></a>
-					</c:if>
-					<c:if test="${form.codaEnabled}">
-						<c:choose>
-						<c:when test="${form.survey.codaWaiting}" >
-							<button type="button" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="message.CodaRequestSuccess" />" id="coda-link-button" class="btn btn-default disabled" ><spring:message code="label.CodaCreateAnalytics" /></button>
-						</c:when>
-						<c:when test="${form.survey.codaLink != null && form.survey.codaLink.length() > 0}">
-							<a href="${form.survey.codaLink}" target="_blank" data-placement="bottom" id="coda-link-a" class="btn btn-default" ><spring:message code="label.CodaOpenAnalytics" /></a>
+				<div style="float: left; margin-top: 0px; margin-bottom: 0px;">
+					<c:choose>
+						<c:when test="${form.survey.isEVote}">
+							<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.QuorumPage" />" id="results-statistics-quorum-link" class="btn btn-default btn-primary" onclick="switchTo('quorum');"><img src="${contextpath}/resources/images/icons/24/quorum.png" /></a>
+							
+							<c:if test="${!published}">
+								<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Results" />" id="results-statistics-seats-link" style="display: none" class="btn btn-default btn-default" onclick="switchTo('seats');"><img src="${contextpath}/resources/images/icons/24/people.png" /></a>
+							
+								<c:if test="${USER.getGlobalPrivilegeValue('FormManagement') == 2}">
+									<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Test" />" id="results-statistics-test-link" style="width: 50px; height: 38px; color: #555;" class="btn btn-default btn-default" onclick="switchTo('test');">
+										<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" style="vertical-align: middle" fill="currentColor" class="bi bi-clipboard2-check" viewBox="0 0 16 16">
+										  <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5h3Z"/>
+										  <path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-12Z"/>
+										  <path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3Z"/>
+										</svg>
+									</a>
+								</c:if>							
+							</c:if>			
 						</c:when>
 						<c:otherwise>
-							<c:if test="${form.survey.owner.id == userid}">
-								<button type="button" onclick="$('#request-coda-dashboard-dialog').modal();" data-placement="bottom" id="coda-link-button" class="btn btn-default" ><spring:message code="label.CodaCreateAnalytics" /></button>
+							<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Results" />" id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
+							<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Statistics" />" id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
+							<c:if test="${form.survey.isQuiz}">
+								<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.QuizResultPage" />" id="results-statistics-quiz-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
+							</c:if>
+							<c:if test="${form.survey.isDelphi}">
+								<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.CompletionRate" />" id="results-statistics-delphi-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-delphi');"><img src="${contextpath}/resources/images/icons/24/delphi.png" /></a>
+							</c:if>
+							<c:if test="${form.survey.isECF}">
+								<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results" />" id="results-ecf" class="btn btn-default btn-xs" onclick="switchTo('ecf');"><span class="glyphicon glyphicon-user" style="font-size: 19px; color: #333"></span></a>
+								<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results2" />" id="results-ecf2" class="btn btn-default btn-xs" onclick="switchTo('ecf2');"><span class="glyphicon glyphicon-eye-open" style="font-size: 19px; color: #333"></span></a>
+								<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results3" />" id="results-ecf3" class="btn btn-default btn-xs" onclick="switchTo('ecf3');"><span class="glyphicon glyphicon-globe" style="font-size: 19px; color: #333"></span></a>
+							</c:if>
+							<c:if test="${form.codaEnabled}">
+								<c:choose>
+								<c:when test="${form.survey.codaWaiting}" >
+									<button type="button" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="message.CodaRequestSuccess" />" id="coda-link-button" class="btn btn-default disabled" ><spring:message code="label.CodaCreateAnalytics" /></button>
+								</c:when>
+								<c:when test="${form.survey.codaLink != null && form.survey.codaLink.length() > 0}">
+									<a href="${form.survey.codaLink}" target="_blank" data-placement="bottom" id="coda-link-a" class="btn btn-default" ><spring:message code="label.CodaOpenAnalytics" /></a>
+								</c:when>
+								<c:otherwise>
+									<c:if test="${form.survey.owner.id == userid}">
+										<button type="button" onclick="$('#request-coda-dashboard-dialog').modal();" data-placement="bottom" id="coda-link-button" class="btn btn-default" ><spring:message code="label.CodaCreateAnalytics" /></button>
+									</c:if>
+								</c:otherwise>
+								</c:choose>
 							</c:if>
 						</c:otherwise>
-						</c:choose>
-					</c:if>
+					</c:choose>
 				</div>
 				
-				<div style="float: left; margin-top: 0px; margin-right: 20px;">
-					<select onchange="$('#resultsForm').submit();" class="form-control" name="results-source" id="results-source" style="width: auto; margin-bottom: 0px; margin-left: 10px;">
-						<c:choose>
-							<c:when test="${!sessioninfo.owner.equals(USER.id) && USER.formPrivilege < 2 && USER.getLocalPrivilegeValue('AccessResults') < 1 && USER.getResultAccess() == null}">
+				<div style="float: left; margin-top: 0px; margin-right: 20px;" id="results-source-dropdown">
+					<c:if test="${!form.survey.isEVote}">
+						<select onchange="$('#resultsForm').submit();" class="form-control" name="results-source" id="results-source" style="width: auto; margin-bottom: 0px; margin-left: 10px;">
+							<c:choose>
+								<c:when test="${!sessioninfo.owner.equals(USER.id) && USER.formPrivilege < 2 && USER.getLocalPrivilegeValue('AccessResults') < 1 && USER.getResultAccess() == null}">
 									<option selected="selected" value="draft"><spring:message code="label.TestAnswers" /></option>
-							</c:when>						
-							<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 ||
-											USER.getLocalPrivilegeValue('FormManagement') > 1 ||
-											USER.getLocalPrivilegeValue('AccessResults') > 0 ||
-											USER.getResultAccess() != null}">											
-								<c:choose>
-									<c:when test="${!form.getSurvey().getIsDraft() || form.getSurvey().getIsPublished()}">
-										<option value="draft"><spring:message code="label.TestAnswers" /></option>
-										<option selected="selected" value="active"><spring:message code="label.Contributions" /></option>
-										<option value="allanswers"><spring:message code="label.ContributionsIncludingDeletedQuestions" /></option>
-									</c:when>
-									<c:otherwise>
-										<option selected="selected" value="draft"><spring:message code="label.TestAnswers" /></option>
-									</c:otherwise>
-								</c:choose>
+								</c:when>
+								<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 ||
+												USER.getLocalPrivilegeValue('FormManagement') > 1 ||
+												USER.getLocalPrivilegeValue('AccessResults') > 0 ||
+												USER.getResultAccess() != null}">
+									<c:choose>
+										<c:when test="${!form.getSurvey().getIsDraft() || form.getSurvey().getIsPublished()}">
+											<option value="draft"><spring:message code="label.TestAnswers" /></option>
+											<option selected="selected" value="active"><spring:message code="label.Contributions" /></option>
+											<option value="allanswers"><spring:message code="label.ContributionsIncludingDeletedQuestions" /></option>
+										</c:when>
+										<c:otherwise>
+											<option selected="selected" value="draft"><spring:message code="label.TestAnswers" /></option>
+										</c:otherwise>
+									</c:choose>
+								</c:when>
+								<c:otherwise>
+									<option selected="selected" value="draft"><spring:message code="label.TestAnswers" /></option>
+								</c:otherwise>
+							</c:choose>
+						</select>
+					</c:if>
+				</div>
+				<div style="margin-top: 2px; margin-right: 10px; float: right;" id="results-view-settings">
+					<c:if test="${!form.survey.isEVote}">
+						<a class="btn btn-default" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><spring:message code="label.Settings" /></a>
+
+						<c:choose>
+							<c:when test="${resultsShowAssignedValues}">
+								<input type="checkbox" style="display: none" id="show-assigned-values" checked="checked" />
 							</c:when>
 							<c:otherwise>
-								<option selected="selected" value="draft"><spring:message code="label.TestAnswers" /></option>			
+								<input type="checkbox" style="display: none" id="show-assigned-values" />
 							</c:otherwise>
 						</c:choose>
-					</select>
-				</div>
-				<div style="margin-top: 2px; margin-right: 10px; float: right;">
-					<a class="btn btn-default" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><spring:message code="label.Settings" /></a>
-					
-					<c:choose>
-						<c:when test="${resultsShowAssignedValues}">
-							<input type="checkbox" style="display: none" id="show-assigned-values" checked="checked" />
-						</c:when>
-						<c:otherwise>
-							<input type="checkbox" style="display: none" id="show-assigned-values" />
-						</c:otherwise>
-					</c:choose>
-					
-					 <c:choose>
-					 	<c:when test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-							<input checked="checked" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
-						</c:when>
-						<c:otherwise>
-							<input value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
-						</c:otherwise>
-					</c:choose>	
-					
-					<span id="content-export-buttons">
-						<span class="deactivatedexports">
-							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
-						</span>
-						<span class="activatedexports hideme">
-							<a class="btn btn-default" onclick="showExportDialog('Content')"><spring:message code="label.Export" /></a>
-						</span>					
-					</span>
-					
-					<span id="statistics-export-buttons" class="hidden">
-						<c:choose>
-							<c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
-								<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+
+						 <c:choose>
+						 	<c:when test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
+								<input checked="checked" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
 							</c:when>
 							<c:otherwise>
-								<span class="deactivatedexports">
-									<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
-								</span>
-								<span class="activatedexports hideme">
-									<a class="btn btn-default" onclick="showExportDialog('Statistics')"><spring:message code="label.Export" /></a>
-								</span>
+								<input value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
 							</c:otherwise>
-						</c:choose>					
-					</span>
-					
-					<span id="statistics-quiz-export-buttons" class="hidden">
-						<span class="deactivatedexports">
-							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
+						</c:choose>
+
+						<span id="content-export-buttons">
+							<span class="deactivatedexports">
+								<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+							</span>
+							<span class="activatedexports hideme">
+								<a class="btn btn-default" onclick="showExportDialog('Content')"><spring:message code="label.Export" /></a>
+							</span>
 						</span>
-						<span class="activatedexports hideme">
-							<a class="btn btn-default" onclick="showExportDialog('StatisticsQuiz')"><spring:message code="label.Export" /></a>
-						</span>		
-					</span>
-					
-					<span id="ecf1-export-buttons" class="hidden">
-						<span class="deactivatedexports">
-							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
+
+						<span id="statistics-export-buttons" class="hidden">
+							<c:choose>
+								<c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
+									<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+								</c:when>
+									<c:otherwise>
+									<span class="deactivatedexports">
+										<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+									</span>
+									<span class="activatedexports hideme">
+										<a class="btn btn-default" onclick="showExportDialog('Statistics')"><spring:message code="label.Export" /></a>
+									</span>
+								</c:otherwise>
+							</c:choose>
 						</span>
-						<span class="activatedexports hideme">
-							<a class="btn btn-default" onclick="showExportDialog('ECFGlobalResults')"><spring:message code="label.Export" /></a>
-						</span>		
-					</span>
-					
-					<span id="ecf2-export-buttons" class="hidden">
-						<span class="deactivatedexports">
-							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
+
+						<span id="statistics-quiz-export-buttons" class="hidden">
+							<span class="deactivatedexports">
+								<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+							</span>
+							<span class="activatedexports hideme">
+								<a class="btn btn-default" onclick="showExportDialog('StatisticsQuiz')"><spring:message code="label.Export" /></a>
+							</span>
 						</span>
-						<span class="activatedexports hideme">
-							<a class="btn btn-default" onclick="showExportDialog('ECFProfileResults')"><spring:message code="label.Export" /></a>
-						</span>		
-					</span>
-					
-					<span id="ecf3-export-buttons" class="hidden">
-						<span class="deactivatedexports">
-							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
+
+						<span id="ecf1-export-buttons" class="hidden">
+							<span class="deactivatedexports">
+								<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+							</span>
+							<span class="activatedexports hideme">
+								<a class="btn btn-default" onclick="showExportDialog('ECFGlobalResults')"><spring:message code="label.Export" /></a>
+							</span>
 						</span>
-						<span class="activatedexports hideme">
-							<a class="btn btn-default" onclick="showExportDialog('ECFOrganizationResults')"><spring:message code="label.Export" /></a>
-						</span>		
-					</span>
-					
-					
+
+						<span id="ecf2-export-buttons" class="hidden">
+							<span class="deactivatedexports">
+								<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+							</span>
+							<span class="activatedexports hideme">
+								<a class="btn btn-default" onclick="showExportDialog('ECFProfileResults')"><spring:message code="label.Export" /></a>
+							</span>
+						</span>
+
+						<span id="ecf3-export-buttons" class="hidden">
+							<span class="deactivatedexports">
+								<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+							</span>
+							<span class="activatedexports hideme">
+								<a class="btn btn-default" onclick="showExportDialog('ECFOrganizationResults')"><spring:message code="label.Export" /></a>
+							</span>
+						</span>
+					</c:if>
 				</div>	
 				
 				<div style="clear: both"></div>	
@@ -1163,7 +1216,7 @@
 		</div>			
 		
 		<div class="fullpageform" style="padding-top: 170px; padding-bottom: 0px;">
-			<div>			
+			<div>
 				<input type="hidden" id="message" name="message" />
 				<input type="hidden" id="resultType" name="resultType" />
 				<input type="hidden" name="active" value="${active}" />
@@ -1172,12 +1225,24 @@
 				
 				<c:set var="questions" value="${form.getSurvey().getQuestions()}" />			
 				<c:set var="pagingElementName" value="Answerset" />		
-				
-				<%@ include file="results-content.jsp" %>					
+
+				<c:if test="${form.survey.isEVote}">
+					<%@ include file="results-quorum.jsp" %>
+					
+					<c:if test="${!published}">
+						<%@ include file="results-seats.jsp" %>
+						
+						<c:if test="${USER.getGlobalPrivilegeValue('FormManagement') == 2}">
+							<%@ include file="results-test.jsp" %>
+						</c:if>					
+					</c:if>					
+					
+				</c:if>
+				<%@ include file="results-content.jsp" %>
 				<%@ include file="results-statistics.jsp" %>
 				<%@ include file="results-statistics-quiz.jsp" %>
 				<%@ include file="results-statistics-delphi.jsp" %>
-				<%@ include file="results-ajax.jsp" %>	
+				<%@ include file="results-ajax.jsp" %>
 				<c:if test="${form.survey.isECF}">
 					<%@ include file="results-ecf.jsp" %>
 					<%@ include file="results-ecf2.jsp" %>

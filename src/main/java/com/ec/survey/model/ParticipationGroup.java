@@ -87,6 +87,8 @@ public class ParticipationGroup {
 			return "Contacts";
 		case Token:
 			return "Token";
+		case VoterFile:
+			return "VoterFile";
 		}
 		
 		return "unknown";

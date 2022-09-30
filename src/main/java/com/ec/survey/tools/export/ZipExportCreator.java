@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -67,7 +68,7 @@ public class ZipExportCreator extends ExportCreator {
 		
 		IOUtils.copy(new FileInputStream(temp), outputStream);
 		
-		activityService.log(314, null, null, export.getUserId(), export.getSurvey().getUniqueId());
+		activityService.log(ActivityRegistry.ID_UPLOADED_ELEMENTS_DOWNLOAD, null, null, export.getUserId(), export.getSurvey().getUniqueId());
 	}
 	
 	@Override

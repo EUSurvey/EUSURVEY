@@ -10,9 +10,10 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.DomainUpdater;
 import com.ec.survey.tools.SkinCreator;
 import com.ec.survey.tools.SurveyCreator;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.IOUtils;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +49,37 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+
+
+	@Transactional
+	public void step106() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		ensureActivities(session,
+				ActivityRegistry.ID_GUEST_LIST_VOTER_ADDED,
+				ActivityRegistry.ID_GUEST_LIST_VOTER_REMOVED,
+				ActivityRegistry.ID_EVOTE_QUORUM,
+				ActivityRegistry.ID_EVOTE_LIST_PORTION,
+				ActivityRegistry.ID_EVOTE_NUM_PREFERENTIAL_VOTES,
+				ActivityRegistry.ID_EVOTE_SEATS
+		);
+
+		status.setDbversion(106);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step105() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		ensureActivity(ActivityRegistry.ID_MOTIVATION_POPUP, session); //This one is older but was never activated
+		ensureActivity(ActivityRegistry.ID_OPEN_QUORUM, session);
+
+		status.setDbversion(105);
+		session.saveOrUpdate(status);
+	}
 
 	@Transactional
 	public void step104() {
@@ -91,14 +123,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("124ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("124ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_PROGRESS_BAR, session);
 		
 		status.setDbversion(102);
 		session.saveOrUpdate(status);
@@ -121,14 +146,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("315ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("315ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_BLANK_ANSWERS, session);
 		
 		status.setDbversion(100);
 		session.saveOrUpdate(status);
@@ -139,22 +157,8 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("801ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("801ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
-		existing = settingsService.get("802ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("802ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_COMMENT_EDITED, session);
+		ensureActivity(ActivityRegistry.ID_COMMENT_DELETED, session);
 
 		status.setDbversion(99);
 		session.saveOrUpdate(status);
@@ -279,7 +283,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("UPDATE LANGUAGES SET LANGUAGE_OFFI = 1 WHERE LANGUAGE_CODE = 'HR'");
+		NativeQuery query = session.createSQLQuery("UPDATE LANGUAGES SET LANGUAGE_OFFI = 1 WHERE LANGUAGE_CODE = 'HR'");
 		query.executeUpdate();
 
 		status.setDbversion(94);
@@ -333,7 +337,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE SETTINGS MODIFY SETTINGS_VALUE TEXT");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE SETTINGS MODIFY SETTINGS_VALUE TEXT");
 		query.executeUpdate();
 
 		String newReportText = "<p>The following survey:<br />" + "<table>"
@@ -524,14 +528,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("123ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("123ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_OWNER, session);
 
 		status.setDbversion(83);
 		session.saveOrUpdate(status);
@@ -651,7 +648,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("UPDATE SURVEYS SET SURVEYSKIN = 1 WHERE SURVEYSKIN is null");
+		NativeQuery query = session.createSQLQuery("UPDATE SURVEYS SET SURVEYSKIN = 1 WHERE SURVEYSKIN is null");
 		query.executeUpdate();
 
 		User admin;
@@ -694,7 +691,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from DRAFTS where Key_name = 'IDX_DRAFTS_DRAFT_UID'";
 		final String createkIndex = "CREATE INDEX IDX_DRAFTS_DRAFT_UID  ON DRAFTS (DRAFT_UID);";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -742,7 +739,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from VALIDCODE where Key_name = 'IDX_VALIDCODE_SURVEY_UID'";
 		final String createkIndex = "CREATE INDEX IDX_VALIDCODE_SURVEY_UID on VALIDCODE (VALIDCODE_SURVEYUID )";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -759,7 +756,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from LANGUAGES where Key_name = 'IDX_LANGUAGES_LANGUAGE_CODE'";
 		final String createkIndex = "CREATE INDEX IDX_LANGUAGES_LANGUAGE_CODE on LANGUAGES (LANGUAGE_CODE)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			logger.info(
 					"SchemaService Step71 Execute SQL CREATE INDEX IDX_LANGUAGES_LANGUAGE_CODE on LANGUAGES (LANGUAGE_CODE)");
@@ -816,14 +813,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("507ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("507ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_GUEST_LIST_CONTACT_CHANGED, session);
 
 		status.setDbversion(70);
 		session.saveOrUpdate(status);
@@ -837,7 +827,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from FILES where Key_name = 'IDX_FILE_UID'";
 		final String createkIndex = "CREATE INDEX IDX_FILE_UID on FILES (FILE_UID)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -854,7 +844,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from ARCHIVE where Key_name = 'IDX_ARCHIVE_FINISHED'";
 		final String createkIndex = "CREATE INDEX IDX_ARCHIVE_FINISHED on ARCHIVE (ARCHIVE_FINISHED, ARCHIVE_ERROR)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -868,7 +858,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session
+		NativeQuery query = session
 				.createSQLQuery("UPDATE MESSAGE_TYPES SET MT_CSS = 'message-success' WHERE MT_CSS = 'alert-success';");
 		query.executeUpdate();
 
@@ -891,7 +881,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from Survey_backgroundDocuments where Key_name = 'IDX_BACK_DOCS'";
 		final String createkIndex = "CREATE INDEX IDX_BACK_DOCS on Survey_backgroundDocuments (BACKGROUNDDOCUMENTS)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -908,7 +898,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from ELEMENTS where Key_name = 'IDX_ELEMENT_URL'";
 		final String createkIndex = "CREATE INDEX IDX_ELEMENT_URL on ELEMENTS (URL)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -925,7 +915,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from ACTIVITY where Key_name = 'IDX_SURVEY_UID'";
 		final String createkIndex = "CREATE INDEX IDX_SURVEY_UID on ACTIVITY (ACTIVITY_SUID)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -940,7 +930,7 @@ public class SchemaService extends BasicService {
 		Status status = getStatus();
 
 		try {
-			SQLQuery query = session.createSQLQuery(
+			NativeQuery query = session.createSQLQuery(
 					"UPDATE ARCHIVE SET ARCHIVE_ERROR = ACTIVITY_ERROR, ARCHIVE_FINISHED = ACTIVITY_FINISHED, ARCHIVE_SLANGS = ACTIVITY_SLANGS, ARCHIVE_SOWNER = ACTIVITY_SOWNER, ARCHIVE_SREPLIES = ACTIVITY_SREPLIES, ARCHIVE_SSHORTNAME = ACTIVITY_SSHORTNAME, ARCHIVE_STITLE = ACTIVITY_STITLE, ARCHIVE_SUID = ACTIVITY_SUID, ARCHIVE_USER = ACTIVITY_USER;");
 			query.executeUpdate();
 
@@ -966,22 +956,8 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("313ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("313ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
-		existing = settingsService.get("314ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("314ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_UPLOADED_ELEMENTS_PUBLISH, session);
+		ensureActivity(ActivityRegistry.ID_UPLOADED_ELEMENTS_DOWNLOAD, session);
 
 		status.setDbversion(62);
 		session.saveOrUpdate(status);
@@ -992,14 +968,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("312ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("312ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_ACTIVITY_EXPORT, session);
 
 		status.setDbversion(61);
 		session.saveOrUpdate(status);
@@ -1031,14 +1000,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("122ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("122ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_WCAG_COMPLIANCE, session);
 
 		status.setDbversion(59);
 		session.saveOrUpdate(status);
@@ -1049,16 +1011,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("228ActivityEnabled");
-		if (existing == null) {
-
-			Setting s = new Setting();
-			s.setKey("228ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-
-		}
+		ensureActivity(ActivityRegistry.ID_MACHINE_TRANSLATION, session);
 
 		status.setDbversion(58);
 		session.saveOrUpdate(status);
@@ -1069,28 +1022,9 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("404ActivityEnabled");
-		if (existing == null) {
-
-			Setting s = new Setting();
-			s.setKey("404ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-
-			s = new Setting();
-			s.setKey("405ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-
-			s = new Setting();
-			s.setKey("406ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-
-		}
+		ensureActivity(ActivityRegistry.ID_TEST_SUBMIT, session);
+		ensureActivity(ActivityRegistry.ID_TEST_DELETE, session);
+		ensureActivity(ActivityRegistry.ID_TEST_EDIT, session);
 
 		status.setDbversion(57);
 		session.saveOrUpdate(status);
@@ -1126,7 +1060,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from ANSWERS_SET where Key_name = 'IDX_SURVEYID_DATE'";
 		final String createIndex = "ALTER TABLE ANSWERS_SET ADD INDEX IDX_SURVEYID_DATE (SURVEY_ID ASC, ANSWER_SET_DATE ASC)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createIndex).executeUpdate();
 		}
@@ -1160,7 +1094,7 @@ public class SchemaService extends BasicService {
 	public void step53() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ECASGROUPS CHANGE GRPS GRPS VARCHAR(255) BINARY");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE ECASGROUPS CHANGE GRPS GRPS VARCHAR(255) BINARY");
 		query.executeUpdate();
 
 		status.setDbversion(53);
@@ -1176,7 +1110,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from EXPORTS where Key_name = 'CHECKNEW'";
 		final String createIndex = "ALTER TABLE EXPORTS ADD INDEX CHECKNEW (USER_ID ASC, EXPORT_STATE ASC, EXPORT_NOT ASC)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createIndex).executeUpdate();
 		}
@@ -1191,7 +1125,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("UPDATE ATTENDEE SET OWNER_ID = 0 WHERE OWNER_ID IS NULL");
+		NativeQuery query = session.createSQLQuery("UPDATE ATTENDEE SET OWNER_ID = 0 WHERE OWNER_ID IS NULL");
 		query.executeUpdate();
 
 		status.setDbversion(51);
@@ -1235,7 +1169,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery deleteQuery = session.createSQLQuery("DELETE FROM Statistics_requestedRecords;");
+		NativeQuery deleteQuery = session.createSQLQuery("DELETE FROM Statistics_requestedRecords;");
 		deleteQuery.executeUpdate();
 		deleteQuery = session.createSQLQuery("DELETE FROM Statistics_requestedRecordsPercent;");
 		deleteQuery.executeUpdate();
@@ -1281,7 +1215,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from " + table + " where Key_name = '" + index + "'";
 		final String createIndex = "ALTER TABLE " + table + " DROP INDEX " + index + ";";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (!query.list().isEmpty()) {
 			session.createSQLQuery(createIndex).executeUpdate();
 		}
@@ -1292,11 +1226,11 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery deleteQuery = session
+		NativeQuery deleteQuery = session
 				.createSQLQuery("UPDATE ANSWERS_SET SET UNIQUECODE = UUID() WHERE length(UNIQUECODE) > 36");
 		deleteQuery.executeUpdate();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ANSWERS_SET MODIFY UNIQUECODE VARCHAR(36)");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE ANSWERS_SET MODIFY UNIQUECODE VARCHAR(36)");
 		query.executeUpdate();
 
 		query = session.createSQLQuery("ALTER TABLE SURVEYS MODIFY TITLE TEXT");
@@ -1437,7 +1371,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from ANSWERS where Key_name = 'v_ft_idx'";
 		final String createIndex = "ALTER TABLE ANSWERS ADD FULLTEXT INDEX v_ft_idx (VALUE);";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createIndex).executeUpdate();
 		}
@@ -1455,7 +1389,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from ANSWERS_SET where Key_name = 'INX_RESPONDER_EMAIL'";
 		final String createkIndex = "ALTER TABLE ANSWERS_SET	ADD INDEX INX_RESPONDER_EMAIL (RESPONDER_EMAIL);";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -1473,7 +1407,7 @@ public class SchemaService extends BasicService {
 		final String checkIndexExists = "show index from ELEMENTS where Key_name = 'IDX_ELEMENT_UID'";
 		final String createkIndex = "CREATE INDEX IDX_ELEMENT_UID on ELEMENTS (ELEM_UID)";
 
-		SQLQuery query = session.createSQLQuery(checkIndexExists);
+		NativeQuery query = session.createSQLQuery(checkIndexExists);
 		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
@@ -1511,7 +1445,7 @@ public class SchemaService extends BasicService {
 		Status status = getStatus();
 
 		try {
-			SQLQuery queryCreateIndex = session.createSQLQuery("ALTER TABLE ELEMENTS_FILES DROP INDEX files_FILE_ID;");
+			NativeQuery queryCreateIndex = session.createSQLQuery("ALTER TABLE ELEMENTS_FILES DROP INDEX files_FILE_ID;");
 			queryCreateIndex.executeUpdate();
 		} catch (Exception e) {
 			// the index only exists for older installations
@@ -1526,7 +1460,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery queryCreateIndex = session
+		NativeQuery queryCreateIndex = session
 				.createSQLQuery("ALTER TABLE ANSWERS_SET ADD INDEX INX_ANSWER_SET_INVID (ANSWER_SET_INVID)");
 		queryCreateIndex.executeUpdate();
 		status.setDbversion(37);
@@ -1538,14 +1472,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get("227ActivityEnabled");
-		if (existing == null) {
-			Setting s = new Setting();
-			s.setKey("227ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
-		}
+		ensureActivity(ActivityRegistry.ID_TRANSLATION_MODIFIED, session);
 
 		status.setDbversion(36);
 		session.saveOrUpdate(status);
@@ -1584,13 +1511,8 @@ public class SchemaService extends BasicService {
 		enabled.setFormat("true / false");
 		session.saveOrUpdate(enabled);
 
-		List<Integer> ids = Setting.ActivityLoggingIds();
-		for (Integer i : ids) {
-			Setting s = new Setting();
-			s.setKey(i + "ActivityEnabled");
-			s.setValue("true");
-			s.setFormat("true / false");
-			session.saveOrUpdate(s);
+		for (Integer i : ActivityRegistry.getAllActivityIds()) {
+			ensureActivity(i, session);
 		}
 
 		status.setDbversion(34);
@@ -1602,11 +1524,11 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ATTRIBUTE MODIFY ATTRIBUTE_VALUE LONGTEXT");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE ATTRIBUTE MODIFY ATTRIBUTE_VALUE LONGTEXT");
 		query.executeUpdate();
 
 		// create indexes
-		SQLQuery queryCreateIndex = session
+		NativeQuery queryCreateIndex = session
 				.createSQLQuery("CREATE INDEX INX_DEP_ORG ON ECASUSERS(USER_DEPARTMENT ASC, USER_ORGANISATION ASC)");
 		queryCreateIndex.executeUpdate();
 
@@ -1627,7 +1549,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE Statistics_totalsPercent MODIFY totalsPercent DOUBLE");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE Statistics_totalsPercent MODIFY totalsPercent DOUBLE");
 		query.executeUpdate();
 
 		query = session
@@ -1697,7 +1619,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ResultFilter_filterValues MODIFY filterValues LONGTEXT");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE ResultFilter_filterValues MODIFY filterValues LONGTEXT");
 		query.executeUpdate();
 
 		status.setDbversion(29);
@@ -1737,7 +1659,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("UPDATE ELEMENTS SET MINNUMBER = null WHERE MINNUMBER = 0;");
+		NativeQuery query = session.createSQLQuery("UPDATE ELEMENTS SET MINNUMBER = null WHERE MINNUMBER = 0;");
 		query.executeUpdate();
 
 		query = session.createSQLQuery("UPDATE ELEMENTS SET MAXNUMBER = null WHERE MAXNUMBER = 0;");
@@ -1913,7 +1835,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("UPDATE ELEMENTS SET SOURCE_ID = ID WHERE SOURCE_ID IS NULL");
+		NativeQuery query = session.createSQLQuery("UPDATE ELEMENTS SET SOURCE_ID = ID WHERE SOURCE_ID IS NULL");
 		query.executeUpdate();
 
 		query = session.createSQLQuery("UPDATE ELEMENTS SET ELEM_UID = SOURCE_ID");
@@ -1949,7 +1871,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session
+		NativeQuery query = session
 				.createSQLQuery("UPDATE INVITATIONS SET INV_DEACTIVATED = 0 WHERE INV_DEACTIVATED IS NULL");
 		query.executeUpdate();
 
@@ -1962,7 +1884,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery(
+		NativeQuery query = session.createSQLQuery(
 				"UPDATE PARTICIPANTS p SET PARTICIPATION_SURVEY_UID = (SELECT SURVEY_UID FROM SURVEYS WHERE SURVEY_ID = p.PARTICIPATION_SURVEY_ID)");
 		query.executeUpdate();
 
@@ -1975,7 +1897,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery(
+		NativeQuery query = session.createSQLQuery(
 				"UPDATE SURVEYS s SET s.SURVEY_UID = UUID() WHERE s.SURVEY_UID is null or s.SURVEY_UID = '' AND s.ISDRAFT = 1");
 		query.executeUpdate();
 
@@ -1992,7 +1914,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK SET WST_COUNTER = 0 WHERE WST_COUNTER IS NULL");
+		NativeQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK SET WST_COUNTER = 0 WHERE WST_COUNTER IS NULL");
 		query.executeUpdate();
 
 		status.setDbversion(10);
@@ -2004,7 +1926,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE PARTICIPANTS MODIFY TEMPL1 LONGTEXT");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE PARTICIPANTS MODIFY TEMPL1 LONGTEXT");
 		query.executeUpdate();
 
 		query = session.createSQLQuery("ALTER TABLE PARTICIPANTS MODIFY TEMPL2 LONGTEXT");
@@ -2019,7 +1941,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("UPDATE EXPORTS SET EXPORT_VALID = 0 WHERE EXPORT_VALID IS NULL");
+		NativeQuery query = session.createSQLQuery("UPDATE EXPORTS SET EXPORT_VALID = 0 WHERE EXPORT_VALID IS NULL");
 		query.executeUpdate();
 
 		status.setDbversion(7);
@@ -2031,7 +1953,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ELEMENTS MODIFY QHELP LONGTEXT");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE ELEMENTS MODIFY QHELP LONGTEXT");
 		query.executeUpdate();
 
 		status.setDbversion(6);
@@ -2043,7 +1965,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("UPDATE SURVEYS SET DBVERSION = 0 WHERE DBVERSION IS NULL");
+		NativeQuery query = session.createSQLQuery("UPDATE SURVEYS SET DBVERSION = 0 WHERE DBVERSION IS NULL");
 		query.executeUpdate();
 
 		status.setDbversion(5);
@@ -2055,7 +1977,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE ANSWERS MODIFY VALUE LONGTEXT");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE ANSWERS MODIFY VALUE LONGTEXT");
 		query.executeUpdate();
 
 		query = session.createSQLQuery("ALTER TABLE SURACCESS MODIFY ACCESS_DEPARTMENT VARCHAR(255)");
@@ -2070,7 +1992,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		SQLQuery query = session.createSQLQuery("ALTER TABLE SURVEYS MODIFY SURVEY_START_DATE DATETIME");
+		NativeQuery query = session.createSQLQuery("ALTER TABLE SURVEYS MODIFY SURVEY_START_DATE DATETIME");
 		query.executeUpdate();
 
 		query = session.createSQLQuery("ALTER TABLE SURVEYS MODIFY SURVEY_END_DATE DATETIME");
@@ -2087,7 +2009,7 @@ public class SchemaService extends BasicService {
 	public void step1() {
 		Session session = sessionFactory.getCurrentSession();
 
-		SQLQuery query = session.createSQLQuery("UPDATE SURVEYS SET NOTIFYALL = false WHERE NOTIFYALL IS NULL");
+		NativeQuery query = session.createSQLQuery("UPDATE SURVEYS SET NOTIFYALL = false WHERE NOTIFYALL IS NULL");
 		query.executeUpdate();
 
 		query = session.createSQLQuery("UPDATE SURVEYS SET NOTIFIED = false WHERE NOTIFIED IS NULL");
@@ -2113,7 +2035,7 @@ public class SchemaService extends BasicService {
 
 		Session session = sessionFactory.getCurrentSession();
 		// copy data
-		SQLQuery queryEcasData = session.createSQLQuery(
+		NativeQuery queryEcasData = session.createSQLQuery(
 				"SELECT DISTINCT USER_DEPARTMENT, USER_ORGANISATION FROM ECASUSERS WHERE USER_DEPARTMENT IS NOT NULL AND USER_ORGANISATION IS NOT NULL AND USER_DEPARTMENT <> '' ORDER BY USER_DEPARTMENT, USER_ORGANISATION");
 
 		@SuppressWarnings("unchecked")
@@ -2138,11 +2060,11 @@ public class SchemaService extends BasicService {
 
 		}
 
-		SQLQuery deleteQuery = session.createSQLQuery(
+		NativeQuery deleteQuery = session.createSQLQuery(
 				"DELETE FROM DEPARTMENTS WHERE  DEPARTMENTS.NAME IS NULL OR DEPARTMENTS.DOMAIN_CODE IS NULL");
 		deleteQuery.executeUpdate();
 
-		SQLQuery insertEcasGroupQuery = session.createSQLQuery(
+		NativeQuery insertEcasGroupQuery = session.createSQLQuery(
 				"INSERT INTO  ECASGROUPS SELECT ECASUSERS.USER_ID, REPLACE(ECASUSERS.USER_ORGANISATION,'eu.europa.','') FROM ECASUSERS WHERE ECASUSERS.USER_ORGANISATION <> 'external'");
 		insertEcasGroupQuery.executeUpdate();
 
@@ -2256,11 +2178,11 @@ public class SchemaService extends BasicService {
 
 		Session session = sessionFactory.getCurrentSession();
 
-		SQLQuery selectQuery = session.createSQLQuery(sqlQueryString);
+		NativeQuery selectQuery = session.createSQLQuery(sqlQueryString);
 
 		List<?> duplicateRows = selectQuery.list();
 
-		SQLQuery deleteQuery = session.createSQLQuery(sqlDeleteString);
+		NativeQuery deleteQuery = session.createSQLQuery(sqlDeleteString);
 
 		if (!duplicateRows.isEmpty()) {
 			for (Object row : duplicateRows) {
@@ -2318,7 +2240,7 @@ public class SchemaService extends BasicService {
 		try {
 			String sqlQueryString = buildCreateUniqueContraint(tableName, constraintName, columns);
 			Session session = sessionFactory.getCurrentSession();
-			SQLQuery query = session.createSQLQuery(sqlQueryString);
+			NativeQuery query = session.createSQLQuery(sqlQueryString);
 			query.executeUpdate();
 		} catch (SQLGrammarException e) {
 			// Hibernate 4
@@ -2361,7 +2283,7 @@ public class SchemaService extends BasicService {
 
 		Session session = sessionFactory.getCurrentSession();
 
-		SQLQuery selectQuery = session.createSQLQuery(sqlQueryString);
+		NativeQuery selectQuery = session.createSQLQuery(sqlQueryString);
 
 		List<?> duplicateRows = selectQuery.list();
 
@@ -2369,7 +2291,7 @@ public class SchemaService extends BasicService {
 			for (Object row : duplicateRows) {
 				Object[] a = (Object[]) row;
 				String sqlDeleteString = baseSqlDeleteString + " LIMIT " + a[length];
-				SQLQuery deleteQuery = session.createSQLQuery(sqlDeleteString);
+				NativeQuery deleteQuery = session.createSQLQuery(sqlDeleteString);
 
 				for (int i = 0; i < length; i++) {
 					deleteQuery.setString(valueColumns[i], a[i].toString());
@@ -2428,7 +2350,7 @@ public class SchemaService extends BasicService {
 			final String checkIndexExists = "show index from ANSWERS where Key_name = 'v_ft_idx'";
 			final String createIndex = "ALTER TABLE ANSWERS ADD FULLTEXT INDEX v_ft_idx (VALUE);";
 
-			SQLQuery query = session.createSQLQuery(checkIndexExists);
+			NativeQuery query = session.createSQLQuery(checkIndexExists);
 			if (query.list().isEmpty()) {
 				logger.error("Special update full text not existing create them");
 				session.createSQLQuery(createIndex).executeUpdate();
@@ -2441,8 +2363,26 @@ public class SchemaService extends BasicService {
 	public boolean tableExists(String tableName) {
 		Session session = sessionFactory.getCurrentSession();
 		String queryString = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + tableName + "' AND TABLE_SCHEMA = database();";
-		SQLQuery query = session.createSQLQuery(queryString);
+		NativeQuery query = session.createSQLQuery(queryString);
 		return !query.list().isEmpty();
+	}
+
+	private void ensureActivities(Session session, int... ids){
+		for (int id : ids) {
+			ensureActivity(id, session);
+		}
+	}
+
+	private void ensureActivity(int id, Session session){
+		String key = id + "ActivityEnabled";
+		String existing = settingsService.get(key);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(key);
+			s.setValue("true");
+			s.setFormat("true / false");
+			session.saveOrUpdate(s);
+		}
 	}
 
 }

@@ -153,6 +153,9 @@
 						<div id="ecasPanelContent2" class="well" style="max-width: 420px; padding:30px; margin-bottom:0px; float: right">
 							<form:form action="${ecasurl}">
 								<input type="hidden" name="service" value="<esapi:encodeForHTMLAttribute>${serviceurl}</esapi:encodeForHTMLAttribute>"/>
+								<c:if test="${require2fa}">
+									<input type="hidden" name="acceptStrength" value="PASSWORD_SMS" />
+								</c:if>
 								<div style="height: 150px;">
 									<c:choose>
 										<c:when test="${casoss !=null}">
@@ -167,7 +170,12 @@
 									<c:choose>
 										<c:when test="${casoss !=null}">
 											<spring:message code="label.CASInfo" /> 			
-										</c:when>									
+										</c:when>
+										<c:when test="${require2fa}">
+											<div style="text-align: left">
+												<spring:message code="login.externalInfo" />
+											</div>
+										</c:when>
 									</c:choose>
 								</div>
 								<a class="btn btn-primary" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>

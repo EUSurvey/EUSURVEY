@@ -35,6 +35,7 @@
 			this.useEscapeLink =  ko.observable(${form.survey.escapePageLink});
 			this.quiz = ko.observable(${form.survey.isQuiz});
 			this.delphi = ko.observable(${form.survey.isDelphi});
+			this.eVote = ko.observable(${form.survey.isEVote});
 			this.opc = ko.observable(${form.survey.isOPC});
 			this.multiPaging = ko.observable(${form.survey.multiPaging});
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
@@ -159,7 +160,7 @@
 			{
 				if (this.self.delphi()) {
 					this.self.changeContribution(true); // should always be activated for delphi surveys
-				} else if (this.timeLimit().length > 0 || this.self.preventGoingBack()) {
+				} else if (this.timeLimit().length > 0 || this.self.preventGoingBack() || this.self.eVote()) {
 					this.self.changeContribution(false); // should always be deactivated if a timelimit is set or preventGoingBack is set
 				} else {
 					this.self.changeContribution(!this.self.changeContribution());
@@ -168,7 +169,7 @@
 			
 			this.toggleSaveAsDraft = function()
 			{
-				if (this.self.delphi() || this.timeLimit().length > 0 || this.self.preventGoingBack()) {
+				if (this.self.delphi() || this.self.eVote() || this.timeLimit().length > 0 || this.self.preventGoingBack()) {
 					this.self.saveAsDraft(false); // should always be deactivated for delphi surveys or if a timelimit is set or if preventGoingBack is set
 				} else {
 					this.self.saveAsDraft(!this.self.saveAsDraft());
@@ -177,7 +178,7 @@
 			
 			this.toggleDownloadContribution = function()
 			{
-				if (this.self.delphi()) {
+				if (this.self.delphi() || this.self.eVote()) {
 					this.self.downloadContribution(false); // should always be deactivated for delphi surveys
 				} else {
 					this.self.downloadContribution(!this.self.downloadContribution());
@@ -208,7 +209,11 @@
 			
 			this.toggleProgressBar = function()
 			{
-				this.self.progressBar(!this.self.progressBar());
+				if (this.self.eVote()){
+					this.self.progressBar(false);
+				} else {
+					this.self.progressBar(!this.self.progressBar());
+				}
 			}
 
 			this.toggleMotivationPopup = function()
@@ -260,47 +265,63 @@
 					this.self.preventGoingBack(false);
 				}
 			}
+
+			this.toggleEVote = function() {
+				this.self.eVote(!this.self.eVote());
+				if (this.self.eVote()){
+					this.self.changeContribution(false)
+					this.self.isUseMaxNumberContribution(false)
+					this.self.saveAsDraft(false)
+					this.self.secured(true)
+					this.self.downloadContribution(false)
+					$("input[name='radio-new-survey-privacy']").prop('checked', true)
+					$("input[name='survey.allowedContributionsPerUser']").val("1")
+					$("input[name='survey.dedicatedResultPrivileges']").prop('checked', false);
+					this.self.progressBar(false)
+					this.self.ecasSecurity(true)
+					$("input[name='survey.ecasMode'][value='all']").prop("checked", true)
+					$("input[name='survey.password']").val("")
+					$("#clearpassword").val("")
+				}
+
+			}
 			
-			this.isNormalSurvey = function()
-			{
-				if (this.self.quiz()) return false;
-				if (this.self.delphi()) return false;
-				if (this.self.opc()) return false;
-				return true;
+			this.isNormalSurvey = function(){
+				let s = this.self;
+				return !s.quiz() && !s.delphi() && !s.opc() && !s.eVote();
 			}
 		}
 		
 		var _properties = new PropertiesViewModel();
-		
-		function checkPropertiesAndSubmit(regformconfirmed, publishingconfirmed)
-		{
-			try {				
+
+		function checkProperties(regformconfirmed, publishingconfirmed) {
+			try {
 				$("#propertiespage").find(".validation-error").remove();
 				var invalid = false;
-			
+
 				if (!checkShortname($('#edit-survey-shortname').val(), '${form.survey.id}'))
 				{
 					$('#edit-survey-shortname').parent().append("<div class='validation-error'>" + shortnameAlreadyExists + "</div>");
-					return;
+					return false;
 				}
 				var value = $("#edit-survey-shortname").val();
 				var reg = /^[a-zA-Z0-9-_]+$/;
 				if ($("#edit-survey-shortname").parent().find(".validation-error").length == 0)
 				{
 					if( !reg.test( value ) ) {
-				    	$("#edit-survey-shortname").after("<div class='validation-error'>" + shortnameText3 + "</div>");
-						return;
-				    } else if( value.indexOf("__") > -1 ) {
-				    	$("#edit-survey-shortname").after("<div class='validation-error'>" + shortnameText2 + "</div>");
-						return;
-				    } ;
+						$("#edit-survey-shortname").after("<div class='validation-error'>" + shortnameText3 + "</div>");
+						return false;
+					} else if( value.indexOf("__") > -1 ) {
+						$("#edit-survey-shortname").after("<div class='validation-error'>" + shortnameText2 + "</div>");
+						return false;
+					} ;
 				}
-				
+
 				var title = $("#edit-survey-title").text().length;
 				if (title > 2000)
 				{
 					$("#edit-survey-title").parent().append("<div class='validation-error'>" + texttoolongText + "</div>");
-					return;
+					return false;
 				}
 
 				if(_properties.isUseMaxNumberContribution()){
@@ -331,7 +352,7 @@
 					if (motivation > 255)
 					{
 						$("#tinymcemotivationpopup").append("<div class='validation-error'>" + texttoolongText + "</div>")
-						return;
+						return false;
 					}
 				}
 
@@ -349,7 +370,7 @@
 					if (confirmationText.length > 3000)
 					{
 						$("#tinymceconfpage").append("<div class='validation-error'>" + texttoolongText + "</div>")
-						return;
+						return false;
 					}
 
 					if(!isNumberOpenClosedBracketsEqual(confirmationText)){
@@ -387,50 +408,50 @@
 					if (startdate >= enddate)
 					{
 						$("#survey\\.end").parent().append("<div class='validation-error'>" + invalidStartEnd + "</div>");
-						return;
-					};					
+						return false;
+					};
 					<c:if test="${!form.survey.isActive}">
-						var now = new Date();						
-						var autoPublishEnabled = ($("#autopub").is(":checked"));						
-						if(autoPublishEnabled && startdate < now && enddate > now)
-						{							
-							$('#publishConfirmationDialog').modal('show');
-							return;
-						};
-						
-						<c:if test="${!form.survey.automaticPublishing}">
-							if(autoPublishEnabled && startdate > now)
-							{							
-								$('#publishConfirmationDialog3').modal('show');
-								return;
-							};
-						</c:if>
+					var now = new Date();
+					var autoPublishEnabled = ($("#autopub").is(":checked"));
+					if(autoPublishEnabled && startdate < now && enddate > now)
+					{
+						$('#publishConfirmationDialog').modal('show');
+						return false;
+					};
+
+					<c:if test="${!form.survey.automaticPublishing}">
+					if(autoPublishEnabled && startdate > now)
+					{
+						$('#publishConfirmationDialog3').modal('show');
+						return false;
+					};
+					</c:if>
 					</c:if>
 					<c:if test="${form.survey.isActive}">
-						var now = new Date();						
-						var autoPublishEnabled = ($("#autopub").is(":checked"));						
-						if(autoPublishEnabled && startdate > now)
-						{							
-							$('#publishConfirmationDialog2').modal('show');
-							return;
-						};
-						
-						if(autoPublishEnabled && enddate < now)
-						{							
-							$('#edit-properties-dialog').modal('hide');
-							$('#publishConfirmationDialog4').modal('show');
-							return;
-						};
-						
+					var now = new Date();
+					var autoPublishEnabled = ($("#autopub").is(":checked"));
+					if(autoPublishEnabled && startdate > now)
+					{
+						$('#publishConfirmationDialog2').modal('show');
+						return false;
+					};
+
+					if(autoPublishEnabled && enddate < now)
+					{
+						$('#edit-properties-dialog').modal('hide');
+						$('#publishConfirmationDialog4').modal('show');
+						return false;
+					};
+
 					</c:if>
 				};
-				
+
 				if ($('#notificationselector1').is(":checked") && !$("#autopub").is(":checked"))
 				{
 					$('#notificationselector1').parent().append("<div class='validation-error'>" + endNotificationAutomatedPublishing + "</div>");
-					return;
+					return false;
 				}
-				
+
 				var labels = [];
 				$("#propertiespage").find("input[name^='doclabel']").each(function(){
 					var label = $(this).val();
@@ -442,61 +463,61 @@
 							{
 								$(this).parent().append("<div class='validation-error'><spring:message code="error.LabelAlreadyUsed" /></div>");
 								invalid = true;
-								return;
+								return false;
 							}
 						}
 						labels[labels.length] = label;
 					}
-				});				
-				
-				if (invalid) return;
+				});
+
+				if (invalid) return false;
 				if ($("#survey-contact-type").val() == "url") {
 					$("#survey\\.contact").removeClass("email").addClass("url");
 					result = validateInput($("#survey\\.contact").parent());
-					
+
 					if (result == false)
 					{
-						return;
+						return false;
 					}
 				} else {
 					$("#survey\\.contact").removeClass("url").addClass("email");
 					result = validateInput($("#survey\\.contact").parent());
-					
+
 					if (result == false)
 					{
-						return;
+						return false;
 					}
-				}				
-				
+				}
+
 				var result = validateInput($('#save-form'));
-				
+
 				if (result == false)
 				{
-					return;
+					return false;
 				}
 
 				result = validateInput($("#maxContributionInput").parent());
-				
+
 				if (result == false)
 				{
-					return;
+					return false;
 				}
-				
+
 				result = validateInput($("#minNumberDelphiStatistics").parent());
-				
+
 				if (result == false)
 				{
-					return;
+					return false;
 				}
-				
+
 				<c:if test="${!validregform}">
-					if ($("#survey\\.registrationForm").is(":checked") && !regformconfirmed)
-					{
-						$("#confirmregformdialog").modal("show");
-						return;
-					}					
+				if ($("#survey\\.registrationForm").is(":checked") && !regformconfirmed)
+				{
+					$("#confirmregformdialog").modal("show");
+					return false;
+				}
 				</c:if>
-				
+
 
 				if ($("#survey\\.publication\\.allContributions1").is(":checked"))
 				{
@@ -504,28 +525,36 @@
 					if (counter > 3)
 					{
 						$("#contributionsToPublishDiv").before("<div class='validation-error'>" + atmost3Selections + "</div>");
-						return;
-					}					
-				}
-				
-				<c:if test="${!form.survey.publication.showContent && !form.survey.publication.showCharts && !form.survey.publication.showStatistics}">
-					if (!publishingconfirmed && ($("#showContent").is(":checked") || $("#showCharts").is(":checked") || $("#showStatistics").is(":checked")))
-					{
-						$("#confirmpublicationdialog").modal("show");
-						return;
+						return false;
 					}
-				</c:if>		
-				
+				}
+
+				<c:if test="${!form.survey.publication.showContent && !form.survey.publication.showCharts && !form.survey.publication.showStatistics}">
+				if (!publishingconfirmed && ($("#showContent").is(":checked") || $("#showCharts").is(":checked") || $("#showStatistics").is(":checked")))
+				{
+					$("#confirmpublicationdialog").modal("show");
+					return false;
+				}
+				</c:if>
+
 				if ($('#survey\\.timeLimit').val().length > 0) {
 					var v = $('#survey\\.timeLimit').val().replaceAll("0", "").replaceAll(":", "");
 					if (v.length == 0) {
 						$("#survey\\.timeLimit").after("<div class='validation-error'>" + timeLimitNotZero + "</div>");
-						return;
+						return false;
 					}
 				}
-				
+
 			} catch (e)	{
 
+			}
+			return true;
+		}
+		
+		function checkPropertiesAndSubmit(regformconfirmed, publishingconfirmed)
+		{
+			if (!checkProperties(regformconfirmed, publishingconfirmed)) {
+				return
 			}
 			
 			if ($("#survey-contact-type").val() == "form")

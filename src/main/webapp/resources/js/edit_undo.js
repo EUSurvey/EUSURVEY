@@ -362,6 +362,8 @@ var UndoProcessor = function() {
 					element.isSingleChoice(step[3] == "SingleChoice");
 				} else if (element.type == "Ruler") {				
 					element.style(step[3]);
+				} else if (element.type == "MultipleChoiceQuestion" || element.type == "SingleChoiceQuestion") {
+					element.choiceType(step[3])
 				} else {
 					if (step[3] == "RadioButton")
 					{
@@ -379,11 +381,6 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
-					} else if (step[3] == "LikertScale")
-					{
-						element.choiceType("likert");
-						element.useRadioButtons(false);
-						element.likert(true);
 					}
 					updateChoice(element);
 				}
@@ -974,6 +971,9 @@ var UndoProcessor = function() {
 					element.isSingleChoice(step[4] == "SingleChoice");
 				} else if (element.type == "Ruler") {				
 					element.style(step[4]);
+				} else if (element.type == "MultipleChoiceQuestion" || element.type == "SingleChoiceQuestion") {
+					element.choiceType(step[4])
+
 				} else {
 					if (step[4] == "RadioButton")
 					{
@@ -991,11 +991,6 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
-					} else if (step[4] == "LikertScale")
-					{
-						element.choiceType("likert");
-						element.useRadioButtons(false);
-						element.likert(true);
 					}
 					updateChoice(element);
 				}

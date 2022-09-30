@@ -108,6 +108,7 @@ public class BasicService implements BeanFactoryAware {
 	
 	protected @Value("${enablereportingdatabase}") String enablereportingdatabase;
 	protected @Value("${ui.enabledelphi}") String enableDelphi;
+	protected @Value("${ui.enableevote:null}") String enableevote;
 	
 	private ExecutorService pool;
 	private ExecutorService pdfpool;
@@ -208,5 +209,9 @@ public class BasicService implements BeanFactoryAware {
 
 	public boolean isDelphiEnabled() {
 		return (!StringUtils.isEmpty(enableDelphi) && enableDelphi.equalsIgnoreCase("true"));
+	}
+	
+	public boolean isEVoteEnabled() {
+		return (!StringUtils.isEmpty(enableevote) && enableevote.equalsIgnoreCase("true"));
 	}
 }

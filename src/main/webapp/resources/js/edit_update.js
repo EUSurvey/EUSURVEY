@@ -475,13 +475,11 @@ function update(input)
 			_undoProcessor.addUndoStep(["OrderSection", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
 			break;
-		case "Style":
-			if ($(_elementProperties.selectedelement).hasClass("matrixitem"))
-			{
+		case "Style": {
+			if ($(_elementProperties.selectedelement).hasClass("matrixitem")) {
 				var text = $(input).val();
 				var oldtext = text == "SingleChoice" ? "MultipleChoice" : "SingleChoice";
-				if (text == "SingleChoice")
-				{
+				if (text == "SingleChoice") {
 					element.isSingleChoice(true);
 				} else {
 					element.isSingleChoice(false);
@@ -499,18 +497,62 @@ function update(input)
 				if (element.cellType() == 4) //Single Choice 
 				{
 					oldtext = element.useRadioButtons() ? 'RadioButton' : 'SelectBox';
-					element.useRadioButtons(text == "RadioButton");					
+					element.useRadioButtons(text == "RadioButton");
 				} else {
 					oldtext = element.useCheckboxes() ? 'CheckBox' : 'ListBox';
-					element.useCheckboxes(text == "CheckBox");			
+					element.useCheckboxes(text == "CheckBox");
 				}
-				
+
 				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			} else if ($(_elementProperties.selectedelement).is(".multiplechoiceitem, .singlechoiceitem")) {
+				let text = $(input).val()
+				let oldType = element.choiceType();
+				let newType
+				switch (text) {
+					case "CheckBox":
+						newType = "checkbox";
+						break;
+					case "ListBox":
+						newType = "list";
+						break;
+					case "RadioButton":
+						newType = "radio";
+						break;
+					case "SelectBox":
+						newType = "select";
+						break;
+					case "LikertScale":
+						newType = "likert";
+						break;
+					case "Buttons":
+						newType = "buttons";
+						break;
+					case "EVoteList":
+						switch (eVoteTemplate) {
+							case "b":
+								newType = "evote-brussels";
+								break;
+							case "l":
+								newType = "evote-luxembourg";
+								break;
+							case "o":
+								newType = "evote-outside";
+								break;
+							default:
+								newType = "evote-brussels";
+								break;
+						}
+						break;
+				}
+
+				element.choiceType(newType)
+
+				updateChoice(element);
+				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldType, newType]);
 			} else {
 				var text = $(input).val();
 				var oldtext;
-				switch (element.choiceType())
-				{
+				switch (element.choiceType()) {
 					case "radio":
 						oldtext = "RadioButton";
 						break;
@@ -527,34 +569,39 @@ function update(input)
 						oldtext = "LikertScale";
 						break;
 				}
-				
-				if (text == "LikertScale")
-				{
+
+				if (text == "LikertScale") {
 					element.likert(true);
-					element.choiceType("likert");				
-				} else if (text == "RadioButton")
-				{
+					element.choiceType("likert");
+				} else if (text == "RadioButton") {
 					element.useRadioButtons(true);
 					element.choiceType("radio");
 					element.likert(false);
-				} else if (text == "SelectBox")
-				{
+				} else if (text == "SelectBox") {
 					element.choiceType("select");
 					element.useRadioButtons(false);
 					element.likert(false);
-				} else if (text == "CheckBox")
-				{
+				} else if (text == "CheckBox") {
 					element.useCheckboxes(true);
 					element.choiceType("checkbox");
-				} else if (text == "ListBox")
-				{
+				} else if (text == "ListBox") {
 					element.choiceType("list");
-					element.useCheckboxes(false);					
+					element.useCheckboxes(false);
 				}
 				updateChoice(element);
 				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			}
 			break;
+		}
+		case "EVoteProcedure": {
+			let oldType = element.choiceType();
+			let newType = $(input).val()
+			element.choiceType(newType)
+
+			updateChoice(element);
+			_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldType, newType]);
+			break;
+		}
 		case "Unit":
 			var text = $(input).val();		
 			if (!checkCharacters(text))
@@ -1343,6 +1390,8 @@ function update(input)
 				}
 			}
 			
+			break;
+		case "PossibleAnswers":
 			break;
 		default:
 			throw label + " not implemented"; 

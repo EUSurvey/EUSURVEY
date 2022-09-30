@@ -109,13 +109,13 @@
 						</td>
 						<td style="text-align: center">
 							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 2}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('ManageInvitations',${access.id});" src="/eusurvey/resources/images/bullet_ball_glass_green.png" alt="read/write" />
+								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('ManageInvitations',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
 							</c:if>
 							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 1}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('ManageInvitations',${access.id});" src="/eusurvey/resources/images/bullet_ball_glass_yellow.png" alt="read" />
+								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('ManageInvitations',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
 							</c:if>
 							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 0}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('ManageInvitations',${access.id});" src="/eusurvey/resources/images/bullet_ball_glass_red.png" alt="none" />
+								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('ManageInvitations',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
 							</c:if>	
 						</td>
 						<td style="vertical-align: middle; text-align: center">
@@ -165,13 +165,13 @@
 						</td>
 						<td style="text-align: center">
 							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 2}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="/eusurvey/resources/images/bullet_ball_glass_green.png" alt="read/write" />
+								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
 							</c:if>
 							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 1}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="/eusurvey/resources/images/bullet_ball_glass_yellow.png" alt="read" />
+								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
 							</c:if>
 							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 0}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="/eusurvey/resources/images/bullet_ball_glass_red.png" alt="none" />
+								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
 							</c:if>	
 						</td>
 						<td style="vertical-align: middle; text-align: center">

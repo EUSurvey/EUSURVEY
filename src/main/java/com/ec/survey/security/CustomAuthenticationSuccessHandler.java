@@ -64,6 +64,11 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 				{
 					request.getSession().setAttribute("ECASSURVEY", auth.getAuthority().substring(17));
 				}
+				
+				if (auth.getAuthority().startsWith("ROLE_ECUSER_"))
+				{
+					request.getSession().setAttribute("ECMONIKER", auth.getAuthority().substring(12));
+				}
 			}
 			
 			if (ecas)

@@ -513,8 +513,8 @@
 					  $('#gotoNext').attr("disabled", "disabled").addClass("disabled");
 				  }
               
-			  }, error: function(e) {
-				  showError(e);
+			  }, error: function (data) {
+					showAjaxError(data.status)
 			}});
 	}
 	
@@ -651,8 +651,8 @@
 				  if (!success) {
 					  showError(errorOperationFailed);
 				  }
-			  }, error: function(e) {
-				  showError(e);
+			  }, error: function (data) {
+					showAjaxError(data.status)
 			}});
 		
 	}

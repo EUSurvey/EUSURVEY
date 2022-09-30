@@ -562,7 +562,7 @@
 															<!-- /ko -->
 															
 														<!-- ko if: formManagementRights && canCreateSurveys -->
-														<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', isQuiz == null ? '' : isQuiz.toString(), isDelphi == null ? '' : isDelphi.toString()); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+														<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', isQuiz == null ? '' : isQuiz.toString(), isDelphi == null ? '' : isDelphi.toString(), isEVote == null ? '' : isEVote.toString()); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 														<!-- /ko -->
 														
 															<!-- ko if: formManagementRights -->
@@ -625,26 +625,26 @@
 														<td data-bind="html: replies"></td>
 														<td>
 															<!-- ko if: finished && error == null -->
-															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/surveypdf/' + id}"><img src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="pdf"></a>
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/surveypdf/' + id}"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf"></a>
 															<!-- /ko -->	
 														</td>
 														<td>
 															<!-- ko if: finished && error == null && replies > 0 -->
 															
 															<!-- ko if: surveyHasUploadedFiles -->
-																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadzip" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlszip/' + id}"><img src="/eusurvey/resources/images/file_extension_zip_small.png" alt="zip"></a>
+																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadzip" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlszip/' + id}"><img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="zip"></a>
 															<!-- /ko -->
 															
 															<!-- ko if: !surveyHasUploadedFiles -->
-																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxls/' + id}"><img src="/eusurvey/resources/images/file_extension_xls_small.png" alt="xls"></a>
+																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxls/' + id}"><img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls"></a>
 															<!-- /ko -->
 															
 															<!-- /ko -->	
 														</td>
 														<td>
 															<!-- ko if: finished && error == null && replies > 0 -->
-															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statspdf/' + id}"><img src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="pdf" style="margin: 0px;"></a>
-															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statsxls/' + id}"><img src="/eusurvey/resources/images/file_extension_xls_small.png" alt="xls" style="margin: 0px;"></a>
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statspdf/' + id}"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" style="margin: 0px;"></a>
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statsxls/' + id}"><img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" style="margin: 0px;"></a>
 															<!-- /ko -->	
 														</td>
 														<td>

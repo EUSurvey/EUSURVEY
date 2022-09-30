@@ -201,7 +201,12 @@
 						  else if (list[i].isECF)
 						  {							 
 							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.ECF" />").attr("src", contextpath + "/resources/images/icons/32/user_square.png");
-						  } 
+						  }
+						  else if (list[i].isEVote)
+						  {
+							  img = document.createElement("div");
+							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.eVote" />").attr("class", "glyphicon glyphicon-ok").attr("style", "border: 2px solid #333; padding: 3px; font-size: 21px; color: #333");
+						  }
 						  else {
 							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.StandardSurvey" />").css("width","32px").attr("src", contextpath + "/resources/images/icons/64/survey.png");
 						  }
@@ -325,7 +330,7 @@
 							  if(list[i].formManagementRights && list[i].canCreateSurveys)
 							  {
 							     $(acopy).addClass("actionRowAction").append("<span class='glyphicon glyphicon-copy'></span>");
-							     $(acopy).attr('onclick', "copySurvey('" + list[i].id + "','" + list[i].title + "','" + list[i].language.code + "', '" + list[i].security+ "', '" + list[i].isQuiz + "', '" + list[i].isDelphi + "');");
+							     $(acopy).attr('onclick', "copySurvey('" + list[i].id + "','" + list[i].title + "','" + list[i].language.code + "', '" + list[i].security+ "', '" + list[i].isQuiz + "', '" + list[i].isDelphi + "', '" + list[i].isEVote + "');");
 							  } else {
 								  $(acopy).addClass("disabled actionRowAction").append("<span style='color: #ccc' class='glyphicon glyphicon-copy'></span>");
 							  }							     
@@ -684,6 +689,9 @@
 											<c:when test="${survey.isECF}">
 												<span data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
 											</c:when>
+											<c:when test="${survey.isEVote}">
+												<span data-toggle="tooltip" title="<spring:message code="label.eVote" />"  class="glyphicon glyphicon-ok" style="border: 2px solid #333; padding: 3px; font-size: 21px; color: #333"></span>
+											</c:when>
 											<c:when test="${survey.isDelphi}">
 												<img data-toggle="tooltip" title="<spring:message code="label.Delphi" />" src="${contextpath}/resources/images/icons/24/delphi.png" />
 											</c:when>
@@ -787,7 +795,7 @@
 											
 												<c:choose>
 													<c:when test="${survey.formManagementRights && survey.canCreateSurveys}">
-														<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}', '${survey.isDelphi}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
+														<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}', '${survey.isDelphi}', '${survey.isEVote}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
 														<a href="<c:url value="/noform/management/exportSurvey/false/${survey.shortname}"/>" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></</span></a>
 													</c:when>
 													<c:otherwise>

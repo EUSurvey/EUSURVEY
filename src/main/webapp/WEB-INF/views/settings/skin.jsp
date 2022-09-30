@@ -190,7 +190,7 @@
 				var id = $("#id").val();
 				
 				$.ajax({type: "GET",
-					url: "/eusurvey/settings/skin/publicnameexists",
+					url: "${contextpath}/settings/skin/publicnameexists",
 					data: {name : name, id : id},
 					cache: false,
 					dataType: "json",

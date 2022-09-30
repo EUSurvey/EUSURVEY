@@ -14,6 +14,7 @@ import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.maven.surefire.shade.org.apache.maven.shared.utils.StringUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.http.HttpHeaders;
@@ -416,7 +417,7 @@ public class ExportsController extends BasicController {
 
 			exportService.deleteExport(export);
 			if (export.getSurvey() != null) {
-				activityService.log(311, export.getId().toString(), null,
+				activityService.log(ActivityRegistry.ID_EXPORT_DELETED, export.getId().toString(), null,
 						sessionService.getCurrentUser(request).getId(), export.getSurvey().getUniqueId());
 			}
 

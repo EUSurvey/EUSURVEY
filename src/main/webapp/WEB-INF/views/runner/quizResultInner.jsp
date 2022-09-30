@@ -65,7 +65,7 @@
 					 						<c:if test='${!quiz.getSectionScore(element.uniqueId).equals("0/0") && !(invisibleElements != null && invisibleElements.contains(element.uniqueId))}'>
 												<tr>
 													<c:set var="scoring" value="${quiz.getSectionScore(element.uniqueId)}" />
-													<td style="width: 225px">${element.getTitle()}</td>
+													<td style="width: 225px">${element.getStrippedTitle()}</td>
 													<td style="width: 50px">${scoring}</td>
 													<td style="width: 225px">
 														<div class="progress noprogressbackground" style="width: 200px; margin-bottom: 2px;">
@@ -101,7 +101,7 @@
 						 										<spring:message code="label.ScoreForThisSection" />: ${scoring}
 						 									</div>
 						 								</c:if>
-					 									${element.getTitle()}
+					 									${element.getStrippedTitle()}
 					 								</div>
 					 							</td>
 					 						</tr>

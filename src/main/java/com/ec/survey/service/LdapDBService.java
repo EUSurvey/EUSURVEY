@@ -7,8 +7,8 @@ import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.springframework.context.MessageSource;
@@ -33,7 +33,7 @@ public class LdapDBService extends BasicService {
 		
 		logger.info("reload started");		
 		
-		SQLQuery query = session.createSQLQuery("SELECT DISTINCT DOMAIN_CODE domainCode, NAME name FROM DEPARTMENTS");
+		NativeQuery query = session.createSQLQuery("SELECT DISTINCT DOMAIN_CODE domainCode, NAME name FROM DEPARTMENTS");
 		@SuppressWarnings("unchecked")
 		List<DepartmentItem> existingDepartments = query.setResultTransformer(Transformers.aliasToBean(DepartmentItem.class)) .list();
 				
@@ -147,59 +147,84 @@ public class LdapDBService extends BasicService {
 		
 		return result;
 	}
-	
+
 	@Transactional(readOnly = true)
-	public List<EcasUser> getECASUsers(String name, String department, String email, String domain, int page, int rowsPerPage) {
+	public List<EcasUser> getECASUsers(String name, String ecMoniker, String department, String email, String domain, int page, int rowsPerPage) {
 		Session session = sessionFactory.getCurrentSession();
-		
+
 		String hql = "SELECT DISTINCT u FROM EcasUser as u WHERE (u.deactivated IS NULL OR u.deactivated = false)";
-				
+
 		if (name != null && name.length() > 0)
 		{
-			hql += " AND CONCAT(u.givenName,' ', u.surname) LIKE :name";			
+			hql += " AND CONCAT(u.givenName,' ', u.surname) LIKE :name";
 		} else {
 			hql += " AND u.givenName <> 'UNKNOWN'";
 		}
-		
+
 		if (email != null && email.length() > 0)
 		{
-			hql += " AND u.email LIKE :email";		
+			hql += " AND u.email LIKE :email";
 		}
-		
+
 		if (department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined"))
 		{
-			hql += " AND u.departmentNumber LIKE :department";			
+			hql += " AND u.departmentNumber LIKE :department";
 		}
-		
-		if (domain != null && domain.length() > 0)
-		{
-			hql += " AND u.organisation LIKE :domain";	
+
+		if (domain != null && domain.length() > 0){
+			hql += " AND u.organisation LIKE :domain";
 		}
-			
+
+		if (ecMoniker != null && ecMoniker.length() > 0){
+			hql += " AND u.ecMoniker LIKE :ecMoniker";
+		}
+
 		hql += " ORDER BY u.id ASC";
-		
-		Query query = session.createQuery(hql);
+
+		Query<EcasUser> query = session.createQuery(hql, EcasUser.class);
 		if (name != null && name.length() > 0)
 		{
-			query.setString("name", "%" + name + "%");
+			query.setParameter("name", "%" + name + "%");
 		}
 		if (email != null && email.length() > 0)
 		{
-			query.setString(Constants.EMAIL, "%" + email + "%");
+			query.setParameter(Constants.EMAIL, "%" + email + "%");
 		}
 		if (department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined"))
 		{
-			query.setString("department", "%" + department + "%");
+			query.setParameter("department", "%" + department + "%");
 		}
 		if (domain != null && domain.length() > 0)
 		{
-			query.setString("domain", domain);
+			query.setParameter("domain", domain);
 		}
-	
+		if (ecMoniker != null && ecMoniker.length() > 0){
+			query.setParameter("ecMoniker", "%" + ecMoniker + "%");
+		}
+
 		@SuppressWarnings("unchecked")
 		List<EcasUser> res = query.setFirstResult((page > 1 ? page - 1 : 0)*rowsPerPage).setMaxResults(rowsPerPage).list();
-				
+
 		return res;
+	}
+
+	@Transactional(readOnly = true)
+	public List<EcasUser> getExclusiveECASVoteUsersWithIds(String surveyUid, Collection<Integer> ids) {
+		Session session = sessionFactory.getCurrentSession();
+
+		//Select all users whose id is in the collection
+		String hql = "SELECT DISTINCT u FROM EcasUser as u WHERE (u.deactivated IS NULL OR u.deactivated = false) AND u.id in :ids";
+
+		//Where a voter with this ecMoniker does not already exist.
+		//This must be checked because the ecMoniker is constrained unique
+		//Which means all users which already are a voter for this survey are ignored
+		hql += " AND u.ecMoniker NOT IN (SELECT v.ecMoniker from Voter as v WHERE v.surveyUid = :surveyUid)";
+
+		Query<EcasUser> query = session.createQuery(hql, EcasUser.class);
+		query.setParameter("ids", ids);
+		query.setParameter("surveyUid", surveyUid);
+
+		return query.list();
 	}
 
 	@Transactional(readOnly = true)

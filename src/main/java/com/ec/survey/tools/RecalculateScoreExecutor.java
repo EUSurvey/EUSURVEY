@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import com.ec.survey.model.Form;
 import com.ec.survey.service.*;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -68,7 +68,7 @@ public class RecalculateScoreExecutor implements Runnable {
 			for (Integer surveyId : surveyIds)
 			{
 				Survey survey = surveyService.getSurvey(surveyid);
-				Query query = session.createQuery("FROM AnswerSet a WHERE a.surveyId = :id").setInteger("id", surveyId);
+				Query<AnswerSet> query = session.createQuery("FROM AnswerSet a WHERE a.surveyId = :id", AnswerSet.class).setParameter("id", surveyId);
 			
 				query.setFetchSize(100);
 				ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);

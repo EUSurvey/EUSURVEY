@@ -15,6 +15,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -56,6 +58,7 @@ import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ArchiveService;
 import com.ec.survey.service.AttendeeService;
 import com.ec.survey.service.ECFService;
+import com.ec.survey.service.EVoteService;
 import com.ec.survey.service.ExportService;
 import com.ec.survey.service.FileService;
 import com.ec.survey.service.LdapDBService;
@@ -147,6 +150,9 @@ public class BasicController implements BeanFactoryAware {
 	@Resource(name = "ecfService")
 	protected ECFService ecfService;
 	
+	@Resource(name = "eVoteService")
+	protected EVoteService eVoteService;
+	
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${captcha.serverprefix}") String captchaserverprefix;
 	public @Value("${captcha.serverprefixtarget}") String captchaserverprefixtarget;
@@ -158,6 +164,8 @@ public class BasicController implements BeanFactoryAware {
 	public @Value("${captcha.bypass:@null}") String bypassCaptcha;
 	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
 	public @Value("${enablereportingdatabase}") String enablereportingdatabase;
+
+	public @Value("${ecas.require2fa:#{false}}") boolean require2fa;
 
 	// OCAS
 	public @Value("${casoss}") String cassOss;
@@ -368,6 +376,22 @@ public class BasicController implements BeanFactoryAware {
 		logger.error(e.getLocalizedMessage(), e);
 		// nothing else to do
 	}
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ModelAndView handleBadCredentialsException(BadCredentialsException e, Locale locale, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		if ("VOTERREJECTED".equals(e.getMessage())) {
+			logger.error(e.getMessage(), e);
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+			String message = resources.getMessage("error.InvalidVoter", null,
+					"Your account is either not allowed to participate in this vote or you have already voted.", locale);
+			model.addObject(Constants.MESSAGE, message);
+			model.addObject("contextpath", contextpath);
+			return model;
+		};		
+		
+		return handleException((Exception)e, locale, request, response);
+	}
 
 	@ExceptionHandler(Exception.class)
 	public ModelAndView handleException(Exception e, Locale locale, HttpServletRequest request,
@@ -397,31 +421,41 @@ public class BasicController implements BeanFactoryAware {
 		boolean existingAnswerSet = answerSet.getId() != null && answerSet.getId() > 0;
 
 		String oldvalues = "";
-		if (existingAnswerSet && answerSet.getSurvey().getIsDraft() && activityService.isLogEnabled(406)) {
+		if (existingAnswerSet && answerSet.getSurvey().getIsDraft() && activityService.isLogEnabled(ActivityRegistry.ID_TEST_EDIT)) {
 			oldvalues = answerService.serializeOriginal(answerSet.getId());
+		}
+		
+		if (answerSet.getSurvey().getIsEVote()) {
+			String ecmoniker = (String) request.getSession().getAttribute("ECMONIKER");
+			if (ecmoniker == null || !eVoteService.checkVoter(answerSet.getSurvey().getUniqueId(), ecmoniker)) {
+				throw new MessageException("Invalid voter");
+			}
+			
+			eVoteService.setVoted(answerSet.getSurvey().getUniqueId(), ecmoniker);
 		}
 
 		while (!saved) {
 			try {
+				
 				answerService.internalSaveAnswerSet(answerSet, fileDir, draftid, true, true);
 				sessionService.ClearUniqueCodeForForm(request, answerSet.getSurvey().getId());
 				if (answerSet.getId() != null) {
 					if (existingAnswerSet) {
 						String newvalues = answerSet.serialize();
 						if (answerSet.getSurvey().getIsDraft()) {
-							activityService.log(406, answerSet.getUniqueCode() + ":" + oldvalues,
+							activityService.log(ActivityRegistry.ID_TEST_EDIT, answerSet.getUniqueCode() + ":" + oldvalues,
 									answerSet.getUniqueCode() + ":" + newvalues, userid,
 									answerSet.getSurvey().getUniqueId());
 						} else {
-							activityService.log(403, null, answerSet.getUniqueCode(), userid,
+							activityService.log(ActivityRegistry.ID_CONTRIBUTION_EDIT, null, answerSet.getUniqueCode(), userid,
 									answerSet.getSurvey().getUniqueId());
 						}
 					} else {
 						if (answerSet.getSurvey().getIsDraft()) {
-							activityService.log(404, null, answerSet.getUniqueCode(), -1,
+							activityService.log(ActivityRegistry.ID_TEST_SUBMIT, null, answerSet.getUniqueCode(), -1,
 									answerSet.getSurvey().getUniqueId());
 						} else {
-							activityService.log(401, null, answerSet.getUniqueCode(), -1,
+							activityService.log(ActivityRegistry.ID_CONTRIBUTION_SUBMIT, null, answerSet.getUniqueCode(), -1,
 									answerSet.getSurvey().getUniqueId());
 						}
 					}
@@ -470,6 +504,7 @@ public class BasicController implements BeanFactoryAware {
 		ModelAndView model = new ModelAndView("home/welcome");
 		model.addObject("page", "welcome");
 		model.addObject("ecasurl", ecashost);
+		model.addObject("require2fa", require2fa);
 		model.addObject("serviceurl", serverPrefix + "auth/ecaslogin");
 		model.addObject("continueWithoutJavascript", true);
 		if (isShowEcas())

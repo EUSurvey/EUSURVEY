@@ -8,6 +8,7 @@ import com.ec.survey.service.*;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.FileUtils;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
@@ -157,7 +158,7 @@ public abstract class ExportCreator implements Runnable {
 			export.setState(ExportState.Finished);
 			if (export.getSurvey() != null)
 			{
-				activityService.log(310, null, export.getId().toString(), export.getUserId(), export.getSurvey().getUniqueId());
+				activityService.log(ActivityRegistry.ID_EXPORT_FINISHED, null, export.getId().toString(), export.getUserId(), export.getSurvey().getUniqueId());
 			}
 									
 			if (export.getEmail() != null)

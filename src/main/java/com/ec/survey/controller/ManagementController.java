@@ -17,12 +17,17 @@ import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.delphi.DelphiMedian;
+import com.ec.survey.model.evote.SeatCounting;
+import com.ec.survey.model.evote.eVoteListResult;
+import com.ec.survey.model.evote.eVoteResults;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyException;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
+import com.ec.survey.tools.activity.ActivityRegistry;
+import com.ec.survey.tools.export.XlsxExportCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -39,6 +44,9 @@ import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -89,6 +97,11 @@ public class ManagementController extends BasicController {
 	public @Value("${ecf.template}") String ecfTemplateSurvey;
 	public @Value("${codaCreateDashboardLink:#{null}}") String codaCreateDashboardLink;
 	public @Value("${codaApiKey:#{null}}") String codaApiKey;
+	public @Value("${evote.template-lux:#{null}}") String evoteLuxTemplate;
+	public @Value("${evote.template-bru:#{null}}") String evoteBruTemplate;
+	public @Value("${evote.template-outside:#{null}}") String evoteOutsideTemplate;
+	
+	private final String LastEVoteTestResult = "LastEVoteTestResult";
 
 	private static final String[] KNOWN_RESULTTYPES = {
 			"content", "charts", "statistics", "ecf", "ecf2", "ecf3", "statistics-delphi", "statistics-quiz"
@@ -211,7 +224,7 @@ public class ManagementController extends BasicController {
 
 		Survey newSurvey = surveyService.clearChanges(form.getSurvey().getShortname(), u.getId());
 
-		activityService.log(108, "n/a", "n/a", u.getId(), newSurvey.getUniqueId());
+		activityService.log(ActivityRegistry.ID_PENDING_DISCARDED, "n/a", "n/a", u.getId(), newSurvey.getUniqueId());
 
 		return overview(shortname, request, locale);
 	}
@@ -562,7 +575,7 @@ public class ManagementController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-		activityService.log(105, "unpublished", "published", u.getId(), form.getSurvey().getUniqueId());
+		activityService.log(ActivityRegistry.ID_SURVEY_STATE_MANUAL, "unpublished", "published", u.getId(), form.getSurvey().getUniqueId());
 
 		return overview(shortname, request, locale);
 	}
@@ -584,7 +597,7 @@ public class ManagementController extends BasicController {
 			}
 
 			surveyService.activate(form.getSurvey(), true, u.getId());
-			activityService.log(105, "unpublished", "published", u.getId(), form.getSurvey().getUniqueId());
+			activityService.log(ActivityRegistry.ID_SURVEY_STATE_MANUAL, "unpublished", "published", u.getId(), form.getSurvey().getUniqueId());
 		}
 		ModelAndView result = overview(shortname, request, locale);
 
@@ -606,7 +619,7 @@ public class ManagementController extends BasicController {
 		}
 
 		surveyService.unpublish(form.getSurvey(), true, u.getId(), false);
-		activityService.log(105, "published", "unpublished", u.getId(), form.getSurvey().getUniqueId());
+		activityService.log(ActivityRegistry.ID_SURVEY_STATE_MANUAL, "published", "unpublished", u.getId(), form.getSurvey().getUniqueId());
 		return overview(shortname, request, locale);
 	}
 
@@ -624,7 +637,7 @@ public class ManagementController extends BasicController {
 			}
 			
 			String oldValue = null;
-			if (activityService.isEnabled(107)) {
+			if (activityService.isEnabled(ActivityRegistry.ID_PENDING_APPLIED)) {
 				Survey published = surveyService.getSurvey(form.getSurvey().getShortname(), false, false, false, false, null,
 						true, false);
 				
@@ -635,8 +648,8 @@ public class ManagementController extends BasicController {
 			
 			surveyService.applyChanges(form.getSurvey(), false, u.getId(), false);
 
-			if (activityService.isEnabled(107)) {
-				activityService.log(107, oldValue, form.getSurvey().serialize(false), u.getId(),
+			if (activityService.isEnabled(ActivityRegistry.ID_PENDING_APPLIED)) {
+				activityService.log(ActivityRegistry.ID_PENDING_APPLIED, oldValue, form.getSurvey().serialize(false), u.getId(),
 						form.getSurvey().getUniqueId());
 			}
 		} catch (Exception e) {
@@ -839,7 +852,7 @@ public class ManagementController extends BasicController {
 
 				if (result != null && result.getSurvey() != null) {
 					int id = surveyService.importSurvey(result, sessionService.getCurrentUser(request), true);
-					activityService.log(102, null, Integer.toString(id), u.getId(), result.getSurvey().getUniqueId());
+					activityService.log(ActivityRegistry.ID_SURVEY_IMPORTED, null, Integer.toString(id), u.getId(), result.getSurvey().getUniqueId());
 					try {
 						Files.delete(file.toPath());
 					} catch (IOException e) {
@@ -929,6 +942,29 @@ public class ManagementController extends BasicController {
 				Survey copy = original.copy(surveyService, sessionService.getCurrentUser(request), fileDir, false, -1,
 						-1, false, false, false, newShortName, UUID.randomUUID().toString());
 
+				if (copy.getIsEVote()) {
+					//change all multiple choice eVote Lists to the right style
+					String template = request.getParameter("evotetemplate");
+					copy.seteVoteTemplate(template);
+					for (Element q : copy.getElements()) {
+						if (q instanceof MultipleChoiceQuestion) {
+							switch(template) {
+								case "b":
+									((MultipleChoiceQuestion) q).setMultipleChoiceStyle(MultipleChoiceStyle.BRUSSELS);
+									break;
+								case "l":
+									((MultipleChoiceQuestion) q).setMultipleChoiceStyle(MultipleChoiceStyle.LUXEMBOURG);
+									break;
+								case "o":
+									((MultipleChoiceQuestion) q).setMultipleChoiceStyle(MultipleChoiceStyle.OUTSIDE);
+									break;
+								default:
+									throw new Exception("No valid eVote template");
+							}
+						}
+					}
+				}
+
 				try {
 
 					Map<String, String> convertedUIDs = surveyService.copyFiles(copy, new HashMap<>(), false, null, original.getUniqueId());
@@ -966,6 +1002,7 @@ public class ManagementController extends BasicController {
 					copy.setAudience(Tools.escapeHTML(parameterMap.get("audience")[0]));
 
 					copy.setAutomaticPublishing(false);
+					copy.setPreventGoingBack(false);
 					copy.setStart(null);
 					copy.setEnd(null);
 					copy.setNotificationValue(null);
@@ -978,6 +1015,8 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("delphi").equalsIgnoreCase("true"));
 					copy.setIsECF(request.getParameter("ecf") != null
 							&& request.getParameter("ecf").equalsIgnoreCase("true"));
+					copy.setIsEVote(request.getParameter("evote") != null
+							&& request.getParameter("evote").equalsIgnoreCase("true"));
 					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi());
 
 					surveyService.update(copy, false, true, true, u.getId());
@@ -992,7 +1031,7 @@ public class ManagementController extends BasicController {
 					sessionService.updateSessionInfo(copy, u, request);
 					request.getSession().setAttribute("SURVEYCOPIED", form.getSurvey().getShortname());
 
-					activityService.log(103, original.getId().toString(), copy.getId().toString(), u.getId(),
+					activityService.log(ActivityRegistry.ID_SURVEY_COPIED, original.getId().toString(), copy.getId().toString(), u.getId(),
 							copy.getUniqueId());
 					return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit");
 
@@ -1013,17 +1052,19 @@ public class ManagementController extends BasicController {
 		}
 	}
 
-	/** checks if the type of the given surves is only one of the possibilites (normal, quiz, opc, delphi)
+	/** checks if the type of the given survey is only one of the possibilities (normal, quiz, opc, delphi, evote)
 	*/
 	private boolean checkConclusiveSurveyType(Survey survey) {
 		boolean isQuiz = survey.getIsQuiz();
 		boolean isOPC = survey.getIsOPC();
 		boolean isDelphi = survey.getIsDelphi();
-		boolean isNormal = !(isQuiz || isOPC || isDelphi);
-		if ( isNormal && !isQuiz && !isOPC && !isDelphi) return true;
-		if (!isNormal &&  isQuiz && !isOPC && !isDelphi) return true;
-		if (!isNormal && !isQuiz &&  isOPC && !isDelphi) return true;
-		if (!isNormal && !isQuiz && !isOPC &&  isDelphi) return true;
+		boolean isEVote = survey.getIsEVote();
+		boolean isNormal = !(isQuiz || isOPC || isDelphi || isEVote);
+		if ( isNormal && !isQuiz && !isOPC && !isDelphi && !isEVote) return true;
+		if (!isNormal &&  isQuiz && !isOPC && !isDelphi && !isEVote) return true;
+		if (!isNormal && !isQuiz &&  isOPC && !isDelphi && !isEVote) return true;
+		if (!isNormal && !isQuiz && !isOPC &&  isDelphi && !isEVote) return true;
+		if (!isNormal && !isQuiz && !isOPC &&  !isDelphi && isEVote) return true;
 		return false;
 	}
 
@@ -1035,6 +1076,47 @@ public class ManagementController extends BasicController {
 			survey.setChangeContribution(true); // should always be activated for delphi surveys
 			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
 			survey.setDownloadContribution(false); // should always be deactivated for delphi surveys
+		}
+		
+		if (survey.getIsEVote()) {
+			survey.setChangeContribution(false);
+			survey.setIsUseMaxNumberContribution(false);
+			survey.setSaveAsDraft(false);
+			survey.setDownloadContribution(false);
+			survey.setSecurity("securedanonymous");
+			survey.setAllowedContributionsPerUser(1);
+			survey.setDedicatedResultPrivileges(false);
+			survey.setProgressBar(false);
+			survey.setEcasSecurity(true);
+			survey.setEcasMode("all");
+			survey.setPassword("");
+			
+			if (creation) {
+				String templateUid;
+				switch (survey.geteVoteTemplate()){
+					case "b":
+						templateUid = evoteBruTemplate;
+						break;
+					case "l":
+						templateUid = evoteLuxTemplate;
+						break;
+					case "o":
+						templateUid = evoteOutsideTemplate;
+						break;
+					default:
+						templateUid = null;
+						break;
+				}
+
+				if (templateUid != null && templateUid.length() > 0){
+					Survey templateSurvey = applyTemplate(survey, templateUid, translationsToCreate);
+
+					survey.setQuorum(templateSurvey.getQuorum());
+					survey.setMaxPrefVotes(templateSurvey.getMaxPrefVotes());
+					survey.setSeatsToAllocate(templateSurvey.getSeatsToAllocate());
+					survey.setMinListPercent(templateSurvey.getMinListPercent());
+				}
+			}
 		}
 		
 		if (survey.getIsOPC()) {
@@ -1056,80 +1138,85 @@ public class ManagementController extends BasicController {
 				survey.setWcagCompliance(true);
 				survey.setShowPDFOnUnavailabilityPage(true);
 				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
-					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
-					template.copyElements(survey, surveyService, true);
-					
-					List<Translations> translations = translationService.getActiveTranslationsForSurvey(template.getId());
-					Map<String, Map<String, Translation>> oldTranslations = new HashMap<>();
-					
-					// copy published translations
-					for (Translations trans : translations) {
-						if (trans.getComplete() && !trans.getLanguage().getCode().equals(survey.getLanguage().getCode())) {
-							oldTranslations.put(trans.getLanguage().getCode(), trans.getTranslationsByKey());
-							Translations trans2 = new Translations();
-							trans2.setLanguage(trans.getLanguage());
-							translationsToCreate.put(trans2.getLanguage().getCode(), trans2);							
-							
-							String confirmation = resources.getMessage("message.confirmationWithTitle", null, Survey.CONFIRMATIONTEXT,
-									new Locale(trans.getLanguage().getCode()));
-							trans2.getTranslations().add(new Translation(Survey.CONFIRMATIONPAGE, confirmation,
-									trans.getLanguage().getCode(), null, trans2));
-						
-							String escape = resources.getMessage("message.escape", null, Survey.ESCAPETEXT,
-									new Locale(trans.getLanguage().getCode()));
-							trans2.getTranslations().add(new Translation(Survey.ESCAPEPAGE, escape, trans.getLanguage().getCode(),
-									null, trans2));							
-						}
-					}
-
-					//Create and set ids and uids
-					surveyService.add(survey, false, survey.getOwner().getId());
-
-					//Copy files eg for Gallery Question
-					surveyService.copyFiles(survey, new HashMap<>(), true, new HashMap<String, String>(), opctemplatesurvey);
-
-					// recreate unique ids
-					for (Element elem : survey.getElementsRecursive(true)) {
-						String newUniqueId = UUID.randomUUID().toString();
-						String oldUniqueId = elem.getUniqueId();
-						
-						elem.setUniqueId(newUniqueId);
-						
-						Map<String, String> possibleKeys = new HashMap<>();
-						possibleKeys.put(oldUniqueId, newUniqueId);
-						possibleKeys.put(oldUniqueId + "help", newUniqueId + "help");
-						possibleKeys.put(oldUniqueId + Question.FEEDBACK, newUniqueId + Question.FEEDBACK);
-						possibleKeys.put(oldUniqueId + Section.TABTITLE, newUniqueId + Section.TABTITLE);
-						possibleKeys.put(oldUniqueId + NumberQuestion.UNIT, newUniqueId + NumberQuestion.UNIT);
-						possibleKeys.put(oldUniqueId + NumberQuestion.MINLABEL, newUniqueId + NumberQuestion.MINLABEL);
-						possibleKeys.put(oldUniqueId + NumberQuestion.MAXLABEL, newUniqueId + NumberQuestion.MAXLABEL);
-						possibleKeys.put(oldUniqueId + Confirmation.TEXT, newUniqueId + Confirmation.TEXT);
-						possibleKeys.put(oldUniqueId + Confirmation.LABEL, newUniqueId + Confirmation.LABEL);
-						possibleKeys.put(oldUniqueId + MatrixOrTable.FIRSTCELL, newUniqueId + MatrixOrTable.FIRSTCELL);
-						possibleKeys.put(oldUniqueId + GalleryQuestion.TEXT, newUniqueId + GalleryQuestion.TEXT);
-						possibleKeys.put(oldUniqueId + GalleryQuestion.TITLE, newUniqueId + GalleryQuestion.TITLE);
-						possibleKeys.put(oldUniqueId + "RESULTTEXT", newUniqueId + "RESULTTEXT");
-						
-						for (String languageCode : oldTranslations.keySet()) {
-							Map<String, Translation> translationsByKey = oldTranslations.get(languageCode);
-							Translations trans2 = translationsToCreate.get(languageCode);
-							
-							for (String possibleOldKey : possibleKeys.keySet()) {							
-								if (translationsByKey.containsKey(possibleOldKey)) {
-									Translation value = translationsByKey.get(possibleOldKey);
-									Translation value2 = new Translation();
-									value2.setKey(possibleKeys.get(possibleOldKey));
-									value2.setLabel(value.getLabel());
-									value2.setLanguage(value.getLanguage());
-									value2.setTranslations(trans2);
-									trans2.getTranslations().add(value2);
-								}							
-							}
-						}						
-					}
+					applyTemplate(survey, opctemplatesurvey, translationsToCreate);
 				}
 			}		
 		}		
+	}
+
+	private Survey applyTemplate(Survey survey, String templateUid, Map<String, Translations> translationsToCreate) throws ValidationException, IOException{
+		Survey template = surveyService.getSurveyByUniqueId(templateUid, false, true);
+		template.copyElements(survey, surveyService, !survey.getIsEVote());
+
+		List<Translations> translations = translationService.getActiveTranslationsForSurvey(template.getId());
+		Map<String, Map<String, Translation>> oldTranslations = new HashMap<>();
+
+		// copy published translations
+		for (Translations trans : translations) {
+			if (trans.getComplete() && !trans.getLanguage().getCode().equals(survey.getLanguage().getCode())) {
+				oldTranslations.put(trans.getLanguage().getCode(), trans.getTranslationsByKey());
+				Translations trans2 = new Translations();
+				trans2.setLanguage(trans.getLanguage());
+				translationsToCreate.put(trans2.getLanguage().getCode(), trans2);
+
+				String confirmation = resources.getMessage("message.confirmationWithTitle", null, Survey.CONFIRMATIONTEXT,
+						new Locale(trans.getLanguage().getCode()));
+				trans2.getTranslations().add(new Translation(Survey.CONFIRMATIONPAGE, confirmation,
+						trans.getLanguage().getCode(), null, trans2));
+
+				String escape = resources.getMessage("message.escape", null, Survey.ESCAPETEXT,
+						new Locale(trans.getLanguage().getCode()));
+				trans2.getTranslations().add(new Translation(Survey.ESCAPEPAGE, escape, trans.getLanguage().getCode(),
+						null, trans2));
+			}
+		}
+
+		//Create and set ids and uids
+		surveyService.add(survey, false, survey.getOwner().getId());
+
+		//Copy files eg for Gallery Question
+		surveyService.copyFiles(survey, new HashMap<>(), true, new HashMap<String, String>(), templateUid);
+
+		// recreate unique ids
+		for (Element elem : survey.getElementsRecursive(true)) {
+			String newUniqueId = UUID.randomUUID().toString();
+			String oldUniqueId = elem.getUniqueId();
+
+			elem.setUniqueId(newUniqueId);
+
+			Map<String, String> possibleKeys = new HashMap<>();
+			possibleKeys.put(oldUniqueId, newUniqueId);
+			possibleKeys.put(oldUniqueId + "help", newUniqueId + "help");
+			possibleKeys.put(oldUniqueId + Question.FEEDBACK, newUniqueId + Question.FEEDBACK);
+			possibleKeys.put(oldUniqueId + Section.TABTITLE, newUniqueId + Section.TABTITLE);
+			possibleKeys.put(oldUniqueId + NumberQuestion.UNIT, newUniqueId + NumberQuestion.UNIT);
+			possibleKeys.put(oldUniqueId + NumberQuestion.MINLABEL, newUniqueId + NumberQuestion.MINLABEL);
+			possibleKeys.put(oldUniqueId + NumberQuestion.MAXLABEL, newUniqueId + NumberQuestion.MAXLABEL);
+			possibleKeys.put(oldUniqueId + Confirmation.TEXT, newUniqueId + Confirmation.TEXT);
+			possibleKeys.put(oldUniqueId + Confirmation.LABEL, newUniqueId + Confirmation.LABEL);
+			possibleKeys.put(oldUniqueId + MatrixOrTable.FIRSTCELL, newUniqueId + MatrixOrTable.FIRSTCELL);
+			possibleKeys.put(oldUniqueId + GalleryQuestion.TEXT, newUniqueId + GalleryQuestion.TEXT);
+			possibleKeys.put(oldUniqueId + GalleryQuestion.TITLE, newUniqueId + GalleryQuestion.TITLE);
+			possibleKeys.put(oldUniqueId + "RESULTTEXT", newUniqueId + "RESULTTEXT");
+
+			for (String languageCode : oldTranslations.keySet()) {
+				Map<String, Translation> translationsByKey = oldTranslations.get(languageCode);
+				Translations trans2 = translationsToCreate.get(languageCode);
+
+				for (String possibleOldKey : possibleKeys.keySet()) {
+					if (translationsByKey.containsKey(possibleOldKey)) {
+						Translation value = translationsByKey.get(possibleOldKey);
+						Translation value2 = new Translation();
+						value2.setKey(possibleKeys.get(possibleOldKey));
+						value2.setLabel(value.getLabel());
+						value2.setLanguage(value.getLanguage());
+						value2.setTranslations(trans2);
+						trans2.getTranslations().add(value2);
+					}
+				}
+			}
+		}
+		return template;
 	}
 
 	private ModelAndView updateSurvey(Form form, HttpServletRequest request, boolean creation, Locale locale)
@@ -1173,6 +1260,13 @@ public class ManagementController extends BasicController {
 					&& request.getParameter("delphi").equalsIgnoreCase("true"));
 			uploadedSurvey.setIsECF(
 					request.getParameter("ecf") != null && request.getParameter("ecf").equalsIgnoreCase("true"));
+			uploadedSurvey.setIsEVote(
+					request.getParameter("evote") != null && request.getParameter("evote").equalsIgnoreCase("true"));
+			
+			if (uploadedSurvey.getIsEVote()) {
+				uploadedSurvey.seteVoteTemplate(request.getParameter("evotetemplate"));
+			}
+			
 			uploadedSurvey.setSaveAsDraft(!uploadedSurvey.getIsQuiz());
 
 			if (uploadedSurvey.getTitle() != null
@@ -1180,7 +1274,7 @@ public class ManagementController extends BasicController {
 				throw new InvalidXHTMLException(uploadedSurvey.getTitle(), uploadedSurvey.getTitle());
 			}
 
-			// check for mutual exclusion of types quiz, opc, delphi (or normal)
+			// check for mutual exclusion of types quiz, opc, delphi, evote (or normal)
 			if (!checkConclusiveSurveyType(uploadedSurvey)) {
 				throw new MessageException("multiple selected survey types at once");
 			}
@@ -1241,7 +1335,7 @@ public class ManagementController extends BasicController {
 
 			if (!uploadedSurvey.getShortname().equals(survey.getShortname())) {
 				String[] oldnew = { survey.getShortname(), uploadedSurvey.getShortname() };
-				activitiesToLog.put(109, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_ALIAS, oldnew);
 				shortnameChanged = true;
 			}
 		}
@@ -1376,7 +1470,7 @@ public class ManagementController extends BasicController {
 
 		if (languageChanged) {
 			String[] oldnew = { survey.getLanguage().getCode(), uploadedSurvey.getLanguage().getCode() };
-			activitiesToLog.put(208, oldnew);
+			activitiesToLog.put(ActivityRegistry.ID_MAIN_LANGUAGE, oldnew);
 		}
 
 		if (!Tools.isEqual(survey.getTitle(), uploadedSurvey.getTitle())) {
@@ -1384,7 +1478,7 @@ public class ManagementController extends BasicController {
 
 			if (!creation) {
 				String[] oldnew = { survey.getTitle(), uploadedSurvey.getTitle() };
-				activitiesToLog.put(207, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_SURVEY_TITLE, oldnew);
 			}
 		}
 
@@ -1396,42 +1490,51 @@ public class ManagementController extends BasicController {
 
 			if (!creation) {
 				String[] oldnew = { survey.getNiceContact(), uploadedSurvey.getNiceContact() };
-				activitiesToLog.put(209, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_CONTACT_INFO, oldnew);
 			}
 		}
 
-		if (survey.getMultiPaging() != uploadedSurvey.getMultiPaging())
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getProgressBar(), uploadedSurvey.getProgressBar()))
-			hasPendingChanges = true;
-		if(!Tools.isEqual(survey.getMotivationPopup(), uploadedSurvey.getMotivationPopup()))
-			hasPendingChanges = true;
-		if(!Tools.isEqual(survey.getMotivationText(), uploadedSurvey.getMotivationText()))
-			hasPendingChanges = true;
-		if(!Tools.isEqual(survey.getMotivationPopupTitle(), uploadedSurvey.getMotivationPopupTitle()))
-			hasPendingChanges = true;
-		if(!Tools.isEqual(survey.getMotivationTriggerProgress(), uploadedSurvey.getMotivationTriggerProgress()))
-			hasPendingChanges = true;
-		if(!Tools.isEqual(survey.getMotivationTriggerTime(), uploadedSurvey.getMotivationTriggerTime()))
-			hasPendingChanges = true;
-		if(!Tools.isEqual(survey.getMotivationType(), uploadedSurvey.getMotivationType()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getProgressDisplay(), uploadedSurvey.getProgressDisplay()))
-			hasPendingChanges = true;
-		if (survey.getValidatedPerPage() != uploadedSurvey.getValidatedPerPage())
-			hasPendingChanges = true;
-		if (survey.getPreventGoingBack() != uploadedSurvey.getPreventGoingBack())
-			hasPendingChanges = true;
-		if (!Objects.equals(survey.getWcagCompliance(), uploadedSurvey.getWcagCompliance()))
-			hasPendingChanges = true;
+		if (!hasPendingChanges) {
+			hasPendingChanges = PropertiesHelper.checkForPendingChanges(survey, uploadedSurvey,
+					Survey::getMultiPaging,
+					Survey::getProgressBar,
+					Survey::getMotivationPopup,
+					Survey::getMotivationText,
+					Survey::getMotivationPopupTitle,
+					Survey::getMotivationTriggerProgress,
+					Survey::getMotivationTriggerTime,
+					Survey::getMotivationType,
+					Survey::getProgressDisplay,
+					Survey::getValidatedPerPage,
+					Survey::getPreventGoingBack,
+					Survey::getWcagCompliance,
+					Survey::getSectionNumbering,
+					Survey::getRegistrationForm,
+					Survey::getQuestionNumbering,
+					Survey::getIsQuiz,
+					Survey::getIsOPC,
+					Survey::getIsDelphi,
+					Survey::getIsEVote,
+					Survey::getQuorum,
+					Survey::getMinListPercent,
+					Survey::getMaxPrefVotes,
+					Survey::getSeatsToAllocate,
+					Survey::getShowTotalScore,
+					Survey::getShowQuizIcons,
+					Survey::getIsUseMaxNumberContribution,
+					Survey::getIsUseMaxNumberContributionLink,
+					Survey::getMaxNumberContributionText,
+					Survey::getMaxNumberContributionLink,
+					Survey::getMaxNumberContribution,
+					Survey::getTimeLimit,
+					Survey::getShowCountdown,
+					Survey::getScoresByQuestion
+			);
+		}
+
 		if (!Tools.isFileEqual(survey.getLogo(), uploadedSurvey.getLogo()))
 			hasPendingChanges = true;
-		if (survey.getSectionNumbering() != uploadedSurvey.getSectionNumbering())
-			hasPendingChanges = true;
-		if (survey.getRegistrationForm() != uploadedSurvey.getRegistrationForm())
-			hasPendingChanges = true;
-		if (survey.getQuestionNumbering() != uploadedSurvey.getQuestionNumbering())
-			hasPendingChanges = true;
+
 		if (!Tools.isEqual(survey.getEscapePage(), uploadedSurvey.getEscapePage())){
 			hasPendingChanges = true;
 			keyTranslationsToAdd.add(Survey.ESCAPEPAGE);
@@ -1452,38 +1555,10 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (!Tools.isEqualIgnoreEmptyString(survey.getQuizResultsMessage(), uploadedSurvey.getQuizResultsMessage()))
 			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getIsQuiz(), uploadedSurvey.getIsQuiz()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getIsOPC(), uploadedSurvey.getIsOPC()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getIsDelphi(), uploadedSurvey.getIsDelphi()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getShowTotalScore(), uploadedSurvey.getShowTotalScore()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getShowQuizIcons(), uploadedSurvey.getShowQuizIcons()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getIsUseMaxNumberContribution(), uploadedSurvey.getIsUseMaxNumberContribution()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getIsUseMaxNumberContributionLink(),
-				uploadedSurvey.getIsUseMaxNumberContributionLink()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getMaxNumberContributionText(), uploadedSurvey.getMaxNumberContributionText()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getMaxNumberContributionLink(), uploadedSurvey.getMaxNumberContributionLink()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getMaxNumberContribution(), uploadedSurvey.getMaxNumberContribution()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getTimeLimit(), uploadedSurvey.getTimeLimit()))
-			hasPendingChanges = true;
-		if (!Tools.isEqual(survey.getShowCountdown(), uploadedSurvey.getShowCountdown()))
-			hasPendingChanges = true;
 
 		if (!uploadedSurvey.getShowTotalScore()) {
 			uploadedSurvey.setScoresByQuestion(false);
 		}
-
-		if (!Tools.isEqual(survey.getScoresByQuestion(), uploadedSurvey.getScoresByQuestion()))
-			hasPendingChanges = true;
 
 		survey.setLanguage(uploadedSurvey.getLanguage());
 		survey.setTitle(uploadedSurvey.getTitle());
@@ -1493,7 +1568,7 @@ public class ManagementController extends BasicController {
 		if (uploadedSurvey.getListForm() != survey.getListForm()) {
 			String[] oldnew = { survey.getListForm() ? "enabled" : "disabled",
 					uploadedSurvey.getListForm() ? "enabled" : "disabled" };
-			activitiesToLog.put(117, oldnew);
+			activitiesToLog.put(ActivityRegistry.ID_PRIVACY_SETTINGS, oldnew);
 
 			survey.setListFormValidated(false);
 			if (uploadedSurvey.getListForm()) {
@@ -1509,6 +1584,9 @@ public class ManagementController extends BasicController {
 		survey.setIsOPC(uploadedSurvey.getIsOPC());
 		survey.setIsDelphi(uploadedSurvey.getIsDelphi());
 		survey.setIsECF(uploadedSurvey.getIsECF());
+		survey.setIsEVote(uploadedSurvey.getIsEVote());
+		survey.seteVoteTemplate(uploadedSurvey.geteVoteTemplate());
+
 		survey.setSaveAsDraft(uploadedSurvey.getSaveAsDraft());
 		survey.setShowQuizIcons(uploadedSurvey.getShowQuizIcons());
 		survey.setShowTotalScore(uploadedSurvey.getShowTotalScore());
@@ -1539,41 +1617,67 @@ public class ManagementController extends BasicController {
 			if (!uploadedSurvey.getSecurity().equals(survey.getSecurity())) {
 				if (survey.getSecurity().startsWith("open") && !uploadedSurvey.getSecurity().startsWith("open")) {
 					String[] oldnew = { "open", "secured" };
-					activitiesToLog.put(114, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_SECURITY_SETTINGS, oldnew);
 				} else if (!survey.getSecurity().startsWith("open")
 						&& uploadedSurvey.getSecurity().startsWith("open")) {
 					String[] oldnew = { "secured", "open" };
-					activitiesToLog.put(114, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_SECURITY_SETTINGS, oldnew);
 				}
 
 				if (survey.getSecurity().endsWith("anonymous") && !uploadedSurvey.getSecurity().endsWith("anonymous")) {
 					String[] oldnew = { "enabled", "disabled" };
-					activitiesToLog.put(116, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_ANONYMITY_SETTINGS, oldnew);
 				} else if (!survey.getSecurity().endsWith("anonymous")
 						&& uploadedSurvey.getSecurity().endsWith("anonymous")) {
 					String[] oldnew = { "disabled", "enabled" };
-					activitiesToLog.put(116, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_ANONYMITY_SETTINGS, oldnew);
 				}
 			}
 
 			if (uploadedSurvey.getMultiPaging() != survey.getMultiPaging()) {
 				String[] oldnew = { survey.getMultiPaging() ? "enabled" : "disabled",
 						uploadedSurvey.getMultiPaging() ? "enabled" : "disabled" };
-				activitiesToLog.put(120, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_MULTI_PAGING_SETTINGS, oldnew);
 			}
 			
 			if (uploadedSurvey.getProgressBar() != survey.getProgressBar()) {
 				String[] oldnew = { survey.getProgressBar() ? "enabled" : "disabled",
 						uploadedSurvey.getProgressBar() ? "enabled" : "disabled" };
-				activitiesToLog.put(124, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_PROGRESS_BAR, oldnew);
 			}
 
 			if(uploadedSurvey.getMotivationPopup() != survey.getMotivationPopup()) {
 				String[] oldnew = { survey.getMotivationPopup() ? "enabled" : "disabled",
 						uploadedSurvey.getMotivationPopup() ? "enabled" : "disabled" };
-				activitiesToLog.put(128, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_MOTIVATION_POPUP, oldnew);
+			}
+
+			if(!Objects.equals(uploadedSurvey.getQuorum(), survey.getQuorum())) {
+				String[] oldnew = { survey.getQuorum() + "",
+						uploadedSurvey.getQuorum() + ""};
+				activitiesToLog.put(ActivityRegistry.ID_EVOTE_QUORUM, oldnew);
+			}
+			if(!Objects.equals(uploadedSurvey.getMinListPercent(), survey.getMinListPercent())) {
+				String[] oldnew = { survey.getMinListPercent() + "",
+						uploadedSurvey.getMinListPercent() + ""};
+				activitiesToLog.put(ActivityRegistry.ID_EVOTE_LIST_PORTION, oldnew);
+			}
+			if(!Objects.equals(uploadedSurvey.getMaxPrefVotes(), survey.getMaxPrefVotes())) {
+				String[] oldnew = { survey.getMaxPrefVotes() + "",
+						uploadedSurvey.getMaxPrefVotes() + ""};
+				activitiesToLog.put(ActivityRegistry.ID_EVOTE_NUM_PREFERENTIAL_VOTES, oldnew);
+			}
+			if(!Objects.equals(uploadedSurvey.getSeatsToAllocate(), survey.getSeatsToAllocate())) {
+				String[] oldnew = { survey.getSeatsToAllocate() + "",
+						uploadedSurvey.getSeatsToAllocate() + ""};
+				activitiesToLog.put(ActivityRegistry.ID_EVOTE_SEATS, oldnew);
 			}
 		}
+
+		survey.setQuorum(uploadedSurvey.getQuorum());
+		survey.setMinListPercent(uploadedSurvey.getMinListPercent());
+		survey.setMaxPrefVotes(uploadedSurvey.getMaxPrefVotes());
+		survey.setSeatsToAllocate(uploadedSurvey.getSeatsToAllocate());
 
 		if (!survey.getIsOPC()) {
 			survey.setSecurity(uploadedSurvey.getSecurity());
@@ -1616,7 +1720,7 @@ public class ManagementController extends BasicController {
 						&& !uploadedSurvey.getPassword().equalsIgnoreCase("********")) {
 					if (!uploadedSurvey.getPassword().equals(survey.getPassword())) {
 						String[] oldnew = { survey.getPassword(), uploadedSurvey.getPassword() };
-						activitiesToLog.put(115, oldnew);
+						activitiesToLog.put(ActivityRegistry.ID_GLOBAL_PASSWORD, oldnew);
 					}
 
 					survey.setPassword(uploadedSurvey.getPassword());
@@ -1634,7 +1738,7 @@ public class ManagementController extends BasicController {
 			if (uploadedSurvey.getValidatedPerPage() != survey.getValidatedPerPage()) {
 				String[] oldnew = { survey.getValidatedPerPage() ? "enabled" : "disabled",
 						uploadedSurvey.getValidatedPerPage() ? "enabled" : "disabled" };
-				activitiesToLog.put(121, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_PAGEWISE_VALIDATION, oldnew);
 			}
 		
 			survey.setValidatedPerPage(uploadedSurvey.getValidatedPerPage());
@@ -1646,7 +1750,7 @@ public class ManagementController extends BasicController {
 			if (!Objects.equals(uploadedSurvey.getWcagCompliance(), survey.getWcagCompliance())) {
 				String[] oldnew = { survey.getWcagCompliance() ? "enabled" : "disabled",
 						uploadedSurvey.getWcagCompliance() ? "enabled" : "disabled" };
-				activitiesToLog.put(122, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_WCAG_COMPLIANCE, oldnew);
 			}
 
 			survey.setWcagCompliance(uploadedSurvey.getWcagCompliance());
@@ -1654,7 +1758,7 @@ public class ManagementController extends BasicController {
 			if (uploadedSurvey.getSectionNumbering() != survey.getSectionNumbering()) {
 				String[] oldnew = { getNumberingLabel(survey.getSectionNumbering()),
 						getNumberingLabel(uploadedSurvey.getSectionNumbering()) };
-				activitiesToLog.put(215, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_AUTO_NUM_SECTIONS, oldnew);
 			}
 
 			survey.setSectionNumbering(uploadedSurvey.getSectionNumbering());
@@ -1662,7 +1766,7 @@ public class ManagementController extends BasicController {
 			if (uploadedSurvey.getQuestionNumbering() != survey.getQuestionNumbering()) {
 				String[] oldnew = { getNumberingLabel(survey.getQuestionNumbering()),
 						getNumberingLabel(uploadedSurvey.getQuestionNumbering()) };
-				activitiesToLog.put(216, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_AUTO_NUM_QUESTIONS, oldnew);
 			}
 
 			survey.setQuestionNumbering(uploadedSurvey.getQuestionNumbering());
@@ -1670,7 +1774,7 @@ public class ManagementController extends BasicController {
 			if (uploadedSurvey.getAutomaticPublishing() != survey.getAutomaticPublishing()) {
 				String[] oldnew = { survey.getAutomaticPublishing() ? "enabled" : "disabled",
 						uploadedSurvey.getAutomaticPublishing() ? "enabled" : "disabled" };
-				activitiesToLog.put(210, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_AUTO_SUBMIT, oldnew);
 				if (!uploadedSurvey.getAutomaticPublishing()){
 					uploadedSurvey.setStart(null);
 					uploadedSurvey.setEnd(null);
@@ -1711,10 +1815,10 @@ public class ManagementController extends BasicController {
 
 			if (uploadedSurvey.getNotificationValue() == null && survey.getNotificationValue() != null) {
 				String[] oldnew = { "enabled", "disabled" };
-				activitiesToLog.put(110, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_END_NOTIFICATION_SETTINGS, oldnew);
 			} else if (uploadedSurvey.getNotificationValue() != null && survey.getNotificationValue() == null) {
 				String[] oldnew = { "disabled", "enabled" };
-				activitiesToLog.put(110, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_END_NOTIFICATION_SETTINGS, oldnew);
 			}
 
 			if (!Tools.isEqual(uploadedSurvey.getNotificationUnit(), survey.getNotificationUnit())
@@ -1724,7 +1828,7 @@ public class ManagementController extends BasicController {
 								? survey.getNotificationValue() + " " + survey.getNiceNotificationUnit()
 								: "",
 						uploadedSurvey.getNotificationValue() + " " + uploadedSurvey.getNiceNotificationUnit() };
-				activitiesToLog.put(111, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_END_NOTIFICATION_VALUES, oldnew);
 			}
 
 			// the feature to limit the notification to the form owner has been removed
@@ -1733,20 +1837,20 @@ public class ManagementController extends BasicController {
 			if (uploadedSurvey.getNotifyAll() != survey.getNotifyAll()) {
 				if (uploadedSurvey.getNotifyAll()) {
 					String[] oldnew = { "disabled", "enabled" };
-					activitiesToLog.put(112, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_END_NOTIFICATION_REACH, oldnew);
 				} else {
 					String[] oldnew = { "enabled", "disabled" };
-					activitiesToLog.put(112, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_END_NOTIFICATION_REACH, oldnew);
 				}
 			}
 
 			if (uploadedSurvey.getRegistrationForm() != survey.getRegistrationForm()) {
 				if (uploadedSurvey.getRegistrationForm()) {
 					String[] oldnew = { "disabled", "enabled" };
-					activitiesToLog.put(113, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_CONTACT_CREATION, oldnew);
 				} else {
 					String[] oldnew = { "enabled", "disabled" };
-					activitiesToLog.put(113, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_CONTACT_CREATION, oldnew);
 				}
 			}
 
@@ -1755,7 +1859,7 @@ public class ManagementController extends BasicController {
 						.equals(ConversionTools.getFullString(survey.getStart()))) {
 					String[] oldnew = { ConversionTools.getFullString(survey.getStart()),
 							ConversionTools.getFullString(uploadedSurvey.getStart()) };
-					activitiesToLog.put(211, oldnew);
+					activitiesToLog.put(ActivityRegistry.ID_START_DATE, oldnew);
 				}
 
 				survey.setStart(uploadedSurvey.getStart());
@@ -1765,7 +1869,7 @@ public class ManagementController extends BasicController {
 					.equals(ConversionTools.getFullString(survey.getEnd()))) {
 				String[] oldnew = { ConversionTools.getFullString(survey.getEnd()),
 						ConversionTools.getFullString(uploadedSurvey.getEnd()) };
-				activitiesToLog.put(212, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_END_DATE, oldnew);
 			}
 
 			survey.setEnd(uploadedSurvey.getEnd());
@@ -1777,7 +1881,7 @@ public class ManagementController extends BasicController {
 			if (uploadedSurvey.getChangeContribution() != survey.getChangeContribution()) {
 				String[] oldnew = { survey.getChangeContribution() ? "enabled" : "disabled",
 						uploadedSurvey.getChangeContribution() ? "enabled" : "disabled" };
-				activitiesToLog.put(119, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_EDIT_CONTRIBUTION, oldnew);
 			}
 
 			survey.setChangeContribution(uploadedSurvey.getChangeContribution());
@@ -1795,7 +1899,7 @@ public class ManagementController extends BasicController {
 			if (uploadedSurvey.getCaptcha() != survey.getCaptcha()) {
 				String[] oldnew = { survey.getCaptcha() ? "enabled" : "disabled",
 						uploadedSurvey.getCaptcha() ? "enabled" : "disabled" };
-				activitiesToLog.put(118, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_CAPTCHA_SETTINGS, oldnew);
 			}
 
 			if (!survey.getIsOPC())
@@ -1832,10 +1936,10 @@ public class ManagementController extends BasicController {
 					String[] oldnew = { null, label.contains("#") ? label.substring(label.indexOf('#') + 1)
 							: label + ":" + survey.getUsefulLinks().get(label) };
 
-					if (activitiesToLog.containsKey(203)) {
-						activitiesToLog.put(203, ArrayUtils.addAll(activitiesToLog.get(203), oldnew));
+					if (activitiesToLog.containsKey(ActivityRegistry.ID_USEFUL_LINK_ADD)) {
+						activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_ADD, ArrayUtils.addAll(activitiesToLog.get(ActivityRegistry.ID_USEFUL_LINK_ADD), oldnew));
 					} else {
-						activitiesToLog.put(203, oldnew);
+						activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_ADD, oldnew);
 					}
 				}
 			}
@@ -1846,10 +1950,10 @@ public class ManagementController extends BasicController {
 					String[] oldnew = { label.contains("#") ? label.substring(label.indexOf('#') + 1)
 							: label + ":" + entry.getValue(), null };
 
-					if (activitiesToLog.containsKey(204)) {
-						activitiesToLog.put(204, ArrayUtils.addAll(activitiesToLog.get(204), oldnew));
+					if (activitiesToLog.containsKey(ActivityRegistry.ID_USEFUL_LINK_REMOVE)) {
+						activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_REMOVE, ArrayUtils.addAll(activitiesToLog.get(ActivityRegistry.ID_USEFUL_LINK_REMOVE), oldnew));
 					} else {
-						activitiesToLog.put(204, oldnew);
+						activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_REMOVE, oldnew);
 					}
 				}
 			}
@@ -1911,10 +2015,10 @@ public class ManagementController extends BasicController {
 					hasPendingChanges = true;
 					String[] oldnew = { null, label + ":" + survey.getBackgroundDocuments().get(label) };
 
-					if (activitiesToLog.containsKey(205)) {
-						activitiesToLog.put(205, ArrayUtils.addAll(activitiesToLog.get(205), oldnew));
+					if (activitiesToLog.containsKey(ActivityRegistry.ID_BACKGROUND_DOC_ADD)) {
+						activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_ADD, ArrayUtils.addAll(activitiesToLog.get(ActivityRegistry.ID_BACKGROUND_DOC_ADD), oldnew));
 					} else {
-						activitiesToLog.put(205, oldnew);
+						activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_ADD, oldnew);
 					}
 				}
 			}
@@ -1922,10 +2026,10 @@ public class ManagementController extends BasicController {
 				if (!survey.getBackgroundDocuments().containsKey(entry.getKey())) {
 					hasPendingChanges = true;
 					String[] oldnew = { entry.getKey() + ":" + entry.getValue(), null };
-					if (activitiesToLog.containsKey(206)) {
-						activitiesToLog.put(206, ArrayUtils.addAll(activitiesToLog.get(206), oldnew));
+					if (activitiesToLog.containsKey(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE)) {
+						activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE, ArrayUtils.addAll(activitiesToLog.get(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE), oldnew));
 					} else {
-						activitiesToLog.put(206, oldnew);
+						activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE, oldnew);
 					}
 
 					fileService.deleteIfNotReferenced(entry.getValue(), survey.getUniqueId());
@@ -1937,7 +2041,7 @@ public class ManagementController extends BasicController {
 				if (logo.equalsIgnoreCase(Constants.DELETED)) {
 					if (survey.getLogo() != null) {
 						String[] oldnew = {survey.getLogo().getName(), Constants.DELETED};
-						activitiesToLog.put(213, oldnew);
+						activitiesToLog.put(ActivityRegistry.ID_LOGO, oldnew);
 
 						survey.setLogo(null);
 						hasPendingChanges = true;
@@ -1948,7 +2052,7 @@ public class ManagementController extends BasicController {
 						f = fileService.get(logo);
 
 						String[] oldnew = { survey.getLogo() != null ? survey.getLogo().getName() : null, f.getName() };
-						activitiesToLog.put(213, oldnew);
+						activitiesToLog.put(ActivityRegistry.ID_LOGO, oldnew);
 
 						survey.setLogo(f);
 						hasPendingChanges = true;
@@ -1974,14 +2078,14 @@ public class ManagementController extends BasicController {
 			if (survey.getPublication().isShowContent() != uploadedSurvey.getPublication().isShowContent()) {
 				String[] oldnew = { survey.getPublication().isShowContent() ? "published" : "unpublished",
 						uploadedSurvey.getPublication().isShowContent() ? "published" : "unpublished" };
-				activitiesToLog.put(301, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_CONTENT_PUBLICATION, oldnew);
 			}
 
 			if (!Objects.equals(survey.getPublication().getShowUploadedDocuments(),
 					uploadedSurvey.getPublication().getShowUploadedDocuments())) {
 				String[] oldnew = { survey.getPublication().getShowUploadedDocuments() ? "published" : "unpublished",
 						uploadedSurvey.getPublication().getShowUploadedDocuments() ? "published" : "unpublished" };
-				activitiesToLog.put(313, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_UPLOADED_ELEMENTS_PUBLISH, oldnew);
 			}
 
 			if (uploadedSurvey.getPublication().getPassword() != null
@@ -1995,7 +2099,7 @@ public class ManagementController extends BasicController {
 			if (survey.getPublication().isShowStatistics() != uploadedSurvey.getPublication().isShowStatistics()) {
 				String[] oldnew = { survey.getPublication().isShowStatistics() ? "published" : "unpublished",
 						uploadedSurvey.getPublication().isShowStatistics() ? "published" : "unpublished" };
-				activitiesToLog.put(303, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_STATISTICS_PUBLICATION, oldnew);
 			}
 
 			survey.getPublication().setShowStatistics(uploadedSurvey.getPublication().isShowStatistics());
@@ -2003,7 +2107,7 @@ public class ManagementController extends BasicController {
 			if (survey.getPublication().isShowCharts() != uploadedSurvey.getPublication().isShowCharts()) {
 				String[] oldnew = { survey.getPublication().isShowCharts() ? "published" : "unpublished",
 						uploadedSurvey.getPublication().isShowCharts() ? "published" : "unpublished" };
-				activitiesToLog.put(302, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_CHARTS_PUBLICATION, oldnew);
 			}
 
 			survey.getPublication().setShowCharts(uploadedSurvey.getPublication().isShowCharts());
@@ -2011,7 +2115,7 @@ public class ManagementController extends BasicController {
 			if (survey.getPublication().isShowSearch() != uploadedSurvey.getPublication().isShowSearch()) {
 				String[] oldnew = { survey.getPublication().isShowSearch() ? "enabled" : "disabled",
 						uploadedSurvey.getPublication().isShowSearch() ? "enabled" : "disabled" };
-				activitiesToLog.put(304, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_PUBLIC_RESULTS_SEARCH, oldnew);
 			}
 
 			StringBuilder oldQuestions = new StringBuilder();
@@ -2073,7 +2177,7 @@ public class ManagementController extends BasicController {
 						hasPendingChanges = true;
 
 						String[] oldnew = { survey.getSkin().getName(), skin.getName() };
-						activitiesToLog.put(214, oldnew);
+						activitiesToLog.put(ActivityRegistry.ID_SKIN, oldnew);
 					}
 
 					survey.setSkin(skin);
@@ -2090,12 +2194,12 @@ public class ManagementController extends BasicController {
 
 			if (!newQuestions.toString().equals(oldQuestions.toString())) {
 				String[] oldnew = { oldQuestions.toString(), newQuestions.toString() };
-				activitiesToLog.put(305, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_PUBLISH_QUESTION_SET, oldnew);
 			}
 
 			if (!newContributions.toString().equals(oldContributions.toString())) {
 				String[] oldnew = { oldContributions.toString(), newContributions.toString() };
-				activitiesToLog.put(306, oldnew);
+				activitiesToLog.put(ActivityRegistry.ID_PUBLISH_ANSWER_SET, oldnew);
 			}
 		
 		}
@@ -2121,7 +2225,7 @@ public class ManagementController extends BasicController {
 				}				
 			}
 			sessionService.updateSessionInfo(survey, u, request);
-			activityService.log(101, null, form.getSurvey().getId().toString(), u.getId(), survey.getUniqueId());
+			activityService.log(ActivityRegistry.ID_SURVEY_CREATED, null, form.getSurvey().getId().toString(), u.getId(), survey.getUniqueId());
 
 			surveyService.setBrpAccess(survey);
 
@@ -2265,6 +2369,11 @@ public class ManagementController extends BasicController {
 				publishedSurvey.getPublication().getFilter().getVisibleQuestions().clear();
 				publishedSurvey.getPublication().getFilter().getFilterValues().clear();
 
+				publishedSurvey.setQuorum(survey.getQuorum());
+				publishedSurvey.setMinListPercent(survey.getMinListPercent());
+				publishedSurvey.setMaxPrefVotes(survey.getMaxPrefVotes());
+				publishedSurvey.setSeatsToAllocate(survey.getSeatsToAllocate());
+				
 				Map<Integer, Element> originalElementsById = survey.getElementsById();
 				Map<String, Element> elementsByUniqueId = publishedSurvey.getElementsByUniqueId();
 
@@ -2293,7 +2402,7 @@ public class ManagementController extends BasicController {
 
 			sessionService.updateSessionInfo(survey, u, request);
 			String[] emptyOldNew = { null, null };
-			activitiesToLog.put(202, emptyOldNew);
+			activitiesToLog.put(ActivityRegistry.ID_PROPERTIES, emptyOldNew);
 			activityService.log(activitiesToLog, u.getId(), survey.getUniqueId());
 
 			if (sendListFormMail && enablepublicsurveys.equalsIgnoreCase("true")) {
@@ -2417,7 +2526,7 @@ public class ManagementController extends BasicController {
 			String id = Tools.escapeHTML(parameterMap.get("template-id")[0]);
 
 			Element element = SurveyHelper.parseElement(request, fileService, id, form.getSurvey(), servletContext,
-					activityService.isEnabled(220));
+					activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED));
 
 			Template template = new Template();
 			template.setName(name);
@@ -2920,7 +3029,7 @@ public class ManagementController extends BasicController {
 		return new ModelAndView(
 				"redirect:/" + survey.getShortname() + "/management/results?message=recalculatestarted");
 	}
-	
+
 	@RequestMapping(value = "/results")
 	public ModelAndView results(@PathVariable String shortname, HttpServletRequest request, Locale locale)
 			throws Exception {
@@ -2955,6 +3064,8 @@ public class ManagementController extends BasicController {
 		if (request != null && request.getParameter("results-source") != null) {
 			active = request.getParameter("results-source").equalsIgnoreCase("active");
 		}
+		
+		boolean published = survey.getIsActive() && survey.getIsPublished();
 
 		boolean showAssignedValues = false;
 		if (request != null && request.getParameter("dialog-show-assigned-values") != null)
@@ -3168,10 +3279,10 @@ public class ManagementController extends BasicController {
 
 			for (String uniqueCode : deletedAnswers) {
 				if (survey.getIsDraft()) {
-					activityService.log(405, uniqueCode, null, sessionService.getCurrentUser(request).getId(),
+					activityService.log(ActivityRegistry.ID_TEST_DELETE, uniqueCode, null, sessionService.getCurrentUser(request).getId(),
 							survey.getUniqueId());
 				} else {
-					activityService.log(402, null, uniqueCode, sessionService.getCurrentUser(request).getId(),
+					activityService.log(ActivityRegistry.ID_CONTRIBUTION_DELETE, null, uniqueCode, sessionService.getCurrentUser(request).getId(),
 							survey.getUniqueId());
 				}
 			}
@@ -3276,6 +3387,7 @@ public class ManagementController extends BasicController {
 		ModelAndView result = new ModelAndView("management/results", "form", form);
 		result.addObject("paging", paging);
 		result.addObject("active", active);
+		result.addObject("published", published);
 		result.addObject("allanswers", allanswers);
 		result.addObject("filtered", filtered);
 		if (user != null) {
@@ -3369,6 +3481,224 @@ public class ManagementController extends BasicController {
 		}
 		result.addObject("contextpath", contextpath);
 		return result;
+	}
+	
+	@RequestMapping(value = "/seatCounting", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody SeatCounting seatCounting(HttpServletRequest request) {
+		try {
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+				throw new ForbiddenURLException();
+			}
+			
+			String uid = request.getParameter("surveyuid");
+			if (!uid.equals(form.getSurvey().getUniqueId())) {
+				return null;
+			}
+			
+			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null);
+		
+			return result;
+			
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return null;
+	}
+	
+	@RequestMapping(value = "/seatTestDownload", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@ResponseBody
+	public ResponseEntity<byte[]> seatTestDownload(HttpServletRequest request, HttpServletResponse response) {
+		final org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+
+		try {
+
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+				throw new ForbiddenURLException();
+			}
+			
+			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null);
+			byte[] file = XlsxExportCreator.createSeatTestSheet(result);
+
+			response.setContentType("application/vnd.ms-excel");
+			response.setHeader("Content-Disposition", "attachment;filename=seattest.xlsx");
+			response.setContentLength(file.length);
+			response.getOutputStream().write(file);			
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			headers.setContentType(MediaType.TEXT_PLAIN);
+			return new ResponseEntity<>(e.getLocalizedMessage().getBytes(), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return null;
+	}
+	
+	@PostMapping(value = "/uploadSeatTest")
+	public @ResponseBody eVoteResults uploadSeatTest(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response) {
+		InputStream is = null;
+		
+		try {
+
+			if (request instanceof DefaultMultipartHttpServletRequest) {
+				DefaultMultipartHttpServletRequest r = (DefaultMultipartHttpServletRequest) request;
+				is = r.getFile("qqfile").getInputStream();
+			} else {
+				is = request.getInputStream();
+			}
+
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+				throw new ForbiddenURLException();
+			}
+			
+			eVoteResults results = eVoteService.importSeatTestSheet(form.getSurvey(), is);	
+			response.setStatus(HttpServletResponse.SC_OK);
+			return results;	
+		} catch (Exception ex) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			logger.error(ex.getMessage(), ex);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException ignored) {
+				// ignore
+			}
+		}
+
+		return null;
+	}
+	
+	@RequestMapping(value = "/seatExport", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@ResponseBody
+	public ResponseEntity<byte[]> seatExport(HttpServletRequest request, HttpServletResponse response) {
+		final org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+
+		try {
+
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+				throw new ForbiddenURLException();
+			}
+			
+			SeatCounting result = null;
+			String testdata = request.getParameter("testdata");
+			if (testdata != null && testdata.equalsIgnoreCase("true")) {
+				result = (SeatCounting) request.getSession().getAttribute(LastEVoteTestResult);
+			}
+			if (result == null) {
+				result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null);
+			}
+			byte[] file = XlsxExportCreator.createSeatContribution(result, form);
+
+			response.setContentType("application/vnd.ms-excel");
+			response.setHeader("Content-Disposition", "attachment;filename=seatdistribution.xlsx");
+			response.setContentLength(file.length);
+			response.getOutputStream().write(file);			
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			headers.setContentType(MediaType.TEXT_PLAIN);
+			return new ResponseEntity<>(e.getLocalizedMessage().getBytes(), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return null;
+	}
+	
+	private int getValue(HttpServletRequest request, String name) {
+		String value = request.getParameter(name);
+		if (value != null)
+		{
+			try {
+				return Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				//ignore
+			}
+		}
+		
+		return 0;
+	}
+	
+	@RequestMapping(value = "/seatCountingTest", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody SeatCounting seatCountingTest(HttpServletRequest request) {
+		try {
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+				throw new ForbiddenURLException();
+			}
+			
+			String uid = request.getParameter("surveyuid");
+			if (!uid.equals(form.getSurvey().getUniqueId())) {
+				return null;
+			}
+			
+			eVoteResults results = eVoteService.getEmptyListResult(form.getSurvey());
+			results.setBlankVotes(getValue(request, "blankvotes"));
+			results.setSpoiltVotes(getValue(request, "spoiltvotes"));
+			results.setPreferentialVotes(getValue(request, "preferentialvotes"));
+			
+			for (Entry<String, eVoteListResult> listResultEntry : results.getLists().entrySet()) { // key is uid of the question
+				eVoteListResult listResult = listResultEntry.getValue();
+				listResult.setListVotes(getValue(request, "listvotes" + listResultEntry.getKey()));
+				
+				Set<String> pauids = listResultEntry.getValue().getCandidateVotes().keySet();
+				int i = 1;
+				int luxListVotes = 0;
+				for (String pauid : pauids) {
+					int v = getValue(request, listResultEntry.getKey() + "-" + i++);
+					listResultEntry.getValue().getCandidateVotes().put(pauid, v);
+					luxListVotes += v;
+				}
+				
+				listResult.setLuxListVotes(luxListVotes);
+			}
+			
+			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), results);
+			request.getSession().setAttribute(LastEVoteTestResult, result);
+			
+			return result;
+			
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return null;
 	}
 
 	@RequestMapping(value = "/resultsJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
@@ -3603,7 +3933,11 @@ public class ManagementController extends BasicController {
 								}
 
 								if (question instanceof ChoiceQuestion || question instanceof RankingQuestion) {
-									s.append(form.getAnswerTitle(answer));
+									if ("EVOTE-ALL".equals(answer.getValue())){
+										s.append(form.getMessage("label.EntireList"));
+									} else {
+										s.append(form.getAnswerTitle(answer));
+									}
 								} else {
 									s.append(ConversionTools.escape(form.getAnswerTitle(answer)));
 								}
@@ -4386,7 +4720,7 @@ public class ManagementController extends BasicController {
 
 			String newInfo = access.getInfo();
 			if (!newInfo.equalsIgnoreCase(oldInfo)) {
-				activityService.log(602, oldInfo, newInfo, u.getId(), access.getSurvey().getUniqueId());
+				activityService.log(ActivityRegistry.ID_PRIVILEGES_EDIT, oldInfo, newInfo, u.getId(), access.getSurvey().getUniqueId());
 			}
 
 			if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request)) {
@@ -4501,7 +4835,7 @@ public class ManagementController extends BasicController {
 				access.setSurvey(form.getSurvey());
 				access.setUser(user);
 				surveyService.saveAccess(access);
-				activityService.log(601, null, user.getName() + " - no privileges",
+				activityService.log(ActivityRegistry.ID_DELEGATE_MANAGER_ADD, null, user.getName() + " - no privileges",
 						sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());				
 			}
 			
@@ -4552,7 +4886,7 @@ public class ManagementController extends BasicController {
 			access.setSurvey(form.getSurvey());
 			access.setDepartment(groupname);
 			surveyService.saveAccess(access);
-			activityService.log(601, null, groupname + " - no privileges",
+			activityService.log(ActivityRegistry.ID_DELEGATE_MANAGER_ADD, null, groupname + " - no privileges",
 					sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
 
 		} else {
@@ -4600,7 +4934,7 @@ public class ManagementController extends BasicController {
 			if (access != null) {
 					
 				surveyService.deleteAccess(access);
-				activityService.log(603, access.getInfo(), null, sessionService.getCurrentUser(request).getId(),
+				activityService.log(ActivityRegistry.ID_PRIVILEGES_DELETE, access.getInfo(), null, sessionService.getCurrentUser(request).getId(),
 						access.getSurvey().getUniqueId());
 	
 				if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request)) {

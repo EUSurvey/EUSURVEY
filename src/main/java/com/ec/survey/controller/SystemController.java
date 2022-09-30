@@ -14,6 +14,7 @@ import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -134,7 +135,7 @@ public class SystemController extends BasicController {
 		String loggingenabled = settingsService.get(Setting.ActivityLoggingEnabled);
 		m.addObject("logging", loggingenabled);
 		m.addObject("activity", new Activity());
-		m.addObject("allActivityIds", Setting.ActivityLoggingIds());
+		m.addObject("allActivityIds", ActivityRegistry.getAllActivityIds());
 		m.addObject("enabledActivityIds", settingsService.getEnabledActivityLoggingIds());
 
 		Map<String, String> complexityParameterList = new LinkedHashMap<>();
@@ -313,7 +314,7 @@ public class SystemController extends BasicController {
 	public ModelAndView configureLogging(@RequestParam("enabled") String enabled, HttpServletRequest request,
 			Locale locale) {
 		settingsService.update(Setting.ActivityLoggingEnabled, enabled);
-		for (int i : Setting.ActivityLoggingIds()) {
+		for (int i : ActivityRegistry.getAllActivityIds()) {
 			String key = "activity" + i;
 			String param = request.getParameter(key);
 			if (param != null && param.equalsIgnoreCase(Integer.toString(i))) {

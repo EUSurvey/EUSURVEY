@@ -1,9 +1,12 @@
 package com.ec.survey.model.survey;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.owasp.esapi.errors.ValidationException;
 import javax.persistence.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Objects;
 
 /**
@@ -27,19 +30,51 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 		super(title, shortname, uid);
 	}
 
-	private boolean useCheckboxes;
+	private boolean useCheckboxes; //Used only by the Serializer
+
 	private int numColumns = 1;
 	private int minChoices;
 	private int maxChoices;
 	private boolean noNegativeScore;
+	//Defaults to Listbox because of the old CHECKBOXES column that was Listbox with false
+	private MultipleChoiceStyle multipleChoiceStyle = MultipleChoiceStyle.LIST;
 
 	@Column(name = "CHECKBOXES")
+	@JsonIgnore
+	@Deprecated
 	public boolean getUseCheckboxes() {
-		return useCheckboxes;
+		return multipleChoiceStyle == MultipleChoiceStyle.CHECKBOX;
 	}
 
+	@Deprecated
 	public void setUseCheckboxes(boolean useCheckboxes) {
-		this.useCheckboxes = useCheckboxes;
+		if (useCheckboxes){
+			multipleChoiceStyle = MultipleChoiceStyle.CHECKBOX;
+		}
+	}
+
+	@Column(name = "MULTIPLE_CHOICE_STYLE")
+	@JsonIgnore
+	public MultipleChoiceStyle getMultipleChoiceStyle(){
+		return multipleChoiceStyle;
+	}
+
+	public void setMultipleChoiceStyle(MultipleChoiceStyle multipleChoiceStyle){
+		if (multipleChoiceStyle != null){
+			this.multipleChoiceStyle = multipleChoiceStyle;
+		} //Otherwise defaults to LIST or is set via setUseCheckboxes
+	}
+
+	@Transient
+	public String getChoiceType(){
+		return multipleChoiceStyle.getText();
+	}
+
+	public void setChoiceType(String choiceType){
+		multipleChoiceStyle = MultipleChoiceStyle.getFromText(choiceType);
+		if (multipleChoiceStyle == null){
+			multipleChoiceStyle = MultipleChoiceStyle.CHECKBOX;
+		}
 	}
 
 	@Column(name = "NUMCOLUMNS")
@@ -85,7 +120,7 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 		copy.numColumns = numColumns;
 		copy.maxChoices = maxChoices;
 		copy.minChoices = minChoices;
-		copy.useCheckboxes = useCheckboxes;
+		copy.multipleChoiceStyle = multipleChoiceStyle;
 
 		for (PossibleAnswer possibleAnswer : getPossibleAnswers()) {
 			PossibleAnswer answerCopy = possibleAnswer.copy(fileDir);
@@ -102,10 +137,18 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 
 		css += " multiplechoice";
 
-		if (useCheckboxes) {
-			css += " checkboxes";
-		} else {
-			css += " listbox";
+		switch (multipleChoiceStyle){
+			case CHECKBOX:
+				css += " checkboxes";
+				break;
+			case LIST:
+				css += " listbox";
+				break;
+			case BRUSSELS:
+			case LUXEMBOURG:
+			case OUTSIDE:
+				css += " checkboxes";
+				break;
 		}
 
 		if (minChoices > 0) {
@@ -134,7 +177,7 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 		MultipleChoiceQuestion multi = (MultipleChoiceQuestion) element;
 
 		if (numColumns != multi.numColumns || maxChoices != multi.maxChoices || minChoices != multi.minChoices
-				|| useCheckboxes != multi.useCheckboxes) {
+				|| multipleChoiceStyle != multi.multipleChoiceStyle) {
 			return true;
 		}
 
@@ -151,5 +194,14 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 		}
 
 		return false;
+	}
+
+	//This method is called by Javas Serializer API
+	//https://docs.oracle.com/javase/7/docs/api/java/io/ObjectInputStream.html#readObject()
+	private void readObject(ObjectInputStream inStream) throws ClassNotFoundException, IOException {
+		inStream.defaultReadObject();  //Read all properties
+
+		//Use the setters to patch the deprecated properties
+		setUseCheckboxes(useCheckboxes);
 	}
 }

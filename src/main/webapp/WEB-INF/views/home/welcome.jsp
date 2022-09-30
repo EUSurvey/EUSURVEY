@@ -124,13 +124,13 @@
 		<c:choose>
 			<c:when test="${responsive != null}">
 				<div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
-					<img src="/eusurvey/resources/images/logo_Eusurvey.png" style="max-width: 100%;" alt="EUSurvey logo" />
+					<img src="${contextpath}/resources/images/logo_Eusurvey.png" style="max-width: 100%;" alt="EUSurvey logo" />
 					<div style="font-weight: bold"><spring:message code="home.create" /></div>
 				</div>
 				
 				<div style="text-align: center; margin-bottom: 40px;">
 					<a class="btn btn-default btn-sm" id="linkEditContribution" href="<c:url value="/home/editcontribution"/>"><spring:message code="label.EditContribution" /> <span class="glyphicon glyphicon-pencil" style="margin-left: 5px;"></span></a><br /><br />
-					<a class="btn btn-default btn-sm" id="linkDownloadContribution" href="javascript:;" onclick="showModalDialog($('#download-contribution-dialog'), this); setTimeout(function() {createCaptcha();}, 100);"><spring:message code="label.DownloadContribution" /> <img style="margin-left: 5px" src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="<spring:message code="label.DownloadContribution" />" width="16px"/></a>
+					<a class="btn btn-default btn-sm" id="linkDownloadContribution" href="javascript:;" onclick="showModalDialog($('#download-contribution-dialog'), this); setTimeout(function() {createCaptcha();}, 100);"><spring:message code="label.DownloadContribution" /> <img style="margin-left: 5px" src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="<spring:message code="label.DownloadContribution" />" width="16px"/></a>
 				</div>
 				
 				<div class="container" style="text-align: left">

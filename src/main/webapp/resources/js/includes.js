@@ -770,10 +770,14 @@ function initModals(item)
 			_participants.selectedGroup().filterUsers(); 			
 		} else if (cell.closest("#eccontactshead").length > 0){
 			_participants.loadUsers(true); 
+		} else if (cell.closest("#voterfiletable").length > 0) {
+			loadVoters();
 		} else if ($(link).closest('form').length == 0 && $("#resultsForm").length > 0){
 			$("#resultsForm").submit();	
 		} else if ($(link).closest('form').length == 0 && $("#publishsurveysform").length > 0){
 			$("#publishsurveysform").submit();	
+		} else if (cell.is("#add-voter-dialog *")) {
+			searchVoters(1)
 		} else {
 			if (staticSearch){
 				searchStatic(true, true, false);
@@ -844,9 +848,11 @@ function initModals(item)
 
 		let validError = $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first()
 
-		$('html, body').animate({
-	         scrollTop: validError.parent().offset().top - 200
-	     }, 2000);
+		if (validError.find(".evote-validation") === "undefined") {
+			$('html, body').animate({
+				scrollTop: validError.parent().offset().top - 200
+			}, 2000);
+		}
 
 		let focusElement = $(`[aria-describedby='${validError.attr("id")}']`)
 		
@@ -883,7 +889,9 @@ function initModals(item)
 		validateInputAndSubmitRunnerContinued(form);
 	}
 
-	function validateInputAndSubmitRunnerContinued(form) {
+	var eVoteConfirmResolve;
+
+	async function validateInputAndSubmitRunnerContinued(form) {
 
 		$("#btnSubmit").hide();
 		$("#busydialog").modal('show');
@@ -941,8 +949,28 @@ function initModals(item)
 
 					$(form).find("input[data-is-answered='false'].sliderbox").val('');
 
-					$(form).submit();
-					return;
+					//EVote confirm placed here so that validation and session checking happen before
+					if ($(form).is("#runnerForm") && isevote){
+						let confirmPromise = new Promise(function(resolve){
+							$("#busydialog").modal('hide');
+							$("#evoteConfirmPopup").modal('show');
+							$("#evoteConfirmPopup").off("hidden.bs.modal") //Aka remove all event handlers - Prevents stacking events
+							$("#evoteConfirmPopup").on("hidden.bs.modal", () => { resolve(false) }) //Resolve when modal hides via background click or escape
+
+							//The evoteConfirmPopup will call this
+							eVoteConfirmResolve = resolve
+						})
+						let confirmed = await confirmPromise //Wait until user resolves the promise
+						if (confirmed){
+							$(form).submit();
+							return;
+						}
+						//User did not confirm; Continue to show Submit Button again, etc.
+					} else {
+						$(form).submit();
+						return;
+					}
+
 				}
 			}
 		
@@ -1028,7 +1056,12 @@ function initModals(item)
 				} else {
 					self.commonImpl(element);
 				}
-			}
+			},
+			andEVoteBeforeButton : function(element, text) {
+			const self = addValidationError;
+			$(".evote-validation").remove();
+			$(element).siblings().first().before("<div class='validation-error evote-validation' style='margin: auto; margin-bottom: 10px'>" + text + "</div>");
+		},
 	}
 	
 	function validateInput(parent)
@@ -1946,6 +1979,17 @@ function initModals(item)
 			
 			}
 		});
+
+		if (isevote) {
+			if (typeof validateEVote !== "undefined") {
+				let evoteValidation = validateEVote();
+				if (evoteValidation.error) {
+					let validationText = evoteValidation.candidatesValid ? validationTooManyListVotes : validationTooManyCandidates
+					addValidationError.andEVoteBeforeButton($("#btnNext"), validationText)
+					result = false;
+				}
+			}
+		}
 		
 		if (!result) {
 			disableDelphiSaveButtons($(parent).closest(".survey-element"));
@@ -2355,6 +2399,14 @@ function initModals(item)
 			$("#create-survey-ecf").val("true");
 		} else {
 			$("#create-survey-ecf").val("false");
+		}
+		
+		if ($("#new-survey-type-evote:checked").length > 0)
+		{
+			$("#create-survey-evote").val("true");
+			$("#create-survey-template").val($("input[name='new-survey-template']:checked").val());
+		} else {
+			$("#create-survey-evote").val("false");
 		}
 		
 		if ($("#new-survey-contact-type").val() == "form")
@@ -2815,3 +2867,10 @@ function initModals(item)
 			});
 		}
 	}(jQuery));
+
+ko.bindingHandlers.indeterminateValue = { //This knockout binding, makes checkboxes show as indeterminate
+	update: function (element, valueAccessor) {
+		let value = ko.utils.unwrapObservable(valueAccessor());
+		element.indeterminate = value;
+	}
+};

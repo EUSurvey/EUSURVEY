@@ -18,7 +18,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -485,7 +485,7 @@ public class XmlExportCreator extends ExportCreator {
 							export == null ? null : export.getResultFilter(), values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
 
-			SQLQuery query = makeQuery(sql, session, values);
+			NativeQuery query = makeQuery(sql, session, values);
 			ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
 			int lastAnswerSet = 0;
@@ -680,7 +680,7 @@ public class XmlExportCreator extends ExportCreator {
 							values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
 
-			SQLQuery query = makeQuery(sql, session, values);
+			NativeQuery query = makeQuery(sql, session, values);
 			ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
 			while (results.next()) {
@@ -693,8 +693,8 @@ public class XmlExportCreator extends ExportCreator {
 		}
 	}
 
-	private SQLQuery makeQuery(String sql, Session session, HashMap<String, Object> values) {
-		SQLQuery query = session.createSQLQuery(sql);
+	private NativeQuery makeQuery(String sql, Session session, HashMap<String, Object> values) {
+		NativeQuery query = session.createSQLQuery(sql);
 
 		query.setReadOnly(true);
 

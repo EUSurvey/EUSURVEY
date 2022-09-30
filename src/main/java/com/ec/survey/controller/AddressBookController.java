@@ -13,6 +13,7 @@ import com.ec.survey.model.attendees.Attribute;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -197,7 +198,7 @@ public class AddressBookController extends BasicController {
 						String oldValue = participationGroup.getId() + " - " + originalAttendee.getName() + " - " + originalAttendee.getEmail();
 						String newValue = participationGroup.getId() + " - contact deleted";
 														
-						activityService.log(507, oldValue, newValue, user.getId(), participationGroup.getSurveyUid());
+						activityService.log(ActivityRegistry.ID_GUEST_LIST_CONTACT_CHANGED, oldValue, newValue, user.getId(), participationGroup.getSurveyUid());
 					}					
 					
 					attendeeService.delete(newAttendee.getId());
@@ -214,7 +215,7 @@ public class AddressBookController extends BasicController {
 						String oldValue = participationGroup.getId() + " - " + originalAttendee.getName() + " - " + originalAttendee.getEmail();
 						String newValue = participationGroup.getId() + " - " + newAttendee.getName() + " - " + newAttendee.getEmail();
 														
-						activityService.log(507, oldValue, newValue, user.getId(), participationGroup.getSurveyUid());
+						activityService.log(ActivityRegistry.ID_GUEST_LIST_CONTACT_CHANGED, oldValue, newValue, user.getId(), participationGroup.getSurveyUid());
 					}
 					
 					attendeeService.delete(originalAttendee.getId());

@@ -1108,6 +1108,9 @@ function DashboardViewModel()
 			}
 		  };
 
+		  // Hide old timeline
+		  $(".vis-timeline").remove();
+
 		  // Create a Timeline
 		  var timeline = new vis.Timeline(container, items, options);
 		  

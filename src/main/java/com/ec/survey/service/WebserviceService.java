@@ -10,8 +10,8 @@ import com.ec.survey.tools.ExportsRemover;
 import com.ec.survey.tools.ResultsCreator;
 import com.ec.survey.tools.TokenCreator;
 import com.ec.survey.tools.Tools;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class WebserviceService extends BasicService {
 	public WebserviceTask get(int id)
 	{
 		Session session = sessionFactory.getCurrentSession();
-		return (WebserviceTask) session.get(WebserviceTask.class, id);
+		return session.get(WebserviceTask.class, id);
 	}
 	
 	@Transactional
@@ -70,9 +70,9 @@ public class WebserviceService extends BasicService {
 		
 		if (error.length() > 250) error = error.substring(0, 250);
 		
-		SQLQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK t SET t.WST_DONE = true, t.WST_ERROR = :error WHERE t.WST_ID = :id");
-		query.setString(Constants.ERROR, error);
-		query.setInteger("id", task);
+		NativeQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK t SET t.WST_DONE = true, t.WST_ERROR = :error WHERE t.WST_ID = :id");
+		query.setParameter(Constants.ERROR, error);
+		query.setParameter("id", task);
 			
 		query.executeUpdate();
 	}
@@ -108,9 +108,9 @@ public class WebserviceService extends BasicService {
 		
 		Date started = new Date();
 		
-		SQLQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK t SET t.WST_STARTED = :now WHERE t.WST_ID = :id");
-		query.setTimestamp("now", started);
-		query.setInteger("id", taskid);
+		NativeQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK t SET t.WST_STARTED = :now WHERE t.WST_ID = :id");
+		query.setParameter("now", started);
+		query.setParameter("id", taskid);
 		
 		query.executeUpdate();
 		session.flush();
@@ -150,9 +150,9 @@ public class WebserviceService extends BasicService {
 		Session session;
 		session = sessionFactory.getCurrentSession();
 		
-		SQLQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK t SET t.WST_DONE = true, t.WST_RESULT = :result WHERE t.WST_ID = :id");
-		query.setString("result", task.getResult());
-		query.setInteger("id", task.getId());
+		NativeQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK t SET t.WST_DONE = true, t.WST_RESULT = :result WHERE t.WST_ID = :id");
+		query.setParameter("result", task.getResult());
+		query.setParameter("id", task.getId());
 		
 		query.executeUpdate();			
 	}
@@ -324,19 +324,18 @@ public class WebserviceService extends BasicService {
 	}
 	
 	@Transactional
-	@SuppressWarnings("unchecked")
 	public List<WebserviceTask> getTasksToRestart() {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM WebserviceTask WHERE done = 0");
+		Query<WebserviceTask> query = session.createQuery("FROM WebserviceTask WHERE done = 0", WebserviceTask.class);
 		return query.list();
 	}
 
 	@Transactional
 	public ServiceRequest getServiceRequest(Integer userId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM ServiceRequest r WHERE r.userId = :userId").setInteger("userId", userId);	
+		Query<ServiceRequest> query = session.createQuery("FROM ServiceRequest r WHERE r.userId = :userId", ServiceRequest.class).setParameter("userId", userId);
 		
-		return (ServiceRequest) query.uniqueResult();
+		return query.uniqueResult();
 	}
 
 	@Transactional
@@ -346,9 +345,9 @@ public class WebserviceService extends BasicService {
 		if (disablewebservicelimit != null && disablewebservicelimit.equalsIgnoreCase("true")) return;
 		
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM ServiceRequest r WHERE r.userId = :userId").setInteger("userId", userId);	
+		Query<ServiceRequest> query = session.createQuery("FROM ServiceRequest r WHERE r.userId = :userId", ServiceRequest.class).setParameter("userId", userId);
 		
-		ServiceRequest req = (ServiceRequest) query.uniqueResult();
+		ServiceRequest req = query.uniqueResult();
 		
 		if (req == null)
 		{
@@ -370,7 +369,7 @@ public class WebserviceService extends BasicService {
 	public int getWaitingTokens(ParticipationGroup group) {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "SELECT SUM(WST_NUM) FROM WEBSERVICETASK WHERE WST_GROUP = :id AND WST_DONE = 0 AND type = 0";
-		Query query = session.createSQLQuery(sql).setInteger("id", group.getId());
+		Query query = session.createSQLQuery(sql).setParameter("id", group.getId());
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 	

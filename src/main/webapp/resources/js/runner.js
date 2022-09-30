@@ -238,6 +238,7 @@ function propagateChange(element)
 	}
 	
 	updateProgress();
+	updateEVoteStatus();
 	
 	if ($(div).hasClass("numberitem") || $(div).hasClass("formulaitem") || $(div).hasClass("regexitem") || $(element).hasClass("number") || $(element).hasClass("formula")) { //.number and .formula are for complex table cells
 		updateFormulas($(div).attr("id"), $(element).attr("data-shortname"));
@@ -400,6 +401,7 @@ function createUploader(instance, maxSize)
 			enableDelphiSaveButtons($(this.element).closest(".survey-element"));
 			$(this.element).closest(".forprogress").addClass("answered");
 			updateProgress();
+			updateEVoteStatus();
 
 			if (responseJSON.wrongextension)
 	    	{
@@ -778,7 +780,7 @@ function selectPage(val) {
 		
 	var max = $(".single-page").length;
 	if (val < max && val >= 0) {
-		
+
 		if (validate && val > page && val - page > 1)
 		{
 			//this means a jump to a page, also validate all pages between them
@@ -1022,6 +1024,7 @@ function checkDependenciesAsync(input, override) {
 			try {
 				checkDependencies(input, override != null && override);
 				updateProgress();
+				updateEVoteStatus();
 			} catch (e) {}
 			
 			$(input).closest(".elementwrapper").removeClass("waiting").find(".waitingdiv").remove();
@@ -1309,6 +1312,10 @@ function isTriggered(element, stoprecursion) {
 		
 	if (triggers != null && triggers.length > 1) { //can be ";"
 		var triggerIds = triggers.split(";");
+		if (triggerIds[triggerIds.length - 1] == "") {
+			triggerIds.pop(); 	//last element is only an empty String
+		}
+
 		var i;
 		var result = false;
 		for (i = 0; i < triggerIds.length; ++i) {
@@ -1476,7 +1483,7 @@ function changeLanguage(mode, lang, draftid) {
 
 function changeLanguageSelectOption(mode) {
 	$("#newlang").val($('#langSelectorRunner').val());
-	submitToChangeLanguageOrView(true), mode;
+	submitToChangeLanguageOrView(true, mode);
 }
 
 function changeLanguageSelectHeader(mode, headerLang) {
@@ -1916,4 +1923,121 @@ function displayECFChart(result) {
 			});
 		});	
 	}
+}
+
+function eVoteEntireListClick(checkbox) {
+	let table = $(checkbox).closest(".evote-table")
+
+	if (table.is(".evote-brussels")){
+		//Brussels has different Entire List behavior
+		if (checkbox.checked) {
+			//Uncheck all other lists
+			$(".evote-brussels .entire-list:checked").not(checkbox).click();
+			//Disable all other lists
+			$(".evote-brussels .entire-list").not(checkbox).prop("disabled", true);
+			//And uncheck + disable all candidates
+			$(".evote-brussels .evote-candidate").prop("checked", false).prop("disabled", true);
+		} else {
+			//Reenable all other lists and candidates
+			$(".evote-brussels .entire-list, .evote-brussels .evote-candidate").prop("disabled", false);
+		}
+
+	} else {
+		//Adjust all candidate checkboxes of this list
+		table.find(".evote-candidate").each(function () {
+			this.checked = checkbox.checked;
+			this.setAttribute("previousValue", this.checked ? false : "checked");
+			singleClick(this);
+		})
+		checkbox.indeterminate = false;
+	}
+	updateEVoteList(checkbox);
+}
+
+//Clears all votes made so far
+function clearEVoteVotes() {
+	$(".evote-candidate, .entire-list")
+		.attr('previousValue', "checked").prop("checked", false)
+		.each(function (){ singleClick(this); } );
+	$(".entire-list").prop('indeterminate', false);
+	$(".evote-brussels .entire-list, .evote-brussels .evote-candidate").prop("disabled", false);
+	$(".evote-validation").remove();
+
+	$('#votedCandidates').html(0);
+	$('#votedLists').html(0);
+	updateEVoteStatus();
+}
+
+//Updates the display for the Entire List Checkbox (Non Brussels)
+//And updates statistics
+function updateEVoteList(element) {
+	let table = $(element).closest(".evote-table");
+	if (!table.is(".evote-brussels")) {
+		let checkedCount = table.find(".evote-candidate:checked").length;
+		let entireListCheckbox = table.find(".entire-list")
+		if (checkedCount == 0) { //Decide whether to show the Entire List as checked or indeterminate
+			entireListCheckbox.prop('checked', false);
+			entireListCheckbox.prop('indeterminate', false);
+		} else if (checkedCount == table.find(".evote-candidate").length) {
+			entireListCheckbox.prop('checked', true);
+			entireListCheckbox.prop('indeterminate', false);
+		} else {
+			entireListCheckbox.prop('checked', false);
+			entireListCheckbox.prop('indeterminate', true);
+		}
+	}
+
+	$(".evote-validation").remove();
+
+	updateEVoteStatus();
+}
+
+var votedLists = 0
+var votedCandidates = 0;
+
+//Updates the eVote Status Bar
+function updateEVoteStatus() {
+
+	if ($(".survey-element:not(.untriggered) .evote-table").length > 0){
+		$("#evoteVoterOverview").css("display", "")
+	} else {
+		$("#evoteVoterOverview").css("display", "none")
+	}
+
+	if ($(".evote-brussels, .evote-luxembourg").length <= 0){
+		$("#votedListsWrapper").css("display", "none")
+	} else {
+		$("#votedListsWrapper").css("display", "")
+	}
+
+	votedLists = 0;
+	//list votes for brussels
+	votedLists += $(".evote-brussels .entire-list:checked").length;
+
+	//no list votes for outside and luxembourg
+
+	votedCandidates = 0;
+	votedCandidates += $(".evote-candidate:checked").length;
+
+	let validation = validateEVote();
+	if (validation.error){
+		$("#evoteVoterOverview").attr("error", true);
+
+		$('#votedLists').css("font-weight", validation.listsValid ? "" : "bold")
+		$('#votedCandidates').css("font-weight", validation.candidatesValid ? "" : "bold")
+
+	} else {
+		$("#evoteVoterOverview").removeAttr("error");
+		$('#votedLists').css("font-weight", "")
+		$('#votedCandidates').css("font-weight", "")
+	}
+
+	$('#votedLists').html(votedLists);
+	$('#votedCandidates').html(votedCandidates);
+}
+
+function validateEVote(){
+	let candidateError = votedCandidates > maxEVoteCandidates
+	let listError = votedLists > 1;
+	return {error:  listError || candidateError, candidatesValid : !candidateError, listsValid: !listError}
 }

@@ -8,7 +8,7 @@ import java.util.Locale;
 import javax.annotation.Resource;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -261,7 +261,8 @@ public class ArchiveExecutor implements Runnable {
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
 		
-		Query query = session.createQuery("UPDATE Survey s SET s.archived = 0 WHERE s.uniqueId = :uid").setString("uid", survey.getUniqueId());
+		@SuppressWarnings("unchecked")
+		Query<Survey> query = session.createQuery("UPDATE Survey s SET s.archived = 0 WHERE s.uniqueId = :uid").setParameter("uid", survey.getUniqueId());
 		query.executeUpdate();	
 		
 		archive = (Archive) session.merge(archive);

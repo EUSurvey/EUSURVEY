@@ -3,7 +3,7 @@ package com.ec.survey.service;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,7 @@ public class SystemService extends BasicService {
 	public Message getMessage()
 	{
 		Session session = sessionFactory.getCurrentSession();		
-		Query q = session.createQuery("FROM Message m WHERE m.userId is null");
-		@SuppressWarnings("unchecked")
+		Query<Message> q = session.createQuery("FROM Message m WHERE m.userId is null", Message.class);
 		List<Message> messages = q.list();
 		
 		Message result = new Message();
@@ -35,10 +34,9 @@ public class SystemService extends BasicService {
 				result.setActive(false);
 			}
 		}
-		
-		q = session.createQuery("FROM MessageType m ORDER BY m.criticality ASC");
-		@SuppressWarnings("unchecked")
-		List<MessageType> messageTypes = q.list();
+
+		Query<MessageType> q2 = session.createQuery("FROM MessageType m ORDER BY m.criticality ASC", MessageType.class);
+		List<MessageType> messageTypes = q2.list();
 		
 		result.setTypes(messageTypes);
 		
@@ -49,9 +47,8 @@ public class SystemService extends BasicService {
 	public Message getUserMessage(int userId)
 	{
 		Session session = sessionFactory.getCurrentSession();		
-		Query q = session.createQuery("FROM Message m WHERE m.userId = :id");
-		q.setInteger("id", userId);
-		@SuppressWarnings("unchecked")
+		Query<Message> q = session.createQuery("FROM Message m WHERE m.userId = :id", Message.class);
+		q.setParameter("id", userId);
 		List<Message> messages = q.list();
 		
 		Message result;
@@ -68,9 +65,8 @@ public class SystemService extends BasicService {
 			return null;
 		}
 		
-		q = session.createQuery("FROM MessageType m ORDER BY m.criticality ASC");
-		@SuppressWarnings("unchecked")
-		List<MessageType> messageTypes = q.list();
+		Query<MessageType> q2 = session.createQuery("FROM MessageType m ORDER BY m.criticality ASC", MessageType.class);
+		List<MessageType> messageTypes = q2.list();
 		
 		result.setTypes(messageTypes);
 		
@@ -81,8 +77,7 @@ public class SystemService extends BasicService {
 	public Message getAdminMessage()
 	{
 		Session session = sessionFactory.getCurrentSession();		
-		Query q = session.createQuery("FROM Message m WHERE m.userId = -1 AND m.type = 5");
-		@SuppressWarnings("unchecked")
+		Query<Message> q = session.createQuery("FROM Message m WHERE m.userId = -1 AND m.type = 5", Message.class);
 		List<Message> messages = q.list();
 		
 		Message result;
@@ -99,9 +94,8 @@ public class SystemService extends BasicService {
 			return null;
 		}
 		
-		q = session.createQuery("FROM MessageType m ORDER BY m.criticality ASC");
-		@SuppressWarnings("unchecked")
-		List<MessageType> messageTypes = q.list();
+		Query<MessageType> q2 = session.createQuery("FROM MessageType m ORDER BY m.criticality ASC", MessageType.class);
+		List<MessageType> messageTypes = q2.list();
 		
 		result.setTypes(messageTypes);
 		
@@ -166,9 +160,10 @@ public class SystemService extends BasicService {
 			hql = "DELETE FROM Message m WHERE m.userId = :userid AND m.id = :id"; 
 		}
 		
-		Query q = session.createQuery(hql);
-		q.setInteger("userid", userId);
-		q.setInteger("id", id);
+		@SuppressWarnings("unchecked")
+		Query<Message> q = session.createQuery(hql);
+		q.setParameter("userid", userId);
+		q.setParameter("id", id);
 		q.executeUpdate();
 		
 	}	

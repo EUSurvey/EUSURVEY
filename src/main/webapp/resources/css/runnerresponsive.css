@@ -603,3 +603,12 @@ textarea:disabled, input:disabled {
     border-width: 1px;
   	border-radius: 2px;
 }
+
+.evote-collapse {
+	width: 2.5em;
+	height: 2.5em;
+}
+.choice-button-label{
+	width: 100%;
+   	margin: 0;
+}

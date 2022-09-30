@@ -737,6 +737,7 @@ public class HomeController extends BasicController {
 		ModelAndView model = new ModelAndView("home/welcome");
 		model.addObject("page", "welcome");
 		model.addObject("ecasurl", ecashost);
+		model.addObject("require2fa", require2fa);
 		model.addObject("serviceurl", serverPrefix + "auth/ecaslogin");
 		model.addObject("continueWithoutJavascript", true);
 		if (isShowEcas())

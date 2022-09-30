@@ -85,6 +85,55 @@
 						</div>
 					</c:if>
 
+					<c:if test="${form.survey.isEVote}">
+						<div class="evote-voter-overview" id="evoteVoterOverview" style="display: none">
+							<div>
+								<span style="float: left; line-height: 32px">
+									<c:choose>
+										<c:when	test="${form.survey.geteVoteTemplate() == 'l'}">
+											<span><spring:message code="label.Votes" />:</span>
+										</c:when>
+										<c:otherwise>
+											<span><spring:message code="label.VotedCandidates" />:</span>
+										</c:otherwise>
+									</c:choose>
+										<span id="overviewVotes">
+											<span id="votedCandidates"></span>
+											/
+											<span id="allCandidates">${form.survey.maxPrefVotes}</span>
+										</span>
+
+										<c:if test="${form.survey.geteVoteTemplate() != 'l'}">
+											<span id="votedListsWrapper" style="display: none">
+												<span style="margin-left: 24px;"><spring:message code="label.VotedLists" />:</span>
+												<span id="votedLists"></span>
+											</span>
+										</c:if>
+								</span>
+								<span style="color: black">
+									<a style="margin-left: 24px; float: right" href="javascript:;" class="btn btn-default" onclick="clearEVoteVotes()"><spring:message code="label.ClearVotes" /></a>
+								</span>
+							</div>
+						</div>
+						<div class="evote-overview-placeholder"></div>
+						<div class="modal evote-confirm-modal not-shown" id="evoteConfirmPopup" style="padding-top: 50px; z-index: 10500;" role="dialog">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header" style="font-weight: bold;">
+										<spring:message code="label.ConfirmBallot" />
+									</div>
+									<div class="modal-body">
+										<div class="modal-body"><spring:message code="label.eVoteConfirmSubmit" /></div>
+									</div>
+									<div class="modal-footer">
+										<a href="javascript:;" class="btn btn-primary" onclick="eVoteConfirmResolve(true)"><spring:message code="label.Imsure" /></a>
+										<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog('.evote-confirm-modal'); eVoteConfirmResolve(false);"><spring:message code="label.Cancel" /></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:if>
+
 					<c:if test="${form.survey.progressBar}">
 						<div id="progressBarContainer" class="progressBar" style="display: none">							
 							<div class="progress">
@@ -135,7 +184,7 @@
 						</div>
 					</c:if>
 					<c:if test="${(form.answerSets.size() == 0 || !form.answerSets[0].disclaimerMinimized)}">
-						<c:if test="${!oss}">
+						<c:if test="${!oss && !form.survey.isEVote}">
 							<c:if test="${(form.survey.owner.type == 'ECAS' && form.survey.owner.getGlobalPrivilegeValue('ECAccess') == 0) || form.survey.owner.type == 'SYSTEM'  }">
 								<div id="ecDisclaimer" class="surveyrunnerinfo">
 									<div style="float: left; width: calc(100% - 18px)">
@@ -338,14 +387,13 @@
 														   class="btn btn-primary hidden">${form.getMessage("label.Submit")}</a>
 												</c:otherwise>
 											</c:choose>
-
 											<a id="btnNext" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToNextPage")}"
-												   href="javascript:;"
-												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
-												   title="${form.survey.isDelphi ? form.getMessage("label.NextPageDelphi") : ""}"
-												   onclick="nextPage();this.blur();"
-												   onfocusin="validateLastContainer()"
-												   class="btn btn-default btn-primary">${form.getMessage("label.Next")}</a>
+											   href="javascript:;"
+											   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
+											   title="${form.survey.isDelphi ? form.getMessage("label.NextPageDelphi") : ""}"
+											   onclick="nextPage(); this.blur();"
+											   onfocusin="validateLastContainer()"
+											   class="btn btn-default btn-primary">${form.getMessage("label.Next")}</a>
 
 											<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
 												<input type="button" id="btnSaveDraftMobile"
@@ -944,7 +992,7 @@
 				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 			});
 		}
-	 	
+
 	 	initializeAnswerData();
 	 	initializeTriggers();
 

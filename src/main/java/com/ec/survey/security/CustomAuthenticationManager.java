@@ -3,9 +3,12 @@ package com.ec.survey.security;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.AdministrationService;
+import com.ec.survey.service.EVoteService;
 import com.ec.survey.service.LdapService;
 import com.ec.survey.service.SessionService;
+import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.Bad2faCredentialsException;
 import com.ec.survey.tools.BadSurveyCredentialsException;
 import com.ec.survey.tools.EcasHelper;
@@ -40,12 +43,18 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	@Resource(name="sessionService")
 	private SessionService sessionService;
 	
+	@Resource(name="surveyService")
+	private SurveyService surveyService;
+	
+	@Resource(name="eVoteService")
+	private EVoteService eVoteService;
+	
 	private @Value("${ecasvalidationhost}") String ecasvalidationhost;
 	private @Value("${server.prefix}") String host;
+	private @Value("${ecas.require2fa:#{false}}") boolean require2fa;
 	
 	public Authentication authenticate(Authentication auth)
 	{
-
 		User user = null;
 		boolean surveyLoginMode = auth.getName() != null && auth.getName().startsWith("surveyloginmode");
 		
@@ -66,7 +75,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			// other (ecas) we have to use the laxValidate to allow login with external user JIRA ESURVEY-2759
 			if(ldapService.isCasOss()){
 				validationUrl = ecasvalidationhost + "/serviceValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
-			}else{
+			} else {
 				validationUrl = ecasvalidationhost + "/laxValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
 			}
 			
@@ -77,7 +86,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     		if (xmlValidationAnswer.contains("<cas:authenticationSuccess>")) {
     			String username = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
     			String type = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:employeeType");	    				    			
-				String strength = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:strength");    				
+				String strength = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:strength");
+
+				boolean no2fa = strength.equalsIgnoreCase("PASSWORD") || strength.equalsIgnoreCase("STRONG");
+
+				if (no2fa && require2fa){
+					throw new Bad2faCredentialsException();
+				}
 				
 				if (auth.getName() != null && auth.getName().startsWith("oldLogin:"))
 				{
@@ -117,12 +132,10 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					{
 						user.getRoles().add(ecRole);
 					} else {
-						if (strength.equalsIgnoreCase("PASSWORD") || strength.equalsIgnoreCase("STRONG"))
-	    				{
+						if (no2fa){
 	    					weakAuthentication = true;
-	    					if (!surveyLoginMode)
-	    					{
-		    					throw new Bad2faCredentialsException("Ecas user does not use two factor authentication!");
+	    					if (!surveyLoginMode){
+		    					throw new Bad2faCredentialsException();
 		    				}
 						}						
 						
@@ -157,12 +170,10 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					} else {
 						if (intRole != null)
 						{
-							if (strength.equalsIgnoreCase("PASSWORD") || strength.equalsIgnoreCase("STRONG"))
-		    				{
+							if (no2fa){
 		    					weakAuthentication = true;
-		    					if (!surveyLoginMode)
-		    					{
-			    					throw new Bad2faCredentialsException("Ecas user does not use two factor authentication!");
+		    					if (!surveyLoginMode){
+			    					throw new Bad2faCredentialsException();
 			    				}
 							}
 							
@@ -198,23 +209,34 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				
 				if (surveyLoginMode)
 				{
+					if (survey.contains("?")) {
+						survey = survey.substring(0, survey.indexOf("?"));
+					}
+					Survey draft = surveyService.getSurvey(survey, true, false, false, false, null, true, false, false, false);
+					if (draft.getIsEVote()) {
+						String ecmoniker = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
+						if (!eVoteService.checkVoter(draft.getUniqueId(), ecmoniker)) {
+							throw new BadSurveyCredentialsException("VOTERREJECTED");
+						}
+						authorities.add(new SimpleGrantedAuthority("ROLE_ECUSER_" + ecmoniker));
+					}
+					
 					authorities.add(new SimpleGrantedAuthority("ROLE_ECAS_SURVEY_" + survey));
 				}
 				
-					UsernamePasswordAuthenticationToken t = new UsernamePasswordAuthenticationToken(
-						username, 
-						"", 
-						authorities);
+				UsernamePasswordAuthenticationToken t = new UsernamePasswordAuthenticationToken(
+					username,
+					"", 
+					authorities);
 				
 				t.setDetails(user);
 				
 				return t;
 				
-				} else{
-					logger.error("cas:authenticationSuccess NOT FOUND IN XMLVALIDATION");
-				} 
-	    	
-	    	
+			} else {
+				logger.error("cas:authenticationSuccess NOT FOUND IN XMLVALIDATION");
+			} 
+	    		    	
 	    	logger.error("Ecas user cannot be validated!");
 	    	
 	    	if (surveyLoginMode)

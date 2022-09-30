@@ -14,5 +14,9 @@ public class Bad2faCredentialsException extends BadCredentialsException {
 		logger.error("BadSurveyCredentialsException".toUpperCase() + " HAS BEEN CALLED WITH MESSAGE " + message);
 	}
 
+	public Bad2faCredentialsException() {
+		this("Ecas user does not use two factor authentication!");
+	}
+
 	private static final long serialVersionUID = 1L;
 }

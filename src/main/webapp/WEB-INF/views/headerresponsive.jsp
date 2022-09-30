@@ -76,7 +76,7 @@
 	
 </div>
 
-<div id="responsivemenu" style="display: none; position: fixed; text-align: left; right: 0px; top: 0px; z-index: 1000; max-height: 100%; overflow: auto;">		
+<div id="responsivemenu" style="display: none; position: fixed; text-align: left; right: 0px; top: 20px; z-index: 10600; max-height: 100%; overflow: auto;">		
 
 	<div style="<c:if test="${ismobile == null}">float: right; border-bottom: 2px solid #777; border-left: 2px solid #777;</c:if> background-color: #EDF7FF; margin-right: 0px; padding: 10px; padding-top: 35px;">
 		

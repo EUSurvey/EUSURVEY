@@ -6,7 +6,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>EUSurvey - <spring:message code="label.Edit" /></title>	
+	<title>EUSurvey - <spring:message code="label.Edit" /></title>
+
 	<%@ include file="../includes.jsp" %>
 	
 	<link href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
@@ -370,7 +371,7 @@
 	<jsp:include page="../runner/elementtemplates.jsp" />
 	<jsp:include page="edittemplates.jsp" />
 	<jsp:include page="editdialogs.jsp" />
-	<jsp:include page="../includes2.jsp" />		
+	<%@ include file="../includes2.jsp" %>
 
 </body>
 </html>

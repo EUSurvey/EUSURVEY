@@ -159,10 +159,10 @@
 			
 			<c:choose>
 				<c:when test="${!oss}">
-					<a id="docTutorial" class="boxlink" href="https://ec.europa.eu${contextpath}/runner/TutorialEUSurvey" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>
+					<a id="docTutorial" class="boxlink" href="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>
 				</c:when>
 				<c:otherwise>
-					<a id="docTutorial" class="boxlink" href="https://ec.europa.eu${contextpath}/runner/TutorialEUSurveyOSS" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>				
+					<a id="docTutorial" class="boxlink" href="https://ec.europa.eu/eusurvey/runner/TutorialEUSurveyOSS" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>
 				</c:otherwise>
 			</c:choose>
 			

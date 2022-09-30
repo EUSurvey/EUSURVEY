@@ -1,7 +1,7 @@
 package com.ec.survey.service;
 
 import com.ec.survey.model.Setting;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +15,15 @@ public class SettingsService extends BasicService {
 	@Transactional(readOnly = true)
 	public String get(String key) {
 		Session session = sessionFactory.getCurrentSession();		
-		Query query = session.createQuery("SELECT value FROM Setting WHERE key = :key").setString("key", key);
-		return (String) query.uniqueResult();		
+		Query<String> query = session.createQuery("SELECT value FROM Setting WHERE key = :key", String.class).setParameter("key", key);
+		return query.uniqueResult();
 	}
 	
 	@Transactional(readOnly = false)
 	public Setting getSetting(String key) {
 		Session session = sessionFactory.getCurrentSession();		
-		Query query = session.createQuery("FROM Setting WHERE key = :key").setString("key", key);
-		@SuppressWarnings("unchecked")
+		Query<Setting> query = session.createQuery("FROM Setting WHERE key = :key", Setting.class).setParameter("key", key);
+
 		List<Setting> result = query.list();
 		return result.isEmpty() ? null : result.get(0);
 	}
@@ -32,7 +32,8 @@ public class SettingsService extends BasicService {
 	public List<Integer> getEnabledActivityLoggingIds() {
 		List<Integer> ids = new ArrayList<>();
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Setting WHERE key LIKE :key AND value LIKE :val").setString("key", "%ActivityEnabled").setString("val","true");
+		Query<Setting> query = session.createQuery("FROM Setting WHERE key LIKE :key AND value LIKE :val", Setting.class)
+				.setParameter("key", "%ActivityEnabled").setParameter("val","true");
 		for (Object s : query.list())
 		{
 			ids.add(Integer.parseInt(((Setting)s).getKey().substring(0, 3)));
@@ -53,7 +54,9 @@ public class SettingsService extends BasicService {
 	@Transactional(readOnly = false)
 	public void update(String key, String val) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("UPDATE Setting SET value = :value WHERE key = :key").setString("key", key).setString("value", val);
+		@SuppressWarnings("unchecked")
+		Query<Setting> query = session.createQuery("UPDATE Setting SET value = :value WHERE key = :key")
+				.setParameter("key", key).setParameter("value", val);
 		query.executeUpdate();		
 	}
 	

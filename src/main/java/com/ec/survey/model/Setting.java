@@ -1,5 +1,8 @@
 package com.ec.survey.model;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,37 +96,6 @@ public class Setting {
 	}
 	public void setFormat(String format) {
 		this.format = format;
-	}
-	
-	@Transient
-	public static List<Integer> ActivityLoggingIds()
-	{
-		List<Integer> ids = new ArrayList<>();
-		for (int i = 101; i < 124; i++) {
-			ids.add(i);
-		}
-		for (int i = 201; i < 229; i++) {
-			ids.add(i);
-		}
-		for (int i = 301; i < 316; i++) {
-			ids.add(i);
-		}
-		ids.add(401);
-		ids.add(402);
-		ids.add(403);
-		ids.add(404);
-		ids.add(405);
-		ids.add(406);
-		for (int i = 501; i < 508; i++) {
-			ids.add(i);
-		}
-		ids.add(601);
-		ids.add(602);
-		ids.add(603);
-		ids.add(701);
-		ids.add(801);
-		ids.add(802);
-		return ids;
 	}
 	
 }

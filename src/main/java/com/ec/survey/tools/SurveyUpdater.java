@@ -7,6 +7,7 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ActivityService;
 import com.ec.survey.service.MailService;
 import com.ec.survey.service.SurveyService;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -71,7 +72,7 @@ public class SurveyUpdater implements Runnable {
 			
 				try {
 					surveyService.activate(survey, false, -1);
-					activityService.log(106, "unpublished", "published", -1, survey.getUniqueId());
+					activityService.log(ActivityRegistry.ID_SURVEY_STATE_AUTO, "unpublished", "published", -1, survey.getUniqueId());
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}				
@@ -130,7 +131,7 @@ public class SurveyUpdater implements Runnable {
 				survey.setNotified(true);
 				surveyService.update(survey, true);
 				
-				activityService.log(701, null, ConversionTools.getFullString(survey.getEnd()) + usermails, -1, survey.getUniqueId());
+				activityService.log(ActivityRegistry.ID_END_NOTIFICATION_SENT, null, ConversionTools.getFullString(survey.getEnd()) + usermails, -1, survey.getUniqueId());
 			}
 			} catch (Exception e)
 			{
@@ -144,7 +145,7 @@ public class SurveyUpdater implements Runnable {
 			for (Survey survey: surveys)
 			{
 				surveyService.unpublish(survey, true, -1, false);
-				activityService.log(106, "published", "unpublished", -1, survey.getUniqueId());
+				activityService.log(ActivityRegistry.ID_SURVEY_STATE_AUTO, "published", "unpublished", -1, survey.getUniqueId());
 			}
 			
 		} catch (Exception e) {

@@ -590,7 +590,7 @@ function delphiPrefill(editorElement) {
 		},
 		error: function(message)
 		{
-			showError(message);
+			showAjaxError(message.status);
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 			surveyElement.find(".explanation-file-upload-section").show();
 		},
@@ -1629,10 +1629,9 @@ function sendDelphiMailLink() {
 		url: contextpath + "/runner/sendDelphiLink",
 		data: "uniqueCode=" + answerSetUniqueCode + "&email=" + mail,
 		beforeSend: function(xhr) { xhr.setRequestHeader(csrfheader, csrftoken); },
-		error: function(data)
-	    {
-			showError(data);
-	    },
+		error: function (data) {
+			showAjaxError(data.status)
+		},
 		success: function(data)
 	    {
 			showSuccess(data);

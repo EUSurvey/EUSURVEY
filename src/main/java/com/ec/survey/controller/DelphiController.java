@@ -11,6 +11,7 @@ import com.ec.survey.model.delphi.*;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import com.ec.survey.tools.export.StatisticsCreator;
 import com.kennycason.kumo.WordFrequency;
 import com.kennycason.kumo.nlp.FrequencyAnalyzer;
@@ -1394,7 +1395,7 @@ public class DelphiController extends BasicController {
 			if (formManager) {
 				final int userid = sessionService.getCurrentUser(request).getId();
 				final String surveyID = surveyService.getSurveyForQuestion(comment.getQuestionUid()).getUniqueId();
-				activityService.log(801, "id: " + comment.getId() + "; text: " + comment.getText(),
+				activityService.log(ActivityRegistry.ID_COMMENT_EDITED, "id: " + comment.getId() + "; text: " + comment.getText(),
 						"id: " + comment.getId() + "; text: " + text, userid, surveyID);
 			}
 			comment.setText(text);
@@ -1428,7 +1429,7 @@ public class DelphiController extends BasicController {
 			if (formManager) {
 				final int userid = sessionService.getCurrentUser(request).getId();
 				final String surveyID = surveyService.getSurveyForQuestion(comment.getQuestionUid()).getUniqueId();
-				activityService.log(802, "id: " + comment.getId() + "; text: " + comment.getText(),
+				activityService.log(ActivityRegistry.ID_COMMENT_DELETED, "id: " + comment.getId() + "; text: " + comment.getText(),
 						null, userid, surveyID);
 			}
 			if (!answerExplanationService.hasCommentChildren(idParsed)) {
