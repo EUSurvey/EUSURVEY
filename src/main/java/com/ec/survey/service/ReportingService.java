@@ -1057,7 +1057,7 @@ public class ReportingService extends BasicService {
 	
 	private void putColumnNameAndType(Map<String, String> columnNamesToType, String uid, String type) throws MessageException {
 		if (columnNamesToType.containsKey(uid)) {
-			throw new MessageException("key already exists");
+			return; //Ignore
 		}
 		
 		columnNamesToType.put(uid, type);
