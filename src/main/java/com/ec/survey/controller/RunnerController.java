@@ -97,7 +97,7 @@ public class RunnerController extends BasicController {
 				&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
 			result.addObject("redirect", survey.getFinalConfirmationLink(lang));
 		}
-		result.addObject("surveyprefix", survey.getId() + ".");
+		result.addObject("surveyprefix", survey.getId());
 
 		return result;
 	}
@@ -645,7 +645,7 @@ public class RunnerController extends BasicController {
 				form.setSurvey(survey);
 				form.getAnswerSets().add(answerSet);
 				result.addObject(form);
-				result.addObject("surveyprefix", survey.getId() + ".");
+				result.addObject("surveyprefix", survey.getId());
 				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
 				result.addObject("invisibleElements", invisibleElements);
@@ -695,7 +695,7 @@ public class RunnerController extends BasicController {
 				result.addObject("redirect", survey.getFinalConfirmationLink(lang));
 			}
 			result.addObject("isthankspage", true);
-			result.addObject("surveyprefix", survey.getId() + "." + uniqueCode);
+			result.addObject("surveyprefix", survey.getId());
 
 			return result;
 
@@ -1724,7 +1724,7 @@ public class RunnerController extends BasicController {
 		if (invitationId != null && invitationId.trim().length() > 0) {
 			result.addObject("surveyprefix", survey.getId() + "." + uniqueCode);
 		} else {
-			result.addObject("surveyprefix", survey.getId() + ".");
+			result.addObject("surveyprefix", survey.getId());
 		}
 
 		if (survey.getEcasSecurity() && survey.getConfirmationPageLink()) {
@@ -1919,8 +1919,10 @@ public class RunnerController extends BasicController {
 			}
 
 			if (origsurvey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null && user != null) {
-				answerSet.setResponderEmail(user.getEmail());
-				email = user.getEmail();
+				if (!origsurvey.getIsEVote()) {
+					answerSet.setResponderEmail(user.getEmail());
+					email = user.getEmail();
+				}				
 
 				if (user.getType().equalsIgnoreCase(User.ECAS)) {
 					// if the user already submitted, show error page
@@ -2091,7 +2093,7 @@ public class RunnerController extends BasicController {
 				form.setSurvey(survey);
 				form.getAnswerSets().add(answerSet);
 				result.addObject(form);
-				result.addObject("surveyprefix", survey.getId() + ".");
+				result.addObject("surveyprefix", survey.getId());
 				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
 				result.addObject("invisibleElements", invisibleElements);
@@ -2144,7 +2146,7 @@ public class RunnerController extends BasicController {
 				result.addObject("asklogout", true);
 			}
 
-			result.addObject("surveyprefix", survey.getId() + ".");
+			result.addObject("surveyprefix", survey.getId());
 			request.getSession().removeAttribute("ECASSURVEY");
 
 			return result;

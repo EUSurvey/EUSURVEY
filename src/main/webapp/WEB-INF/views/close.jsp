@@ -8,7 +8,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="version.txt" %>"></script>
 	
 	<script type="text/javascript"> 
-		clearAllCookies('${surveyprefix}');
+		clearLocalBackupForPrefix('${surveyprefix}');
 	
 		window.open('', '_self', '');
     	window.close();

@@ -210,18 +210,20 @@ public class ExportService extends BasicService {
 	private String getExportFilePath(int id, ExportFormat format)
 	{
 		Export export = get(id,  false);
-		
+
 		if (export.getSurvey() == null)
 		{
 			java.io.File folder = fileService.getUsersFolder(export.getUserId());
 			return String.format("%s/Export%s.%s", folder.getPath(), id, format);
 		}
-		
+
 		java.io.File folder = fileService.getSurveyExportsFolder(export.getSurvey().getUniqueId());
 		return String.format("%s/Export%s.%s", folder.getPath(), id, format);
 	}
 
 	public String getReturnFileName(Export export) {
+
+		ExportFormat format = export.getFormat();
 		
 		if (export.getType() != ExportType.AddressBook)
 		{
@@ -230,24 +232,24 @@ public class ExportService extends BasicService {
 				return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", export.getType(), export.getSurvey().getShortname(), export.getName(),"zip"));
 			} 
 			
-			if (export.getFormat().equals(ExportFormat.pdf) && export.getType().equals(ExportType.Content))
+			if (format.equals(ExportFormat.pdf) && export.getType().equals(ExportType.Content))
 			{
 				return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", export.getType(), export.getSurvey().getShortname(), export.getName(),"zip"));
 			}
 			
-			return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", export.getType(), export.getSurvey().getShortname(), export.getName(),export.getFormat()));
+			return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", export.getType(), export.getSurvey().getShortname(), export.getName(),format));
 		} else {
 			if (export.getZipped() != null && export.getZipped())
 			{
 				return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", export.getType(), export.getName(),"zip"));
 			} 
 			
-			if (export.getFormat().equals(ExportFormat.pdf) && export.getType().equals(ExportType.Content))
+			if (format.equals(ExportFormat.pdf) && export.getType().equals(ExportType.Content))
 			{
 				return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", export.getType(), export.getName(),"zip"));
 			}
 			
-			return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", export.getType(), export.getName(),export.getFormat()));
+			return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", export.getType(), export.getName(),format));
 		}
 	}
 
@@ -471,7 +473,7 @@ public class ExportService extends BasicService {
 		try {
 			if (export != null)
 			{
-				if (export.getType().equals(ExportType.AddressBook))
+				if (export.getType().equals(ExportType.AddressBook) || export.getType().equals(ExportType.VoterFiles))
 				{
 					export.setValid(true);
 				} else if(export.getType().equals(ExportType.Activity)) {

@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript"> 
 		$(function() {					
-			clearAllCookies('${surveyprefix}');
+			clearLocalBackupForPrefix('${surveyprefix}');
 			<c:if test="${redirect != null}">
 				setTimeout(function(){ window.location = "${redirect}"; }, 10000);				
 			</c:if>		

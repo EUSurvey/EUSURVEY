@@ -529,7 +529,7 @@ function updatePossibleAnswers(selectedelement, text, inundo, element)
 				id = ids[lines[i]];
 			}
 			
-			var pa = newPossibleAnswerViewModel(id, uniqueIDs[lines[i]], shortnames[lines[i]], dependentElementsStrings[lines[i]], lines[i]);
+			var pa = newPossibleAnswerViewModel(id, uniqueIDs[lines[i]], shortnames[lines[i]], dependentElementsStrings[lines[i]], lines[i], false);
 				
 			if (!shortnames.hasOwnProperty(lines[i]))
 			{

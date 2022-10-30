@@ -30,6 +30,8 @@ public class SeatCounting {
 	private List<ElectedCandidate> candidatesFromPreferentialVotes = new ArrayList<>();
 	private List<List<ElectedCandidate>> candidateVotes = new ArrayList<>();
 	private DHondtEntry[][] dHondtEntries;
+	private List<String> reallocationMessages = new ArrayList<>();
+	private List<String> reallocationMessagesForLists = new ArrayList<>();
 
 	public int getQuorum() {
 		return quorum;
@@ -223,5 +225,37 @@ public class SeatCounting {
 	}
 	public void setTotalPreferentialVotes(int totalPreferentialVotes) {
 		this.totalPreferentialVotes = totalPreferentialVotes;
+	}
+	
+	public List<String> getReallocationMessages() {
+		return reallocationMessages;
+	}
+	public void setReallocationMessages(List<String> reallocationMessages) {
+		this.reallocationMessages = reallocationMessages;
+	}
+	
+	public List<String> getReallocationMessagesForLists() {
+		return reallocationMessagesForLists;
+	}
+	public void setReallocationMessagesForLists(List<String> reallocationMessagesForLists) {
+		this.reallocationMessagesForLists = reallocationMessagesForLists;
+	}
+	
+	//can differ from listVotesSeats if number of candidates too small for all seats
+	public int getListVotesSeatsReal() {
+		int listVotesSeatsReal = 0;
+		for (SeatDistribution list : this.getListSeatDistribution()) {
+			listVotesSeatsReal += list.getListSeats();
+		}
+		return listVotesSeatsReal;
+	}
+	
+	//can differ from preferentialVotesSeats if number of candidates too small for all seats
+	public int getPreferentialVotesSeatsReal() {
+		int preferentialVotesSeatsReal = 0;
+		for (SeatDistribution list : this.getListSeatDistribution()) {
+			preferentialVotesSeatsReal += list.getPreferentialSeats();
+		}
+		return preferentialVotesSeatsReal;
 	}
 }

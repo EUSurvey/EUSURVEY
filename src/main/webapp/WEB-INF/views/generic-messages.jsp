@@ -379,7 +379,7 @@
 	}
 		
 	function showMessages() {
-		$('.message:hidden').slideDown("slow");
+		$('.message:hidden').show();
 	}
 	
 	function hideMessages() {
@@ -441,6 +441,10 @@
 		timeoutTime.setDate(timeoutTime.getDate() - 1);
 		$('#timeout-dialog').modal('show');
 		updateTimeout();
+	}
+
+	function showLocalBackupFilesInfo(){
+		showInfo("<spring:message code="info.LocalBackupFiles"/>")
 	}
 			
 	function updateTimeout()

@@ -8,6 +8,7 @@ public class ElectedCandidate {
 	private int seats;
 	private int position; // the index in the list
 	private boolean preferentialSeat;
+	private boolean reallocatedSeat;
 
 	public String getName() {
 		return name;
@@ -55,5 +56,13 @@ public class ElectedCandidate {
 
 	public void setPreferentialSeat(boolean preferentialSeat) {
 		this.preferentialSeat = preferentialSeat;
+	}
+
+	public boolean isReallocatedSeat() {
+		return reallocatedSeat;
+	}
+
+	public void setReallocatedSeat(boolean reallocatedSeat) {
+		this.reallocatedSeat = reallocatedSeat;
 	}
 }

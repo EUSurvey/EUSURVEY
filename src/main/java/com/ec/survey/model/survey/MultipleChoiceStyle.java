@@ -5,9 +5,7 @@ import java.util.Objects;
 public enum MultipleChoiceStyle {
     CHECKBOX("checkbox"),
     LIST("list"),
-    BRUSSELS("evote-brussels"),
-    LUXEMBOURG("evote-luxembourg"),
-    OUTSIDE("evote-outside");
+    EVOTE("evote");
 
     private final String textRepresentation;
 
@@ -22,6 +20,10 @@ public enum MultipleChoiceStyle {
     public static MultipleChoiceStyle getFromText(String text){
         for (MultipleChoiceStyle t : values()){
             if (Objects.equals(t.textRepresentation, text)){
+                return t;
+            }
+            if (text.startsWith(t.textRepresentation)) {
+                //case for evote-brussels, evote-ispra, evote-luxembourg, evote-outside
                 return t;
             }
         }

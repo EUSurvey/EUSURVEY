@@ -17,9 +17,9 @@
 		<div id="quoruminfo" style="text-align: left; margin-bottom: 40px; color: #337ab7; font-size: 125%" >
 			<b id="quorum-info"><spring:message code="info.Quorum" /> <span style="margin-left: 10px;" data-bind="text: quorumText('${form.survey.quorum}')"></span> </b>
 		</div>
-		<select class="form-control" style="width:160px; margin-bottom: 28px; display: inline;" onchange="loadGraphData(this.value)">
-			<option value="quorumDays" selected>Count every day</option>
-			<option value="quorumHours">Count every hour</option>
+		<select class="form-control" style="width:auto; margin-bottom: 28px; display: inline;" onchange="loadGraphData(this.value)">
+			<option value="quorumDays" selected><spring:message code="label.CountEveryDay" /></option>
+			<option value="quorumHours"><spring:message code="label.CountEveryHour" /></option>
 		</select>
 		<a class="chart-download" style="float: none; margin-left: 10px;" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
 		<div id="quorum-table" >

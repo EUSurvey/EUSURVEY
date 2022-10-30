@@ -124,7 +124,7 @@ function newRatingItemViewModel(id, uniqueId, optional, shortname, title, origin
 	return viewModel;
 }
 
-function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsString, title, scoring, ecfScore, ecfProfile)
+function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsString, title, scoring, ecfScore, ecfProfile, exclusive)
 {
 	var viewModel = newBasicViewModel();
 	viewModel.type = 'PossibleAnswer';
@@ -137,6 +137,7 @@ function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsSt
 	viewModel.scoring = newScoringViewModel(scoring);
 	viewModel.ecfScore = ko.observable(ecfScore);
 	viewModel.ecfProfile = ko.observable(ecfProfile);
+	viewModel.exclusive = ko.observable(exclusive);
 	
 	viewModel.titleForDisplayMode = function(displayMode)
 	{
@@ -161,7 +162,7 @@ function newPossibleAnswersViewModel(answers)
 	var viewModel = ko.observableArray();
 	for (var i = 0; i < answers.length; i++)
 	{
-		viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring, answers[i].ecfScore, answers[i].ecfProfile));
+		viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring, answers[i].ecfScore, answers[i].ecfProfile, answers[i].exclusive));
 	}
 	return viewModel;
 }
@@ -271,6 +272,18 @@ function newScoringViewModel(element)
 	}
 	
 	return viewModel;
+}
+
+function notAViewModel(el){
+	//Set all .isViewModel properties of this el all childs to false
+	if (el != null && typeof el == "object"){
+		if (el.isViewModel){
+			el.isViewModel = false;
+		}
+		for (let propKey in el) {
+			notAViewModel(el[propKey]);
+		}
+	}
 }
 
 function createNewDelphiBasicViewModel() {
@@ -388,17 +401,7 @@ function newBasicViewModel(element)
 		//Create a deep clone that transforms all observables to default js values
 		let copy = ko.toJS(viewModel);
 
-		function notAViewModel(el){
-			//Set all .isViewModel properties of this el all childs to false
-			if (el != null && typeof el == "object"){
-				if (el.isViewModel){
-					el.isViewModel = false;
-				}
-				for (let propKey in el) {
-					notAViewModel(el[propKey]);
-				}
-			}
-		}
+
 		notAViewModel(copy);
 
 		//Use the viewmodels constructor to create a new viewmodel of the same type
@@ -761,6 +764,19 @@ function newMultipleChoiceViewModel(element)
 	viewModel.isEVoteList = ko.pureComputed(function() {
 		return viewModel.choiceType().startsWith("evote")
 	});
+
+	viewModel.choiceTypeWithEVote = function(template){
+		if (viewModel.isEVoteList()){
+			switch (template) {
+				case "b": return "evote-brussels";
+				case "i": return "evote-ispra";
+				case "l": return "evote-luxembourg";
+				case "o": return "evote-outside";
+			}
+		} else {
+			return viewModel.choiceType()
+		}
+	}
 
 	viewModel.styleType = ko.pureComputed(function() {
 		if (viewModel.choiceType() === "checkbox")
@@ -2068,9 +2084,9 @@ function newComplexPossibleAnswersViewModel(answers)
 		{
 			if (answers[i].hasOwnProperty("isViewModel") && answers[i].isViewModel)
 			{
-				viewModel.push(newPossibleAnswerViewModel(answers[i].id(), answers[i].uniqueId(), answers[i].shortname(), answers[i].dependentElementsString(), answers[i].title(), answers[i].scoring, answers[i].ecfScore(), answers[i].ecfProfile()));
+				viewModel.push(newPossibleAnswerViewModel(answers[i].id(), answers[i].uniqueId(), answers[i].shortname(), answers[i].dependentElementsString(), answers[i].title(), answers[i].scoring, answers[i].ecfScore(), answers[i].ecfProfile(), answers[i].exclusive));
 			} else {
-				viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring, answers[i].ecfScore, answers[i].ecfProfile));
+				viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring, answers[i].ecfScore, answers[i].ecfProfile, answers[i].exclusive));
 			}
 		}
 	}

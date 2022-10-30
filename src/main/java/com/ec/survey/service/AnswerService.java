@@ -1758,6 +1758,11 @@ public class AnswerService extends BasicService {
 		AnswerSet answerSet = list1.get(0);
 
 		if (answerSet != null) {
+
+			if (answerSet.getSurvey().getIsEVote()){
+				throw new IllegalStateException("eVote contributions may not be reset");
+			}
+
 			query = session
 					.createQuery("FROM Draft d WHERE d.answerSet.uniqueCode = :uniqueCode order by answerSet.date DESC")
 					.setString(Constants.UNIQUECODE, code);

@@ -51,6 +51,15 @@ public class ParticipationService extends BasicService {
 		
 		return result;
 	}
+
+	@Transactional
+	public List<ParticipationGroup> getAll(String uid) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM ParticipationGroup g WHERE g.surveyUid = :uid").setString("uid", uid);
+		@SuppressWarnings("unchecked")
+		List<ParticipationGroup> result = query.list();
+		return result;
+	}
 	
 	@Transactional
 	public List<ParticipationGroup> getAll(int id) {

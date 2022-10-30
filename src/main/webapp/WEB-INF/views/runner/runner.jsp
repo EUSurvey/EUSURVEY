@@ -86,7 +86,6 @@
 				});
 			} else {
 				checkPages();
-				readCookies();
 				
 				<c:if test="${form.validation != null && form.validation.size() > 0}">
 					goToFirstValidationError($("form"));
@@ -105,6 +104,7 @@
 				updateProgress();
 				updateEVoteStatus();
 				updateAllFormulas();
+				updateAllExclusiveAnswers();
 			}
 		}
 		
@@ -116,6 +116,11 @@
 			
 			var surveyElement = $(element).closest(".survey-element");
 			enableDelphiSaveButtons(surveyElement);
+			
+			if (responseJSON.files.length == 0) {
+				 $(surveyElement).removeClass("answered");
+				 updateProgress();
+			}
 
 			for (var i = 0; i < responseJSON.files.length; i++) {
 				var f = responseJSON.files[i];

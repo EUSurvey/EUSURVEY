@@ -50,6 +50,29 @@ public class SchemaService extends BasicService {
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
 
+	@Transactional
+	public void step108() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		ensureActivity(ActivityRegistry.ID_DISPLAY_RESULTS, session);
+		ensureActivity(ActivityRegistry.ID_ALLOCATE_SEATS, session);
+		ensureActivity(ActivityRegistry.ID_EXPORT_SEATS, session);
+
+		status.setDbversion(108);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step107() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		ensureActivities(session, ActivityRegistry.ID_EVOTE_TEST_PAGE);
+
+		status.setDbversion(107);
+		session.saveOrUpdate(status);
+	}
 
 	@Transactional
 	public void step106() {

@@ -3152,7 +3152,7 @@ public class SurveyHelper {
 			if (!newElement) {
 				DeletePossibleAnswers(answers, originalAnswers, item.getPossibleAnswers());
 			}
-			getPossibleAnswers(answers, originalAnswers, null, shortnamesForAnswers, null, null, null, item.getPossibleAnswers(), survey, log220, new StringBuilder(), null);
+			getPossibleAnswers(answers, originalAnswers, null, shortnamesForAnswers, null, null, null, null, item.getPossibleAnswers(), survey, log220, new StringBuilder(), null);
 		}
 
 		if (log220 && oldValues.length() > 0) {
@@ -3195,7 +3195,7 @@ public class SurveyHelper {
 		}
 	}
 	
-	private static void getPossibleAnswers(String[] answers, String[] originalAnswers, String[] dependenciesForAnswers, String[] shortnamesForAnswers, String[] correctForAnswers, String[] pointsForAnswers, String[] feedbackForAnswers, List<PossibleAnswer> possibleAnswers, Survey survey, boolean log220, StringBuilder newAnswers, HashMap<PossibleAnswer, String> dependencies) {
+	private static void getPossibleAnswers(String[] answers, String[] originalAnswers, String[] dependenciesForAnswers, String[] shortnamesForAnswers, String[] correctForAnswers, String[] pointsForAnswers, String[] feedbackForAnswers, String[] exclusiveForAnswers, List<PossibleAnswer> possibleAnswers, Survey survey, boolean log220, StringBuilder newAnswers, HashMap<PossibleAnswer, String> dependencies) {
 		PossibleAnswer p;
 		int j = 0;
 		String shortname;
@@ -3230,6 +3230,10 @@ public class SurveyHelper {
 			p.setTitle(answer);
 			p.setShortname(shortname);
 			p.setPosition(j);
+			
+			if (exclusiveForAnswers != null) {
+				p.setExclusive(exclusiveForAnswers[k].equalsIgnoreCase("true"));
+			}
 
 			if (survey.getIsQuiz()) {
 				boolean correct = false;
@@ -3237,9 +3241,15 @@ public class SurveyHelper {
 					correct = correctForAnswers[k].equalsIgnoreCase("true");
 
 				int points = 0;
-				if (pointsForAnswers != null && pointsForAnswers.length > k)
-					points = Integer.parseInt(pointsForAnswers[k]);
-
+				if (pointsForAnswers != null && pointsForAnswers.length > k && pointsForAnswers[k].length() > 0)
+				{
+					try {
+						points = Integer.parseInt(pointsForAnswers[k]);
+					} catch (NumberFormatException nfe) {
+						logger.error(nfe.getLocalizedMessage(), nfe);
+					}
+				}
+				
 				String feedback = "";
 				if (feedbackForAnswers != null && feedbackForAnswers.length > k)
 					feedback = feedbackForAnswers[k];
@@ -3435,7 +3445,7 @@ public class SurveyHelper {
 			}
 		}
 
-		getPossibleAnswers(answers, originalAnswers, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, singlechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
+		getPossibleAnswers(answers, originalAnswers, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, null, singlechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
 
 		if (log220 && !oldAnswers.toString().equals(newAnswers.toString())) {
 			oldValues += " answers: " + oldAnswers;
@@ -3453,7 +3463,7 @@ public class SurveyHelper {
 	private static MultipleChoiceQuestion getMultipleChoice(Map<String, String[]> parameterMap, Element currentElement,
 			Survey survey, String id, String[] answers, String[] originalAnswers, String[] dependenciesForAnswers,
 			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] correctForAnswers,
-			String[] pointsForAnswers, String[] feedbackForAnswers, ServletContext servletContext, boolean log220)
+			String[] pointsForAnswers, String[] feedbackForAnswers, String[] exclusiveForAnswers, ServletContext servletContext, boolean log220)
 			throws InvalidXHTMLException {
 		String oldValues = "";
 		String newValues = "";
@@ -3632,7 +3642,7 @@ public class SurveyHelper {
 			}
 		}
 
-		getPossibleAnswers(answers, originalAnswers, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, multiplechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
+		getPossibleAnswers(answers, originalAnswers, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, exclusiveForAnswers, multiplechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
 
 		if (log220 && !oldAnswers.toString().equals(newAnswers.toString())) {
 			oldValues += " answers: " + oldAnswers;
@@ -4346,6 +4356,7 @@ public class SurveyHelper {
 			String[] correctForAnswers = parameterMap.get("correct" + id);
 			String[] pointsForAnswers = parameterMap.get("answerpoints" + id);
 			String[] feedbackForAnswers = parameterMap.get("feedback" + id);
+			String[] exclusiveForAnswers = parameterMap.get("exclusive" + id);
 
 			boolean single = getBoolean(parameterMap, "single", id);
 
@@ -4355,7 +4366,7 @@ public class SurveyHelper {
 						servletContext, log220);
 			} else {
 				element = getMultipleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, dependenciesForAnswers,
-						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
+						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, exclusiveForAnswers,
 						servletContext, log220);
 			}
 		} else if (type.equalsIgnoreCase("rankingquestion")) {

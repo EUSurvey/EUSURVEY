@@ -124,7 +124,7 @@ public class ContributionController extends BasicController {
 
 		form.getAnswerSets().add(answerSet);
 		result.addObject(form);
-		result.addObject("surveyprefix", answerSet.getSurvey().getId() + ".");
+		result.addObject("surveyprefix", answerSet.getSurvey().getId());
 		result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 		form.setForPDF(true);
 		result.addObject("forpdf", "true");
@@ -222,6 +222,9 @@ public class ContributionController extends BasicController {
 
 		Set<String> invisibleElements = new HashSet<>();
 		if (answerSet != null) {
+			if (answerSet.getSurvey().getIsEVote()){
+				throw new IllegalStateException("eVote contributions may not be viewed");
+			}
 			// participants can only access it if the survey is still active
 			User u;
 			
@@ -368,6 +371,10 @@ public class ContributionController extends BasicController {
 			if (oldAnswerSet != null) {
 				List<String> oldFileUIDs = oldAnswerSet.getAllFiles();
 
+				if (oldAnswerSet.getSurvey().getIsEVote()){
+					throw new IllegalStateException("eVote contributions may not be edited");
+				}
+
 				String uniqueCode = request.getParameter(Constants.UNIQUECODE);
 				SurveyHelper.parseAndMergeAnswerSet(request, origsurvey, uniqueCode, oldAnswerSet,
 						oldAnswerSet.getLanguageCode(), null, fileService);
@@ -434,7 +441,7 @@ public class ContributionController extends BasicController {
 				}
 
 				if (dialogmode) {
-					return new ModelAndView("close", "surveyprefix", origsurvey.getId() + ".");
+					return new ModelAndView("close", "surveyprefix", origsurvey.getId());
 				}
 
 				if (origsurvey.getIsQuiz()) {
@@ -452,7 +459,7 @@ public class ContributionController extends BasicController {
 					form.setSurvey(origsurvey);
 					form.getAnswerSets().add(answerSet);
 					result.addObject(form);
-					result.addObject("surveyprefix", origsurvey.getId() + ".");
+					result.addObject("surveyprefix", origsurvey.getId());
 					result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 					result.addObject("isquizresultpage", true);
 					result.addObject("invisibleElements", invisibleElements);
@@ -487,7 +494,7 @@ public class ContributionController extends BasicController {
 					result.addObject("asklogout", true);
 				}
 
-				result.addObject("surveyprefix", origsurvey.getId() + ".");
+				result.addObject("surveyprefix", origsurvey.getId());
 				return result;
 			} else {
 				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
@@ -533,6 +540,9 @@ public class ContributionController extends BasicController {
 		if (uid != null && uid.length() > 0) {
 			AnswerSet answerSet = answerService.get(uid);
 			if (answerSet != null) {
+				if (answerSet.getSurvey().getIsEVote()){
+					throw new IllegalStateException("eVote contributions may not be viewed");
+				}
 				Form form = new Form(resources);
 				Set<String> invisibleElements = new HashSet<>();
 				SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null,
@@ -593,6 +603,10 @@ public class ContributionController extends BasicController {
 				if (answerSet != null) {
 					Form form = new Form(resources);
 					String lang = answerSet.getLanguageCode();
+
+					if (answerSet.getSurvey().getIsEVote()){
+						throw new IllegalStateException("eVote contributions may not be viewed");
+					}
 
 					SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null,
 							request, true, null, fileService);

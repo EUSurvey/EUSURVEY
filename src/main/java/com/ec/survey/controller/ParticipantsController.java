@@ -1287,38 +1287,21 @@ public class ParticipantsController extends BasicController {
 
 		return null;
 	}
-	
-	@RequestMapping(value = "/exportvoterfile", method = { RequestMethod.GET, RequestMethod.HEAD })
+
+	@RequestMapping(value = "/emptyvoterfile", method = { RequestMethod.GET, RequestMethod.HEAD })
 	@ResponseBody
-	public ResponseEntity<byte[]> exportvoterfile(HttpServletRequest request,
-			HttpServletResponse response) {
+	public ResponseEntity<byte[]> emptyvoterfile(HttpServletRequest request, HttpServletResponse response) {
 
 		final HttpHeaders headers = new HttpHeaders();
 
 		try {
 
-			Form form = sessionService.getForm(request, null, false, false);
-			User u = sessionService.getCurrentUser(request);
-			sessionService.upgradePrivileges(form.getSurvey(), u, request);
-
-			if (!u.getId().equals(form.getSurvey().getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations) < 2) {
-				throw new ForbiddenURLException();
-			}
-			
-			String user = (String) request.getSession().getAttribute("VotersUserFilter");
-			String first = (String) request.getSession().getAttribute("VotersFirstFilter");
-			String last = (String) request.getSession().getAttribute("VotersLastFilter");
-			Boolean voted = (Boolean) request.getSession().getAttribute("VotersVotedFilter");
-			
-			byte[] file = eVoteService.exportVoterFile(form.getSurvey().getUniqueId(), user, first, last, voted);
+			byte[] file = eVoteService.exportVoterFile(new LinkedList<>());
 
 			response.setContentType("application/vnd.ms-excel");
 			response.setHeader("Content-Disposition", "attachment;filename=voterfile.xlsx");
 			response.setContentLength(file.length);
-			response.getOutputStream().write(file);			
+			response.getOutputStream().write(file);
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
 

@@ -144,9 +144,7 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 			case LIST:
 				css += " listbox";
 				break;
-			case BRUSSELS:
-			case LUXEMBOURG:
-			case OUTSIDE:
+			case EVOTE:
 				css += " checkboxes";
 				break;
 		}

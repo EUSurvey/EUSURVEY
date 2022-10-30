@@ -9,39 +9,36 @@
 <!-- 			<param name="ConversionPattern" value="%-5p: %c - %m%n" /> -->
 <!-- 		</layout> -->
 <!-- 	</appender> -->
-	
-	<appender name="info" class="org.apache.log4j.rolling.RollingFileAppender">
+
+	<appender name="info" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/esurvey-info.log" />
+		<param name="MaxFileSize" value="4096KB" />
+		<param name="MaxBackupIndex" value="20" />
 		<param name="Append" value="true" />
 		<param name="Threshold" value="Info" />
-		<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-			<param name="FileNamePattern" value="${catalina.base}/logs/esurvey-info.%d.log" />
-		</rollingPolicy>
-		<param name="file" value="${catalina.base}/logs/esurvey-info.log" />
-		<layout class="org.apache.log4j.EnhancedPatternLayout">
+		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}-%-4r [%t] (%F:%L) %-5p %c %x - %m%n" />
 		</layout>
 	</appender>
 
-	<appender name="debug" class="org.apache.log4j.rolling.RollingFileAppender">
+	<appender name="debug" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/esurvey-debug.log" />
+		<param name="MaxFileSize" value="4096KB" />
+		<param name="MaxBackupIndex" value="20" />
 		<param name="Append" value="true" />
 		<param name="Threshold" value="Debug" />
-		<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-			<param name="FileNamePattern" value="${catalina.base}/logs/esurvey-debug.%d.log" />
-		</rollingPolicy>
-		<param name="file" value="${catalina.base}/logs/esurvey-debug.log" />
-		<layout class="org.apache.log4j.EnhancedPatternLayout">
+		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}-%-4r [%t] (%F:%L) %-5p %c %x - %m%n" />
 		</layout>
 	</appender>
 
-	<appender name="error" class="org.apache.log4j.rolling.RollingFileAppender">
+	<appender name="error" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/esurvey-error.log" />
+		<param name="MaxFileSize" value="5120KB" />
+		<param name="MaxBackupIndex" value="20" />
 		<param name="Append" value="true" />
 		<param name="Threshold" value="Error" />
-		<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
-			<param name="FileNamePattern" value="${catalina.base}/logs/esurvey-error.%d.log" />
-		</rollingPolicy>
-		<param name="file" value="${catalina.base}/logs/esurvey-error.log" />
-		<layout class="org.apache.log4j.EnhancedPatternLayout">
+		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}-%-4r [%t] (%F:%L) %-5p %c %x - %m%n" />
 		</layout>
 	</appender>

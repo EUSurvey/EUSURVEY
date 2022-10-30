@@ -624,6 +624,9 @@
 								<span class="glyphicon glyphicon-file"></span>
 								<spring:message code="label.ImportVoterFile" />
 							</a>
+							<a href="${contextpath}/noform/management/emptyvoterfile" class="btn btn-default">
+								<spring:message code="label.DownloadTemplateFile" />
+							</a>
 						</c:if>
 					</c:when>
 					<c:otherwise>

@@ -789,6 +789,12 @@ var UndoProcessor = function() {
 			case "ShowHeadersAndBorders":
 				element.showHeadersAndBorders(step[3]);
 				break;
+			case "Exclusive":
+				var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+				var parent = _elements[parentid];
+				element = parent.getChild(id);
+				element.exclusive(step[3]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -1367,6 +1373,12 @@ var UndoProcessor = function() {
 				break;
 			case "ShowHeadersAndBorders":
 				element.showHeadersAndBorders(step[4]);
+				break;
+			case "Exclusive":
+				var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+				var parent = _elements[parentid];
+				element = parent.getChild(id);
+				element.exclusive(step[4]);
 				break;
 		}
 		

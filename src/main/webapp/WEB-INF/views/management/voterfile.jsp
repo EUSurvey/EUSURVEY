@@ -15,10 +15,11 @@
 				<!-- /ko -->
 			</div>
 			<div class="col-md-10" style="text-align: left">
-				<button class="btn btn-primary" onclick="openAddVoterDialog()"><spring:message code="label.AddUser" /></button>
-				<a class="btn btn-primary" href="${contextpath}/noform/management/exportvoterfile"><spring:message code="label.Export" /></a>
+				
+				<!-- <button class="btn btn-primary" onclick="openAddVoterDialog()"><spring:message code="label.AddUser" /></button> -->
+				<a class="btn btn-primary" onclick="showVoterFileExportDialog()"><spring:message code="label.Export" /></a>
 				<span v-if="totalVoters > 0" style="margin-left: 20px">
-		      		<span data-bind="text: totalVoters"></span> <spring:message code="label.entries" />
+		      		<span data-bind="text: totalVoters"></span>&nbsp;<spring:message code="label.entries" />
 		      	</span>	
 				<br />
 				
@@ -110,6 +111,27 @@
 			<div class="modal-footer">
 				<a onclick="deleteVoterContinue(); return false;" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				<a class="btn btn-default" data-dismiss="modal"><spring:message	code="label.Cancel" /></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="export-voter-file-dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header" style="font-weight: bold;">
+				<spring:message code="label.Start" />&nbsp;<span id="export-voter-file-dialog-type"></span>&nbsp;<spring:message code="label.Export" />
+			</div>
+			<div class="modal-body" style="padding-left: 30px;">
+				<label for="export-name-voter-file" style="display:inline"><span class="mandatory">*</span><spring:message code="label.ExportName" /></label>
+				<input class="form-control" type="text" id="export-name-voter-file" maxlength="255" name="export-name" style="width:220px; margin-top: 10px" />
+				<span id="validation-error-vf-required" class="validation-error hideme"><br /><spring:message code="validation.required" /></span>
+				<span id="validation-error-vf-exportname" class="validation-error hideme"><spring:message code="validation.name2" /></span>
+			</div>
+			<div class="modal-footer">
+				<img alt="wait animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+				<a id="okVFStartExportButton"  onclick="exportVoterFile($('#export-name-voter-file').val());"  class="btn btn-primary"><spring:message code="label.OK" /></a>
+				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
 			</div>
 		</div>
 	</div>
@@ -279,6 +301,52 @@
 			  showGenericError();
 		  }
 		});
+	}
+
+	function showVoterFileExportDialog(){
+		$('#export-voter-file-dialog').val("");
+		$('#export-voter-file-dialog-type').text("XLSX");
+		$('#export-voter-file-dialog').modal();
+		$('#export-voter-file-dialog').find("input").first().focus();
+	}
+
+	function exportVoterFile(name){
+		//check if input valid
+		$("#export-voter-file-dialog-dialog").find(".validation-error").hide();
+
+		if (name === null || name.trim().length === 0)
+		{
+			$("#export-name-type-dialog").find("#validation-error-vf-required").show();
+			return;
+		}
+
+		var reg = /^[a-zA-Z0-9-_\.]+$/;
+		if( !reg.test( name ) ) {
+			$("#export-name-type-dialog").find("#validation-error-vf-exportname").show();
+			return;
+		};
+
+		window.checkExport = true;
+		$("#export-voter-file-dialog").modal("hide");
+
+
+		//export
+		$.ajax({
+			type: "POST",
+			url: "${contextpath}/exports/start/VoterFiles/xlsx",
+			data: {exportName: name, showShortnames: false, allAnswers: false, group: ""},
+			beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+			success: function(data)
+			{
+				if (data == "success") {
+					showExportSuccessMessage();
+				} else {
+					showExportFailureMessage();
+				}
+			}
+		});
+
+		return false;
 	}
 	
 	let voterIdToDelete = 0;

@@ -299,6 +299,7 @@
 				createNavigation(true);
 				updateDependenciesView();
 				_actions.AllElementsLoaded(true);
+				eVoteRuleEvaluator.recalculate()
 				
 				$.ajax({type: "GET",
 					url: contextpath + "/administration/system/complexity",
@@ -481,6 +482,7 @@
 		strings["TabTitle"] = "<spring:message code="label.TabTitle" />";
 		strings["Level"] = "<spring:message code="label.Level" />";
 		strings["Visibility"] = "<spring:message code="label.Visibility" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.visibility" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
+		strings["StyleWithInfo"] = "<spring:message code="label.Style" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.StyleMC" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 		strings["alwaysVisible"] = "<spring:message code="label.alwaysVisible" />";
 		strings["dependent"] = "<spring:message code="label.dependent" />";
 		strings["Mandatory"] = "<spring:message code="label.Mandatory" />";
@@ -523,10 +525,6 @@
 		strings["CheckBox"] = "<spring:message code="html.CheckBox" />";
 		strings["ListBox"] = "<spring:message code="html.ListBox" />";
 		strings["EVoteList"] = "<spring:message code="html.EVoteList" />";
-		strings["EVoteProcedure"] = "<spring:message code="label.EVoteProcedure" />";
-		strings["evote-brussels"] = "<spring:message code="label.Brussels" />";
-		strings["evote-luxembourg"] = "<spring:message code="label.Luxembourg" />";
-		strings["evote-outside"] = "<spring:message code="label.OutsideCommunity" />";
 		strings["Unit"] = "<spring:message code="label.Unit" />";
 		strings["DecimalPlaces"] = "<spring:message code="label.DecimalPlacesNew" />";
 		strings["DisplaySlider"] = "<spring:message code="label.Display" />";
@@ -702,6 +700,7 @@
 		strings["invalidPaDeletion"] = "<spring:message code="validation.invalidPaDeletion" />";
 		strings["invalidRankItemDeletion"] = "<spring:message code="validation.invalidRankItemDeletion" />";
 		strings["invalidRatingDeletion"] = "<spring:message code="validation.invalidRatingDeletion" />";
+		strings["Exclusive"] = "<spring:message code="label.Exclusive" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Exclusive" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 
 	 	function getPropertyLabel(label)
 	 	{

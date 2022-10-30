@@ -382,7 +382,7 @@
 		<span class="hideimport hidecopy"><spring:message code="label.NewSurvey" /></span>
 		<span class="hideimport hidecreate"><spring:message code="label.CopySurvey" /></span>		
 	</div>
-	<div class="modal-body" style="padding: 10px;">
+	<div class="modal-body" style="padding: 10px; text-align: left;">
 		<table class="table table-striped table-bordered" id="new-survey-table">
 			<tbody>
 				<tr class="hideimport">
@@ -428,6 +428,7 @@
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Template" /></td>
 					<td>
 						<input type="radio" name="new-survey-template" checked="checked" value="b" />&#160;<spring:message code="label.Brussels" />
+						<input type="radio" name="new-survey-template" value="i" style="margin-left: 20px;" />&#160;<spring:message code="label.IspraSeville" />
 						<input type="radio" name="new-survey-template" value="l" style="margin-left: 20px;" />&#160;<spring:message code="label.Luxembourg" />
 						<input type="radio" name="new-survey-template" value="o" style="margin-left: 20px;" />&#160;<spring:message code="label.OutsideCommunity" />
 					</td>

@@ -1046,12 +1046,13 @@
 				<div style="float: left; margin-top: 0px; margin-bottom: 0px;">
 					<c:choose>
 						<c:when test="${form.survey.isEVote}">
-							<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.QuorumPage" />" id="results-statistics-quorum-link" class="btn btn-default btn-primary" onclick="switchTo('quorum');"><img src="${contextpath}/resources/images/icons/24/quorum.png" /></a>
+							<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Quorum" />" id="results-statistics-quorum-link" class="btn btn-default btn-primary" onclick="switchTo('quorum');"><img src="${contextpath}/resources/images/icons/24/quorum.png" /></a>
 							
 							<c:if test="${!published}">
 								<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Results" />" id="results-statistics-seats-link" style="display: none" class="btn btn-default btn-default" onclick="switchTo('seats');"><img src="${contextpath}/resources/images/icons/24/people.png" /></a>
-							
-								<c:if test="${USER.getGlobalPrivilegeValue('FormManagement') == 2}">
+							</c:if>
+
+							<c:if test="${form.survey.showResultsTestPage && !published}">
 									<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Test" />" id="results-statistics-test-link" style="width: 50px; height: 38px; color: #555;" class="btn btn-default btn-default" onclick="switchTo('test');">
 										<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" style="vertical-align: middle" fill="currentColor" class="bi bi-clipboard2-check" viewBox="0 0 16 16">
 										  <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5h3Z"/>
@@ -1059,7 +1060,6 @@
 										  <path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3Z"/>
 										</svg>
 									</a>
-								</c:if>							
 							</c:if>			
 						</c:when>
 						<c:otherwise>
@@ -1231,11 +1231,10 @@
 					
 					<c:if test="${!published}">
 						<%@ include file="results-seats.jsp" %>
-						
-						<c:if test="${USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-							<%@ include file="results-test.jsp" %>
-						</c:if>					
-					</c:if>					
+					</c:if>
+					<c:if test="${form.survey.showResultsTestPage}">
+						<%@ include file="results-test.jsp" %>
+					</c:if>
 					
 				</c:if>
 				<%@ include file="results-content.jsp" %>

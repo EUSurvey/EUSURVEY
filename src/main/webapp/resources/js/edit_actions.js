@@ -10,7 +10,8 @@ var Actions = function() {
 	this.UndoEnabled= ko.observable(false);
 	this.RedoEnabled= ko.observable(false);
 	this.CopyEnabled = ko.observable(false);
-	this.PasteEnabled = ko.observable(false);    
+	this.PasteEnabled = ko.observable(false);
+	this.DialogOpen = ko.observable(false);
     this.ElementSelected = ko.observable(false);
 	this.ChildSelected = ko.observable(false);
 	this.CutEnabled = ko.observable(false);
@@ -92,6 +93,9 @@ var Actions = function() {
 		
 		this.copiedElements = [];
 		$("#content").find(".selectedquestion").each(function(){
+			if (!eVoteRuleEvaluator.isElementAllowed(this)){
+				return; //continue
+			}
 			var oldid = $(this).attr("id");
 			var originalmodel = _elements[oldid];
 			var copiedmodel = originalmodel.copy();
@@ -101,15 +105,21 @@ var Actions = function() {
 		if (this.copiedElements.length == 1 && this.copiedElements[0].type == "Section")
 		{
 			$("#askcopysectiondialog").modal("show");
+			this.DialogOpen(true);
 			return;
 		}
-		
-		$("#copiedtoolboxitem").show();
-		$("#cancelcopytoolboxitem").show();
-		
+
 		this.CopyEnabled(true);
 		this.CutEnabled(true);
-		this.PasteEnabled(true);
+		this.PasteEnabled(this.copiedElements.length > 0);
+
+		if (this.PasteEnabled()){
+			$("#copiedtoolboxitem").show();
+			$("#cancelcopytoolboxitem").show();
+		} else {
+			$("#copiedtoolboxitem").hide();
+			$("#cancelcopytoolboxitem").hide();
+		}
 		
 		if (!$("#showtoolboxbutton").hasClass("selected"))
 		{
@@ -142,6 +152,10 @@ var Actions = function() {
     					return false;
     				}
     			}
+
+				if (!eVoteRuleEvaluator.isElementAllowed(this)){
+					return; //continue
+				}
     			
     			var oldid = $(this).attr("id");
     			var newid = getNewId();
@@ -165,6 +179,7 @@ var Actions = function() {
 		}    
     	
     	$("#askcopysectiondialog").modal("hide");
+		this.DialogOpen(false);
     }
     
     this.copyElement = function(item)
@@ -256,8 +271,8 @@ var Actions = function() {
     	});
     	
     	item.remove();
-    	
-    	_elementProperties.deselectAll();
+
+    	_elementProperties.deselectForPaste();
     	
     	_undoProcessor.addUndoStep(["COPYPASTE", ids]);
     	
@@ -448,7 +463,7 @@ var Actions = function() {
     	
     	if (!skip)
     	{
-	    	_elementProperties.deselectAll();
+	    	_elementProperties.deselectForPaste();
 	    	$("#cuttoolboxitem").hide();
 	    	$("#cancelcuttoolboxitem").hide();
 	    	this.PasteEnabled(!!$("#copiedtoolboxitem").is(":visible"));
@@ -778,7 +793,7 @@ var Actions = function() {
     }
     
     this.backup = function(){
-    	if (!check_local_storage_enabled(false) || !this.BackupEnabled()) {
+    	if (!checkLocalStorageEnabled(false) || !this.BackupEnabled()) {
     		return;
     	}
     	
@@ -808,7 +823,7 @@ var Actions = function() {
     }
     
     this.restore = function(){
-    	if (!check_local_storage_enabled(false) || !this.BackupEnabled()) {
+    	if (!checkLocalStorageEnabled(false) || !this.BackupEnabled()) {
     		return;
     	}
     	
@@ -833,7 +848,9 @@ var Actions = function() {
 	    	$("#content").append(emptyelement);
 	    	
 	    	var element = _elements[elementid];
-	    	element.isViewModel = false;
+
+	    	notAViewModel(element)
+
 	    	var model = getElementViewModel(element, true);
 	    	 _elements[elementid] = model;
 	    	var item = addElement(element, true, false);

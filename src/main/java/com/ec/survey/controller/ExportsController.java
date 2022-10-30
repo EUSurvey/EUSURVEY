@@ -1,10 +1,12 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.Export.ExportFormat;
 import com.ec.survey.model.Export.ExportState;
 import com.ec.survey.model.Export.ExportType;
 import com.ec.survey.model.administration.GlobalPrivilege;
+import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.MailService;
@@ -29,6 +31,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -104,6 +107,40 @@ public class ExportsController extends BasicController {
 					form.setSurvey(survey);
 					break;
 					}
+				case VoterFiles: {
+					Form voterForm = sessionService.getForm(request, null, false, false);
+					User u = sessionService.getCurrentUser(request);
+					sessionService.upgradePrivileges(voterForm.getSurvey(), u, request);
+
+					if (!u.getId().equals(voterForm.getSurvey().getOwner().getId())
+							&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+							&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+							&& u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations) < 2) {
+						throw new ForbiddenURLException();
+					}
+
+					export.setSurvey(voterForm.getSurvey());
+					export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
+
+					String user = (String) request.getSession().getAttribute("VotersUserFilter");
+					String first = (String) request.getSession().getAttribute("VotersFirstFilter");
+					String last = (String) request.getSession().getAttribute("VotersLastFilter");
+					Boolean voted = (Boolean) request.getSession().getAttribute("VotersVotedFilter");
+
+					byte[] file = eVoteService.exportVoterFile(voterForm.getSurvey().getUniqueId(), user, first, last, voted);
+					export.setValid(true);
+					export.setState(ExportState.Finished);
+
+					exportService.prepareExport(voterForm, export);
+					String exportFilePath = exportService.getExportFilePath(export, uid);
+
+					try (FileOutputStream fos = new FileOutputStream(exportFilePath)) {
+						fos.write(file);
+					}
+					sessionService.setCheckExport(request, "true");
+
+					return "success";
+				}
 				case Survey: {
 					User u = sessionService.getCurrentUser(request);
 					if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
@@ -358,6 +395,7 @@ public class ExportsController extends BasicController {
 				response.setContentType("application/zip");
 			} else {
 				switch (export.getFormat()) {
+				case xlsx:
 				case xls:
 					response.setContentType("application/vnd.ms-excel");
 					break;

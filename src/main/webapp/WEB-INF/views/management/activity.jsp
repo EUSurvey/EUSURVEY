@@ -321,7 +321,13 @@
 									</c:otherwise>
 								</c:choose>
 							</c:if>
-							<c:if test='${filter.visible("object") == true}'><td><spring:message code="label.${activity.getObject()}" /></td></c:if>
+							<c:if test='${filter.visible("object") == true}'>
+								<td>
+									<c:if test="${activity.getObject() != null && activity.getObject().length() > 0}">
+										<spring:message code="label.${activity.getObject()}" />
+									</c:if>
+								</td>
+							</c:if>
 							<c:if test='${filter.visible("property") == true}'>
 								<td>
 									<c:choose>
@@ -334,7 +340,13 @@
 									</c:choose>
 								</td>
 							</c:if>
-							<c:if test='${filter.visible("event") == true}'><td><spring:message code="label.${activity.event}" /></td></c:if>
+							<c:if test='${filter.visible("event") == true}'>
+								<td>
+								<c:if test='${activity.event != null && activity.event.length() > 0}'>
+									<spring:message code="label.${activity.event}" />
+								</c:if>
+								</td>
+							</c:if>
 							<c:if test='${filter.visible("description") == true}'><td><spring:message code="logging.${activity.logID}" /></td></c:if>
 							<c:if test='${filter.visible("oldvalue") == true}'><td>${activity.oldValue}</td></c:if>
 							<c:if test='${filter.visible("newvalue") == true}'><td>${activity.newValue}</td></c:if>					

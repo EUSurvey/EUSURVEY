@@ -202,7 +202,7 @@ $(document).keyup(function(event){
     if (cntrlIsPressed && event.which=="67" && _actions.CopyEnabled())
     	_actions.copySelectedElement();
     
-    if (cntrlIsPressed && event.which=="86" && _actions.PasteEnabled())
+    if (cntrlIsPressed && event.which=="86" && _actions.PasteEnabled() && !_actions.DialogOpen())
     	_actions.pasteElementAfter();
     
 });
@@ -223,6 +223,8 @@ function checkContent()
 	} else {
 		$("#empty-content-message").show();
 	}
+
+	eVoteRuleEvaluator.recalculate()
 }
 
 function checkDependenciesAfterMove(item){
@@ -1330,4 +1332,37 @@ function getCounter(level, n1, n2, n3, n4, n5)
 	}	
 	
 	return result;
+}
+
+const eVoteRuleEvaluator = {
+
+	isElementAllowed(element){
+
+		if (!isEVote)
+			return true
+
+		const classes = $(element).prop("classList")
+		const itemClass = Array.from(classes).find(name => name.includes("item"))
+		const toolboxItem = $(".toolboxitem." + itemClass)
+		return toolboxItem.length > 0 && !toolboxItem.is(".disallowed")
+	},
+
+	recalculate(){
+		const toolbox = $(".toolbox");
+		toolbox.find(".disallowed").removeClass("disallowed")
+
+		if (isEVote) {
+			this.evaluateRule(eVoteTemplate)
+		}
+	},
+
+	disallowElement(elType){
+		$(".toolboxitem." + elType).addClass("disallowed")
+	},
+
+	evaluateRule(template){
+		if ($(".survey-element.singlechoiceitem").length > 0) {
+			this.disallowElement("singlechoiceitem")
+		}
+	}
 }

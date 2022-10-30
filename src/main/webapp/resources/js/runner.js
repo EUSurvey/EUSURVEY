@@ -213,6 +213,21 @@ function propagateChange(element)
 	
 	enableDelphiSaveButtons(div);
 	
+	if ($(element).hasClass("exclusive")) {		
+		if ($(element).is(":checked")) {		
+			var id = $(element).attr("id");
+			$(div).find("input[type=checkbox]").each(function(){
+				if ($(this).attr("id") != id) {
+					$(this).removeAttr("checked").prop("disabled", true).addClass("disabled").attr('previousValue', false);
+				}
+			});
+		} else {
+			$(div).find("input[type=checkbox]").each(function(){
+				$(this).removeAttr("disabled", true).removeClass("disabled");
+			});
+		}
+	}
+	
 	if (!checkHasValue(element)) {
 		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
@@ -243,6 +258,26 @@ function propagateChange(element)
 	if ($(div).hasClass("numberitem") || $(div).hasClass("formulaitem") || $(div).hasClass("regexitem") || $(element).hasClass("number") || $(element).hasClass("formula")) { //.number and .formula are for complex table cells
 		updateFormulas($(div).attr("id"), $(element).attr("data-shortname"));
 	}
+}
+
+function updateAllExclusiveAnswers() {
+	$('.exclusive').each(function() {
+		var element = this;
+		var div = $(element).parents(".survey-element").last();
+			
+		if ($(element).is(":checked")) {		
+			var id = $(element).attr("id");
+			$(div).find("input[type=checkbox]").each(function(){
+				if ($(this).attr("id") != id) {
+					$(this).removeAttr("checked").prop("disabled", true).addClass("disabled").attr('previousValue', false);
+				}
+			});
+		} else {
+			$(div).find("input[type=checkbox]").each(function(){
+				$(this).removeAttr("disabled", true).removeClass("disabled");
+			});
+		}
+	});
 }
 
 function updateAllFormulas() {
@@ -437,11 +472,12 @@ $(function() {
 	});
 
 	if ($("#nolocalstorage").length > 0) {
-		if (!is_local_storage_enabled()) {
+		if (!isLocalStorageEnabled()) {
 			 $("#nolocalstorage").show();
 			 $("#localstorageinfo").hide();
 		 } else {
-			 window.setTimeout("saveCookies()", 60000);
+			 recheckLocalBackup();
+			 window.addEventListener("beforeunload", checkLocalBackup)
 		 }
 	}
 	
@@ -1498,7 +1534,7 @@ function changeLanguageSelector(mode, draftid) {
 
 function submitToChangeLanguageOrView(lang, mode)
 {
-	saveCookies();
+	checkLocalBackup()
 	
 	if (lang)
 	{
@@ -1549,7 +1585,7 @@ function submitToChangeLanguageOrView(lang, mode)
 }
 
 function saveDraft(mode) {
-	saveCookies();
+	checkLocalBackup()
 	
 	var sessiontimeout = false;
 	var networkproblems = false;
@@ -1598,137 +1634,62 @@ function saveDraft(mode) {
 	}
 }
 
-function readCookies() {
-	cachedIsTriggered = {};
-	readCookiesForParent($("body"));
+var backupHelper = {
+	/*
+	 <id>: {
+		 uid: "..."
+		 type: "..."
+	 },
+	 */
 }
 
-function readCookiesForParent(parent)
-{
-	if (!is_local_storage_enabled()) {
-		return;
-	}
-	
-	if ($('#saveLocalBackup').length == 0 || $('#saveLocalBackup').is(":checked")) {
-
-		var survey = getSurveyIdentifier();
-				
-		$(parent).find("input").each(function(index) {
-			var type = $(this).attr("type");
-			var id = $(this).attr("data-id");
-			var value = readCookie(survey+id);
-
-			if (value != null && value.length > 0 && ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'internal_captcha_response'))) {
-				if (type == "text") {
-					$(this).val(value);
-					$(this).closest(".forprogress").addClass("answered");
-				} else if (type == "hidden" && $(this).attr("data-id") && ($(this).attr("id") == null || !strStartsWith($(this).attr("id"), 'regex'))) {
-					$(this).val(value);		
-					
-					if ($(this).attr("data-type") == "rating")
-					{
-						updateRatingIcons(parseInt(value)-1, $(this).parent());
-						$(this).closest(".forprogress").addClass("answered");
-					}					
-				} else if (type == "radio" || type == "checkbox") {
-					if (value == "true") {
-						$(this).prop("checked","checked");
-						$(this).closest(".possible-answer").addClass("selected-choice");
-						checkDependencies(this);
-						$(this).closest(".forprogress").addClass("answered");
-					}
-				}
-			
-			}					
-		});
-		
-		$(parent).find("textarea").each(function(index){
-			if ($(this).attr("data-id"))
-			{
-				var id = $(this).attr("data-id");
-				var s = readCookie(survey+id);
-				if (s != null && s.length > 0) {
-					$(this).closest(".forprogress").addClass("answered");
-					$(this).val(s);
-				}
-				
-			}
-		});
-		
-		$(parent).find("select").each(function(index){
-			
-			if ($(this).attr("id") == null || $(this).attr("id") != 'langSelectorRunner')
-			{
-				var id = $(this).attr("data-id");
-				var s = readCookie(survey+id);
-				if (s != null && s.length > 0) {
-					$(this).val(s);
-					$(this).closest(".forprogress").addClass("answered");
-					checkDependencies(this);
-				}
-			}
-		});
-	}	
-}
-
+var _surveyBackupIdentifier
 function getSurveyIdentifier() {
-	var survey = $(document.getElementById("survey.id")).val();
-	var invitation = $(document.getElementById("invitation")).val();
-	var uniqueCode = $(document.getElementById("uniqueCode")).val();
-	var draftId = $(document.getElementById("draftid")).val();
-	
-	if (invitation.length > 0 && uniqueCode.length > 0) {
-		return survey + "." + uniqueCode;
-	} else if (draftId.length > 0) {
-		return survey + "." + draftId;
+
+	if (_surveyBackupIdentifier == null){
+		let survey = $(document.getElementById("survey.id")).val();
+		let invitation = $(document.getElementById("invitation")).val();
+		let uniqueCode = $(document.getElementById("uniqueCode")).val();
+		let draftId = $(document.getElementById("draftid")).val();
+
+		if (invitation.length > 0 && uniqueCode.length > 0) {
+			_surveyBackupIdentifier = survey + "." + uniqueCode;
+		} else if (draftId.length > 0) {
+			_surveyBackupIdentifier = survey + "." + draftId;
+		} else {
+			_surveyBackupIdentifier = survey
+		}
 	}
-	
-	return survey + ".";
+
+	return _surveyBackupIdentifier
 }
 
-function saveCookies() {
-	
-	if (!is_local_storage_enabled() || ($('#saveLocalBackup').length > 0 && !$('#saveLocalBackup').is(":checked"))) {
-		return;
-	}
-		
-	var survey = getSurveyIdentifier();	
-	
-	$("input").each(function(index){
-		
-		var type = $(this).attr("type");
-		var id = $(this).attr("data-id");
-		
-		if (!$(this).hasClass("comparable-second"))
-		{
-			if ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'internal_captcha_response')) {
-				if (type == "text" || type == "hidden" || type == "password") {
-					createCookie(survey+id, $(this).val(), 7);
-				} else if (type == "radio" || type == "checkbox") {
-					createCookie(survey+id, $(this).is(":checked"), 7);		
-				}
-			}
-		}
-	});
-	
-	$("textarea").each(function(index){
-		if (!$(this).hasClass("comparable-second"))
-		{
-			var id = $(this).attr("data-id");
-			createCookie(survey+id, $(this).val(), 7);
-		}
-	});
-	
-	$("select").each(function(index){
-		var id = $(this).attr("data-id");
-		createCookie(survey+id, $(this).val(), 7);
-	});	
-	
-	window.setTimeout("saveCookies()", 60000);
+function shouldSaveLocalBackup(){
+	//jquery automatically return false if length == 0
+	return isLocalStorageEnabled() && $('#saveLocalBackup').is(":checked");
 }
 
-function clearAllCookies(surveyprefix) {
-	if (!check_local_storage_enabled(false)) {
+function checkLocalBackup() {
+	if (shouldSaveLocalBackup()) {
+		saveLocalBackup();
+	} else {
+		clearLocalBackup();
+	}
+}
+
+function recheckLocalBackup(){
+	checkLocalBackup();
+	window.setTimeout(recheckLocalBackup, 60000);
+}
+
+function clearLocalBackup(){
+	const key = getSurveyIdentifier();
+
+	window.localStorage.removeItem(key);
+}
+
+function clearLocalBackupForPrefix(surveyprefix) {
+	if (!checkLocalStorageEnabled(false)) {
 		return;
 	}
 	
@@ -1745,90 +1706,86 @@ function clearAllCookies(surveyprefix) {
 	}
 }
 
-function checkLocalBackup() {
-	if (!$('#saveLocalBackup').is(":checked")) {
-		clearCookies();
-	} else {
-		window.setTimeout("saveCookies()", 60000);
-	}
+function saveLocalBackup(){
+
+	const backup = $("#runnerForm").serializeArray()
+
+	let filesUploaded = $(".uploaditem .uploaded-files > div").length > 0
+
+	backup.push({name: "__filesUploaded", value: filesUploaded})
+
+	const key = getSurveyIdentifier();
+
+	window.localStorage.setItem(key, JSON.stringify(backup));
 }
 
-function clearCookies() {
-	if (!is_local_storage_enabled()) {
+function restoreBackup(){
+
+	const key = getSurveyIdentifier();
+
+	const store = window.localStorage.getItem(key);
+
+	if (store == null)
 		return;
-	}
-	
-	var survey = getSurveyIdentifier();
-	
-	$("input").each(function(index){
-		
-		var type = $(this).attr("type");
-		var id = $(this).attr("data-id");
-		
-		if (type == "text" || type == "hidden") {
-			//createCookie(survey+id, "",-1);
-			eraseCookie(survey+id);
-		} else if (type == "radio" || type == "checkbox") {
-			//createCookie(survey+id,"",-1);		
-			eraseCookie(survey+id);
+
+	const backup = JSON.parse(store);
+
+	const merger = {}
+
+	backup.forEach(entry => {
+		const name = entry.name;
+		let value = entry.value;
+
+		if (merger.hasOwnProperty(name)){
+			value = merger[name] + ";" + value
 		}
-	});
-	
-	$("textarea").each(function(index){
-		var id = $(this).attr("data-id");
-		//createCookie(survey+id, "",-1);
-		eraseCookie(survey+id);
-	});	
-	
-	window.setTimeout("saveCookies()", 60000);
+		merger[name] = value;
+
+		if (name.startsWith("answer")){
+			const id = name.slice(6);
+			if (id.includes("|")){
+				const [newid, row, column] = id.split("|");
+				const elem = backupHelper[newid];
+
+				tablevalues[elem.uid + "#" + row + "#" + column] = value;
+			} else {
+				const elem = backupHelper[id];
+				values[elem.uid] = value;
+				pavalues[elem.uid] = value.split(";").map(id => backupHelper.hasOwnProperty(id) ? backupHelper[id].uid : "");
+			}
+		} else if (name == "__filesUploaded" && value){
+			window.setTimeout(() => showLocalBackupFilesInfo(), 400)
+		}
+	})
 }
 
-function createCookie(name,value,days) {
-	if (value != null && typeof value != "undefined"
-			&& (typeof value != "string" || value.length > 0)) {
-		try {
-			localStorage.setItem(name, value);
-		} catch(e) {
-		    if(e.name == "NS_ERROR_FILE_CORRUPTED") {
-		    	showError("Sorry, it looks like your browser storage has been corrupted. Please clear your storage by going to Tools -> Clear Recent History -> Cookies and set time range to 'Everything'. This will remove the corrupted browser storage across all sites.");
-		    }
-		}		
-	 }
+function isLocalStorageEnabled() {
+	return checkLocalStorageEnabled(true);
 }
 
-function readCookie(name) {
-	return localStorage.getItem(name);
-}
-
-function eraseCookie(name) {
-	localStorage.removeItem(name);
-}
-
-function is_local_storage_enabled() {
-	return check_local_storage_enabled(true);
-}
-
-function check_local_storage_enabled(checkDelphi)
-{
+var _localStorageEnabled
+function checkLocalStorageEnabled(checkDelphi) {
 	if (checkDelphi && $("#saveLocalBackup").length === 0) {
 		// local backup checkbox is not displayed => Delphi question => disable local storage
 		return false;
 	}
 
-	if (typeof (Storage) !== "undefined") {
-    var ABCD=0;
-		try {
-			localStorage.setItem("EUSurvey_areCookiesThere", 1234);
-		} catch (e) {
+	if (_localStorageEnabled == null){
+		if (typeof (Storage) == "undefined"){
+			_localStorageEnabled = false;
+		} else {
+			let testValue = "";
+			try {
+				window.localStorage.setItem("EUSurvey.LocalStorageTest", "abcdefg");
+				testValue = window.localStorage.getItem("EUSurvey.LocalStorageTest");
+				window.localStorage.removeItem("EUSurvey.LocalStorageTest");
+			} finally {
+				_localStorageEnabled = testValue === "abcdefg";
+			}
 		}
-		try {
-			ABCD = localStorage.getItem("EUSurvey_areCookiesThere");
-		} catch (e) {
-		}
-	  return ABCD==1234;
-	} else {
-	  return false;
 	}
+
+	return _localStorageEnabled;
 }
 
 function fetchECFResult() {
@@ -1929,7 +1886,6 @@ function eVoteEntireListClick(checkbox) {
 	let table = $(checkbox).closest(".evote-table")
 
 	if (table.is(".evote-brussels")){
-		//Brussels has different Entire List behavior
 		if (checkbox.checked) {
 			//Uncheck all other lists
 			$(".evote-brussels .entire-list:checked").not(checkbox).click();
@@ -1940,6 +1896,19 @@ function eVoteEntireListClick(checkbox) {
 		} else {
 			//Reenable all other lists and candidates
 			$(".evote-brussels .entire-list, .evote-brussels .evote-candidate").prop("disabled", false);
+		}
+
+	} else if (table.is(".evote-ispra")){
+		if (checkbox.checked) {
+			//Uncheck all other lists
+			$(".evote-ispra .entire-list:checked").not(checkbox).click();
+			//Disable all other lists
+			$(".evote-ispra .entire-list").not(checkbox).prop("disabled", true);
+			//And uncheck + disable all candidates
+			$(".evote-ispra .evote-candidate").prop("checked", false).prop("disabled", true);
+		} else {
+			//Reenable all other lists and candidates
+			$(".evote-ispra .entire-list, .evote-ispra .evote-candidate").prop("disabled", false);
 		}
 
 	} else {
@@ -1961,6 +1930,7 @@ function clearEVoteVotes() {
 		.each(function (){ singleClick(this); } );
 	$(".entire-list").prop('indeterminate', false);
 	$(".evote-brussels .entire-list, .evote-brussels .evote-candidate").prop("disabled", false);
+	$(".evote-ispra .entire-list, .evote-ispra .evote-candidate").prop("disabled", false);
 	$(".evote-validation").remove();
 
 	$('#votedCandidates').html(0);
@@ -1972,7 +1942,7 @@ function clearEVoteVotes() {
 //And updates statistics
 function updateEVoteList(element) {
 	let table = $(element).closest(".evote-table");
-	if (!table.is(".evote-brussels")) {
+	if (!(table.is(".evote-brussels") || table.is(".evote-ispra"))) {
 		let checkedCount = table.find(".evote-candidate:checked").length;
 		let entireListCheckbox = table.find(".entire-list")
 		if (checkedCount == 0) { //Decide whether to show the Entire List as checked or indeterminate
@@ -2004,15 +1974,16 @@ function updateEVoteStatus() {
 		$("#evoteVoterOverview").css("display", "none")
 	}
 
-	if ($(".evote-brussels, .evote-luxembourg").length <= 0){
+	if ($(".evote-brussels, .evote-ispra, .evote-luxembourg").length <= 0){
 		$("#votedListsWrapper").css("display", "none")
 	} else {
 		$("#votedListsWrapper").css("display", "")
 	}
 
 	votedLists = 0;
-	//list votes for brussels
+	//list votes for brussels and ispra
 	votedLists += $(".evote-brussels .entire-list:checked").length;
+	votedLists += $(".evote-ispra .entire-list:checked").length;
 
 	//no list votes for outside and luxembourg
 

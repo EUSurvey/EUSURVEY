@@ -79,7 +79,8 @@ public class ActivityRegistry {
             PROP_QUORUM = "Quorum",
             PROP_LIST_PORTION = "EligibleLists",
             PROP_NUM_PREFERENTIAL_VOTES = "MaximumPreferentialVotes",
-            PROP_SEATS = "NumberOfSeatsToAllocate";
+            PROP_SEATS = "NumberOfSeatsToAllocate",
+            PROP_RESULT_TEST_PAGE = "EnableResultsTestPage";
 
     public static final String 
             EVT_ADDED = "Added",
@@ -133,6 +134,7 @@ public class ActivityRegistry {
             ID_EVOTE_LIST_PORTION = 130, //Minimum portion of votes for lists changed
             ID_EVOTE_NUM_PREFERENTIAL_VOTES = 131, //Maximum number of votes changed
             ID_EVOTE_SEATS = 132, //Number of seats changed
+            ID_EVOTE_TEST_PAGE = 133, //Evote Test Result Page changed
 
             ID_SURVEY_LOADED = 201, // Survey successfully loaded
             ID_PROPERTIES = 202, // Properties updated
@@ -179,6 +181,9 @@ public class ActivityRegistry {
             ID_UPLOADED_ELEMENTS_DOWNLOAD = 314, // Upload elements are downloaded from results
             ID_BLANK_ANSWERS = 315, // Blank answers from question in results
             ID_OPEN_QUORUM = 316, //Quorum page was accessed
+            ID_DISPLAY_RESULTS = 317, //'Display Results' button on eVote results page was clicked
+            ID_ALLOCATE_SEATS = 318, //'Allocate Seats' button on eVote results page was clicked
+            ID_EXPORT_SEATS = 319, //'Export' button on eVote results page was clicked
 
             ID_CONTRIBUTION_SUBMIT = 401, // Contribution has been submitted
             ID_CONTRIBUTION_DELETE = 402, // Contribution has been deleted
@@ -281,6 +286,7 @@ public class ActivityRegistry {
         register(PROP_LIST_PORTION, EVT_MODIFIED, ID_EVOTE_LIST_PORTION);
         register(PROP_NUM_PREFERENTIAL_VOTES, EVT_MODIFIED, ID_EVOTE_NUM_PREFERENTIAL_VOTES);
         register(PROP_SEATS, EVT_MODIFIED, ID_EVOTE_SEATS);
+        register(PROP_RESULT_TEST_PAGE, EVT_MODIFIED, ID_EVOTE_TEST_PAGE);
 
         //Draft Survey 200
         register(PROP_NA, EVT_OPENED, ID_SURVEY_LOADED);
@@ -329,6 +335,9 @@ public class ActivityRegistry {
         register(PROP_DELETE_COLUMN, EVT_DELETED, ID_BLANK_ANSWERS);
 
         register(PROP_NA, EVT_OPENED, ID_OPEN_QUORUM);
+        register(PROP_NA, EVT_OPENED, ID_DISPLAY_RESULTS);
+        register(PROP_NA, EVT_OPENED, ID_ALLOCATE_SEATS);
+        register(PROP_NA, EVT_STARTED, ID_EXPORT_SEATS);
 
         //Activities 312
         register(PROP_EXPORT_ACTIVITIES, EVT_STARTED, ID_ACTIVITY_EXPORT);

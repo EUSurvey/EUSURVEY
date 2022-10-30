@@ -471,9 +471,6 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			$(container).addClass("locked");
 		}
 	}
-		
-	if (!foreditor && !forskin)
-	readCookiesForParent($(container));
 	
 	$(container).find(".freetext").each(function(){
 		countChar(this);
@@ -1221,7 +1218,7 @@ function checkSessionTimeout(){
 
 	try{
 
-		saveCookies();
+		checkLocalBackup()
 
 		$.ajax({type: "POST",
 			url: contextpath + "/runner/checksession",

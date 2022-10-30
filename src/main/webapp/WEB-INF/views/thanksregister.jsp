@@ -9,7 +9,7 @@
 	
 	<script type="text/javascript"> 
 		$(function() {					
-			clearAllCookies('${surveyprefix}');
+			clearLocalBackupForPrefix('${surveyprefix}');
 			
 			<c:if test="${redirect != null}">
 				window.location = "${redirect}";

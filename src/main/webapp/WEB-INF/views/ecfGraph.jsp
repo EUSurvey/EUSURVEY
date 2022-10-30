@@ -39,7 +39,7 @@
 			<c:forEach var="base64ECFSpiderChart"
 			items="${base64ECFSpiderCharts}" varStatus="loop">
 		 	<div style="margin-top:10px;">
-				<img src="data:image/png;base64, ${base64ECFSpiderChart}"  alt="spider chart" style="width: 600px;" />
+				<img src="data:image/png;base64,${base64ECFSpiderChart}"  alt="spider chart" style="width: 600px;" />
 			</div>
 			</c:forEach>
          </c:otherwise>

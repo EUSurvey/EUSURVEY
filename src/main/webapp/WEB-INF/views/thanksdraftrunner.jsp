@@ -7,10 +7,10 @@
 	<title>EUSurvey - <esapi:encodeForHTML>${surveyTitle}</esapi:encodeForHTML> - <spring:message code="label.Thanks" /></title>	
 	<%@ include file="includes.jsp" %>
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="version.txt" %>"></script>
-	<script type="text/javascript"> 
+	<script type="text/javascript">
 		$(function() {					
-			clearAllCookies('${surveyprefix}');
-		});	
+			clearLocalBackupForPrefix('${surveyprefix}');
+		});
 	</script>
 	<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 </head>
@@ -54,8 +54,8 @@
 									<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="showAskEmailDialog(this)">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
 								</c:otherwise>
 							</c:choose>
-							
-							<a id="copyme" class="btn btn-primary btn-lg" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.CopyToClipboard")}</a>
+
+							<a href="javascript:;" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
 						</c:when>
 						<c:otherwise>					
 							<a class="draftLink visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
@@ -69,9 +69,8 @@
 									<a href="javascript:;" class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);">${form.getMessage("label.SendLinkAsEmail")}</a>
 								</c:otherwise>
 							</c:choose>
-							
-							<a id="bookmarkme" class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.SaveToBookMark")}</a>
-							<a id="copyme"class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.CopyToClipboard")}</a>
+
+							<a href="javascript:;" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
 						</c:otherwise>
 					</c:choose>	
 					<c:if test="${downloadContribution}">
@@ -284,24 +283,6 @@
 		}
 		
 		$(document).ready(function(){
-			
-			var bookMarkEnabled = false;
-			
-			if (window.sidebar && window.sidebar.addPanel) {
-				bookMarkEnabled = true;
-	        } else if ((window.sidebar && (navigator.userAgent.toLowerCase().indexOf('firefox') > -1)) || (window.opera && window.print)) {
-	        	bookMarkEnabled = true;
-	        } else if (window.external && ('AddFavorite' in window.external)) {
-	        	bookMarkEnabled = true;
-	        } else {
-	        	bookMarkEnabled = false;
-	        }
-			
-			if(!bookMarkEnabled)
-			{
-				$("#bookmarkme").hide();
-			}		
-			
 			if(!document.queryCommandSupported('copy'))
 			{
 				$("#copyme").hide();
@@ -330,7 +311,7 @@
 				$("#ask-export-dialog").find(".validation-error-keep").hide();
 				
 				var mail = $("#linkemail").val();
-				var linkDraft = $("#copyme").attr("href");
+				var linkDraft = '${url}';
 				
 				var challenge = getChallenge();
 			    var uresponse = getResponse($("#ask-export-dialog"));
@@ -384,70 +365,6 @@
 				});				
 				
 			}
-		    $(function() {
-		        $("#bookmarkme").click(function(event) {
-		        	
-		        	var bookmarkURL = $("#copyme").attr("href");
-	                var bookmarkTitle = document.title;
-	                var triggerDefault = false;
-	
-	                if (window.sidebar && window.sidebar.addPanel) {
-	                    // Firefox version < 23
-	                    window.sidebar.addPanel(bookmarkTitle, bookmarkURL, '');
-	                } else if ((window.sidebar && (navigator.userAgent.toLowerCase().indexOf('firefox') > -1)) || (window.opera && window.print)) {
-	                    // Firefox version >= 23 and Opera Hotlist
-	                    var $this = $(this);
-	                    $this.attr('href', bookmarkURL);
-	                    $this.attr('title', bookmarkTitle);
-	                    $this.attr('rel', 'sidebar');
-	                    $this.off(event);
-	                    triggerDefault = true;
-	                } else if (window.external && ('AddFavorite' in window.external)) {
-	                    // IE Favorite
-	                    window.external.AddFavorite(bookmarkURL, bookmarkTitle);
-	                } else {
-	                    // WebKit - Safari/Chrome
-	                    alert('Press ' + (navigator.userAgent.toLowerCase().indexOf('mac') != -1 ? 'Cmd' : 'Ctrl') + '+D <spring:message code="label.bookmark.help"/>');
-	                }
-	
-	                return triggerDefault;
-		        });
-		        
-		        
-	        	$('#copyme').click(function(event) { 
-	        		
-	        		if(document.queryCommandSupported('copy'))
-	    	        {
-			        	event.preventDefault();
-						// Select the email link anchor text  
-						var emailLink = document.querySelector('#draftLinkFromThanksDraft');  
-						window.getSelection().removeAllRanges();  
-						var range = document.createRange();  
-						range.selectNode(emailLink);  
-						window.getSelection().addRange(range);  
-						  
-						try {  
-						  // Now that we've selected the anchor text, execute the copy command  
-						  document.execCommand('copy');
-
-						  showSuccess('<spring:message code="message.copy.successCopyClipboardLink" />');
-						  
-						} catch(err) {  
-						  //console.log('Oops, unable to copy');
-						  alert("<spring:message code="label.CopyToClipboard.disabled"/>");
-						}  
-						  
-						// Remove the selections - NOTE: Should use   
-						// removeRange(range) when it is supported  
-						window.getSelection().removeAllRanges();  
-						$('#copyme').focus();
-	        		}
-		        	else
-	        		{
-	        			alert("<spring:message code="label.CopyToClipboard.disabled"/>");
-	        		}
-		        });
-		    });
 		</script>
 	</div>
 

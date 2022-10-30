@@ -134,10 +134,10 @@
 							}
 						});
 				} else {
-					readCookies();
 					updateProgress();
 					updateEVoteStatus();
 					updateAllFormulas();
+					updateAllExclusiveAnswers();
 					$("#btnSubmit").removeClass("hidden");
 					$("#btnSaveDraft").removeClass("hidden");
 					$("#btnSaveDraftMobile").removeClass("hidden");

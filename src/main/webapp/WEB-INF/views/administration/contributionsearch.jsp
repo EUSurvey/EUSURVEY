@@ -389,7 +389,7 @@
 										</td>
 										<td>
 											<c:choose>
-												<c:when test="${answerSet.isDraft}">
+												<c:when test="${answerSet.isDraft || answerSet.survey.isEVote}">
 													<img data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" src="${contextpath}/resources/images/file_extension_pdf_small_grey.png">
 												</c:when>
 												<c:otherwise>
@@ -407,7 +407,7 @@
 											</c:choose>
 											
 											<c:choose>
-												<c:when test="${!answerSet.isDraft}">
+												<c:when test="${!answerSet.isDraft && !answerSet.survey.isEVote}">
 													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton" onclick="resetContribution('${answerSet.uniqueCode}', this)" ><span class="glyphicon glyphicon-refresh"></span></a>
 												</c:when>
 												<c:otherwise>

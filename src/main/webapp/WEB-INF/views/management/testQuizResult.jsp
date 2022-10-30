@@ -34,7 +34,7 @@
 	
 	<script type="text/javascript"> 
 		$(function() {
-			clearAllCookies('${surveyprefix}');
+			clearLocalBackupForPrefix('${surveyprefix}');
 			$("#form-menu-tab").addClass("active");
 			$("#test-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
 		});

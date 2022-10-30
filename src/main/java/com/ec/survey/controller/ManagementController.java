@@ -99,6 +99,7 @@ public class ManagementController extends BasicController {
 	public @Value("${codaApiKey:#{null}}") String codaApiKey;
 	public @Value("${evote.template-lux:#{null}}") String evoteLuxTemplate;
 	public @Value("${evote.template-bru:#{null}}") String evoteBruTemplate;
+	public @Value("${evote.template-ispra:#{null}}") String evoteIspraTemplate;
 	public @Value("${evote.template-outside:#{null}}") String evoteOutsideTemplate;
 	
 	private final String LastEVoteTestResult = "LastEVoteTestResult";
@@ -154,7 +155,7 @@ public class ManagementController extends BasicController {
 				&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
 			result.addObject("redirect", survey.getFinalConfirmationLink(lang));
 		}
-		result.addObject("surveyprefix", survey.getId() + ".");
+		result.addObject("surveyprefix", survey.getId());
 
 		return result;
 	}
@@ -322,6 +323,12 @@ public class ManagementController extends BasicController {
 		overviewPage.addObject("newElements", newElements);
 		overviewPage.addObject("changedElements", changedElements);
 		overviewPage.addObject("deletedElements", deletedElements);
+
+		List<ParticipationGroup> group = participationService.getAll(survey.getUniqueId());
+		if (group.size() > 0) {
+			boolean active = group.get(0).getActive();
+			overviewPage.addObject("active", active);
+		}
 
 		if (request.getParameter("repairedlabels") != null) {
 			try {
@@ -946,23 +953,6 @@ public class ManagementController extends BasicController {
 					//change all multiple choice eVote Lists to the right style
 					String template = request.getParameter("evotetemplate");
 					copy.seteVoteTemplate(template);
-					for (Element q : copy.getElements()) {
-						if (q instanceof MultipleChoiceQuestion) {
-							switch(template) {
-								case "b":
-									((MultipleChoiceQuestion) q).setMultipleChoiceStyle(MultipleChoiceStyle.BRUSSELS);
-									break;
-								case "l":
-									((MultipleChoiceQuestion) q).setMultipleChoiceStyle(MultipleChoiceStyle.LUXEMBOURG);
-									break;
-								case "o":
-									((MultipleChoiceQuestion) q).setMultipleChoiceStyle(MultipleChoiceStyle.OUTSIDE);
-									break;
-								default:
-									throw new Exception("No valid eVote template");
-							}
-						}
-					}
 				}
 
 				try {
@@ -1017,7 +1007,7 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("ecf").equalsIgnoreCase("true"));
 					copy.setIsEVote(request.getParameter("evote") != null
 							&& request.getParameter("evote").equalsIgnoreCase("true"));
-					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi());
+					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi() && !copy.getIsEVote());
 
 					surveyService.update(copy, false, true, true, u.getId());
 
@@ -1033,6 +1023,8 @@ public class ManagementController extends BasicController {
 
 					activityService.log(ActivityRegistry.ID_SURVEY_COPIED, original.getId().toString(), copy.getId().toString(), u.getId(),
 							copy.getUniqueId());
+					Map<String, Translations> translationToCreate = new HashMap<>();
+					ensurePropertiesDependingOnSurveyType(copy, false, translationToCreate);
 					return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit");
 
 				} catch (Exception e) {
@@ -1097,6 +1089,9 @@ public class ManagementController extends BasicController {
 					case "b":
 						templateUid = evoteBruTemplate;
 						break;
+					case "i":
+						templateUid = evoteIspraTemplate;
+						break;
 					case "l":
 						templateUid = evoteLuxTemplate;
 						break;
@@ -1115,6 +1110,7 @@ public class ManagementController extends BasicController {
 					survey.setMaxPrefVotes(templateSurvey.getMaxPrefVotes());
 					survey.setSeatsToAllocate(templateSurvey.getSeatsToAllocate());
 					survey.setMinListPercent(templateSurvey.getMinListPercent());
+					survey.setShowResultsTestPage(templateSurvey.getShowResultsTestPage());
 				}
 			}
 		}
@@ -1519,6 +1515,7 @@ public class ManagementController extends BasicController {
 					Survey::getMinListPercent,
 					Survey::getMaxPrefVotes,
 					Survey::getSeatsToAllocate,
+					Survey::getShowResultsTestPage,
 					Survey::getShowTotalScore,
 					Survey::getShowQuizIcons,
 					Survey::getIsUseMaxNumberContribution,
@@ -1672,12 +1669,19 @@ public class ManagementController extends BasicController {
 						uploadedSurvey.getSeatsToAllocate() + ""};
 				activitiesToLog.put(ActivityRegistry.ID_EVOTE_SEATS, oldnew);
 			}
+
+			if(uploadedSurvey.getShowResultsTestPage() != survey.getShowResultsTestPage()) {
+				String[] oldnew = { survey.getShowResultsTestPage() ? "enabled" : "disabled",
+						uploadedSurvey.getShowResultsTestPage() ? "enabled" : "disabled" };
+				activitiesToLog.put(ActivityRegistry.ID_EVOTE_TEST_PAGE, oldnew);
+			}
 		}
 
 		survey.setQuorum(uploadedSurvey.getQuorum());
 		survey.setMinListPercent(uploadedSurvey.getMinListPercent());
 		survey.setMaxPrefVotes(uploadedSurvey.getMaxPrefVotes());
 		survey.setSeatsToAllocate(uploadedSurvey.getSeatsToAllocate());
+		survey.setShowResultsTestPage(uploadedSurvey.getShowResultsTestPage());
 
 		if (!survey.getIsOPC()) {
 			survey.setSecurity(uploadedSurvey.getSecurity());
@@ -2373,6 +2377,7 @@ public class ManagementController extends BasicController {
 				publishedSurvey.setMinListPercent(survey.getMinListPercent());
 				publishedSurvey.setMaxPrefVotes(survey.getMaxPrefVotes());
 				publishedSurvey.setSeatsToAllocate(survey.getSeatsToAllocate());
+				publishedSurvey.setShowResultsTestPage(survey.getShowResultsTestPage());
 				
 				Map<Integer, Element> originalElementsById = survey.getElementsById();
 				Map<String, Element> elementsByUniqueId = publishedSurvey.getElementsByUniqueId();
@@ -2969,7 +2974,7 @@ public class ManagementController extends BasicController {
 
 			result.addObject("invisibleElements", invisibleElements);
 			result.addObject(form);
-			result.addObject("surveyprefix", survey.getId() + ".");
+			result.addObject("surveyprefix", survey.getId());
 			result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 			result.addObject("isquizresultpage", true);
 			return result;
@@ -3000,7 +3005,7 @@ public class ManagementController extends BasicController {
 				&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
 			result.addObject("redirect", survey.getFinalConfirmationLink(lang));
 		}
-		result.addObject("surveyprefix", survey.getId() + ".");
+		result.addObject("surveyprefix", survey.getId());
 		return result;
 	}
 
@@ -3484,7 +3489,7 @@ public class ManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/seatCounting", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody SeatCounting seatCounting(HttpServletRequest request) {
+	public @ResponseBody SeatCounting seatCounting(HttpServletRequest request, Locale locale) {
 		try {
 			Form form = sessionService.getForm(request, null, false, false);
 			User u = sessionService.getCurrentUser(request);
@@ -3502,7 +3507,39 @@ public class ManagementController extends BasicController {
 				return null;
 			}
 			
-			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null);
+			activityService.log(ActivityRegistry.ID_DISPLAY_RESULTS, null, null, u.getId(), uid);
+			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null, resources, locale, false);
+		
+			return result;
+			
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return null;
+	}
+	
+	@RequestMapping(value = "/seatAllocation", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody SeatCounting seatAllocation(HttpServletRequest request, Locale locale) {
+		try {
+			Form form = sessionService.getForm(request, null, false, false);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(form.getSurvey(), u, request);
+
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+				throw new ForbiddenURLException();
+			}
+			
+			String uid = request.getParameter("surveyuid");
+			if (!uid.equals(form.getSurvey().getUniqueId())) {
+				return null;
+			}
+			
+			activityService.log(ActivityRegistry.ID_ALLOCATE_SEATS, null, null, u.getId(), uid);
+			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null, resources, locale, true);
 		
 			return result;
 			
@@ -3515,7 +3552,7 @@ public class ManagementController extends BasicController {
 	
 	@RequestMapping(value = "/seatTestDownload", method = { RequestMethod.GET, RequestMethod.HEAD })
 	@ResponseBody
-	public ResponseEntity<byte[]> seatTestDownload(HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<byte[]> seatTestDownload(HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		final org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
 
 		try {
@@ -3531,7 +3568,7 @@ public class ManagementController extends BasicController {
 				throw new ForbiddenURLException();
 			}
 			
-			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null);
+			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null, resources, locale, true);
 			byte[] file = XlsxExportCreator.createSeatTestSheet(result);
 
 			response.setContentType("application/vnd.ms-excel");
@@ -3609,15 +3646,17 @@ public class ManagementController extends BasicController {
 				throw new ForbiddenURLException();
 			}
 			
+			activityService.log(ActivityRegistry.ID_EXPORT_SEATS, null, null, u.getId(), form.getSurvey().getUniqueId());
+			
 			SeatCounting result = null;
 			String testdata = request.getParameter("testdata");
 			if (testdata != null && testdata.equalsIgnoreCase("true")) {
 				result = (SeatCounting) request.getSession().getAttribute(LastEVoteTestResult);
 			}
 			if (result == null) {
-				result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null);
+				result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null, resources, new Locale("EN"), true);
 			}
-			byte[] file = XlsxExportCreator.createSeatContribution(result, form);
+			byte[] file = XlsxExportCreator.createSeatContribution(result, resources);
 
 			response.setContentType("application/vnd.ms-excel");
 			response.setHeader("Content-Disposition", "attachment;filename=seatdistribution.xlsx");
@@ -3650,7 +3689,7 @@ public class ManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/seatCountingTest", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody SeatCounting seatCountingTest(HttpServletRequest request) {
+	public @ResponseBody SeatCounting seatCountingTest(HttpServletRequest request, Locale locale) {
 		try {
 			Form form = sessionService.getForm(request, null, false, false);
 			User u = sessionService.getCurrentUser(request);
@@ -3689,8 +3728,13 @@ public class ManagementController extends BasicController {
 				listResult.setLuxListVotes(luxListVotes);
 			}
 			
-			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), results);
-			request.getSession().setAttribute(LastEVoteTestResult, result);
+			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), results, resources, locale, true);
+			
+			if (locale.getLanguage().equals("en")) {
+				request.getSession().setAttribute(LastEVoteTestResult, result);
+			} else {
+				request.getSession().setAttribute(LastEVoteTestResult, eVoteService.getCounting(form.getSurvey().getUniqueId(), results, resources, new Locale("EN"), true));
+			}
 			
 			return result;
 			

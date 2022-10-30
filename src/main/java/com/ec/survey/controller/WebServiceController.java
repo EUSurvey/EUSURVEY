@@ -939,6 +939,11 @@ public class WebServiceController extends BasicController {
 				response.setStatus(412);
 				return "";
 			}
+			
+			if (survey.getIsEVote()){
+				response.setStatus(403);
+				return "";
+			}
 
 			boolean isAllowed = false;
 			if (survey.getOwner().getId().equals(user.getId()) || user.getFormPrivilege() == 2) {

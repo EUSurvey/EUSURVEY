@@ -528,20 +528,7 @@ function update(input)
 						newType = "buttons";
 						break;
 					case "EVoteList":
-						switch (eVoteTemplate) {
-							case "b":
-								newType = "evote-brussels";
-								break;
-							case "l":
-								newType = "evote-luxembourg";
-								break;
-							case "o":
-								newType = "evote-outside";
-								break;
-							default:
-								newType = "evote-brussels";
-								break;
-						}
+						newType="evote";
 						break;
 				}
 
@@ -591,15 +578,6 @@ function update(input)
 				updateChoice(element);
 				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			}
-			break;
-		}
-		case "EVoteProcedure": {
-			let oldType = element.choiceType();
-			let newType = $(input).val()
-			element.choiceType(newType)
-
-			updateChoice(element);
-			_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldType, newType]);
 			break;
 		}
 		case "Unit":
@@ -1393,6 +1371,18 @@ function update(input)
 			break;
 		case "PossibleAnswers":
 			break;
+		case "Exclusive":
+			var checked = $(input).is(":checked");
+			var text = checked ? "true" : "false";
+			var oldtext = checked ? "false" : "true";
+			
+			var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+			var parent = _elements[parentid];
+			element = parent.getChild(id);	
+			
+			element.exclusive(checked);
+			_undoProcessor.addUndoStep(["Exclusive", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			break;
 		default:
 			throw label + " not implemented"; 
 	}	
@@ -1490,11 +1480,13 @@ function updateVisibility(span, reset, ask, dialogresult, noUndo)
 				$(this).removeAttr("checked");
 			}
 		});
-						
-		$(list).find("input:checked").each(function(){
+
+		let checked = $(list).find("input:checked");
+		checked.each(function(i, e){
+			let separator = (i == checked.length - 1) ? "" : ", ";
 			var a = document.createElement("a");			
 			var label = $(this).nextAll().first().html();			
-			$(a).html(label);			
+			$(a).html(label + separator);
 			var id = $(this).val();
 			$(a).attr("data-targetid", id);
 			

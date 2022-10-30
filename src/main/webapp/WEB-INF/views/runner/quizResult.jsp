@@ -51,7 +51,7 @@
 	
 	<script type="text/javascript"> 
 		$(function() {
-			clearAllCookies('${surveyprefix}');
+			clearLocalBackupForPrefix('${surveyprefix}');
 		});
 	</script>
 		

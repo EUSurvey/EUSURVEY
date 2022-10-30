@@ -14,8 +14,8 @@
 </style>
 
 <div id="results-seats" style="display: none; width: 730px; max-width:100%; margin-left: auto; margin-right:auto;">
-	<a class="btn btn-primary" data-bind="click: function() {showResults(!showResults())}"><spring:message code="label.DisplayResults" /></a>
-	<a class="btn btn-primary" id="btnAllocateSeats" data-bind="visible: showResults() && loaded(), click: function() {showSeats(!showSeats())}"><spring:message code="label.AllocateSeats" /></a>
+	<a class="btn btn-primary" data-bind="click: function() {toggleResults('${form.survey.uniqueId}')}"><spring:message code="label.DisplayResults" /></a>
+	<a class="btn btn-primary" id="btnAllocateSeats" data-bind="visible: showResults() && loaded(), click: function() {toggleSeats('${form.survey.uniqueId}')}"><spring:message code="label.AllocateSeats" /></a>
 	<a class="btn btn-primary" id="btnExportSeats" data-bind="visible: showResults() && showSeats(), attr: {href: '${contextpath}/${form.survey.shortname}/management/seatExport' + (useTestData() ? '?testdata=true' : '')}"><spring:message code="label.Export" /></a>
 	
 	<div id="results-seats-counting" data-bind="visible: showResults()">
@@ -61,9 +61,10 @@
 			</tr>
 		</table>
 	</div>
-	
-	<div id="results-seats-allocation" data-bind="visible: showResults() && showSeats()" style="display: none; margin-top: 40px;">
-	
+
+	<img data-bind="visible: showResults() && showSeats() && (seatsLoaded() == false)" class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" />	
+	<div id="results-seats-allocation" data-bind="visible: showResults() && showSeats() && seatsLoaded()" style="display: none; margin-top: 40px;">
+		
 		<!-- ko if: counting() != null && counting().template != 'l' -->
 		<h1><spring:message code="label.seats.WeightingOfVotes" /></h1>
 		<table class="table table-condensed table-striped table-bordered" style="width: auto;">
@@ -71,7 +72,7 @@
 				<th></th>
 				<th><spring:message code="label.seats.ListVotes" /></th>
 				<th><spring:message code="label.seats.ListVotesWeighted" /></th>
-				<th><spring:message code="label.seats.PreferentialVotes" /></th>
+				<th><spring:message code="label.seats.CandidateVotes" /></th>
 				<th><spring:message code="label.seats.Total" /></th>
 				<th>%</th>
 			</tr>
@@ -122,7 +123,7 @@
 		<!-- /ko -->
 		
 		<!-- ko if: counting() != null && counting().template != 'l' -->
-		<h1><spring:message code="label.seats.AllocationOfSeats" /></h1>
+		<h1><spring:message code="label.seats.AllocationOfSeatsPC" /></h1>
 		<table class="table table-condensed table-striped table-bordered" style="width: auto;">
 			<tr>
 				<th></th>
@@ -131,26 +132,31 @@
 				<th><spring:message code="label.seats.Prorata" /></th>
 			</tr>
 			<tr>
-				<td><spring:message code="label.seats.ListVotes" /></td>
-				<td data-bind="text: counting().listVotes"></td>
-				<td data-bind="text: getSeatPercent(counting().listVotes, counting().listVotes + counting().preferentialVotes)"></td>
+				<td><spring:message code="label.seats.ListVotesWeighted" /></td>
+				<td data-bind="text: counting().listVotesWeighted"></td>
+				<td data-bind="text: getSeatPercent(counting().listVotesWeighted, counting().listVotesWeighted + counting().totalPreferentialVotes)"></td>
 				<td data-bind="text: counting().listVotesSeats"></td>
 			</tr>
 			<tr>
-				<td><spring:message code="label.seats.PreferentialVotes" /></td>
-				<td data-bind="text: counting().preferentialVotes"></td>
-				<td data-bind="text: getSeatPercent(counting().preferentialVotes, counting().listVotes + counting().preferentialVotes)"></td>
+				<td><spring:message code="label.seats.CandidateVotes" /></td>
+				<td data-bind="text: counting().totalPreferentialVotes"></td>
+				<td data-bind="text: getSeatPercent(counting().totalPreferentialVotes, counting().listVotesWeighted + counting().totalPreferentialVotes)"></td>
 				<td data-bind="text: counting().preferentialVotesSeats"></td>
 			</tr>
 			<tr>
 				<td><spring:message code="label.seats.Total" /></td>
-				<td data-bind="text: counting().listVotes + counting().preferentialVotes"></td>
+				<td data-bind="text: counting().listVotesWeighted + counting().totalPreferentialVotes"></td>
 				<td>100%</td>
 				<td data-bind="text: counting().maxSeats"></td>
 			</tr>
 		</table>
 		
 		<h2><spring:message code="label.seats.DistributionListSeats" />:</h2>
+		<!-- ko if: counting() != null -->
+			<!-- ko foreach: counting().reallocationMessagesForLists -->
+				<p data-bind="html: $data"></p>
+			<!-- /ko -->
+		<!-- /ko -->
 		<table data-bind="if: counting() != null" class="table table-condensed table-striped table-bordered" style="width: auto;">
 			<tr style="font-weight: bold">
 				<th><spring:message code="label.seats.List" /></th>
@@ -172,11 +178,16 @@
 				<td><spring:message code="label.seats.Total" /></td>
 				<td data-bind="text: counting().listVotesFinal"></td>
 				<td>100%</td>
-				<td data-bind="text: counting().listVotesSeats"></td>
+				<td data-bind="text: counting().listVotesSeatsReal"></td>
 			</tr>
 		</table>
 		
 		<h2><spring:message code="label.seats.DistributionPreferentialSeats" />:</h2>
+		<!-- /ko -->
+		<!-- ko if: counting() != null -->
+			<!-- ko foreach: counting().reallocationMessages -->
+				<p data-bind="html: $data"></p>
+			<!-- /ko -->
 		<!-- /ko --> 
 		<table data-bind="if: counting() != null" class="table table-condensed table-striped table-bordered" style="width: auto;">
 			<tr style="font-weight: bold">
@@ -199,10 +210,10 @@
 				<td><spring:message code="label.seats.Total" /></td>
 				<td data-bind="text: counting().preferentialVotesFinal"></td>
 				<td>100%</td>
-				<td data-bind="text: counting().preferentialVotesSeats"></td>
+				<td data-bind="text: counting().preferentialVotesSeatsReal"></td>
 			</tr>
 		</table>
-				
+					
 		<!-- ko if: counting() != null && counting().template != 'l' -->
 		<h2><spring:message code="label.seats.ElectedCandidatesListVotes" />:</h2>
 		<table class="table table-condensed table-striped table-bordered" style="width: auto;">
@@ -224,7 +235,7 @@
 				<td><spring:message code="label.seats.Total" /></td>
 				<td></td>
 				<td data-bind="text: counting().sumListVotes"></td>
-				<td data-bind="text: counting().listVotesSeats"></td>
+				<td data-bind="text: counting().listVotesSeatsReal"></td>
 			</tr>
 		</table>
 		<!-- /ko -->
@@ -258,7 +269,7 @@
 			</tr>
 			<!-- /ko -->
 			</tbody>
-		</table>
+		</table>		
 		<!-- /ko -->		
 	
 		<h2><spring:message code="label.seats.ElectedCandidatesPreferentialVotes" />:</h2>
@@ -281,7 +292,7 @@
 				<td><spring:message code="label.seats.Total" /></td>
 				<td></td>
 				<td data-bind="text: counting().sumPreferentialVotes"></td>
-				<td data-bind="text: counting().preferentialVotesSeats"></td>
+				<td data-bind="text: counting().preferentialVotesSeatsReal"></td>
 			</tr>
 		</table>
 		
@@ -291,15 +302,12 @@
 				<td><spring:message code="label.seats.CandidateNumber" /></td>
 				<!-- ko foreach: counting().listSeatDistribution -->
 				<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
-				<td>
-					<span><spring:message code="label.seats.List" /></span>
-					<span data-toggle="tooltip" data-bind="text: ($index()+1), attr: {title: name}"></span>
-				</td>
+					<td data-bind="html: name"></td>
 				<!-- /ko -->
 				<!-- /ko -->
 			</tr>
 			<tr data-bind="if: counting().template != 'l'" style="font-weight: bold">
-				<td><spring:message code="label.seats.TotalVL" /></td>
+				<td><spring:message code="label.seats.TotalListVotes" /></td>
 				<!-- ko foreach: counting().listSeatDistribution -->
 				<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
 				<td data-bind="text: listVotes"></td>
@@ -311,7 +319,7 @@
 				<td data-bind="text: $index()+1"></td>
 				
 				<!-- ko foreach: $data -->
-				<td data-bind="attr: {style: seats > 0 ? (preferentialSeat ? 'background-color: #FFC000' : 'background-color: #00E266') : ''}">
+				<td data-bind="attr: {style: seats > 0 ? (preferentialSeat ? 'background-color: #FFC000' : 'background-color: #00E266') : (reallocatedSeat ? 'background-color: #ffabab' : '')}">
 					<span data-toggle="tooltip" data-bind="text: votes, attr: {title: name}"></span>
 				</td>
 				<!-- /ko -->				
@@ -319,7 +327,7 @@
 			<!-- /ko -->
 			<tr style="font-weight: bold">
 				<td>
-					<span data-bind="if: counting().template != 'l'"><spring:message code="label.seats.TotalVP" /></span>
+					<span data-bind="if: counting().template != 'l'"><spring:message code="label.seats.TotalPreferentialVotes" /></span>
 					<span data-bind="if: counting().template == 'l'"><spring:message code="label.seats.Total" /></span>
 				</td>
 				<!-- ko foreach: counting().listSeatDistribution -->
@@ -339,6 +347,10 @@
 				<td style="background-color: #FFC000; width: 50px;"></td>
 				<td style="padding-left: 10px;"><spring:message code="label.seats.ElectedFromPreferentialVotes" /></td>
 			</tr>
+			<tr>
+				<td style="background-color: #ffabab; width: 50px;"></td>
+				<td style="padding-left: 10px;"><spring:message code="label.seats.Reallocated" /></td>
+			</tr>
 		</table>
 		<!-- /ko -->
 	</div>
@@ -356,9 +368,5 @@
 	function getSeatPercent(value, voterCount) {
 		return (Math.round(value / voterCount * 10000) / 100) + "%";
 	}
-
-	$(function() {
-		_seatResults.loadCounting('${form.survey.uniqueId}');
-	});
 </script>
 		

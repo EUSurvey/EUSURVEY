@@ -21,9 +21,9 @@ public class Export implements java.io.Serializable {
 	{
 		Pending, Failed, Finished
 	}
-	
+
 	public enum ExportType {
-		Content, Statistics, Charts, AddressBook, Activity, Tokens, Files, Survey, StatisticsQuiz, ECFGlobalResults, ECFProfileResults, ECFOrganizationResults
+		Content, Statistics, Charts, AddressBook, Activity, Tokens, Files, VoterFiles, Survey, StatisticsQuiz, ECFGlobalResults, ECFProfileResults, ECFOrganizationResults
 	}
 	
 	public enum ExportFormat
@@ -206,6 +206,9 @@ public class Export implements java.io.Serializable {
 	public boolean isTypeFiles() {
 		return type == ExportType.Files;
 	}
+
+	@Transient
+	public boolean isTypeVoterFiles() { return type == ExportType.VoterFiles; }
 	
 	@Transient
 	public boolean isTypeSurvey() {

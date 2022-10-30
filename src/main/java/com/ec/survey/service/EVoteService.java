@@ -13,6 +13,7 @@ import org.hibernate.query.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,17 +42,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("eVoteService")
@@ -304,6 +295,11 @@ public class EVoteService extends BasicService {
 
 	public byte[] exportVoterFile(String surveyUid, String user, String first, String last, Boolean voted) throws IOException {
 		List<Voter> voters = getVoters(surveyUid, 1, 100000, user, first, last, voted);
+
+		return exportVoterFile(voters);
+	}
+
+	public byte[] exportVoterFile(Collection<Voter> voters) throws IOException {
 		
 		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet("Voters");
@@ -315,8 +311,10 @@ public class EVoteService extends BasicService {
 		headerCell.setCellValue("First name");
 		headerCell = header.createCell(2);
 		headerCell.setCellValue("Surname");
-		headerCell = header.createCell(3);
-		headerCell.setCellValue("Has voted?");
+		if (voters.size() > 0) {
+			headerCell = header.createCell(3);
+			headerCell.setCellValue("Has voted?");
+		}
 		
 		Row row;
 		int rowCounter = 1;
@@ -528,7 +526,7 @@ public class EVoteService extends BasicService {
 	}
 	
 	@Transactional
-	public SeatCounting getCounting(String surveyUid, eVoteResults evoteResults) throws Exception {
+	public SeatCounting getCounting(String surveyUid, eVoteResults evoteResults, MessageSource resources, Locale locale, boolean full) throws Exception {
 		SeatCounting result = new SeatCounting();
 		EVoteConfiguration config = new EVoteConfiguration();
 		
@@ -554,191 +552,268 @@ public class EVoteService extends BasicService {
 		}
 		parseEVoteAnswers(config, result, evoteResults);
 		
-		// compute distribution of seats (list / preferential)
-		Integer[] votes = new Integer[] {result.getListVotes(), result.getPreferentialVotes()};
-		int[] seatsArray = computeSeats(survey, votes, result.getListVotes() + result.getPreferentialVotes(), result.getMaxSeats(), null, null);		
-		result.setListVotesSeats(seatsArray[0]);
-		result.setPreferentialVotesSeats(seatsArray[1]);		
-		result.setListVotesFinal(result.getListVotes());
-		if (config.useLuxembourgProcedure) {
-			result.setPreferentialVotesFinal(result.getLuxListVotes());
-			result.setTotalPreferentialVotes(result.getLuxListVotes());
-		} else {
-			int sumAllPreferentialVotes = config.listSeatDistributions.values().stream().collect(Collectors.summingInt(SeatDistribution::getPreferentialVotes));
-			result.setTotalPreferentialVotes(sumAllPreferentialVotes);
-			result.setPreferentialVotesFinal(sumAllPreferentialVotes);
-		}
-		
-		for (SeatDistribution listSeatDistribution : config.listSeatDistributions.values()) {
-			if (config.useLuxembourgProcedure) {
-				listSeatDistribution.setListPercent(Math.round((float)listSeatDistribution.getLuxListVotes() / (float)result.getLuxListVotes() * 10000) / 100.0);
-			} else {
-				listSeatDistribution.setListPercent(Math.round((float)listSeatDistribution.getListVotes() / (float)result.getListVotes() * 10000) / 100.0);
-			}
-			listSeatDistribution.setListVotesWeighted(listSeatDistribution.getListVotes() * result.getMaxSeats());
-			listSeatDistribution.setPreferentialPercent(Math.round((float)listSeatDistribution.getPreferentialVotes() / (float)result.getPreferentialVotes() * 10000) / 100.0);
-			listSeatDistribution.setListPercentWeighted(Math.round((double)listSeatDistribution.getTotalWeighted() / (double)result.getTotalVotesWeighted() * 10000) / 100.0);
-			if (listSeatDistribution.getListPercentWeighted() < result.getMinListPercent()) {
-				result.setListVotesFinal(result.getListVotesFinal() - listSeatDistribution.getListVotes());
-				if (config.useLuxembourgProcedure) {
-					result.setPreferentialVotesFinal(result.getPreferentialVotesFinal() - listSeatDistribution.getLuxListVotes());
-				} else {
-					result.setPreferentialVotesFinal(result.getPreferentialVotesFinal() - listSeatDistribution.getPreferentialVotes());
-				}				
-			}
-		}
-				
-		// compute distribution of list seats		
-		LinkedHashMap<MultipleChoiceQuestion, SeatDistribution> listSeatDistributionsFiltered = config.listSeatDistributions
-				.entrySet().stream().filter(x -> x.getValue().getListPercentWeighted() >= result.getMinListPercent())
-				.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue(),  (u, v) -> {
-	                throw new IllegalStateException(String.format("Duplicate key %s", u));
-	            },
-	            LinkedHashMap::new));
-		
-	
-		// compute distribution of preferential seats
-		Integer[] preferentialVotes = listSeatDistributionsFiltered.values().stream().map(SeatDistribution::getPreferentialVotes).toArray(Integer[]::new);
-		DHondtEntry[][] numbers = new DHondtEntry[result.getMaxSeats()][preferentialVotes.length];
-		
-		int[] candidatesPerList = new int[listSeatDistributionsFiltered.size()];
-		int counter = 0;
-		for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
-			candidatesPerList[counter++] = mc.getPossibleAnswers().size();
-		}
-		
-		int[] preferentialSeatsArray = computeSeats(survey, preferentialVotes, result.getPreferentialVotesFinal(), result.getPreferentialVotesSeats(), numbers, candidatesPerList);
-		counter = 0;
-		for (SeatDistribution listSeatDistribution : listSeatDistributionsFiltered.values()) {
-			listSeatDistribution.setPreferentialSeats(preferentialSeatsArray[counter++]);
-			if (!config.useLuxembourgProcedure) {
-				listSeatDistribution.setPreferentialPercentFinal(Math.round((double)listSeatDistribution.getPreferentialVotes() / (double)result.getPreferentialVotesFinal() * 10000) / 100.0);
-			} else {
-				listSeatDistribution.setPreferentialPercentFinal(Math.round((double)listSeatDistribution.getLuxListVotes() / (double)result.getPreferentialVotesFinal() * 10000) / 100.0);
-			}
-		}
-
-		if (config.useLuxembourgProcedure) {
-			result.setDHondtEntries(numbers);
+		if (full) {		
+			// compute distribution of seats (list / preferential)
+			Integer[] votes;
+			int[] seatsArray;			
 			
-			// there are no list votes
-			// the lists get the votes according to the preferential votes			
-			for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
-				List<ElectedCandidate> candidatesOrdered = getCandidates(mc, config.candidateVotes, true);
+			if (config.useLuxembourgProcedure) {
+				result.setPreferentialVotesFinal(result.getLuxListVotes());
+				result.setTotalPreferentialVotes(result.getLuxListVotes());
 				
-				// compute elected candidates from preferential votes
-				SeatDistribution listSeatDistribution = listSeatDistributionsFiltered.get(mc);
-				for (int i = 0; i < listSeatDistribution.getPreferentialSeats(); i++) {
-					if (i >= candidatesOrdered.size()) {
-						break;
-					}
-					
-					ElectedCandidate ec = candidatesOrdered.get(i);
-					ec.setSeats(1);
-					ec.setPreferentialSeat(true);
-					result.getCandidatesFromPreferentialVotes().add(ec);
+				votes = new Integer[] {result.getListVotes(), result.getPreferentialVotes()};
+				seatsArray = computeSeats(survey, votes, result.getListVotes() + result.getPreferentialVotes(), result.getMaxSeats(), null, null);
+			} else {
+				int sumAllPreferentialVotes = config.listSeatDistributions.values().stream().collect(Collectors.summingInt(SeatDistribution::getPreferentialVotes));
+				result.setTotalPreferentialVotes(sumAllPreferentialVotes);
+				result.setPreferentialVotesFinal(sumAllPreferentialVotes);
+				
+				votes = new Integer[] {result.getListVotesWeighted(), result.getTotalPreferentialVotes()};
+				seatsArray = computeSeats(survey, votes, result.getListVotesWeighted() + result.getTotalPreferentialVotes(), result.getMaxSeats(), null, null);
+			}
+			
+			result.setListVotesSeats(seatsArray[0]);
+			result.setPreferentialVotesSeats(seatsArray[1]);
+			result.setListVotesFinal(result.getListVotes());
+			
+			for (SeatDistribution listSeatDistribution : config.listSeatDistributions.values()) {
+				if (config.useLuxembourgProcedure) {
+					listSeatDistribution.setListPercent(Math.round((float)listSeatDistribution.getLuxListVotes() / (float)result.getLuxListVotes() * 10000) / 100.0);
+				} else {
+					listSeatDistribution.setListPercent(Math.round((float)listSeatDistribution.getListVotes() / (float)result.getListVotes() * 10000) / 100.0);
+				}
+				listSeatDistribution.setListVotesWeighted(listSeatDistribution.getListVotes() * result.getMaxSeats());
+				listSeatDistribution.setPreferentialPercent(Math.round((float)listSeatDistribution.getPreferentialVotes() / (float)result.getPreferentialVotes() * 10000) / 100.0);
+				listSeatDistribution.setListPercentWeighted(Math.round((double)listSeatDistribution.getTotalWeighted() / (double)result.getTotalVotesWeighted() * 10000) / 100.0);
+				if (listSeatDistribution.getListPercentWeighted() < result.getMinListPercent()) {
+					result.setListVotesFinal(result.getListVotesFinal() - listSeatDistribution.getListVotes());
+					if (config.useLuxembourgProcedure) {
+						result.setPreferentialVotesFinal(result.getPreferentialVotesFinal() - listSeatDistribution.getLuxListVotes());
+					} else {
+						result.setPreferentialVotesFinal(result.getPreferentialVotesFinal() - listSeatDistribution.getPreferentialVotes());
+					}				
 				}
 			}
+					
+			// compute distribution of list seats		
+			LinkedHashMap<MultipleChoiceQuestion, SeatDistribution> listSeatDistributionsFiltered = config.listSeatDistributions
+					.entrySet().stream().filter(x -> x.getValue().getListPercentWeighted() >= result.getMinListPercent())
+					.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue(),  (u, v) -> {
+		                throw new IllegalStateException(String.format("Duplicate key %s", u));
+		            },
+		            LinkedHashMap::new));
 			
-			// if the lists were not big enough to use all seats
-			if (result.getCandidatesFromPreferentialVotes().size() < result.getMaxSeats()) {
-				List<ElectedCandidate> allCandidatesOrdered = getCandidates(listSeatDistributionsFiltered.keySet(), config.candidateVotes, true);
-				for (ElectedCandidate ec : allCandidatesOrdered) {
-					if (ec.getSeats() == 0) { // only consider candidates that do not already have a seat
+		
+			// compute distribution of preferential seats
+			Integer[] preferentialVotes = listSeatDistributionsFiltered.values().stream().map(SeatDistribution::getPreferentialVotes).toArray(Integer[]::new);
+			DHondtEntry[][] numbers = new DHondtEntry[result.getMaxSeats()][preferentialVotes.length];
+			
+			int[] candidatesPerList = new int[listSeatDistributionsFiltered.size()];
+			int counter = 0;
+			for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
+				candidatesPerList[counter++] = mc.getPossibleAnswers().size();
+			}
+			
+			int[] preferentialSeatsArray = computeSeats(survey, preferentialVotes, result.getPreferentialVotesFinal(), result.getPreferentialVotesSeats(), numbers, candidatesPerList);
+			counter = 0;
+			for (SeatDistribution listSeatDistribution : listSeatDistributionsFiltered.values()) {
+				listSeatDistribution.setPreferentialSeats(preferentialSeatsArray[counter++]);
+				if (!config.useLuxembourgProcedure) {
+					listSeatDistribution.setPreferentialPercentFinal(Math.round((double)listSeatDistribution.getPreferentialVotes() / (double)result.getPreferentialVotesFinal() * 10000) / 100.0);
+				} else {
+					listSeatDistribution.setPreferentialPercentFinal(Math.round((double)listSeatDistribution.getLuxListVotes() / (double)result.getPreferentialVotesFinal() * 10000) / 100.0);
+				}
+			}
+	
+			Integer[] listVotes = listSeatDistributionsFiltered.values().stream().map(SeatDistribution::getListVotes).toArray(Integer[]::new);
+			int[] listSeatsArrayLimited = null;
+			if (config.useLuxembourgProcedure) {
+				result.setDHondtEntries(numbers);
+				
+				// there are no list votes
+				// the lists get the votes according to the preferential votes			
+				for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
+					List<ElectedCandidate> candidatesOrdered = getCandidates(mc, config.candidateVotes, true);
+					
+					// compute elected candidates from preferential votes
+					SeatDistribution listSeatDistribution = listSeatDistributionsFiltered.get(mc);
+					for (int i = 0; i < listSeatDistribution.getPreferentialSeats(); i++) {
+						if (i >= candidatesOrdered.size()) {
+							break;
+						}
+						
+						ElectedCandidate ec = candidatesOrdered.get(i);
 						ec.setSeats(1);
 						ec.setPreferentialSeat(true);
 						result.getCandidatesFromPreferentialVotes().add(ec);
-						
-						if (result.getCandidatesFromPreferentialVotes().size() == result.getMaxSeats()) {
-							// we reached the limit for seats
-							break;
-						}
 					}
 				}
-			}	
-			
-		} else {
-			Integer[] listVotes = listSeatDistributionsFiltered.values().stream().map(SeatDistribution::getListVotes).toArray(Integer[]::new);
-			int[] listSeatsArray = computeSeats(survey, listVotes, result.getListVotesFinal(), result.getListVotesSeats(), null, null);
-			
-			counter = 0;
-			for (SeatDistribution listSeatDistribution : listSeatDistributionsFiltered.values()) {
-				listSeatDistribution.setListSeats(listSeatsArray[counter++]);
-				listSeatDistribution.setListPercentFinal(Math.round((double)listSeatDistribution.getListVotes() / (double)result.getListVotesFinal() * 10000) / 100.0);
-			}
-			
-			// compute elected candidates from list votes
-			for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
-				List<ElectedCandidate> candidatesOrdered = getCandidates(mc, config.candidateVotes, false);
-				List<ElectedCandidate> candidatesOrderedByVotes = getCandidates(mc, config.candidateVotes, true);
 				
-				// compute elected candidates from list votes
-				SeatDistribution listSeatDistribution = listSeatDistributionsFiltered.get(mc);
-				for (int i = 0; i < listSeatDistribution.getListSeats(); i++) {
-					if (i >= candidatesOrdered.size()) {
-						break;
-					}
-					ElectedCandidate ec = candidatesOrdered.get(i);
-					ec.setSeats(1);
-					result.getCandidatesFromListVotes().add(ec);					
-				}
-				
-				counter = 0;
-				if (listSeatDistribution.getPreferentialSeats() > 0) {
-					for (int i = 0; i < candidatesOrderedByVotes.size(); i++) {
-						ElectedCandidate ec = candidatesOrderedByVotes.get(i);
-						if (ec.getSeats() == 0) { // only consider candidates that do not already have a seat (list vote)
+				// if the lists were not big enough to use all seats
+				if (result.getCandidatesFromPreferentialVotes().size() < result.getMaxSeats()) {
+					List<ElectedCandidate> allCandidatesOrdered = getCandidates(listSeatDistributionsFiltered.keySet(), config.candidateVotes, true);
+					for (ElectedCandidate ec : allCandidatesOrdered) {
+						if (ec.getSeats() == 0) { // only consider candidates that do not already have a seat
 							ec.setSeats(1);
 							ec.setPreferentialSeat(true);
 							result.getCandidatesFromPreferentialVotes().add(ec);
-							counter++;
 							
-							if (counter == listSeatDistribution.getPreferentialSeats()) {
-								// we reached the limit for preferential vote seats
+							if (result.getCandidatesFromPreferentialVotes().size() == result.getMaxSeats()) {
+								// we reached the limit for seats
 								break;
 							}
 						}
 					}
-				}
-			}
-			
-			// in case one or more lists did not have enough candidates for list and preferential seats: fill with candidates that have the most votes
-			if (result.getMaxSeats() > (result.getCandidatesFromListVotes().size() + result.getCandidatesFromPreferentialVotes().size())) {
-				List<ElectedCandidate> allCandidatesOrdered = getCandidates(listSeatDistributionsFiltered.keySet(), config.candidateVotes, true);
-				for (ElectedCandidate ec : allCandidatesOrdered) {
-					if (ec.getSeats() == 0) { // only consider candidates that do not already have a seat (list vote)
-						ec.setSeats(1);
-						ec.setPreferentialSeat(true);
-						result.getCandidatesFromPreferentialVotes().add(ec);
-						
-						if (result.getMaxSeats() == (result.getCandidatesFromListVotes().size() + result.getCandidatesFromPreferentialVotes().size())) {
-							// all seats allocated
+				}	
+				
+			} else {
+				listSeatsArrayLimited = computeSeats(survey, listVotes, result.getListVotesFinal(), result.getListVotesSeats(), null, candidatesPerList);
+				
+				counter = 0;
+				for (SeatDistribution listSeatDistribution : listSeatDistributionsFiltered.values()) {
+					listSeatDistribution.setListSeats(listSeatsArrayLimited[counter++]);
+					listSeatDistribution.setListPercentFinal(Math.round((double)listSeatDistribution.getListVotes() / (double)result.getListVotesFinal() * 10000) / 100.0);
+				}				
+				
+				// compute elected candidates from list votes
+				for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
+					List<ElectedCandidate> candidatesOrdered = getCandidates(mc, config.candidateVotes, false);
+					List<ElectedCandidate> candidatesOrderedByVotes = getCandidates(mc, config.candidateVotes, true);
+					
+					// compute elected candidates from list votes
+					SeatDistribution listSeatDistribution = listSeatDistributionsFiltered.get(mc);
+					for (int i = 0; i < listSeatDistribution.getListSeats(); i++) {
+						if (i >= candidatesOrdered.size()) {
 							break;
+						}
+						ElectedCandidate ec = candidatesOrdered.get(i);
+						ec.setSeats(1);
+						result.getCandidatesFromListVotes().add(ec);					
+					}
+					
+					counter = 0;
+					if (listSeatDistribution.getPreferentialSeats() > 0) {
+						for (int i = 0; i < candidatesOrderedByVotes.size(); i++) {
+							ElectedCandidate ec = candidatesOrderedByVotes.get(i);
+							if (ec.getSeats() == 0) { // only consider candidates that do not already have a seat (list vote)
+								ec.setSeats(1);
+								ec.setPreferentialSeat(true);
+								result.getCandidatesFromPreferentialVotes().add(ec);
+								counter++;
+								
+								if (counter == listSeatDistribution.getPreferentialSeats()) {
+									// we reached the limit for preferential vote seats
+									break;
+								}
+							}
 						}
 					}
 				}
+				
+				// in case one or more lists did not have enough candidates for list and preferential seats: fill with candidates that have the most votes
+				if (result.getMaxSeats() > (result.getCandidatesFromListVotes().size() + result.getCandidatesFromPreferentialVotes().size())) {
+					List<ElectedCandidate> allCandidatesOrdered = getCandidates(listSeatDistributionsFiltered.keySet(), config.candidateVotes, true);
+					for (ElectedCandidate ec : allCandidatesOrdered) {
+						if (ec.getSeats() == 0) { // only consider candidates that do not already have a seat (list vote)
+							ec.setSeats(1);
+							ec.setPreferentialSeat(true);
+							result.getCandidatesFromPreferentialVotes().add(ec);
+							
+							if (result.getMaxSeats() == (result.getCandidatesFromListVotes().size() + result.getCandidatesFromPreferentialVotes().size())) {
+								// all seats allocated
+								break;
+							}
+						}
+					}
+				}			
 			}
-		}
-		
-		// combine vote counts for all candidates in all lists
-		for (int i = 0; i < result.getMaxCandidatesInLists(); i++) {
-			List<ElectedCandidate> candidateList = new ArrayList<>();			
 			
-			for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
-				if (mc.getPossibleAnswers().size() > i) {
-					PossibleAnswer pa = mc.getPossibleAnswers().get(i);					
-					ElectedCandidate candidateVote = config.candidateVotes.get(pa);
-					candidateList.add(candidateVote);
-				} else {
-					candidateList.add(new ElectedCandidate()); // the list does not have enough candidates -> add empty one
+			MultipleChoiceQuestion[] mcs = listSeatDistributionsFiltered.keySet().toArray(new MultipleChoiceQuestion[listSeatDistributionsFiltered.size()]);
+			int[] finalPreferentialSeats = null;
+			int[] reallocatedListSeats = new int[listSeatDistributionsFiltered.size()];
+			if (!config.useLuxembourgProcedure) {
+				// find reallocated list seats
+				int[] listSeatsArray = computeSeats(survey, listVotes, result.getListVotesFinal(), result.getListVotesSeats(), null, null);
+				
+				for (int i = 0; i < listSeatDistributionsFiltered.size(); i++) {
+					int reallocatedSeats = listSeatsArray[i] - listSeatsArrayLimited[i];
+					if (reallocatedSeats > 0) {
+						String list = mcs[i].getStrippedTitle();
+						String reallocationMessage = resources.getMessage("message.reallocationMessage", new String[] { list, Integer.toString(reallocatedSeats) }, "There are not enough candidates for", locale);
+						
+						result.getReallocationMessagesForLists().add(reallocationMessage);
+						reallocatedListSeats[i] += reallocatedSeats;
+					}
+				}
+				
+				// compute final preferential seats
+				finalPreferentialSeats = new int[listSeatDistributionsFiltered.size()];
+				for (int i = 0; i < result.getMaxCandidatesInLists(); i++) {			
+					for (int q = 0; q < mcs.length; q++) {
+						MultipleChoiceQuestion mc = mcs[q];
+						
+						if (mc.getPossibleAnswers().size() > i) {
+							PossibleAnswer pa = mc.getPossibleAnswers().get(i);					
+							ElectedCandidate candidateVote = config.candidateVotes.get(pa);
+							if (candidateVote.getSeats() > 0 && candidateVote.isPreferentialSeat()) {
+								finalPreferentialSeats[q]++;
+							}
+						}
+					}			
+				}	
+			} else {
+				finalPreferentialSeats = preferentialSeatsArray;
+			}
+				
+			// find reallocated preferential seats
+			int[] preferentialSeatsArrayNoLimits = computeSeats(survey, preferentialVotes, result.getPreferentialVotesFinal(), result.getPreferentialVotesSeats(), numbers, null);
+			int[] reallocatedSeats = new int[listSeatDistributionsFiltered.size()];
+			for (int i = 0; i < listSeatDistributionsFiltered.size(); i++) {
+				reallocatedSeats[i] = preferentialSeatsArrayNoLimits[i] - finalPreferentialSeats[i];
+				if (reallocatedSeats[i] > 0) {
+					String list = mcs[i].getStrippedTitle();
+					String reallocationMessage = resources.getMessage("message.reallocationMessage", new String[] { list, Integer.toString(reallocatedSeats[i]) }, "There are not enough candidates for", locale);
+					
+					result.getReallocationMessages().add(reallocationMessage);
 				}
 			}
-			
-			result.getCandidateVotes().add(candidateList);
-		}
-				
-		logger.info("end");
 		
+			// combine vote counts for all candidates in all lists		
+			for (int i = 0; i < result.getMaxCandidatesInLists(); i++) {
+				List<ElectedCandidate> candidateList = new ArrayList<>();
+					
+				for (int q = 0; q < mcs.length; q++) {
+					MultipleChoiceQuestion mc = mcs[q];
+				
+					if (mc.getPossibleAnswers().size() > i) {
+						PossibleAnswer pa = mc.getPossibleAnswers().get(i);					
+						ElectedCandidate candidateVote = config.candidateVotes.get(pa);
+						candidateList.add(candidateVote);
+					} else {
+						ElectedCandidate ec = new ElectedCandidate();
+						
+						if (reallocatedListSeats[q] > 0) {
+							ec.setReallocatedSeat(true);
+							reallocatedListSeats[q]--;
+						} else if (reallocatedSeats[q] > 0) {
+							ec.setReallocatedSeat(true);
+							reallocatedSeats[q]--;
+						}
+						candidateList.add(ec); // the list does not have enough candidates -> add empty one
+					}
+				}					
+				result.getCandidateVotes().add(candidateList);
+			}			
+		
+			if (!config.useLuxembourgProcedure) {
+				counter = 0;
+				for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
+					SeatDistribution listSeatDistribution = listSeatDistributionsFiltered.get(mc);
+					listSeatDistribution.setPreferentialSeats(finalPreferentialSeats[counter++]);
+				}
+			}
+		}
+			
 		return result;
 	}
 	
@@ -755,7 +830,7 @@ public class EVoteService extends BasicService {
 		}
 		
 		if (orderByVotes) {		
-		Collections.sort(result, Comparator.comparing(ElectedCandidate::getVotes).reversed()
+			Collections.sort(result, Comparator.comparing(ElectedCandidate::getVotes).reversed()
 	            .thenComparing(ElectedCandidate::getPosition));
 		}
 		
@@ -800,7 +875,7 @@ public class EVoteService extends BasicService {
 			case "l":
 				return computeSeatsUsingDHondtMethod(input, total, maxSeats, numbers, candidatesPerList);
 			default:
-				return computeSeatsUsingLargestRemainderMethod(input, total, maxSeats);
+				return computeSeatsUsingLargestRemainderMethod(input, total, maxSeats, candidatesPerList);
 		}
 	}
 		
@@ -862,7 +937,7 @@ public class EVoteService extends BasicService {
 		return seats;
 	}
 	
-	public static int[] computeSeatsUsingLargestRemainderMethod(Integer[] input, int total, int maxSeats) {
+	public static int[] computeSeatsUsingLargestRemainderMethod(Integer[] input, int total, int maxSeats, int[] candidatesPerList) {
 		int[] result = new int[input.length];
 		
 		List<RemainderValue> rvs = new ArrayList<>();
@@ -874,7 +949,15 @@ public class EVoteService extends BasicService {
 			
 			RemainderValue rv = new RemainderValue();
 			rv.setIndex(i);
-			rv.setSeats((int)Math.floor(value));
+			
+			int initialSeats = (int)Math.floor(value);
+			
+			if (candidatesPerList != null && initialSeats > candidatesPerList[i]) {
+				initialSeats = candidatesPerList[i];
+				// todo: mark as invalid
+			}
+			
+			rv.setSeats(initialSeats);
 			rv.setFraction(value - rv.seats);
 			rvs.add(rv);
 			
@@ -885,6 +968,11 @@ public class EVoteService extends BasicService {
 			Collections.sort(rvs, Comparator.comparingDouble(RemainderValue::getFraction).reversed());
 			
 			for (int i = 0; i < rvs.size(); i++) {
+				if (candidatesPerList != null && rvs.get(i).getSeats() >= candidatesPerList[rvs.get(i).getIndex()]) {
+					// todo: mark as invalid
+					continue;
+				}
+				
 				rvs.get(i).setSeats(rvs.get(i).getSeats()+1);
 				seats++;
 				if (seats >= maxSeats) {

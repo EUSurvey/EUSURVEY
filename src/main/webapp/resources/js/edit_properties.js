@@ -208,6 +208,16 @@ var ElementProperties = function() {
 		_actions.MoveDownEnabled(false);
 		_actions.DeleteEnabled(false);
 	}
+
+	this.deselectForPaste = function()
+	{
+		this.clear();
+		_actions.CopyEnabled(false);
+		_actions.CutEnabled(false);
+		_actions.MoveUpEnabled(false);
+		_actions.MoveDownEnabled(false);
+		_actions.DeleteEnabled(false);
+	}
 	
 	this.showProperties = function(e, event, doubleclick)
 	{
@@ -220,7 +230,7 @@ var ElementProperties = function() {
 			}
 		})
 	
-		var advancedOpen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
+		var advancedOpen = $(".advancedtogglebutton").find(".glyphicon-plus-sign").length == 0;
 				
 		_actions.ElementSelected(false);
 		
@@ -307,19 +317,23 @@ var ElementProperties = function() {
 		}
 		
 		_actions.ChildSelected(false);
-		
-		if ($("#content").find(".selectedquestion").length == 0)
-		{
+
+		let selection = $("#content").find(".selectedquestion");
+		let filteredSelection = selection.filter((i, el) => eVoteRuleEvaluator.isElementAllowed(el))
+
+		if (selection.length == 0){
 			_actions.CopyEnabled(false);
 			_actions.CutEnabled(false);
 			_actions.DeleteEnabled(false);
 			_actions.MoveUpEnabled(false);
 			_actions.MoveDownEnabled(false);
+		} else if (filteredSelection.length == 0){
+			_actions.CopyEnabled(false);
 		}
 				
-		if ($("#content").find(".selectedquestion").length == 1)
+		if (selection.length == 1)
 		{
-			e = $("#content").find(".selectedquestion").first();
+			e = selection.first();
 			
 			if (e.is(":visible"))
 			{
@@ -456,10 +470,8 @@ var ElementProperties = function() {
 				let editenabled = !element.editorRowsLocked()
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
-				getChoosePropertiesRow("Style", "CheckBox,ListBox" + (isEVote ? ",EVoteList" : ""), false, false, element.styleType());
-				if (element.isEVoteList()) {
-					getChoosePropertiesRow("EVoteProcedure", "evote-brussels,evote-luxembourg,evote-outside", false, false, element.choiceType());
-				} else {
+				getChoosePropertiesRow("Style", "CheckBox,ListBox" + (isEVote ? ",EVoteList" : ""), false, false, element.styleType(), true);
+				if (!element.isEVoteList()) {
 					getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
 				}
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
@@ -549,6 +561,10 @@ var ElementProperties = function() {
 					
 					var shortname = $("input[name^='pashortname'][data-id='" + id + "']").first().val();
 					getTextPropertiesRow("Identifier", shortname, false);
+					
+					if (parent.type === "MultipleChoiceQuestion" && parent.styleType() == "CheckBox") {
+						getCheckPropertiesRow("Exclusive", $("input[name^='exclusive'][data-id='" + id + "']").val() == 'true');
+					}
 					
 					_actions.ChildSelected(true);
 					

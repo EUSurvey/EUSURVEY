@@ -835,7 +835,8 @@
 		 			</c:if>
 		 		</c:forEach>
 	 		</c:if>
- 		
+			initializeBackupHelper();
+			restoreBackup();
 			
 			<c:forEach items="${form.validationMessageElements}" var="element">
 				validationMessages["${element.uniqueId}"] = "${form.getValidationMessage(element)}";
@@ -845,6 +846,16 @@
 				invisibleElements["${element}"] = true;
 			</c:forEach>
 	 	}
+
+	 	function initializeBackupHelper(){
+	 		backupHelper = {}
+			<c:forEach var="element" items="${form.survey.getElementsRecursive(true)}">
+				backupHelper["${element.id}"] = {
+					uid : "${element.uniqueId}",
+					type : "${element.type}"
+				}
+			</c:forEach>
+		}
 	 	
 	 	function doAnswersExist() {
 	 		<c:choose>
@@ -883,18 +894,19 @@
 	 	}
 	 	
 	 	var values = null;
-	 	function getValueByQuestion(uniqueId, cellEl)
+	 	var alreadyEncountered = false;
+	 	function getValueByQuestion(uniqueId, isRegEx, cellEl)
 	 	{
-	 		if (typeof values[uniqueId] != 'undefined') {
+	 		if (typeof values[uniqueId] != 'undefined' && !(isRegEx && alreadyEncountered)) {
 	 			if (cellEl != null && $(cellEl).is(".complex")){
 					$(cellEl).closest(".innercell").addClass("answered");
 				} else {
+					alreadyEncountered = true;
 					$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
 					$('tr[data-uid="' + uniqueId + '"]').closest(".survey-element").addClass("answered");
 				}
  				return values[uniqueId];
 	 		}
-	 		
 	 		return "";
 	 	}
 	 	
@@ -970,7 +982,13 @@
 	 	var filevalues = null;
 	 	function getFileAnswer(uniqueId)
 	 	{
-	 		return typeof filevalues[uniqueId] != 'undefined' ? filevalues[uniqueId] : "";
+	 		const result = filevalues[uniqueId];
+	 		if (typeof result != 'undefined') {
+	 			$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+	 			return result;
+	 		}
+	 		
+	 		return "";
 	 	}
 
 		function deleteDelphiCommentFromRunner(button, isReply) {

@@ -730,3 +730,7 @@ a.accordion-toggle:hover {
 .survey-element[cut-item]{
 	opacity: 50%;
 }
+
+.toolboxitem.disallowed, .toolboxgroup.disallowed{
+	display: none;
+}

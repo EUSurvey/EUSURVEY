@@ -158,6 +158,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isOPC;
 	private Boolean isECF;
 	private Boolean isEVote;
+	private Boolean showResultsTestPage = false;
 	private Boolean showQuizIcons;
 	private Boolean showTotalScore;
 	private Boolean scoresByQuestion;
@@ -1714,6 +1715,16 @@ final public class Survey implements java.io.Serializable {
 	public void setIsEVote(Boolean isEVote) {
 		this.isEVote = isEVote != null ? isEVote : false;
 	}
+
+
+	@Column(name = "RESULTSTESTPAGE")
+	public Boolean getShowResultsTestPage(){
+		return showResultsTestPage != null ? showResultsTestPage : false;
+	}
+
+	public void setShowResultsTestPage(Boolean showResultsTestPage){
+		this.showResultsTestPage = showResultsTestPage != null ? showResultsTestPage : false;
+	}
 	
 	@Column(name = "EVOTETEMPLATE")
 	public String geteVoteTemplate() {
@@ -1722,6 +1733,19 @@ final public class Survey implements java.io.Serializable {
 
 	public void seteVoteTemplate(String eVoteTemplate) {
 		this.eVoteTemplate = eVoteTemplate;
+	}
+
+	@Transient
+	public String geteVoteTemplateTitle() {
+		switch(eVoteTemplate){
+			case "b":
+				return "label.Brussels";
+			case "i":
+				return "label.IspraSeville";
+			case "l":
+				return "label.Luxembourg";
+		}
+		return "label.OutsideCommunity";
 	}
 	
 	
@@ -1889,6 +1913,7 @@ final public class Survey implements java.io.Serializable {
 		copy.minListPercent = minListPercent;
 		copy.maxPrefVotes = maxPrefVotes;
 		copy.seatsToAllocate = seatsToAllocate;
+		copy.showResultsTestPage = showResultsTestPage;
 		copy.setAllowedContributionsPerUser(allowedContributionsPerUser);
 		copy.setIsUseMaxNumberContribution(isUseMaxNumberContribution);
 		copy.setIsUseMaxNumberContributionLink(isUseMaxNumberContributionLink);
@@ -2794,7 +2819,7 @@ final public class Survey implements java.io.Serializable {
 	public Integer getMaxPrefVotes() {
 		if (maxPrefVotes == null) {
 			if (eVoteTemplate != null) {
-				if (eVoteTemplate.equals("b")) {
+				if (eVoteTemplate.equals("b") || eVoteTemplate.equals("i")) {
 					maxPrefVotes = 27;
 				} else {
 					maxPrefVotes = 20;
@@ -2811,7 +2836,7 @@ final public class Survey implements java.io.Serializable {
 	public Integer getSeatsToAllocate() {
 		if (seatsToAllocate == null) {
 			if (eVoteTemplate != null) {
-				if (eVoteTemplate.equals("b")) {
+				if (eVoteTemplate.equals("b") || eVoteTemplate.equals("i")) {
 					seatsToAllocate = 27;
 				} else {
 					seatsToAllocate = 20;

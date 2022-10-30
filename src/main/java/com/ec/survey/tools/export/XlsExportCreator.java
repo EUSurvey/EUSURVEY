@@ -745,7 +745,7 @@ public class XlsExportCreator extends ExportCreator {
 									if (sfile.length() > 0) {
 										String[] data = sfile.split("\\|");
 										File file = new File();
-										file.setUid(data[0]);
+										file.setUid(data[0].trim());
 										if (data.length > 1) {
 											file.setName(data[1]);
 										} else {

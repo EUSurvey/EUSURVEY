@@ -1366,7 +1366,7 @@ var closeOverlayDivsEnabled = false;
 										<c:if test="${form.survey.isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleExplanations.contains(question.id.toString()))}">
 											var td = document.createElement("td");
 											td.style["overflow-wrap"] = "anywhere";
-											$(td).append(list[i++]);
+											$(td).append(list[i++].stripStyleHtml());
 											$(tr).append(td);
 										</c:if>
 										

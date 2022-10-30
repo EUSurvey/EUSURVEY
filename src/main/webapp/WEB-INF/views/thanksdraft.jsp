@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript"> 
 		$(function() {					
-			clearAllCookies('${surveyprefix}');
+			clearLocalBackupForPrefix('${surveyprefix}');
 			
 			<c:if test="${redirect != null}">
 				window.location = "${redirect}";
@@ -50,8 +50,7 @@
 					<br/><br/>
 				
 					<a class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);"><spring:message code="label.SendLinkAsEmail" /></a>
-					<a id="bookmarkme" class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><spring:message code="label.SaveToBookMark" /></a>
-					<a id="copyme"class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><spring:message code="label.CopyToClipboard" /></a>
+					<a href="javascript:;" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
 					<c:if test="${downloadContribution}">
 						<br /><br />
 						<h2><spring:message code="question.needcopydraft" /></h2>
@@ -218,24 +217,7 @@
 		}
 		
 		$(document).ready(function(){
-			
-			var bookMarkEnabled = false;
-			
-			if (window.sidebar && window.sidebar.addPanel) {
-				bookMarkEnabled = true;
-	        } else if ((window.sidebar && (navigator.userAgent.toLowerCase().indexOf('firefox') > -1)) || (window.opera && window.print)) {
-	        	bookMarkEnabled = true;
-	        } else if (window.external && ('AddFavorite' in window.external)) {
-	        	bookMarkEnabled = true;
-	        } else {
-	        	bookMarkEnabled = false;
-	        }
-			
-			if(!bookMarkEnabled)
-			{
-				$("#bookmarkme").hide();
-			}
-			
+
 			if(!document.queryCommandSupported('copy'))
 			{
 				$("#copyme").hide();
@@ -259,7 +241,7 @@
 				$("#ask-export-dialog").find(".validation-error-keep").hide();
 				
 				var mail = $("#ask-export-dialog").find("#email").val();
-				var linkDraft = $("#copyme").attr("href");
+				var linkDraft = '${url}';
 				
 				var challenge = getChallenge();
 			    var uresponse = getResponse($("#ask-export-dialog"));
@@ -310,75 +292,6 @@
 				});				
 				
 			}
-		
-		
-		    $(function() {
-		        $("#bookmarkme").click(function(event) {
-	
-		        	var bookmarkURL = $("#copyme").attr("href");
-	                var bookmarkTitle = document.title;
-	                var triggerDefault = false;
-	
-	                if (window.sidebar && window.sidebar.addPanel) {
-	                    // Firefox version < 23
-	                    window.sidebar.addPanel(bookmarkTitle, bookmarkURL, '');
-	                } else if ((window.sidebar && (navigator.userAgent.toLowerCase().indexOf('firefox') > -1)) || (window.opera && window.print)) {
-	                    // Firefox version >= 23 and Opera Hotlist
-	                    var $this = $(this);
-	                    $this.attr('href', bookmarkURL);
-	                    $this.attr('title', bookmarkTitle);
-	                    $this.attr('rel', 'sidebar');
-	                    $this.off(event);
-	                    triggerDefault = true;
-	                } else if (window.external && ('AddFavorite' in window.external)) {
-	                    // IE Favorite
-	                    window.external.AddFavorite(bookmarkURL, bookmarkTitle);
-	                } else {
-	                    // WebKit - Safari/Chrome
-	                    alert('Press ' + (navigator.userAgent.toLowerCase().indexOf('mac') != -1 ? 'Cmd' : 'Ctrl') + '+D <spring:message code="label.bookmark.help"/>');
-	                }
-	
-	                return triggerDefault;
-		        });
-		        
-		        
-	        	$('#copyme').click(function(event) { 
-	        		
-	        		if(document.queryCommandSupported('copy'))
-	    	        {
-			        	event.preventDefault();
-						// Select the email link anchor text  
-						var emailLink = document.querySelector('#draftLinkFromThanksDraft');
-						window.getSelection().removeAllRanges();
-						var range = document.createRange();  
-						range.selectNode(emailLink);  
-						window.getSelection().addRange(range);  
-						  
-						try {  
-						  // Now that we've selected the anchor text, execute the copy command  
-						  var result = document.execCommand('copy');  
-						  
-						  if(result)
-						  {
-						    showSuccess('<spring:message code="message.copy.successCopyClipboardLink" />');
-						  }
-						  
-						} catch(err) {  
-						  //console.log('Oops, unable to copy');
-						  alert("<spring:message code="label.CopyToClipboard.disabled"/>");
-						}  
-						  
-						// Remove the selections - NOTE: Should use   
-						// removeRange(range) when it is supported  
-						window.getSelection().removeAllRanges();  
-						$('#copyme').focus();
-	        		}
-		        	else
-	        		{
-	        			alert("<spring:message code="label.CopyToClipboard.disabled"/>");
-	        		}
-		        });
-		    });
 		</script>
 	
 	</div>

@@ -96,7 +96,13 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		request.setAttribute(APPLICATION_CAPTCHA_BYPASS, isByPassCaptcha());
 		request.setAttribute(APPLICATION_FILEMANAGEMENT, enablefilemanagement != null && enablefilemanagement.equalsIgnoreCase("true"));
-        
+
+		request.setAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
+		request.setAttribute(APPLICATION_ECF, enableecf != null && enableecf.equalsIgnoreCase("true"));
+		request.setAttribute(APPLICATION_DELPHI, enabledelphi != null && enabledelphi.equalsIgnoreCase("true"));
+		request.setAttribute(APPLICATION_EVOTE, enableevote != null && enableevote.equalsIgnoreCase("true"));
+		request.setAttribute("languages", surveyService.getLanguages());
+
 		return true;
 	}
 	

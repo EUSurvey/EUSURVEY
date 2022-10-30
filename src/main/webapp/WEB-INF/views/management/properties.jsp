@@ -1588,11 +1588,16 @@
 							<td>
 								<div style="float: left; max-width: 500px;">
 									<spring:message code="label.Quorum" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								</div>
 								<div style="float: right; text-align: right">
 									<div>
 										<input id='quorum' class="form-control number max1000000000" type='number' name='survey.quorum' min='0' max='1000000000' value="<esapi:encodeForHTMLAttribute>${form.survey.quorum}</esapi:encodeForHTMLAttribute>">
 									</div>
+								</div>
+								<div style="clear: both"></div>
+								<div class="help" style="display: none; margin-top: 10px;">
+									<span><spring:message code="message.Quorum" /></span>
 								</div>
 							</td>
 						</tr>
@@ -1601,11 +1606,16 @@
 							<td>
 								<div style="float: left; max-width: 500px;">
 									<spring:message code="label.EligibleLists" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								</div>
 								<div style="float: right; text-align: right">
 									<div>
 										<input id='minListPercent' class="form-control number min0 max100" type='number' name='survey.minListPercent' min='0' max='100' value="<esapi:encodeForHTMLAttribute>${form.survey.minListPercent}</esapi:encodeForHTMLAttribute>">
 									</div>
+								</div>
+								<div style="clear: both"></div>
+								<div class="help" style="display: none; margin-top: 10px;">
+									<span><spring:message code="message.EligibleLists" /></span>
 								</div>
 							</td>
 						</tr>
@@ -1614,11 +1624,16 @@
 							<td>
 								<div style="float: left; max-width: 500px;">
 									<spring:message code="label.MaximumPreferentialVotes" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								</div>
 								<div style="float: right; text-align: right">
 									<div>
 										<input id='maxPrefVotes' class="form-control number min1 max1000" type='number' name='survey.maxPrefVotes' min='1' max='1000' value="<esapi:encodeForHTMLAttribute>${form.survey.maxPrefVotes}</esapi:encodeForHTMLAttribute>">
 									</div>
+								</div>
+								<div style="clear: both"></div>
+								<div class="help" style="display: none; margin-top: 10px;">
+									<span><spring:message code="message.MaximumPreferentialVotes" /></span>
 								</div>
 							</td>
 						</tr>
@@ -1627,15 +1642,38 @@
 							<td>
 								<div style="float: left; max-width: 500px;">
 									<spring:message code="label.NumberOfSeatsToAllocate" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								</div>
 								<div style="float: right; text-align: right">
 									<div>
 										<input id='seatsToAllocate' class="form-control number min1 max1000" type='number' name='survey.seatsToAllocate' min='1' max='1000' value="<esapi:encodeForHTMLAttribute>${form.survey.seatsToAllocate}</esapi:encodeForHTMLAttribute>">
 									</div>
 								</div>
+								<div style="clear: both"></div>
+								<div class="help" style="display: none; margin-top: 10px;">
+									<span><spring:message code="message.NumberOfSeatsToAllocate" /></span>
+								</div>
 							</td>
 						</tr>
 
+						<tr class="subelement" data-bind="visible: eVote">
+							<td>
+								<div style="float: left; max-width: 500px;">
+									<spring:message code="label.EnableResultsTestPage" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+									<div class="help hideme"><spring:message code="info.EnableResultsTestPage" /></div>
+								</div>
+								<div style="float: right; text-align: right">
+									<div class="onoffswitch">
+										<form:checkbox path="survey.showResultsTestPage" class="onoffswitch-checkbox" id="enableresultstestpage" />
+										<label class="onoffswitch-label" for="enableresultstestpage">
+											<span class="onoffswitch-inner"></span>
+											<span class="onoffswitch-switch"></span>
+										</label>
+									</div>
+								</div>
+							</td>
+						</tr>
 					</c:if>
 
 				</table>	

@@ -66,7 +66,7 @@
 	    
 	    <script type="text/javascript">
 		    $(function() {	
-		    	var date = new Date().toString();
+		    	var date = new Date().getFullYear().toString();
 		    	document.cookie = "testcookie=" + date + "; path=/";
 		    	
 		    	var nameEQ = "testcookie=";

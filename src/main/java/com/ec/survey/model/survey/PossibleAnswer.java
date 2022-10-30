@@ -26,6 +26,7 @@ public class PossibleAnswer extends Element {
 	private ScoringItem scoring;
 	private ECFProfile ecfProfile;
 	private Integer ecfScore;
+	private Boolean exclusive;
 		
 	@Column(name="QUESTION_ID")
 	public int getQuestionId() {
@@ -45,6 +46,7 @@ public class PossibleAnswer extends Element {
 		copy.setPosition(this.getPosition());
 		copy.setEcfProfile(this.getEcfProfile());
 		copy.setEcfScore(this.ecfScore);
+		copy.setExclusive(exclusive);
 		
 		if (scoring != null) copy.setScoring(scoring.copy());
 		
@@ -85,6 +87,14 @@ public class PossibleAnswer extends Element {
 	}
 	public void setEcfScore(Integer ecfScore) {
 		this.ecfScore = ecfScore;
+	}
+	
+	@Column(name="EXCLUSIVE")
+	public Boolean getExclusive() {
+		return exclusive;
+	}
+	public void setExclusive(Boolean exclusive) {
+		this.exclusive = exclusive == null ? false : exclusive;
 	}
 	
 	@Transient

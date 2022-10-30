@@ -652,15 +652,16 @@ function getVisibilityRow(multiselection, isVisible = true)
 			var id = mytriggers[i];
 			
 			if (id.length > 0)
-			{				
+			{
+				let separator = (i == mytriggers.length-1) ? "" : ", ";
 				if (id.indexOf("|") == -1)
 				{	
 					//triggered by a possible answer
-					var text = strip_tags($("textarea[data-id='" + mytriggers[i] + "']").text());
-					var pashortname = $("input[data-id='" + mytriggers[i] + "'][name^='pashortname']").val()
-					
+					var text = strip_tags($("textarea[data-id='" + mytriggers[i] + "']").first().text());
+					var pashortname = $("input[data-id='" + mytriggers[i] + "'][name^='pashortname']").val();
+
 					var a = document.createElement("a");			
-					$(a).attr("data-targetid", id).html(text + " (" + pashortname + ")");			
+					$(a).attr("data-targetid", id).html(text + " (" + pashortname + ")" + separator);
 					$(triggers).append(a);
 				} else {
 					//triggered by a matrix cell
@@ -670,7 +671,7 @@ function getVisibilityRow(multiselection, isVisible = true)
 					var pashortname = $(td).find("input[name^='shortname']").val()
 					
 					var a = document.createElement("a");			
-					$(a).attr("data-targetid", id).html(text + " (" + pashortname + ")");		
+					$(a).attr("data-targetid", id).html(text + " (" + pashortname + ")" + separator);
 					$(triggers).append(a);
 				}
 				empty = false;
@@ -1015,24 +1016,25 @@ function getNumberPropertiesRow(label, value)
 	});	
 }
 
-function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioButtons)
+function getChoosePropertiesRow(label, content, multiple, edit, value, isMultipleChoiceItem)
 {
 	var row = new PropertyRow();
 	row.Type("first");
 
-	row.LabelTitle(getPropertyLabel(label));	
-	
-	if (label == "DelphiChartTypeNumber") {
-		label = "DelphiChartType";
-	}
-	
+	row.LabelTitle(getPropertyLabel(label));
 	row.Label(label);
 
-	var rowcontent = "";
+	if (label == "DelphiChartTypeNumber") {
+		label = "DelphiChartType";
+		row.Label(label);
+	} else if (isEVote && isMultipleChoiceItem && label == "Style") {
+		row.LabelTitle(getPropertyLabel("StyleWithInfo"));
+	}
+
 	var options = content.split(",");
 	var name = getNewId();
-	const radioLabels = ["Style", "Order", "OrderSection", "Display", "DisplaySlider", "InitialSliderPosition", "EVoteProcedure"]
-	if (radioLabels.includes(label)){
+	const radioLabels = ["Style", "Order", "OrderSection", "Display", "DisplaySlider", "InitialSliderPosition"]
+	if (radioLabels.includes(label)) {
 		row.ContentType("radio");
 		row.Content(options);
 		for (var i = 0; i < options.length; i++)
@@ -1048,8 +1050,7 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 			}
 			row.ContentItems.push(item);
 		}
-	} else if (label == "Align")
-	{
+	} else if (label == "Align") {
 		row.ContentType("align");
 		row.Value(value);
 		edit = false;	
@@ -1859,7 +1860,7 @@ function addPossibleAnswer(noundo)
 
 	text = "Answer " + answerNum
 
-	var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text);
+	var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text, false);
 	element.possibleAnswers.push(newanswer);	
 	
 	if (isQuiz && quizanswersrow != null)
@@ -1955,7 +1956,7 @@ function addPossibleAnswerChildren(){
 	let text = "Answer " + (headerCell.possibleAnswersChildren().length + 1);
 
 	function nextAnswer(){
-		return newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text);
+		return newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text, false);
 	}
 
 	headerCell.possibleAnswersChildren.push(nextAnswer());

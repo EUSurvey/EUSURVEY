@@ -1,3 +1,5 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <script type="text/javascript">
 	var surveyUniqueId = "${form.survey.uniqueId}";
 	var labelOf = " ${form.getMessage("label.of")} ";
@@ -172,7 +174,7 @@
 											
 						<td style="vertical-align: top">
 							<!-- ko ifnot: id() == 'dummy' -->
-							<input style="position: relative" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onkeyup: 'singleKeyUp(event, this, '+$parents[1].readonly()+')', onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id(), 'aria-labelledby': 'answerlabel' + id()}", type="radio"  />
+							<input style="position: relative" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onkeyup: 'singleKeyUp(event, this, '+$parents[1].readonly()+')', onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id(), 'aria-labelledby': 'answerlabel' + id(), 'previousvalue': getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()) != '' ? 'checked' : 'false'}", type="radio"  />
 							<!-- /ko -->	
 						</td>
 						<td style="vertical-align: top; padding-right: 15px;">
@@ -192,7 +194,7 @@
 				<!-- /ko -->
 				<!-- ko if: useSelectBox -->
 				<div class="answer-column">		
-					<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'onclick': !foreditor ? 'validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);' : '', 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
+					<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'onchange': !foreditor ? 'validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);' : '', 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 						<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
 					</select>
 					<!-- ko if: foreditor -->
@@ -213,7 +215,7 @@
 						<!-- ko foreach: orderedPossibleAnswers(false) -->
 
 							<!-- ko ifnot: id() == 'dummy' -->
-								<input tabindex="0" style="clip: rect(0 0 0 0);position: absolute;" data-bind="enable: !$parent.readonly() && !$parent.foreditor, checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {'data-id': $parent.id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onkeyup: 'singleKeyUp(event, this, '+$parent.readonly()+')', onclick: $parent.readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parent.css + ' trigger check', name: 'answer' + $parent.id(), value: id(), 'aria-labelledby': 'answerlabel' + id()}" type="radio"  />
+								<input tabindex="0" style="clip: rect(0 0 0 0);position: absolute;" data-bind="enable: !$parent.readonly() && !$parent.foreditor, checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {'data-id': $parent.id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onkeyup: 'singleKeyUp(event, this, '+$parent.readonly()+')', onclick: $parent.readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parent.css + ' trigger check', name: 'answer' + $parent.id(), value: id(), 'aria-labelledby': 'answerlabel' + id(), 'previousvalue': getPAByQuestion2($parent.uniqueId(), uniqueId(), id()) != '' ? 'checked' : 'false'}" type="radio"  />
 								<label class="choice-button-label answertext" data-bind="attr: {'for': id, 'id': 'answerlabel' + id(), 'data-id' : id()}">
 									<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
 									<span data-bind="html: titleForDisplayMode($parent.displayMode())"></span>
@@ -311,7 +313,7 @@
 					<!-- ko foreach: $data -->
 					<td style="vertical-align: top">
 						<!-- ko ifnot: id() == 'dummy' -->
-						<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: !$parents[1].foreditor && getPAByQuestion($parents[1].uniqueId()).indexOf(uniqueId()) > -1, attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'findSurveyElementAndResetValidationErrors(this); singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id(), 'aria-labelledby': 'answerlabel' + id()}" type="checkbox"  />
+						<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: !$parents[1].foreditor && getPAByQuestion($parents[1].uniqueId()).indexOf(uniqueId()) > -1, attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-exclusive': exclusive(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'findSurveyElementAndResetValidationErrors(this); singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check' + (exclusive() ? ' exclusive' : ''), name: 'answer' + $parents[1].id(), value: id(), 'aria-labelledby': 'answerlabel' + id()}" type="checkbox"  />
 						<!-- /ko -->
 					</td>
 					<td style="vertical-align: top; padding-right: 10px;">
@@ -353,26 +355,25 @@
 			<div style="clear: both"></div>
 			<!-- /ko -->
 			<!-- ko if: isEVoteList -->
-			<table role="list" data-bind="attr: {class:'answers-table evote-table ' + choiceType(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
-
+			<table role="list" data-bind="attr: {class:'answers-table evote-table ' + choiceTypeWithEVote('${form.survey.geteVoteTemplate()}'), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 				<tr>
 					<th style="width: 20px">
-						<!-- ko if: choiceType() == "evote-brussels" -->
-						<input data-bind="enable: !readonly() && !foreditor, attr: {'data-id': id() + 'evote-all', 'id': id() + 'evote-all', onclick: readonly() ? 'return false;' : 'eVoteEntireListClick(this)', class: css + ' trigger check entire-list', name: 'answer' + id(), value: 'EVOTE-ALL'}" type="checkbox" />
-						<!-- /ko -->
-						<!-- ko if: choiceType() == "evote-outside" -->
-						<input data-bind="enable: !readonly() && !foreditor, attr: {'id': id() + 'evote-all', onclick: readonly() ? 'return false;' : 'eVoteEntireListClick(this)', class: css + ' trigger check entire-list'}" type="checkbox" />
-						<!-- /ko -->
+						<c:if test="${form.survey.geteVoteTemplate() == 'b' ||form.survey.geteVoteTemplate() == 'i'}">
+							<input data-bind="enable: !readonly() && !foreditor, attr: {'data-id': id() + 'evote-all', 'id': id() + 'evote-all', onclick: readonly() ? 'return false;' : 'eVoteEntireListClick(this)', class: css + ' trigger check entire-list', name: 'answer' + id(), value: 'EVOTE-ALL'}" type="checkbox" />
+						</c:if>
+						<c:if test="${form.survey.geteVoteTemplate() == 'o'}">
+							<input data-bind="enable: !readonly() && !foreditor, attr: {'id': id() + 'evote-all', onclick: readonly() ? 'return false;' : 'eVoteEntireListClick(this)', class: css + ' trigger check entire-list'}" type="checkbox" />
+						</c:if>
 					</th>
 					<th style="display: flex; flex-flow: row nowrap; justify-content: space-between; height: inherit; min-width: 155px;">
 						<div style="padding-right: 24px; align-self: center">
 							<label data-bind="attr: {'for': id() + 'evote-all'}">
-								<!-- ko if: choiceType() == "evote-brussels" -->
-								${form.getMessage("label.EntireList")}
-								<!-- /ko -->
-								<!-- ko if: choiceType() == "evote-outside" -->
-								${form.getMessage("label.eVoteSelectAll")}
-								<!-- /ko -->
+								<c:if test="${form.survey.geteVoteTemplate() == 'b' || form.survey.geteVoteTemplate() == 'i'}">
+									${form.getMessage("label.EntireList")}
+								</c:if>
+								<c:if test="${form.survey.geteVoteTemplate() == 'o'}">
+									${form.getMessage("label.eVoteSelectAll")}
+								</c:if>
 							</label>
 						</div>
 						<div class="evote-collapse" onclick="$(this).closest('.evote-table').attr('collapsed', (_, val) => val == null ? '' : null); event.stopImmediatePropagation(); event.preventDefault()">
@@ -450,6 +451,7 @@
 				<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parent.id(), 'data-id' : id()}" />
 				<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parent.id(), 'data-id' : id()}" />
 				<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parent.id(), 'data-id' : id()}" />
+				<input type="hidden" data-bind="value: exclusive, attr: {'name': 'exclusive' + $parent.id(), 'data-id' : id()}" />
 				<!-- /ko -->
 			<!-- /ko -->
 		</div>
@@ -659,7 +661,7 @@
 			<!-- /ko -->
 		<!-- /ko -->
 		<!-- ko if: maxCharacters() == 0 -->	
-			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
+			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId(), type == 'RegExQuestion'), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
 		<!-- /ko -->
 		
 		<!-- ko if: isComparable() -->		
@@ -1621,7 +1623,7 @@
 									<div class='limits' data-bind="html: getMaxCharacters(child.maxCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->							
 
-								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : '', onkeyup: child.maxCharacters() > 0 ? 'countChar(this);' : ''}"></textarea>
+								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), false, $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : '', onkeyup: child.maxCharacters() > 0 ? 'countChar(this);' : ''}"></textarea>
 
 								<!-- ko if: child.maxCharacters() > 0 && !$parent.foreditor -->
 									<div class="charactercounterdiv limits" style="max-width: 645px; text-align: right; margin-left: 20px;" aria-live="polite" aria-atomic="true">
@@ -1728,7 +1730,7 @@
 									<div class='limits' data-bind="html: getMax(child.max()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->							
 								
-								<input type="number" oninput="propagateChange(this);" onblur="resetValidationErrors($(this).closest('.cell'));validateInput($(this).parent())" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), $element), attr: {'name' : 'answer' + child.id(), min: child.min(), max: child.max(), 'data-shortname': child.shortname()}"/>
+								<input type="number" oninput="propagateChange(this);" onblur="resetValidationErrors($(this).closest('.cell'));validateInput($(this).parent())" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), false, $element), attr: {'name' : 'answer' + child.id(), min: child.min(), max: child.max(), 'data-shortname': child.shortname()}"/>
 								<!-- ko if: child.unit -->
 								<span data-bind="text: child.unit"></span>
 								<!-- /ko -->

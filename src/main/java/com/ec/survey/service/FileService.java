@@ -1353,11 +1353,15 @@ public class FileService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-		java.io.File file = fileService.getSurveyFile(surveyuid, fileuid);
-		Files.deleteIfExists(file.toPath());
-		
-		file = new java.io.File(fileDir + fileuid);
-		Files.deleteIfExists(file.toPath());
+		try {		
+			java.io.File file = fileService.getSurveyFile(surveyuid, fileuid);
+			Files.deleteIfExists(file.toPath());
+			
+			file = new java.io.File(fileDir + fileuid);
+			Files.deleteIfExists(file.toPath());		
+		} catch (FileSystemException f) {
+			logger.error(f.getLocalizedMessage(), f);
+		}
 	}
 
 	public Map<String, String> getMissingFiles(String uniqueId) throws Exception {

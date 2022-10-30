@@ -125,6 +125,13 @@ function initModals(item)
     		return noHTMLString.trim();
     	};
 	}
+
+    if (!String.prototype.stripStyleHtml) {
+		String.prototype.stripStyleHtml=function(){
+			var noHTMLString = this.replace(/(<(?!(?:br|a)\b)([^>]+)>)/ig,"");
+			return noHTMLString.trim();
+		};
+	}
     
     if (!String.prototype.stripHtml115) {
     	String.prototype.stripHtml115=function(){
@@ -916,7 +923,7 @@ function initModals(item)
 				$('#runner-captcha-empty-error').show();
 			} else {
 				
-				saveCookies();
+				checkLocalBackup();
 				
 				$.ajax({type: "POST",
 					url: contextpath + "/runner/checksession",
@@ -2069,6 +2076,10 @@ function initModals(item)
 
 			if (element.hasClass("freetextitem")) {
 				if (getCharacterCount(element.find(".freetext")) === 0) {
+					return true;
+				}
+			} else if (element.hasClass("rankingitem")) {
+				if (!element.hasClass("answered")) {
 					return true;
 				}
 			} else if (element.hasClass("matrixitem")) {

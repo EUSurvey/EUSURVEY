@@ -3376,6 +3376,7 @@ public class SurveyService extends BasicService {
 					Survey::getMinListPercent,
 					Survey::getMaxPrefVotes,
 					Survey::getSeatsToAllocate,
+					Survey::getShowResultsTestPage,
 					Survey::getShowTotalScore,
 					Survey::getScoresByQuestion,
 					Survey::getShowQuizIcons,

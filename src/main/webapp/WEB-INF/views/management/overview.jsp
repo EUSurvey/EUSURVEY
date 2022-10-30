@@ -75,6 +75,10 @@
 		function checkPublish()
 		{
 			<c:choose>
+				<c:when test="${form.survey.getIsEVote() && !active}">
+					$("#publish-error").show();
+					$("#placeholder").remove();
+				</c:when>
 				<c:when test="${!form.survey.automaticPublishing}">
 					$("#generic-wait-dialog").modal("show");
 					$("#overviewform-target").val("publish");
@@ -105,6 +109,9 @@
 		function checkActivate()
 		{
 			<c:choose>
+				<c:when test="${form.survey.getIsEVote() && !active}">
+					$("#publish-error").show();
+				</c:when>
 				<c:when test="${!form.survey.automaticPublishing}">
 					$("#generic-wait-dialog").modal("show");
 					$("#overviewform-target").val("activate");
@@ -152,7 +159,7 @@
 							<span data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
 						</c:when>
 						<c:when test="${form.survey.isEVote}">
-							<span data-toggle="tooltip" title="<spring:message code="label.eVote" />"  class="glyphicon glyphicon-ok" style="border: 2px solid #333; padding: 3px; font-size: 21px; color: #333"></span>
+							<span data-toggle="tooltip" title="<spring:message code="label.eVote" /> - <spring:message code="${form.survey.eVoteTemplateTitle}"/>"  class="glyphicon glyphicon-ok" style="border: 2px solid #333; padding: 3px; font-size: 21px; color: #333"></span>
 						</c:when>
 						<c:otherwise>
 							<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
@@ -221,18 +228,22 @@
 								</c:when>
 								<c:when test="${form.survey.isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
 									<a id="btnOverviewPublish" onclick="checkPublish()" class="btn btn-primary"><spring:message code="label.Publish" /></a>
+									<br />
+									<span id="publish-error" class="validation-error hideme"><spring:message code="validation.PublishWithoutVoterFile" /></span>
 								</c:when>
 								<c:when test="${form.survey.isPublished}">
 									<a class="btn disabled btn-default"><spring:message code="label.Publish" /></a>
 								</c:when>
 								<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
 									<a id="btnOverviewPublish" onclick="checkActivate();" class="btn btn-primary"><spring:message code="label.Publish" /></a>
+									<br />
+									<span id="publish-error" class="validation-error hideme"><spring:message code="validation.PublishWithoutVoterFile" /></span>
 								</c:when>
 								<c:otherwise>
 									<a id="btnOverviewPublish" class="btn btn-primary disabled"><spring:message code="label.Publish" /></a>
 								</c:otherwise>
 							</c:choose>
-							<br /><br />
+							<br id="placeholder" /><br />
 							<c:choose>
 								<c:when test="${form.survey.isPublished && form.survey.hasPendingChanges && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
 									<a id="btnOverviewApplyEnabled" onclick="$('#pending-changes-dialog').modal('show');" class="btn btn-default btn-primary"><spring:message code="label.ShowPendingChanges" /></a>
