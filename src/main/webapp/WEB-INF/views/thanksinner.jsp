@@ -45,14 +45,16 @@
 	</c:if>	
 		
 	<br /><br />
-	<div id="contribution-id-save-hint" style="color: #777; margin: 6px 0 0px 0;">
-		<spring:message code="label.ContributionSavingHint" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
-		<a href="javascript:;" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText(uniqueCode);" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
-			<i class="glyphicon glyphicon-copy copy-icon"></i>
-		</a>
-		<br />
-		<spring:message code="label.ContributionSavingExplanation" />
-	</div>
+	<c:if test="${!form.survey.isEVote}">
+		<div id="contribution-id-save-hint" style="color: #777; margin: 6px 0 0px 0;">
+			<spring:message code="label.ContributionSavingHint" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
+			<a href="javascript:;" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText(uniqueCode);" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
+				<i class="glyphicon glyphicon-copy copy-icon"></i>
+			</a>
+			<br />
+			<spring:message code="label.ContributionSavingExplanation" />
+		</div>
+	</c:if>
 	
 	<br />
 	

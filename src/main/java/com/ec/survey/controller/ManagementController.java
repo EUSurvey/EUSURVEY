@@ -1111,6 +1111,7 @@ public class ManagementController extends BasicController {
 					survey.setSeatsToAllocate(templateSurvey.getSeatsToAllocate());
 					survey.setMinListPercent(templateSurvey.getMinListPercent());
 					survey.setShowResultsTestPage(templateSurvey.getShowResultsTestPage());
+					survey.setConfirmationPage(templateSurvey.getConfirmationPage());
 				}
 			}
 		}
