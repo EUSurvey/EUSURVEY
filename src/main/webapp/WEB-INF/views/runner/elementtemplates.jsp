@@ -355,7 +355,7 @@
 			<div style="clear: both"></div>
 			<!-- /ko -->
 			<!-- ko if: isEVoteList -->
-			<table role="list" data-bind="attr: {class:'answers-table evote-table ' + choiceTypeWithEVote('${form.survey.geteVoteTemplate()}'), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
+			<table role="list" collapsed data-bind="attr: {class:'answers-table evote-table ' + choiceTypeWithEVote('${form.survey.geteVoteTemplate()}'), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 				<tr>
 					<th style="width: 20px">
 						<c:if test="${form.survey.geteVoteTemplate() == 'b' ||form.survey.geteVoteTemplate() == 'i'}">
