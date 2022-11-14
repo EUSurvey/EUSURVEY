@@ -272,7 +272,12 @@
 		</table>		
 		<!-- /ko -->		
 	
+		<!-- ko if: counting() != null && counting().template == 'l' -->
+		<h2><spring:message code="label.seats.ElectedCandidatesProvisionalClassification" />:</h2>
+		<!-- /ko -->
+		<!-- ko if: counting() != null && counting().template != 'l' -->
 		<h2><spring:message code="label.seats.ElectedCandidatesPreferentialVotes" />:</h2>
+		<!-- /ko -->
 		<table data-bind="if: counting() != null" class="table table-condensed table-striped table-bordered" style="width: auto;">
 			<tr style="font-weight: bold">
 				<th><spring:message code="label.seats.List" /></th>

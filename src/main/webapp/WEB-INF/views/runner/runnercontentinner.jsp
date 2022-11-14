@@ -207,7 +207,14 @@
 							<div tabindex="0" style="float: left; width: calc(100% - 18px)">
 								<b>${form.getMessage("label.AnonymousMode")}</b>
 								<p>
-									${form.getMessage("info.AnonymousMode")}
+									<c:choose>
+										<c:when test="${form.survey.isEVote}">
+											${form.getMessage("info.AnonymousModeEVote")}
+										</c:when>
+										<c:otherwise>
+											${form.getMessage("info.AnonymousMode")}
+										</c:otherwise>
+									</c:choose>	
 								</p>					
 							</div>
 							<div style="float: right; margin-top: -15px; margin-right: -15px;">
