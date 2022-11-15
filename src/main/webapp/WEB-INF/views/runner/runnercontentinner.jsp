@@ -111,7 +111,7 @@
 										</c:if>
 								</span>
 								<span style="color: black">
-									<a style="margin-left: 24px; float: right" href="javascript:;" class="btn btn-default" onclick="clearEVoteVotes()"><spring:message code="label.ClearVotes" /></a>
+									<a style="margin-left: 24px; float: right" href="javascript:;" class="btn btn-default" onclick="clearEVoteVotes()">${form.getMessage("label.ClearVotes")}</a>
 								</span>
 							</div>
 						</div>
