@@ -26,7 +26,7 @@
 						<i>
 						<c:choose>
 							<c:when test="${oss}"><spring:message code="footer.fundedOSSNew" /></c:when>
-							<c:otherwise><spring:message code="footer.fundedNew" /></c:otherwise>
+							<c:otherwise><spring:message code="footer.fundedDEP" /></c:otherwise>
 						</c:choose>
 						</i>
 					</div>
