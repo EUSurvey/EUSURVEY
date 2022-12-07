@@ -437,6 +437,10 @@ public class EVoteService extends BasicService {
 		int counter = 0;
 		Set<Integer> preferentialVoteAnswerIds = new HashSet<>();
 		
+		// we use his hashset to check whether each vote has at least one candidate or list vote
+		// if not, we treat it as "blank" vote
+		Set<Integer> voteAnswerIds = new HashSet<>();
+		
 		try {
 			session.flush();
 			
@@ -457,8 +461,14 @@ public class EVoteService extends BasicService {
 					evoteResults.setBlankVotes(evoteResults.getBlankVotes() + 1);
 				} else if (config.spoilt.getUniqueId().equals(pauid)) {
 					evoteResults.setSpoiltVotes(evoteResults.getSpoiltVotes() + 1);
+				} else if (config.vote.getUniqueId().equals(pauid)) {
+					voteAnswerIds.add(answerSetId);
 				} else if (evoteResults.getLists().containsKey(quid)) {
 					eVoteListResult listResult = evoteResults.getLists().get(quid);
+					
+					if (voteAnswerIds.contains(answerSetId)) {
+						voteAnswerIds.remove(answerSetId);
+					}
 					
 					if (!config.useLuxembourgProcedure && value != null && value.equalsIgnoreCase("EVOTE-ALL")) {
 						listResult.setListVotes(listResult.getListVotes() + 1);
@@ -480,6 +490,9 @@ public class EVoteService extends BasicService {
 		}
 				
 		evoteResults.setPreferentialVotes(preferentialVoteAnswerIds.size());
+		if (voteAnswerIds.size() > 0) {
+			evoteResults.setBlankVotes(evoteResults.getBlankVotes() + voteAnswerIds.size());
+		}
 		
 		return evoteResults;
 	}
