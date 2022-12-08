@@ -438,7 +438,7 @@ public class EVoteService extends BasicService {
 		Set<Integer> preferentialVoteAnswerIds = new HashSet<>();
 		
 		// we use his hashset to check whether each vote has at least one candidate or list vote
-		// if not, we treat it as "blank" vote
+		// if not, we treat it as preferential vote
 		Set<Integer> voteAnswerIds = new HashSet<>();
 		
 		try {
@@ -489,11 +489,8 @@ public class EVoteService extends BasicService {
 			results.close();
 		}
 				
-		evoteResults.setPreferentialVotes(preferentialVoteAnswerIds.size());
-		if (voteAnswerIds.size() > 0) {
-			evoteResults.setBlankVotes(evoteResults.getBlankVotes() + voteAnswerIds.size());
-		}
-		
+		evoteResults.setPreferentialVotes(preferentialVoteAnswerIds.size() + voteAnswerIds.size());
+				
 		return evoteResults;
 	}
 	
