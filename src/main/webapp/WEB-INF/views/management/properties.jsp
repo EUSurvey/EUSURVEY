@@ -25,6 +25,7 @@
 		<form:form id="save-form" style="width: 730px; margin-left: auto; margin-right: auto;" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/properties?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
 			<form:hidden path="survey.id" />
 			<input type="hidden" id="survey-security" name="survey.security" value="" />
+			<form:input type="hidden" path="survey.isEVote" />
 			<form:input type="hidden" path="survey.eVoteTemplate" />
 			
 			<div class="actions">
@@ -1318,7 +1319,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr  data-bind="visible: !opc()">
+					<tr  data-bind="visible: !opc() && !eVote()">
 						<td>
 							<div style="float: left"><spring:message code="label.EnableQuiz" /></div>
 							<div style="float: right">
@@ -1478,7 +1479,7 @@
 						</td> 
 					</tr>
 					<c:if test="${enabledelphi || form.survey.isDelphi}">
-						<tr data-bind="visible: !opc()">
+						<tr data-bind="visible: !opc() && !eVote()">
 							<td>
 								<div style="float: left"><spring:message code="label.EnableDelphi" /></div>
 								<div style="float: right">
@@ -1558,28 +1559,17 @@
 						</tr>
 					</c:if>
 
-					<c:if test="${enableevote || form.survey.isEVote}">
-						<tr data-bind="visible: !opc()">
+					<c:if test="${form.survey.isEVote}">
+						<tr>
 							<td>
 								<div style="float: left"><spring:message code="label.EnableEVote" /></div>
 								<div style="float: right">
 									<div class="onoffswitch">
-										<c:choose>
-											<c:when test="${form.survey.isOPC}">
-												<input type="radio" disabled="disabled" name="survey.isEVote" class="onoffswitch-checkbox" id="myonoffswitchevote" />
-												<label class="onoffswitch-label disabled" for="myonoffswitchevote">
-													<span class="onoffswitch-inner"></span>
-													<span class="onoffswitch-switch"></span>
-												</label>
-											</c:when>
-											<c:otherwise>
-												<form:checkbox path="survey.isEVote" onclick="_properties.toggleEVote(this)" class="onoffswitch-checkbox" data-bind="enable: (_properties.isNormalSurvey()||_properties.eVote())" id="myonoffswitchevote" />
-												<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.isNormalSurvey()||_properties.eVote()) ? "" : " disabled")' for="myonoffswitchevote">
-													<span class="onoffswitch-inner"></span>
-													<span class="onoffswitch-switch"></span>
-												</label>
-											</c:otherwise>
-										</c:choose>
+										<input checked="checked" disabled="disabled" type="checkbox" class="onoffswitch-checkbox" id="myonoffswitchevote">
+										<label class="onoffswitch-label disabled" for="myonoffswitchevote">
+											<span class="onoffswitch-inner"></span>
+											<span class="onoffswitch-switch"></span>
+										</label>
 									</div>
 								</div>
 							</td>
@@ -1602,23 +1592,25 @@
 							</td>
 						</tr>
 
-						<tr class="subelement" data-bind="visible: eVote">
-							<td>
-								<div style="float: left; max-width: 500px;">
-									<spring:message code="label.EligibleLists" />
-									<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								</div>
-								<div style="float: right; text-align: right">
-									<div>
-										<input id='minListPercent' class="form-control number min0 max100" type='number' name='survey.minListPercent' min='0' max='100' value="<esapi:encodeForHTMLAttribute>${form.survey.minListPercent}</esapi:encodeForHTMLAttribute>">
+						<c:if test="${form.survey.geteVoteTemplate() != 'p'}">
+							<tr class="subelement" data-bind="visible: eVote">
+								<td>
+									<div style="float: left; max-width: 500px;">
+										<spring:message code="label.EligibleLists" />
+										<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 									</div>
-								</div>
-								<div style="clear: both"></div>
-								<div class="help" style="display: none; margin-top: 10px;">
-									<span><spring:message code="message.EligibleLists" /></span>
-								</div>
-							</td>
-						</tr>
+									<div style="float: right; text-align: right">
+										<div>
+											<input id='minListPercent' class="form-control number min0 max100" type='number' name='survey.minListPercent' min='0' max='100' value="<esapi:encodeForHTMLAttribute>${form.survey.minListPercent}</esapi:encodeForHTMLAttribute>">
+										</div>
+									</div>
+									<div style="clear: both"></div>
+									<div class="help" style="display: none; margin-top: 10px;">
+										<span><spring:message code="message.EligibleLists" /></span>
+									</div>
+								</td>
+							</tr>
+						</c:if>
 
 						<tr class="subelement" data-bind="visible: eVote">
 							<td>
@@ -1637,24 +1629,26 @@
 								</div>
 							</td>
 						</tr>
-						
-						<tr class="subelement" data-bind="visible: eVote">
-							<td>
-								<div style="float: left; max-width: 500px;">
-									<spring:message code="label.NumberOfSeatsToAllocate" />
-									<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								</div>
-								<div style="float: right; text-align: right">
-									<div>
-										<input id='seatsToAllocate' class="form-control number min1 max1000" type='number' name='survey.seatsToAllocate' min='1' max='1000' value="<esapi:encodeForHTMLAttribute>${form.survey.seatsToAllocate}</esapi:encodeForHTMLAttribute>">
+
+						<c:if test="${form.survey.geteVoteTemplate() != 'p'}">
+							<tr class="subelement" data-bind="visible: eVote">
+								<td>
+									<div style="float: left; max-width: 500px;">
+										<spring:message code="label.NumberOfSeatsToAllocate" />
+										<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 									</div>
-								</div>
-								<div style="clear: both"></div>
-								<div class="help" style="display: none; margin-top: 10px;">
-									<span><spring:message code="message.NumberOfSeatsToAllocate" /></span>
-								</div>
-							</td>
-						</tr>
+									<div style="float: right; text-align: right">
+										<div>
+											<input id='seatsToAllocate' class="form-control number min1 max1000" type='number' name='survey.seatsToAllocate' min='1' max='1000' value="<esapi:encodeForHTMLAttribute>${form.survey.seatsToAllocate}</esapi:encodeForHTMLAttribute>">
+										</div>
+									</div>
+									<div style="clear: both"></div>
+									<div class="help" style="display: none; margin-top: 10px;">
+										<span><spring:message code="message.NumberOfSeatsToAllocate" /></span>
+									</div>
+								</td>
+							</tr>
+						</c:if>
 
 						<tr class="subelement" data-bind="visible: eVote">
 							<td>

@@ -68,6 +68,13 @@
 		.complextable pre {
 			margin-left: 0;
 		}
+
+		@media print {
+		/* Removes hundreads of blank pages in Chrome 108 */
+			.chartjs-size-monitor {
+				display:none !important;
+			}
+		}
 	
 	</style>
 	

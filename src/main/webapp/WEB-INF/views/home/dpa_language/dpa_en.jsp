@@ -356,11 +356,11 @@
     <p>Points a, b, c, d of article 31 par. 2 EUDPR – GDPR art. 30 par. 2</p>
     <table class="table-format">
         <tr>
-            <td><b>Name and contact details of the data processor</b></td>
+            <td><b>Name and contact details of the data processor:</b></td>
             <td>European Commission, DG for Informatics (DIGIT), Unit D1, <a href="https://ec.europa.eu/eusurvey/home/support">contact form</a></td>
         </tr>
         <tr>
-            <td><b>Subject matter of the processing activity</b></td>
+            <td><b>Subject matter of the processing activity:</b></td>
             <td>Processing of personal data in relation to the services provided to the Survey Owner:
                 <ul>
                     <li>Development, provision, operation and maintenance of EU Survey as a managed service, including all future developments</li>
@@ -371,11 +371,11 @@
             </td>
         </tr>
         <tr>
-            <td><b>International data transfers</b></td>
+            <td><b>International data transfers:</b></td>
             <td>N/A, all personal data are stored in the servers of the European Commission</td>
         </tr>
         <tr>
-            <td><b>Technical and organisational measures</b></td>
+            <td><b>Technical and organisational measures:</b></td>
             <td>EUSurvey stores the EU-Login username as well as e-mail addresses of the survey owners at the
                 Datacentres of the European Commission.<br>
                 The European Commission has implemented security measures to protect server hardware, software and the

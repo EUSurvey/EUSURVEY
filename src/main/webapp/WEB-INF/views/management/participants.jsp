@@ -226,7 +226,7 @@
 														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- /ko -->
 													<!-- ko if: sendEnabled() -->
-														<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
+														<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/sendInvitations/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
 													<!-- ko if: !sendEnabled() && type() != 'Token' -->
 														<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
@@ -259,7 +259,7 @@
 													<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
 													<!-- ko if: editEnabled() -->
-														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/participantsEdit?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- /ko -->
 													<!-- ko if: !editEnabled() -->
 														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
@@ -338,7 +338,7 @@
 														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- /ko -->
 													<!-- ko if: sendEnabled() -->
-														<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
+														<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/sendInvitations/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
 													<!-- ko if: !sendEnabled() && type() != 'Token' -->
 														<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
@@ -371,7 +371,7 @@
 													<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
 													<!-- ko if: editEnabled() -->
-														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/participantsEdit?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- /ko -->
 													<!-- ko if: !editEnabled() -->
 														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
@@ -451,7 +451,7 @@
 															<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 														<!-- /ko -->
 														<!-- ko if: sendEnabled() -->
-															<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
+															<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/sendInvitations/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
 														<!-- /ko -->
 														<!-- ko if: !sendEnabled() && type() != 'Token' -->
 															<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
@@ -484,7 +484,7 @@
 														<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 														<!-- /ko -->
 														<!-- ko if: editEnabled() -->
-															<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+															<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/participantsEdit?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
 														<!-- /ko -->
 														<!-- ko if: !editEnabled() -->
 															<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
@@ -582,7 +582,7 @@
 													<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
 													<!-- ko if: editEnabled() -->
-														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/participantsEdit?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- /ko -->
 													<!-- ko if: !editEnabled() -->
 														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>

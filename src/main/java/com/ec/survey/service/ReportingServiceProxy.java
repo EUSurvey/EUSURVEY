@@ -24,6 +24,9 @@ public class ReportingServiceProxy {
 	@Resource(name = "reportingService")
 	protected ReportingService reportingService;
 	
+	@Resource(name = "surveyService")
+	protected SurveyService surveyService;
+	
 	protected @Value("${enablereportingdatabase}") String enablereportingdatabase;
 	
 	private boolean isReportingDatabaseEnabled()
@@ -59,6 +62,16 @@ public class ReportingServiceProxy {
 	public void updateOLAPTable(String shortname, boolean draftversion, boolean publishedversion) throws Exception {
 		if (!isReportingDatabaseEnabled()) return;
 		reportingService.updateOLAPTableInternal(shortname, draftversion, publishedversion);
+	}
+	
+	public void recreateOLAPTable(String shortname, boolean draftversion, boolean publishedversion) throws Exception {
+		if (!isReportingDatabaseEnabled()) return;
+		
+		Survey survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, false, true, false);
+		String uid = survey.getUniqueId();
+				
+		reportingService.deleteOLAPTableInternal(uid, draftversion, publishedversion);
+		reportingService.createOLAPTableInternal(shortname, draftversion, publishedversion);
 	}
 
 	public int getCount(boolean isDraft, String surveyUid) {

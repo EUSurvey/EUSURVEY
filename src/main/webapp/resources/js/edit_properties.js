@@ -470,7 +470,7 @@ var ElementProperties = function() {
 				let editenabled = !element.editorRowsLocked()
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
-				getChoosePropertiesRow("Style", "CheckBox,ListBox" + (isEVote ? ",EVoteList" : ""), false, false, element.styleType(), true);
+				getChoosePropertiesRow("Style", (isEVote ? "EVoteList" : "CheckBox,ListBox"), false, false,  (isEVote ? "EVoteList" : element.styleType()), true);
 				if (!element.isEVoteList()) {
 					getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
 				}

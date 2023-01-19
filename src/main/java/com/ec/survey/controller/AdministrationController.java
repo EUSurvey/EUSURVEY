@@ -425,4 +425,15 @@ public class AdministrationController extends BasicController {
 		}
 		return Constants.ERROR;
 	}
+	
+	@RequestMapping(value = "/recreateOLAPTable/{shortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public  @ResponseBody String recreateOLAPTable(@PathVariable String shortname, HttpServletRequest request) throws Exception {
+		try {
+			reportingService.recreateOLAPTable(shortname, true, true);
+			return "executed";
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return Constants.ERROR;
+	}
 }

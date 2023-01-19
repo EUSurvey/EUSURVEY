@@ -1164,13 +1164,24 @@ function handleElement(active, elementIds, i) {
 					refreshSlider(this);
 				});
 			}
-			
+
+			var atLeastOneSubQuestion = false;
 			$(element).find(".matrix-question").each(function(){
-				if ($(this).hasClass("untriggered") && isTriggered(this, true))
+				var triggered = isTriggered(this, true);
+				if (triggered) {
+					atLeastOneSubQuestion = true;
+				}
+				if ($(this).hasClass("untriggered") && triggered)
 				{
-					$(this).removeClass("untriggered").show();	
+					$(this).removeClass("untriggered").show();
+					$(element).find(".trigger").each(function() {
+						checkDependencies(this);
+					});
 				}
 			});
+			if ($(element).hasClass("matrixitem") && !atLeastOneSubQuestion) {
+				$(element).addClass("untriggered").hide();
+			}
 			
 			// if the target contains other single/multiple choice answers, also
 			// check those dependents
@@ -1214,59 +1225,49 @@ function handleElement(active, elementIds, i) {
 		}
 		
 		$(element).find(".matrix-question").each(function(){
-			if (!$(this).hasClass("untriggered") && !isTriggered(this, true))
-			{
-				$(this).addClass("untriggered").hide();	
-			} else if (isTriggered(this, true))
-			{
-				$(this).removeClass("untriggered").show();	
-				$(element).removeClass("untriggered").show();
-			}
+			$(this).addClass("untriggered").hide();
 		});
 	}	
-	
+
 	if ($(element).hasClass("matrix-question")) {
-		//hide matrix if all questions are hidden
-		if ($(element).closest("table").length > 0)
-		{	
-			//special case: all dependent elements are hidden and matrix itself is dependent
-			if ($(element).closest(".survey-element").attr("data-triggers") && $(element).closest(".survey-element").attr("data-triggers") != ";")
-			{
-				var dependents = $(element).closest("table").find("tr[data-triggers!=';']").length - 1;
-				var hiddendependents = $(element).closest("table").find("tr[data-triggers!=';'].untriggered").length;
-				if (dependents == hiddendependents)
-				{
-					//also hide other matrix questions
-					$(element).closest("table").find("tr[data-triggers=';']").addClass("untriggered").hide();
-				}
-			}
-			
-			//normal runner
-			if ($(element).closest("table").find("tr.untriggered").length == $(element).closest("table").find("tr").length - 1) 
-			{
-				if (!triggered)
-				$(element).closest(".survey-element").addClass("untriggered").hide();
-			} else {
-				if (triggered)
-				{
-					$(element).closest(".survey-element").removeClass("untriggered").show();
-					
-					// if the target contains other single/multiple choice answers, also
-					// check those dependents
-					$(element).find(".trigger").each(function() {
-						checkDependencies(this);
-					});				
-				}
-			}
+		var matrixItem = $(element).closest(".matrixitem");
+		if (matrixItem.length > 0 && !isTriggered(matrixItem, true)) {
+			//hide matrix if dependencies of matrix itself aren't fulfilled although a subquestion may be visible
+			matrixItem.addClass("untriggered").hide();
+			$(element).find(".matrix-question").each(function(){
+				$(this).addClass("untriggered").hide();
+			});
 		} else {
-			//mobile runner
-			if ($(element).closest(".matrixdiv").find(".matrix-question.untriggered").length == $(element).closest(".matrixdiv").find(".matrix-question").length) 
+			//hide matrix if all questions are hidden
+			if ($(element).closest("table").length > 0)
 			{
-				if (!triggered)
-				$(element).closest(".survey-element").addClass("untriggered").hide();
+				//normal runner
+				if ($(element).closest("table").find("tr.untriggered").length == $(element).closest("table").find("tr").length - 1)
+				{
+					if (!triggered)
+						$(element).closest(".survey-element").addClass("untriggered").hide();
+				} else {
+					if (triggered)
+					{
+						$(element).closest(".survey-element").removeClass("untriggered").show();
+
+						// if the target contains other single/multiple choice answers, also
+						// check those dependents
+						$(element).find(".trigger").each(function() {
+							checkDependencies(this);
+						});
+					}
+				}
 			} else {
-				if (triggered)
-				$(element).closest(".survey-element").removeClass("untriggered").show();
+				//mobile runner
+				if ($(element).closest(".matrixdiv").find(".matrix-question.untriggered").length == $(element).closest(".matrixdiv").find(".matrix-question").length)
+				{
+					if (!triggered)
+						$(element).closest(".survey-element").addClass("untriggered").hide();
+				} else {
+					if (triggered)
+						$(element).closest(".survey-element").removeClass("untriggered").show();
+				}
 			}
 		}
 	}
@@ -1348,7 +1349,7 @@ function isTriggered(element, stoprecursion) {
 		
 	if (triggers != null && triggers.length > 1) { //can be ";"
 		var triggerIds = triggers.split(";");
-		if (triggerIds[triggerIds.length - 1] == "") {
+		while (triggerIds[triggerIds.length - 1] == "") {
 			triggerIds.pop(); 	//last element is only an empty String
 		}
 
@@ -1391,25 +1392,21 @@ function isTriggered(element, stoprecursion) {
 	} 
 	if ($(element).hasClass("matrix-question"))
 	{
-		//the matrix question itself is not triggered but its parent matrix
-		var res =  isTriggered($(element).closest(".survey-element"), true);
-		cachedIsTriggered[id] = res;
-		if (res) return true;
+		if (triggers == ";") {
+			$(element).removeClass("untriggered").show();
+			cachedIsTriggered[id] = true;
+			return true;
+		} else {
+			//the matrix question itself is not triggered; independent of parent!!!
+			cachedIsTriggered[id] = false;
+			return false;
+		}
 	}
 	
 	if (stoprecursion) {
 		cachedIsTriggered[id] = false;
 		return false;
 	}
-	
-	var result = false;
-	$(element).find(".matrix-question").each(function(){
-		if (isTriggered(this, true))
-		{
-			result = true;
-			return;
-		}
-	});
 	
 	cachedIsTriggered[id] = result;
 	return result;
@@ -1647,6 +1644,8 @@ var _surveyBackupIdentifier
 function getSurveyIdentifier() {
 
 	if (_surveyBackupIdentifier == null){
+		if ($("#survey.id").length == 0) return; // for example on the skin page
+		
 		let survey = $(document.getElementById("survey.id")).val();
 		let invitation = $(document.getElementById("invitation")).val();
 		let uniqueCode = $(document.getElementById("uniqueCode")).val();
@@ -1684,8 +1683,9 @@ function recheckLocalBackup(){
 
 function clearLocalBackup(){
 	const key = getSurveyIdentifier();
-
-	window.localStorage.removeItem(key);
+	if (key != null) {
+		window.localStorage.removeItem(key);
+	}
 }
 
 function clearLocalBackupForPrefix(surveyprefix) {
@@ -1715,8 +1715,9 @@ function saveLocalBackup(){
 	backup.push({name: "__filesUploaded", value: filesUploaded})
 
 	const key = getSurveyIdentifier();
-
-	window.localStorage.setItem(key, JSON.stringify(backup));
+	if (key != null) {
+		window.localStorage.setItem(key, JSON.stringify(backup));
+	}
 }
 
 function restoreBackup(){
@@ -1760,13 +1761,13 @@ function restoreBackup(){
 }
 
 function isLocalStorageEnabled() {
-	return checkLocalStorageEnabled(true);
+	return checkLocalStorageEnabled(true, true);
 }
 
 var _localStorageEnabled
-function checkLocalStorageEnabled(checkDelphi) {
-	if (checkDelphi && $("#saveLocalBackup").length === 0) {
-		// local backup checkbox is not displayed => Delphi question => disable local storage
+function checkLocalStorageEnabled(checkDelphi, checkEVote) {
+	if (checkDelphi && checkEVote && $("#saveLocalBackup").length === 0) {
+		// local backup checkbox is not displayed => Delphi/ EVote survey => disable local storage
 		return false;
 	}
 
@@ -1985,20 +1986,19 @@ function updateEVoteStatus() {
 	votedLists += $(".evote-brussels .entire-list:checked").length;
 	votedLists += $(".evote-ispra .entire-list:checked").length;
 
-	//no list votes for outside and luxembourg
-
+	//no list votes for outside, luxembourg and single president
 	votedCandidates = 0;
-	votedCandidates += $(".evote-candidate:checked").length;
+	votedCandidates += $(".survey-element:not(.untriggered) .evote-candidate:checked").length;
 
 	let validation = validateEVote();
-	if (validation.error){
+	if (validation.error && !(validation.candidatesInvalid2)){
 		$("#evoteVoterOverview").attr("error", true);
 
-		$('#votedLists').css("font-weight", validation.listsValid ? "" : "bold")
-		$('#votedCandidates').css("font-weight", validation.candidatesValid ? "" : "bold")
-
+		$('#votedLists').css("font-weight", validation.listsInvalid ? "bold" : "")
+		$('#votedCandidates').css("font-weight", validation.candidatesInvalid1 ? "bold" : "")
 	} else {
 		$("#evoteVoterOverview").removeAttr("error");
+		$(".evote-validation").remove();
 		$('#votedLists').css("font-weight", "")
 		$('#votedCandidates').css("font-weight", "")
 	}
@@ -2008,7 +2008,11 @@ function updateEVoteStatus() {
 }
 
 function validateEVote(){
-	let candidateError = votedCandidates > maxEVoteCandidates
+	let candidateError1 = votedCandidates > maxEVoteCandidates;
+	let candidateError2 = false;
+	if ($(".survey-element:not(.untriggered) .evote-table").length > 0) {
+		candidateError2 = votedCandidates === 0 & votedLists === 0;
+	}
 	let listError = votedLists > 1;
-	return {error:  listError || candidateError, candidatesValid : !candidateError, listsValid: !listError}
+	return {error:  listError || candidateError1 || candidateError2, candidatesInvalid1 : candidateError1, candidatesInvalid2 : candidateError2, listsInvalid: listError}
 }

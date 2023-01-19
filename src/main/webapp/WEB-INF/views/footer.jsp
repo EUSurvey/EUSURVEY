@@ -23,25 +23,47 @@
 						</c:choose>
 						
 						<br /><br />
-						<i>
-						<c:choose>
-							<c:when test="${oss}"><spring:message code="footer.fundedOSSNew" /></c:when>
-							<c:otherwise><spring:message code="footer.fundedNew" /></c:otherwise>
-						</c:choose>
+						<i>						
+							<c:choose>
+								<c:when test="${form != null}">
+									<c:choose>
+										<c:when test="${oss}">${form.getMessage("footer.fundedOSSNew")}</c:when>
+										<c:otherwise>${form.getMessage("footer.fundedNewDEP")}</c:otherwise>
+									</c:choose>
+								</c:when>
+								<c:otherwise>
+									<c:choose>
+										<c:when test="${oss}"><spring:message code="footer.fundedOSSNew" /></c:when>
+										<c:otherwise><spring:message code="footer.fundedNewDEP" /></c:otherwise>
+									</c:choose>
+								</c:otherwise>
+							</c:choose>
 						</i>
 					</div>
 					
 					<div class="col-md-3"></div>
 					
 					<div class="col-md-3" style="padding-top: 40px;">
-						<c:if test="${showprivacy}">
-							<a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a><br />
-							<a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a><br />
-						</c:if>
-						
 						<c:set var="localeCode" value="${fn:toLowerCase(pageContext.response.locale.language)}" />
 						
-						<a href="https://ec.europa.eu/info/cookies_${localeCode}"><spring:message code="label.Cookies" /></a><br />
+						<c:choose>
+							<c:when test="${form != null}">
+								<c:if test="${showprivacy}">
+									<a href="<c:url value="/home/privacystatement"/>">${form.getMessage("label.PrivacyStatement.bis")}</a><br />
+									<a href="<c:url value="/home/tos"/>">${form.getMessage("label.TermsOfService")}</a><br />
+								</c:if>
+								
+								<a href="https://ec.europa.eu/info/cookies_${localeCode}">${form.getMessage("label.Cookies")}</a><br />
+							</c:when>
+							<c:otherwise>
+								<c:if test="${showprivacy}">
+									<a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a><br />
+									<a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a><br />
+								</c:if>
+								
+								<a href="https://ec.europa.eu/info/cookies_${localeCode}"><spring:message code="label.Cookies" /></a><br />
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 			</div>
@@ -93,7 +115,16 @@
 			</div>
 			<div class="row" style="text-align: center">					
 				<div id="footerVersionNumber">
-					<spring:message code="label.Version" />&nbsp;<%@include file="versionfooter.txt" %>
+					<c:choose>
+						<c:when test="${form != null}">
+							${form.getMessage("label.Version")}
+						</c:when>
+						<c:otherwise>
+							<spring:message code="label.Version" />
+						</c:otherwise>
+					</c:choose>
+				
+					&nbsp;<%@include file="versionfooter.txt" %>
 				</div>
 			</div>
 		</div>

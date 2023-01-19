@@ -24,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 import javax.servlet.ServletContext;
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1672,9 +1670,7 @@ public class SchemaService extends BasicService {
 		Status status = getStatus();
 
 		InputStream is = servletContext.getResourceAsStream("/WEB-INF/classes/antisamy-esapi.xml");
-		File file = new java.io.File(fileDir + "antisamy-esapi.xml");
-		file.mkdirs();
-		FileOutputStream fos = new FileOutputStream(file);
+		FileOutputStream fos = new FileOutputStream(new java.io.File(fileDir + "antisamy-esapi.xml"));
 		IOUtils.copy(is, fos);
 
 		status.setDbversion(27);

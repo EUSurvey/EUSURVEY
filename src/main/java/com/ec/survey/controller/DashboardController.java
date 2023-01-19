@@ -375,6 +375,12 @@ public class DashboardController extends BasicController {
 	public @ResponseBody List<Archive> archives(HttpServletRequest request, HttpServletResponse response, Locale locale,
 			Model model) {
 		try {
+			if (request.getParameter("type") != null) {
+				if (request.getParameter("type").equalsIgnoreCase("shared")) {
+					return new ArrayList<Archive>();
+				}
+			}
+
 			User u = sessionService.getCurrentUser(request);
 
 			int page = 1;

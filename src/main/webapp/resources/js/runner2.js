@@ -726,10 +726,8 @@ function addStatisticsToAnswerText(div, result) {
 		var len = possibleAnswersArray().length;
 		if (false === remove) {
 			for (var i = 0; (result.data.length > i) && (len > i); ++i) {
-				var label = possibleAnswersArray()[i].originalTitle();
-				var value = result.data[i].value;
-				var newlabel = label+' <span class="answertextdelphivotes">('+value+')</span>';
-				possibleAnswersArray()[i].title(newlabel);
+				possibleAnswersArray()[i].delphiAnswerCount(result.data[i].value);
+				possibleAnswersArray()[i].useSavedDisplayMode(true);
 			}
 		} else {
 			for (var j = 0; len > j; ++j) {

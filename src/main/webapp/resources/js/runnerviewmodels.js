@@ -138,9 +138,13 @@ function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsSt
 	viewModel.ecfScore = ko.observable(ecfScore);
 	viewModel.ecfProfile = ko.observable(ecfProfile);
 	viewModel.exclusive = ko.observable(exclusive);
+	viewModel.delphiAnswerCount = ko.observable(0);
+	viewModel.useSavedDisplayMode = ko.observable(false);
 	
 	viewModel.titleForDisplayMode = function(displayMode)
 	{
+		if(this.useSavedDisplayMode()) return this.title() + " (" + this.delphiAnswerCount() + ")";
+
 		switch (displayMode)
 		{
 			case 0:
@@ -772,6 +776,7 @@ function newMultipleChoiceViewModel(element)
 				case "i": return "evote-ispra";
 				case "l": return "evote-luxembourg";
 				case "o": return "evote-outside";
+				case "p": return "evote-president";
 			}
 		} else {
 			return viewModel.choiceType()

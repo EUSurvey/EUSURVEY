@@ -916,6 +916,7 @@ public class XmlExportCreator extends ExportCreator {
 
 								for (String answer : answers) {
 									if (answer.length() > 0) {
+										answer = answer.trim();
 										writer.writeStartElement(ANSWER);
 										writer.writeAttribute("qid", question.getUniqueId());
 										if (question instanceof ChoiceQuestion) {

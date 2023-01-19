@@ -1934,10 +1934,10 @@ function updateIdentifier(element, id, text, noundo)
 		if ($(_elementProperties.selectedelement).closest("tr").hasClass("matrix-question"))
 		{
 			var pos = $(_elementProperties.selectedelement).closest("tr").index();
-			element = parent.questionsOrdered()[pos-1];
+			element = parent.questionsOrdered()[pos];
 		} else {
 			var pos = $(_elementProperties.selectedelement).index();
-			element = parent.answers()[pos-1];
+			element = parent.answers()[pos];
 		}
 	} else if ($(_elementProperties.selectedelement).hasClass("table-header"))
 	{

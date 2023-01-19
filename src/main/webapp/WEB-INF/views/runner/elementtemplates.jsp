@@ -3,6 +3,25 @@
 <script type="text/javascript">
 	var surveyUniqueId = "${form.survey.uniqueId}";
 	var labelOf = " ${form.getMessage("label.of")} ";
+	function tabpress(event){
+		if (event.key === "Tab"){
+			if (event.shiftKey){
+				//If tabbing backwards and this is not the first radio button
+				if (!event.target.matches(":first-of-type")){
+					//Focus the previous radio button
+					event.target.previousElementSibling.previousElementSibling.focus()
+					event.preventDefault()
+				}
+			} else {
+				//If tabbing forwards and this is not the last radio button
+				if (!event.target.matches(":last-of-type")){
+					//Focus the next radio button
+					event.target.nextElementSibling.nextElementSibling.focus()
+					event.preventDefault()
+				}
+			}
+		}
+	}
 </script>
 
 <div style="display: none">
@@ -215,7 +234,8 @@
 						<!-- ko foreach: orderedPossibleAnswers(false) -->
 
 							<!-- ko ifnot: id() == 'dummy' -->
-								<input tabindex="0" style="clip: rect(0 0 0 0);position: absolute;" data-bind="enable: !$parent.readonly() && !$parent.foreditor, checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {'data-id': $parent.id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onkeyup: 'singleKeyUp(event, this, '+$parent.readonly()+')', onclick: $parent.readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parent.css + ' trigger check', name: 'answer' + $parent.id(), value: id(), 'aria-labelledby': 'answerlabel' + id(), 'previousvalue': getPAByQuestion2($parent.uniqueId(), uniqueId(), id()) != '' ? 'checked' : 'false'}" type="radio"  />
+								<input tabindex="0" style="clip-path: circle(0); position: absolute;" type="radio" onkeydown="tabpress(event)"
+									   data-bind="enable: !$parent.readonly() && !$parent.foreditor, checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {'data-id': $parent.id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onkeyup: 'singleKeyUp(event, this, '+$parent.readonly()+')', onclick: $parent.readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parent.css + ' trigger check', name: 'answer' + $parent.id(), value: id(), 'aria-labelledby': 'answerlabel' + id(), 'previousvalue': getPAByQuestion2($parent.uniqueId(), uniqueId(), id()) != '' ? 'checked' : 'false'}" />
 								<label class="choice-button-label answertext" data-bind="attr: {'for': id, 'id': 'answerlabel' + id(), 'data-id' : id()}">
 									<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
 									<span data-bind="html: titleForDisplayMode($parent.displayMode())"></span>
@@ -313,7 +333,7 @@
 					<!-- ko foreach: $data -->
 					<td style="vertical-align: top">
 						<!-- ko ifnot: id() == 'dummy' -->
-						<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: !$parents[1].foreditor && getPAByQuestion($parents[1].uniqueId()).indexOf(uniqueId()) > -1, attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-exclusive': exclusive(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'findSurveyElementAndResetValidationErrors(this); singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check' + (exclusive() ? ' exclusive' : ''), name: 'answer' + $parents[1].id(), value: id(), 'aria-labelledby': 'answerlabel' + id()}" type="checkbox"  />
+						<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: !$parents[1].foreditor && getPAByQuestionCheckBox($parents[1].uniqueId(), uniqueId()).indexOf(uniqueId()) > -1, attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-exclusive': exclusive(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'findSurveyElementAndResetValidationErrors(this); singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check' + (exclusive() ? ' exclusive' : ''), name: 'answer' + $parents[1].id(), value: id(), 'aria-labelledby': 'answerlabel' + id()}" type="checkbox"  />
 						<!-- /ko -->
 					</td>
 					<td style="vertical-align: top; padding-right: 10px;">
@@ -376,7 +396,7 @@
 								</c:if>
 							</label>
 						</div>
-						<div class="evote-collapse" onclick="$(this).closest('.evote-table').attr('collapsed', (_, val) => val == null ? '' : null); event.stopImmediatePropagation(); event.preventDefault()">
+						<div class="evote-collapse" tabindex="0" onclick="$(this).closest('.evote-table').attr('collapsed', (_, val) => val == null ? '' : null); event.stopImmediatePropagation(); event.preventDefault()" onkeypress="$(this).closest('.evote-table').attr('collapsed', (_, val) => val == null ? '' : null); event.stopImmediatePropagation(); event.preventDefault()">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="m24 30.75-12-12 2.15-2.15L24 26.5l9.85-9.85L36 18.8Z"></path></svg>
 						</div>
 					</th>
@@ -477,6 +497,7 @@
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />
 
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
@@ -486,31 +507,35 @@
 			</div>
 		<!-- /ko -->
 		
-		<div role="group" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
+		<div role="group" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id() + ' listcountinfo' + id() + ' listorderinfo' + id()}">
 
 			<!-- ko ifnot: foreditor -->
-		
-			<span class="screen-reader-only" data-bind="html: getRankingQuestionInfo(itemCount()), attr: {id: 'listcountinfo' + id()}"></span>
-			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
-				${form.getMessage("label.HintOnInitialRankingOrder")}
-			</div>
-			<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
-				<a href="javascript:;" data-bind="click: resetOrder">${form.getMessage("label.ResetOrder")}</a>
-			</div>
+				<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
+					${form.getMessage("label.HintOnInitialRankingOrder")}
+				</div>
+				<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
+					<a href="javascript:;" data-bind="click: resetOrder">${form.getMessage("label.ResetOrder")}</a>
+				</div>
 			<!-- /ko -->
 
 			<div class="rankingitem-list-container" data-bind="attr: {id: 'ranking-item-list-container' + id()}">
-				<div class="rankingitem-list">
-
-					<!-- ko ifnot: foreditor -->
-					<span class="screen-reader-only" data-bind="html: getInitialOrderInfoText(), attr: {id: 'listorderinfo' + id()}"></span>
-					<!-- /ko -->
+			
+				<!-- ko ifnot: foreditor -->
+					<span class="screen-reader-only" data-bind="attr: {id: 'listorderinfo' + id()}">
+						<span data-bind="html: getInitialOrderInfoText()"></span>
+						<!-- ko foreach: orderedRankingItems() -->
+						<span data-bind="html: title()"></span>
+						<!-- /ko -->
+					</span>
+				<!-- /ko -->
+			
+				<div class="rankingitem-list" role="list">					
 
 					<!-- ko foreach: orderedRankingItems() -->
 					<div role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
 						<div class="rankingitem-decoration">&#x283F;</div>
-						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }, attr: {'aria-label' : title()}"><span class="screen-reader-only"></span><span class="glyphicon glyphicon-arrow-up"></span></a>
-						<a aria-hidden="true" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }, attr: {'aria-label' : title()}"><span class="glyphicon glyphicon-arrow-down"></span></a>
+						<a tabindex="0" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }, attr: {'aria-label' : title()}"><span class="screen-reader-only"></span><span class="glyphicon glyphicon-arrow-up"></span></a>
+						<a tabindex="0" role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }, attr: {'aria-label' : title()}"><span class="screen-reader-only"></span><span class="glyphicon glyphicon-arrow-down"></span></a>
 						<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
 					</div>
 					<!-- /ko -->
@@ -649,7 +674,7 @@
 		<!-- /ko -->
 	
 		<!-- ko if: maxCharacters() > 0 -->
-			<textarea class="data" data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}"  onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea class="data">
+			<textarea class="data" data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId(), true), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}"  onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea class="data">
 			<!-- ko if: !foreditor -->
 				<div class="charactercounterdiv limits" style="max-width: 645px; text-align: right; margin-left: 20px;" aria-live="polite" aria-atomic="true">
 					<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title="${form.getMessage("info.charactercounter")}" aria-label="${form.getMessage("info.charactercounter")}"></span>
@@ -660,8 +685,8 @@
 				</div>
 			<!-- /ko -->
 		<!-- /ko -->
-		<!-- ko if: maxCharacters() == 0 -->	
-			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId(), type == 'RegExQuestion'), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
+		<!-- ko if: maxCharacters() == 0 -->
+		     <textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId(), true), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
 		<!-- /ko -->
 		
 		<!-- ko if: isComparable() -->		
@@ -763,7 +788,7 @@
 						<!-- /ko -->
 						<div data-bind="html: title, attr:{id: 'answerlabel' + id()}"></div>					
 						<!-- ko if: $parents[0].ismobile || $parents[0].istablet -->
-							<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
+							<input data-bind="value:getValueByQuestion(uniqueId(), true), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 			
 							<div data-bind="foreach: new Array($parent.numIcons())">
 								<a class="ratingitem" role="listitem" href="javascript:;" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
@@ -782,7 +807,7 @@
 					</td>
 					<!-- ko if: !$parents[0].ismobile && !$parents[0].istablet -->
 					<td>				
-						<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
+						<input data-bind="value:getValueByQuestion(uniqueId(), true), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 		
 						<div data-bind="foreach: new Array($parent.numIcons())">
 							<a class="ratingitem" role="listitem" href="javascript:;" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
@@ -844,7 +869,7 @@
 		<!-- /ko -->
 				
 		<!-- ko if: display() != 'Slider' -->
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" oninput="propagateChange(this);" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId(), true), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" oninput="propagateChange(this);" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
 		<!-- /ko -->
 		
 		<!-- ko if: display() == 'Slider' -->
@@ -928,7 +953,7 @@
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		<div class="input-group" style="margin-left: 20px;">
 	    	<div class="input-group-addon" style="margin-bottom: 5px">@</div>
-	      	<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questionhelp' + id()}"  onblur="validateInput($(this).parent().parent())" onkeyup="propagateChange(this);" onchange="validateInput($(this).parent());" style="width: 180px; margin-left: 0px; margin-bottom: 0px !important;" type='email' maxlength="255" />
+	      	<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId(), true), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questionhelp' + id()}"  onblur="validateInput($(this).parent().parent())" onkeyup="propagateChange(this);" onchange="validateInput($(this).parent());" style="width: 180px; margin-left: 0px; margin-bottom: 0px !important;" type='email' maxlength="255" />
 	    </div>
 	    <!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'email', attr: {'name': 'type' + id()}" />	
@@ -975,7 +1000,7 @@
 			<!-- ko if: foreditor || readonly() -->
 				<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 			<!-- /ko -->
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'datepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if($(this).val().length > 0 && validateInput($(this).parent().parent())) { propagateChange(this); }" oninput="propagateChange(this);" type="text" placeholder="DD/MM/YYYY" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId(), true), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'datepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if($(this).val().length > 0 && validateInput($(this).parent().parent())) { propagateChange(this); }" oninput="propagateChange(this);" type="text" placeholder="DD/MM/YYYY" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
 		</div>
 		
 		<!-- ko if: foreditor -->
@@ -1076,7 +1101,7 @@
 		</div>
 		
 		<input type="hidden" data-bind="attr: {'id': 'answer' + id(), 'name':'answer' + id()}" value="files" />				
-		<div class="uploaded-files" data-bind="foreach: getFileAnswer(uniqueId())">
+		<div class="uploaded-files" data-bind="foreach: getFileAnswer(uniqueId(), true)">
 			<div>
 				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}">
 					<span style="margin-right: 10px;" class="glyphicon glyphicon-trash"></span>
@@ -1169,7 +1194,7 @@
 						<td data-bind="attr: {'data-uid':uid()}" style="vertical-align: top">
 							<div class="galleryinfo">
 								<span data-bind="if: $parents[1].selection()">																			
-									<input data-bind="value: $parentContext.$index() * $parents[1].columns() + $index(), checked: getValueByQuestion($parents[1].uniqueId()).indexOf(($parentContext.$index() * $parents[1].columns() + $index()).toString()) > -1, attr: {'onclick': $parents[1].readonly() ? 'return false;':'propagateChange(this);', 'data-shortname': $parents[1].shortname(), 'class': $parents[1].css() + ' selection', 'name':'answer'+$parents[1].id(), 'aria-labelledby': 'answerlabel' + $parents[1].id() + $index()}" type="checkbox" />
+									<input data-bind="value: $parentContext.$index() * $parents[1].columns() + $index(), checked: getValueByQuestionGallery($parents[1].uniqueId()).indexOf(($parentContext.$index() * $parents[1].columns() + $index()).toString()) > -1, attr: {'onclick': $parents[1].readonly() ? 'return false;':'propagateChange(this);', 'data-shortname': $parents[1].shortname(), 'class': $parents[1].css() + ' selection', 'name':'answer'+$parents[1].id(), 'aria-labelledby': 'answerlabel' + $parents[1].id() + $index()}" type="checkbox" />
 								</span>
 								<!-- ko if: $parents[1].numbering() -->
 								<span data-bind='html: ($parentContext.$index() * $parents[1].columns() + $index()+1) + "."'></span>
@@ -1418,7 +1443,7 @@
 						</th>
 						<!-- ko foreach: $parent.answers -->
 							<td style="padding: 2px;">
-								<textarea onblur="validateInput($(this).closest('.tabletable').parent(), true)" oninput="propagateChange(this);" data-bind="enable: !$parents[1].readonly(), value: getTableAnswer($parents[1].uniqueId(), $parentContext.$index()+1, $index()+1), attr: {'data-id': $parents[1].id() + $parentContext.$index() + '' + $index(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class':$parents[1].css() + ' ' + $parents[0].css(), 'name':'answer' + $parents[1].id() + '|' + ($parentContext.$index()+1) + '|' + ($index()+1), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString()}"></textarea>
+								<textarea onblur="validateInput($(this).closest('.tabletable').parent(), true)" oninput="propagateChange(this);" data-bind="enable: !$parents[1].readonly(), value: getTableAnswer($parents[1].uniqueId(), $parentContext.$index()+1, $index()+1, true), attr: {'data-id': $parents[1].id() + $parentContext.$index() + '' + $index(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class':$parents[1].css() + ' ' + $parents[0].css(), 'name':'answer' + $parents[1].id() + '|' + ($parentContext.$index()+1) + '|' + ($index()+1), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString()}"></textarea>
 							</td>
 						 <!-- /ko -->
 					</tr>
@@ -1623,7 +1648,7 @@
 									<div class='limits' data-bind="html: getMaxCharacters(child.maxCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->							
 
-								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), false, $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : '', onkeyup: child.maxCharacters() > 0 ? 'countChar(this);' : ''}"></textarea>
+								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), true, $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : '', onkeyup: child.maxCharacters() > 0 ? 'countChar(this);' : ''}"></textarea>
 
 								<!-- ko if: child.maxCharacters() > 0 && !$parent.foreditor -->
 									<div class="charactercounterdiv limits" style="max-width: 645px; text-align: right; margin-left: 20px;" aria-live="polite" aria-atomic="true">
@@ -1664,7 +1689,7 @@
 												<!-- ko foreach: child.orderedPossibleAnswersByColumn(${ismobile != null}, ${responsive != null}) -->
 												<div style="display: table-cell; padding-right: 10px">
 													<!-- ko foreach: $data -->
-													<input type="radio" data-bind="enable: child.foreditor == false && !child.readonly(), checkedValue: true, checked: !child.foreditor && getPAByQuestion(child.uniqueId(), $element).indexOf(uniqueId()) > -1, value: id(), attr: {'name' : 'answer' + child.id(), class: child.css(), 'onclick': child.readonly() ? 'return false;' : 'checkSingleClick(this); propagateChange(this);', onkeyup: 'singleKeyUp(event, this, '+child.readonly()+')'}" /> <span data-bind="html: title()"></span><br />
+													<input type="radio" data-bind="enable: child.foreditor == false && !child.readonly(), checkedValue: true, checked: !child.foreditor && getPAByQuestion(child.uniqueId(), $element).indexOf(uniqueId()) > -1, value: id(), attr: {'name' : 'answer' + child.id(), class: child.css(), 'onclick': child.readonly() ? 'return false;' : 'checkSingleClick(this); propagateChange(this);', onkeyup: 'singleKeyUp(event, this, '+child.readonly()+')', 'previousvalue': getPAByQuestion(child.uniqueId(), $element).indexOf(uniqueId()) > -1 ? 'checked' : 'false'}" /> <span data-bind="html: title()"></span><br />
 													<!-- /ko -->
 												</div>
 												<!-- /ko -->
@@ -1698,7 +1723,7 @@
 											<!-- ko foreach: child.orderedPossibleAnswersByColumn(${ismobile != null}, ${responsive != null}) -->
 												<div style="display: table-cell; padding-right: 10px">
 													<!-- ko foreach: $data -->
-													<input type="checkbox" onclick="resetValidationErrors($(this).closest('.cell'));propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), checked: !child.foreditor && getPAByQuestion(child.uniqueId(), $element).indexOf(uniqueId()) > -1, value: id(), attr: {'name' : 'answer' + child.id(), class: child.css()}"/> <span data-bind="html: title()"></span><br />
+													<input type="checkbox" onclick="resetValidationErrors($(this).closest('.cell'));propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), checked: !child.foreditor && getPAByQuestionCheckBox(child.uniqueId(), uniqueId(), $element).indexOf(uniqueId()) > -1, value: id(), attr: {'name' : 'answer' + child.id(), class: child.css()}"/> <span data-bind="html: title()"></span><br />
 													<!-- /ko -->
 												</div>
 											<!-- /ko -->
@@ -1730,7 +1755,7 @@
 									<div class='limits' data-bind="html: getMax(child.max()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->							
 								
-								<input type="number" oninput="propagateChange(this);" onblur="resetValidationErrors($(this).closest('.cell'));validateInput($(this).parent())" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), false, $element), attr: {'name' : 'answer' + child.id(), min: child.min(), max: child.max(), 'data-shortname': child.shortname()}"/>
+								<input type="number" oninput="propagateChange(this);" onblur="resetValidationErrors($(this).closest('.cell'));validateInput($(this).parent())" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), true, $element), attr: {'name' : 'answer' + child.id(), min: child.min(), max: child.max(), 'data-shortname': child.shortname()}"/>
 								<!-- ko if: child.unit -->
 								<span data-bind="text: child.unit"></span>
 								<!-- /ko -->

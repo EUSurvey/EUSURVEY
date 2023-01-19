@@ -2675,6 +2675,31 @@
 				If you have any questions, please feel free to
 				<a href="${contextpath}/home/support?dataprotection=1">contact us</a>.
 			</p>
+			<h2>
+				Someone has contacted me to access, modify or delete all or part of their personal data - what should I do?
+			</h2>
+			<p>
+				<div><b>REGULATION (EU) 2018/1725</b></div>
+				<div><b>Right of access by the data subject - Article 17</b></div>
+				<div><b>Right to rectification - Article 18</b></div>
+				<div><b>Right to erasure ('right to be forgotten') - Article 19</b></div>
+			</p>
+			<p>
+				Survey managers are responsible for managing the personal data collected as part of the survey.
+				As a survey manager, you must respond to requests received from your survey participants in relation to data protection.
+			</p>
+			<p>
+				In order to access, rectify or delete personal data collected as part of your survey, you can go to the results screen and search for the personal data in question using the available filters.
+				You can then delete or modify them either by editing the contribution or by deleting the contribution entirely.
+			</p>
+			<p>
+				<figure>
+					<img style="max-width: 920px" src="${contextpath}/resources/images/documentation/personal_data_modification.png">
+				</figure>
+			</p>
+			<p>
+				Regarding email addresses as well as first and last names, the other parts of the system where this data may be saved are the guest lists ('Participants' tab) or your 'Address Book'.
+			</p>
 	</div> <!-- faqcontent -->
 	</div>
 	</div>

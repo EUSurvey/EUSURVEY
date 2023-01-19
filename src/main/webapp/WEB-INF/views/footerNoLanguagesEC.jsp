@@ -8,7 +8,7 @@
 	
 	<c:choose>
 		<c:when test="${oss}">${form.getMessage("footer.fundedOSSNew")}</c:when>
-		<c:otherwise>${form.getMessage("footer.fundedNew")}</c:otherwise>
+		<c:otherwise>${form.getMessage("footer.fundedNewDEP")}</c:otherwise>
 	</c:choose>
 	
 	<br /><br />

@@ -1017,6 +1017,12 @@
 				return true; 
 			});
 		});
+
+		function getLabel(s){
+			if (s == "NumberOfReceivedVotes") return '<spring:message code="label.NumberOfReceivedVotes" />';
+
+			return "unknown label";
+		}
 		
 	</script>
 	

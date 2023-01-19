@@ -101,6 +101,7 @@ public class ManagementController extends BasicController {
 	public @Value("${evote.template-bru:#{null}}") String evoteBruTemplate;
 	public @Value("${evote.template-ispra:#{null}}") String evoteIspraTemplate;
 	public @Value("${evote.template-outside:#{null}}") String evoteOutsideTemplate;
+	public @Value("${evote.template-president:#{null}}") String evotePresidenTemplate;
 	
 	private final String LastEVoteTestResult = "LastEVoteTestResult";
 
@@ -689,6 +690,7 @@ public class ManagementController extends BasicController {
 		survey.setCompleteTranslations(completed);
 
 		form = new Form();
+		form.setResources(resources);
 		form.setSurvey(survey);
 
 		User u = sessionService.getCurrentUser(request);
@@ -1097,6 +1099,9 @@ public class ManagementController extends BasicController {
 						break;
 					case "o":
 						templateUid = evoteOutsideTemplate;
+						break;
+					case "p":
+						templateUid = evotePresidenTemplate;
 						break;
 					default:
 						templateUid = null;

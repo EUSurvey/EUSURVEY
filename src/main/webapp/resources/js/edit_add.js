@@ -48,7 +48,7 @@ function getNewElement(item)
 		element = getBasicElement("MultipleChoiceQuestion", true, "Multiple Choice Question", item.attr("id"), true);
 		element.maxChoices = 0;
 		element.minChoices = 0;
-		element.choiceType = "checkbox";
+		element.choiceType = isEVote ? "evote" : "checkbox";
 		element.noNegativeScore = false;
 		element.numColumns = 1;
 		element.order = 0;
@@ -348,7 +348,7 @@ function addNewElement(item, element)
 		item.attr("id", id).attr("data-id", id);
 		element = getNewElement(item);
 	}
-	
+
 	elemcounter++;
 	
 	var model = getElementViewModel(element, true);

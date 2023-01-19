@@ -2,6 +2,7 @@ package com.ec.survey.controller;
 
 import com.ec.survey.model.OneTimePasswordResetCode;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.survey.Survey;
 import com.ec.survey.security.CustomAuthenticationManager;
 import com.ec.survey.security.CustomAuthenticationSuccessHandler;
 import com.ec.survey.service.MailService;
@@ -146,6 +147,7 @@ public class LoginLogoutController extends BasicController {
 		SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
 		
 		customAuthenticationSuccessHandler.onAuthenticationSuccess(request, response, authenticatedUser);
+		request.getSession().setAttribute("RUNNER_LOGIN", "true");
 	}
 	
 	@RequestMapping(value = "/auth/logout", method = {RequestMethod.GET, RequestMethod.HEAD})

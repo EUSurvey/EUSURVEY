@@ -917,15 +917,6 @@ public class RunnerController extends BasicController {
 		boolean isDraft = request.getParameter("draft") != null
 				&& request.getParameter("draft").equalsIgnoreCase("true");
 
-		String lang = request.getParameter("surveylanguage");
-
-		if (lang == null && !isDraft) {
-			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, true);
-			if (draft != null) {
-				lang = draft.getLanguage().getCode();
-			}
-		}
-
 		String p = request.getParameter("readonly");
 		if (p != null && p.equalsIgnoreCase("true")) {
 			p = request.getParameter("draftid");
@@ -936,6 +927,7 @@ public class RunnerController extends BasicController {
 				}
 			}
 		}
+		String lang = request.getParameter("surveylanguage");
 
 		Survey survey = surveyService.getSurvey(uidorshortname, isDraft, true, false, false, lang, true, true);
 
@@ -978,10 +970,18 @@ public class RunnerController extends BasicController {
 			if (SurveyHelper.isMaxContributionReached(survey, answerService)) {
 				return getMaxAnswersReachedPageModel(survey, request, device);
 			}
-
+			
 			if (survey.getSecurity().startsWith("secured")) {
 				if (survey.getEcasSecurity()) {
 					try {
+						// if passwords are also permitted we have to keep the session due to CSRF
+						if (survey.getPassword() == null || survey.getPassword().trim().length() == 0) {
+							// If not logged in for runner: auto logout
+							if (request.getSession().getAttribute("RUNNER_LOGIN") == null) {
+								request.getSession().invalidate();
+							}
+						}						
+						
 						User user = sessionService.getCurrentUser(request, false, false);
 
 						boolean ecasauthenticated = request.getSession().getAttribute("ECASSURVEY") != null && request

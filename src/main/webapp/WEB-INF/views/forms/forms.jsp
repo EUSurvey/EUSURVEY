@@ -795,7 +795,7 @@
 											
 												<c:choose>
 													<c:when test="${survey.formManagementRights && survey.canCreateSurveys}">
-														<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}', '${survey.isDelphi}', '${survey.isEVote}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
+														<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}', '${survey.isDelphi}', '${survey.isEVote}', '${survey.eVoteTemplate}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
 														<a href="<c:url value="/noform/management/exportSurvey/false/${survey.shortname}"/>" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></</span></a>
 													</c:when>
 													<c:otherwise>

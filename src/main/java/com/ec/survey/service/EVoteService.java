@@ -113,7 +113,7 @@ public class EVoteService extends BasicService {
             	results.setPreferentialVotes((int) row.getCell(1).getNumericCellValue());
             } else if (rowCounter == 3) {
             	// skip as it contains the names of the lists
-            } else if (rowCounter == 4 && !survey.geteVoteTemplate().equals("l")) {
+            } else if (rowCounter == 4 && !survey.geteVoteTemplate().equals("l") && !survey.geteVoteTemplate().equals("o") && !survey.geteVoteTemplate().equals("p")) {
             	// list votes
             	colCounter = 1;
             	for (eVoteListResult listResult : results.getLists().values()) {
@@ -490,7 +490,7 @@ public class EVoteService extends BasicService {
 		}
 				
 		evoteResults.setPreferentialVotes(preferentialVoteAnswerIds.size() + voteAnswerIds.size());
-				
+		
 		return evoteResults;
 	}
 	
@@ -535,6 +535,167 @@ public class EVoteService extends BasicService {
 		result.setTotal(total);
 	}
 	
+	private SeatCounting handleOutsideCommunity(Survey survey, SeatCounting result, EVoteConfiguration config) {
+		int sumAllPreferentialVotes = config.listSeatDistributions.values().stream().collect(Collectors.summingInt(SeatDistribution::getPreferentialVotes));
+		result.setTotalPreferentialVotes(sumAllPreferentialVotes);
+		result.setPreferentialVotesFinal(sumAllPreferentialVotes);
+		result.setListVotes(sumAllPreferentialVotes);
+		result.setListVotesFinal(sumAllPreferentialVotes);
+		
+		int[] seatsArray = new int[2];
+		seatsArray[0] = 6;
+		seatsArray[1] = 8;
+
+		List<ElectedCandidate> allCandidatesOrdered = getCandidates(config.listSeatDistributions.keySet(), config.candidateVotes, true);
+		
+		// take first 8 candidates (ordered by votes)
+		int totalSeats = 0;
+		for (int i = 0; i < 8; i++) {
+			if (i >= allCandidatesOrdered.size()) {
+				break;
+			}
+			
+			ElectedCandidate ec = allCandidatesOrdered.get(i);
+			ec.setSeats(1);
+			ec.setPreferentialSeat(true);
+			result.getCandidatesFromPreferentialVotes().add(ec);
+			totalSeats++;
+		}
+		
+		//check if last seat was ambiguous
+		int checkSeat = totalSeats;
+		while(allCandidatesOrdered.size() > checkSeat && allCandidatesOrdered.get(7).getVotes() == allCandidatesOrdered.get(checkSeat).getVotes()) {
+			if (checkSeat - 1 == 7) {
+				allCandidatesOrdered.get(7).setAmbiguous(true);
+			}
+			allCandidatesOrdered.get(checkSeat).setAmbiguous(true);
+			result.setAmbiguous(true);
+			checkSeat++;
+		}
+		
+		for (SeatDistribution listSeatDistribution : config.listSeatDistributions.values()) {
+			listSeatDistribution.setListPercent(Math.round((float)listSeatDistribution.getPreferentialVotes() / (float)result.getTotalPreferentialVotes() * 10000) / 100.0);
+			listSeatDistribution.setListPercentWeighted(listSeatDistribution.getListPercent());
+			
+			if (listSeatDistribution.getListPercent() < result.getMinListPercent()) {
+				result.setListVotesFinal(result.getListVotesFinal() - listSeatDistribution.getPreferentialVotes());
+			}
+		}
+
+		//filter out lists with less than x% votes
+		LinkedHashMap<MultipleChoiceQuestion, SeatDistribution> listSeatDistributionsFiltered = config.listSeatDistributions
+		.entrySet().stream().filter(x -> x.getValue().getListPercent() >= result.getMinListPercent())
+		.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue(),  (u, v) -> {
+            throw new IllegalStateException(String.format("Duplicate key %s", u));
+        },
+        LinkedHashMap::new));
+						
+		result.setListVotesSeats(seatsArray[0]);
+		result.setPreferentialVotesSeats(seatsArray[1]);							
+		
+		DHondtEntry[][] numbers = new DHondtEntry[result.getListVotesSeats()][listSeatDistributionsFiltered.size()];
+		int[] candidatesPerList = new int[listSeatDistributionsFiltered.size()];
+		int counter = 0;
+		for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
+			candidatesPerList[counter++] = mc.getPossibleAnswers().size();
+		}
+		Integer[] preferentialVotes = listSeatDistributionsFiltered.values().stream().map(SeatDistribution::getPreferentialVotes).toArray(Integer[]::new);
+		int[] listSeatsArrayLimited = computeSeats(survey, preferentialVotes, result.getPreferentialVotesFinal(), result.getListVotesSeats(), numbers, candidatesPerList);
+		result.setDHondtEntries(numbers);
+						
+		counter = 0;
+		for (SeatDistribution listSeatDistribution : listSeatDistributionsFiltered.values()) {
+			listSeatDistribution.setListSeats(listSeatsArrayLimited[counter++]);
+			listSeatDistribution.setListPercentFinal(Math.round((double)listSeatDistribution.getPreferentialVotes() / (double)result.getListVotesFinal() * 10000) / 100.0);
+		}
+		
+		MultipleChoiceQuestion[] mcs = listSeatDistributionsFiltered.keySet().toArray(new MultipleChoiceQuestion[listSeatDistributionsFiltered.size()]);
+		
+		for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
+			List<ElectedCandidate> candidatesOrderedByVotes = getCandidates(mc, config.candidateVotes, true);
+			
+			// compute elected candidates from list votes
+			SeatDistribution listSeatDistribution = listSeatDistributionsFiltered.get(mc);
+			counter = 0;
+			int i = 0;
+			while (counter < listSeatDistribution.getListSeats()) {
+				if (i >= candidatesOrderedByVotes.size()) {
+					break;
+				}
+				ElectedCandidate ec = candidatesOrderedByVotes.get(i);
+				if (ec.getSeats() == 0) {
+					ec.setSeats(1);
+					result.getCandidatesFromListVotes().add(ec);
+					counter++;
+					totalSeats++;
+				}
+				i++;
+			}
+		}
+		
+		// if lists did not have enough candidates for all list seats, give seats to candidates with most votes
+		int i = 0;
+		while (totalSeats < result.getMaxSeats()) {
+			
+			if (i >= allCandidatesOrdered.size()) {
+				break;
+			}
+			
+			ElectedCandidate ec = allCandidatesOrdered.get(i);
+			
+			if (ec.getSeats() == 0 || ec.isReallocatedSeat()) {
+				ec.setReallocatedSeat(true);
+				result.getCandidatesFromListVotes().add(ec);
+				totalSeats++;
+			}
+			
+			i++;
+		}
+		
+		// combine vote counts for all candidates in all lists
+		int minVotesOfSelectedCandidates = Integer.MAX_VALUE;
+		ElectedCandidate minSelected = null;
+		int maxVotesOfUnselectedCandidates = Integer.MIN_VALUE;
+		Set<ElectedCandidate> maxUnselected = new HashSet<>();
+		for (i = 0; i < result.getMaxCandidatesInLists(); i++) {
+			List<ElectedCandidate> candidateList = new ArrayList<>();
+				
+			for (int q = 0; q < mcs.length; q++) {
+				MultipleChoiceQuestion mc = mcs[q];
+			
+				if (mc.getPossibleAnswers().size() > i) {
+					PossibleAnswer pa = mc.getPossibleAnswers().get(i);					
+					ElectedCandidate candidateVote = config.candidateVotes.get(pa);
+					candidateList.add(candidateVote);
+					
+					if (candidateVote.getSeats() > 0 && candidateVote.getVotes() < minVotesOfSelectedCandidates) {
+						minVotesOfSelectedCandidates = candidateVote.getVotes();
+						minSelected = candidateVote;
+					}
+					if (candidateVote.getSeats() == 0 && candidateVote.getVotes() >= maxVotesOfUnselectedCandidates) {
+						maxVotesOfUnselectedCandidates = candidateVote.getVotes();
+						maxUnselected.add(candidateVote);
+					}
+				} else {
+					ElectedCandidate ec = new ElectedCandidate();
+					candidateList.add(ec); // the list does not have enough candidates -> add empty one
+				}
+			}					
+			result.getCandidateVotes().add(candidateList);
+		}
+		
+		//check if last seat was ambiguous
+		if (minVotesOfSelectedCandidates == maxVotesOfUnselectedCandidates) {
+			minSelected.setAmbiguous(true);
+			for (ElectedCandidate ec : maxUnselected) {
+				ec.setAmbiguous(true);
+			}
+			result.setAmbiguous(true);
+		}
+		
+		return result;
+	}
+	
 	@Transactional
 	public SeatCounting getCounting(String surveyUid, eVoteResults evoteResults, MessageSource resources, Locale locale, boolean full) throws Exception {
 		SeatCounting result = new SeatCounting();
@@ -562,12 +723,17 @@ public class EVoteService extends BasicService {
 		}
 		parseEVoteAnswers(config, result, evoteResults);
 		
-		if (full) {		
+		if (full && !(survey.geteVoteTemplate().equals("p"))) {		
 			// compute distribution of seats (list / preferential)
 			Integer[] votes;
 			int[] seatsArray;			
 			
-			if (config.useLuxembourgProcedure) {
+			if (survey.geteVoteTemplate().equals("o")) {
+				
+				handleOutsideCommunity(survey, result, config);				
+				return result;
+				
+			} else if (config.useLuxembourgProcedure) {
 				result.setPreferentialVotesFinal(result.getLuxListVotes());
 				result.setTotalPreferentialVotes(result.getLuxListVotes());
 				
@@ -822,6 +988,23 @@ public class EVoteService extends BasicService {
 					listSeatDistribution.setPreferentialSeats(finalPreferentialSeats[counter++]);
 				}
 			}
+		} else if (full && survey.geteVoteTemplate().equals("p")) {
+			// only need Votes per Candidate
+
+			List<ElectedCandidate> allCandidatesOrdered = getCandidates(config.listSeatDistributions.keySet(), config.candidateVotes, true);
+			if (allCandidatesOrdered.size() > 0) {
+				result.setHighestVote(allCandidatesOrdered.get(0).getVotes());
+			}
+			//limit candidates shown on the results page to 50 here, as it would be more difficult to implement this on the results page
+			while (allCandidatesOrdered.size() > 50) {
+				allCandidatesOrdered.remove(allCandidatesOrdered.size() - 1);
+			}
+			if (allCandidatesOrdered.size() > 1) {
+				if (allCandidatesOrdered.get(0).getVotes() == allCandidatesOrdered.get(1).getVotes()) {
+					result.setAmbiguous(true);
+				}
+			}
+			result.setCandidatesFromPreferentialVotes(allCandidatesOrdered);
 		}
 			
 		return result;
@@ -883,6 +1066,7 @@ public class EVoteService extends BasicService {
 	public static int[] computeSeats(Survey survey, Integer[] input, int total, int maxSeats, DHondtEntry[][] numbers, int[] candidatesPerList) {
 		switch (survey.geteVoteTemplate()){
 			case "l":
+			case "o":
 				return computeSeatsUsingDHondtMethod(input, total, maxSeats, numbers, candidatesPerList);
 			default:
 				return computeSeatsUsingLargestRemainderMethod(input, total, maxSeats, candidatesPerList);

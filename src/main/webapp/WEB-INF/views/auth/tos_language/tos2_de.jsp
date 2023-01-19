@@ -175,13 +175,13 @@
 				Dienstes für solche Benutzer, die wiederholt durch Verletzung der
 				Urheberrechte oder geistigen Eigentumsrechte der DIGIT oder Dritten
 				aufgefallen sind.</li>
-			<li><b>Geistiges Eigentum.</b> EUSurvey wurde bei der GD DIGIT
-				entwickelt und im Rahmen der Programme ISA und
-				<a href="https://ec.europa.eu/isa2/" target="_blank">ISA&sup2;</a>
-				finanziert; es ist vollständig quelloffen und wird unter der
-				<a href="https://joinup.ec.europa.eu/community/eupl/home" target="_blank">EUPL-Lizenz</a>
-				veröffentlicht. Der Quellcode kann auf den Beitrittsseiten der Kommission
-				heruntergeladen werden.</li>
+			<li><b>Geistiges Eigentum:</b> Von der GD DIGIT
+				entworfen und im Rahmen der Interoperabilitätsprogramme ISA,
+				<a target="_blank" href="https://ec.europa.eu/isa2/home_en/" aria-label="ISA² programme - Opens in new window">ISA²</a> und
+				<a target="_blank" href="https://digital-strategy.ec.europa.eu/de/activities/digital-programme" aria-label="DEP"> DEP</a> finanziert,
+				ist EUSurvey vollständig Open Source und wird unter der <a target="_blank" href="https://joinup.ec.europa.eu/collection/eupl">EUPL</a>-Lizenz
+				veröffentlicht. Sie können den Quellcode von GitHub herunterladen:
+				<a href="https://github.com/EUSurvey/EUSURVEY/tree/develop">https://github.com/EUSurvey/EUSURVEY/tree/develop</a></li>
 			<li><b>Änderungen.</b> Die DIGIT behält sich das Recht vor, die
 				vorliegende Vereinbarung oder Teile davon nach alleinigem eigenem
 				Ermessen zu modifizieren oder zu ersetzen. Durch die weitere

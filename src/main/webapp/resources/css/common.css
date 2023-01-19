@@ -171,6 +171,10 @@ table {
   border-collapse: collapse;
 }
 
+.float-right {
+	float: right;
+}
+
 .iconbutton, .switchiconbutton {
 	color: #333;
     font-size: 18px;
@@ -2232,6 +2236,12 @@ a.elearningWelcomeLink:hover
 	padding-right: 10px;
 	border-radius: 4px;
 	margin-top: -7px;
+}
+
+#actions-menu-dropdown {
+	width: fit-content;
+	max-width: 290px;
+	min-width: 190px;
 }
 
 #menutab2 li img, #menutab3  li img

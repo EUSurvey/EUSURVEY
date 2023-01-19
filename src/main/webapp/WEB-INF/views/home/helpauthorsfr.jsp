@@ -3655,6 +3655,31 @@
 				Si vous avez des questions, n'hésitez pas à
 				<a href="${contextpath}/home/support?dataprotection=1">nous contacter</a>.
 			</p>
+			<h2>
+				Quelqu’un m’a contacter pour accéder, modifier ou supprimer tout ou partie de ses données personnelles – que dois-je faire ?
+			</h2>
+			<p>
+				<div><b>RÈGLEMENT (UE) 2018/1725</b></div>
+				<div><b>Droit d’accès de la personne concernée – Article 17</b></div>
+				<div><b>Droit de rectification – Article 18</b></div>
+				<div><b>Droit à l’effacement («droit à l’oubli») – Article 19</b></div>
+			</p>
+			<p>
+				C’est aux gestionnaires d'enquêtes que reviens la responsabilité de gérer les données personnelles collectées dans le cadre de l’enquête.
+				En tant que responsable de l’enquête vous devez répondre aux requêtes reçues de la part des participants à votre enquête en lien avec la protection des données.
+			</p>
+			<p>
+				Afin d’accéder, de rectifier ou de supprimer des données personnelles collectées dans le cadre de votre enquête, vous pouvez vous rendre dans l’écran de résultat et chercher les données personnelles en question grâce aux filtres disponibles.
+				Vous pouvez ensuite les supprimer ou les modifier soit en éditant la contribution soit en supprimant la contribution entièrement.
+			</p>
+			<p>
+				<figure>
+					<img style="max-width: 920px" src="${contextpath}/resources/images/documentation/personal_data_modification.png">
+				</figure>
+			</p>
+			<p>
+				Concernant les adresses emails ainsi que les noms et prénoms, les autres parties du système où ces données peuvent éventuellement être enregistrées sont les listes d’invités (onglet Participants) ou votre carnet d’adresses.
+			</p>
 
 		</div>
 	

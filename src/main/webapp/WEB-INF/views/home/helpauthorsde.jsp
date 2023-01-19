@@ -3582,6 +3582,32 @@
 			<p><a href="${contextpath}/home/support?dataprotection=1">Kontaktieren Sie uns</a>‚
 				wenn Sie Fragen haben.</p>
 
+			<h2>
+				Jemand hat mich kontaktiert, um auf seine/ihre personenbezogenen Daten zuzugreifen, sie zu ändern, ganz oder teilweise zu löschen - was muss ich tun?
+			</h2>
+			<p>
+				<div><b>VERORDNUNG (EU)  2018/1725</b></div>
+				<div><b>Auskunftsrecht der betroffenen Person - Artikel 17</b></div>
+				<div><b>Recht auf Berichtigung - Artikel 18</b></div>
+				<div><b>Recht auf Löschung („Recht auf Vergessenwerden“) - Artikel 19</b></div>
+			</p>
+			<p>
+				Umfragemanager sind für die Verwaltung der im Rahmen der Umfrage erhobenen personenbezogenen Daten verantwortlich.
+				Als Umfragemanager müssen Sie auf Anfragen Ihrer Umfrageteilnehmer in Bezug auf den Datenschutz reagieren.
+			</p>
+			<p>
+				Um auf die im Rahmen Ihrer Umfrage erhobenen personenbezogenen Daten zuzugreifen, sie zu berichtigen oder zu löschen, können Sie unter „Ergebnisse" mit Hilfe der verfügbaren Filter nach den betreffenden personenbezogenen Daten suchen.
+				Anschließend können Sie diese entweder entfernen oder ändern, indem Sie den jeweiligen Beitrag bearbeiten oder ihn ganz löschen.
+			</p>
+			<p>
+				<figure>
+					<img style="max-width: 920px" src="${contextpath}/resources/images/documentation/personal_data_modification.png">
+				</figure>
+			</p>
+			<p>
+				Was E-Mail-Adressen sowie Vor- und Nachnamen betrifft, so sind die anderen Teile des Systems, in denen diese Daten gespeichert werden können, die Gästelisten (Registerkarte „Teilnehmer“) oder Ihr „Adressbuch“.
+			</p>
+
 			</div>
 			</div>
 			</div>

@@ -128,8 +128,7 @@ public class SurveyUpdater implements Runnable {
 					}
 				}
 				
-				survey.setNotified(true);
-				surveyService.update(survey, true);
+				surveyService.setNotified(survey);
 				
 				activityService.log(ActivityRegistry.ID_END_NOTIFICATION_SENT, null, ConversionTools.getFullString(survey.getEnd()) + usermails, -1, survey.getUniqueId());
 			}

@@ -40,6 +40,7 @@
 			{
 				_seatResults.counting(data);
 				_seatResults.updateEVoteCountingChart();
+				_seatResults.updateEVoteSinglePresidentChart();
 				_seatResults.loaded(true);
 				_seatResults.useTestData(true);
 				$('[data-toggle="tooltip"]').tooltip();
@@ -67,7 +68,7 @@
 				$('#spoiltvotes').val(result.spoiltVotes);
 				$('#preferentialvotes').val(result.preferentialVotes);
 				
-				<c:if test="${form.survey.geteVoteTemplate() != 'l'}">
+				<c:if test="${form.survey.geteVoteTemplate() != 'l' && form.survey.geteVoteTemplate() != 'p' && form.survey.geteVoteTemplate() != 'o'}">
 					//list votes not for Luxembourg templates
 					for (let i = 0; i < listUids.length; i++) {
 						$('#listvotes' + listUids[i]).val(result.lists[listUids[i]].listVotes);
@@ -95,7 +96,9 @@
 		$(".qq-upload-list").hide();
 		$(".qq-upload-drop-area").css("margin-left", "-1000px");
 		$("input[type=file]").attr("aria-label", "<spring:message code="info.uploadbutton" />");
-		
+		$("input[type=file]").css("width", "100%");
+		$("input[type=file]").css("height", "100%");
+
 		$(".filtercell input").on('keyup', function (event) {
 	      if (event.keyCode === 13) {
 	    	  firstVoterPage();
@@ -136,7 +139,7 @@
 			</c:forEach>
 		</tr>
 		
-		<c:if test="${form.survey.geteVoteTemplate() != 'l'}">
+		<c:if test="${form.survey.geteVoteTemplate() != 'l' && form.survey.geteVoteTemplate() != 'p' && form.survey.geteVoteTemplate() != 'o'}">
 		<tr>
 			<th><spring:message code="label.seats.ListVotes" /></th>
 			<c:forEach var="question" items="${form.survey.questions}">

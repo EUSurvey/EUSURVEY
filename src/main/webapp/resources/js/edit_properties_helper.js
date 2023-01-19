@@ -1027,8 +1027,6 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, isMultipl
 	if (label == "DelphiChartTypeNumber") {
 		label = "DelphiChartType";
 		row.Label(label);
-	} else if (isEVote && isMultipleChoiceItem && label == "Style") {
-		row.LabelTitle(getPropertyLabel("StyleWithInfo"));
 	}
 
 	var options = content.split(",");

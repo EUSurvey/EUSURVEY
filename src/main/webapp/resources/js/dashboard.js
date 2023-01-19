@@ -303,7 +303,7 @@ function DashboardViewModel()
 		var model = this;
 		model.surveys(null);
 		model.archives(null);
-		var params = "page=" +  model.surveysPage();
+		var params = "page=" +  model.surveysPage() + "&type=" + $("#surveystatesselector").val();
 		
 		if (model.sort().length > 0)
 		{

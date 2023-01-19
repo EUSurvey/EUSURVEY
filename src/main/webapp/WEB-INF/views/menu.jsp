@@ -45,7 +45,7 @@
 					  <c:if test="${USER.formPrivilege > 0 && USER.canCreateSurveys}">
 						  <li id="actions-menu-tab" class="dropdown menudropdown">
 						  	<a id="actions-menu-tab-toggle" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><div><spring:message code="label.NewSurvey" /> <span class="caret" style="margin-left: 5px"></span></div></a>
-					          <ul class="dropdown-menu" style="position: absolute">
+					          <ul class="dropdown-menu" id="actions-menu-dropdown" style="position: absolute">
 					            <li><a id="menuShowCreateSurveyDialogButton" class="menudropdownaction" onclick="showCreateSurveyDialog();"><span class="glyphicon glyphicon-plus" style="margin-right: 10px;"></span><spring:message code="label.CreateNewSurvey2" /></a></li>
 					            <li><a class="menudropdownaction" onclick="$('.qq-upload-fail').remove();$('#import-survey-dialog').modal('show');"><span class="glyphicon glyphicon-import" style="margin-right: 10px;"></span><spring:message code="label.ImportSurvey" /></a></li>
 							  </ul>
@@ -259,16 +259,16 @@
 		$('#add-survey-dialog').modal();
 	}
 	
-	function copySurvey(id, title, lang, security, isQuiz, isDelphi, isEVote)
+	function copySurvey(id, title, lang, security, isQuiz, isDelphi, isEVote, eVoteTemplate)
 	{
-		var login = '${USER.login}';
-		var contact = "${USER.email}";
+		let login = '${USER.login}';
+		let contact = '${USER.email}';
 			
 		$('#new-survey-shortname').val(getNewSurveyId(login));
 		$('#create-survey-uuid').val("");
 		$('#create-survey-original').val(id);
 		
-		$('#new-survey-title').val(title);
+		$('#new-survey-title').val(title + "_copy");
 		$('#new-survey-language').val(lang);
 		$('#new-survey-contact').val(contact);
 		$('#new-survey-contact-label').val('');
@@ -306,6 +306,7 @@
 			$("#new-survey-type-delphi").closest("label").removeClass("active");
 			$("#new-survey-type-evote").closest("label").addClass("active");
 			$("#new-survey-type-evote").attr("checked", "checked");
+			$("#evote-template input[value='" + eVoteTemplate +"']").attr("checked", "checked");
 			$("#new-survey-security-secured").prop("checked", "checked");
 			$("#new-survey-security-secured").attr("disabled", "disabled");
 			$("#new-survey-security-open").attr("disabled", "disabled");
@@ -431,6 +432,7 @@
 						<input type="radio" name="new-survey-template" value="i" style="margin-left: 20px;" />&#160;<spring:message code="label.IspraSeville" />
 						<input type="radio" name="new-survey-template" value="l" style="margin-left: 20px;" />&#160;<spring:message code="label.Luxembourg" />
 						<input type="radio" name="new-survey-template" value="o" style="margin-left: 20px;" />&#160;<spring:message code="label.OutsideCommunity" />
+						<input type="radio" name="new-survey-template" value="p" style="margin-left: 20px;" />&#160;<spring:message code="label.SinglePresident" />
 					</td>
 				</tr>				
 				<tr>
@@ -441,7 +443,7 @@
 						<div id="new-survey-shortname-exists" class="hideme alert-danger"><spring:message code="message.ShortnameAlreadyExists" /></div>
 					</td>
 				</tr>
-				<tr class="hidecopy">
+				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Title" /></td>
 					<td>
 						<textarea class="tinymcealign2 required xhtml freetext max2000" id="new-survey-title"></textarea>

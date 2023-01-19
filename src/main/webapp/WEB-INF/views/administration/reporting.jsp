@@ -251,6 +251,30 @@
 				});
 		}
 		
+		function recreateOLAPTable()
+		{
+			var uid = $('#uid').val();
+			if (uid.length == 0)
+			{
+				$('#emptyUID').modal('show');
+				return;
+			}
+			
+			var request = $.ajax({
+				  url: contextpath + "/administration/recreateOLAPTable/" + uid,
+				  cache: false,
+				  success: function(data)
+				  {
+					  if (data != "executed")
+					  {
+						showError(data);		
+					  } else {
+						showInfo("<spring:message code="info.OperationExecuted" />");						
+					  }
+				  }
+				});
+		}
+		
 	</script>		
 </head>
 <body>
@@ -271,6 +295,7 @@
 							<input class="form-control" placeholder="uid or shortname" style="display: inline-block; margin-top: 2px;" type="text" id="uid" />
 							<a onclick="createOLAPTable();" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="create table" class="btn btn-default" style="margin-left: 10px; margin-top: -2px;">createOLAPTable</a>
 							<a onclick="updateOLAPTable();" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="update table" class="btn btn-default" style="margin-top: -2px;">updateOLAPTable</a>
+							<a onclick="recreateOLAPTable();" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="update table" class="btn btn-default" style="margin-top: -2px;">recreateOLAPTable</a>
 							<br /><br />
 						</c:if>
 							

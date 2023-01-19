@@ -219,7 +219,7 @@
 		}
 		
 		function refreshSurveys( list, textStatus, xhr ) {
-			
+
 			if (list.length == 0)
 			{
 				infinitePage--;
@@ -273,30 +273,31 @@
 				td = document.createElement("td");				
 				$(td).append(list[i].numberOfDrafts);		
 				$(row).append(td);
-				
-				td = document.createElement("td");	
-				var a = document.createElement("a");				
-				$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.ExportWithAnswers" />").attr("onclick","showExportDialog('Survey','eus','" + list[i].shortname + "')").html('<span class="glyphicon glyphicon-download-alt"></span>');
-				$(td).append(a);
-				
+
+				td = document.createElement("td");
+
 				a = document.createElement("a");
-				$(a).addClass("iconbutton").attr("href", "${contextpath}/" + list[i].shortname + "/management/repairxhtml?from=surveysearch").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.RepairXhtml" />").attr("onclick","$('#generic-wait-dialog').modal('show');").html('<span class="glyphicon glyphicon-wrench"></span>');
+				if (list[i].isFrozen) {
+					$(a).addClass("iconbutton float-right").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Unfreeze" />").attr("onclick","unfreezeSurvey('" + list[i].id + "');").html('<span class="glyphicon glyphicon-ban-circle lightred"></span>');
+				} else {
+					$(a).addClass("iconbutton float-right").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Freeze" />").attr("onclick","showFreezeDialog('" + list[i].id + "', '" + list[i].shortname + "', '${serverprefix}" + list[i].shortname + "/management/overview', '" + list[i].titleSort + "');").html('<span class="glyphicon glyphicon-ban-circle"></span>');
+				}
 				$(td).append(a);
-				
+
 				a = document.createElement("a");
 				$(a).attr("data-state", list[i].state);
-				$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Delete" />").attr("onclick","showDeleteDialog('" + list[i].id + "');").html('<span class="glyphicon glyphicon-remove"></span>');
+				$(a).addClass("iconbutton float-right").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Delete" />").attr("onclick","showDeleteDialog('" + list[i].id + "');").html('<span class="glyphicon glyphicon-remove"></span>');
 				$(td).append(a);
-				
+
 				a = document.createElement("a");
-				
-				if (list[i].isFrozen) {
-					$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Unfreeze" />").attr("onclick","unfreezeSurvey('" + list[i].id + "');").html('<span class="glyphicon glyphicon-ban-circle lightred"></span>');
-				} else {				
-					$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Freeze" />").attr("onclick","showFreezeDialog('" + list[i].id + "', '" + list[i].shortname + "', '${serverprefix}" + list[i].shortname + "/management/overview', '" + list[i].titleSort + "');").html('<span class="glyphicon glyphicon-ban-circle"></span>');
-				}
-				
+				$(a).addClass("iconbutton float-right").attr("href", "${contextpath}/" + list[i].shortname + "/management/repairxhtml?from=surveysearch").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.RepairXhtml" />").attr("onclick","$('#generic-wait-dialog').modal('show');").html('<span class="glyphicon glyphicon-wrench"></span>');
 				$(td).append(a);
+
+				if(!list[i].isEVote) {
+					var a = document.createElement("a");
+					$(a).addClass("iconbutton float-right").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.ExportWithAnswers" />").attr("onclick", "showExportDialog('Survey','eus','" + list[i].shortname + "')").html('<span class="glyphicon glyphicon-download-alt"></span>');
+					$(td).append(a);
+				}
 				
 				$(row).append(td);
 								

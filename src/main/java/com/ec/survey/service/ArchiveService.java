@@ -3,6 +3,7 @@ package com.ec.survey.service;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.ArchiveFilter;
+import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.Constants;

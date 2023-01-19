@@ -58,12 +58,13 @@ public class QuorumContributions {
 		}
 		
 		// replace 0 votes for a day by sum of previous votes
-		int counter = 0;
+		int previous = 0;
 		for (Date d : answersPerDay.keySet()) {
 			int value = answersPerDay.get(d);
-			counter += value;
 			if (value == 0) {
-				answersPerDay.put(d, counter);
+				answersPerDay.put(d, previous);
+			} else {
+				previous = value;
 			}
 		}
 	}

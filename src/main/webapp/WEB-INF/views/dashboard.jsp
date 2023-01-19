@@ -81,11 +81,11 @@
 						</div>
 					</c:if>
 					
-						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived' && sharedOnly() == true">
+						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && sharedOnly() == true">
 							<spring:message code="info.NoSharedSurveys" />
 						</div>
 							
-						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || surveysMode() == 'archived' || (surveys() != null && surveys().length != 0)">
+						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || (surveys() != null && surveys().length != 0)">
 														
 							<div class="row" style="margin-bottom: 10px;">				
 								<div class="col-md-6" >

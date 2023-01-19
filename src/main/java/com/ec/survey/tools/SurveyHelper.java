@@ -305,23 +305,14 @@ public class SurveyHelper {
 			if (!lastSectionInvisible || ((element instanceof Section) && ((Section) element).getLevel() == 1)) {
 				validateElement(element, answerSet, dependencies, result, answerService, invisibleElements, resources,
 						locale, null, request, draft);
-
+				
 				if (element instanceof Matrix) {
-					Matrix m = (Matrix) element;
-					boolean atLeastOneQuestionVisible = false;
-					if (!invisibleElements.contains(m.getUniqueId()))
-					{			
-						for (Element matrixquestion : m.getQuestions()) {
-							matrixquestion.setSurvey(m.getSurvey());
-							validateElement(matrixquestion, answerSet, dependencies, result, answerService,
-									invisibleElements, resources, locale, m, request, draft);
-							if (!invisibleElements.contains(matrixquestion.getUniqueId())) {
-								atLeastOneQuestionVisible = true;
-							}
-						}
-					}
-					if (!atLeastOneQuestionVisible && !invisibleElements.contains(m.getUniqueId())) {
-						invisibleElements.add(m.getUniqueId());
+					Matrix m = (Matrix) element;					
+
+					for (Element matrixquestion : m.getQuestions()) {
+						matrixquestion.setSurvey(m.getSurvey());
+						validateElement(matrixquestion, answerSet, dependencies, result, answerService,
+								invisibleElements, resources, locale, m, request, draft);
 					}
 				}
 			} else if (lastSectionInvisible && answerSet.getSurvey().getMultiPaging()) {
@@ -426,19 +417,10 @@ public class SurveyHelper {
 
 				// check dependency
 				if (parent == null ? question.getIsDependent() : question.getIsDependentMatrixQuestion()) {
-					boolean found = false;
-					boolean missing = false;
 					List<Element> deps = dependencies.get(question);
 					List<Element> questiondependencies = null;
 					if (deps != null)
 						questiondependencies = new ArrayList<>(deps);
-					if (question instanceof Matrix) {
-						for (Element matrixquestion : ((Matrix) question).getQuestions()) {
-							List<Element> matrixquestiondependencies = dependencies.get(matrixquestion);
-							if (matrixquestiondependencies != null)
-								questiondependencies.addAll(matrixquestiondependencies);
-						}
-					}
 
 					if (questiondependencies == null && parent != null) {
 						// a question without dependencies inside a dependent matrix
@@ -447,54 +429,35 @@ public class SurveyHelper {
 							questiondependencies = new ArrayList<>(deps);
 					} else if (parent != null) {
 						// a question with dependencies inside (possibly) a dependent matrix
-						deps = dependencies.get(parent);
+						deps = dependencies.get(element);
 						if (deps != null)
 							questiondependencies.addAll(deps);
 					}
 
-					if (questiondependencies != null)
-						for (Element trigger : questiondependencies) {
-							if (trigger instanceof Matrix) {
-								Matrix m = (Matrix) trigger;
-								for (DependencyItem candidate : m.getDependentElements()) {
-									Set<String> dependentElementUniqueIds = candidate.getDependentElementUniqueIds();
-									if (dependentElementUniqueIds.contains(question.getUniqueId()) || (parent != null
-											&& dependentElementUniqueIds.contains(parent.getUniqueId()))) {
-										Element matrixQuestion = m.getQuestions()
-												.get(candidate.getPosition() / (m.getColumns() - 1));
-										Element matrixAnswer = m.getAnswers()
-												.get(candidate.getPosition() % (m.getColumns() - 1));
-										if ((answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null
-											|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId()) && !invisibleElements.contains(m.getUniqueId())) {
-											found = true;
-										} else {
-											missing = true;
-										}
-									}
-								}
-							} else {
-								if (trigger instanceof PossibleAnswer) {
-									PossibleAnswer possibleAnswer = (PossibleAnswer) trigger;
-									boolean paFound = false;
-									for (Answer answer : answerSet.getAnswers(
-											answerSet.getSurvey().getElementsById().get(possibleAnswer.getQuestionId())
-													.getUniqueId())) {
-										if (((answer.getPossibleAnswerUniqueId() != null && answer
-														.getPossibleAnswerUniqueId().equals(trigger.getUniqueId())))
-												&& !invisibleElements.contains(answer.getQuestionUniqueId())) {
-											found = true;
-											paFound = true;
-										}
-									}
-									if (!paFound) {
-										missing = true;
-									}
+					boolean found = checkDependencies(questiondependencies, element, question, parent, answerSet, invisibleElements);
+
+					if (found && question instanceof Matrix) {
+						boolean answerPossibilityVisible = false;
+						boolean subquestionFound = false;
+						for (Element matrixquestion : ((Matrix) question).getQuestions()) {
+							List<Element> matrixquestiondependencies = dependencies.get(matrixquestion);
+							matrixquestiondependencies.remove(questiondependencies);
+							if (matrixquestiondependencies != null) {
+								subquestionFound = checkDependencies(matrixquestiondependencies, matrixquestion, (Question) matrixquestion, parent, answerSet, invisibleElements);
+								if (!subquestionFound) {
+									invisibleElements.add(matrixquestion.getUniqueId());
 								}
 							}
+							answerPossibilityVisible = answerPossibilityVisible || subquestionFound;
 						}
-
-					if (element.getUseAndLogic() && missing) {
-						found = false;
+						if (!answerPossibilityVisible) {
+							found = false;
+						}
+					} else if (found && parent != null & parent instanceof Matrix) {
+						if (invisibleElements.contains(parent.getUniqueId())) {
+							found = false;
+							invisibleElements.add(question.getUniqueId());
+						}
 					}
 					
 					if (!found) {
@@ -719,40 +682,52 @@ public class SurveyHelper {
 				
 				if (element instanceof ComplexTableItem) {
 					ComplexTableItem complexTableItem = (ComplexTableItem) element;
-					switch (complexTableItem.getCellType()) {
-						case FreeText:
-							String answer = "";
-							if (!answers.isEmpty())
-								answer = answers.get(0).getValue();
-
-							if (complexTableItem.getMinCharacters() > 0 && answer.length() > 0
-									&& answer.length() < complexTableItem.getMinCharacters()) {
-								result.put(element, resources.getMessage("validation.textNotLongEnough", null,
-										"This text is not long enough", locale));
-							}
-
-							if (complexTableItem.getMaxCharacters() > 0 && answer.length() > 0
-									&& answer.length() > complexTableItem.getMaxCharacters()) {
-								result.put(element, resources.getMessage("validation.textTooLong", null,
-										"This text is too long", locale));
-							}					
-							break;
-						case MultipleChoice:
-							if (complexTableItem.getMinChoices() > answers.size() && !answers.isEmpty()) {
-								result.put(element, resources.getMessage("validation.notEnoughAnswers", null,
-										"Not enough answers selected", locale));
-							}
-
-							if (complexTableItem.getMaxChoices() < answers.size()
-									&& complexTableItem.getMaxChoices() > 0 && !answers.isEmpty()) {
-								result.put(element, resources.getMessage("validation.tooManyAnswers", null,
-										"Too many answers selected", locale));
-							}
-							break;
-						case Number:
-						case Formula:
-							checkNumber(complexTableItem, answerSet, answers, result, resources, locale, answerService);
-							break;
+					
+					if (invisibleElements.contains(parentElement.getUniqueId())) {
+						invisibleElements.add(complexTableItem.getUniqueId());
+						
+						// this answer must be ignored because the dependent question was not triggered
+						for (Answer answer : answers) {
+							answerSet.getAnswers().remove(answer);
+						}
+						
+						answers.clear();
+					} else {					
+						switch (complexTableItem.getCellType()) {
+							case FreeText:
+								String answer = "";
+								if (!answers.isEmpty())
+									answer = answers.get(0).getValue();
+	
+								if (complexTableItem.getMinCharacters() > 0 && answer.length() > 0
+										&& answer.length() < complexTableItem.getMinCharacters()) {
+									result.put(element, resources.getMessage("validation.textNotLongEnough", null,
+											"This text is not long enough", locale));
+								}
+	
+								if (complexTableItem.getMaxCharacters() > 0 && answer.length() > 0
+										&& answer.length() > complexTableItem.getMaxCharacters()) {
+									result.put(element, resources.getMessage("validation.textTooLong", null,
+											"This text is too long", locale));
+								}					
+								break;
+							case MultipleChoice:
+								if (complexTableItem.getMinChoices() > answers.size() && !answers.isEmpty()) {
+									result.put(element, resources.getMessage("validation.notEnoughAnswers", null,
+											"Not enough answers selected", locale));
+								}
+	
+								if (complexTableItem.getMaxChoices() < answers.size()
+										&& complexTableItem.getMaxChoices() > 0 && !answers.isEmpty()) {
+									result.put(element, resources.getMessage("validation.tooManyAnswers", null,
+											"Too many answers selected", locale));
+								}
+								break;
+							case Number:
+							case Formula:
+								checkNumber(complexTableItem, answerSet, answers, result, resources, locale, answerService);
+								break;
+						}
 					}
 				}
 
@@ -804,6 +779,57 @@ public class SurveyHelper {
 			logger.error(e.getLocalizedMessage(), e);
 			return false;
 		}
+	}
+
+	public static boolean checkDependencies(List<Element> questiondependencies, Element element, Question question, Matrix parent, AnswerSet answerSet, Set<String> invisibleElements) {
+		boolean found = false;
+		boolean missing = false;
+		if (questiondependencies != null)
+			for (Element trigger : questiondependencies) {
+				if (trigger instanceof Matrix) {
+					Matrix m = (Matrix) trigger;
+					for (DependencyItem candidate : m.getDependentElements()) {
+						Set<String> dependentElementUniqueIds = candidate.getDependentElementUniqueIds();
+						if (dependentElementUniqueIds.contains(question.getUniqueId()) || (parent != null
+								&& dependentElementUniqueIds.contains(parent.getUniqueId()))) {
+							Element matrixQuestion = m.getQuestions()
+									.get(candidate.getPosition() / (m.getColumns() - 1));
+							Element matrixAnswer = m.getAnswers()
+									.get(candidate.getPosition() % (m.getColumns() - 1));
+							if ((answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null
+									|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId()) && !invisibleElements.contains(m.getUniqueId())) {
+								found = true;
+							} else {
+								missing = true;
+							}
+						}
+					}
+				} else {
+					if (trigger instanceof PossibleAnswer) {
+						PossibleAnswer possibleAnswer = (PossibleAnswer) trigger;
+						boolean paFound = false;
+						for (Answer answer : answerSet.getAnswers(
+								answerSet.getSurvey().getElementsById().get(possibleAnswer.getQuestionId())
+										.getUniqueId())) {
+							if (((answer.getPossibleAnswerUniqueId() != null && answer
+									.getPossibleAnswerUniqueId().equals(trigger.getUniqueId())))
+									&& !invisibleElements.contains(answer.getQuestionUniqueId())) {
+								found = true;
+								paFound = true;
+							}
+						}
+						if (!paFound) {
+							missing = true;
+						}
+					}
+				}
+			}
+
+		if (element.getUseAndLogic() && missing) {
+			found = false;
+		}
+
+		return found;
 	}
 
 	private static void checkNumber(Element element, AnswerSet answerSet, List<Answer> answers, Map<Element, String> result, MessageSource resources, Locale locale, AnswerService answerService) {
@@ -3759,6 +3785,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		rankingQuestion.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !rankingQuestion.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + rankingQuestion.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		rankingQuestion.setUseAndLogic(useAndLogic);
 
 		Integer order = getInteger(parameterMap, "order", id);
 		if (log220 && !order.equals(rankingQuestion.getOrder())) {

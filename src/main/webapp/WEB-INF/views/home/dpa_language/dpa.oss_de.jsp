@@ -1,0 +1,1 @@
+<h2>Bitte geben Sie hier Ihre Zustimmung zur Datenverarbeitung an.</h2>

@@ -54,7 +54,7 @@ public class XlsxExportCreator {
 			cell = row.createCell(colCounter++);
 			cell.setCellValue(ConversionTools.removeHTMLNoEscape(list.getName()));
 		}
-		if (!result.getTemplate().equals("l")) {
+		if (!result.getTemplate().equals("l") && !result.getTemplate().equals("p") && !result.getTemplate().equals("o")) {
 			row = sheet.createRow(rowCounter++);
 			cell = row.createCell(0);
 			cell.setCellValue("List votes");
@@ -95,6 +95,7 @@ public class XlsxExportCreator {
 	private static CellStyle redPercentStyle = null;
 	private static XSSFCellStyle yellowBackgroundStyle = null;
 	private static XSSFCellStyle greenBackgroundStyle = null;
+	private static XSSFCellStyle purpleBackgroundStyle = null;
 	private static XSSFCellStyle redBackgroundStyle = null;
 	
 	private static void initStyles(Workbook workbook) throws Exception {
@@ -158,7 +159,18 @@ public class XlsxExportCreator {
 		greenBackgroundStyle.setBorderBottom(CellStyle.BORDER_THIN);
 		greenBackgroundStyle.setBorderLeft(CellStyle.BORDER_THIN);
 		greenBackgroundStyle.setBorderRight(CellStyle.BORDER_THIN);
-		
+
+		purpleBackgroundStyle = (XSSFCellStyle) workbook.createCellStyle();
+		String hexColorPurple = "E064E3";
+		XSSFColor colorPurple = new XSSFColor(Hex.decodeHex(hexColorPurple.toCharArray()));
+		purpleBackgroundStyle.setFillForegroundColor(colorPurple);
+		purpleBackgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		purpleBackgroundStyle.setAlignment(CellStyle.ALIGN_LEFT);
+		purpleBackgroundStyle.setBorderTop(CellStyle.BORDER_THIN);
+		purpleBackgroundStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		purpleBackgroundStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		purpleBackgroundStyle.setBorderRight(CellStyle.BORDER_THIN);
+
 		redBackgroundStyle = (XSSFCellStyle) workbook.createCellStyle();
 		String hexColorRed = "FFABAB";
 		XSSFColor colorRed = new XSSFColor(Hex.decodeHex(hexColorRed.toCharArray()));
@@ -191,37 +203,48 @@ public class XlsxExportCreator {
 		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet(getMessage(resource, "label.seats.Counting"));
 		boolean luxTemplate = result.getTemplate().equals("l");
+		boolean outsideTemplate = result.getTemplate().equals("o");
 		
 		int rowCounter = 0;
 		
 		initStyles(workbook);
 		
-		addCountingTable(resource, result, sheet, luxTemplate, 0);
+		addCountingTable(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 		if (luxTemplate) {
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.DHondtSeatDistribution"));
-			rowCounter = addDHondtSeatDistribution(resource, result, sheet, 0);
+			rowCounter = addDHondtSeatDistribution(resource, result, sheet, 0, outsideTemplate);
 			addDistributionPreferentialSeats(resource, result, sheet, luxTemplate, rowCounter);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.DHondtTable"));
 			addDHondtTable(resource, result, sheet, 0);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.ElectedCandidates"));
-			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, 0);
+			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.NbVotesPerCandidate"));
-			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, 0);
+			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
+		} else if (outsideTemplate) {
+			sheet = workbook.createSheet(getMessage(resource, "label.seats.AllocationFirstExport"));
+			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
+			sheet = workbook.createSheet(getMessage(resource, "label.seats.DistributionListSeats"));
+			rowCounter = addDHondtSeatDistribution(resource, result, sheet, 0, outsideTemplate);
+			addDistributionListSeats(resource, result, sheet, rowCounter, outsideTemplate);
+			sheet = workbook.createSheet(getMessage(resource, "label.seats.DHondtTable"));
+			addDHondtTable(resource, result, sheet, 0);
+			sheet = workbook.createSheet(getMessage(resource, "label.seats.NbVotesPerCandidate"));
+			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 		} else {
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.WeightingOfVotes"));
 			addWeightingOfVotes(resource, result, sheet, 0);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.AllocationOfSeats"));
 			addAllocationOfSeats(resource, result, sheet, 0);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.DistributionListSeats"));
-			addDistributionListSeats(resource, result, sheet, 0);
+			addDistributionListSeats(resource, result, sheet, 0, outsideTemplate);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.DistributionPreferentialSeatsExport"));
 			addDistributionPreferentialSeats(resource, result, sheet, luxTemplate, rowCounter);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.ElectedCandidatesListVotesExport"));
 			addElectedCandidatesFromListVotes(resource, result, sheet, rowCounter);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.ElectedCandidatesPreferentialVotesExport"));
-			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, 0);
+			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 			sheet = workbook.createSheet(getMessage(resource, "label.seats.NbVotesPerCandidate"));
-			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, 0);
+			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 		}
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -267,7 +290,7 @@ public class XlsxExportCreator {
 		return ++rowCounter;
 	}
 	
-	private static int addCountingTable(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, int rowCounter) {
+	private static int addCountingTable(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, boolean outsideTemplate, int rowCounter) {
 		Row row = sheet.createRow(rowCounter++);
 		addStringCell(row, 0, getMessage(resource, "label.Quorum"), false);
 		addNumberCell(row, 1, result.getQuorum(), false);
@@ -280,7 +303,7 @@ public class XlsxExportCreator {
 		addStringCell(row, 0, getMessage(resource, "label.Votes"), false);
 		addNumberCell(row, 1, result.getVotes(), false);
 		
-		if (!luxTemplate) {
+		if (!luxTemplate && !outsideTemplate) {
 			row = sheet.createRow(rowCounter++);
 			addStringCell(row, 0, getMessage(resource, "label.seats.ListVotes"), false);
 			addNumberCell(row, 1, result.getListVotes(), false);
@@ -308,7 +331,7 @@ public class XlsxExportCreator {
 		return ++rowCounter;
 	}
 	
-	private static int addDHondtSeatDistribution(MessageSource resource, SeatCounting result, Sheet sheet, int rowCounter) {
+	private static int addDHondtSeatDistribution(MessageSource resource, SeatCounting result, Sheet sheet, int rowCounter, boolean outsideTemplate) {
 		Row row = sheet.createRow(rowCounter++);
 		addStringCell(row, 1, getMessage(resource, "label.Votes"), true);
 		addStringCell(row, 2, "%", true);
@@ -317,7 +340,7 @@ public class XlsxExportCreator {
 		{
 			row = sheet.createRow(rowCounter++);
 			addStringCell(row, 0, list.getName(), false);
-			addNumberCell(row, 1, list.getLuxListVotes(), false);
+			addNumberCell(row, 1, outsideTemplate ? list.getPreferentialVotes() : list.getLuxListVotes(), false);
 			addPercentCell(row, 2, list.getListPercent(), false);
 			
 			if (list.getListPercentWeighted() < result.getMinListPercent()) {
@@ -329,7 +352,7 @@ public class XlsxExportCreator {
 		
 		row = sheet.createRow(rowCounter++);
 		addStringCell(row, 0, getMessage(resource, "label.seats.Total"), true);
-		addNumberCell(row, 1, result.getLuxListVotes(), true);
+		addNumberCell(row, 1, outsideTemplate ? result.getListVotes() : result.getLuxListVotes(), true);
 		addPercentCell(row, 2, 100, true);
 		
 		sheet.autoSizeColumn(0);
@@ -351,16 +374,18 @@ public class XlsxExportCreator {
 		}
 
 		DHondtEntry[][] entries = result.getDHondtEntries();
-		for (int r = 0; r < result.getMaxSeats(); r++) {  // r = round = divisor
+		for (int r = 0; r < entries.length; r++) {  // r = round = divisor
 			row = sheet.createRow(rowCounter++);
-			addNumberCell(row, 0, entries[r][0].getRound(), false);
-			for (int i = 0; i < entries[r].length; i++) {
-				DHondtEntry entry = entries[r][i];
-				
-				if (entry.getSeat() > 0) {
-					addStringCell(row, i + 1, format("%.2f", entry.getValue()) + " (" + entry.getSeat() + ")" , false);
-				} else {
-					addNumberCell(row, i + 1, entry.getValue(), false);
+			if (entries[r].length > 0) {
+				addNumberCell(row, 0, entries[r][0].getRound(), false);
+				for (int i = 0; i < entries[r].length; i++) {
+					DHondtEntry entry = entries[r][i];
+					
+					if (entry.getSeat() > 0) {
+						addStringCell(row, i + 1, format("%.2f", entry.getValue()) + " (" + entry.getSeat() + ")" , false);
+					} else {
+						addNumberCell(row, i + 1, entry.getValue(), false);
+					}
 				}
 			}
 		}
@@ -372,7 +397,7 @@ public class XlsxExportCreator {
 		return ++rowCounter;
 	}
 
-	private static int addDistributionListSeats(MessageSource resource, SeatCounting result, Sheet sheet, int rowCounter) {
+	private static int addDistributionListSeats(MessageSource resource, SeatCounting result, Sheet sheet, int rowCounter, boolean outsideTemplate) {
 		Row row;
 		
 		for (String message: result.getReallocationMessagesForLists()) {
@@ -394,7 +419,7 @@ public class XlsxExportCreator {
 			if (list.getListPercentWeighted() >= result.getMinListPercent()) {
 				row = sheet.createRow(rowCounter++);
 				addStringCell(row, 0, list.getName(), false);
-				addNumberCell(row, 1, list.getListVotes(), false);
+				addNumberCell(row, 1, outsideTemplate ? list.getPreferentialVotes() : list.getListVotes(), false);
 				addPercentCell(row, 2, list.getListPercentFinal(), false);
 				addNumberCell(row, 3, list.getListSeats(), false);
 			}
@@ -486,7 +511,7 @@ public class XlsxExportCreator {
 		return ++rowCounter;
 	}
 
-	private static int addElectedCandidatesFromPreferentialVotes(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, int rowCounter) {
+	private static int addElectedCandidatesFromPreferentialVotes(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, boolean outsideTemplate, int rowCounter) {
 		Row row = sheet.createRow(rowCounter++);
 		addStringCell(row, 0, getMessage(resource, "label.seats.List"), true);
 		addStringCell(row, 1, getMessage(resource, "label.seats.Candidate"), true);
@@ -506,7 +531,7 @@ public class XlsxExportCreator {
 		addStringCell(row, 0, getMessage(resource, "label.seats.Total"), true);
 		addEmptyCell(row, 1);
 		addNumberCell(row, 2, result.getSumPreferentialVotes(), true);
-		addNumberCell(row, 3, result.getPreferentialVotesSeatsReal(), true);
+		addNumberCell(row, 3, outsideTemplate ? 8 : result.getPreferentialVotesSeatsReal(), true);
 
 		sheet.autoSizeColumn(0);
 		sheet.autoSizeColumn(1);
@@ -516,8 +541,17 @@ public class XlsxExportCreator {
 		return ++rowCounter;
 	}
 
-	private static int addNumberOfVotesPerCandidate(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, int rowCounter) {
+	private static int addNumberOfVotesPerCandidate(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, boolean outsideTemplate, int rowCounter) {
+		
 		Row row = sheet.createRow(rowCounter++);
+		
+		if (result.isAmbiguous()) {
+			addMessageStringCell(row, 0, getMessage(resource, "info.seats.ambiguous"), true);
+			row.getCell(0).setCellStyle(redStyle);
+			rowCounter++;
+			row = sheet.createRow(rowCounter++);
+		}
+	
 		addStringCell(row, 0, getMessage(resource, "label.seats.CandidateNumber"), true);
 		
 		int counter = 1;
@@ -528,7 +562,7 @@ public class XlsxExportCreator {
 			}
 		}
 		
-		if (!luxTemplate) {
+		if (!luxTemplate && !outsideTemplate) {
 			row = sheet.createRow(rowCounter++);
 			addStringCell(row, 0, getMessage(resource, "label.seats.TotalListVotes"), true);
 			counter = 1;
@@ -549,7 +583,9 @@ public class XlsxExportCreator {
 			for (ElectedCandidate candidate : candidates) {
 				addNumberCell(row, counter, candidate.getVotes(), false);
 				if (candidate.getSeats() > 0) {
-					if (candidate.isPreferentialSeat()) {
+					if (candidate.isAmbiguous()) {
+						row.getCell(counter).setCellStyle(purpleBackgroundStyle);
+					} else if (candidate.isPreferentialSeat()) {
 						row.getCell(counter).setCellStyle(yellowBackgroundStyle);
 					} else {
 						row.getCell(counter).setCellStyle(greenBackgroundStyle);
@@ -562,7 +598,7 @@ public class XlsxExportCreator {
 		}
 		
 		row = sheet.createRow(rowCounter++);
-		addStringCell(row, 0, luxTemplate ? getMessage(resource, "label.seats.Total") : getMessage(resource, "label.seats.TotalPreferentialVotes"), true);
+		addStringCell(row, 0, (luxTemplate || outsideTemplate) ? getMessage(resource, "label.seats.Total") : getMessage(resource, "label.seats.TotalPreferentialVotes"), true);
 		counter = 1;
 		for (SeatDistribution list : result.getListSeatDistribution())
 		{
@@ -585,13 +621,20 @@ public class XlsxExportCreator {
 		row = sheet.createRow(rowCounter++);
 		addEmptyCell(row, 0);
 		row.getCell(0).setCellStyle(yellowBackgroundStyle);
-		addStringCell(row, 1, getMessage(resource, "label.seats.ElectedFromPreferentialVotes"), false);
-		
+		addStringCell(row, 1, outsideTemplate ? getMessage(resource, "label.seats.ElectedByHighest") : getMessage(resource, "label.seats.ElectedFromPreferentialVotes"), false);
+
 		row = sheet.createRow(rowCounter++);
 		addEmptyCell(row, 0);
 		row.getCell(0).setCellStyle(redBackgroundStyle);
 		addStringCell(row, 1, getMessage(resource, "label.seats.Reallocated"), false);
 
+		if (outsideTemplate) {
+			row = sheet.createRow(rowCounter++);
+			addEmptyCell(row, 0);
+			row.getCell(0).setCellStyle(purpleBackgroundStyle);
+			addStringCell(row, 1, getMessage(resource, "label.seats.Ambiguous"), false);
+		}
+		
 		for (int i = 0; i < counter; i++) {
 			sheet.autoSizeColumn(i);
 		}

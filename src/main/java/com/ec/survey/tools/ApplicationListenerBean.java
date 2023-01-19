@@ -852,8 +852,17 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 	public static void createDummyAnswers(String shortname, int answerCount, User user, String fileDir, AnswerService answerService, SurveyService surveyService, boolean validate, MessageSource resources, Locale locale, FileService fileService) throws Exception
 	{
 		Survey psurvey = surveyService.getSurvey(shortname, false, false, false, true, null, true, false);
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		
 		for (int j = 0; j < answerCount; j++) {
-			AnswerSet answerSet = SurveyCreator.createDummyAnswerSet(psurvey, user);		
+			AnswerSet answerSet = SurveyCreator.createDummyAnswerSet(psurvey, user);
+			
+			if (psurvey.getIsEVote()) {
+				answerSet.setDate(cal.getTime());
+				cal.add(Calendar.MINUTE, -10);
+			}
 			
 			if (validate)
 			{

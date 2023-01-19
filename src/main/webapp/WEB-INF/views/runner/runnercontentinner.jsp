@@ -78,7 +78,7 @@
 										<div class="modal-body">${form.survey.motivationText}</div>
 									</div>
 									<div class="modal-footer">
-										<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog('.motivation-popup-modal')"><spring:message code="label.Close" /></a>
+										<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog('.motivation-popup-modal')">${form.getMessage("label.Close")}</a>
 									</div>
 								</div>
 							</div>
@@ -90,11 +90,11 @@
 							<div>
 								<span style="float: left; line-height: 32px">
 									<c:choose>
-										<c:when	test="${form.survey.geteVoteTemplate() == 'l'}">
-											<span><spring:message code="label.Votes" />:</span>
+										<c:when	test="${form.survey.geteVoteTemplate() == 'l' || form.survey.geteVoteTemplate() == 'o'}">
+											<span>${form.getMessage("label.Votes")}:</span>
 										</c:when>
 										<c:otherwise>
-											<span><spring:message code="label.VotedCandidates" />:</span>
+											<span>${form.getMessage("label.VotedCandidates")}:</span>
 										</c:otherwise>
 									</c:choose>
 										<span id="overviewVotes">
@@ -105,7 +105,7 @@
 
 										<c:if test="${form.survey.geteVoteTemplate() != 'l'}">
 											<span id="votedListsWrapper" style="display: none">
-												<span style="margin-left: 24px;"><spring:message code="label.VotedLists" />:</span>
+												<span style="margin-left: 24px;">${form.getMessage("label.VotedLists")}:</span>
 												<span id="votedLists"></span>
 											</span>
 										</c:if>
@@ -119,15 +119,21 @@
 						<div class="modal evote-confirm-modal not-shown" id="evoteConfirmPopup" style="padding-top: 50px; z-index: 10500;" role="dialog">
 							<div class="modal-dialog">
 								<div class="modal-content">
-									<div class="modal-header" style="font-weight: bold;">
-										<spring:message code="label.ConfirmBallot" />
-									</div>
 									<div class="modal-body">
-										<div class="modal-body"><spring:message code="label.eVoteConfirmSubmit" /></div>
+										<div class="container-fluid">
+											<div class="row align-items-center">
+												<div class="col-sm-4">
+													<img alt="cast ballot icon" src="${contextpath}/resources/images/castballoticon.png"/>
+												</div>
+												<div class="col-sm-8" style="height: 198px; line-height: 20px; padding-top: 85px; font-size: 16px !important;">
+													${form.getMessage("label.eVoteConfirmSubmit")}
+												</div>
+											</div>
+										</div>
 									</div>
 									<div class="modal-footer">
-										<a href="javascript:;" class="btn btn-primary" onclick="eVoteConfirmResolve(true)"><spring:message code="label.Imsure" /></a>
-										<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog('.evote-confirm-modal'); eVoteConfirmResolve(false);"><spring:message code="label.Cancel" /></a>
+										<a href="javascript:;" class="btn btn-primary" onclick="eVoteConfirmResolve(true)">${form.getMessage("label.Imsure")}</a>
+										<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog('.evote-confirm-modal'); eVoteConfirmResolve(false);">${form.getMessage("label.Cancel")}</a>
 									</div>
 								</div>
 							</div>
@@ -152,7 +158,7 @@
 						<div class="progressBarPlaceholder"></div>
 					</c:if>
 				
-					<c:if test="${!(form.survey.isDelphi)}">
+					<c:if test="${!(form.survey.isDelphi) && !(form.survey.isEVote)}">
 						<div id="nolocalstorage" class="hideme" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
 							<span class="alert-danger" style="padding: 10px;">${form.getMessage("info.LocalStorageDisabled")}</span>
 						</div>
@@ -214,7 +220,7 @@
 										<c:otherwise>
 											${form.getMessage("info.AnonymousMode")}
 										</c:otherwise>
-									</c:choose>	
+									</c:choose>									
 								</p>					
 							</div>
 							<div style="float: right; margin-top: -15px; margin-right: -15px;">
@@ -842,8 +848,11 @@
 		 			</c:if>
 		 		</c:forEach>
 	 		</c:if>
-			initializeBackupHelper();
-			restoreBackup();
+	 		
+	 		if ($("#survey.id").length > 0) {
+	 			initializeBackupHelper();
+	 			restoreBackup();
+	 		}			
 			
 			<c:forEach items="${form.validationMessageElements}" var="element">
 				validationMessages["${element.uniqueId}"] = "${form.getValidationMessage(element)}";
@@ -901,23 +910,51 @@
 	 	}
 	 	
 	 	var values = null;
-	 	var alreadyEncountered = false;
-	 	function getValueByQuestion(uniqueId, isRegEx, cellEl)
+	 	function getValueByQuestion(uniqueId, readValueOnce, cellEl)
 	 	{
-	 		if (typeof values[uniqueId] != 'undefined' && !(isRegEx && alreadyEncountered)) {
+	 		if (typeof values[uniqueId] != 'undefined' && values[uniqueId] != null) {
 	 			if (cellEl != null && $(cellEl).is(".complex")){
 					$(cellEl).closest(".innercell").addClass("answered");
 				} else {
-					alreadyEncountered = true;
 					$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
 					$('tr[data-uid="' + uniqueId + '"]').closest(".survey-element").addClass("answered");
+	 			}
+				if (readValueOnce) {
+					var ret = values[uniqueId];
+					values[uniqueId] = null
+					return ret;
 				}
  				return values[uniqueId];
 	 		}
 	 		return "";
 	 	}
-	 	
-	 	var pavalues = null;
+
+		var valuesread = {};
+		function getValueByQuestionRating(uniqueId, answerUniqueId, cellEl)
+		{
+			if (typeof values[uniqueId] != 'undefined' && typeof valuesread[answerUniqueId] == 'undefined') {
+				if (cellEl != null && $(cellEl).is(".complex")){
+					$(cellEl).closest(".innercell").addClass("answered");
+				} else {
+					$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+					$('tr[data-uid="' + uniqueId + '"]').closest(".survey-element").addClass("answered");
+					valuesread[answerUniqueId] += true
+				}
+				return values[uniqueId];
+			}
+			return "";
+		}
+
+		function getValueByQuestionGallery(uniqueId)
+		{
+			if (typeof values[uniqueId] != 'undefined') {
+				return values[uniqueId];
+			}
+			return "";
+		}
+
+		var pavalues = null;
+	 	var pavaluesread = {};
 	 	function getPAByQuestion(uniqueId, cellEl)
 	 	{
 	 		if (typeof pavalues[uniqueId] != 'undefined')
@@ -931,6 +968,27 @@
 	 		}
 	 		return "";
 	 	}
+
+		var pavaluesread = {};
+	 	var pavaluesread2 = {};
+		function getPAByQuestionCheckBox(uniqueId, answerUniqueId, cellEl)
+		{
+			if (typeof pavalues[uniqueId] != 'undefined' && typeof pavaluesread2[answerUniqueId] == 'undefined')
+			{
+				if (cellEl != null && $(cellEl).is(".complex")){
+					$(cellEl).closest(".innercell").addClass("answered");
+				} else {
+					$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+				}
+				if (typeof pavaluesread[answerUniqueId] != 'undefined') {
+					pavaluesread2[answerUniqueId] += true;
+				} else {
+					pavaluesread[answerUniqueId] += true;
+				}
+				return pavalues[uniqueId];
+			}
+			return "";
+		}
 	 	
 	 	var pavaluesid = null;
 	 	function getPAIdByQuestion(uniqueId)
@@ -975,11 +1033,16 @@
 	 	}
 	 	
 	 	var tablevalues = null;
-	 	function getTableAnswer(uniqueId, row, col)
+	 	function getTableAnswer(uniqueId, row, col, readOnce)
 	 	{
-	 		if (typeof tablevalues[uniqueId + "#" + row + "#" + col] != 'undefined')
+	 		if (typeof tablevalues[uniqueId + "#" + row + "#" + col] != 'undefined' && tablevalues[uniqueId + "#" + row + "#" + col] != null)
 	 		{
 	 			$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+	 			if (readOnce) {
+	 				var res = tablevalues[uniqueId + "#" + row + "#" + col];
+					tablevalues[uniqueId + "#" + row + "#" + col] = null;
+					return res;
+				}
 	 			return tablevalues[uniqueId + "#" + row + "#" + col];
 	 		}
 	 		
@@ -987,11 +1050,18 @@
 	 	}
 	 	
 	 	var filevalues = null;
+	 	var filesread = {};
+		var filesread2 = {};
 	 	function getFileAnswer(uniqueId)
 	 	{
 	 		const result = filevalues[uniqueId];
-	 		if (typeof result != 'undefined') {
+	 		if (typeof result != 'undefined' && typeof filesread2[uniqueId] == 'undefined') {
 	 			$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
+	 			if (typeof filesread[uniqueId] != 'undefined') {
+					filesread2[uniqueId] += true;
+				} else {
+	 				filesread[uniqueId] += true;
+				}
 	 			return result;
 	 		}
 	 		

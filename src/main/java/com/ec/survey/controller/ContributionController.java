@@ -223,7 +223,13 @@ public class ContributionController extends BasicController {
 		Set<String> invisibleElements = new HashSet<>();
 		if (answerSet != null) {
 			if (answerSet.getSurvey().getIsEVote()){
-				throw new IllegalStateException("eVote contributions may not be viewed");
+				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+				model.addObject(Constants.MESSAGE,
+						resources.getMessage("error.EVoteContributionViewNotAllowed", null,
+								"The survey has been closed and it is not possible to access the contribution anymore.",
+								locale));
+				return model;
+
 			}
 			// participants can only access it if the survey is still active
 			User u;
@@ -372,7 +378,12 @@ public class ContributionController extends BasicController {
 				List<String> oldFileUIDs = oldAnswerSet.getAllFiles();
 
 				if (oldAnswerSet.getSurvey().getIsEVote()){
-					throw new IllegalStateException("eVote contributions may not be edited");
+					ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+					model.addObject(Constants.MESSAGE,
+							resources.getMessage("error.EVoteContributionEditNotAllowed", null,
+									"The survey has been closed and it is not possible to access the contribution anymore.",
+									locale));
+					return model;
 				}
 
 				String uniqueCode = request.getParameter(Constants.UNIQUECODE);
@@ -541,7 +552,12 @@ public class ContributionController extends BasicController {
 			AnswerSet answerSet = answerService.get(uid);
 			if (answerSet != null) {
 				if (answerSet.getSurvey().getIsEVote()){
-					throw new IllegalStateException("eVote contributions may not be viewed");
+					ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+					model.addObject(Constants.MESSAGE,
+							resources.getMessage("error.EVoteContributionViewNotAllowed", null,
+									"The survey has been closed and it is not possible to access the contribution anymore.",
+									locale));
+					return model;
 				}
 				Form form = new Form(resources);
 				Set<String> invisibleElements = new HashSet<>();
@@ -605,7 +621,12 @@ public class ContributionController extends BasicController {
 					String lang = answerSet.getLanguageCode();
 
 					if (answerSet.getSurvey().getIsEVote()){
-						throw new IllegalStateException("eVote contributions may not be viewed");
+						ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+						model.addObject(Constants.MESSAGE,
+								resources.getMessage("error.EVoteContributionViewNotAllowed", null,
+										"The survey has been closed and it is not possible to access the contribution anymore.",
+										locale));
+						return model;
 					}
 
 					SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null,

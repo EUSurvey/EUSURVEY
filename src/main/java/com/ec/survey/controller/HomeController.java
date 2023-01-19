@@ -15,8 +15,10 @@ import com.ec.survey.tools.Ucs2Utf8;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -339,10 +341,12 @@ public class HomeController extends BasicController {
 		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
 
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		
 		try {
 
 			sessionService.initializeProxy();
-			HttpClient httpclient = HttpClients.createDefault();
+			
 			HttpPost httppost = new HttpPost(incidentHost);
 			httppost.addHeader("Content-type", "text/xml;charset=UTF-8");
 			httppost.addHeader("SOAPAction", "Create");
@@ -353,22 +357,31 @@ public class HomeController extends BasicController {
 
 			httppost.setEntity(new StringEntity(createTemplate));
 			
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
-
-			if (entity != null) {
-				String strResponse = EntityUtils.toString(entity, "UTF-8");
-				if (!strResponse.toLowerCase().contains("message=\"success\"")) {
-					logger.error(strResponse);
-					throw new MessageException("Calling SMT web service failed.");
+			CloseableHttpResponse response = httpclient.execute(httppost);
+			
+			try {
+			
+				HttpEntity entity = response.getEntity();
+	
+				if (entity != null) {
+					String strResponse = EntityUtils.toString(entity, "UTF-8");
+					if (!strResponse.toLowerCase().contains("message=\"success\"")) {
+						logger.error(strResponse);
+						throw new MessageException("Calling SMT web service failed.");
+					}
+					logger.info(strResponse);
 				}
-				logger.info(strResponse);
+			
+			} finally{
+			   response.close();
 			}
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			//fallback to email
 			return sendSupportEmail(request, locale, model);
+		} finally {
+			httpclient.close();
 		}
 
 		model.put("messagesent", true);

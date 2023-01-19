@@ -16,6 +16,7 @@ var SeatResults = function() {
 			this.showResults(true);
 			if (this.useTestData()) {
 				this.updateEVoteCountingChart();
+				this.updateEVoteSinglePresidentChart();
 				this.loaded(true);
 			} else {
 				this.loadCounting(surveyUid);
@@ -34,6 +35,7 @@ var SeatResults = function() {
 			{
 				model.counting(data);
 				model.updateEVoteCountingChart();
+				model.updateEVoteSinglePresidentChart();
 				model.loaded(true);
 				$('[data-toggle="tooltip"]').tooltip();
 			}
@@ -124,6 +126,68 @@ var SeatResults = function() {
 		};
 
 		eVoteCountingChart = new Chart(ctx, config);
+	}
+
+	let eVoteSinglePresidentChart = null;
+	this.updateEVoteSinglePresidentChart = function()
+	{
+		if (eVoteSinglePresidentChart != null) eVoteSinglePresidentChart.destroy();
+
+		let container = document.getElementById("eVoteSinglePresidentChartContainer");
+
+		if (container == null || this.counting == null) {
+			return;
+		}
+
+		let heightAttribute = this.counting().candidatesFromPreferentialVotes.length * 20 + "px !important";
+		container.setAttribute("style","height:" + heightAttribute);
+
+		let ctx = $("#eVoteSinglePresidentChart");
+
+		const labels = [];
+		const votes = [];
+		this.counting().candidatesFromPreferentialVotes.forEach((ec) => {
+			labels.push(ec.name);
+			votes.push(ec.votes);
+		});
+
+		const data = {
+			labels: labels,
+			datasets: [{
+				data: votes,
+				backgroundColor: 'rgb(91, 155, 213)',
+			}]
+		};
+
+		let config = {
+			type: 'horizontalBar',
+			data: data,
+			options: {
+				legend: {
+					display: false
+				},
+				plugins: {
+					labels: false,
+				},
+				scales: {
+					yAxes: [{
+						ticks: {
+							autoSkip: false
+						}
+					}],
+					xAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: getLabel('NumberOfReceivedVotes')
+						}
+					}],
+				},
+				responsive: true,
+				maintainAspectRatio: false
+			},
+		};
+
+		eVoteSinglePresidentChart = new Chart(ctx, config);
 	}
 }
 

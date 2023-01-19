@@ -322,7 +322,7 @@
 							
 							<c:choose>
 								<c:when test="${USER.canCreateSurveys}">
-									<a class="actionRowAction" onclick="copySurvey('${form.survey.id}', $('#originaltitle').html(), '${form.survey.language.code}', '${form.survey.security}', '${form.survey.isQuiz}', '${form.survey.isDelphi}', '${form.survey.isEVote}')" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+									<a class="actionRowAction" onclick="copySurvey('${form.survey.id}', $('#originaltitle').html(), '${form.survey.language.code}', '${form.survey.security}', '${form.survey.isQuiz}', '${form.survey.isDelphi}', '${form.survey.isEVote}', '${form.survey.eVoteTemplate}')" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 								</c:when>
 								<c:otherwise>
 									<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy disabled"></span></a>

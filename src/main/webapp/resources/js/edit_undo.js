@@ -15,6 +15,11 @@ var UndoProcessor = function() {
 	this.addUndoStep = function(data)
 	{
 		this.undostack.push(data);
+
+		// reset redo stack whenever a new action is pushed to the undostack
+		_actions.RedoEnabled(false);
+		this.redostack = [];
+
 		_actions.UndoEnabled(true);
 		_actions.SaveEnabled(true);
 	}
@@ -53,12 +58,24 @@ var UndoProcessor = function() {
 		return el
 	}
 
+	this.popDeletedElementById = function(id)
+	{
+		let element;
+		for(let k = 0; k < _actions.deletedElements.length; k++) {
+			if (_actions.deletedElements[k][0].id == id) {
+				element = _actions.deletedElements[k];
+				_actions.deletedElements.splice(k, 1);
+			}
+		}
+		return element;
+	}
+
 	this.undo = function()
 	{
 		if (this.undostack.length == 0) return;
-		
+
 		var step = this.undostack.pop();
-		
+
 		var id = step[1];
 		var position = step[2];
 
@@ -71,7 +88,7 @@ var UndoProcessor = function() {
 				$(step[1]).width(step[2]);
 				break;
 			case "ADD":
-				_actions.deletedElements.push(_elementProperties.selectedelement);			
+				_actions.deletedElements.push(_elementProperties.selectedelement);
 				$(_elementProperties.selectedelement).remove();
 				_elementProperties.selectedelement = null;
 				removeFromNavigation(id);
@@ -102,7 +119,9 @@ var UndoProcessor = function() {
 					{
 						var elemid = arrelements[i].substring(0, arrelements[i].indexOf("|"));
 						var elemposition = arrelements[i].substring(arrelements[i].indexOf("|")+1);
-						var selectedelement = _actions.deletedElements.pop();
+
+						let selectedelement = this.popDeletedElementById(elemid);
+						if(!selectedelement) break;
 						
 						if (selectedelement.hasClass("matrix-question"))
 						{
@@ -832,7 +851,9 @@ var UndoProcessor = function() {
 				$(step[1]).width(step[3]);
 				break;
 			case "ADD":
-				var element = _actions.deletedElements.pop();
+				let element = this.popDeletedElementById(id);
+				if(!element) break;
+
 				if ($("#content").find("li").length > position)
 				{
 					$($("#content").find("li")[position]).before(element);
@@ -881,10 +902,11 @@ var UndoProcessor = function() {
 				break;
 			case "COPYPASTE":
 				var ids = step[1].split(";");
-				for (var i = 0; i < ids.length; i++)
+				for (let i = 0; i < ids.length; i++)
 				{
-					var position = this.positions.pop();
-					var item = _actions.deletedElements.pop();
+					let position = this.positions.pop();
+					let item = this.popDeletedElementById(id);
+					if(!element) break;
 					
 					if (position == 0)
 					{
@@ -1306,7 +1328,7 @@ var UndoProcessor = function() {
 				scoring.value2(step[4]);
 				break;
 			case "addExpectedAnswer":
-				element.scoringItems.push(_actions.deletedElements.pop());		
+				element.scoringItems.push(_actions.deletedElements.pop());
 				break;
 			case "removeExpectedAnswer":
 				_actions.deletedElements.push(element.scoringItems.pop());

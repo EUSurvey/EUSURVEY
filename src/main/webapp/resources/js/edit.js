@@ -643,6 +643,11 @@ function getValueByQuestion(s)
 	return "";
 }
 
+function getValueByQuestionGallery(s)
+{
+	return "";
+}
+
 function getPAByQuestion(a,b,c)
 {
 	return "";
@@ -654,6 +659,11 @@ function getPAByQuestion2(a,b,c)
 }
 
 function getPAByQuestion3(a)
+{
+	return "";
+}
+
+function getPAByQuestionCheckBox(a,b,c)
 {
 	return "";
 }

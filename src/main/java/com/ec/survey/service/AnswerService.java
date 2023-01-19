@@ -2016,21 +2016,44 @@ public class AnswerService extends BasicService {
 		String sql = "SELECT DATE(ANSWER_SET_DATE), count(*) FROM ANSWERS_SET WHERE SURVEY_ID IN ("
 				+ StringUtils.collectionToCommaDelimitedString(allVersions)
 				+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY DATE(ANSWER_SET_DATE) ORDER BY DATE(ANSWER_SET_DATE)";
+		
+		String sqlVotesBefore = "SELECT count(*) FROM ANSWERS_SET WHERE SURVEY_ID IN ("
+				+ StringUtils.collectionToCommaDelimitedString(allVersions)
+				+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE <= :start";
+		
+		if (span.equalsIgnoreCase("quorumHours")) {
+			sql = "SELECT DATE(ANSWER_SET_DATE), count(*), HOUR(ANSWER_SET_DATE) FROM ANSWERS_SET WHERE SURVEY_ID IN ("
+					+ StringUtils.collectionToCommaDelimitedString(allVersions)
+					+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY HOUR(ANSWER_SET_DATE) ORDER BY ANSWER_SET_DATE";
+			
+			sqlVotesBefore += " AND ANSWER_SET_DATE >= :today";
+		}
 
 		if (span.equalsIgnoreCase("quorumDays")) {
 			cal.setTime(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH));
 			cal.add(Calendar.DATE, -10);
 		} else if (span.equalsIgnoreCase("quorumHours")){
 			cal.setTime(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY));
-			cal.add(Calendar.HOUR_OF_DAY, -10);
-			sql = "SELECT DATE(ANSWER_SET_DATE), count(*), HOUR(ANSWER_SET_DATE) FROM ANSWERS_SET WHERE SURVEY_ID IN ("
-					+ StringUtils.collectionToCommaDelimitedString(allVersions)
-					+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY HOUR(ANSWER_SET_DATE) ORDER BY ANSWER_SET_DATE";
+			cal.add(Calendar.HOUR_OF_DAY, -10);			
 		} else {
 			cal.add(Calendar.YEAR, -20);
 		}
 
 		Date firstDay = cal.getTime();
+		
+		int counter = 0;
+		if (span.equalsIgnoreCase("quorumDays")) {
+			// get the number of votes before the first day
+			NativeQuery queryBefore = session.createSQLQuery(sqlVotesBefore);
+			queryBefore.setParameter("start", firstDay);
+			counter = ConversionTools.getValue(queryBefore.uniqueResult());
+		} else if (span.equalsIgnoreCase("quorumHours")){
+			//get the number of votes of that day before the first hour		
+			NativeQuery queryBefore = session.createSQLQuery(sqlVotesBefore);
+			queryBefore.setParameter("start", firstDay);
+			queryBefore.setParameter("today", DateUtils.truncate(new Date(), Calendar.DATE));
+			counter = ConversionTools.getValue(queryBefore.uniqueResult());
+		}
 
 		NativeQuery query = session.createSQLQuery(sql);
 		query.setParameter("start", firstDay);
@@ -2044,7 +2067,6 @@ public class AnswerService extends BasicService {
 
 		Date first = null;
 		Date last = null;
-		int counter = 0;
 		for (Object o : res) {
 			Object[] a = (Object[]) o;
 			cal.setTime((Date) a[0]);
@@ -2065,14 +2087,14 @@ public class AnswerService extends BasicService {
 			System.out.println(lastDay);
 			if (first == null || first.after(firstDay)) result.put(firstDay, 0);
 
-			if (last == null || last.before(lastDay)) result.put(lastDay, 0);
+			if (last == null || last.before(lastDay)) result.put(lastDay, counter);
 		}
 
 		if (span.equalsIgnoreCase("quorumHours")) {
 			Date lastHour = DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY);
 			if (first == null || first.after(firstDay)) result.put(firstDay, 0);
 
-			if (last == null || last.before(lastHour)) result.put(lastHour, 0);
+			if (last == null || last.before(lastHour)) result.put(lastHour, counter);
 		}
 
 		return result;

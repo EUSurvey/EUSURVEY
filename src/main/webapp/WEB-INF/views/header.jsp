@@ -64,9 +64,9 @@
 								</c:otherwise>
 							</c:choose>
 					
-						<div id="dropDownHelp" class="dropdown" style="display: inline-block;">
+							<div id="dropDownHelp" class="dropdown" style="display: inline-block;">
 								<a href="javascript:;" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									<spring:message code="label.Help" />&nbsp;
+									${form.getMessage("label.Help")}&nbsp;
 									<span class="caret"></span>
 		  						</a>
 								<ul id="dropDownHelpHeader" class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -82,7 +82,7 @@
 		
 								<div class="dropdown" >
 									<a href="javascript:;" class="dropdown-toggle" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-										<spring:message code="label.Language" />&nbsp;
+										${form.getMessage("label.Language")}&nbsp;
 										<span class="caret"></span>
 			  						</a>	
 			  						
@@ -114,7 +114,7 @@
 												</c:forEach>
 											</c:otherwise>					
 										</c:choose>
-						 				</ul>							
+						 			</ul>							
 								</div>	
 							</c:if>	
 		

@@ -42,8 +42,8 @@
 	<c:if test="${opcredirection != null}">
 		<br /><br />
 		<a class="btn btn-primary" href="${opcredirection}"><spring:message code="label.ConsultationPage" /></a>
-	</c:if>	
-		
+	</c:if>
+
 	<br /><br />
 	<c:if test="${!form.survey.isEVote}">
 		<div id="contribution-id-save-hint" style="color: #777; margin: 6px 0 0px 0;">

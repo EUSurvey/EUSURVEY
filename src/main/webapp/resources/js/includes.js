@@ -369,9 +369,21 @@ function initModals(item)
 			$(instance).datepicker( "setDate", d );
 		});
  }
-
+	let firstFocusableElement;
+	let lastFocusableElement;
 	$(document).ready(function(){
-				
+		$("#evoteConfirmPopup").on('shown.bs.modal', function(){
+			let focusableElements = $(this).find("a");
+			firstFocusableElement = focusableElements[0];
+			lastFocusableElement = focusableElements[focusableElements.length -1];
+			firstFocusableElement.focus();
+			document.addEventListener('keydown', addModalTabListener);
+		});
+
+		$("#evoteConfirmPopup").on('hide.bs.modal', function(){
+			document.removeEventListener('keydown', addModalTabListener);
+		});
+
 		inPlaceHolderInit = true;
 		$("input[type='text']").placeholder();
 		$("input[type='password']").placeholder();
@@ -453,6 +465,21 @@ function initModals(item)
 			);
 	});
 
+	function addModalTabListener(e){
+		let isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+		if (!isTabPressed) return;
+		if (e.shiftKey) {
+			if (document.activeElement == firstFocusableElement) {
+				lastFocusableElement.focus();
+				e.preventDefault();
+			}
+		} else {
+			if (document.activeElement == lastFocusableElement) {
+				firstFocusableElement.focus();
+				e.preventDefault();
+			}
+		}
+	}
 	
 	function selectMultipleChoiceAnswer(link)
 	{
@@ -646,7 +673,7 @@ function initModals(item)
 	        }
 		} else {
 			$(cell).find(".filtertools").remove();
-			
+
 			if ($(cell).find(".overlaymenu").length > 0) {
 				$(cell).find(".nobreak").html(allValues);	
 				$(cell).find(".nobreak").attr("data-text",allValues);
@@ -1067,7 +1094,7 @@ function initModals(item)
 			andEVoteBeforeButton : function(element, text) {
 			const self = addValidationError;
 			$(".evote-validation").remove();
-			$(element).siblings().first().before("<div class='validation-error evote-validation' style='margin: auto; margin-bottom: 10px'>" + text + "</div>");
+			$(element).siblings().first().before("<div class='validation-error evote-validation' style='position: relative; margin: auto; margin-bottom: 10px'>" + text + "</div>");
 		},
 	}
 	
@@ -1991,7 +2018,7 @@ function initModals(item)
 			if (typeof validateEVote !== "undefined") {
 				let evoteValidation = validateEVote();
 				if (evoteValidation.error) {
-					let validationText = evoteValidation.candidatesValid ? validationTooManyListVotes : validationTooManyCandidates
+					let validationText = evoteValidation.candidatesInvalid1 ? validationTooManyCandidates : (evoteValidation.candidatesInvalid2 ? validationNotEnoughCandidates : validationTooManyListVotes);
 					addValidationError.andEVoteBeforeButton($("#btnNext"), validationText)
 					result = false;
 				}
@@ -2572,7 +2599,6 @@ function initModals(item)
 	});
 	$(document).ready(function() {
 		applyScrolling();
-		
 		//call everytime a modal opens
 		$("body").on("shown",".modal.in", function() {
 			applyModalMargin();

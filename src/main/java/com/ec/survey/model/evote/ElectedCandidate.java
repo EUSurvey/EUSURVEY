@@ -9,6 +9,7 @@ public class ElectedCandidate {
 	private int position; // the index in the list
 	private boolean preferentialSeat;
 	private boolean reallocatedSeat;
+	private boolean ambiguous;
 
 	public String getName() {
 		return name;
@@ -64,5 +65,13 @@ public class ElectedCandidate {
 
 	public void setReallocatedSeat(boolean reallocatedSeat) {
 		this.reallocatedSeat = reallocatedSeat;
+	}
+
+	public boolean isAmbiguous() {
+		return ambiguous;
+	}
+
+	public void setAmbiguous(boolean ambiguous) {
+		this.ambiguous = ambiguous;
 	}
 }

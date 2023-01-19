@@ -24,6 +24,7 @@ public class SeatCounting {
 	private int maxCandidatesInLists;
 	private int listVotesSeats;
 	private int preferentialVotesSeats;
+	private int highestVotes;
 	private String template;
 	private List<SeatDistribution> listSeatDistribution = new ArrayList<>();
 	private List<ElectedCandidate> candidatesFromListVotes = new ArrayList<>();
@@ -32,6 +33,7 @@ public class SeatCounting {
 	private DHondtEntry[][] dHondtEntries;
 	private List<String> reallocationMessages = new ArrayList<>();
 	private List<String> reallocationMessagesForLists = new ArrayList<>();
+	private boolean ambiguous;
 
 	public int getQuorum() {
 		return quorum;
@@ -179,18 +181,28 @@ public class SeatCounting {
 	public void setPreferentialVotesFinal(int preferentialVotesFinal) {
 		this.preferentialVotesFinal = preferentialVotesFinal;
 	}
+
+	public int getHighestVote() {
+		return highestVotes;
+	}
+	public void setHighestVote(int highestVotes) {
+		this.highestVotes = highestVotes;
+	}
+
 	public String getTemplate() {
 		return template;
 	}
 	public void setTemplate(String template) {
 		this.template = template;
 	}
+
 	public int getLuxListVotes() {
 		return luxListVotes;
 	}
 	public void setLuxListVotes(int luxListVotes) {
 		this.luxListVotes = luxListVotes;
 	}
+
 	public int getLuxListVotesFinal() {
 		return luxListVotesFinal;
 	}
@@ -257,5 +269,11 @@ public class SeatCounting {
 			preferentialVotesSeatsReal += list.getPreferentialSeats();
 		}
 		return preferentialVotesSeatsReal;
+	}
+	public boolean isAmbiguous() {
+		return ambiguous;
+	}
+	public void setAmbiguous(boolean ambiguous) {
+		this.ambiguous = ambiguous;
 	}
 }

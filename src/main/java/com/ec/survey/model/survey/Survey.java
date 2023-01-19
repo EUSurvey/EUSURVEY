@@ -1744,8 +1744,10 @@ final public class Survey implements java.io.Serializable {
 				return "label.IspraSeville";
 			case "l":
 				return "label.Luxembourg";
+			case "o":
+				return "label.OutsideCommunity";
 		}
-		return "label.OutsideCommunity";
+		return "label.SinglePresident";
 	}
 	
 	

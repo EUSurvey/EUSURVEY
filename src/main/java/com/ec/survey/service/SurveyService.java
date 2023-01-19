@@ -268,6 +268,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(", s.SURVEY_UID");
 		stringBuilder.append(", s.SURVEYNAME");
 		stringBuilder.append(", s.TITLE");
+		stringBuilder.append(", s.EVOTE");
 		stringBuilder.append(", s.OWNER");
 		
 		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {
@@ -318,6 +319,7 @@ public class SurveyService extends BasicService {
 			survey.setUniqueId((String) row[columnNum++]);
 			survey.setShortname((String) row[columnNum++]);
 			survey.setTitle((String) row[columnNum++]);
+			survey.setIsEVote((Boolean) row[columnNum++]);
 
 			int userId = ConversionTools.getValue(row[columnNum++]);			
 			User user = administrationService.getUser(userId);
@@ -328,7 +330,7 @@ public class SurveyService extends BasicService {
 			} else {
 				survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[columnNum++]));
 			}
-			
+
 			survey.setDeleted((Date) row[columnNum++]);
 			survey.setCreated((Date) row[columnNum++]);
 			survey.setIsFrozen((Boolean) row[columnNum++]);
@@ -1195,7 +1197,7 @@ public class SurveyService extends BasicService {
 
 			if (synchronize) {
 				if (language == null) {
-					synchronizeSurvey(survey, draft.getLanguage().getCode(), true);
+					synchronizeSurvey(survey, survey.getLanguage().getCode(), true);
 				} else {
 					synchronizeSurvey(survey, language, true);
 				}
@@ -1569,6 +1571,16 @@ public class SurveyService extends BasicService {
 			reportingService.addToDo(ToDo.NEWSURVEY, draftSurvey.getUniqueId(), null);
 
 		return publishedSurvey;
+	}
+	
+	@Transactional
+	public void setNotified(Survey survey) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		
+		Survey ob = session.get(Survey.class, survey.getId());
+		session.setReadOnly(ob, false);
+		ob.setNotified(true);
+		session.update(ob);
 	}
 
 	@Transactional
@@ -2595,11 +2607,14 @@ public class SurveyService extends BasicService {
 			logger.info("starting import of answers");
 
 			Set<String> rankingQuestions = new HashSet<>();
+			Set<String> galleryQuestions = new HashSet<>();
 			for (Element element : survey.getElementsRecursive()) {
 				if (element instanceof RankingQuestion) {
 					rankingQuestions.add(element.getUniqueId());
+				} else if (element instanceof GalleryQuestion) {
+					galleryQuestions.add(element.getUniqueId());
 				}
-			}
+			}			
 
 			Set<AnswerSet> answerSets2 = new HashSet<>();
 			
@@ -2641,10 +2656,16 @@ public class SurveyService extends BasicService {
 					an.setQuestionUniqueId(oldToNewUniqueIds.get(an.getQuestionUniqueId()));
 
 					if (an.getPossibleAnswerUniqueId() != null) {
-						if (!oldToNewUniqueIds.containsKey(an.getPossibleAnswerUniqueId())) {
-							oldToNewUniqueIds.put(an.getPossibleAnswerUniqueId(), UUID.randomUUID().toString());
+						if (!galleryQuestions.contains(an.getQuestionUniqueId())) {						
+							if (!oldToNewUniqueIds.containsKey(an.getPossibleAnswerUniqueId())) {
+								oldToNewUniqueIds.put(an.getPossibleAnswerUniqueId(), UUID.randomUUID().toString());
+							}
+							an.setPossibleAnswerUniqueId(oldToNewUniqueIds.get(an.getPossibleAnswerUniqueId()));
+						} else {
+							if (convertedFileUIDs.containsKey(an.getPossibleAnswerUniqueId())) {
+								an.setPossibleAnswerUniqueId(convertedFileUIDs.get(an.getPossibleAnswerUniqueId()));
+							}
 						}
-						an.setPossibleAnswerUniqueId(oldToNewUniqueIds.get(an.getPossibleAnswerUniqueId()));
 					}
 					
 					if (an.getValue() != null && rankingQuestions.contains(an.getQuestionUniqueId())) {
@@ -3395,6 +3416,10 @@ public class SurveyService extends BasicService {
 					Survey::getAllowQuestionnaireDownload,
 					Survey::getRegistrationForm
 			);
+
+			if (doesLanguageDiffer(draftSurvey.getUniqueId())){
+				hasPendingChanges = true;
+			}
 
 			if (!Tools.isFileEqual(draftSurvey.getLogo(), publishedSurvey.getLogo()))
 				hasPendingChanges = true;
@@ -4150,6 +4175,20 @@ public class SurveyService extends BasicService {
 		}
 
 		return result;
+	}
+
+	@Transactional(readOnly = true)
+	public boolean doesLanguageDiffer(String uid){
+		Session session = sessionFactory.getCurrentSession();
+		Query<Integer> query = session.createQuery("SELECT s.language.id FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = true ORDER BY s.id DESC", Integer.class).setParameter("uid", uid);
+		Query<Integer> query2 = session.createQuery("SELECT s.language.id FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = false ORDER BY s.id DESC", Integer.class).setParameter("uid", uid);
+		List<Integer> list = query.list();
+		List<Integer> list2 = query2.list();
+
+		if (list.isEmpty() || list2.isEmpty())
+			return false;
+
+		return !list.get(0).equals(list2.get(0));
 	}
 
 	@Transactional
@@ -5015,9 +5054,11 @@ public class SurveyService extends BasicService {
 			result[4]++;
 		}
 
-		List<Archive> archives = archiveService.getArchivesForUser(user.getId());
-		result[2] += archives.size();
-		result[4] += archives.size();
+		if (!type.equalsIgnoreCase("shared")) {
+			List<Archive> archives = archiveService.getArchivesForUser(user.getId());
+			result[2] += archives.size();
+			result[4] += archives.size();
+		}
 
 		return result;
 	}

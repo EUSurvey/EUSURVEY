@@ -686,6 +686,8 @@ public class Form {
 	}
 
 	private String getInternalMessage(String key, Object[] args) {
+		if (resources == null) return key;
+		
 		String locale = "en";
 
 		if (language != null) {

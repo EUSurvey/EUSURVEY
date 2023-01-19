@@ -170,12 +170,15 @@
 				l'utilisateur se révèle être un contrevenant récidiviste aux droits
 				d'auteur ou à d'autres droits de propriété intellectuelle de la
 				DIGIT ou d'autrui.</li>
-			<li><b>Propriété intellectuelle</b> Conçue par la DIGIT et
-				financée par les programmes ISA et
-				<a href="https://ec.europa.eu/isa2/" target="_blank">ISA&sup2;</a>, EUSurvey est une
-				application entièrement libre publiée dans le cadre de la
-				<a href="https://joinup.ec.europa.eu/community/eupl/home" target="_blank">licence EUPL</a>.
-				Le code source peut être téléchargé sur le site Joinup de la Commission.</li>
+			<li><b>Propriété intellectuelle :</b> Conçue la DG DIGIT et financé
+				dans le cadre des programmes ISA,
+				<a target="_blank" href="https://ec.europa.eu/isa2/home_en/" aria-label="ISA² programme - Opens in new window">ISA²</a>
+				et <a target="_blank" href="https://digital-strategy.ec.europa.eu/fr/activities/digital-programme" aria-label="DEP">
+					DEP</a> Interopérabilité,
+				EUSurvey est entièrement open source et publié sous la licence
+				<a target="_blank" href="https://joinup.ec.europa.eu/collection/eupl">EUPL</a>.
+				Vous pouvez télécharger le code source depuis GitHub :
+				<a target="_blank" href="https://github.com/EUSurvey/EUSURVEY/tree/develop">https://github.com/EUSurvey/EUSURVEY/tree/develop</a></li>
 			<li><b>Modifications</b> La DIGIT se réserve le droit, à sa
 				seule discrétion, de modifier ou de remplacer toute partie du
 				présent accord. Le fait de continuer à utiliser le service ou

@@ -189,6 +189,7 @@
 			var timeLimitNotZero = "${form.getMessage("error.timeLimitNotZero")}";
 			var infolabeluploadbutton = "${form.getMessage("info.uploadbutton")}";
 			var infoNoData = "${form.getMessage("info.NoData")}";
+			var validationNotEnoughCandidates = "${form.getMessage("validation.NotEnoughCandidates")}";
 			var validationTooManyCandidates = "${form.getMessage("validation.TooManyCandidates")}";
 			var validationTooManyListVotes = "${form.getMessage("validation.TooManyListVotes")}";
 		</c:when>
@@ -279,6 +280,7 @@
 			var timeLimitNotZero = "<spring:message code='error.timeLimitNotZero' />";
 			var infolabeluploadbutton = "<spring:message code='info.uploadbutton' />";
 			var infoNoData = "<spring:message code='info.NoData' />";
+			var validationNotEnoughCandidates = "<spring:message code='validation.NotEnoughCandidates' />";
 			var validationTooManyCandidates = "<spring:message code='validation.TooManyCandidates'/>";
 			var validationTooManyListVotes = "<spring:message code='validation.TooManyListVotes'/>";
 		</c:otherwise>

@@ -261,8 +261,21 @@
 		return params;
 	}
 
+
+	function resetVoterFilterHighlighting() {
+		let voterFilterfields = ["#voterUserName", "#voterFirstName", "#voterLastName", "#voterVoted"];
+		voterFilterfields.forEach((filterField) => {
+			if($(filterField).val().length <= 0){
+				$(filterField).parent().css("background-color","");
+			}
+		});
+	}
+
 	function loadVoters() {
+
 		_participants.ShowWait(true);
+
+		resetVoterFilterHighlighting();
 		
 		const model = this;
 
