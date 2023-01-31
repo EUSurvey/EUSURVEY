@@ -785,6 +785,7 @@ public class AnswerService extends BasicService {
 				where.append(" ORDER BY ans.SCORE ").append(filter.getSortOrder());
 				break;
 			case DATE:
+			case CREATED:	
 				where.append(" ORDER BY ans.ANSWER_SET_DATE ").append(filter.getSortOrder());
 				break;
 			case ECFSCORE:
