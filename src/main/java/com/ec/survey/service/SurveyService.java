@@ -524,12 +524,12 @@ public class SurveyService extends BasicService {
 		}
 
 		if (filter.getShortname() != null && filter.getShortname().length() > 0) {
-			sql.append(" AND s.SURVEYNAME COLLATE UTF8_GENERAL_CI like :shortname");
+			sql.append(" AND s.SURVEYNAME like :shortname");
 			oQueryParameters.put(Constants.SHORTNAME, "%" + filter.getShortname().trim() + "%");
 		}
 
 		if (filter.getTitle() != null && filter.getTitle().length() > 0) {
-			sql.append(" AND s.TITLE COLLATE UTF8_GENERAL_CI like :title");
+			sql.append(" AND s.TITLE like :title");
 			oQueryParameters.put("title", "%" + filter.getTitle().trim() + "%");
 		}
 
@@ -664,8 +664,8 @@ public class SurveyService extends BasicService {
 						sql.append(" OR");
 					}
 
-					sql.append(" ( s.SURVEYNAME COLLATE UTF8_GENERAL_CI like :").append(w)
-							.append(" OR s.TITLE COLLATE UTF8_GENERAL_CI like :").append(w).append(")");
+					sql.append(" ( s.SURVEYNAME like :").append(w)
+							.append(" OR s.TITLE like :").append(w).append(")");
 					oQueryParameters.put(w, "%" + word.trim() + "%");
 				}
 			}
