@@ -7,6 +7,7 @@ import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.FilesByType;
 import com.ec.survey.model.survey.*;
+import com.ec.survey.model.survey.ComplexTableItem.CellType;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
@@ -226,6 +227,21 @@ public class XmlExportCreator extends ExportCreator {
 						writer.writeStartElement("ResultText");
 						writer.writeCharacters(child.getResultTitle(table));
 						writer.writeEndElement(); // ResultText
+						
+						if (child.getCellType() == CellType.SingleChoice || child.getCellType() == CellType.MultipleChoice) {
+							for (PossibleAnswer answer : child.getPossibleAnswers()) {
+								writer.writeStartElement(ANSWER);
+								writer.writeAttribute("id", answer.getUniqueId());
+								writer.writeAttribute("type", getNiceType(answer));
+
+								if (export != null && export.getShowShortnames()) {
+									writer.writeAttribute("bid", answer.getShortname());
+								}
+								
+								writer.writeCharacters(answer.getTitle());
+								writer.writeEndElement(); // Answer
+							}
+						}
 
 						writer.writeEndElement(); // Cell
 					}
