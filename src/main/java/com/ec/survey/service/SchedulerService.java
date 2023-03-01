@@ -536,8 +536,11 @@ public class SchedulerService extends BasicService {
 	
 	private boolean isHost2ExecuteTask(boolean ldap, boolean todo){
 		
+		logger.info("entering isHost2ExecuteTask");
+		
 		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("true"))
 		{
+			logger.info("isHost2ExecuteTask: is worker server");
 			return false;
 		}
 		
@@ -546,18 +549,18 @@ public class SchedulerService extends BasicService {
 		if (ldap) {
 			host = hostExecutingLDAPTask;
 			if (StringUtils.isEmpty(host)){
-				logger.debug("The property host.executing.ldaptask is empty and scheduler will be executed");
+				logger.info("The property host.executing.ldaptask is empty and scheduler will be executed");
 				return true;
 			}
 		} else if (todo) {
 			host = hostExecutingTODOTask;
 			if (StringUtils.isEmpty(host)){
-				logger.debug("The property host.executing.todotask is empty and scheduler will be executed");
+				logger.info("The property host.executing.todotask is empty and scheduler will be executed");
 				return true;
 			}
 		} else {
 			if (StringUtils.isEmpty(host)){
-				logger.debug("The property host.executing.task is empty and scheduler will be executed");
+				logger.info("The property host.executing.task is empty and scheduler will be executed");
 				return true;
 			}
 		}
@@ -574,15 +577,14 @@ public class SchedulerService extends BasicService {
 			for(InetAddress inetAddr: Collections.list(inetAddrs)){
 				if (StringUtils.contains(inetAddr.getHostName().toLowerCase(), host.toLowerCase())){
 					return true;
-				}
-					
+				}					
 			}
 		}
 
 		if (StringUtils.isEmpty(hostExecutingTask)){
 			logger.warn("Unable to determine if should be execute the Task on this host, no server name set in hostExecutingTask property");	
-		}else{
-			logger.debug("no server name found with this value: " + hostExecutingTask);
+		} else {
+			logger.info("no server name found with this value: " + hostExecutingTask);
 		}
 		
 		return false;
