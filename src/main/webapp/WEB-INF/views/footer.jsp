@@ -30,9 +30,7 @@
 						</c:choose>
 						</i>
 					</div>
-					
-					<div class="col-md-3"></div>
-					
+										
 					<div class="col-md-3" style="padding-top: 40px;">
 						<c:if test="${showprivacy}">
 							<a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a><br />
@@ -42,6 +40,23 @@
 						<c:set var="localeCode" value="${fn:toLowerCase(pageContext.response.locale.language)}" />
 						
 						<a href="https://ec.europa.eu/info/cookies_${localeCode}"><spring:message code="label.Cookies" /></a><br />
+					</div>
+					
+					<div class="col-md-3" style="padding-top: 40px;">
+						<c:set var="localeCode" value="${fn:toLowerCase(pageContext.response.locale.language)}" />
+
+						<c:choose>
+							<c:when test="${form != null && useUILanguage == null}">
+								<a href="https://commission.europa.eu/languages-our-websites_${localeCode}">${form.getMessage("label.LanguagesPolicy")}</a><br />
+								<a href="https://commission.europa.eu/privacy-policy-websites-managed-european-commission_${localeCode}">${form.getMessage("label.PrivacyPolicy")}</a><br />
+								<a href="https://commission.europa.eu/legal-notice_${localeCode}">${form.getMessage("label.LegalNotice")}</a><br />
+							</c:when>
+							<c:otherwise>
+								<a href="https://commission.europa.eu/languages-our-websites_${localeCode}"><spring:message code="label.LanguagesPolicy" /></a><br />
+								<a href="https://commission.europa.eu/privacy-policy-websites-managed-european-commission_${localeCode}"><spring:message code="label.PrivacyPolicy" /></a><br />
+								<a href="https://commission.europa.eu/legal-notice_${localeCode}"><spring:message code="label.LegalNotice" /></a><br />
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 			</div>
