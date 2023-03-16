@@ -3157,8 +3157,8 @@ public class SurveyService extends BasicService {
 		
 		String sql = "FROM ResultAccess a WHERE a.surveyUID = :uid";
 		
-		if (name != null && name.length() > 0) {
-			sql += " AND a.user IN (SELECT u.id FROM User u WHERE concat(u.givenName, ' ', u.surName, ' ', u.login) LIKE :name)";
+		if (name != null && name.length() > 0) {		
+			sql += " AND a.user IN (SELECT u.id FROM User u WHERE concat(COALESCE(u.givenName, ''), ' ', COALESCE(u.surName, ''), ' ', COALESCE(u.login, '')) LIKE :name)";
 		}
 		
 		if (resultAccess != null) {
