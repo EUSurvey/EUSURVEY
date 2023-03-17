@@ -668,7 +668,7 @@ public class ManagementController extends BasicController {
 		}
 		survey.setCompleteTranslations(completed);
 
-		form = new Form();
+		form = new Form(resources);
 		form.setSurvey(survey);
 
 		User u = sessionService.getCurrentUser(request);

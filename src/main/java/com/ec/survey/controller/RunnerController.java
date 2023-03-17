@@ -2315,7 +2315,7 @@ public class RunnerController extends BasicController {
 			}
 		}
 
-		Form form = new Form();
+		Form form = new Form(resources);
 		form.setSurvey(survey);
 
 		for (Element element : result) {

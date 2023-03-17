@@ -697,7 +697,11 @@ public class Form {
 		} else if (this.survey != null && this.survey.getLanguage() != null) {
 			locale = this.survey.getLanguage().getCode().toLowerCase();
 		}
-		return resources.getMessage(key, args, key, new Locale(locale));
+		try {
+			return resources.getMessage(key, args, key, new Locale(locale));
+		} catch (Exception e) {
+			return key;
+		}
 	}
 
 	public MessageSource getResources() {
