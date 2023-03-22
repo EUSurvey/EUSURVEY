@@ -393,25 +393,18 @@ var Actions = function() {
     	let cuttoolboxitem = $("#cuttoolboxitem");
     	let isClipboardCopy = true
 
+		if ($(_elementProperties.selectedelement).length <= 0) {
+				_elementProperties.selectedelement = $("#content").find(".selectedquestion").last();
+		}
+
     	if (copiedtoolboxitem.is(":visible"))
     	{
     		var item = copiedtoolboxitem.clone();
-    		
-    		if ($(_elementProperties.selectedelement).length > 0)
-        	{
-        		$(_elementProperties.selectedelement).after(item);	
-        	} else {
-        		$("#content").append(item);
-        	}
+			$(_elementProperties.selectedelement).after(item);
     		this.copyElement($(item));	
     	} else {
     		var item = cuttoolboxitem.clone();
-    		if ($(_elementProperties.selectedelement).length > 0)
-	    	{
-	    		$(_elementProperties.selectedelement).after(item);	
-	    	} else {
-	    		$("#content").append(item);
-	    	}
+			$(_elementProperties.selectedelement).after(item);
     		this.pasteElement($(item));
     	}
     	

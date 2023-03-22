@@ -315,6 +315,30 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public String[] checkLoginsForEmails(List<String> emails) {
+
+		Session session = sessionFactory.getCurrentSession();
+		for(String e : emails) {
+			e = "%" + e + "%";
+		}
+
+		Query query = null;
+		if (emails != null && emails.size() > 0) {
+			query = session.createQuery("FROM User u where u.email IN :email and u.type = :type order by u.login asc").setString("type", User.SYSTEM).setParameter(Constants.EMAIL, emails);
+		}
+
+		@SuppressWarnings("unchecked")
+		List<User> list = query.setMaxResults(100).list();
+		String[] result = new String[list.size()];
+		int counter = 0;
+		for (User user : list) {
+			result[counter++] = user.getEmail();
+		}
+
+		return result;
+	}
+
+	@Transactional(readOnly = true)
 	public User getUserForLogin(String login) {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -387,6 +411,14 @@ public class AdministrationService extends BasicService {
 			throw new MessageException("Multiple users found for login " + login);
 
 		return list.get(0);
+	}
+
+	@Transactional(readOnly = true)
+	public List<User> getUserLoginsByEmail(String email) {
+			Session session = sessionFactory.getCurrentSession();
+			email = "%" + email + "%";
+			Query query = session.createQuery("FROM User u where u.email like :email and u.type = :type order by u.login asc").setString("type", User.SYSTEM).setParameter(Constants.EMAIL, email);
+			return query.setMaxResults(100).list();
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)

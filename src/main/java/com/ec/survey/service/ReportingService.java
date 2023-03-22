@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
@@ -453,289 +454,244 @@ public class ReportingService extends BasicService {
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
 	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
-		
+
 		Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
-		
+
 		Map<String, Object> values = new HashMap<>();
 		String where = getWhereClause(filter, values, survey);
-		
+
 		Map<String, Element> visibleQuestions = new LinkedHashMap<>();
-		
-		for (Question question : survey.getQuestions())
-    	{
-    		if (filter.getVisibleQuestions().contains(question.getId().toString()))
-    		{
-	    		if (question instanceof Matrix)
-    			{
-	    			for (Element child : ((Matrix)question).getQuestions())
-    				{
-	    				visibleQuestions.put(child.getUniqueId(), (Matrix)question);
-		    		}
-    			} else if (question instanceof Table)
-    			{
-    				Table table = (Table)question;
-    				String lastCell = "";
-	    			for (Element q : table.getQuestions())
-	    			{
-	    				for (Element a : table.getAnswers())
-		    			{
-	    					lastCell = Tools.md5hash(q.getUniqueId() + a.getUniqueId());
-	    					visibleQuestions.put(lastCell, null);
-		    			}	    				
-	    			}
-	    			visibleQuestions.put(lastCell, table);
-	    			
-    			} else if (question instanceof RatingQuestion)
-	    		{
-    				RatingQuestion rating = (RatingQuestion)question;
-	    			for (Element child : rating.getQuestions())
-	    			{
-	    				visibleQuestions.put(child.getUniqueId(), rating);
-	    			}
-	    		} else if (question instanceof Upload) 
-	    		{
-	    			if (showuploadedfiles)
-	    			{
-	    				visibleQuestions.put(question.getUniqueId(), question);	  
-	    			}
-	    		} else if (question instanceof ComplexTable)
-    			{
-	    			for (Element child : ((ComplexTable)question).getQuestionChildElements())
-    				{
-	    				visibleQuestions.put(child.getUniqueId(), child);
-		    		}
-    			} else if (question.isUsedInResults()) {
-	    			visibleQuestions.put(question.getUniqueId(), question);	    		
-	    		}
-    		}
-    	}
-    	
-    	if (filter.getVisibleQuestions().contains("invitation"))
-		{
-    		visibleQuestions.put("INVITATIONID", null);
+
+		for (Question question : survey.getQuestions()) {
+			if (filter.getVisibleQuestions().contains(question.getId().toString())) {
+				if (question instanceof Matrix) {
+					for (Element child : ((Matrix) question).getQuestions()) {
+						visibleQuestions.put(child.getUniqueId(), (Matrix) question);
+					}
+				} else if (question instanceof Table) {
+					Table table = (Table) question;
+					String lastCell = "";
+					for (Element q : table.getQuestions()) {
+						for (Element a : table.getAnswers()) {
+							lastCell = Tools.md5hash(q.getUniqueId() + a.getUniqueId());
+							visibleQuestions.put(lastCell, null);
+						}
+					}
+					visibleQuestions.put(lastCell, table);
+
+				} else if (question instanceof RatingQuestion) {
+					RatingQuestion rating = (RatingQuestion) question;
+					for (Element child : rating.getQuestions()) {
+						visibleQuestions.put(child.getUniqueId(), rating);
+					}
+				} else if (question instanceof Upload) {
+					if (showuploadedfiles) {
+						visibleQuestions.put(question.getUniqueId(), question);
+					}
+				} else if (question instanceof ComplexTable) {
+					for (Element child : ((ComplexTable) question).getQuestionChildElements()) {
+						visibleQuestions.put(child.getUniqueId(), child);
+					}
+				} else if (question.isUsedInResults()) {
+					visibleQuestions.put(question.getUniqueId(), question);
+				}
+			}
 		}
-    	if (filter.getVisibleQuestions().contains("case"))
-		{
-    		visibleQuestions.put("CONTRIBUTIONID", null);
+
+		if (filter.getVisibleQuestions().contains("invitation")) {
+			visibleQuestions.put("INVITATIONID", null);
 		}
-    	if (filter.getVisibleQuestions().contains("user"))
-		{
-    		visibleQuestions.put("USER", null);
-		}		    	
-		if (filter.getVisibleQuestions().contains("created"))
-		{
+		if (filter.getVisibleQuestions().contains("case")) {
+			visibleQuestions.put("CONTRIBUTIONID", null);
+		}
+		if (filter.getVisibleQuestions().contains("user")) {
+			visibleQuestions.put("USER", null);
+		}
+		if (filter.getVisibleQuestions().contains("created")) {
 			visibleQuestions.put("CREATED", null);
-		}			
-		if (filter.getVisibleQuestions().contains("updated"))
-		{
+		}
+		if (filter.getVisibleQuestions().contains("updated")) {
 			visibleQuestions.put("UPDATED", null);
 		}
-		if (filter.getVisibleQuestions().contains("languages"))
-		{
+		if (filter.getVisibleQuestions().contains("languages")) {
 			visibleQuestions.put("LANGUAGE", null);
 		}
-	    if (survey.getIsQuiz() || filter.getVisibleQuestions().contains("score"))
-	    {
-	    	visibleQuestions.put("SCORE", null);
-	    }
-	    
-	    // QANSWERSETID is used in all tables (after 1000 columns a new table is created)
-	    String sql = "SELECT QCONTRIBUTIONID, " + getOLAPTableName(survey) + ".QANSWERSETID";
-	    for (String question : visibleQuestions.keySet())
-	    {
-	    	if (question.equals("CONTRIBUTIONID"))
-	    	{
-	    		//automatically selected
-	    	} else if (question.equals("CREATED") || question.equals("UPDATED"))
-	    	{
-	    		if (useXmlDateFormat)
-	    		{
-	    			sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d_%H-%i-%s\")";
-	    		} else {
-	    			sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d %H\\:%i\\:%s\")";
-	    		}
-	    	} else {
-	    		sql += ", Q" + question.replace("-", "");
-	    	}
-	    }
+		if (survey.getIsQuiz() || filter.getVisibleQuestions().contains("score")) {
+			visibleQuestions.put("SCORE", null);
+		}
 
-	    String tableName = getOLAPTableName(survey);
-	    sql += " FROM " + tableName;
-	    
-	    if (isSecondTableUsed(survey)){
-	    	String secondTable = tableName + "_1";
+		// QANSWERSETID is used in all tables (after 1000 columns a new table is created)
+		String sql = "SELECT QCONTRIBUTIONID, " + getOLAPTableName(survey) + ".QANSWERSETID";
+		for (String question : visibleQuestions.keySet()) {
+			if (question.equals("CONTRIBUTIONID")) {
+				//automatically selected
+			} else if (question.equals("CREATED") || question.equals("UPDATED")) {
+				if (useXmlDateFormat) {
+					sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d_%H-%i-%s\")";
+				} else {
+					sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d %H\\:%i\\:%s\")";
+				}
+			} else {
+				sql += ", Q" + question.replace("-", "");
+			}
+		}
+
+		String tableName = getOLAPTableName(survey);
+		sql += " FROM " + tableName;
+
+		if (isSecondTableUsed(survey)) {
+			String secondTable = tableName + "_1";
 			sql += " LEFT JOIN " + secondTable + " ON " + tableName + ".QANSWERSETID = " + secondTable + ".QANSWERSETID";
-		}		
-		
-		if (where.length() > 10)
-		{
+		}
+
+		if (where.length() > 10) {
 			sql += where;
 		}
-		
-		NativeQuery query = session.createSQLQuery(sql);		
+
+		NativeQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, values);
-		
+
 		try {
 			List<List<String>> rows = new ArrayList<>();
-			
-			if (sqlPagination != null)
-			{
+
+			if (sqlPagination != null) {
 				query.setFirstResult(sqlPagination.getFirstResult()).setMaxResults(sqlPagination.getMaxResult());
 			}
-			
+
 			@SuppressWarnings("unchecked")
 			List<Object> result = query.list();
-			
-			for (Object o : result)
-			{
+
+			for (Object o : result) {
 				List<String> row = new ArrayList<>();
-				
-				if (o instanceof Integer)
-				{
+
+				if (o instanceof Integer) {
 					//special case: answer set has no answers
 					row.add(o.toString());
-				} else {				
+				} else {
 					Object[] answerrow = (Object[]) o;
-					
+
 					row.add(answerrow[0].toString()); //this is the answerset code
 					row.add(answerrow[1].toString()); //this is the answerset id
-					
+
 					int counter = 2;
-					for (Entry<String, Element> entry : visibleQuestions.entrySet())
-				    {
+					for (Entry<String, Element> entry : visibleQuestions.entrySet()) {
 						String questionuid = entry.getKey();
-						if (questionuid.equals("CONTRIBUTIONID"))
-						{
+						if (questionuid.equals("CONTRIBUTIONID")) {
 							row.add(answerrow[0].toString());
-						} else {						
-						
+						} else {
+
 							Object item = answerrow[counter];
 							Element question = entry.getValue();
-							
-							if (question == null || item == null)
-							{
+
+							if (question == null || item == null) {
 								row.add(item != null ? item.toString() : "");
 							} else if (question instanceof ChoiceQuestion) {
-								ChoiceQuestion choicequestion = (ChoiceQuestion)question;						
-								String[] answerids = item.toString().split(";");						
+								ChoiceQuestion choicequestion = (ChoiceQuestion) question;
+								String[] answerids = item.toString().split(";");
 								String v = "";
-								for (String answerid : answerids)
-								{
+								for (String answerid : answerids) {
 									if (v.length() > 0) v += "; ";
 									Element answer = choicequestion.getPossibleAnswerByUniqueId(answerid);
-									if (answer != null)
-									{
-										if (doNotReplaceAnswerIDs)
-										{
+									if (answer != null) {
+										if (doNotReplaceAnswerIDs) {
 											v += answerid;
 										} else {
 											v += answer.getStrippedTitle();
 										}
-										
+
 										if (showShortnames) {
-											v += "<span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+											v += "<span class='assignedValue hideme'>(" + answer.getShortname() + ")</span>";
 										}
-									} else if ("EVOTE-ALL".equals(answerid)){
+									} else if ("EVOTE-ALL".equals(answerid)) {
 										String languageCode = survey.getLanguage().getCode();
 										if (languageCode == null)
 											languageCode = "en";
 										v += resources.getMessage("label.EntireList", new Object[0], "Entire List", new Locale(languageCode));
 									}
-								}						
+								}
 								row.add(v.length() > 0 ? v : null);
 							} else if (question instanceof Matrix) {
-								Matrix matrix = (Matrix)question;
-								String[] answerids = item.toString().split(";");						
+								Matrix matrix = (Matrix) question;
+								String[] answerids = item.toString().split(";");
 								String v = "";
-								for (String answerid : answerids)
-								{
+								for (String answerid : answerids) {
 									if (v.length() > 0) v += "; ";
 									Element answer = matrix.getChildByUniqueId(answerid);
-									if (answer != null)
-									{
-										if (doNotReplaceAnswerIDs)
-										{
+									if (answer != null) {
+										if (doNotReplaceAnswerIDs) {
 											v += answerid;
 										} else {
 											v += answer.getStrippedTitle();
 										}
-										
+
 										if (showShortnames) {
-											v += "<span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+											v += "<span class='assignedValue hideme'>(" + answer.getShortname() + ")</span>";
 										}
-									}							
-								}						
+									}
+								}
 								row.add(v.length() > 0 ? v : null);
-							}  else if (question instanceof GalleryQuestion) {
-								GalleryQuestion gallery = (GalleryQuestion)question;
-								String[] indexes = item.toString().split(";");	
+							} else if (question instanceof GalleryQuestion) {
+								GalleryQuestion gallery = (GalleryQuestion) question;
+								String[] indexes = item.toString().split(";");
 								String v = "";
-								for (String index : indexes)
-								{
+								for (String index : indexes) {
 									File file = null;
 									if (index.contains("-")) {
 										file = gallery.getFileByUid(index);
-									} else {									
+									} else {
 										int i = Integer.parseInt(index);
 										if (gallery.getFiles().size() > i) {
-											file = gallery.getFiles().get(i);											
+											file = gallery.getFiles().get(i);
 										}
 									}
-									
-									if (file != null)
-									{
+
+									if (file != null) {
 										if (v.length() > 0) v += "; ";
 										v += file.getName();
 									}
-								}						
+								}
 								row.add(v.length() > 0 ? v : null);
-							}  else if (question instanceof Upload) {
+							} else if (question instanceof Upload) {
 								String[] fileuids = item.toString().split(";");
-								
+
 								String v = "";
-								for (String fileuid : fileuids)
-								{
+								for (String fileuid : fileuids) {
 									File file = fileService.get(fileuid);
-									if (file != null)
-									{
-										if (addlinks)
-										{
+									if (file != null) {
+										if (addlinks) {
 											v += "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + file.getUid() + "'>" + file.getNameForExport() + "</a><br />";
 										} else if (forexport) {
-											if (v.length() > 0) v += " ";	
+											if (v.length() > 0) v += " ";
 											v += file.getUid() + "|" + file.getNameForExport() + ";";
 										} else {
 											v += file.getNameForExport() + "<br />";
 										}
-									}							
-								}						
+									}
+								}
 								row.add(v.length() > 0 ? v : null);
 							} else if (question instanceof RankingQuestion) {
-								RankingQuestion rankingQuestion = (RankingQuestion)question;
+								RankingQuestion rankingQuestion = (RankingQuestion) question;
 								Map<String, RankingItem> children = rankingQuestion.getChildElementsByUniqueId();
-								String[] answerids = item.toString().split(";");						
+								String[] answerids = item.toString().split(";");
 								String v = "";
-								for (String uniqueId : answerids)
-								{
+								for (String uniqueId : answerids) {
 									if (v.length() > 0) v += "; ";
 									RankingItem child = children.get(uniqueId);
-									if (child != null)
-									{
-										if (doNotReplaceAnswerIDs)
-										{
+									if (child != null) {
+										if (doNotReplaceAnswerIDs) {
 											v += uniqueId;
 										} else {
 											v += child.getTitle();
 										}
-										
+
 										if (showShortnames) {
-											v += "<span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
+											v += "<span class='assignedValue hideme'>(" + child.getShortname() + ")</span>";
 										}
-									}							
-								}						
+									}
+								}
 								row.add(v.length() > 0 ? v : null);
 							} else if (question instanceof FormulaQuestion) {
-								FormulaQuestion formulaQuestion = (FormulaQuestion)question;
+								FormulaQuestion formulaQuestion = (FormulaQuestion) question;
 								if (formulaQuestion.getDecimalPlaces() != null) {
 									row.add(String.format(Locale.ROOT, "%." + formulaQuestion.getDecimalPlaces() + "f", item));
 								} else {
@@ -744,26 +700,23 @@ public class ReportingService extends BasicService {
 							} else if (question instanceof ComplexTableItem) {
 								ComplexTableItem child = (ComplexTableItem) question;
 								if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
-									String[] answerids = item.toString().split(";");						
+									String[] answerids = item.toString().split(";");
 									String v = "";
-									for (String answerid : answerids)
-									{
+									for (String answerid : answerids) {
 										if (v.length() > 0) v += "; ";
 										Element answer = child.getPossibleAnswerByUniqueId(answerid);
-										if (answer != null)
-										{
-											if (doNotReplaceAnswerIDs)
-											{
+										if (answer != null) {
+											if (doNotReplaceAnswerIDs) {
 												v += answerid;
 											} else {
 												v += answer.getStrippedTitle();
 											}
-											
+
 											if (showShortnames) {
-												v += "<span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+												v += "<span class='assignedValue hideme'>(" + answer.getShortname() + ")</span>";
 											}
-										}							
-									}						
+										}
+									}
 									row.add(v.length() > 0 ? v : null);
 								} else if (child.getCellType() == ComplexTableItem.CellType.Number || child.getCellType() == ComplexTableItem.CellType.Formula) {
 									if (child.getDecimalPlaces() != null) {
@@ -777,40 +730,33 @@ public class ReportingService extends BasicService {
 							} else {
 								row.add(item.toString());
 							}
-							
-							if (question == null)
-							{
+
+							if (question == null) {
 								logger.info("question not found");
 							}
-								
-							if (survey.getIsDelphi() && question != null && question.isDelphiElement())
-							{
+
+							if (survey.getIsDelphi() && question != null && question.isDelphiElement()) {
 								boolean skip = false;
-									
-								if (question instanceof Matrix)
-								{
+
+								if (question instanceof Matrix) {
 									//explanation and discussion columns are only added once (after the last matrix subquestion)
-									Matrix matrix = (Matrix)question;
+									Matrix matrix = (Matrix) question;
 									List<Element> matrixQuestions = matrix.getQuestions();
-									Element lastQuestion = matrixQuestions.get(matrixQuestions.size()-1);
-									if (!lastQuestion.getUniqueId().equals(questionuid))
-									{
+									Element lastQuestion = matrixQuestions.get(matrixQuestions.size() - 1);
+									if (!lastQuestion.getUniqueId().equals(questionuid)) {
 										skip = true;
 									}
-								} else if (question instanceof RatingQuestion)
-								{
+								} else if (question instanceof RatingQuestion) {
 									//explanation and discussion columns are only added once (after the last matrix subquestion)
-									RatingQuestion rating = (RatingQuestion)question;
+									RatingQuestion rating = (RatingQuestion) question;
 									List<Element> ratingQuestions = rating.getQuestions();
-									Element lastQuestion = ratingQuestions.get(ratingQuestions.size()-1);
-									if (!lastQuestion.getUniqueId().equals(questionuid))
-									{
+									Element lastQuestion = ratingQuestions.get(ratingQuestions.size() - 1);
+									if (!lastQuestion.getUniqueId().equals(questionuid)) {
 										skip = true;
 									}
-								}						
-								
-								if (!skip && filter.getVisibleExplanations().contains(question.getId().toString()))
-								{
+								}
+
+								if (!skip && filter.getVisibleExplanations().contains(question.getId().toString())) {
 									try {
 										String explanation = answerExplanationService.getFormattedExplanationWithFiles(
 												ConversionTools.getValue(answerrow[1]), question.getUniqueId(),
@@ -820,9 +766,8 @@ public class ReportingService extends BasicService {
 										row.add("");
 									}
 								}
-								
-								if (!skip && filter.getVisibleDiscussions().contains(question.getId().toString()))
-								{
+
+								if (!skip && filter.getVisibleDiscussions().contains(question.getId().toString())) {
 									try {
 										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId(), !forexport, usersByUid);
 										row.add(discussion);
@@ -831,22 +776,28 @@ public class ReportingService extends BasicService {
 									}
 								}
 							}
-							
+
 							counter++;
 						}
-				    }
+					}
 				}
-				
-				rows.add(row);				
+
+				rows.add(row);
 			}
-			
+
 			return rows;
-			
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			
+
+		} catch(PersistenceException e) {
+			if (!(ExceptionUtils.getRootCause(e) instanceof java.sql.SQLSyntaxErrorException)) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
+
 			return null;
-		}	
+		} catch(Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+
+			return null;
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

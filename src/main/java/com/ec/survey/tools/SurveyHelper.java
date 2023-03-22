@@ -441,14 +441,18 @@ public class SurveyHelper {
 						boolean subquestionFound = false;
 						for (Element matrixquestion : ((Matrix) question).getQuestions()) {
 							List<Element> matrixquestiondependencies = dependencies.get(matrixquestion);
-							matrixquestiondependencies.remove(questiondependencies);
 							if (matrixquestiondependencies != null) {
+								matrixquestiondependencies.remove(questiondependencies);
 								subquestionFound = checkDependencies(matrixquestiondependencies, matrixquestion, (Question) matrixquestion, parent, answerSet, invisibleElements);
 								if (!subquestionFound) {
 									invisibleElements.add(matrixquestion.getUniqueId());
 								}
+								answerPossibilityVisible = answerPossibilityVisible || subquestionFound;
+							} else {
+								// matrix question has no own dependency
+								answerPossibilityVisible = true;
 							}
-							answerPossibilityVisible = answerPossibilityVisible || subquestionFound;
+							
 						}
 						if (!answerPossibilityVisible) {
 							found = false;
@@ -825,7 +829,7 @@ public class SurveyHelper {
 				}
 			}
 
-		if (element.getUseAndLogic() && missing) {
+		if (element.getIsDependent() && element.getUseAndLogic() && missing) {
 			found = false;
 		}
 

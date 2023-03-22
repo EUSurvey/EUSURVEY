@@ -143,6 +143,7 @@ public class Numbering {
 	
 	public static String getSmallLetter(int pcounter)
 	{
+		if (pcounter <= 0) return "a";
 		//1 -> a
 		int counter = pcounter -1; //we start with 0 and not 1
 		int prefix = counter / 26;
@@ -158,6 +159,7 @@ public class Numbering {
 	
 	public static String getBigLetter(int pcounter)
 	{
+		if (pcounter <= 0) return "A";
 		int counter = pcounter -1; //we start with 0 and not 1
 		int prefix = counter / 26;
 		counter = counter % 26;

@@ -307,12 +307,13 @@ var ElementProperties = function() {
 		}
 
 		_actions.CopyEnabled(true);
-		_actions.CutEnabled(true);
 		
 		if ($("#content").find(".selectedquestion").not(".locked").length > 0)
 		{
+			_actions.CutEnabled(true);
 			_actions.DeleteEnabled(true);
 		} else {
+			_actions.CutEnabled(false);
 			_actions.DeleteEnabled(false);
 		}
 		
@@ -350,11 +351,20 @@ var ElementProperties = function() {
 			_elementProperties.Id(getElementTypeAsId($(e)));
 			
 			$("#lockedElementInfo").hide();
-			
+
+			var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
+
 			if (isOPC && element != null && element.hasOwnProperty("locked") && element.locked())
 			{
+				_actions.CutEnabled(false);
+				_actions.DeleteEnabled(false);
 				$("#lockedElementInfo").show();
-			} else	if ($(e).hasClass("sectionitem"))
+			} else if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
+			{
+				_actions.CutEnabled(false);
+				_actions.DeleteEnabled(false);
+				$("#lockedElementInfo").show();
+			} else if ($(e).hasClass("sectionitem"))
 			{
 				getTextPropertiesRow("Text", element.originalTitle(), true);
 				
@@ -540,39 +550,31 @@ var ElementProperties = function() {
 				_actions.MoveDownEnabled(false);
 			} else if ($(e).hasClass("answertext"))
 			{
-				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
-				
-				if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
-				{
-					$("#lockedElementInfo").show();
+				if (parent != null && (parent.type === "MultipleChoiceQuestion" || parent.type === "SingleChoiceQuestion")){
+					_actions.DeleteEnabled(true)
 				} else {
-
-					if (parent != null && (parent.type === "MultipleChoiceQuestion" || parent.type === "SingleChoiceQuestion")){
-						_actions.DeleteEnabled(true)
-					} else {
-						_actions.DeleteEnabled(false);
-					}
-					
-					var id = $(e).attr("data-id");
-					var text = $("textarea[name^='answer'][data-id='" + id + "']").first().text();
-					
-					getTextPropertiesRow("Text", text, true);
-					getAdvancedPropertiesRow();
-					
-					var shortname = $("input[name^='pashortname'][data-id='" + id + "']").first().val();
-					getTextPropertiesRow("Identifier", shortname, false);
-					
-					if (parent.type === "MultipleChoiceQuestion" && parent.styleType() == "CheckBox") {
-						getCheckPropertiesRow("Exclusive", $("input[name^='exclusive'][data-id='" + id + "']").val() == 'true');
-					}
-					
-					_actions.ChildSelected(true);
-					
-					_actions.CopyEnabled(false);
-					_actions.CutEnabled(false);		
-					_actions.MoveUpEnabled(false);
-					_actions.MoveDownEnabled(false);
+					_actions.DeleteEnabled(false);
 				}
+
+				var id = $(e).attr("data-id");
+				var text = $("textarea[name^='answer'][data-id='" + id + "']").first().text();
+
+				getTextPropertiesRow("Text", text, true);
+				getAdvancedPropertiesRow();
+
+				var shortname = $("input[name^='pashortname'][data-id='" + id + "']").first().val();
+				getTextPropertiesRow("Identifier", shortname, false);
+
+				if (parent.type === "MultipleChoiceQuestion" && parent.styleType() == "CheckBox") {
+					getCheckPropertiesRow("Exclusive", $("input[name^='exclusive'][data-id='" + id + "']").val() == 'true');
+				}
+
+				_actions.ChildSelected(true);
+
+				_actions.CopyEnabled(false);
+				_actions.CutEnabled(false);
+				_actions.MoveUpEnabled(false);
+				_actions.MoveDownEnabled(false);
 			} else if ($(e).hasClass("numberitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
@@ -658,47 +660,41 @@ var ElementProperties = function() {
 				}
 			} else if ($(e).hasClass("matrix-header"))
 			{
-				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
 				const element = parent.getChild($(e).attr("data-id"));
-				
-				if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
-				{
-					$("#lockedElementInfo").show();
-				} else {
-					var id = $(e).attr("data-id");
-					var text = $("textarea[name^='text" + id + "']").first().text();
-					
-					if ($(e).hasClass("firstCell"))
-					{
-						text =  $("textarea[name^='firstCellText" + id + "']").first().text();
-						getTextPropertiesRow("Text", text, true);
-					} else {
-		 	 		
-			 	 		var shortname = $("input[name^='shortname" + id + "']").first().val();
-			 	 		                                
-						getTextPropertiesRow("Text", text, true);
-						
-						if ($(e).closest("thead").length == 0)
-						{
-							getCheckPropertiesRow("Mandatory", $("input[name^='optional" + id + "']").val() == 'false');
-							getVisibilityRow(false);
-						}
-						
-						getAdvancedPropertiesRow();
-						getTextPropertiesRow("Identifier", shortname, false);
-					
-					}
-					
-					_actions.ChildSelected(true);
-					
-					_actions.CopyEnabled(false);
-					_actions.CutEnabled(false);		
-					_actions.MoveUpEnabled(false);
-					_actions.MoveDownEnabled(false);
 
-					if (isDelphi) {
-						adaptDelphiChildControls(element, parent);
+				var id = $(e).attr("data-id");
+				var text = $("textarea[name^='text" + id + "']").first().text();
+
+				if ($(e).hasClass("firstCell"))
+				{
+					text =  $("textarea[name^='firstCellText" + id + "']").first().text();
+					getTextPropertiesRow("Text", text, true);
+				} else {
+
+					var shortname = $("input[name^='shortname" + id + "']").first().val();
+
+					getTextPropertiesRow("Text", text, true);
+
+					if ($(e).closest("thead").length == 0)
+					{
+						getCheckPropertiesRow("Mandatory", $("input[name^='optional" + id + "']").val() == 'false');
+						getVisibilityRow(false);
 					}
+
+					getAdvancedPropertiesRow();
+					getTextPropertiesRow("Identifier", shortname, false);
+
+				}
+
+				_actions.ChildSelected(true);
+
+				_actions.CopyEnabled(false);
+				_actions.CutEnabled(false);
+				_actions.MoveUpEnabled(false);
+				_actions.MoveDownEnabled(false);
+
+				if (isDelphi) {
+					adaptDelphiChildControls(element, parent);
 				}
 			} else if ($(e).hasClass("mytableitem"))
 			{
@@ -736,43 +732,38 @@ var ElementProperties = function() {
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
 				const element = parent.getChild($(e).attr("data-id"));
 
-				if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
-				{
-					$("#lockedElementInfo").show();
-				} else {
-					var text = $(e).html();
-					
-					if ($(e).hasClass("firstCell"))
-					{
-						text =  $("textarea[name^='firstCellText" + id + "']").first().text();
-						getTextPropertiesRow("Text", text, true);
-					} else {					
-						if ($(e).find("textarea").length > 0)
-						{
-							text = $(e).find("textarea").first().text();
-						}
-						
-						getTextPropertiesRow("Text", text, true);
-						
-						if ($(e).closest("tr").index() > 0)
-						{
-							getCheckPropertiesRow("Mandatory", $(e).attr("data-optional") == 'false');
-						}
-						
-						getAdvancedPropertiesRow();
-						getTextPropertiesRow("Identifier", $(e).attr("data-shortname"), false);
-					}
-					
-					_actions.ChildSelected(true);
-					
-					_actions.CopyEnabled(false);
-					_actions.CutEnabled(false);		
-					_actions.MoveUpEnabled(false);
-					_actions.MoveDownEnabled(false);
+				var text = $(e).html();
 
-					if (isDelphi) {
-						adaptDelphiChildControls(element, parent);
+				if ($(e).hasClass("firstCell"))
+				{
+					text =  $("textarea[name^='firstCellText" + id + "']").first().text();
+					getTextPropertiesRow("Text", text, true);
+				} else {
+					if ($(e).find("textarea").length > 0)
+					{
+						text = $(e).find("textarea").first().text();
 					}
+
+					getTextPropertiesRow("Text", text, true);
+
+					if ($(e).closest("tr").index() > 0)
+					{
+						getCheckPropertiesRow("Mandatory", $(e).attr("data-optional") == 'false');
+					}
+
+					getAdvancedPropertiesRow();
+					getTextPropertiesRow("Identifier", $(e).attr("data-shortname"), false);
+				}
+
+				_actions.ChildSelected(true);
+
+				_actions.CopyEnabled(false);
+				_actions.CutEnabled(false);
+				_actions.MoveUpEnabled(false);
+				_actions.MoveDownEnabled(false);
+
+				if (isDelphi) {
+					adaptDelphiChildControls(element, parent);
 				}
 			} else if ($(e).hasClass("complextableitem"))
 			{
@@ -1050,35 +1041,29 @@ var ElementProperties = function() {
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
 				const element = parent.getChild($(e).attr("data-id"));
 				
-				if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
-				{
-					$("#lockedElementInfo").show();
-				} else {
-				
-					_actions.DeleteEnabled(true);
-					
-					var id = $(e).attr("data-id");
-					var text = $("textarea[name^='question'][data-id='" + id + "']").first().text();
-					
-					getTextPropertiesRow("Text", text, true);
-					
-					getCheckPropertiesRow("Mandatory", $("input[name^='questionoptional'][data-id='" + id + "']").val() == 'false');
-					
-					getAdvancedPropertiesRow();
-					
-					var shortname = $("input[name^='questionshortname'][data-id='" + id + "']").first().val();
-					getTextPropertiesRow("Identifier", shortname, false);
-					
-					_actions.ChildSelected(true);
-					
-					_actions.CopyEnabled(false);
-					_actions.CutEnabled(false);		
-					_actions.MoveUpEnabled(false);
-					_actions.MoveDownEnabled(false);
+				_actions.DeleteEnabled(true);
 
-					if (isDelphi) {
-						adaptDelphiChildControls(element, parent);
-					}
+				var id = $(e).attr("data-id");
+				var text = $("textarea[name^='question'][data-id='" + id + "']").first().text();
+
+				getTextPropertiesRow("Text", text, true);
+
+				getCheckPropertiesRow("Mandatory", $("input[name^='questionoptional'][data-id='" + id + "']").val() == 'false');
+
+				getAdvancedPropertiesRow();
+
+				var shortname = $("input[name^='questionshortname'][data-id='" + id + "']").first().val();
+				getTextPropertiesRow("Identifier", shortname, false);
+
+				_actions.ChildSelected(true);
+
+				_actions.CopyEnabled(false);
+				_actions.CutEnabled(false);
+				_actions.MoveUpEnabled(false);
+				_actions.MoveDownEnabled(false);
+
+				if (isDelphi) {
+					adaptDelphiChildControls(element, parent);
 				}
 			} else if ($(e).find(".gallery-image").length > 0)
 			{
@@ -1167,6 +1152,7 @@ var ElementProperties = function() {
 			{
 				$("#lockedElementInfo").show();
 				hidevisibility = true;
+				_actions.CutEnabled(false);
 				_actions.DeleteEnabled(false);
 			} else if (childselected)
 			{

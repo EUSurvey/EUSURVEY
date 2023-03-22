@@ -127,6 +127,12 @@
 					</tr>
 				</table>
 				
+				<!-- ko if: counting() != null -->
+					<!-- ko foreach: counting().reallocationMessagesForLists -->
+						<p data-bind="html: $data"></p>
+					<!-- /ko -->
+				<!-- /ko -->
+				
 				<table data-bind="if: counting() != null" class="table table-condensed table-striped table-bordered" style="width: auto;">
 					<tr style="font-weight: bold">
 						<th><spring:message code="label.seats.List" /></th>
@@ -148,7 +154,7 @@
 						<td><spring:message code="label.seats.Total" /></td>
 						<td data-bind="text: counting().listVotesFinal"></td>
 						<td>100%</td>
-						<td data-bind="text: counting().listVotesSeatsReal"></td>
+						<td data-bind="text: counting().listVotesSeats"></td>
 					</tr>
 				</table>
 				
@@ -433,17 +439,31 @@
 			<tr style="font-weight: bold">
 				<td><spring:message code="label.seats.CandidateNumber" /></td>
 				<!-- ko foreach: counting().listSeatDistribution -->
-				<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
-					<td data-bind="html: name"></td>
+					<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
+						<td data-bind="html: name"></td>
+					<!-- /ko -->
 				<!-- /ko -->
+				<!-- ko foreach: counting().listSeatDistribution -->
+					<!-- ko ifnot: listPercentWeighted >= $parent.counting().minListPercent -->
+					<td>
+						<span data-bind="html: name" style="color: #777;"></span>
+						<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign" style="color: #aaa;"></span></a>
+						<div class="help hideme"><spring:message code="help.EligibleLists" /></div>
+					</td>
+					<!-- /ko -->
 				<!-- /ko -->
 			</tr>
 			<tr data-bind="if: counting().template != 'l' && counting().template != 'o'" style="font-weight: bold">
 				<td><spring:message code="label.seats.TotalListVotes" /></td>
 				<!-- ko foreach: counting().listSeatDistribution -->
-				<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
-				<td data-bind="text: listVotes"></td>
+					<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
+						<td data-bind="text: listVotes"></td>
+					<!-- /ko -->
 				<!-- /ko -->
+				<!-- ko foreach: counting().listSeatDistribution -->
+					<!-- ko ifnot: listPercentWeighted >= $parent.counting().minListPercent -->
+						<td data-bind="text: listVotes" style="color: #777;"></td>
+					<!-- /ko -->
 				<!-- /ko -->
 			</tr>
 			<!-- ko foreach: counting().candidateVotes -->
@@ -451,11 +471,11 @@
 				<td data-bind="text: $index()+1"></td>
 				
 				<!-- ko foreach: $data -->
-				<td data-bind="attr: {style: 'background-color: ' + getCellBackground($data)}">
+				<td data-bind="attr: {style: 'background-color: ' + getCellBackground($data) + ';' + 'color: ' + getFontColor($data)}">
 					<span data-toggle="tooltip" data-bind="text: votes, attr: {title: name}"></span>
 				</td>
-				<!-- /ko -->				
-			</tr>			
+				<!-- /ko -->
+			</tr>
 			<!-- /ko -->
 			<tr style="font-weight: bold">
 				<td>
@@ -463,9 +483,14 @@
 					<span data-bind="if: counting().template == 'l' || counting().template == 'o'"><spring:message code="label.seats.Total" /></span>
 				</td>
 				<!-- ko foreach: counting().listSeatDistribution -->
-				<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
-				<td data-bind="text: luxListVotes"></td>
+					<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
+						<td data-bind="text: luxListVotes"></td>
+					<!-- /ko -->
 				<!-- /ko -->
+				<!-- ko foreach: counting().listSeatDistribution -->
+					<!-- ko ifnot: listPercentWeighted >= $parent.counting().minListPercent -->
+						<td data-bind="text: luxListVotes" style="color: #777;"></td>
+					<!-- /ko -->
 				<!-- /ko -->
 			</tr>
 		</table>
@@ -512,7 +537,7 @@
 		<!-- /ko -->
 		
 		<!-- ko if: counting() != null && counting().template == 'p' -->
-		<h1><spring:message code="label.seats.ElectedCandidates" /></h1>
+		<h1><spring:message code="label.seats.NumberVotesPerCandidate" /></h1>
 		<div id="eVoteSinglePresidentChartContainer" style="position: relative; margin-top: 10px; margin-bottom: 10px;">
 			<canvas id="eVoteSinglePresidentChart"></canvas>
 		</div>
@@ -593,5 +618,14 @@
 		
 		return "";
 	}
+
+	function getFontColor(candidate) {
+		if (candidate.listNotAccepted) {
+			return "#777";
+		}
+
+		return "";
+	}
+
 </script>
 		

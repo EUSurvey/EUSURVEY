@@ -7,7 +7,7 @@
 	<artifactId>eusurvey</artifactId>
 	<name>eusurvey</name>
 	<packaging>war</packaging>
-	<version>1.5.3</version>
+	<version>1.5.4</version>
 	<properties>
 		<java-version>11</java-version>
 		<org.springframework-version>5.3.20</org.springframework-version>
@@ -486,14 +486,12 @@
 			<version>3.13</version>
 		</dependency>
 
-		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
 			<version>5.6.8.Final</version>
 		</dependency>
 
-		<!-- Ehcache -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
@@ -506,13 +504,13 @@
 			<artifactId>jgroups</artifactId>
 			<version>3.6.12.Final</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-jgroupsreplication</artifactId>
 			<version>1.7</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-surefire-plugin</artifactId>

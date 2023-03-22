@@ -14,9 +14,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.persistence.*;
 import javax.persistence.Table;
 import com.ec.survey.model.ECFProfile;
@@ -26,7 +23,6 @@ import com.ec.survey.model.Skin;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyService;

@@ -27,6 +27,7 @@
 			<input type="hidden" id="survey-security" name="survey.security" value="" />
 			<form:input type="hidden" path="survey.isEVote" />
 			<form:input type="hidden" path="survey.eVoteTemplate" />
+			<form:input type="hidden" path="survey.isECF" />
 			
 			<div class="actions">
 				<div style="width: 950px; margin-left: auto; margin-right: auto;">

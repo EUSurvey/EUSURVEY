@@ -83,6 +83,7 @@ public class TranslationController extends BasicController {
 		}
 
 		ModelAndView result = new ModelAndView("management/translations", "translations", translations);
+		result.addObject("useUILanguage", true);
 		result.addObject("form", form);
 		result.addObject("isMTAvailable", isMTAvailable);
 		List<Language> languages = surveyService.getLanguages();
@@ -722,19 +723,23 @@ public class TranslationController extends BasicController {
 					}
 				}
 
-				if (form.getSurvey().getConfirmationPage().equalsIgnoreCase(Survey.CONFIRMATIONTEXT)) {
-					String confirmation = resources.getMessage("message.confirmationWithTitle", null, Survey.CONFIRMATIONTEXT,
-							new Locale(language.getCode()));
-					newTranslation.getTranslations().add(new Translation(Survey.CONFIRMATIONPAGE, confirmation,
-							language.getCode(), form.getSurvey().getId(), newTranslation));
-				}
+				String languageCode = language.getCode();
 
-				if (form.getSurvey().getEscapePage().equalsIgnoreCase(Survey.ESCAPETEXT)) {
-					String escape = resources.getMessage("message.escape", null, Survey.ESCAPETEXT,
-							new Locale(language.getCode()));
-					newTranslation.getTranslations().add(new Translation(Survey.ESCAPEPAGE, escape, language.getCode(),
-							form.getSurvey().getId(), newTranslation));
+				String confirmation = resources.getMessage("message.confirmationWithTitle", null, Survey.CONFIRMATIONTEXT,
+						new Locale(language.getCode()));
+				if(!languageCode.equals("EN") && confirmation.equalsIgnoreCase(Survey.CONFIRMATIONTEXT)) {
+					confirmation = "";
 				}
+				newTranslation.getTranslations().add(new Translation(Survey.CONFIRMATIONPAGE, confirmation,
+						language.getCode(), form.getSurvey().getId(), newTranslation));
+
+				String escape = resources.getMessage("message.escape", null, Survey.ESCAPETEXT,
+						new Locale(language.getCode()));
+				if(!languageCode.equals("EN") && escape.equalsIgnoreCase(Survey.ESCAPETEXT)) {
+					escape = "";
+				}
+				newTranslation.getTranslations().add(new Translation(Survey.ESCAPEPAGE, escape, language.getCode(),
+						form.getSurvey().getId(), newTranslation));
 
 				translationService.add(newTranslation);
 				if (translationRequested) {

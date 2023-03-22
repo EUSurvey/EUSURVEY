@@ -22,6 +22,7 @@ import com.ec.survey.model.evote.eVoteListResult;
 import com.ec.survey.model.evote.eVoteResults;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.service.ECService;
 import com.ec.survey.service.SurveyException;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.service.mapping.PaginationMapper;
@@ -58,6 +59,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -104,6 +106,9 @@ public class ManagementController extends BasicController {
 	public @Value("${evote.template-president:#{null}}") String evotePresidenTemplate;
 	
 	private final String LastEVoteTestResult = "LastEVoteTestResult";
+	
+	@Resource(name = "ecService")
+	private ECService ecService;
 
 	private static final String[] KNOWN_RESULTTYPES = {
 			"content", "charts", "statistics", "ecf", "ecf2", "ecf3", "statistics-delphi", "statistics-quiz"
@@ -289,6 +294,7 @@ public class ManagementController extends BasicController {
 		}
 
 		ModelAndView overviewPage = new ModelAndView("management/overview", "form", form);
+		overviewPage.addObject("useUILanguage", true);
 		overviewPage.addObject("isPublished", form.getSurvey().getIsPublished());
 
 		List<Element> newElements = new ArrayList<>();
@@ -700,7 +706,7 @@ public class ManagementController extends BasicController {
 
 		form.setUploadItem(new UploadItem());
 		ModelAndView result = new ModelAndView("management/properties", "form", form);
-
+		result.addObject("useUILanguage", true);
 		form.getSurvey().setFileNamesForBackgroundDocuments(
 				fileService.getFileNamesForBackgroundDocuments(form.getSurvey().getBackgroundDocuments()));
 
@@ -1142,8 +1148,8 @@ public class ManagementController extends BasicController {
 				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
 					applyTemplate(survey, opctemplatesurvey, translationsToCreate);
 				}
-			}		
-		}		
+			}
+		}
 	}
 
 	private Survey applyTemplate(Survey survey, String templateUid, Map<String, Translations> translationsToCreate) throws ValidationException, IOException{
@@ -2221,6 +2227,9 @@ public class ManagementController extends BasicController {
 		form.setLanguage(survey.getLanguage());
 
 		if (creation) {
+			// set the constant messages of the survey to the main language selected in the creation dialogue
+			initializeMessageConstantsForLanguage(survey, locale);
+
 			surveyService.add(survey, u.getId());
 			if (!translationToCreate.isEmpty()) {
 				for (Translations trans : translationToCreate.values()) {
@@ -2426,6 +2435,19 @@ public class ManagementController extends BasicController {
 
 			return properties(form.getSurvey().getShortname(), request, locale);
 		}
+	}
+
+	/**
+	 * Sets the values of a Survey's default constants to the given language
+	 */
+	public void initializeMessageConstantsForLanguage(Survey survey, Locale locale){
+		Locale localeWithNewMainLanguage = new Locale(survey.getLanguage().getCode());
+
+		// confirmation text
+		survey.setConfirmationPage(resources.getMessage("message.confirmationWithTitle", null, survey.CONFIRMATIONTEXT, localeWithNewMainLanguage));
+
+		// escape page message
+		survey.setEscapePage(resources.getMessage("message.escape", null, survey.ESCAPETEXT, localeWithNewMainLanguage));
 	}
 
 	private String getNumberingLabel(int value) {
@@ -4570,7 +4592,7 @@ public class ManagementController extends BasicController {
 		}
 
 		ModelAndView result = new ModelAndView("management/access", "accesses", accesses);
-
+		result.addObject("useUILanguage", true);
 		result.addObject("form", form);
 
 		List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
@@ -4735,6 +4757,8 @@ public class ManagementController extends BasicController {
 		if (target != null) {
 			if (target.equals("addUser")) {
 				return addUser(shortname, request.getParameter("login"), request.getParameter("ecas"), request, locale);
+			} else if (target.equals("addUserEmail")) {
+				return addUserEmail(shortname, request.getParameter("emails"), request, locale);
 			} else if (target.equals("removeUser")) {
 				return removeUser(shortname, request.getParameter("id"), request, locale);
 			} else if (target.equals("addGroup")) {
@@ -4897,6 +4921,89 @@ public class ManagementController extends BasicController {
 		}		
 	}
 
+	public ModelAndView addUserEmail(String shortname, String emails, HttpServletRequest request, Locale locale)
+			throws Exception {
+
+		List<User> usersToAdd = new ArrayList<>();
+		String[] splittedEmails = Arrays.stream(emails.split(",")).map(String::trim).toArray(String[]::new);
+		boolean resultsPrivilege = request.getParameter("resultMode") != null && request.getParameter("resultMode").equalsIgnoreCase("true");
+
+		Form form;
+		form = sessionService.getForm(request, shortname, false, false);
+		User u = sessionService.getCurrentUser(request);
+		boolean userIsFormManager = sessionService.userIsFormAdmin(form.getSurvey(), u, request);
+
+		if (!userIsFormManager && (!resultsPrivilege || u.getResultAccess() == null)) {
+			throw new ForbiddenURLException();
+		}
+
+		try {
+			for(String email : splittedEmails) {
+				usersToAdd.addAll(administrationService.getUserLoginsByEmail(email));
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+
+		if(usersToAdd == null || usersToAdd.size() <= 0) {
+			ModelAndView result = access(shortname, request, locale);
+			result.addObject(Constants.MESSAGE, "No Users found.");
+			return result;
+		}
+
+		for (User user : usersToAdd) {
+			if (resultsPrivilege) {
+				ResultAccess access = surveyService.getResultAccess(form.getSurvey().getUniqueId(), user.getId());
+				if (access != null) {
+					continue;
+				}
+
+				ResultAccess resAccess = new ResultAccess();
+				resAccess.setSurveyUID(form.getSurvey().getUniqueId());
+				resAccess.setUser(user.getId());
+				resAccess.setOwner(u.getId());
+
+				if (u.getResultAccess() != null && u.getResultAccess().isReadonly()) {
+					resAccess.setReadonly(true);
+				}
+
+				String readonlyQuestionUIDs = "";
+				if (!userIsFormManager && u.getResultAccess() != null && u.getResultAccess().getResultFilter() != null) {
+					resAccess.setResultFilter(u.getResultAccess().getResultFilter().copy());
+
+					for (String questionUID : resAccess.getResultFilter().getFilterValues().keySet()) {
+						if (readonlyQuestionUIDs.length() > 0) {
+							readonlyQuestionUIDs += ";";
+						}
+						readonlyQuestionUIDs += questionUID;
+					}
+				}
+				if (readonlyQuestionUIDs.length() > 0) {
+					resAccess.setReadonlyFilterQuestions(readonlyQuestionUIDs);
+				}
+				surveyService.saveResultAccess(resAccess);
+			} else {
+				List<Access> accesses = surveyService.getAccesses(form.getSurvey().getId());
+				boolean accessAlreadyGranted = false;
+				for (Access access : accesses) {
+					accessAlreadyGranted = accessAlreadyGranted || (access.getUser() != null && access.getUser().getId().equals(user.getId()));
+				}
+
+				if(accessAlreadyGranted) {
+					continue;
+				}
+
+				Access newAccess = new Access();
+				newAccess.setSurvey(form.getSurvey());
+				newAccess.setUser(user);
+				surveyService.saveAccess(newAccess);
+				activityService.log(ActivityRegistry.ID_DELEGATE_MANAGER_ADD, null, user.getName() + " - no privileges",
+						sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
+			}
+		}
+		return access(shortname, request, locale);
+	}
+
 	public ModelAndView addGroup(String shortname, String groupname, HttpServletRequest request, Locale locale)
 			throws Exception {
 
@@ -4915,11 +5022,7 @@ public class ManagementController extends BasicController {
 		if (groupname.equalsIgnoreCase("ALL-COM") || (ecasInternalDomains.contains(groupname))) {
 			departments[0] = groupname;
 		} else {
-			departments = ldapDBService.getDepartments(null, groupname, false, false);
-
-			if (departments == null || departments.length == 0) {
-				departments = ldapDBService.getDepartments(null, groupname, true, false);
-			}
+			departments = ecService.getDepartments();
 		}
 
 		if (departments != null && departments.length > 0) {

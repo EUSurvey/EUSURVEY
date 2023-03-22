@@ -176,9 +176,9 @@
 				Urheberrechte oder geistigen Eigentumsrechte der DIGIT oder Dritten
 				aufgefallen sind.</li>
 			<li><b>Geistiges Eigentum:</b> Von der GD DIGIT
-				entworfen und im Rahmen der Interoperabilitätsprogramme ISA,
+				entworfen und im Rahmen der Programme ISA,
 				<a target="_blank" href="https://ec.europa.eu/isa2/home_en/" aria-label="ISA² programme - Opens in new window">ISA²</a> und
-				<a target="_blank" href="https://digital-strategy.ec.europa.eu/de/activities/digital-programme" aria-label="DEP"> DEP</a> finanziert,
+				<a target="_blank" href="https://digital-strategy.ec.europa.eu/de/activities/digital-programme" aria-label="DIGITAL">"Digitales Europa"</a> (DIGITAL) finanziert,
 				ist EUSurvey vollständig Open Source und wird unter der <a target="_blank" href="https://joinup.ec.europa.eu/collection/eupl">EUPL</a>-Lizenz
 				veröffentlicht. Sie können den Quellcode von GitHub herunterladen:
 				<a href="https://github.com/EUSurvey/EUSURVEY/tree/develop">https://github.com/EUSurvey/EUSURVEY/tree/develop</a></li>

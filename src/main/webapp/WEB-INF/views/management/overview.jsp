@@ -123,6 +123,10 @@
 				</c:otherwise>
 			</c:choose>
 		}
+
+		$(function () {
+			$("[rel='tooltip']").tooltip();
+		});
 	</script>
 		 
 </head>
@@ -147,22 +151,22 @@
 				<div class="typeicon">
 					<c:choose>
 						<c:when test="${form.survey.isQuiz}">
-							<img data-toggle="tooltip" title="<spring:message code="label.Quiz" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/quiz.png" />
+							<img rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Quiz" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/quiz.png" />
 						</c:when>
 						<c:when test="${form.survey.isOPC}">
-							<img data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
+							<img rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
 						</c:when>
 						<c:when test="${form.survey.isDelphi}">
-							<img data-toggle="tooltip" title="<spring:message code="label.Delphi" />" src="${contextpath}/resources/images/icons/24/delphi.png" />
+							<img rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delphi" />" src="${contextpath}/resources/images/icons/24/delphi.png" />
 						</c:when>
 						<c:when test="${form.survey.isECF}">
-							<span data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
+							<span rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
 						</c:when>
 						<c:when test="${form.survey.isEVote}">
-							<span data-toggle="tooltip" title="<spring:message code="label.eVote" /> - <spring:message code="${form.survey.eVoteTemplateTitle}"/>"  class="glyphicon glyphicon-ok" style="border: 2px solid #333; padding: 3px; font-size: 21px; color: #333"></span>
+							<span rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.eVote" /> - <spring:message code="${form.survey.eVoteTemplateTitle}"/>"  class="glyphicon glyphicon-ok" style="border: 2px solid #333; padding: 3px; font-size: 21px; color: #333"></span>
 						</c:when>
 						<c:otherwise>
-							<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
+							<img rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
 						</c:otherwise>
 					</c:choose>
 				</div>
@@ -199,7 +203,7 @@
 						<td colspan="2" style="padding-bottom: 20px;">
 							<div class="shortname" style="max-width: 500px;">
 								<a id="lnkOverviewAccessSurvey" target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/<esapi:encodeForHTML>${form.survey.shortname}</esapi:encodeForHTML></a>
-								<a style="font-size: 20px; margin: 10px; position: absolute; margin-top: -2px;" data-toggle="tooltip" title="<spring:message code="label.ShowLinksInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<a style="font-size: 20px; margin: 10px; position: absolute; margin-top: -2px;" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ShowLinksInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');"><span class="glyphicon glyphicon-info-sign"></span></a>
 							</div>
 						</td>
 					</tr>	
@@ -264,7 +268,7 @@
 							&nbsp;
 							<c:choose>
 								<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
-									<a href="properties?tab=5&editelem=autopub" class="visiblelink" title="<spring:message code="label.EditSettings" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
+									<a href="properties?tab=5&editelem=autopub" class="visiblelink" rel="tooltip" title="<spring:message code="label.EditSettings" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
 								</c:when>
 								<c:otherwise>
 									<a class="visiblelinkdisabled"><spring:message code="label.EditSettings" /></a>								
@@ -300,10 +304,10 @@
 								&nbsp;
 								<c:choose>
 									<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1) && !form.survey.getIsEVote()}">
-										<a href="properties?tab=6&editelem=showContent" class="visiblelink" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
+										<a href="properties?tab=6&editelem=showContent" class="visiblelink" rel="tooltip" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
 									</c:when>
 									<c:otherwise>
-										<a class="visiblelink disabled" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip" style="color: #ccc"><span class="glyphicon glyphicon-pencil"></span></a>
+										<a class="visiblelink disabled" rel="tooltip" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip" style="color: #ccc"><span class="glyphicon glyphicon-pencil"></span></a>
 									</c:otherwise>
 								</c:choose>		
 							</td>					

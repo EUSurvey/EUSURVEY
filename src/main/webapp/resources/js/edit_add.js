@@ -537,11 +537,11 @@ function getNewShortname()
 {
 	if (usedIDs.length == 0)
 	{
-		$("input[name^='shortname'],input[name^='pashortname'],input[name^='rankingitemshortname']").each(function(){
+		$("input[name^='shortname'],input[name^='pashortname'],input[name^='rankingitemshortname'],input[name^='questionshortname']").each(function(){
 			usedIDs[usedIDs.length] = $(this).val();
 		});
 		
-		$("td").each(function(){
+		$("td, th").each(function(){
 			if ($(this).attr("data-shortname"))
 			usedIDs[usedIDs.length] = $(this).attr("data-shortname");
 		});

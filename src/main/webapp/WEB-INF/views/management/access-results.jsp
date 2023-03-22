@@ -78,7 +78,7 @@
 								<c:when test="${!entry.getValue().isEmpty()}">
 									<div id="${entry.getKey().uniqueId}">
 										<c:forEach items="${entry.getValue()}" var="child">
-											<input name="${entry.getKey().uniqueId}" type="checkbox" style="margin: 5px; vertical-align: middle; margin-bottom: 7px;" value="${child.uniqueId}" /> ${child.getStrippedTitleAtMost100()} <br />
+											<input name="${entry.getKey().uniqueId}" type="checkbox" style="margin: 5px; vertical-align: middle; margin-bottom: 7px;" value="${child.id}|${child.uniqueId}" /> ${child.getStrippedTitleAtMost100()} <br />
 										</c:forEach>
 									</div>
 								</c:when>

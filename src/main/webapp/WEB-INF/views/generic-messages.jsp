@@ -366,12 +366,16 @@
 	}
 
 	let lastTimeAjaxError = new Date(0)
+	let stopAjaxErrors = false
 	function showAjaxError(statuscode){
-		if (new Date().getTime() - lastTimeAjaxError.getTime() > 2500) { //Prevent Spam
+		if (!stopAjaxErrors && new Date().getTime() - lastTimeAjaxError.getTime() > 2500) { //Prevent Spam
 			showError("Connection Error " + statuscode);
 			lastTimeAjaxError = new Date()
 		}
 	}
+
+	//When unloading the page, prevent ajaxErrors, as they might be thrown when the request is interrupted by the browser
+	window.addEventListener("beforeunload", () => {stopAjaxErrors = true})
 	
 	function showSystemMessage(message)
 	{

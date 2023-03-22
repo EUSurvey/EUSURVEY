@@ -29,6 +29,10 @@ import org.odftoolkit.simple.table.Row;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +45,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.Map.Entry;
@@ -1153,17 +1158,7 @@ public class AddressBookController extends BasicController {
 		
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 		
-		String operation = request.getParameter("operation");	
-		if (operation != null && operation.equalsIgnoreCase("delete"))
-		{
-			AttendeeUpdater updater = (AttendeeUpdater) context.getBean("attendeeUpdater");
-			updater.initForDelete(user, request.getParameter("checkAllCheckBox") != null && request.getParameter("checkAllCheckBox").equalsIgnoreCase("true"), (HashMap<String, String>) request.getSession().getAttribute("attendees-filter"), parameterMap);
-			taskExecutorLong.execute(updater);			
-			
-			request.getSession().removeAttribute("attendees-paging");
-			return new ModelAndView("redirect:/addressbook?deleted=batch");
-		}
-		
+		String operation = request.getParameter("operation");
 		if (operation != null && operation.equalsIgnoreCase("batchedit"))
 		{
 			List<Integer> selectedAttendees = new ArrayList<>();
@@ -1271,12 +1266,33 @@ public class AddressBookController extends BasicController {
 	}	
 	
 	@PostMapping(value = "/deleteAttendee")
-	public String delete(@RequestParam("id") String id, HttpServletRequest request) {	
+	public ResponseEntity<String> delete(HttpServletRequest request) {
+		String id = request.getParameter("id");
 		Attendee attendee = attendeeService.get(Integer.parseInt(id));
 		attendee.setOriginalId(attendee.getId());
 		attendee.setHidden(true);		
 		attendeeService.update(attendee, true);
-		return "redirect:/addressbook?deleted=" + id;
+
+		var httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
+
+		return new ResponseEntity<>("OK", httpHeaders, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/deleteAttendees")
+	public ResponseEntity<String> deleteMultiple(HttpServletRequest request) throws Exception {
+		User user = sessionService.getCurrentUser(request);
+		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
+
+		AttendeeUpdater updater = (AttendeeUpdater) context.getBean("attendeeUpdater");
+		updater.initForDelete(user, request.getParameter("checkAllCheckBox") != null && request.getParameter("checkAllCheckBox").equalsIgnoreCase("true"), (HashMap<String, String>) request.getSession().getAttribute("attendees-filter"), parameterMap);
+		taskExecutorLong.execute(updater);
+		request.getSession().removeAttribute("attendees-paging");
+
+		var httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
+
+		return new ResponseEntity<>("OK", httpHeaders, HttpStatus.OK);
 	}
 		
 	@SuppressWarnings("unchecked")

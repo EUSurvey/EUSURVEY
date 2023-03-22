@@ -274,6 +274,12 @@ public class LdapDBService extends BasicService {
 			kv.setValue(resources.getMessage("domain." + kv.getKey(), null, kv.getValue(), locale));
 		}
 		
+		// this creates at least the EC entry if LDAP synchronization does not work
+		if (domainsList.size() == 1) {
+			KeyValue ec =  new KeyValue("eu.europa.ec" ,"European Commission");
+			domainsList.add(ec);
+		}
+		
     	return domainsList;
 	}
 	

@@ -227,7 +227,7 @@ public class XmlExportCreator extends ExportCreator {
 						writer.writeStartElement("ResultText");
 						writer.writeCharacters(child.getResultTitle(table));
 						writer.writeEndElement(); // ResultText
-						
+
 						if (child.getCellType() == CellType.SingleChoice || child.getCellType() == CellType.MultipleChoice) {
 							for (PossibleAnswer answer : child.getPossibleAnswers()) {
 								writer.writeStartElement(ANSWER);
@@ -241,8 +241,8 @@ public class XmlExportCreator extends ExportCreator {
 								writer.writeCharacters(answer.getTitle());
 								writer.writeEndElement(); // Answer
 							}
-						}
-
+						}					
+						
 						writer.writeEndElement(); // Cell
 					}
 				} else if (question instanceof Table) {

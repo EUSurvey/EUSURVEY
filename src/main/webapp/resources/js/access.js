@@ -20,7 +20,7 @@
 			
 			$('#add-group-name').keyup(function(e){
 			    if(e.keyCode == 13){
-			    	addGroup($('#add-group-name').val());
+			    	addGroup();
 			    	$('#add-group-dialog').modal("hide");
 			    }
 			});
@@ -36,126 +36,22 @@
 			});
 		});
 		
-		function loadTopDepartments(domain)
-		{
-			$( "#wheel" ).show();
-			$("#tree").empty();
-			
-			$.ajax({
-				type:'GET',
-				  url: contextpath + "/noform/management/topDepartmentsJSON?domain=" +domain,
-				  dataType: 'json',
-				  success: function( list ) {					  
-					
-					var selectedValue = domain.replace("eu.europa.","");
-
-					var selectedText = $("#add-group-type-ecas :selected").text();
-						
-				  	var liRoot = document.createElement("li");
-				  	var spanRoot = document.createElement("span");
-				  	$(spanRoot).attr("onclick","disabledEventPropagation(event);").attr("onselectstart","return false;").attr("id","spanRoot");
-					var inputRoot = document.createElement("input");
-					$(inputRoot).css("margin-left","10px").attr("onclick","disabledEventPropagation(event);").attr("type","radio").addClass("check").attr("name","department").val(selectedValue);
-					if ($("#readonlytree").length > 0 && $("#readonlytree").val() == 'true')
-					{
-						$(inputRoot).attr("disabled", "disabled");
-					}
-					
-					var linkRoot = document.createElement("a");
-					$(linkRoot).attr("onclick","openChildren($(this).closest('li').find('ul').first(),'"+  selectedValue +"')").html("<img class='folderimage' src='" + contextpath + "/resources/images/folderclosed.png'></img>");
-					$(spanRoot).append(linkRoot);
-					
-					$(spanRoot).append(inputRoot);
-					$(spanRoot).append(selectedText);
-					
-					$(liRoot).append(spanRoot);
-					
-					var ulRoot = document.createElement("ul");
-					$(ulRoot).addClass("dep-tree").addClass("dep-tree-child").hide();
-					$(spanRoot).append(ulRoot);
-					
-					$("#tree").append(liRoot);
-									  
-				  for (var i = 0; i < list.length; i++ )
-				  {
-					var li = document.createElement("li");
-					var span = document.createElement("span");
-					
-					$(span).attr("onclick","disabledEventPropagation(event);").attr("onselectstart","return false;").attr("id","span" + list[i].key);
-					
-					var input = document.createElement("input");
-					$(input).css("margin-left","10px").attr("onclick","disabledEventPropagation(event);").attr("type","radio").addClass("check").attr("name","department").val(list[i].key);
-					
-					if ($("#readonlytree").length > 0 && $("#readonlytree").val() == 'true')
-					{
-						$(input).attr("disabled", "disabled");
-					}
-					
-					if (list[i].value == '0')
-					{
-						//this means there are children
-						var link = document.createElement("a");
-						$(link).attr("onclick","openChildren($(this).closest('li').find('ul').first(), '" + list[i].key + "')").html("<img class='folderimage' src='" + contextpath + "/resources/images/folderclosed.png'></img>");
-						$(span).append(link);
-					} else {
-						$(span).append("<img class='folderitemimage' src='" + contextpath + "/resources/images/folderitem.png' />");
-					}
-					
-					$(span).append(input);
-					$(span).append(list[i].key);
-					
-					$(li).append(span);
-					
-					if (list[i].value == '0')
-					{
-						//this means there are children
-						var ul = document.createElement("ul");
-						$(ul).addClass("dep-tree").addClass("dep-tree-child").hide();
-						$(span).append(ul);
-					}
-					
-					$(ulRoot).append(li);
-				  }
-				  
-				  openChildren($(".dep-tree-child").first(), selectedValue);
-				  				  				  				  
-				  $( "#wheel" ).hide();
-				  
-				}});
-		}
-		
-		function recursiveOpenChildren(child, globalprefix)
-		{
-			if (child.indexOf(".") > -1)
-			{
-				var prefix = child.substring(0, child.indexOf("."));
-				
-				$("input[name='node" + globalprefix + prefix + "']").each(function(){
-					if ($(this).parent().find(".folderopenimage").length == 0)
-					{
-						 openChildren($(this).closest("li").find('ul'), $(this).val());
-					}
-				});
-				recursiveOpenChildren(child.substring(child.indexOf(".")+1), globalprefix + prefix + ".");
-			}
-		}
-		
-		function openChildren(targetul, department)
-		{			
+		function openEntities(targetul, isDGs) {
 			if ($(targetul).closest("span").find("a").first().find(".folderimage").length > 0)
 			{
 				//open
 				if ($(targetul).children().length > 0)
 				{
 					$(targetul).show();
-					  $(targetul).closest("span").find("a").first().find(".folderimage").each(function(){
-						  $(this).removeClass("folderimage").addClass("folderopenimage").attr("src", contextpath + "/resources/images/folderopen.png");
-						});
+					$(targetul).closest("span").find("a").first().find(".folderimage").each(function(){
+					  $(this).removeClass("folderimage").addClass("folderopenimage").attr("src", contextpath + "/resources/images/folderopen.png");
+					});
 				} else {
+					$( "#wheel" ).show();
 					$.ajax({
 						type:'GET',
 						  url: contextpath + "/noform/management/departmentsJSON",
-						  data: {term:department},
+						  data: {term: isDGs ? "dgs" : "aex", isdgs: isDGs},
 						  dataType: 'json',
 						  success: function( list ) {
 							  
@@ -178,7 +74,111 @@
 							{
 								//this means there are children
 								var link = document.createElement("a");
-								$(link).attr("onclick","openChildren($(this).closest('li').find('ul').first(), '" + list[i].key + "')").html("<img class='folderimage' src='" + contextpath + "/resources/images/folderclosed.png'></img>");
+								$(link).attr("onclick","openChildren($(this).closest('li').find('ul').first(), '" + list[i].key + "'," + isDGs + ")").html("<img class='folderimage' src='" + contextpath + "/resources/images/folderclosed.png'></img>");
+								$(span).append(link);
+							} else {
+								$(span).append("<img class='folderitemimage' src='" + contextpath + "/resources/images/folderitem.png' />");
+							}
+							
+							$(span).append(input);
+							$(span).append(list[i].key);
+							
+							$(li).append(span);
+							
+							if (list[i].value == '0')
+							{
+								//this means there are children
+								var ul = document.createElement("ul");
+								$(ul).addClass("dep-tree").addClass("dep-tree-child").hide();
+								$(span).append(ul);
+							}
+							
+							$(targetul).append(li);
+						  }
+						  
+						  $(targetul).closest("span").find("a").first().find(".folderimage").each(function(){
+								$(this).removeClass("folderimage").addClass("folderopenimage").attr("src", contextpath + "/resources/images/folderopen.png");
+							});
+						  					  
+						  
+						  $(targetul).show();
+						  $( "#wheel" ).hide();
+						  
+						}});
+				}
+			} else {
+				//close
+				$(targetul).hide();
+				$(targetul).closest("span").find("a").first().find(".folderopenimage").each(function(){
+					$(this).removeClass("folderopenimage").addClass("folderimage").attr("src", contextpath + "/resources/images/folderclosed.png");
+				});
+			}
+		}
+		
+		function loadTopDepartments(domain)
+		{
+			if (domain != "eu.europa.ec") {
+				
+			} else {
+				
+			}
+		}
+		
+		function recursiveOpenChildren(child, globalprefix)
+		{
+			if (child.indexOf(".") > -1)
+			{
+				var prefix = child.substring(0, child.indexOf("."));
+				
+				$("input[name='node" + globalprefix + prefix + "']").each(function(){
+					if ($(this).parent().find(".folderopenimage").length == 0)
+					{
+						 openChildren($(this).closest("li").find('ul'), $(this).val());
+					}
+				});
+				recursiveOpenChildren(child.substring(child.indexOf(".")+1), globalprefix + prefix + ".");
+			}
+		}
+		
+		function openChildren(targetul, department, isDGs)
+		{			
+			if ($(targetul).closest("span").find("a").first().find(".folderimage").length > 0)
+			{
+				//open
+				if ($(targetul).children().length > 0)
+				{
+					$(targetul).show();
+					  $(targetul).closest("span").find("a").first().find(".folderimage").each(function(){
+						  $(this).removeClass("folderimage").addClass("folderopenimage").attr("src", contextpath + "/resources/images/folderopen.png");
+						});
+				} else {
+					$.ajax({
+						type:'GET',
+						  url: contextpath + "/noform/management/departmentsJSON",
+						  data: {term:department, isdgs:isDGs},
+						  dataType: 'json',
+						  success: function( list ) {
+							  
+						  for (var i = 0; i < list.length; i++ )
+						  {
+							var li = document.createElement("li");
+							var span = document.createElement("span");
+							
+							$(span).attr("onclick","disabledEventPropagation(event);").attr("onselectstart","return false;").attr("id","span" + list[i].key);
+							
+							var input = document.createElement("input");
+							$(input).css("margin-left","10px").attr("onclick","disabledEventPropagation(event);").attr("type","radio").addClass("check").attr("name","department").val(list[i].key);
+							
+							if ($("#readonlytree").length > 0 && $("#readonlytree").val() == 'true')
+							{
+								$(input).attr("disabled", "disabled");
+							}
+							
+							if (list[i].value == '0')
+							{
+								//this means there are children
+								var link = document.createElement("a");
+								$(link).attr("onclick","openChildren($(this).closest('li').find('ul').first(), '" + list[i].key + "', " + isDGs + ")").html("<img class='folderimage' src='" + contextpath + "/resources/images/folderclosed.png'></img>");
 								$(span).append(link);
 							} else {
 								$(span).append("<img class='folderitemimage' src='" + contextpath + "/resources/images/folderitem.png' />");
@@ -222,6 +222,7 @@
 		function showAddUserDialog(results)
 		{
 			$("#add-resultMode").val(results);
+			$("#add-resultMode-Email").val(results);
 			
 			// select european commision if exists
 			var exists = false;
@@ -262,9 +263,17 @@
 		var selectedPrivilege = null;
 		var selectedId = null;
 		
-		function domainChaged()
+		function domainChanged()
 		{
-			loadTopDepartments($("#add-group-type-ecas").val());
+			const domain = $("#add-group-type-ecas").val();
+			
+			if (domain != 'eu.europa.ec') {
+				$('#add-group-tree-div').hide();
+				return;
+			}
+			
+			$('#add-group-tree-div').show();
+			loadTopDepartments(domain);
 		}
 		
 		function checkUserType()
@@ -350,11 +359,26 @@
 			$("#add-form-ecas").val(ecas);
 			$("#add-form").submit();
 		}
+
+		function addUserByEmail()
+		{
+			let emails =  $("#add-user-email").val().split(";").map(s => s.trim());
+
+			$("#add-wait-animation").show();
+			$("#add-form-emails").val(emails);
+			$("#add-form-email").submit();
+		}
 		
-		function addGroup(name)
+		function addGroup()
 		{
 			$("#add-wait-animation").show();
-			$("#add-form-group-name").val($("input[name='department']:checked").val());
+			
+			if ($("input[name='department']:checked").length == 0) {
+				$("#add-form-group-name").val($('#add-group-type-ecas').val());
+			} else {
+				$("#add-form-group-name").val($("input[name='department']:checked").val());
+			}			
+		
 			$("#add-form-group").submit();
 		}
 		
@@ -372,7 +396,60 @@
 			selectedId = id;
 			$('#remove-user-dialog').modal();
 		}
-                
+
+		function setEmailCheckFeedback(foundCount, invalidMails, notFoundMails) {
+			resetEmailFeedback();
+
+			$("#foundEmailUsers").text(foundCount + " user(s) (email) found.");
+
+			if(invalidMails.length > 0) {
+				let invalidMessage =  invalidMails.length + " invalid email address(es): ";
+				$("#invalidEmailsIcon").show();
+				$("#invalidEmailsText").html(invalidMessage.concat(' ', invalidMails.join(', ')));
+			}
+
+			if(notFoundMails.length > 0) {
+				let notFoundMessage = notFoundMails.length + " email address(es) not found: ";
+				$("#notFoundEmailsIcon").show();
+				$("#notFoundEmailsText").html(notFoundMessage.concat(' ', notFoundMails.join(', ')));
+			}
+		}
+
+		function searchEmailUser(order) {
+
+			let allMails = $("#add-user-email").val().split(";").map(s => s.trim());
+			let validMails = allMails.filter(mail => validateEmail(mail));
+			let invalidMails = allMails.filter(mail => !validateEmail(mail) && mail != "");
+
+			$.ajax({
+				type:'GET',
+				url: contextpath + "/logins/usersEmailJSON",
+				data: {emails: $("#add-user-email").val()},
+				dataType: 'json',
+				cache: false,
+				success: function( foundMails ) {
+					let notFoundMails = [];
+					for (let i = 0; i < validMails.length; i++) {
+						if(!foundMails.includes(validMails[i])) {
+							notFoundMails.push(validMails[i]);
+						}
+					}
+					setEmailCheckFeedback(foundMails.length, invalidMails, notFoundMails);
+				}, error: function(e) {
+					console.log(e);
+					$("#busydialog").modal('hide');
+					$("#add-user-dialog").modal('show');
+				}});
+		}
+
+	function resetEmailFeedback() {
+		$("#foundEmailUsers").text("");
+		$("#invalidEmailsText").text("");
+		$("#invalidEmailsIcon").hide();
+		$("#notFoundEmailsIcon").hide();
+		$("#notFoundEmailsText").text("");
+	}
+
 		function searchUser(order)
 		{
 			var name = $("#add-user-name").val();
@@ -396,7 +473,7 @@
 				  dataType: 'json',
 				  cache: false,
 				  success: function( users ) {
-				  
+					  console.log(users);
 					  $("#search-results").find("tbody").empty();
 					  var body = $("#search-results").find("tbody").first();
 					  

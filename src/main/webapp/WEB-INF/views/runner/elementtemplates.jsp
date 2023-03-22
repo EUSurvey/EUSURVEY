@@ -786,7 +786,7 @@
 						<!-- ko if: optional() == false -->
 							<span class="mandatory">*</span>
 						<!-- /ko -->
-						<div data-bind="html: title, attr:{id: 'answerlabel' + id()}"></div>					
+							<span data-bind="html: title, attr:{id: 'answerlabel' + id()}"></span>
 						<!-- ko if: $parents[0].ismobile || $parents[0].istablet -->
 							<input data-bind="value:getValueByQuestion(uniqueId(), true), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 			

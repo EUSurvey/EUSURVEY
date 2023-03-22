@@ -11,6 +11,7 @@ import com.ec.survey.tools.Constants;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/logins")
@@ -59,5 +60,13 @@ public class JSONController extends BasicController {
 		} else {
 			return administrationService.getLoginsForPrefix(name, email, true);
 		}
+	}
+
+	@GetMapping(value = "/usersEmailJSON", headers="Accept=*/*")
+	public @ResponseBody String[] participantsEmailSearch(HttpServletRequest request, HttpServletResponse response ) throws NamingException {
+		String email = request.getParameter("emails");
+		String[] splittedEmails = Arrays.stream(email.split(";")).map(String::trim).toArray(String[]::new);
+
+		return administrationService.checkLoginsForEmails(Arrays.asList(splittedEmails));
 	}
 }

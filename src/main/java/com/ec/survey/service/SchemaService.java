@@ -1668,9 +1668,6 @@ public class SchemaService extends BasicService {
 	public void step27(ServletContext servletContext) throws IOException {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
-		
-		java.io.File directory = new java.io.File(fileDir);
-		directory.mkdirs();
 
 		InputStream is = servletContext.getResourceAsStream("/WEB-INF/classes/antisamy-esapi.xml");
 		FileOutputStream fos = new FileOutputStream(new java.io.File(fileDir + "antisamy-esapi.xml"));

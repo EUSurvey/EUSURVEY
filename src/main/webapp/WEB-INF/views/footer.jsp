@@ -25,7 +25,7 @@
 						<br /><br />
 						<i>						
 							<c:choose>
-								<c:when test="${form != null}">
+								<c:when test="${form != null && useUILanguage == null}">
 									<c:choose>
 										<c:when test="${oss}">${form.getMessage("footer.fundedOSSNew")}</c:when>
 										<c:otherwise>${form.getMessage("footer.fundedNewDEP")}</c:otherwise>
@@ -40,14 +40,12 @@
 							</c:choose>
 						</i>
 					</div>
-					
-					<div class="col-md-3"></div>
-					
+
 					<div class="col-md-3" style="padding-top: 40px;">
 						<c:set var="localeCode" value="${fn:toLowerCase(pageContext.response.locale.language)}" />
 						
 						<c:choose>
-							<c:when test="${form != null}">
+							<c:when test="${form != null && useUILanguage == null}">
 								<c:if test="${showprivacy}">
 									<a href="<c:url value="/home/privacystatement"/>">${form.getMessage("label.PrivacyStatement.bis")}</a><br />
 									<a href="<c:url value="/home/tos"/>">${form.getMessage("label.TermsOfService")}</a><br />
@@ -65,6 +63,23 @@
 							</c:otherwise>
 						</c:choose>
 					</div>
+					<div class="col-md-3" style="padding-top: 40px;">
+						<c:set var="localeCode" value="${fn:toLowerCase(pageContext.response.locale.language)}" />
+
+						<c:choose>
+							<c:when test="${form != null && useUILanguage == null}">
+								<a href="https://commission.europa.eu/languages-our-websites_${localeCode}">${form.getMessage("label.LanguagesPolicy")}</a><br />
+								<a href="https://commission.europa.eu/privacy-policy-websites-managed-european-commission_${localeCode}">${form.getMessage("label.PrivacyPolicy")}</a><br />
+								<a href="https://commission.europa.eu/legal-notice_${localeCode}">${form.getMessage("label.LegalNotice")}</a><br />
+							</c:when>
+							<c:otherwise>
+								<a href="https://commission.europa.eu/languages-our-websites_${localeCode}"><spring:message code="label.LanguagesPolicy" /></a><br />
+								<a href="https://commission.europa.eu/privacy-policy-websites-managed-european-commission_${localeCode}"><spring:message code="label.PrivacyPolicy" /></a><br />
+								<a href="https://commission.europa.eu/legal-notice_${localeCode}"><spring:message code="label.LegalNotice" /></a><br />
+							</c:otherwise>
+						</c:choose>
+					</div>
+
 				</div>
 			</div>
 			<div class="row" id="footer-content-languages">
@@ -99,7 +114,7 @@
 			</div>
 			<div class="row" id="footer-content-languages-form" style="display: none">
 				<div style="max-width: 970px; margin-left: auto; margin-right: auto">		
-					<c:if test="${form != null && form.getLanguages().size() != 0}">
+					<c:if test="${form != null && form.getLanguages().size() != 0 && useUILanguage == null}">
 						<c:choose>
 							<c:when test="${isthankspage != null || isdraftinfopage != null}">
 								<a><esapi:encodeForHTML>${form.language.name}</esapi:encodeForHTML></a>
@@ -116,15 +131,15 @@
 			<div class="row" style="text-align: center">					
 				<div id="footerVersionNumber">
 					<c:choose>
-						<c:when test="${form != null}">
+						<c:when test="${form != null && useUILanguage == null}">
 							${form.getMessage("label.Version")}
 						</c:when>
 						<c:otherwise>
 							<spring:message code="label.Version" />
 						</c:otherwise>
 					</c:choose>
-				
-					&nbsp;<%@include file="versionfooter.txt" %>
+
+					&nbsp<%@include file="versionfooter.txt" %>
 				</div>
 			</div>
 		</div>

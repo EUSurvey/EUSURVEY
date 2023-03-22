@@ -173,8 +173,8 @@
 			<li><b>Propriété intellectuelle :</b> Conçue la DG DIGIT et financé
 				dans le cadre des programmes ISA,
 				<a target="_blank" href="https://ec.europa.eu/isa2/home_en/" aria-label="ISA² programme - Opens in new window">ISA²</a>
-				et <a target="_blank" href="https://digital-strategy.ec.europa.eu/fr/activities/digital-programme" aria-label="DEP">
-					DEP</a> Interopérabilité,
+				et le <a target="_blank" href="https://digital-strategy.ec.europa.eu/fr/activities/digital-programme" aria-label="DIGITAL">
+					programme pour une Europe numérique</a> (DIGITAL),
 				EUSurvey est entièrement open source et publié sous la licence
 				<a target="_blank" href="https://joinup.ec.europa.eu/collection/eupl">EUPL</a>.
 				Vous pouvez télécharger le code source depuis GitHub :

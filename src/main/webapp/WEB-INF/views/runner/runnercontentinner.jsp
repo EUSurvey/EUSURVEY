@@ -224,7 +224,7 @@
 								</p>					
 							</div>
 							<div style="float: right; margin-top: -15px; margin-right: -15px;">
-								<a href="javascript:;" style="cursor: pointer" onclick="$('#anonymousSurveyInfo').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+								<a href="javascript:;" style="cursor: pointer" onclick="$('#anonymousSurveyInfo').hide();" aria-label="${form.getMessage("label.CloseAnonymousInfo")}"><span class="glyphicon glyphicon-remove"></span></a>
 							</div>								
 							<div style="clear: both"></div>
 						</div>

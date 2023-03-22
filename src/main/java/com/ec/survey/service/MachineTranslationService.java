@@ -116,6 +116,12 @@ public class MachineTranslationService extends BasicService {
 	@Transactional
 	public void saveErrorResponse(String requestId, String targetLanguage, String errorCode, String errorMessage) {
 		Request request = getRequest(requestId);
+		
+		if (request == null) {
+			logger.error("invalid request id:" + requestId);
+			return;
+		}
+		
 		request.getTranslationsID();
 		Response response = new Response();
 		response.setRequest(request);

@@ -7,14 +7,6 @@ function getNiceHelp(help)
 
 function toggleVisibility(span) {
 	$(span).toggleClass("sr-only");
-
-	//only focussable when the help is revealed
-	if(!$(span).hasClass("sr-only")){
-		$(span).attr("tabindex", "0");
-		$(span).focus();
-	} else {
-		$(span).removeAttr("tabindex");
-	}
 }
 
 function addIconToHelp(help)

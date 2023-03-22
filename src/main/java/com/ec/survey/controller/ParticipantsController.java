@@ -4,7 +4,6 @@ import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.Export.ExportType;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
@@ -12,7 +11,6 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.administration.Voter;
 import com.ec.survey.model.attendees.*;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
@@ -20,7 +18,6 @@ import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
 
 import com.ec.survey.tools.activity.ActivityRegistry;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -43,15 +40,8 @@ import javax.annotation.Resource;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.ImageIcon;
-
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -65,6 +55,9 @@ public class ParticipantsController extends BasicController {
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${participant.default.domain:@null}") String defaultDomain;
 
+	@Resource(name = "ecService")
+	private ECService ecService;
+	
 	@Resource(name = "mailService")
 	private MailService mailService;
 	
@@ -98,6 +91,7 @@ public class ParticipantsController extends BasicController {
 		int owner = u.getId();
 
 		ModelAndView result = new ModelAndView("management/participants", "form", form);
+		result.addObject("useUILanguage", true);
 
 		String name = request.getParameter("name");
 		String email = request.getParameter(Constants.EMAIL);
@@ -860,12 +854,15 @@ public class ParticipantsController extends BasicController {
 		if (domain == null) {
 			domain = "eu.europa.ec";
 		}
+		
 		return ldapService.getTopDepartments(domain);		
 	}
 
 	@GetMapping(value = "/departmentsJSON", headers = "Accept=*/*")
 	public @ResponseBody List<KeyValue> departments(HttpServletRequest request, HttpServletResponse response) {
-		return ldapService.getDepartments(request.getParameter("term"));
+		String term = request.getParameter("term");
+		Boolean isDGs = request.getParameter("isdgs").equalsIgnoreCase("true");
+		return ecService.GetEntities(term, isDGs);
   }
 
 	@PostMapping(value = "/saveTemplateJSON", headers = "Accept=*/*")

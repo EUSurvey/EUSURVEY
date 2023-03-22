@@ -149,8 +149,8 @@
 				rights of DIGIT or others.</li>
 			<li><b>Intellectual Property:</b> Built by DG DIGIT and funded under the ISA,
 				<a target="_blank" href="https://ec.europa.eu/isa2/home_en/" aria-label="ISA² programme - Opens in new window">ISA<sup>2</sup></a>
-				and <a target="_blank" href="https://digital-strategy.ec.europa.eu/en/activities/digital-programme" aria-label="DEP">
-					DEP</a> interoperability programmes
+				and <a target="_blank" href="https://digital-strategy.ec.europa.eu/en/activities/digital-programme" aria-label="DIGITAL">
+					Digital Europe Programme</a> (DIGITAL)
 				EUSurvey is fully open source and published under the
 				<a target="_blank" href="https://joinup.ec.europa.eu/collection/eupl">EUPL</a>
 				licence. You can download the source code from GitHub:

@@ -535,7 +535,7 @@ public class EVoteService extends BasicService {
 		result.setTotal(total);
 	}
 	
-	private SeatCounting handleOutsideCommunity(Survey survey, SeatCounting result, EVoteConfiguration config) {
+	private SeatCounting handleOutsideCommunity(Survey survey, SeatCounting result, EVoteConfiguration config, Locale locale) {
 		int sumAllPreferentialVotes = config.listSeatDistributions.values().stream().collect(Collectors.summingInt(SeatDistribution::getPreferentialVotes));
 		result.setTotalPreferentialVotes(sumAllPreferentialVotes);
 		result.setPreferentialVotesFinal(sumAllPreferentialVotes);
@@ -584,11 +584,17 @@ public class EVoteService extends BasicService {
 
 		//filter out lists with less than x% votes
 		LinkedHashMap<MultipleChoiceQuestion, SeatDistribution> listSeatDistributionsFiltered = config.listSeatDistributions
-		.entrySet().stream().filter(x -> x.getValue().getListPercent() >= result.getMinListPercent())
-		.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue(),  (u, v) -> {
-            throw new IllegalStateException(String.format("Duplicate key %s", u));
-        },
-        LinkedHashMap::new));
+				.entrySet().stream().filter(x -> x.getValue().getListPercent() >= result.getMinListPercent())
+				.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue(),  (u, v) -> {
+						throw new IllegalStateException(String.format("Duplicate key %s", u));
+					},
+					LinkedHashMap::new));
+		LinkedHashMap<MultipleChoiceQuestion, SeatDistribution> notAcceptedLists = config.listSeatDistributions
+				.entrySet().stream().filter(x -> x.getValue().getListPercentWeighted() < result.getMinListPercent())
+				.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue(),  (u, v) -> {
+							throw new IllegalStateException(String.format("Duplicate key %s", u));
+						},
+						LinkedHashMap::new));
 						
 		result.setListVotesSeats(seatsArray[0]);
 		result.setPreferentialVotesSeats(seatsArray[1]);							
@@ -610,7 +616,8 @@ public class EVoteService extends BasicService {
 		}
 		
 		MultipleChoiceQuestion[] mcs = listSeatDistributionsFiltered.keySet().toArray(new MultipleChoiceQuestion[listSeatDistributionsFiltered.size()]);
-		
+		MultipleChoiceQuestion[] mcs_notAcceptedList = notAcceptedLists.keySet().toArray(new MultipleChoiceQuestion[notAcceptedLists.size()]);
+
 		for (MultipleChoiceQuestion mc : listSeatDistributionsFiltered.keySet()) {
 			List<ElectedCandidate> candidatesOrderedByVotes = getCandidates(mc, config.candidateVotes, true);
 			
@@ -645,6 +652,7 @@ public class EVoteService extends BasicService {
 			
 			if (ec.getSeats() == 0 || ec.isReallocatedSeat()) {
 				ec.setReallocatedSeat(true);
+				ec.setPreferentialSeat(false);
 				result.getCandidatesFromListVotes().add(ec);
 				totalSeats++;
 			}
@@ -680,7 +688,21 @@ public class EVoteService extends BasicService {
 					ElectedCandidate ec = new ElectedCandidate();
 					candidateList.add(ec); // the list does not have enough candidates -> add empty one
 				}
-			}					
+			}
+			for (int q = 0; q < mcs_notAcceptedList.length; q++) {
+				MultipleChoiceQuestion mc = mcs_notAcceptedList[q];
+
+				if (mc.getPossibleAnswers().size() > i) {
+					PossibleAnswer pa = mc.getPossibleAnswers().get(i);
+					ElectedCandidate ec = config.candidateVotes.get(pa);
+					ec.setListNotAccepted(true);
+					candidateList.add(ec);
+				} else {
+					ElectedCandidate ec = new ElectedCandidate();
+					ec.setListNotAccepted(true);
+					candidateList.add(ec); // the list does not have enough candidates -> add empty one
+				}
+			}
 			result.getCandidateVotes().add(candidateList);
 		}
 		
@@ -693,6 +715,40 @@ public class EVoteService extends BasicService {
 			result.setAmbiguous(true);
 		}
 		
+		// find reallocated preferential seats
+		// compute final preferential seats
+		int[] finalListSeats = new int[listSeatDistributionsFiltered.size()];
+		for (i = 0; i < result.getMaxCandidatesInLists(); i++) {			
+			for (int q = 0; q < mcs.length; q++) {
+				MultipleChoiceQuestion mc = mcs[q];
+				
+				if (mc.getPossibleAnswers().size() > i) {
+					PossibleAnswer pa = mc.getPossibleAnswers().get(i);					
+					ElectedCandidate candidateVote = config.candidateVotes.get(pa);
+					if ((candidateVote.getSeats() > 0 && !candidateVote.isPreferentialSeat()) || candidateVote.isReallocatedSeat()) {
+						finalListSeats[q]++;
+					}
+				}
+			}			
+		}
+		
+		numbers = null;
+		int[] listSeatsArrayNoLimit = computeSeats(survey, preferentialVotes, result.getPreferentialVotesFinal(), result.getListVotesSeats(), numbers, null);
+		int[] reallocatedSeats = new int[listSeatDistributionsFiltered.size()];
+		for (i = 0; i < listSeatDistributionsFiltered.size(); i++) {
+			reallocatedSeats[i] = listSeatsArrayNoLimit[i] - finalListSeats[i];
+			if (reallocatedSeats[i] > 0) {
+				String list = mcs[i].getStrippedTitle();
+				String reallocationMessage = resources.getMessage("message.reallocationMessage", new String[] { list, Integer.toString(reallocatedSeats[i]) }, "There are not enough candidates for", locale);
+				
+				result.getReallocationMessagesForLists().add(reallocationMessage);
+				
+			}
+			
+			SeatDistribution listSeatDistribution = listSeatDistributionsFiltered.get(mcs[i]);
+			listSeatDistribution.setListSeats(finalListSeats[i]);
+		}
+				
 		return result;
 	}
 	
@@ -730,7 +786,7 @@ public class EVoteService extends BasicService {
 			
 			if (survey.geteVoteTemplate().equals("o")) {
 				
-				handleOutsideCommunity(survey, result, config);				
+				handleOutsideCommunity(survey, result, config, locale);				
 				return result;
 				
 			} else if (config.useLuxembourgProcedure) {
@@ -778,6 +834,12 @@ public class EVoteService extends BasicService {
 		                throw new IllegalStateException(String.format("Duplicate key %s", u));
 		            },
 		            LinkedHashMap::new));
+			LinkedHashMap<MultipleChoiceQuestion, SeatDistribution> notAcceptedLists = config.listSeatDistributions
+					.entrySet().stream().filter(x -> x.getValue().getListPercentWeighted() < result.getMinListPercent())
+					.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue(),  (u, v) -> {
+								throw new IllegalStateException(String.format("Duplicate key %s", u));
+							},
+							LinkedHashMap::new));
 			
 		
 			// compute distribution of preferential seats
@@ -905,6 +967,7 @@ public class EVoteService extends BasicService {
 			}
 			
 			MultipleChoiceQuestion[] mcs = listSeatDistributionsFiltered.keySet().toArray(new MultipleChoiceQuestion[listSeatDistributionsFiltered.size()]);
+			MultipleChoiceQuestion[] mcs_notAcceptedList = notAcceptedLists.keySet().toArray(new MultipleChoiceQuestion[notAcceptedLists.size()]);
 			int[] finalPreferentialSeats = null;
 			int[] reallocatedListSeats = new int[listSeatDistributionsFiltered.size()];
 			if (!config.useLuxembourgProcedure) {
@@ -960,7 +1023,7 @@ public class EVoteService extends BasicService {
 					
 				for (int q = 0; q < mcs.length; q++) {
 					MultipleChoiceQuestion mc = mcs[q];
-				
+
 					if (mc.getPossibleAnswers().size() > i) {
 						PossibleAnswer pa = mc.getPossibleAnswers().get(i);					
 						ElectedCandidate candidateVote = config.candidateVotes.get(pa);
@@ -977,7 +1040,21 @@ public class EVoteService extends BasicService {
 						}
 						candidateList.add(ec); // the list does not have enough candidates -> add empty one
 					}
-				}					
+				}
+				for (int q = 0; q < mcs_notAcceptedList.length; q++) {
+					MultipleChoiceQuestion mc = mcs_notAcceptedList[q];
+
+					if (mc.getPossibleAnswers().size() > i) {
+						PossibleAnswer pa = mc.getPossibleAnswers().get(i);
+						ElectedCandidate ec = config.candidateVotes.get(pa);
+						ec.setListNotAccepted(true);
+						candidateList.add(ec);
+					} else {
+						ElectedCandidate ec = new ElectedCandidate();
+						ec.setListNotAccepted(true);
+						candidateList.add(ec); // the list does not have enough candidates -> add empty one
+					}
+				}
 				result.getCandidateVotes().add(candidateList);
 			}			
 		

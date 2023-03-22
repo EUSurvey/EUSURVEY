@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <!DOCTYPE html>
@@ -14,6 +14,7 @@
 	
 	<script>
 		var surveyuid = '${form.survey.uniqueId}';
+		var published = ${form.survey.isActive};
 		var attributeIDs = new Array();
 		var attributeNames = new Array();
 		
@@ -545,13 +546,13 @@
 											<td data-bind="text: invited"></td>
 											<td>
 												<!-- ko if: $parent.Access() == 2 -->
-													<!-- ko if: activateEnabled() -->
+													<!-- ko if: activateEnabled() && !published -->
 														<a id="btnActivateFromParticipant" class="iconbutton" data-bind="click: activate" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class='glyphicon glyphicon-play'></span></a>
 													<!-- /ko -->
-													<!-- ko if: deactivateEnabled() -->
+													<!-- ko if: deactivateEnabled() && !published -->
 														<a id="btnDeactivateFromParticipant" class="iconbutton" data-bind="click: deactivate" data-class="deactivatebutton" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
 													<!-- /ko -->
-													<!-- ko if: !activateEnabled() && !deactivateEnabled() -->
+													<!-- ko if: (!activateEnabled() && !deactivateEnabled()) || published -->
 														<a id="btnDeactivateFromParticipant" class="iconbutton disabled" data-class="deactivatebutton" onclick="return false;" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
 													<!-- /ko -->
 														<!-- ko if: editEnabled() -->
@@ -564,18 +565,18 @@
 														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
 													<!-- /ko -->
-													<!-- ko if: deleteEnabled() -->
+													<!-- ko if: deleteEnabled() && !published -->
 														<a id="btnDeleteEnabledFromParticipant" data-bind="click: deleteList" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>										
 													<!-- /ko -->
-													<!-- ko if: !deleteEnabled() -->
+													<!-- ko if: !deleteEnabled() || published -->
 														<a id="btnDeleteDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>
 													<!-- /ko -->
 												<!-- /ko -->
 												<!-- ko if: $parent.Access() == 1 -->
-													<!-- ko if: !activateEnabled() -->
+													<!-- ko if: !activateEnabled() || published -->
 														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
 													<!-- /ko -->
-													<!-- ko if: activateEnabled() -->
+													<!-- ko if: activateEnabled() && !published -->
 														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
 													<!-- /ko -->
 													<!-- ko if: type() != 'Token' -->
@@ -594,10 +595,10 @@
 													<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
 												<!-- /ko -->
 												<!-- ko if: $parent.Access() == 0 -->
-													<!-- ko if: !activateEnabled() -->
+													<!-- ko if: !activateEnabled() || published -->
 														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
 													<!-- /ko -->
-													<!-- ko if: activateEnabled() -->
+													<!-- ko if: activateEnabled() && !published -->
 														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
 													<!-- /ko -->
 													<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>		

@@ -27,6 +27,7 @@ import com.ec.survey.tools.WeakAuthenticationException;
 import com.ec.survey.tools.activity.ActivityRegistry;
 import com.ec.survey.tools.export.StatisticsCreator;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.query.Query;
@@ -732,8 +733,12 @@ public class AnswerService extends BasicService {
 											// the filter on ranking questions is basically the first element in the sorted list
 											if (rankingQuestionUids.contains(questionUid)) {
 												values.put(Constants.ANSWER + i, answer + "%");
-											} else {											
-												values.put(Constants.ANSWER + i, "%" + answer + "%");
+											} else {
+												if (NumberUtils.isNumber(answer) && answer.endsWith(".0")) {
+													values.put(Constants.ANSWER + i, "%" + answer.replace(".0", "") + "%");
+												} else {
+													values.put(Constants.ANSWER + i, "%" + answer + "%");
+												}
 											}
 										}
 									}
@@ -785,7 +790,7 @@ public class AnswerService extends BasicService {
 				where.append(" ORDER BY ans.SCORE ").append(filter.getSortOrder());
 				break;
 			case DATE:
-			case CREATED:	
+			case CREATED:
 				where.append(" ORDER BY ans.ANSWER_SET_DATE ").append(filter.getSortOrder());
 				break;
 			case ECFSCORE:
@@ -1589,7 +1594,7 @@ public class AnswerService extends BasicService {
 		Query query = session.createSQLQuery(
 				"select count(*) from ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID INNER JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID where s.ISDRAFT = :isdraft AND ans.UNIQUECODE != :ansuid AND (a.QUESTION_UID= :questionUid and a.VALUE= :value and ans.ISDRAFT=0)")
 				.setBoolean("isdraft", surveyIsDraft).setString("value", value).setString("ansuid", answerSetUniqueCode)
-				.setString("questionUid", questionUid).setInteger("questionId", questionId);
+				.setString("questionUid", questionUid);
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 

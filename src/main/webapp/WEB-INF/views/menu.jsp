@@ -501,15 +501,17 @@
 						</select>				
 					</td>
 				</tr>
-				<tr>
-					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Confirmation" /></td>
-					<td>
-						<div style="float: left; height: 50px; margin-right: 10px;">
-							<input class="required check" type="checkbox" name="radio-new-survey-audience" value="1" />
-						</div>
-						<spring:message code="message.highaudiencenew" />
-					</td>
-				</tr>
+				<c:if test="${oss != true}">
+					<tr>
+						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Confirmation" /></td>
+						<td>
+							<div style="float: left; height: 50px; margin-right: 10px;">
+								<input class="required check" type="checkbox" name="radio-new-survey-audience" value="1" />
+							</div>
+							<spring:message code="message.highaudiencenew" />
+						</td>
+					</tr>
+				</c:if>
 				<c:if test="${USER.getGlobalPrivilegeValue('ECAccess') == 0}">
 					<tr>
 						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.DPA" /></td>

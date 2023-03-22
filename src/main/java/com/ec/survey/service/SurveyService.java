@@ -3126,7 +3126,7 @@ public class SurveyService extends BasicService {
 		String sql = "FROM ResultAccess a WHERE a.surveyUID = :uid";
 		
 		if (name != null && name.length() > 0) {
-			sql += " AND a.user IN (SELECT u.id FROM User u WHERE concat(u.givenName, ' ', u.surName, ' ', u.login) LIKE :name)";
+			sql += " AND a.user IN (SELECT u.id FROM User u WHERE concat(COALESCE(u.givenName, ''), ' ', COALESCE(u.surName, ''), ' ', COALESCE(u.login, '')) LIKE :name)";
 		}
 		
 		if (resultAccess != null) {
@@ -3170,7 +3170,8 @@ public class SurveyService extends BasicService {
 						
 						if (question instanceof ChoiceQuestion || question instanceof Text) {
 							boolean first = true;
-							for (String pauid : value.split(";")) {
+							for (String paidanduid : value.split(";")) {
+								String pauid = paidanduid.contains("|") ? paidanduid.substring(paidanduid.indexOf("|") + 1) : paidanduid;
 								Element answer = elementsByUniqueId.get(pauid);
 								if (answer != null) {
 									filter.append(answer.getStrippedTitleAtMost100());
@@ -3475,8 +3476,7 @@ public class SurveyService extends BasicService {
 			// check if the order of elements has changed
 			if (!hasPendingChanges && !draftSurvey.getElementsRecursiveUids().equals(publishedSurvey.getElementsRecursiveUids())) {
 				hasPendingChanges = true;
-				if (hasPendingChanges)
-					result.put(new PropertiesElement(true), 1);
+				result.put(new PropertiesElement(true), 1);
 			}
 
 			List<Translations> draftTranslations = translationService.getActiveTranslationsForSurvey(draftSurvey.getId());

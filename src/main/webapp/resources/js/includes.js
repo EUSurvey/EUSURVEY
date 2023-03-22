@@ -2806,6 +2806,7 @@ function initModals(item)
 	
 	function getSmallLetter(pcounter)
 	{
+		if (pcounter <= 0) return "a";
 		var counter = pcounter -1; //we start with 0 and not 1
 		var prefix = counter / 26;
 		counter = counter % 26;
@@ -2820,6 +2821,7 @@ function initModals(item)
 	
 	function getBigLetter(pcounter)
 	{
+		if (pcounter <= 0) return "A";
 		var counter = pcounter -1; //we start with 0 and not 1
 		var prefix = counter / 26;
 		counter = counter % 26;

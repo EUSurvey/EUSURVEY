@@ -536,11 +536,8 @@ public class SchedulerService extends BasicService {
 	
 	private boolean isHost2ExecuteTask(boolean ldap, boolean todo){
 		
-		logger.debug("entering isHost2ExecuteTask");
-		
 		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("true"))
 		{
-			logger.debug("isHost2ExecuteTask: is worker server");
 			return false;
 		}
 		
@@ -577,13 +574,14 @@ public class SchedulerService extends BasicService {
 			for(InetAddress inetAddr: Collections.list(inetAddrs)){
 				if (StringUtils.contains(inetAddr.getHostName().toLowerCase(), host.toLowerCase())){
 					return true;
-				}					
+				}
+					
 			}
 		}
 
 		if (StringUtils.isEmpty(hostExecutingTask)){
 			logger.warn("Unable to determine if should be execute the Task on this host, no server name set in hostExecutingTask property");	
-		} else {
+		}else{
 			logger.debug("no server name found with this value: " + hostExecutingTask);
 		}
 		

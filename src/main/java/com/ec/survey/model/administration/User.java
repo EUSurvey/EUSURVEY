@@ -159,6 +159,9 @@ public class User implements java.io.Serializable {
 	}
 
 	public void setOtherEmail(String otherEmail) {
+		if (otherEmail != null) {
+			otherEmail = otherEmail.replace("\n", "").replace("\r", "");
+		}
 		this.otherEmail = otherEmail;
 	}
 

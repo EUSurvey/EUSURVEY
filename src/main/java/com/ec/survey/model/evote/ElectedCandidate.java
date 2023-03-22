@@ -10,6 +10,7 @@ public class ElectedCandidate {
 	private boolean preferentialSeat;
 	private boolean reallocatedSeat;
 	private boolean ambiguous;
+	private boolean listNotAccepted;
 
 	public String getName() {
 		return name;
@@ -73,5 +74,13 @@ public class ElectedCandidate {
 
 	public void setAmbiguous(boolean ambiguous) {
 		this.ambiguous = ambiguous;
+	}
+
+	public boolean isListNotAccepted() {
+		return listNotAccepted;
+	}
+
+	public void setListNotAccepted(boolean listNotAccepted) {
+		this.listNotAccepted = listNotAccepted;
 	}
 }

@@ -13,8 +13,6 @@ import com.ec.survey.tools.QuizExecutor;
 import com.ec.survey.tools.Ucs2Utf8;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -1002,7 +1000,11 @@ public class HomeController extends BasicController {
 		if (requestId == null) {
 			requestId = request.getParameter("request-id");
 		  }
-		String targetLanguage = request.getParameter("target-languages");
+		String targetLanguage = request.getParameter("target-language");
+		if (targetLanguage == null) {
+			targetLanguage = "";
+		}
+		
 		String errorCode = request.getParameter("error-code");
 		String errorMessage = request.getParameter("error-message");
 

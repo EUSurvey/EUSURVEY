@@ -1347,6 +1347,8 @@ var closeOverlayDivsEnabled = false;
 												
 												</c:forEach>	
 											</c:when>
+
+						  					<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
 					 						
 											<c:otherwise>
 															
@@ -1404,8 +1406,8 @@ var closeOverlayDivsEnabled = false;
 						<c:if test="${form.getSurvey().isQuiz}">
 							$(tr).append('<td class="cellscore"><div class="answercell">' + list[i++] + '</div></td>');
 						</c:if>
-						
-						$( "#contentstablebody").append(tr);						
+
+						$( "#contentstablebody").append(tr);
 					  }
 
 					  <c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">

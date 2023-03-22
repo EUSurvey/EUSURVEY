@@ -229,7 +229,7 @@
 			
 			<div id="add-group-domain-div" style="margin-bottom: 10px;">
 				<label for="add-group-type-ecas"><spring:message code="label.Domain" /></label>
-				<select id="add-group-type-ecas" onchange="domainChaged()"  style="width: 450px" >
+				<select id="add-group-type-ecas" onchange="domainChanged()"  style="width: 450px" >
 					<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
 						<option value="${domain.key}">${domain.value} </option>	
 					</c:forEach>
@@ -237,10 +237,29 @@
 			</div>
 			
 			<div style="height: 400px; overflow: auto;" id="add-group-tree-div" >
-				<label for="add-group-name"><spring:message code="label.SelectADepartment" />:</label>
+				<label for="add-group-name"><spring:message code="label.SelectAnEntity" />:</label>
 				
 				<ul id="tree" class="dep-tree" style="-moz-user-select: none;">
-	
+					<li>
+						<span onclick="disabledEventPropagation(event);" onselectstart="return false;" id="spanRoot">
+							<a onclick="openEntities($(this).closest('li').find('ul').first(), true)">
+								<img class="folderimage" src="/eusurvey/resources/images/folderclosed.png" />
+							</a>
+							<input onclick="disabledEventPropagation(event);" type="radio" class="check" name="department" value="ec" style="margin-left: 10px;">
+							<spring:message code="label.DGsAndServices" />
+							<ul class="dep-tree dep-tree-child" style="display: block;"></ul>
+						</span>
+					</li>
+					<li>
+						<span onclick="disabledEventPropagation(event);" onselectstart="return false;" id="spanRoot">
+							<a onclick="openEntities($(this).closest('li').find('ul').first(), false)">
+								<img class="folderimage" src="/eusurvey/resources/images/folderclosed.png" />
+							</a>
+							<input onclick="disabledEventPropagation(event);" type="radio" class="check" name="department" value="ec" style="margin-left: 10px;">
+							<spring:message code="label.ExecutiveAgencies" />
+							<ul class="dep-tree dep-tree-child" style="display: block;"></ul>
+						</span>
+					</li>
 				</ul>
 			</div>	
 						

@@ -8,6 +8,19 @@
 	<title>EUSurvey - <spring:message code="label.AddressBook" /></title>
 	
 	<%@ include file="../includes.jsp" %>
+
+	<meta name="_csrf" content="${_csrf.token}"/>
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
+
+	<script>
+		$(function () {
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			$(document).ajaxSend(function(e, xhr, options) {
+				xhr.setRequestHeader(header, token);
+			});
+		});
+	</script>
 	
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/fileuploader.css" rel="stylesheet" type="text/css" />
@@ -293,7 +306,8 @@
 				return;
 			}
 			
-			$('#operation').val('batchedit'); $('#load-attendees').submit();
+			$('#operation').val('batchedit');
+			$('#load-attendees').submit();
 		}
 		
 		function executeBulkDelete() {
@@ -353,7 +367,7 @@
 						</div>
 						
 						<div style="float: left; padding-top:-5px; margin-left: 10px; padding-left: 10px;">
-							<a onclick="$('#load-attendees').submit()" class="btn btn-primary"><spring:message code="label.Search" /></a>
+							<a onclick="$('#operation').val('');$('#load-attendees').submit();" class="btn btn-primary"><spring:message code="label.Search" /></a>
 							<a onclick="$('#show-wait-image').modal('show');" href="<c:url value="/addressbook?clear=true"/>" class="btn btn-default"><spring:message code="label.ResetFilter" /></a>
 						</div>
 												
@@ -478,10 +492,6 @@
 	
 		</form:form>
 		
-		<form:form id="delete-attendee" method="POST" action="${contextpath}/addressbook/deleteAttendee">
-			<input type="hidden" name="id" id="delete-id" value="" />
-		</form:form>
-		
 		<form:form id="add-attendee-form" method="POST" action="${contextpath}/addressbook/addAttendee">
 			
 		</form:form>
@@ -494,7 +504,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a  onclick="deleteAttendee();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>	
+				<a  onclick="deleteAttendee('${contextpath}');" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>		
 			</div>
 			</div>
@@ -509,7 +519,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a  onclick="$('#delete-attendees-dialog').modal('hide');$('#operation').val('delete');$('#load-attendees').submit();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+				<a  onclick="deleteAttendees('${contextpath}');" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 			</div>
 			</div>

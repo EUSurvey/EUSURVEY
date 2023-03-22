@@ -89,6 +89,8 @@ public class XlsxExportCreator {
 	
 	private static CellStyle borderStyle = null;
 	private static CellStyle boldStyle = null;
+	private static CellStyle greyStyle = null;
+	private static CellStyle boldgreyStyle = null;
 	private static CellStyle percentStyle = null;
 	private static CellStyle boldPercentStyle = null;
 	private static CellStyle redStyle = null;
@@ -118,7 +120,28 @@ public class XlsxExportCreator {
 		boldPercentStyle.setBorderLeft(CellStyle.BORDER_THIN);
 		boldPercentStyle.setBorderRight(CellStyle.BORDER_THIN);
 		boldPercentStyle.setFont(boldFont);
-		
+
+		greyStyle = workbook.createCellStyle();
+		Font greyFont = workbook.createFont();
+		greyFont.setColor(IndexedColors.GREY_50_PERCENT.index);
+		greyStyle.setFont(greyFont);
+		greyStyle.setAlignment(CellStyle.ALIGN_LEFT);
+		greyStyle.setBorderTop(CellStyle.BORDER_THIN);
+		greyStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		greyStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		greyStyle.setBorderRight(CellStyle.BORDER_THIN);
+
+		boldgreyStyle = workbook.createCellStyle();
+		Font boldgreyFont = workbook.createFont();
+		boldgreyFont.setColor(IndexedColors.GREY_50_PERCENT.index);
+		boldgreyFont.setBold(true);
+		boldgreyStyle.setFont(boldgreyFont);
+		boldgreyStyle.setAlignment(CellStyle.ALIGN_LEFT);
+		boldgreyStyle.setBorderTop(CellStyle.BORDER_THIN);
+		boldgreyStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		boldgreyStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		boldgreyStyle.setBorderRight(CellStyle.BORDER_THIN);
+
 		redStyle = workbook.createCellStyle();
 		Font redFont = workbook.createFont();
 		redFont.setColor(Font.COLOR_RED);
@@ -542,9 +565,21 @@ public class XlsxExportCreator {
 	}
 
 	private static int addNumberOfVotesPerCandidate(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, boolean outsideTemplate, int rowCounter) {
-		
 		Row row = sheet.createRow(rowCounter++);
-		
+
+		for (SeatDistribution list : result.getListSeatDistribution())
+		{
+			if (list.getListPercentWeighted() < result.getMinListPercent()) {
+				addMessageStringCell(row, 0, getMessage(resource, "help.EligibleLists"), false);
+				row.getCell(0).setCellStyle(greyStyle);
+
+				sheet.createRow(rowCounter++);	//empty row
+
+				row = sheet.createRow(rowCounter++);
+				break;
+			}
+		}
+
 		if (result.isAmbiguous()) {
 			addMessageStringCell(row, 0, getMessage(resource, "info.seats.ambiguous"), true);
 			row.getCell(0).setCellStyle(redStyle);
@@ -561,6 +596,14 @@ public class XlsxExportCreator {
 				addStringCell(row, counter++, list.getName(), true);				
 			}
 		}
+		for (SeatDistribution list : result.getListSeatDistribution())
+		{
+			if (list.getListPercentWeighted() < result.getMinListPercent()) {
+				addStringCell(row, counter, list.getName(), true);
+				row.getCell(counter).setCellStyle(boldgreyStyle);
+				counter++;
+			}
+		}
 		
 		if (!luxTemplate && !outsideTemplate) {
 			row = sheet.createRow(rowCounter++);
@@ -570,6 +613,14 @@ public class XlsxExportCreator {
 			{
 				if (list.getListPercentWeighted() >= result.getMinListPercent()) {
 					addNumberCell(row, counter++, list.getListVotes(), true);				
+				}
+			}
+			for (SeatDistribution list : result.getListSeatDistribution())
+			{
+				if (list.getListPercentWeighted() < result.getMinListPercent()) {
+					addNumberCell(row, counter, list.getListVotes(), true);
+					row.getCell(counter).setCellStyle(boldgreyStyle);
+					counter++;
 				}
 			}
 		}
@@ -582,7 +633,9 @@ public class XlsxExportCreator {
 			counter = 1;
 			for (ElectedCandidate candidate : candidates) {
 				addNumberCell(row, counter, candidate.getVotes(), false);
-				if (candidate.getSeats() > 0) {
+				if (candidate.isListNotAccepted()) {
+					row.getCell(counter).setCellStyle(greyStyle);
+				} else if (candidate.getSeats() > 0) {
 					if (candidate.isAmbiguous()) {
 						row.getCell(counter).setCellStyle(purpleBackgroundStyle);
 					} else if (candidate.isPreferentialSeat()) {
@@ -604,6 +657,14 @@ public class XlsxExportCreator {
 		{
 			if (list.getListPercentWeighted() >= result.getMinListPercent()) {
 				addNumberCell(row, counter++, list.getLuxListVotes(), true);				
+			}
+		}
+		for (SeatDistribution list : result.getListSeatDistribution())
+		{
+			if (list.getListPercentWeighted() < result.getMinListPercent()) {
+				addNumberCell(row, counter, list.getLuxListVotes(), true);
+				row.getCell(counter).setCellStyle(boldgreyStyle);
+				counter++;
 			}
 		}
 		

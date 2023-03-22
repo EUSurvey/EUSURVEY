@@ -977,7 +977,7 @@ public class RunnerController extends BasicController {
 						// if passwords are also permitted we have to keep the session due to CSRF
 						if (survey.getPassword() == null || survey.getPassword().trim().length() == 0) {
 							// If not logged in for runner: auto logout
-							if (request.getSession().getAttribute("RUNNER_LOGIN") == null) {
+							if (request.getSession().getAttribute("RUNNER_LOGIN") == null && survey.getIsEVote()) {
 								request.getSession().invalidate();
 							}
 						}						

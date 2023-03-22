@@ -628,7 +628,8 @@
 			if(markups.length <= 0)
 				return '';
 
-			const validIDs = "${form.survey.getValidMarkupIDs()}";
+			const validIDs_string = "${form.survey.getValidMarkupIDs()}";
+			const validIDs = validIDs_string.slice(1, validIDs_string.length - 1).split(', ');
 
 			// check if all markups are valid
 			for(const mark of markups){
@@ -643,7 +644,7 @@
 						break;
 					default:
 						// is element in question Ids?
-						if(validIDs.includes(markNoBrackets))
+						if(validIDs.indexOf(markNoBrackets) != -1)
 							break;
 
 						// invalid markup
