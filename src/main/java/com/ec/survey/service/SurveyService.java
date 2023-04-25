@@ -1331,6 +1331,21 @@ public class SurveyService extends BasicService {
 		survey.setTrustScore(score);
 		session.saveOrUpdate(survey);
 	}
+	
+	/**
+	 * Returns true if the user has ever published a survey before
+	 */
+	@Transactional
+	public boolean getUserHasPublishedSurveys(int userId) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		Query query = session.createSQLQuery("SELECT SURVEY_ID FROM SURVEYS WHERE  ISDRAFT = 0 AND OWNER = :id");
+
+		@SuppressWarnings("rawtypes")
+		List surveys = query.setParameter("id", userId).setMaxResults(1).list();			
+		
+		return !surveys.isEmpty();
+	}
 
 	/**
 	 * Creates a copy of the survey and save it as non-draft survey
@@ -1346,6 +1361,8 @@ public class SurveyService extends BasicService {
 			session.evict(draftSurvey);
 			draftSurvey = (Survey) session.merge(draftSurvey);
 		}
+		
+		boolean firstPublicationForUser = !getUserHasPublishedSurveys(userId);
 
 		Survey publishedSurvey = draftSurvey.copy(this, draftSurvey.getOwner(), fileDir, true, pnumberOfAnswerSets,
 				pnumberOfAnswerSetsPublished, true, resetSourceIds, true, null, null);
@@ -1564,7 +1581,25 @@ public class SurveyService extends BasicService {
 		if (!alreadyPublished)
 			reportingService.addToDo(ToDo.NEWSURVEY, draftSurvey.getUniqueId(), null);
 
+		if (firstPublicationForUser) {
+			sendFirstPublishedSurveyMail(draftSurvey);
+		}
+		
 		return publishedSurvey;
+	}
+	
+	public void sendFirstPublishedSurveyMail(Survey survey) throws Exception {
+		String body = "The user <b>" + survey.getOwner().getLogin() + "</b> - <b>" + survey.getOwner().getFirstLastName()
+				+ "</b> published the survey <b>" + survey.getTitleSort() + "</b> using the alias <b>" + survey.getShortname() + "</b>.<br /><br />"
+				+ "Links to the survey:<br />Administration: <a href=\"" + host	+ survey.getShortname() + "/management/overview\">" + host + survey.getShortname() + "/management/overview</a><br />"
+				+ "Runner: <a href=\"" + host	+ "runner/" + survey.getShortname() + "\">" + host + "runner/" + survey.getShortname() + "</a><br /><br />"
+				+ "Your EUSurvey Team";
+
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);
+
+		mailService.SendHtmlMail(publicsurveynotification, sender, sender,
+				"First survey published by user " + survey.getOwner().getLogin(), text, null);
 	}
 
 	@Transactional
