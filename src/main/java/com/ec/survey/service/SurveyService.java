@@ -1598,7 +1598,7 @@ public class SurveyService extends BasicService {
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);
 
-		mailService.SendHtmlMail(publicsurveynotification, sender, sender,
+		mailService.SendHtmlMail(monitoringEmail, sender, sender,
 				"First survey published by user " + survey.getOwner().getLogin(), text, null);
 	}
 
