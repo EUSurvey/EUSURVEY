@@ -1362,7 +1362,7 @@ public class SurveyService extends BasicService {
 			draftSurvey = (Survey) session.merge(draftSurvey);
 		}
 		
-		boolean firstPublicationForUser = !getUserHasPublishedSurveys(userId);
+		boolean firstPublicationForUser = !getUserHasPublishedSurveys(draftSurvey.getOwner().getId());
 
 		Survey publishedSurvey = draftSurvey.copy(this, draftSurvey.getOwner(), fileDir, true, pnumberOfAnswerSets,
 				pnumberOfAnswerSetsPublished, true, resetSourceIds, true, null, null);
