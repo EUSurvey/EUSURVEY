@@ -1480,7 +1480,7 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 
 		survey.setLanguage(uploadedSurvey.getLanguage());
-		survey.setTitle(uploadedSurvey.getTitle());
+		survey.setTitle(Tools.filterHTML(uploadedSurvey.getTitle()));
 
 		boolean sendListFormMail = false;
 
@@ -1590,8 +1590,8 @@ public class ManagementController extends BasicController {
 		survey.setEscapeLink(uploadedSurvey.getEscapeLink());
 		survey.setAudience(uploadedSurvey.getAudience());
 
-		survey.setQuizWelcomeMessage(uploadedSurvey.getQuizWelcomeMessage());
-		survey.setQuizResultsMessage(uploadedSurvey.getQuizResultsMessage());
+		survey.setQuizWelcomeMessage(Tools.filterHTML(uploadedSurvey.getQuizWelcomeMessage()));
+		survey.setQuizResultsMessage(Tools.filterHTML(uploadedSurvey.getQuizResultsMessage()));
 
 		survey.setShowPDFOnUnavailabilityPage(uploadedSurvey.getShowPDFOnUnavailabilityPage());
 		survey.setShowDocsOnUnavailabilityPage(uploadedSurvey.getShowDocsOnUnavailabilityPage());
