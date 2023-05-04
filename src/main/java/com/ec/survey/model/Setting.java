@@ -60,6 +60,8 @@ public class Setting {
 	public static final String AnswersAnonymWorkerEnabled = "AnswersAnonymWorkerEnabled";
 	
 	public static final String UseSMTService = "UseSMTService";
+	public static final String MaxSurveysPerUser = "MaxSurveysPerUser";
+	public static final String MaxSurveysTimespan = "MaxSurveysTimespan";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")

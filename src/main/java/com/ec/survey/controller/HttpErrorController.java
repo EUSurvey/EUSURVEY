@@ -70,6 +70,12 @@ public class HttpErrorController extends BasicController {
 		return new ModelAndView("error/frozen",Constants.ERROR,"exception" );
 	}	
 	
+	@RequestMapping(value = "/surveylimit.html")
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public ModelAndView handlesurveylimit(HttpServletRequest request){
+		return new ModelAndView("error/surveylimit",Constants.ERROR,"exception" );
+	}	
+	
 	@RequestMapping(value = "/weak.html")
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ModelAndView handleWeak(HttpServletRequest request, Locale locale) {
