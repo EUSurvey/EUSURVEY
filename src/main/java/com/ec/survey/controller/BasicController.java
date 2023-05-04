@@ -73,7 +73,6 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.InvalidXHTMLException;
 import com.ec.survey.tools.NotAgreedToTosException;
-import com.ec.survey.tools.SurveyCreationLimitExceededException;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.WeakAuthenticationException;
 
@@ -221,7 +220,7 @@ public class BasicController implements BeanFactoryAware {
 	public ModelAndView handleSurveyCreationLimitExceededException(Exception e, HttpServletRequest request) {
 		logger.info(e.getLocalizedMessage(), e);
 		ModelAndView model = new ModelAndView("redirect:/errors/surveylimit.html");
-		model.addObject("contextpath", contextpath);
+		model.addObject("contextpath", contextpath);		
 		return model;
 	}
 

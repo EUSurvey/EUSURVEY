@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ec.survey.model.Setting;
 import com.ec.survey.tools.Constants;
 
 @Controller
@@ -72,8 +73,27 @@ public class HttpErrorController extends BasicController {
 	
 	@RequestMapping(value = "/surveylimit.html")
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-	public ModelAndView handlesurveylimit(HttpServletRequest request){
-		return new ModelAndView("error/surveylimit",Constants.ERROR,"exception" );
+	public ModelAndView handlesurveylimit(HttpServletRequest request, Locale locale){
+		ModelAndView result = new ModelAndView("error/surveylimit",Constants.ERROR,"exception" );		
+		
+		result.addObject("MaxSurveysPerUser", settingsService.get(Setting.MaxSurveysPerUser));
+		int minutes = Integer.parseInt(settingsService.get(Setting.MaxSurveysTimespan));
+		
+		String lminutes = resources.getMessage("label.minutes", null, "minutes", locale);
+		
+		String timespan = minutes + " " + lminutes;
+		
+		if (minutes >= 1440) {
+			String ldays = resources.getMessage("label.days", null, "days", locale);			
+			timespan = (minutes / 1440) + " " + ldays;
+		} else if (minutes >= 60) {
+			String lhours = resources.getMessage("label.hours", null, "hours", locale);	
+			timespan = (minutes / 60) + " " + lhours;
+		}
+		
+		result.addObject("MaxSurveysTimespan", timespan);
+		
+		return result;
 	}	
 	
 	@RequestMapping(value = "/weak.html")

@@ -28,7 +28,7 @@
 					<span class="glyphicon glyphicon-ban-circle" style="font-size: 30px; color: #bd281d; margin-right: 10px; margin-top: 0px"></span>
 				</div>
 				<div style="float: right; width: 400px; margin-top: 15px;">
-					<p><spring:message code="error.surveylimit" arguments="${contextpath}/home/support" /></p>
+					<p><spring:message code="error.surveylimit" arguments="${MaxSurveysPerUser},${MaxSurveysTimespan},${contextpath}/home/support" /></p>
 				</div>
 				<div style="clear: both"></div>
 			</div>
