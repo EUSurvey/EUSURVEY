@@ -795,6 +795,8 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
+		surveyService.checkSurveyCreationLimit(u.getId());		
+		
 		if (request.getParameter("uuid") != null && request.getParameter("uuid").length() > 0) {
 			// Case 1: import survey
 			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);

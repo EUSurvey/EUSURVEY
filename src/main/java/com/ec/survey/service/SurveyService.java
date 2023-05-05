@@ -5775,4 +5775,21 @@ public class SurveyService extends BasicService {
 		}
 
 	}
+
+	@Transactional
+	public void checkSurveyCreationLimit(Integer userid) throws SurveyCreationLimitExceededException {
+		int maxSurveysPerUser = Integer.parseInt(settingsService.get(Setting.MaxSurveysPerUser));
+		int maxSurveysTimespan = Integer.parseInt(settingsService.get(Setting.MaxSurveysTimespan));
+		
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery query = session.createSQLQuery("SELECT COUNT(*) FROM SURVEYS WHERE OWNER = :id AND ISDRAFT = 1 AND SURVEY_CREATED > now() - INTERVAL :minutes MINUTE");
+		
+		Object count = query.setInteger("id", userid).setInteger("minutes", maxSurveysTimespan).uniqueResult();
+		
+		int result = ConversionTools.getValue(count);
+		
+		if (result >= maxSurveysPerUser) {
+			throw new SurveyCreationLimitExceededException();
+		}
+	}
 }
