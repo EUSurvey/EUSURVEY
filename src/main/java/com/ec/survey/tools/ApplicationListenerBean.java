@@ -773,6 +773,8 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			schemaService.step104();
 			status = schemaService.getStatus();
 		}
+		
+		schemaService.step105a(); // this step creates settings if they do not exist yet
 
 		if (status.getDbversion() < 105)
 		{

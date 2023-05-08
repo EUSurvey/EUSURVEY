@@ -7,6 +7,7 @@ function getNewElement(item)
 		element = getBasicElement("Section", false, "Section Title", item.attr("id"), false);
 		element.level = 1;
 		element.tabTitle = "[Section]";
+		element.order = 0;
 		updateComplexityScore("addSectionItem");
 	} else if (item.hasClass("freetextitem"))
 	{
@@ -242,6 +243,7 @@ function getNewElement(item)
 		element.maxChoices = 0;
 		element.minChoices = 0;
 		element.useRadioButtons = true;
+		element.choiceType = "radio";
 		element.numColumns = 1;
 		element.order = 1;
 		element.isDelphiQuestion = isDelphi;	

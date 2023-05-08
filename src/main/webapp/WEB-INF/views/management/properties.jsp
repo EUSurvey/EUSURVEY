@@ -1508,6 +1508,25 @@
 						<tr class="subelement" data-bind="visible: delphi">
 							<td>
 								<div style="float: left">
+									<spring:message code="label.ShowDelphiStartPage" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+									<div class="help hideme"><spring:message code="info.ShowDelphiStartPage" /></div>
+								</div>
+								<div style="float: right">
+									<div class="onoffswitch">
+										<form:checkbox path="survey.isDelphiShowStartPage" class="onoffswitch-checkbox" id="isDelphiShowStartPage" />
+										<label class="onoffswitch-label" for="isDelphiShowStartPage">
+											<span class="onoffswitch-inner"></span>
+											<span class="onoffswitch-switch"></span>
+										</label>
+									</div>
+								</div>
+								<div style="clear: both"></div>
+							</td>
+						</tr>
+						<tr class="subelement" data-bind="visible: delphi">
+							<td>
+								<div style="float: left">
 									<spring:message code="label.ShowDelphiResultsTableAndStatisticsInstantly" />
 									<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
 									<div class="help hideme"><spring:message code="info.ShowDelphiResultsTableAndStatisticsInstantly" /></div>

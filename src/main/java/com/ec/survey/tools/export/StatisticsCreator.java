@@ -1029,6 +1029,15 @@ public class StatisticsCreator implements Runnable {
 				return reportingService.getCount(survey, where, values);
 			} catch (Exception e) {
 				logger.info(e.getLocalizedMessage(), e);
+				// as a fallback the statistics are created using the main database
+				// therefore we have to reset the maps in order not to count any answer twice
+				map.clear();
+				mapMatrix.clear();
+				mapGallery.clear();
+				mapRankingQuestion.clear();
+				mapNumberQuestion.clear();
+				multipleChoiceSelectionsByAnswerset.clear();
+				mapRankingQuestion.clear();
 			}
 		}
 

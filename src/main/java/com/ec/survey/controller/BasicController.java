@@ -223,6 +223,14 @@ public class BasicController implements BeanFactoryAware {
 	public boolean isByPassCaptcha() {
 		return bypassCaptcha != null && bypassCaptcha.equalsIgnoreCase("true");
 	}
+	
+	@ExceptionHandler(com.ec.survey.tools.SurveyCreationLimitExceededException.class)
+	public ModelAndView handleSurveyCreationLimitExceededException(Exception e, HttpServletRequest request) {
+		logger.info(e.getLocalizedMessage(), e);
+		ModelAndView model = new ModelAndView("redirect:/errors/surveylimit.html");
+		model.addObject("contextpath", contextpath);		
+		return model;
+	}
 
 	@ExceptionHandler(com.ec.survey.tools.Bad2faCredentialsException.class)
 	public ModelAndView handleBad2faCredentialsException(Exception e, HttpServletRequest request) {

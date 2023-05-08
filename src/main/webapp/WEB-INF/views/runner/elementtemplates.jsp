@@ -22,6 +22,12 @@
 			}
 		}
 	}
+	
+	function goToNextQuestion(link) {
+		 $('html, body').animate({
+	        'scrollTop' : $(link).closest("fieldset").next().position().top - 20
+	    });
+	}
 </script>
 
 <div style="display: none">
@@ -1477,7 +1483,7 @@
 				
 					<table class='table table-condensed table-bordered minh355' style="width: auto; margin-bottom: 0; background-color: #fff">
 						<tr>
-							<th class='area-header'>${form.getMessage("label.ExplainYourAnswer")}</th>
+							<th class='area-header'>${form.getMessage("label.OptionalAdditionalComments")}</th>
 						</tr>
 						<tr>
 							<td>
@@ -1545,7 +1551,11 @@
 					</span>
 					
 					<br /><br />
-					<a href="javascript:;" data-type="delphireturntostart" class="link" onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</a>
+					<c:if test="${form.survey.isDelphiShowStartPage}">
+						<a href="javascript:;" data-type="delphireturntostart" class="link" style="margin-right: 20px;"  onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</a>
+					</c:if>
+					
+					<a href="javascript:;" data-type="delphitonextquestion" class="link delphitonextquestion" onclick="goToNextQuestion(this)">${form.getMessage("label.GoToNextQuestion")}</a>
 				</div>
 		
 				<div class="delphiupdatemessage"></div>
@@ -1589,7 +1599,7 @@
 		
 		<div class="table-responsive">
 		
-			<table class="table complextable" data-bind="css: { 'table-bordered': showHeadersAndBorders() || foreditor }, attr: {'style': size() == 0 ? 'width: auto' : 'width: 900px'}">
+			<table class="table complextable" data-bind="css: { 'table-bordered': showHeadersAndBorders() || foreditor }, attr: {'style': size() == 0 ? 'width: auto' : 'width: 900px', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 				<tr data-bind="if: showHeadersAndBorders() || foreditor">
 					<!-- ko foreach: answers() -->
 						<th class="headercell cell" data-bind="html: title, attr:{'data-id': id(), colspan: columnSpan()}"></th>
@@ -1648,7 +1658,7 @@
 									<div class='limits' data-bind="html: getMaxCharacters(child.maxCharacters()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->							
 
-								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), true, $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : '', onkeyup: child.maxCharacters() > 0 ? 'countChar(this);' : ''}"></textarea>
+								<textarea oninput="propagateChange(this)" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), true, $element), attr: {'name' : 'answer' + child.id(), rows: child.numRows(), maxlength: child.maxCharacters() > 0 ? child.maxCharacters() : '', onkeyup: child.maxCharacters() > 0 ? 'countChar(this);' : '', 'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}"></textarea>
 
 								<!-- ko if: child.maxCharacters() > 0 && !$parent.foreditor -->
 									<div class="charactercounterdiv limits" style="max-width: 645px; text-align: right; margin-left: 20px;" aria-live="polite" aria-atomic="true">
@@ -1684,7 +1694,7 @@
 		
 								<!-- ko if: child && child.cellType() == 4 -->
 									<!-- ko if: child && child.useRadioButtons() -->
-										<div style="display: table">
+										<div style="display: table" role="radiogroup" data-bind="attr: {'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}">
 											<div style="display: table-row">
 												<!-- ko foreach: child.orderedPossibleAnswersByColumn(${ismobile != null}, ${responsive != null}) -->
 												<div style="display: table-cell; padding-right: 10px">
@@ -1719,7 +1729,7 @@
 								
 									<!-- ko if: child && child.useCheckboxes() -->
 										<div class="complex-multitable" style="display: table">
-											<div style="display: table-row">
+											<div style="display: table-row"  role="list" data-bind="attr: {'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}">
 											<!-- ko foreach: child.orderedPossibleAnswersByColumn(${ismobile != null}, ${responsive != null}) -->
 												<div style="display: table-cell; padding-right: 10px">
 													<!-- ko foreach: $data -->
@@ -1755,7 +1765,7 @@
 									<div class='limits' data-bind="html: getMax(child.max()), attr: {id: 'questioninfo' + child.id()}"></div>
 								<!-- /ko -->							
 								
-								<input type="number" oninput="propagateChange(this);" onblur="resetValidationErrors($(this).closest('.cell'));validateInput($(this).parent())" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), true, $element), attr: {'name' : 'answer' + child.id(), min: child.min(), max: child.max(), 'data-shortname': child.shortname()}"/>
+								<input type="number" oninput="propagateChange(this);" onblur="resetValidationErrors($(this).closest('.cell'));validateInput($(this).parent())" data-bind="enable: child.foreditor == false && !child.readonly(), class: child.css(), value:getValueByQuestion(child.uniqueId(), true, $element), attr: {'name' : 'answer' + child.id(), min: child.min(), max: child.max(), 'data-shortname': child.shortname(), 'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}"/>
 								<!-- ko if: child.unit -->
 								<span data-bind="text: child.unit"></span>
 								<!-- /ko -->

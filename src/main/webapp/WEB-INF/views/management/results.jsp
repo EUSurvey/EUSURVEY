@@ -1303,7 +1303,7 @@
 				<thead>
 				<tbody>
 					<c:forEach items="${questions}" var="question">
-						<c:if test="${question.getType() != 'Image' && question.getType() != 'Text' && question.getType() != 'Confirmation'  && question.getType() != 'Ruler' && !(question.getType() == 'GalleryQuestion' && !question.selection) }">
+						<c:if test="${question.getType() != 'Image' && question.getType() != 'Text' && question.getType() != 'Download' && question.getType() != 'Confirmation'  && question.getType() != 'Ruler' && !(question.getType() == 'GalleryQuestion' && !question.selection) }">
 							<tr>
 								<td style="vertical-align: top;"><input name="selected${question.id}" <c:if test="${filter.visible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="${question.id}" /></td>
 								<td style="vertical-align: top; "><input name="exportselected${question.id}" <c:if test="${filter.exported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exported${question.id}" /></td>

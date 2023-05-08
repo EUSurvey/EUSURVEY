@@ -189,7 +189,7 @@
 			<form:form id="surveyform" action="files" method="post">
 				<input type="hidden" name="mode" id="mode" value="${mode}" />
 				
-				<div class="tab-content">
+				<div class="tab-content" style="z-index: 4; position: relative">
 				    <div role="tabpanel" class="tab-pane <c:if test='${mode.equals("surveys")}'>active</c:if>" id="surveys">			    	
 						<div style="float: right; margin-right: 20px; margin-top: 10px;">
 					    	<input type="radio" <c:if test="${filter.searchInFileSystem == true}">checked="checked"</c:if> name="surveytarget" value="fs" class="check" /> search in file system<br />
@@ -241,7 +241,7 @@
 			   	</div>
 				    	
 		    	<table id="fileTableDivTable" class="table table-bordered table-styled" style="margin-top: 20px;">
-					<thead style="border-top: 1px solid #ddd;">
+					<thead style="border-top: 1px solid #ddd;box-shadow: 0 -40px 0 20px white;">
 						<tr>
 							<th><input name="checkall" id="checkall" class="checkall" value="true" type="checkbox" /></th>
 							<th><spring:message code="label.FilePath" /></th>

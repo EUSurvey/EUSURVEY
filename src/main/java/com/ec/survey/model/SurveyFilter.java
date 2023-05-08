@@ -1,7 +1,7 @@
 package com.ec.survey.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -44,7 +44,9 @@ public class SurveyFilter implements Serializable  {
 	private Integer minReported = null;
 	private Integer minContributions = null;
 	private Boolean frozen = null;
-	
+	private String isEVote = null;
+	private Set<String> surveyTypes = null;
+
 	public User getUser() {
 		return user;
 	}
@@ -285,11 +287,53 @@ public class SurveyFilter implements Serializable  {
 	public void setMinContributions(Integer minContributions) {
 		this.minContributions = minContributions;
 	}
-	
+
 	public Boolean getFrozen() {
 		return frozen;
 	}
 	public void setFrozen(Boolean frozen) {
 		this.frozen = frozen;
+	}
+
+	public String getIsEVote() {
+		return isEVote;
+	}
+	public void setIsEVote(String isEVote) {
+		this.isEVote = isEVote;
+	}
+
+	public Set<String> getSurveyTypes() {
+		return surveyTypes;
+	}
+
+	public void setSurveyTypes(Set<String> surveyTypes) {
+		this.surveyTypes = surveyTypes;
+	}
+
+	public Boolean containsSurveyType(String surveyType) {
+		if (this.surveyTypes == null) {
+			return false;
+		}
+		return this.surveyTypes.contains(surveyType);
+	}
+
+	public void addSurveyType(String type) {
+		if (this.surveyTypes == null) {
+			this.surveyTypes = new HashSet<>();
+		}
+		this.surveyTypes.add(type);
+	}
+
+	public void removeSurveyType(String type) {
+		if (this.surveyTypes != null) {
+			this.surveyTypes.remove(type);
+		}
+	}
+
+	public Boolean areAllSurveyTypes() {
+		if (this.surveyTypes == null) {
+			return false;
+		}
+		return this.surveyTypes.size() == 6;
 	}
 }

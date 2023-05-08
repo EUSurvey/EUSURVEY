@@ -151,9 +151,9 @@
 				<c:if test="${form.survey.logo != null && form.survey.logoInInfo}">
 					<img style="max-width: 100%" src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" />
 					<hr style="margin-top: 15px;" />
-				</c:if>			
+				</c:if>		
 				
-				<c:if test="${form.getLanguages().size() != 0}">		
+				<c:if test='${form.getLanguages().size() != 0 && iseditcontribution == null}'>	
 					<label for="langSelectorRunner">
 						<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Languages")}</div>	
 					</label>

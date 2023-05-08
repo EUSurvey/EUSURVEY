@@ -226,6 +226,45 @@ public class SurveySearchController extends BasicController {
 			filter.setUid(request.getParameter("uid"));
 			filter.setTitle(request.getParameter("title"));
 			filter.setOwner(request.getParameter("owner"));
+
+			if (request.getParameter("surveyStandard") != null
+					&& request.getParameter("surveyStandard").equalsIgnoreCase("true")) {
+				filter.addSurveyType("standard");
+			} else {
+				filter.removeSurveyType("standard");
+			}
+			if (request.getParameter("surveyOPC") != null
+					&& request.getParameter("surveyOPC").equalsIgnoreCase("true")) {
+				filter.addSurveyType("opc");
+			} else {
+				filter.removeSurveyType("opc");
+			}
+			if (request.getParameter("surveyQuiz") != null
+					&& request.getParameter("surveyQuiz").equalsIgnoreCase("true")) {
+				filter.addSurveyType("quiz");
+			} else {
+				filter.removeSurveyType("quiz");
+			}
+			if (request.getParameter("surveyDelphi") != null
+					&& request.getParameter("surveyDelphi").equalsIgnoreCase("true")) {
+				filter.addSurveyType("delphi");
+			} else {
+				filter.removeSurveyType("delphi");
+			}
+			if (request.getParameter("surveyEVote") != null
+					&& request.getParameter("surveyEVote").equalsIgnoreCase("true")) {
+				filter.addSurveyType("evote");
+			} else {
+				filter.removeSurveyType("evote");
+			}
+			if (request.getParameter("surveyECF") != null
+					&& request.getParameter("surveyECF").equalsIgnoreCase("true")) {
+				filter.addSurveyType("ecf");
+			} else {
+				filter.removeSurveyType("ecf");
+			}
+
+			filter.setIsEVote(request.getParameter("isEVote"));
 			filter.setPublishedFrom(ConversionTools.getDate(request.getParameter("publishedFrom")));
 			filter.setPublishedTo(ConversionTools.getDate(request.getParameter("publishedTo")));
 			filter.setFirstPublishedFrom(ConversionTools.getDate(request.getParameter("firstPublishedFrom")));

@@ -179,11 +179,17 @@ var Guestlist = function() {
 					  self.users.push(user);
 				  }
 				}
-				$("#participantdetailstable").stickyTableHeaders({fixedOffset: 160});
+				model.initStickyTableHeaders();
 			}, error: function() {
 				  showGenericError();
 			}
 		});		
+	}
+	
+	this.initStickyTableHeaders = function() {
+		$('#participantdetailstable').stickyTableHeaders('destroy');
+		
+		$("#participantdetailstable").stickyTableHeaders({fixedOffset: 112});	
 	}
 	
 	this.activateSelected = function()

@@ -316,9 +316,10 @@ public class ContributionController extends BasicController {
 
 			ModelAndView model = new ModelAndView("contributions/edit", "form", f);
 			
-			if (!isPDF && newestSurvey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+			if (!isPDF && newestSurvey.getIsDelphi() && newestSurvey.getIsDelphiShowStartPage() && request.getParameter("startDelphi") == null) {
 				model = new ModelAndView("runner/delphi", "form", f);
 				model.addObject("isdelphipage", true);
+				model.addObject("iseditcontribution", true);
 			}
 
 			model.addObject("submit", true);

@@ -28,6 +28,7 @@ public class ResultAccess {
 	private boolean readonly;
 	private Date date;
 	private String userName;
+	private String userEmail;
 	private ResultFilter resultFilter;
 	private String filter;
 	private String readonlyFilterQuestions;
@@ -125,5 +126,14 @@ public class ResultAccess {
 
 	public void setReadonlyFilterQuestions(String readonlyFilterQuestions) {
 		this.readonlyFilterQuestions = readonlyFilterQuestions;
+	}
+
+	@Transient
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 }

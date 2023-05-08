@@ -11,6 +11,7 @@
 		<thead>
 			<tr style="text-align: center;">
 				<th style="vertical-align: middle;"><spring:message code="label.User" /></th>
+				<th style="vertical-align: middle;"><spring:message code="label.Email" /></th>
 				<th style="vertical-align: middle;"><spring:message code="label.ResultFilter" /></th>
 				<c:if test="${!readOnlyResultPrivileges}">
 					<th style="vertical-align: middle;"><spring:message code="label.Access" /></th>
@@ -19,6 +20,7 @@
 			</tr>
 			<tr>
 				<th><input placeholder="<spring:message code="label.Filter" />" class="form-control" id="resacc-user-name" /></th>
+				<th><input placeholder="<spring:message code="label.Filter" />" class="form-control" id="resacc-user-email" /></th>
 				<th></th>
 				<c:if test="${!readOnlyResultPrivileges}">
 					<th></th>

@@ -575,7 +575,7 @@ legend {
 }
 
 .progressBar {
-	z-index: 1000;	
+	z-index: 999;
 	position: fixed;		
 	top: 40px;
 	width: 960px;
@@ -620,4 +620,8 @@ textarea:disabled, input:disabled {
 }
 .choice-button-label:last-of-type{
 	border-radius: 0 4px 4px 0;
+}
+
+.single-page fieldset:last-child .delphitonextquestion {
+	display: none;
 }

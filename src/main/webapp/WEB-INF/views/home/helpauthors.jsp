@@ -1071,6 +1071,47 @@
 			<ul>
 				<li>The DELPHI start page shows the questions in their original order.</li>
 			</ul>
+			<h2>Formula field</h2>
+			<p>
+				This question type called 'Formula' calculates and displays a value based on the data entered by the participant.
+				It allows you to display a total or an average for example and adds an interactive aspect to your survey.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_1.png" style="margin-bottom: 1em;" />
+			<p>Main points of the question element:</p>
+			<ul>
+				<li>
+					Ready-to-use functions are available for different use cases:<br>
+					<img src="${contextpath}/resources/images/documentation/formular_field_2.png" style="margin-bottom: 1em" />
+				</li>
+				<li>
+					Users can also type their formula in the 'Formula' field:<br>
+					<img src="${contextpath}/resources/images/documentation/formular_field_3.png" style="margin-bottom: 1em" />
+				</li>
+			</ul>
+			<p>Element IDs are used to compose the formula. The list of IDs is displayed to allow you to directly select the IDs you need.
+				You can also enter them directly in the input field.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_4.png" style="margin-bottom: 1em" />
+			<p>Please note that element IDs are visible in the 'Advanced' section of the element properties.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_5.png" style="margin-bottom: 1em" />
+			<p><span style="text-decoration: underline;">Example 1:</span><br>
+				In the example below, the 'Formula' field is the sum of the two 'Number-Slider' questions above.
+				Therefore, as soon as the survey participant has entered the second value (5 in our example),
+				the sum is calculated and displayed in real-time.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_6.png" style="margin-bottom: 1em" />
+			<p><span style="text-decoration: underline;">Example 2:</span><br>
+				In the example below, you can ask your survey participant to enter either his monthly or yearly rent.
+				The application will calculate automatically the other. Both fields remain editable by the user.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_7.png" style="margin-bottom: 1em" />
+			<p>
+				<span style="font-style: italic;">Survey participant has entered 500 and 6000 has been calculated.</span>
+			</p>
+			<p><span style="text-decoration: underline;">Example 3 'Read only' option:</span></p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_8.png" style="margin-bottom: 1em" />
+			<p>In the example below, line 5 is showing the total for each column.
+				Those fields use the 'Read only' option, so that, the total cannot be modified by the user.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_9.png" style="margin-bottom: 1em" />
 			<h1>
 				Survey security
 			</h1>

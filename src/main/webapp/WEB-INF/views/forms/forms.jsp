@@ -575,7 +575,71 @@
 						
 							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Title" /></h4>
 							<input id="txtTitleSearch" class="form-control" name="title" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.title}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveysTitle"/>
-													
+
+							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Type" /></h4>
+
+							<c:choose>
+								<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("standard")}'>
+									<input class="check" checked="checked" value="standard" type="checkbox" name="surveyStandard" /> <spring:message code="label.Standard" />
+								</c:when>
+								<c:otherwise>
+									<input class="check" value="standard" type="checkbox" name="surveyStandard" /> <spring:message code="label.Standard" />
+								</c:otherwise>
+							</c:choose>
+							<c:if test="${enableopc && USER.getGlobalPrivilegeValue('ECAccess') > 0}">
+								<br />
+								<c:choose>
+									<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("opc")}'>
+										<input class="check" checked="checked" value="opc" type="checkbox" name="surveyOPC" /> <spring:message code="label.OPC" />
+									</c:when>
+									<c:otherwise>
+										<input class="check" value="opc" type="checkbox" name="surveyOPC" /> <spring:message code="label.OPC" />
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+							<br />
+							<c:choose>
+								<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("quiz")}'>
+									<input class="check" checked="checked" value="quiz" type="checkbox" name="surveyQuiz" /> <spring:message code="label.Quiz" />
+								</c:when>
+								<c:otherwise>
+									<input class="check" value="quiz" type="checkbox" name="surveyQuiz" /> <spring:message code="label.Quiz" />
+								</c:otherwise>
+							</c:choose>
+							<c:if test="${enabledelphi}">
+								<br />
+								<c:choose>
+									<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("delphi")}'>
+										<input class="check" checked="checked" value="delphi" type="checkbox" name="surveyDelphi" /> <spring:message code="label.Delphi" />
+									</c:when>
+									<c:otherwise>
+										<input class="check" value="delphi" type="checkbox" name="surveyDelphi" /> <spring:message code="label.Delphi" />
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+							<c:if test="${enableevote}">
+								<br />
+								<c:choose>
+									<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("evote")}'>
+										<input class="check" checked="checked" value="eVote" type="checkbox" name="surveyEVote" /> <spring:message code="label.eVote" />
+									</c:when>
+									<c:otherwise>
+										<input class="check" value="eVote" type="checkbox" name="surveyEVote" /> <spring:message code="label.eVote" />
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+							<c:if test="${enableecf}">
+								<br />
+								<c:choose>
+									<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("ecf")}'>
+										<input class="check" checked="checked" value="ecf" type="checkbox" name="surveyECF" /> <spring:message code="label.ECF" />
+									</c:when>
+									<c:otherwise>
+										<input class="check" value="ecf" type="checkbox" name="surveyECF" /> <spring:message code="label.ECF" />
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+
 							<h4 style="margin-top: 20px;"><spring:message code="label.Status" />:</h4>					
 					
 							<c:choose>

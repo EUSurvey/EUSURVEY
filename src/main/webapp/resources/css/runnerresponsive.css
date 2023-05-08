@@ -612,3 +612,7 @@ textarea:disabled, input:disabled {
 	width: 100%;
    	margin: 0;
 }
+
+.single-page fieldset:last-child .delphitonextquestion {
+	display: none;
+}

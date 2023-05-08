@@ -1355,6 +1355,48 @@
 			<ul>
 				<li>La page d'accueil de DELPHI présente les questions dans leur ordre original.</li>
 			</ul>
+			<h2>Formule</h2>
+			<p>
+				Ce type de question appelé « Formule » calcule et affiche une valeur basée sur les données saisies par le participant.
+				Il vous permet d'afficher un total ou une moyenne par exemple et ajoute un aspect interactif à votre enquête.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_1_FR.png" style="margin-bottom: 1em;" />
+			<p>Principaux points de l'élément de question :</p>
+			<ul>
+				<li>
+					Des fonctions prêtes à l'emploi sont disponibles pour différents cas d'utilisation :<br>
+					<img src="${contextpath}/resources/images/documentation/formular_field_2_FR.png" style="margin-bottom: 1em" />
+				</li>
+				<li>
+					Les utilisateurs peuvent également saisir leur formule dans le champ prévu à cet effet :<br>
+					<img src="${contextpath}/resources/images/documentation/formular_field_3_FR.png" style="margin-bottom: 1em" />
+				</li>
+			</ul>
+			<p>Les ID des éléments sont utilisés pour composer la formule.
+				La liste des ID est affichée pour vous permettre de sélectionner directement les ID dont vous avez besoin.
+				Vous pouvez également les saisir directement dans le champ de saisie.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_4_FR.png" style="margin-bottom: 1em" />
+			<p>Veuillez noter que les ID des éléments sont visibles dans la section Avancé des propriétés de l'élément.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_5_FR.png" style="margin-bottom: 1em" />
+			<p><span style="text-decoration: underline;">Exemple 1 :</span><br>
+				Dans l'exemple ci-dessous, le champ « Formule » correspond à la somme des deux questions « Nombre/Curseur ».
+				Par conséquent, dès que le participant à l'enquête a saisi la deuxième valeur (5 dans notre exemple),
+				la somme est calculée et affichée en temps réel.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_6_FR.png" style="margin-bottom: 1em" />
+			<p><span style="text-decoration: underline;">Exemple 2 :</span><br>
+				Dans l'exemple ci-dessous, vous pouvez demander à votre participant à l'enquête d'indiquer son loyer mensuel ou annuel.
+				L'application calculera automatiquement l'autre. Les deux champs restent modifiables par l'utilisateur.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_7_FR.png" style="margin-bottom: 1em" />
+			<p>
+				<span style="font-style: italic;">Le participant à l'enquête a saisi 500 et 6000 a été calculé.</span>
+			</p>
+			<p><span style="text-decoration: underline;">Exemple 3 option « En lecture seule » :</span></p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_8_FR.png" style="margin-bottom: 1em" />
+			<p>Dans l'exemple ci-dessous, la ligne 5 affiche le total de chaque colonne.
+				Ces champs utilisent l'option « En lecture seule », de sorte que le total ne peut être modifié par l'utilisateur.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_9_FR.png" style="margin-bottom: 1em" />
 			<h1>
 				Sécurité des enquêtes
 			</h1>

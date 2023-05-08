@@ -257,7 +257,23 @@
 				$(b).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.ChangeOwnership" />").addClass("editbutton").attr("onclick", "changeOwner('" + list[i].uniqueId + "','" + list[i].title + "','" + list[i].owner.name + "')").html("<span class='glyphicon glyphicon-pencil'></span>");
 				$(td).append(b);
 				$(row).append(td);
-				
+
+				td = document.createElement("td");
+				if (list[i].isOPC) {
+					$(td).append("<spring:message code="label.OPC"/>");
+				} else if (list[i].isQuiz) {
+					$(td).append("<spring:message code="label.Quiz"/>");
+				} else if (list[i].isDelphi) {
+					$(td).append("<spring:message code="label.Delphi"/>");
+				} else if (list[i].isEVote) {
+					$(td).append("<spring:message code="label.eVote"/>");
+				} else if (list[i].isECF) {
+					$(td).append("<spring:message code="label.ECF"/>");
+				} else {
+					$(td).append("<spring:message code="label.StandardSurvey"/>");
+				}
+				$(row).append(td);
+
 				td = document.createElement("td");				
 				$(td).append(list[i].niceFirstPublished);		
 				$(row).append(td);
@@ -924,6 +940,7 @@
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.Type" /></th>
 								<th>
 									<div style="float: right">
 										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('firstPublished',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('firstPublished',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
@@ -1210,6 +1227,69 @@
 								</th>
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="owner" />
+								</th>
+								<th class="filtercell smallfiltercell">
+									<div class="btn-group">
+										<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+											<spring:message code="label.AllValues" />
+											<span style="margin-right: 10px" class="caret"></span>
+										</a>
+										<ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">
+											<li style="text-align: right;">
+												<a style="display: inline"  onclick="$('#resultsForm').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+											</li>
+										</ul>
+										<ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">
+											<c:choose>
+												<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("standard")}'>
+													<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyStandard" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.Standard" /></li>
+												</c:when>
+												<c:otherwise>
+													<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyStandard" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.Standard" /></li>
+												</c:otherwise>
+											</c:choose>
+											<c:choose>
+												<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("opc")}'>
+													<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyOPC" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.OPC" /></li>
+												</c:when>
+												<c:otherwise>
+													<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyOPC" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.OPC" /></li>
+												</c:otherwise>
+											</c:choose>
+											<c:choose>
+												<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("quiz")}'>
+													<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyQuiz" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.Quiz" /></li>
+												</c:when>
+												<c:otherwise>
+													<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyQuiz" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.Quiz" /></li>
+												</c:otherwise>
+											</c:choose>
+											<c:choose>
+												<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("delphi")}'>
+													<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyDelphi" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.Delphi" /></li>
+												</c:when>
+												<c:otherwise>
+													<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyDelphi" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.Delphi" /></li>
+												</c:otherwise>
+											</c:choose>
+											<c:choose>
+												<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("evote")}'>
+													<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyEVote" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.eVote" /></li>
+												</c:when>
+												<c:otherwise>
+													<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyEVote" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.eVote" /></li>
+												</c:otherwise>
+											</c:choose>
+											<c:choose>
+												<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("ecf")}'>
+													<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyECF" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.ECF" /></li>
+												</c:when>
+												<c:otherwise>
+													<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyECF" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.ECF" /></li>
+												</c:otherwise>
+											</c:choose>
+										</ul>
+									</div>
 								</th>
 								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
 									<div class="btn-toolbar" style="margin: 0px; text-align: center">

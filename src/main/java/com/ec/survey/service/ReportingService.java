@@ -330,9 +330,11 @@ public class ReportingService extends BasicService {
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i, "%" + answerUid + "%");
 								} else if (question instanceof NumberQuestion || question instanceof FormulaQuestion) {
-									double val = Double.parseDouble(answer);
-									where += columnname + " = :answer" + i;
-									values.put(Constants.ANSWER + i, val);
+									Double val = ConversionTools.getDouble(answer);
+									if (val != null) {
+										where += columnname + " = :answer" + i;
+										values.put(Constants.ANSWER + i, val);
+									}
 								} else if (question instanceof DateQuestion) {
 									Date val = ConversionTools.getDate(answer);
 									if (questionIdAndUid.endsWith("from")) {

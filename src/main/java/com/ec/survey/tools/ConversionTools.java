@@ -152,6 +152,14 @@ public class ConversionTools {
 	    }
 	}
 	
+	public static Double getDouble(String input) {
+	    try {
+		    return new Double(input);
+	    } catch (NumberFormatException e) {
+		    return null;
+	    }
+	}
+	
 	public static String removeHTML(String htmlString)
     {
 		return removeHTML(htmlString, false);

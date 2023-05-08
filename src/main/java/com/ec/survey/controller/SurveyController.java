@@ -81,7 +81,7 @@ public class SurveyController extends BasicController {
 		
         SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
 		List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, true);
-		
+
 		surveyService.generateAccessInformation(surveys, user);
 		
 		paging.setItems(surveys);

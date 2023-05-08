@@ -2242,6 +2242,7 @@ a.elearningWelcomeLink:hover
 	width: fit-content;
 	max-width: 290px;
 	min-width: 190px;
+	z-index: 1000;
 }
 
 #menutab2 li img, #menutab3  li img

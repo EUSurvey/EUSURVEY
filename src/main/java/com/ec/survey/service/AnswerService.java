@@ -1300,6 +1300,14 @@ public class AnswerService extends BasicService {
 
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(answerSet);
+		
+		if (!answerSet.getIsDraft()) {
+			//also delete draft
+			Draft draft = getDraftByAnswerUID(answerSet.getUniqueCode());
+			if (draft != null) {
+				session.delete(draft);
+			}
+		}
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)

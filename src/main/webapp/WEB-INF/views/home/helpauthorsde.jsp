@@ -1325,6 +1325,46 @@
 			<ul>
 				<li>Auf der DELPHI-Startseite werden die Fragen in ihrer ursprünglichen Reihenfolge angezeigt.</li>
 			</ul>
+			<h2>Formel</h2>
+			<p>
+				Der Fragetyp "Formel" berechnet und zeigt einen Wert auf der Grundlage der vom Teilnehmer eingegebenen Daten an.
+				Damit können Sie z. B. eine Gesamtsumme oder einen Durchschnitt anzeigen und Ihrer Umfrage einen interaktiven Aspekt hinzufügen.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_1_DE.png" style="margin-bottom: 1em;" />
+			<p>Die wichtigsten Punkte des Frageelements:</p>
+			<ul>
+				<li>
+					Für verschiedene Anwendungsfälle stehen gebrauchsfertige Funktionen zur Verfügung:<br>
+					<img src="${contextpath}/resources/images/documentation/formular_field_2_DE.png" style="margin-bottom: 1em" />
+				</li>
+				<li>
+					Die Benutzer können eigene Formeln in das "Formel"-Feld eingeben:<br>
+					<img src="${contextpath}/resources/images/documentation/formular_field_3_DE.png" style="margin-bottom: 1em" />
+				</li>
+			</ul>
+			<p>Die Element-IDs werden zum Zusammenstellen der Formel verwendet. Die Liste der IDs wird angezeigt, damit Sie die gewünschten IDs direkt auswählen können.
+				Sie können die IDs auch direkt in das Eingabefeld eingeben.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_4_DE.png" style="margin-bottom: 1em" />
+			<p>Bitte beachten Sie, dass die Element-IDs im Abschnitt "Erweitert" der Elementeigenschaften sichtbar sind.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_5_DE.png" style="margin-bottom: 1em" />
+			<p><span style="text-decoration: underline;">Beispiel 1:</span><br>
+				Im folgenden Beispiel ergibt sich das Feld "Formel" aus der Summe der beiden obigen Nummer-Fragen ("Nummernschieber").
+				Sobald der Umfrageteilnehmer den zweiten Wert (in unserem Beispiel 5) eingegeben hat, wird die Summe berechnet und in Echtzeit angezeigt.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_6_DE.png" style="margin-bottom: 1em" />
+			<p><span style="text-decoration: underline;">Beispiel 2:</span><br>
+				Im folgenden Beispiel können Sie Ihren Umfrageteilnehmer auffordern, entweder seine monatliche oder seine jährliche Miete einzugeben.
+				Die Anwendung berechnet automatisch die jeweils andere Miete. Beide Felder bleiben für den Benutzer editierbar.
+			</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_7_DE.png" style="margin-bottom: 1em" />
+			<p>
+				<span style="font-style: italic;">Der Umfrageteilnehmer hat 500 eingegeben und 6000 wurde berechnet.</span>
+			</p>
+			<p><span style="text-decoration: underline;">Beispiel 3 "Schreibgeschützt"-Option:</span></p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_8_DE.png" style="margin-bottom: 1em" />
+			<p>Im folgenden Beispiel wird in Zeile 5 die Summe für jede Spalte angezeigt.
+				Diese Felder verwenden die Option "Schreibgeschützt", so dass die Summe vom Benutzer nicht geändert werden kann.</p>
+			<img src="${contextpath}/resources/images/documentation/formular_field_9_DE.png" style="margin-bottom: 1em" />
 			<h1>
 				Sicherheit der Umfrage
 			</h1>

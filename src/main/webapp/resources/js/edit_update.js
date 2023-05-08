@@ -1937,7 +1937,7 @@ function updateIdentifier(element, id, text, noundo)
 			element = parent.questionsOrdered()[pos];
 		} else {
 			var pos = $(_elementProperties.selectedelement).index();
-			element = parent.answers()[pos];
+			element = parent.answers()[pos-1];
 		}
 	} else if ($(_elementProperties.selectedelement).hasClass("table-header"))
 	{

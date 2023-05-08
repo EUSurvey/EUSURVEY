@@ -1,5 +1,7 @@
 package com.ec.survey.model.evote;
 
+import com.ec.survey.tools.Tools;
+
 public class ElectedCandidate {
 	
 	private String list;
@@ -13,7 +15,7 @@ public class ElectedCandidate {
 	private boolean listNotAccepted;
 
 	public String getName() {
-		return name;
+		return Tools.escapeHTML(name);
 	}
 
 	public void setName(String name) {

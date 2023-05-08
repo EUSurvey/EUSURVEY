@@ -14,6 +14,7 @@ import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
@@ -263,14 +264,23 @@ public class SurveyService extends BasicService {
 	
 	@Transactional(readOnly = true)
 	public List<Survey> getSurveysForSurveySearch(SurveyFilter filter, SqlPagination sqlPagination, boolean initDrafts, boolean initReports) throws Exception {
+		if (filter.getSurveyTypes() != null && filter.getSurveyTypes().size() == 0) {
+			return new ArrayList<>();
+		}
+
 		StringBuilder stringBuilder = new StringBuilder(1024);
 		stringBuilder.append("SELECT s.SURVEY_ID");
 		stringBuilder.append(", s.SURVEY_UID");
 		stringBuilder.append(", s.SURVEYNAME");
 		stringBuilder.append(", s.TITLE");
-		stringBuilder.append(", s.EVOTE");
 		stringBuilder.append(", s.OWNER");
-		
+
+		stringBuilder.append(", s.OPC");
+		stringBuilder.append(", s.QUIZ");
+		stringBuilder.append(", s.DELPHI");
+		stringBuilder.append(", s.EVOTE");
+		stringBuilder.append(", s.ECF");
+
 		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {
 			stringBuilder.append(", npa.PUBLISHEDANSWERS as replies");// 7
 		}
@@ -319,11 +329,16 @@ public class SurveyService extends BasicService {
 			survey.setUniqueId((String) row[columnNum++]);
 			survey.setShortname((String) row[columnNum++]);
 			survey.setTitle((String) row[columnNum++]);
-			survey.setIsEVote((Boolean) row[columnNum++]);
 
-			int userId = ConversionTools.getValue(row[columnNum++]);			
+			int userId = ConversionTools.getValue(row[columnNum++]);
 			User user = administrationService.getUser(userId);
 			survey.setOwner(user);
+
+			survey.setIsOPC((Boolean) row[columnNum++]);
+			survey.setIsQuiz((Boolean) row[columnNum++]);
+			survey.setIsDelphi((Boolean) row[columnNum++]);
+			survey.setIsEVote((Boolean) row[columnNum++]);
+			survey.setIsECF((Boolean) row[columnNum++]);
 
 			if (this.isReportingDatabaseEnabled() && !filter.getSortKey().equalsIgnoreCase("REPLIES")) {
 				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(false, survey.getUniqueId()));
@@ -553,6 +568,30 @@ public class SurveyService extends BasicService {
 				case "delphi":
 					sql.append(" AND s.DELPHI = 1");
 					break;
+			}
+		}
+
+		if (filter.getSurveyTypes() != null && !filter.areAllSurveyTypes() && !filter.getSurveyTypes().isEmpty()) {
+			boolean firstLoop = true;
+			for (String type : filter.getSurveyTypes()) {
+				if (firstLoop) {
+					sql.append(" AND (");
+					firstLoop = false;
+				} else {
+					sql.append(" OR");
+				}
+
+				switch (type) {
+					case "standard":
+						sql.append(" (s.QUIZ = 0 AND s.ECF = 0 AND s.EVOTE = 0 AND s.OPC = 0 AND s.DELPHI = 0) ");
+						break;
+					default:
+						sql.append(" s." + type.toUpperCase() + " = 1");
+						break;
+				}
+			}
+			if (!filter.getSurveyTypes().isEmpty()) {
+				sql.append(")");
 			}
 		}
 
@@ -1338,6 +1377,21 @@ public class SurveyService extends BasicService {
 		survey.setTrustScore(score);
 		session.saveOrUpdate(survey);
 	}
+	
+	/**
+	 * Returns true if the user has ever published a survey before
+	 */
+	@Transactional
+	public boolean getUserHasPublishedSurveys(int userId) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		NativeQuery query = session.createSQLQuery("SELECT SURVEY_ID FROM SURVEYS WHERE  ISDRAFT = 0 AND OWNER = :id");
+
+		@SuppressWarnings("rawtypes")
+		List surveys = query.setParameter("id", userId).setMaxResults(1).list();			
+		
+		return !surveys.isEmpty();
+	}
 
 	/**
 	 * Creates a copy of the survey and save it as non-draft survey
@@ -1353,6 +1407,8 @@ public class SurveyService extends BasicService {
 			session.evict(draftSurvey);
 			draftSurvey = (Survey) session.merge(draftSurvey);
 		}
+		
+		boolean firstPublicationForUser = !getUserHasPublishedSurveys(draftSurvey.getOwner().getId());
 
 		Survey publishedSurvey = draftSurvey.copy(this, draftSurvey.getOwner(), fileDir, true, pnumberOfAnswerSets,
 				pnumberOfAnswerSetsPublished, true, resetSourceIds, true, null, null);
@@ -1569,8 +1625,26 @@ public class SurveyService extends BasicService {
 
 		if (!alreadyPublished)
 			reportingService.addToDo(ToDo.NEWSURVEY, draftSurvey.getUniqueId(), null);
+		
+		if (firstPublicationForUser) {
+			sendFirstPublishedSurveyMail(draftSurvey);
+		}
 
 		return publishedSurvey;
+	}
+	
+	public void sendFirstPublishedSurveyMail(Survey survey) throws Exception {
+		String body = "The user <b>" + survey.getOwner().getLogin() + "</b> - <b>" + survey.getOwner().getFirstLastName()
+				+ "</b> published the survey <b>" + survey.getTitleSort() + "</b> using the alias <b>" + survey.getShortname() + "</b>.<br /><br />"
+				+ "Links to the survey:<br />Administration: <a href=\"" + host	+ survey.getShortname() + "/management/overview\">" + host + survey.getShortname() + "/management/overview</a><br />"
+				+ "Runner: <a href=\"" + host	+ "runner/" + survey.getShortname() + "\">" + host + "runner/" + survey.getShortname() + "</a><br /><br />"
+				+ "Your EUSurvey Team";
+
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);
+
+		mailService.SendHtmlMail(monitoringEmail, sender, sender,
+				"First survey published by user " + survey.getOwner().getLogin(), text, null);
 	}
 	
 	@Transactional
@@ -3120,22 +3194,26 @@ public class SurveyService extends BasicService {
 	
 
 	@Transactional(readOnly = true)
-	public List<ResultAccess> getResultAccesses(ResultAccess resultAccess, String uid, int page, int rows, String name, String order, Locale locale) {
+	public List<ResultAccess> getResultAccesses(ResultAccess resultAccess, String uid, int page, int rows, String name, String email, String order, Locale locale) {
 		Session session = sessionFactory.getCurrentSession();
 		
-		String sql = "FROM ResultAccess a WHERE a.surveyUID = :uid";
+		String hql = "FROM ResultAccess a WHERE a.surveyUID = :uid";
 		
 		if (name != null && name.length() > 0) {
-			sql += " AND a.user IN (SELECT u.id FROM User u WHERE concat(COALESCE(u.givenName, ''), ' ', COALESCE(u.surName, ''), ' ', COALESCE(u.login, '')) LIKE :name)";
+			hql += " AND a.user IN (SELECT u.id FROM User u WHERE concat(COALESCE(u.givenName, ''), ' ', COALESCE(u.surName, ''), ' ', COALESCE(u.login, '')) LIKE :name)";
+		}
+		
+		if (email != null && email.length() > 0) {
+			hql += " AND a.user IN (SELECT u.id FROM User u WHERE u.email LIKE :email)";
 		}
 		
 		if (resultAccess != null) {
-			sql += " AND a.owner = :user"; 
+			hql += " AND a.owner = :user"; 
 		}
 		
-		sql += " ORDER BY a." + order + " DESC";
+		hql += " ORDER BY a." + order + " DESC";
 		
-		Query<ResultAccess> query = session.createQuery(sql, ResultAccess.class).setParameter("uid", uid);
+		Query<ResultAccess> query = session.createQuery(hql, ResultAccess.class).setParameter("uid", uid);
 		
 		if (resultAccess != null) {
 			query.setParameter("user", resultAccess.getUser());
@@ -3145,11 +3223,16 @@ public class SurveyService extends BasicService {
 			query.setParameter("name", "%" + name + "%");
 		}
 		
+		if (email != null && email.length() > 0) {
+			query.setParameter("email", "%" + email + "%");
+		}
+		
 		List<ResultAccess> accesses = query.setFirstResult((page > 1 ? page - 1 : 0) * rows).setMaxResults(rows).list();
 		
 		for (ResultAccess access : accesses) {
-			String userName = administrationService.getUser(access.getUser()).getFirstLastName();
-			access.setUserName(userName);
+			User user = administrationService.getUser(access.getUser());
+			access.setUserName(user.getFirstLastName());
+			access.setUserEmail(user.getEmail());
 			
 			if (access.getResultFilter() != null && !access.getResultFilter().getFilterValues().isEmpty()) {
 				
@@ -3408,6 +3491,7 @@ public class SurveyService extends BasicService {
 					Survey::getMaxNumberContributionLink,
 					Survey::getMaxNumberContribution,
 					Survey::getIsDelphiShowAnswersAndStatisticsInstantly,
+					Survey::getIsDelphiShowStartPage,
 					Survey::getIsDelphiShowAnswers,
 					Survey::getMinNumberDelphiStatistics,
 					Survey::getTimeLimit,
@@ -5684,5 +5768,22 @@ public class SurveyService extends BasicService {
 			published.setCodaWaiting(waiting);
 		}
 
+	}
+
+	@Transactional
+	public void checkSurveyCreationLimit(Integer userid) throws SurveyCreationLimitExceededException {
+		int maxSurveysPerUser = Integer.parseInt(settingsService.get(Setting.MaxSurveysPerUser));
+		int maxSurveysTimespan = Integer.parseInt(settingsService.get(Setting.MaxSurveysTimespan));
+		
+		Session session = sessionFactory.getCurrentSession();
+		NativeQuery query = session.createSQLQuery("SELECT COUNT(*) FROM SURVEYS WHERE OWNER = :id AND ISDRAFT = 1 AND SURVEY_CREATED > now() - INTERVAL :minutes MINUTE");
+		
+		Object count = query.setParameter("id", userid).setParameter("minutes", maxSurveysTimespan).uniqueResult();
+		
+		int result = ConversionTools.getValue(count);
+		
+		if (result >= maxSurveysPerUser) {
+			throw new SurveyCreationLimitExceededException();
+		}
 	}
 }

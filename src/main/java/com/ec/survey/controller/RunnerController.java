@@ -105,7 +105,7 @@ public class RunnerController extends BasicController {
 	@RequestMapping(value = "/invited/{group}/{unique}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView invited(@PathVariable String group, @PathVariable String unique, HttpServletRequest request,
 			Locale locale, Integer draftSurveyId, Device device)
-			throws WeakAuthenticationException, NotAgreedToPsException, NotAgreedToTosException {
+			throws WeakAuthenticationException, NotAgreedToPsException, NotAgreedToTosException, FrozenSurveyException {
 
 		boolean readonlyMode = false;
 		String p = request.getParameter("readonly");
@@ -202,6 +202,10 @@ public class RunnerController extends BasicController {
 					if (!draftSurvey.getIsActive()
 							|| SurveyHelper.isDeactivatedOrEndDateExceeded(draftSurvey, surveyService)) {
 
+						if (draftSurvey.getIsFrozen()) {
+							throw new FrozenSurveyException();
+						}	
+						
 						if (draftSurvey.getIsDeleted() || draftSurvey.getArchived()) {
 							throw new InvalidURLException();
 						}
@@ -334,7 +338,7 @@ public class RunnerController extends BasicController {
 									// the start date for the time limit starts when the user left the quiz start page
 									sessionService.SetUniqueCodeForForm(request, survey.getId(), uniqueCode);
 									sessionService.setFormStartDate(request, f, uniqueCode);
-								} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+								} else if (survey.getIsDelphi() && survey.getIsDelphiShowStartPage() && request.getParameter("startDelphi") == null) {
 									model = new ModelAndView("runner/delphi", "form", f);
 									model.addObject("isdelphipage", true);
 								}
@@ -365,7 +369,8 @@ public class RunnerController extends BasicController {
 					}
 				}
 			}
-
+		} catch (FrozenSurveyException fe) {
+			throw fe;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -709,29 +714,25 @@ public class RunnerController extends BasicController {
 	@RequestMapping(value = "/{shortname}/{token}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView runnerToken(@PathVariable String shortname, @PathVariable String token,
 			HttpServletRequest request, Locale locale, Device device)
-			throws InvalidURLException, ForbiddenURLException {
-		Survey survey = null;
-
-		try {
-			survey = surveyService.getSurveyByShortname(shortname, false, null, request, true, true, true, true);
-		} catch (InvalidURLException iue) {
-			// ignore
-		}
-
-		if (survey == null) {
-			survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, true);
-		}
-
+			throws InvalidURLException, ForbiddenURLException, FrozenSurveyException {
+		Survey survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, true);
+	
 		if (survey == null) {
 			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 			if (draft != null && !draft.getIsDeleted() && !draft.getArchived()) {
-
+				if (draft.getIsFrozen()) {
+					throw new FrozenSurveyException();
+				}	
 				return getEscapePageModel(draft, request, device);
 
 			} else {
 				throw new InvalidURLException();
 			}
 		}
+		
+		if (survey.getIsFrozen()) {
+			throw new FrozenSurveyException();
+		}	
 
 		try {
 
@@ -938,6 +939,9 @@ public class RunnerController extends BasicController {
 		if (survey == null && !isDraft) {
 			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, true);
 			if (draft != null && !draft.getIsDeleted() && !draft.getArchived()) {
+				if (draft.getIsFrozen()) {
+					throw new FrozenSurveyException();
+				}				
 				return getEscapePageModel(draft, request, device);
 			} else {
 				throw new InvalidURLException();
@@ -1267,7 +1271,7 @@ public class RunnerController extends BasicController {
 					// the start date for the time limit starts when the user left the quiz start page
 					sessionService.SetUniqueCodeForForm(request, survey.getId(), uniqueCode);
 					sessionService.setFormStartDate(request, f, uniqueCode);
-				} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+				} else if (survey.getIsDelphi() && survey.getIsDelphiShowStartPage() && request.getParameter("startDelphi") == null) {
 					model = new ModelAndView("runner/delphi", "form", f);
 					model.addObject("isdelphipage", true);
 					model.addObject("runnermode", true);

@@ -563,15 +563,14 @@ function initModals(item)
 			{
 				text = true;	
 			};
-		 });	
-		
-		//reset
+		 });
+
 		if ($(cell).find("input[type='checkbox']").length > 0)
 		{
-			$(cell).find(".dropdown-toggle").html("All values&nbsp;<span class='caret'></span>");	
+			$(cell).find(".dropdown-toggle").html("All values&nbsp;<span class='caret'></span>");
 			$(cell).removeAttr("title");
-		}			
-		
+		}
+
 		if ($(cell).find(".hiddendate").length > 0)
 		{
 			$(cell).find(".btn-toolbar").first().find(".datefilter").first().find("a").first().html(labelfrom + "&nbsp;<span class='caret'></span>");	
@@ -675,10 +674,10 @@ function initModals(item)
 			$(cell).find(".filtertools").remove();
 
 			if ($(cell).find(".overlaymenu").length > 0) {
-				$(cell).find(".nobreak").html(allValues);	
+				$(cell).find(".nobreak").html(allValues);
 				$(cell).find(".nobreak").attr("data-text",allValues);
 				//checkNoBreaks();
-			}		
+			}
 		}
 		
 		if ($(cell).closest('.ptable').length > 0)

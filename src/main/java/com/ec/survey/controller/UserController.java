@@ -11,7 +11,11 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
+import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.WeakAuthenticationException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,7 +62,11 @@ public class UserController extends BasicController {
 			List<User> users = administrationService.getUsers(filter, sqlPagination);
 			paging.setItems(users);	
 		}
-    	
+		
+		return usersGet(paging, filter, request, null);
+	}
+    
+    private ModelAndView usersGet(Paging<User> paging, UserFilter filter, HttpServletRequest request, String info) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
     	ModelAndView m =  new ModelAndView("administration/users", "paging", paging);
     	
     	List<Role> roles = administrationService.getAllRoles();
@@ -71,9 +79,13 @@ public class UserController extends BasicController {
     	
     	m.addObject("freezeusertext", settingsService.get(Setting.FreezeUserTextBan));
     	m.addObject("unfreezeusertext", settingsService.get(Setting.FreezeUserTextUnban));
+    	
+    	if (info != null) {
+    		m.addObject("info", info);
+    	}
 
     	return m;
-	}
+    }
 	
 	@PostMapping(value = "/banuser")
 	public ModelAndView banuser(@RequestParam("userId") String userId, @RequestParam("emailText") String emailText, HttpServletRequest request, Model model) throws Exception {	
@@ -134,14 +146,15 @@ public class UserController extends BasicController {
 		String language = request.getParameter("add-language");
 		String roles = request.getParameter("add-roles"); 
 						
-		List<User> users = administrationService.getAllUsers();
 		boolean valid = true;
-		for (User user : users) {
-			if (user.getLogin().equalsIgnoreCase(login))
+		
+		try {
+			if (administrationService.getUserForLogin(login, false) != null)
 			{
 				valid = false;
-				break;
 			}
+		} catch (Exception e) {
+			//happens when the user does not exist
 		}
 		
 		if (valid)
@@ -185,8 +198,9 @@ public class UserController extends BasicController {
 		} else {
 			model.addAttribute(Constants.ERROR, resources.getMessage("error.LoginExists", null, "This login already exists. Please choose a unique login.", locale));
 		}
-		
-		return users(request, model);
+				
+		String info = resources.getMessage("label.UserCreated", null, "The user has been created successfully.", locale);
+		return usersGet(new Paging<User>(), new UserFilter(), request, info);
 	}
 	
 	public ModelAndView updateUser(HttpServletRequest request, Model model, Locale locale) throws Exception {	

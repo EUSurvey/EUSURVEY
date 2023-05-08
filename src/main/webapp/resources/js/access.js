@@ -34,6 +34,12 @@
 			    	firstPage();
 			    }
 			});
+			
+			$('#resacc-user-email').keyup(function(e){
+			    if(e.keyCode == 13){
+			    	firstPage();
+			    }
+			});
 		});
 		
 		function openEntities(targetul, isDGs) {
@@ -533,8 +539,9 @@
 	function loadResultAccesses(order)
 	{
 		var name = $("#resacc-user-name").val();
+		var email = $("#resacc-user-email").val();
 		
-		var s = "name=" + name + "&order=" + order + "&page=" + page + "&rows=" + rows;
+		var s = "name=" + name + "&email=" + email + "&order=" + order + "&page=" + page + "&rows=" + rows;
 		
 		$.ajax({
 			type:'GET',
@@ -559,6 +566,7 @@
 				  {
 					  var tr = document.createElement("tr");
 					  addTableCell(tr, accesses[i].userName);
+					  addTableCell(tr, accesses[i].userEmail);
 					  addFilterTableCell(tr, accesses[i]);
 					  
 					  if (!readOnlyResultPrivileges) {

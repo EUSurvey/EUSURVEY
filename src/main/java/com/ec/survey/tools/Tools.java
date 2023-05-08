@@ -6,7 +6,15 @@ import edu.vt.middleware.password.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.simple.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document.OutputSettings;
+import org.jsoup.nodes.Entities.EscapeMode;
+import org.jsoup.safety.Whitelist;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationException;
+
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -221,10 +229,22 @@ public class Tools {
 		return ESAPI.encoder().decodeForHTML(input);
 	}
 
-	public static String filterHTML(String input) {
-		// this is postponed to ticket ESURVEY-1626, please do not remove this line
-		// return ESAPI.validator().getValidSafeHTML("input", input, 10000, true);
-		return input;
+	public static String filterHTML(String input) {	
+		//the following removes direct formatting
+		//return Jsoup.clean(input, Whitelist.relaxed());
+		
+		// the following turns <br /> into <br>:
+		//return Jsoup.clean(input, Whitelist.relaxed().addAttributes(":all", "style"));
+		
+		if (input == null || input.length() == 0) return input;
+		
+		OutputSettings outputSettings = new OutputSettings()
+                 .syntax(OutputSettings.Syntax.xml)
+                 .charset(StandardCharsets.UTF_8)
+                 .escapeMode(EscapeMode.xhtml)
+                 .prettyPrint(false);
+		
+		return Jsoup.clean(input, "", Whitelist.relaxed().addAttributes(":all", "style"), outputSettings);
 	}
 
 	public static String toUTF83Bytes(String input) {

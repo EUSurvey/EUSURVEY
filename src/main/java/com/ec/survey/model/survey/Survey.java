@@ -176,6 +176,7 @@ final public class Survey implements java.io.Serializable {
 	private String maxNumberContributionLink = "";
 	private Boolean sendConfirmationEmail = false;
 	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
+	private Boolean isDelphiShowStartPage = true;
 	private Boolean isDelphiShowAnswers = false;
 	private Integer minNumberDelphiStatistics = 1;
 	private String logoText = "";
@@ -1684,6 +1685,15 @@ final public class Survey implements java.io.Serializable {
 	public void setIsDelphiShowAnswersAndStatisticsInstantly(Boolean isDelphiShowAnswersAndStatisticsInstantly) {
 		this.isDelphiShowAnswersAndStatisticsInstantly = isDelphiShowAnswersAndStatisticsInstantly != null ? isDelphiShowAnswersAndStatisticsInstantly : false;
 	}
+	
+	@Column(name = "DELPHISTARTPAGE")
+	public Boolean getIsDelphiShowStartPage() {
+		return isDelphiShowStartPage != null ? isDelphiShowStartPage : true;
+	}
+
+	public void setIsDelphiShowStartPage(Boolean isDelphiShowStartPage) {
+		this.isDelphiShowStartPage = isDelphiShowStartPage != null ? isDelphiShowStartPage : true;
+	}
 
 	@Column(name = "DELPHIANSWERS")
 	public Boolean getIsDelphiShowAnswers() {
@@ -1920,6 +1930,7 @@ final public class Survey implements java.io.Serializable {
 		copy.setMaxNumberContributionLink(Tools.filterHTML(maxNumberContributionLink));
 		copy.isDelphi = isDelphi;
 		copy.isDelphiShowAnswersAndStatisticsInstantly = isDelphiShowAnswersAndStatisticsInstantly;
+		copy.isDelphiShowStartPage = isDelphiShowStartPage;
 		copy.isDelphiShowAnswers = isDelphiShowAnswers;
 		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
 		copy.timeLimit = timeLimit;

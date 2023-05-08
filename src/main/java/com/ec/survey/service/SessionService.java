@@ -407,6 +407,19 @@ public class SessionService extends BasicService {
 			boolean filterAny = request.getParameter("surveysShared") != null
 					&& request.getParameter("surveysShared").equalsIgnoreCase("any");
 
+			boolean filterStandardSurvey = request.getParameter("surveyStandard") != null
+					&& request.getParameter("surveyStandard").equalsIgnoreCase("standard");
+			boolean filterOPC = request.getParameter("surveyOPC") != null
+					&& request.getParameter("surveyOPC").equalsIgnoreCase("opc");
+			boolean filterQuiz = request.getParameter("surveyQuiz") != null
+					&& request.getParameter("surveyQuiz").equalsIgnoreCase("quiz");
+			boolean filterDelphi = request.getParameter("surveyDelphi") != null
+					&& request.getParameter("surveyDelphi").equalsIgnoreCase("delphi");
+			boolean filterEVote = request.getParameter("surveyEVote") != null
+					&& request.getParameter("surveyEVote").equalsIgnoreCase("evote");
+			boolean filterECF = request.getParameter("surveyECF") != null
+					&& request.getParameter("surveyECF").equalsIgnoreCase("ecf");
+
 			String status = "";
 			if (filterDraft)
 				status += "Draft;";
@@ -429,6 +442,37 @@ public class SessionService extends BasicService {
 				filter.setSelector("shared");
 			} else {
 				filter.setSelector("all");
+			}
+
+			if (filterStandardSurvey) {
+				filter.addSurveyType("standard");
+			} else {
+				filter.removeSurveyType("standard");
+			}
+			if (filterOPC) {
+				filter.addSurveyType("opc");
+			} else {
+				filter.removeSurveyType("opc");
+			}
+			if (filterQuiz) {
+				filter.addSurveyType("quiz");
+			} else {
+				filter.removeSurveyType("quiz");
+			}
+			if (filterDelphi) {
+				filter.addSurveyType("delphi");
+			} else {
+				filter.removeSurveyType("delphi");
+			}
+			if (filterEVote) {
+				filter.addSurveyType("evote");
+			} else {
+				filter.removeSurveyType("evote");
+			}
+			if (filterECF) {
+				filter.addSurveyType("ecf");
+			} else {
+				filter.removeSurveyType("ecf");
 			}
 
 			if (request.getParameter("sortkey") == null) {

@@ -823,6 +823,8 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
+		surveyService.checkSurveyCreationLimit(u.getId());		
+		
 		if (request.getParameter("uuid") != null && request.getParameter("uuid").length() > 0) {
 			// Case 1: import survey
 			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
@@ -1570,7 +1572,7 @@ public class ManagementController extends BasicController {
 		}
 
 		survey.setLanguage(uploadedSurvey.getLanguage());
-		survey.setTitle(uploadedSurvey.getTitle());
+		survey.setTitle(Tools.filterHTML(uploadedSurvey.getTitle()));
 
 		boolean sendListFormMail = false;
 
@@ -1604,6 +1606,7 @@ public class ManagementController extends BasicController {
 		survey.setShowCountdown(uploadedSurvey.getShowCountdown());
 
 		survey.setIsDelphiShowAnswersAndStatisticsInstantly(uploadedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly());
+		survey.setIsDelphiShowStartPage(uploadedSurvey.getIsDelphiShowStartPage());
 		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
 		survey.setMinNumberDelphiStatistics(uploadedSurvey.getMinNumberDelphiStatistics());
 		if (survey.getIsECF() && creation) {
@@ -1716,8 +1719,8 @@ public class ManagementController extends BasicController {
 		survey.setEscapeLink(uploadedSurvey.getEscapeLink());
 		survey.setAudience(uploadedSurvey.getAudience());
 
-		survey.setQuizWelcomeMessage(uploadedSurvey.getQuizWelcomeMessage());
-		survey.setQuizResultsMessage(uploadedSurvey.getQuizResultsMessage());
+		survey.setQuizWelcomeMessage(Tools.filterHTML(uploadedSurvey.getQuizWelcomeMessage()));
+		survey.setQuizResultsMessage(Tools.filterHTML(uploadedSurvey.getQuizResultsMessage()));
 
 		survey.setShowPDFOnUnavailabilityPage(uploadedSurvey.getShowPDFOnUnavailabilityPage());
 		survey.setShowDocsOnUnavailabilityPage(uploadedSurvey.getShowDocsOnUnavailabilityPage());
@@ -1928,7 +1931,7 @@ public class ManagementController extends BasicController {
 			for (Entry<String, String[]> entry : parameterMap.entrySet()) {
 				if (entry.getKey().startsWith("linklabel")) {
 					String number = entry.getKey().substring(9);
-					String label = number + "#" + Tools.escapeHTML(entry.getValue()[0]);
+					String label = number + "#" + Tools.escapeHTML(Tools.filterHTML(entry.getValue()[0]));
 					String url = parameterMap.get(entry.getKey().replace("label", "url"))[0];
 
 					if (StringUtils.hasText(label) && StringUtils.hasText(url)) {
@@ -1980,7 +1983,7 @@ public class ManagementController extends BasicController {
 			survey.getBackgroundDocuments().clear();
 			for (Entry<String, String[]> entry : parameterMap.entrySet()) {
 				if (entry.getKey().startsWith("doclabel")) {
-					String label = Tools.escapeHTML(entry.getValue()[0]);
+					String label = Tools.escapeHTML(Tools.filterHTML(entry.getValue()[0]));
 					String url = parameterMap.get(entry.getKey().replace("label", "url"))[0];
 
 					if (StringUtils.hasText(label) && StringUtils.hasText(url)) {
@@ -2858,7 +2861,7 @@ public class ManagementController extends BasicController {
 			if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 				result = new ModelAndView("management/testQuiz", "form", form);
 				result.addObject("isquizpage", true);
-			} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+			} else if (survey.getIsDelphi() && survey.getIsDelphiShowStartPage() && request.getParameter("startDelphi") == null) {
 				result = new ModelAndView("management/testDelphi", "form", form);
 				result.addObject("isdelphipage", true);
 			}
@@ -3995,7 +3998,7 @@ public class ManagementController extends BasicController {
 								result.add(s.toString());
 							}
 						} else if (question instanceof com.ec.survey.model.survey.Image || question instanceof Text
-								|| question instanceof Ruler) {
+								|| question instanceof Ruler || question instanceof Confirmation) {
 							// these elements are not displayed
 						} else {
 							StringBuilder s = new StringBuilder();
@@ -4640,9 +4643,10 @@ public class ManagementController extends BasicController {
 		}
 		
 		String name = request.getParameter("name");
+		String email = request.getParameter("email");
 		String order = request.getParameter("order");
 		
-		List<ResultAccess> result = surveyService.getResultAccesses(u.getResultAccess(), shortname, Integer.parseInt(page), Integer.parseInt(rows), name, order, locale);
+		List<ResultAccess> result = surveyService.getResultAccesses(u.getResultAccess(), shortname, Integer.parseInt(page), Integer.parseInt(rows), name, email, order, locale);
 		sessionService.upgradePrivileges(survey, u, request);
 
 		if (sessionService.userIsFormAdmin(survey, u, request) || u.getLocalPrivileges().get(LocalPrivilege.FormManagement) >= 2)

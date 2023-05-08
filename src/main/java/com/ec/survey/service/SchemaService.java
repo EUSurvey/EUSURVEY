@@ -49,6 +49,33 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+	
+	@Transactional
+	public void step105a() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.MaxSurveysPerUser);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.MaxSurveysPerUser);
+			s.setValue("10");
+			s.setFormat("Integer");
+			session.saveOrUpdate(s);
+		}
+		
+		existing = settingsService.get(Setting.MaxSurveysTimespan);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.MaxSurveysTimespan);
+			s.setValue("1440");
+			s.setFormat("minutes");
+			session.saveOrUpdate(s);
+		}
+
+		status.setDbversion(105);
+		session.saveOrUpdate(status);
+	}
 
 	@Transactional
 	public void step108() {

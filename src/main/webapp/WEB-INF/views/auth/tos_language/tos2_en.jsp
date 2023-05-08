@@ -154,7 +154,7 @@
 				EUSurvey is fully open source and published under the
 				<a target="_blank" href="https://joinup.ec.europa.eu/collection/eupl">EUPL</a>
 				licence. You can download the source code from GitHub:
-				<a target="_blank" href="https://github.com/EUSurvey/EUSURVEY/tree/develop">https://github.com/EUSurvey/EUSURVEY/tree/develop</a></li>
+				<a target="_blank" href="https://github.com/EUSurvey">https://github.com/EUSurvey</a></li>
 			<li><b>Changes.</b> DIGIT reserves the right, at its sole
 				discretion, to modify or replace any part of this agreement. Your
 				continued use of the service or access to the EUSurvey application

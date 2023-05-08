@@ -5904,6 +5904,7 @@ button.close {
   position: relative;
   width: auto;
   margin: 10px;
+  margin-top: 40px;
 }
 .modal-content {
   position: relative;
