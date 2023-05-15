@@ -1048,6 +1048,10 @@ public class RunnerController extends BasicController {
 					modelReturn.addObject(Constants.SHORTNAME, uidorshortname);
 					modelReturn.addObject("surveyname", survey.cleanTitle());
 
+					if (survey.getIsOPC()) {
+						modelReturn.addObject("allowIndex", true);
+					}
+					
 					if (survey.getContact().startsWith("form:")) {
 						modelReturn.addObject("contact", true);
 					}
@@ -1281,6 +1285,10 @@ public class RunnerController extends BasicController {
 			}
 
 			request.getSession().setAttribute(Constants.UNIQUECODE, uniqueCode);
+			
+			if (survey.getIsOPC()) {
+				model.addObject("allowIndex", true);
+			}
 					
 			model.addObject(Constants.UNIQUECODE, uniqueCode);
 			return model;

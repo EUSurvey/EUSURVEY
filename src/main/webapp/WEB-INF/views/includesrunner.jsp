@@ -17,6 +17,10 @@
 <meta name="_csrf_header" content="${_csrf.headerName}"/>
 <meta name="Description" content="EUSurvey is an online survey-management system built for the creation and publishing of globally accessible forms, such as user satisfaction surveys and public consultations." />
 
+<c:if test="${allowIndex == null}">
+	<meta name="robots" content="noindex"></meta>
+</c:if>
+
 <link href="${contextpath}/resources/css/jquery-ui.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 <link href="${contextpath}/resources/css/jquery-ui.structure.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 <link href="${contextpath}/resources/css/jquery-ui.theme.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>

@@ -489,6 +489,8 @@ public class BasicController implements BeanFactoryAware {
 		if (request.getParameter("ecaslogout") != null) {
 			model.addObject("ECASLOGOUT", ecaslogout);
 		}
+		
+		model.addObject("allowIndex", true);
 
 		return model;
 	}
