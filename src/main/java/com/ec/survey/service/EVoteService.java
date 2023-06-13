@@ -1065,7 +1065,7 @@ public class EVoteService extends BasicService {
 					listSeatDistribution.setPreferentialSeats(finalPreferentialSeats[counter++]);
 				}
 			}
-		} else if (full && survey.geteVoteTemplate().equals("p")) {
+		} else if (survey.geteVoteTemplate().equals("p")) {
 			// only need Votes per Candidate
 
 			List<ElectedCandidate> allCandidatesOrdered = getCandidates(config.listSeatDistributions.keySet(), config.candidateVotes, true);
