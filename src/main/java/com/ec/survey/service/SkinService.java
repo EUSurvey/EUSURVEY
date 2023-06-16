@@ -40,7 +40,7 @@ public class SkinService extends BasicService {
 	{
 		List<Skin> result = new ArrayList<>();
 		
-		Skin[] defaultSkins = new Skin[5];
+		Skin[] defaultSkins = new Skin[6];
 		
 		for (Skin skin: skins)
 		{
@@ -63,6 +63,9 @@ public class SkinService extends BasicService {
 					case "Official EC Skin":
 						defaultSkins[4] = skin;
 						break;
+					case "ECA 2023":
+						defaultSkins[5] = skin;
+						break;
 					default:
 						result.add(skin);
 						break;
@@ -72,7 +75,7 @@ public class SkinService extends BasicService {
 			}		
 		}
 		
-		for (int i = 4; i >= 0; i--)
+		for (int i = 5; i >= 0; i--)
 		{
 			if (defaultSkins[i] != null) {
 				result.add(0, defaultSkins[i]);

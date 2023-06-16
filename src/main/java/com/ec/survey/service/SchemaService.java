@@ -51,6 +51,27 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domaintWorker;
 	
 	@Transactional
+	public void step109() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		if (!isOss()) {
+			Skin standardskin = skinService.get(1);
+			Skin ecaskin = new Skin();
+			ecaskin.setName("ECA 2023");
+			ecaskin.setOwner(standardskin.getOwner());
+			ecaskin.setIsPublic(true);
+			ecaskin.setUpdateDate(new Date());
+			ecaskin.getElements().clear();
+			for (SkinElement element : standardskin.getElements()) {
+				ecaskin.getElements().add(element.copy());
+			}
+			skinService.add(ecaskin);
+		}
+		status.setDbversion(109);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
 	public void step105a() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
