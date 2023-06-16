@@ -178,6 +178,9 @@
 		<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("ECA Skin")}'>
 			<link href="${contextpath}/resources/css/ecanew.css" rel="stylesheet" type="text/css"></link>
 		</c:when>
+		<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("ECA 2023")}'>
+			<link href="${contextpath}/resources/css/eca2023.css" rel="stylesheet" type="text/css"></link>
+		</c:when>
 		<c:when test="${form.survey.skin != null && !form.wcagCompliance && ismobile == null}">
 			<style type="text/css">
 				<c:choose>
@@ -299,6 +302,10 @@
 					<%@ include file="../headerECAnew.jsp" %>
 					<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
 				</c:when>
+				<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("ECA 2023")}'>
+					<%@ include file="../headerECA2023.jsp" %>
+					<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
+				</c:when>
 				<c:when test="${responsive != null}">
 					<%@ include file="../headerresponsive.jsp" %>	 
 				</c:when>
@@ -335,6 +342,10 @@
 			<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("ECA Skin")}'>
 				</div>  
 				<%@ include file="../footerNoLanguagesECAnew.jsp" %>
+			</c:when>
+			<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("ECA 2023")}'>
+				</div>  
+				<%@ include file="../footerNoLanguagesECA2023.jsp" %>
 			</c:when>
 			<c:otherwise>
 				<%@ include file="../footerNoLanguages.jsp" %> 
