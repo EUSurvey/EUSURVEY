@@ -1145,7 +1145,7 @@ public class WebServiceController extends BasicController {
 
 			for (int i = 0; i < values1.length; i++) {
 				// convert and replace invalid characters
-				String val = Ucs2Utf8.unconvert(values1[i]).replaceAll(re, "");
+				String val = Ucs2Utf8.unconvert(values1[i], request.getCharacterEncoding()).replaceAll(re, "");
 				values1[i] = val;
 			}
 

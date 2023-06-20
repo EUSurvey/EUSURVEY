@@ -827,9 +827,9 @@ public class ParticipantsController extends BasicController {
 	@PostMapping(value = "/saveTemplateJSON", headers = "Accept=*/*")
 	public @ResponseBody String saveTemplateJSON(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			String text1 = Tools.filterHTML(Ucs2Utf8.unconvert(request.getParameter("text1")));
-			String text2 = Tools.filterHTML(Ucs2Utf8.unconvert(request.getParameter("text2")));
-			String subject = Tools.filterHTML(Ucs2Utf8.unconvert(request.getParameter("subject")));
+			String text1 = Tools.filterHTML(Ucs2Utf8.unconvert(request.getParameter("text1"), request.getCharacterEncoding()));
+			String text2 = Tools.filterHTML(Ucs2Utf8.unconvert(request.getParameter("text2"), request.getCharacterEncoding()));
+			String subject = Tools.filterHTML(Ucs2Utf8.unconvert(request.getParameter("subject"), request.getCharacterEncoding()));
 			String template = request.getParameter("template");
 			String texttemplate = request.getParameter("texttemplate");
 			String name = request.getParameter("name");

@@ -1306,7 +1306,7 @@ public class RunnerController extends BasicController {
 		try {
 
 			String fileName = request.getParameter("fileName");
-			fileName = Ucs2Utf8.unconvert(fileName);
+			fileName = Ucs2Utf8.unconvert(fileName, request.getCharacterEncoding());
 			if (fileName.contains(Constants.PATH_DELIMITER) || fileName.contains("\\") || fileName.contains("*")) {
 				throw new ValidationException("Invalid file name: " + fileName, "Invalid file name: " + fileName);
 			}
