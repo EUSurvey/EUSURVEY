@@ -1326,6 +1326,12 @@ public class WebServiceController extends BasicController {
 				}
 			}
 
+			if (answerSet.getAnswers().isEmpty()) {
+				logger.error("prefill call rejected as the draft contribution would be empty: " + getFullURL(request));
+				response.setStatus(412);
+				return "";
+			}
+			
 			try {
 				answerService.saveDraft(draft);
 			} catch (Exception e) {
@@ -1340,6 +1346,17 @@ public class WebServiceController extends BasicController {
 			response.setStatus(412);
 			return "";
 		}
+	}
+	
+	private static String getFullURL(HttpServletRequest request) {
+	    StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
+	    String queryString = request.getQueryString();
+
+	    if (queryString == null) {
+	        return requestURL.toString();
+	    } else {
+	        return requestURL.append('?').append(queryString).toString();
+	    }
 	}
 
 	/// survey API
