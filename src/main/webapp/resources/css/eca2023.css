@@ -638,3 +638,7 @@ body {
 	top: 10px;
 	bottom: 30px;
 }
+
+.page-wrap {
+	margin-bottom: -80px;
+}
