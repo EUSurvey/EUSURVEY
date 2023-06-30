@@ -26,8 +26,6 @@
 	</div>
 </div>
 
-<div style="margin-bottom: 130px;"></div>
-
 <div class="modal" id="show-wait-image" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
