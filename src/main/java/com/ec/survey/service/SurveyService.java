@@ -794,6 +794,25 @@ public class SurveyService extends BasicService {
 	private void synchronizeSurvey(Survey survey, String languageCode, boolean setSurvey) {
 		SurveyHelper.synchronizeSurvey(survey, languageCode, translationService, getLanguage(languageCode), setSurvey);
 	}
+	
+	@Transactional
+	public String getSurveyUIDIfDraftSurvey(int id) {
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery query = session.createSQLQuery("SELECT SURVEY_UID, ISDRAFT FROM SURVEYS WHERE SURVEY_ID = :SURVEY_ID");
+		
+		@SuppressWarnings("unchecked")
+		List<Object> datesList = query.setInteger("SURVEY_ID", id).list();
+		
+		if (datesList == null || datesList.size() == 0) return null;
+		
+		Object[] values = (Object[]) datesList.get(0);
+		
+		String uid = (String) values[0];
+		boolean isdraft = (Boolean) values[1];
+		
+		if (isdraft) return uid;
+		return null;
+	}
 
 	@Transactional
 	public Survey getSurvey(int id) {

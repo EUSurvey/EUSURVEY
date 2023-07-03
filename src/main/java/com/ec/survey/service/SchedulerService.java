@@ -212,12 +212,13 @@ public class SchedulerService extends BasicService {
 				
 				while (currentDate.before(endDate) && id > 0)
 				{			
-					Survey survey = surveyService.getSurvey(id);
+					//Survey survey = surveyService.getSurvey(id);
+					String uid = surveyService.getSurveyUIDIfDraftSurvey(id);
 					
-					if (survey != null && survey.getIsDraft())
+					if (uid != null)
 					{
 						long tStart = System.currentTimeMillis();
-						int deletedfiles = fileService.deleteOldAnswerPDFs(survey.getUniqueId(), lastmonth);		
+						int deletedfiles = fileService.deleteOldAnswerPDFs(uid, lastmonth);		
 	
 						long tEnd = System.currentTimeMillis();
 						long tDelta = tEnd - tStart;
@@ -225,7 +226,7 @@ public class SchedulerService extends BasicService {
 						
 						if(deletedfiles > 0)
                         {
-							logger.info(deletedfiles + " old answer pdfs of survey " + survey.getId() + " deleted, it took " + elapsedSeconds + " seconds");
+							logger.info(deletedfiles + " old answer pdfs of survey " + id + " deleted, it took " + elapsedSeconds + " seconds");
                         }
 					}
 					
