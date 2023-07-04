@@ -17,6 +17,14 @@ html, body {
   height: 100%;
 }
 
+.underlined a {
+	text-decoration: underline;
+}
+
+.contrast a {
+	color: #3073ad;
+}
+
 /* Helper for rows */ 
 .mtop20 {
 	margin-top: 20px;
@@ -1613,9 +1621,10 @@ div.medianpa {
 	margin-right: 20px;
 }
 
-.chart-download {
+.chart-download, .chart-clipboard {
 	color: inherit;
 	float: right;
+	margin-left: 10px;
 }
 
 .update-error {
@@ -1738,7 +1747,7 @@ div.medianpa {
 
 .helptext {
 	font-size: 12px;
-	color: #777;
+	color: #717171;
 	font-style: oblique;
 }
 
@@ -2123,7 +2132,7 @@ a.elearningWelcomeLink:hover
 
 #linkSelfRegA, #linkSelfRegA:hover 
 {
-	color:#A6A6A6;
+	color:#555;
 }
 
 .h3Privacy
@@ -2154,7 +2163,7 @@ a.elearningWelcomeLink:hover
 .surveyrunnerinfo p
 {
 	font-style: italic;
-    color: #777;
+    color: #6b6b6b;
 }
 
 .evote-voter-overview {
@@ -2229,7 +2238,7 @@ a.elearningWelcomeLink:hover
 }
 
 #actions-menu-tab-toggle div {
-	background-color: #4caf50;
+	background-color: #39853c;
     color: #FFF;
 	padding: 5px;
 	padding-left: 10px;

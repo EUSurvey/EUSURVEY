@@ -128,7 +128,7 @@ public abstract class ExportCreator implements Runnable {
 	abstract void exportAddressBook() throws Exception;
 	abstract void exportActivities() throws Exception;
 	abstract void exportTokens() throws Exception;
-	
+	abstract void exportPDFReport() throws Exception;
 	
 	private void initAnswers() throws Exception
 	{
@@ -230,6 +230,7 @@ public abstract class ExportCreator implements Runnable {
 			case Tokens: exportTokens(); break;
 			case Files: exportContent(sync); break;
 			case Survey: exportContent(sync); break;
+			case PDFReport: exportPDFReport(); break;
 		default:
 			break;
 		}

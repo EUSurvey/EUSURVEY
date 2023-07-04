@@ -189,8 +189,12 @@ public class InvitationMailCreator implements Runnable {
 		}
 			
 		String middleText = host + "runner/invited/" + participationGroup.getId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
-			
-		String body = text1 + "<br /><br /><a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
+
+		String body = text1;
+		if (!text1.endsWith("</p>")) {
+			body += "<br /><br />";
+		}
+		body += "<a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
 		body = body.replace("{Name}", ecasUser.getDisplayName());		
 		body = insertDisclaimer(survey, body);		
 		body += "<br/><br/><span style=\"font-size: 9pt; color: #999\">This message was sent by " + sendername + " using EUSurvey's invitation service</span>";
@@ -226,7 +230,7 @@ public class InvitationMailCreator implements Runnable {
 	     
     	 return "[CONTENT]";
 	}
-
+	
 	private void createAndSendInvitation(ParticipationGroup participationGroup, Attendee attendee, String senderAddress, String sendername, String reply, String subject, Survey survey, String text1, String text2, String mailtemplate) throws Exception
 	{		
 		//check if there already is an invitation
@@ -251,8 +255,12 @@ public class InvitationMailCreator implements Runnable {
 		}
 			
 		String middleText = host + "runner/invited/" + participationGroup.getId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
-		
-		String body = text1 + "<br /><br /><a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
+
+		String body = text1;
+		if (!text1.endsWith("</p>")) {
+			body += "<br /><br />";
+		}
+		body += "<a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
 		body = replaceAttributePlaceholders(body, attendee);		
 		body = insertDisclaimer(survey, body);		
 		body += "<br/><br/><span style=\"font-size: 9pt; color: #999\">This message was sent by " + sendername + " using EUSurvey's invitation service</span>";

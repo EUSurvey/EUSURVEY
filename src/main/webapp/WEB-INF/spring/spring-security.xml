@@ -42,6 +42,7 @@
 		<security:intercept-url pattern="/*/management/preparecharts/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/preparestatistics/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/preparestatisticsquiz/**"	access="permitAll" />
+		<security:intercept-url pattern="/*/management/preparepdfreport/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/statisticsJSON/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/resultsJSON"	access="permitAll" />
 		<security:intercept-url pattern="/ecfResultJSON"	access="permitAll" />

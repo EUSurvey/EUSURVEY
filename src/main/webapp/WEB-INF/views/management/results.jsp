@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.Results" /></title>
 	<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js"></script>
@@ -538,7 +538,7 @@
 			$("#results-statistics-link").addClass("btn-primary");
 			$("#results-statistics").removeClass('hidden');
 			$("#statistics-export-buttons").removeClass('hidden');
-					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
+			$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 			
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
@@ -790,7 +790,36 @@
 	         });			
 			
 			return false;
-		}		
+		}
+		
+		function createPDFReport() {
+			var showshortnames = $("#show-assigned-values").is(":checked");
+			var allanswers = $("#allAnswers").val();
+			
+			var charts = {};
+			
+			$('.chart-download:visible').each(function(){
+				var questionUid = $(this).closest(".chart-wrapper").attr("data-question-uid");
+				var href = $(this).attr("href");
+				charts[questionUid] = href;
+			});
+			
+			$.ajax({
+	           type: "POST",
+	           url: "${contextpath}/exports/start/PDFReport/pdf",
+	           data: {exportName: "PDF Report", showShortnames: showshortnames, allAnswers: allanswers, group: "", charts: JSON.stringify(charts)},
+	           beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+	           success: function(data)
+	           {
+	        	   if (data == "success") {
+						showExportSuccessMessage();
+					} else {
+						showExportFailureMessage();
+					}
+					$('#deletionMessage').addClass('hidden');
+			   }
+	         });	
+		}
 		
 		function reOrder(target, type)
 		{		
@@ -1024,6 +1053,24 @@
 			return "unknown label";
 		}
 		
+		function copyBase64ImageToClipboard(base64) {
+			base64 = base64.replace("data:image/png;base64,", "");
+			const byteCharacters = atob(base64);
+			const byteNumbers = new Array(byteCharacters.length);
+			for (let i = 0; i < byteCharacters.length; i++) {
+			    byteNumbers[i] = byteCharacters.charCodeAt(i);
+			}
+			const byteArray = new Uint8Array(byteNumbers);
+			const blob = new Blob([byteArray], {type: 'image/png'});
+			
+			try {
+				navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);				
+			} catch (e) {
+				showError("<spring:message code="error.CopyToClipboardFailed" />");
+			}
+			
+		}
+		
 	</script>
 	
 	<style type="text/css">
@@ -1170,8 +1217,14 @@
 									<span class="deactivatedexports">
 										<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
 									</span>
+									<span class="deactivatedexports">
+										<a class="btn btn-default disabled"><spring:message code="label.PDFReport" /></a>
+									</span>
 									<span class="activatedexports hideme">
 										<a class="btn btn-default" onclick="showExportDialog('Statistics')"><spring:message code="label.Export" /></a>
+									</span>
+									<span class="activatedexports hideme">
+										<a class="btn btn-default" onclick="createPDFReport()"><spring:message code="label.PDFReport" /></a>
 									</span>
 								</c:otherwise>
 							</c:choose>

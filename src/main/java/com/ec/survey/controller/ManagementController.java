@@ -3784,6 +3784,7 @@ public class ManagementController extends BasicController {
 
 			String rows = request.getParameter("rows");
 			String page = request.getParameter("page");
+			String discussionSortingOption = request.getParameter("discussionSortingOption");
 
 			if (page == null || rows == null) {
 				return null;
@@ -4482,6 +4483,62 @@ public class ManagementController extends BasicController {
 
 		results.setViewName("management/statisticspdf");
 		results.addObject("forpdf", true);
+		return results;
+	}
+		
+	@RequestMapping(value = "/preparepdfreport/{id}/{exportId}", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public ModelAndView preparepdfreport(@PathVariable String id, @PathVariable String exportId, Locale locale,
+			HttpServletRequest request) throws Exception {
+
+		Export export = exportService.getExport(Integer.parseInt(exportId), false);
+
+		if (export == null) {
+			logger.error("export is null");
+			return null;
+		}
+
+		if (export.getState() != ExportState.Pending) {
+			logger.error("export state is " + export.getState());
+			return null;
+		}
+
+		if (!export.getSurvey().getId().equals(Integer.parseInt(id))) {
+			logger.error("mismatch: " + export.getSurvey().getId() + " : " + id);
+			return null;
+		}
+
+		Survey s = surveyService.getSurvey(Integer.parseInt(id), false, true);
+
+		Survey survey = surveyService.getSurveyInOriginalLanguage(s.getId(), s.getShortname(), s.getUniqueId());
+
+		surveyService.initializeSurvey(survey);
+
+		ResultFilter filter = export.getResultFilter().copy();
+
+		if (filter.getLanguages() != null && filter.getLanguages().isEmpty()) {
+			filter.setLanguages(null);
+		}
+
+		ModelAndView results = results(survey, new HashMap<>(), null, survey.getIsDraft(), export.isAllAnswers(),
+				filter, true);
+
+		Publication publication = new Publication();
+		publication.setFilter(export.getResultFilter());
+
+		publication.getFilter().setVisibleQuestions(publication.getFilter().getExportedQuestions());
+
+		publication.setAllQuestions(publication.getFilter().getVisibleQuestions().isEmpty());
+		results.addObject("publication", publication);
+
+		if (export.getShowShortnames() != null && export.getShowShortnames()) {
+			results.addObject("showShortnames", true);
+		}
+
+		results.setViewName("management/statisticspdf");
+		results.addObject("forpdf", true);
+		
+		results.addObject("charts", export.getChartsByQuestionUID());
+		
 		return results;
 	}
 

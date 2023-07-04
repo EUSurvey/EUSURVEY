@@ -1046,6 +1046,10 @@ public class RunnerController extends BasicController {
 					modelReturn.setViewName("runner/surveyLogin");
 					modelReturn.addObject(Constants.SHORTNAME, uidorshortname);
 					modelReturn.addObject("surveyname", survey.cleanTitle());
+					
+					if (survey.getIsOPC()) {
+						modelReturn.addObject("allowIndex", true);
+					}
 
 					if (survey.getContact().startsWith("form:")) {
 						modelReturn.addObject("contact", true);
@@ -1275,12 +1279,22 @@ public class RunnerController extends BasicController {
 					model = new ModelAndView("runner/delphi", "form", f);
 					model.addObject("isdelphipage", true);
 					model.addObject("runnermode", true);
+					
+					String originalUniqueCode = request.getParameter("originalUniqueCode");
+					if (originalUniqueCode != null)
+					{
+						uniqueCode = originalUniqueCode;
+					}
 				}
 
 				validCodesService.add(uniqueCode, survey);
 			}
 
 			request.getSession().setAttribute(Constants.UNIQUECODE, uniqueCode);
+			
+			if (survey.getIsOPC()) {
+				model.addObject("allowIndex", true);
+			}
 					
 			model.addObject(Constants.UNIQUECODE, uniqueCode);
 			return model;
@@ -1298,7 +1312,7 @@ public class RunnerController extends BasicController {
 		try {
 
 			String fileName = request.getParameter("fileName");
-			fileName = Ucs2Utf8.unconvert(fileName);
+			fileName = Ucs2Utf8.unconvert(fileName, request.getCharacterEncoding());
 			if (fileName.contains(Constants.PATH_DELIMITER) || fileName.contains("\\") || fileName.contains("*")) {
 				throw new ValidationException("Invalid file name: " + fileName, "Invalid file name: " + fileName);
 			}

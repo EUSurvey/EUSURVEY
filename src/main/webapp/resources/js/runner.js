@@ -443,7 +443,8 @@ function createUploader(instance, maxSize)
 	    		 $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + getWrongExtensionMessage(fileName) + "</div>");
 	    	}
 
-			$(".qq-uploader input[type='file']").attr("title", " ");			
+			$(".qq-uploader input[type='file']").attr("title", " ");
+			$(instance).find(".btn").first().find("input").focus();
 		},
 		onError: function() {
 			$(this.element).parent().find(".uploadinfo").hide();
@@ -758,8 +759,9 @@ function deleteFile(id, uniqueCode, fileName, button) {
 	  cache: false,
 		success : function(data) {
 			if (data.success) {
-				updateFileList($(button).parent().parent().siblings(
-						".file-uploader").first(), data);
+				let instance = $(button).parent().parent().siblings(".file-uploader").first();				
+				updateFileList(instance, data);						
+				$(instance).find(".btn").first().find("input").focus();
 			} else {
 				showError("Not possible to delete file");
 			}

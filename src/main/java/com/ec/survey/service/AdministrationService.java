@@ -127,7 +127,7 @@ public class AdministrationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		HashMap<String, Object> parameters = new HashMap<>();
-		Query query = session.createQuery(getHql(filter, parameters));
+		Query query = session.createQuery(getHql(filter, parameters, false));
 		sqlQueryService.setParameters(query, parameters);
 
 		return query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).setFirstResult(sqlPagination.getFirstResult()).setMaxResults(sqlPagination.getMaxResult()).list();
@@ -138,7 +138,7 @@ public class AdministrationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		HashMap<String, Object> parameters = new HashMap<>();
-		Query query = session.createQuery(getHql(filter, parameters));
+		Query query = session.createQuery(getHql(filter, parameters, false));
 		sqlQueryService.setParameters(query, parameters);
 
 		@SuppressWarnings("unchecked")
@@ -276,11 +276,20 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional
-	public String deleteUser(int id) {
+	public String deleteUser(int id, boolean onlySetFlag) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = (User) session.get(User.class, id);
 		String login = user.getLogin();
-		session.delete(user);
+		
+		if (onlySetFlag) {
+			user.setDeleteDate(new Date());
+			user.setDeleteRequested(true);	
+			user.setDeleted(true);		
+			session.update(user);
+		} else {
+			session.delete(user);
+		}
+		
 		return login;
 	}
 
@@ -589,7 +598,7 @@ public class AdministrationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		HashMap<String, Object> parameters = new HashMap<>();
-		Query query = session.createQuery(getHql(filter, parameters));
+		Query query = session.createQuery(getHql(filter, parameters, true));
 
 		for (Entry<String, Object> entry : parameters.entrySet()) {
 			Object value = entry.getValue();
@@ -602,11 +611,12 @@ public class AdministrationService extends BasicService {
 			}
 		}
 
-		return query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).list().size();
+		return ConversionTools.getValue(query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).uniqueResult());
 	}
 
-	private String getHql(UserFilter filter, HashMap<String, Object> parameters) {
-		StringBuilder hql = new StringBuilder("SELECT DISTINCT u FROM User u LEFT JOIN u.roles as r WHERE u.id > 0");
+	private String getHql(UserFilter filter, HashMap<String, Object> parameters, boolean doCount) {
+		
+		StringBuilder hql = new StringBuilder("SELECT " + (doCount ? "COUNT(DISTINCT u)" : "DISTINCT u") + " FROM User u LEFT JOIN u.roles as r WHERE u.id > 0");
 
 		if (filter.getLogin() != null && filter.getLogin().length() > 0) {
 			hql.append(" AND u.login like :login");

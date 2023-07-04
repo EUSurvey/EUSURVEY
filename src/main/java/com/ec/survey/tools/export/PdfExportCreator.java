@@ -40,6 +40,15 @@ public class PdfExportCreator extends ExportCreator {
 		fis.close();
 		Files.delete(file.toPath());
 	}
+	
+	@Override
+	void exportPDFReport() throws Exception {
+		File file = pdfService.createPDFReport(form.getSurvey(), export.getId().toString());
+		FileInputStream fis = new FileInputStream(file);
+		IOUtils.copy(fis, outputStream);
+		fis.close();
+		Files.delete(file.toPath());
+	}
 
 	@Override
 	void exportAddressBook() throws Exception {

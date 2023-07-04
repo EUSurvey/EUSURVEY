@@ -78,6 +78,7 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	private @Value("${enablecookieconsentkit:@null}") String enablecookieconsentkit;
 
 	private @Value("${contextpath}") String contextpath;	
+	private @Value("${googlesiteverification:#{null}}") String googlesiteverification;
 	
 	@Resource(name="settingsService")
 	private SettingsService settingsService;
@@ -137,6 +138,8 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             modelAndView.getModelMap().addAttribute("monitoringEmail", monitoringEmail);
             modelAndView.getModelMap().addAttribute("enablereportingdatabase", enablereportingdatabase);
             modelAndView.getModelMap().addAttribute("enablecookieconsentkit", enablecookieconsentkit);
+            
+            modelAndView.getModelMap().addAttribute("googlesiteverification", googlesiteverification);
             
             Device device = DeviceUtils.getCurrentDevice(request);
             if (!request.getRequestURI().endsWith("management/edit") && (device.isMobile() || device.isTablet()))

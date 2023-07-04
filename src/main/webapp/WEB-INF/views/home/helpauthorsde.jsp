@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html; charset=UTF-8" session="true" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.Documentation" /></title>	
 	<%@ include file="../includes.jsp" %>	
@@ -64,6 +64,10 @@
 			font-style: italic;
 			padding: 2px;
 			text-align: center;
+		}
+
+		#faqcontent a {
+			text-decoration: underline;
 		}
 
 	</style>
@@ -743,7 +747,7 @@
 				„Aussehen“ verfügbar.
 			</p>
 			<figure>
-				<img src="${contextpath}/resources/images/documentation/motivation_popup_1_DE.png" style="width: 75%"/>
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/motivation_popup_1_DE.png" style="width: 75%"/>
 				<figcaption>Motivations-Popup in den „Eigenschaften“ der Umfrage</figcaption>
 			</figure>
 			<p>
@@ -765,7 +769,7 @@
 				Schließlich kann der Text über das Feld „Motivationstext“/ „Motivation text“ angepasst werden.
 			</p>
 			<figure>
-				<img src="${contextpath}/resources/images/documentation/motivation_popup_2_DE.png" style="width: 75%"/>
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/motivation_popup_2_DE.png" style="width: 75%"/>
 				<figcaption>Optionen des Motivations-Popups</figcaption>
 			</figure>
 		<h1>
@@ -1257,7 +1261,7 @@
 			</p>
 			<p>
 				Aus diesem Grund befindet sich in der oberen rechten Ecke des Formular-Editors ein kleiner Indikator:<br />
-				<img src="${contextpath}/resources/images/documentation/complexityDE.png" />
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/complexityDE.png" />
 			</p>
 			<p>
 				Ihre Umfrage könnte aus verschiedenen Gründen einen hohen Komplexitätsgrad aufweisen: 
@@ -1309,7 +1313,7 @@
 			<p>
 				Wenn Sie einen <strong>Abschnitt</strong> der ersten Stufe verwenden, haben Sie die Möglichkeit, die darunter liegenden Fragen/Elemente in ihrer ursprünglichen Reihenfolge zu belassen oder ihre Position zu randomisieren. Die Zufallsanordnung kann in den Abschnittseigenschaften direkt neben "Ordnen nach" ausgewählt werden.
 			</p>
-			<img src="${contextpath}/resources/images/documentation/randomization_DE.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/randomization_DE.png" style="margin-bottom: 1em" />
 			<p>Bitte beachten Sie auch die folgenden Punkte:</p>
 			<ul>
 				<li>Alle Umfrageelemente (einschließlich Bilder und statischer Text) werden zufällig angeordnet.</li>
@@ -1318,7 +1322,7 @@
 				<li>Die PDF-Version der Umfrage (Funktion "PDF-Version herunterladen") zeigt die Fragen immer in der ursprünglichen Reihenfolge.</li>
 				<li>PDFs von Beiträgen zeigen die Fragen immer in der ursprünglichen Reihenfolge.</li>
 				<li>Wenn die automatische Nummerierung der Abschnitte/Fragen gleichzeitig mit der Randomisierungsfunktion aktiviert ist, werden auch die Fragennummern zusammen mit den Fragen randomisiert.
-					<div><img src="${contextpath}/resources/images/documentation/randomization_sections_DE.png" style="max-width: 100%;" /></div>
+					<div><img alt="Screenshot" src="${contextpath}/resources/images/documentation/randomization_sections_DE.png" style="max-width: 100%;" /></div>
 				</li>
 			</ul>
 			<p>Es gibt noch einen weiteren Punkt, der speziell für DELPHI-Umfragen gilt:</p>
@@ -1330,41 +1334,41 @@
 				Der Fragetyp "Formel" berechnet und zeigt einen Wert auf der Grundlage der vom Teilnehmer eingegebenen Daten an.
 				Damit können Sie z. B. eine Gesamtsumme oder einen Durchschnitt anzeigen und Ihrer Umfrage einen interaktiven Aspekt hinzufügen.
 			</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_1_DE.png" style="margin-bottom: 1em;" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_1_DE.png" style="margin-bottom: 1em;" />
 			<p>Die wichtigsten Punkte des Frageelements:</p>
 			<ul>
 				<li>
 					Für verschiedene Anwendungsfälle stehen gebrauchsfertige Funktionen zur Verfügung:<br>
-					<img src="${contextpath}/resources/images/documentation/formular_field_2_DE.png" style="margin-bottom: 1em" />
+					<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_2_DE.png" style="margin-bottom: 1em" />
 				</li>
 				<li>
 					Die Benutzer können eigene Formeln in das "Formel"-Feld eingeben:<br>
-					<img src="${contextpath}/resources/images/documentation/formular_field_3_DE.png" style="margin-bottom: 1em" />
+					<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_3_DE.png" style="margin-bottom: 1em" />
 				</li>
 			</ul>
 			<p>Die Element-IDs werden zum Zusammenstellen der Formel verwendet. Die Liste der IDs wird angezeigt, damit Sie die gewünschten IDs direkt auswählen können.
 				Sie können die IDs auch direkt in das Eingabefeld eingeben.</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_4_DE.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_4_DE.png" style="margin-bottom: 1em" />
 			<p>Bitte beachten Sie, dass die Element-IDs im Abschnitt "Erweitert" der Elementeigenschaften sichtbar sind.</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_5_DE.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_5_DE.png" style="margin-bottom: 1em" />
 			<p><span style="text-decoration: underline;">Beispiel 1:</span><br>
 				Im folgenden Beispiel ergibt sich das Feld "Formel" aus der Summe der beiden obigen Nummer-Fragen ("Nummernschieber").
 				Sobald der Umfrageteilnehmer den zweiten Wert (in unserem Beispiel 5) eingegeben hat, wird die Summe berechnet und in Echtzeit angezeigt.
 			</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_6_DE.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_6_DE.png" style="margin-bottom: 1em" />
 			<p><span style="text-decoration: underline;">Beispiel 2:</span><br>
 				Im folgenden Beispiel können Sie Ihren Umfrageteilnehmer auffordern, entweder seine monatliche oder seine jährliche Miete einzugeben.
 				Die Anwendung berechnet automatisch die jeweils andere Miete. Beide Felder bleiben für den Benutzer editierbar.
 			</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_7_DE.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_7_DE.png" style="margin-bottom: 1em" />
 			<p>
 				<span style="font-style: italic;">Der Umfrageteilnehmer hat 500 eingegeben und 6000 wurde berechnet.</span>
 			</p>
 			<p><span style="text-decoration: underline;">Beispiel 3 "Schreibgeschützt"-Option:</span></p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_8_DE.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_8_DE.png" style="margin-bottom: 1em" />
 			<p>Im folgenden Beispiel wird in Zeile 5 die Summe für jede Spalte angezeigt.
 				Diese Felder verwenden die Option "Schreibgeschützt", so dass die Summe vom Benutzer nicht geändert werden kann.</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_9_DE.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_9_DE.png" style="margin-bottom: 1em" />
 			<h1>
 				Sicherheit der Umfrage
 			</h1>
@@ -1515,7 +1519,7 @@
 						Aktivieren Sie die Option „Ermöglicht Teilnehmern, ihren Beitrag auszudrucken und als PDF-Datei zu erhalten“.
 					</li>
 				</ol>
-				<img src="${contextpath}/resources/images/documentation/printDE.png" />
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/printDE.png" />
 			</p>
 			<h2>
 				Wie kann ich den Teilnehmern erlauben, ihren Beitrag zu ändern (zu bearbeiten)?
@@ -1539,7 +1543,7 @@
 						Aktivieren Sie die Option „Ermöglicht Teilnehmern, ihren Beitrag zu ändern“
 					</li>
 				</ol>
-			<img src="${contextpath}/resources/images/documentation/changecontributionDE.png" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/changecontributionDE.png" />
 			</p>
 			<h1>
 				Umfrage testen
@@ -3376,17 +3380,17 @@
 				indem Sie die folgende URL verwenden:
 			</p>
 			<p>
-				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>
+				https://ec.europa.eu/eusurvey/runner/<span style="color: #e50000; font-weight: bold">SurveyAlias</span>/<span style="color: #e50000; font-weight: bold">TOKEN</span>
 			</p>
 			<p>
 				Ersetzen Sie dabei:
 			</p>
 			<ul>
 				<li>
-					<span style="color: #f00; font-weight: bold">SurveyAlias</span> mit dem <b>Alias Ihrer Umfrage</b>
+					<span style="color: #e50000; font-weight: bold">SurveyAlias</span> mit dem <b>Alias Ihrer Umfrage</b>
 				</li>
 				<li>
-					<span style="color: #f00; font-weight: bold">TOKEN</span> mit einem der Token aus der „Token-Liste“
+					<span style="color: #e50000; font-weight: bold">TOKEN</span> mit einem der Token aus der „Token-Liste“
 				</li>
 			</ul>
 			<h1>
@@ -3641,7 +3645,7 @@
 			</p>
 			<p>
 				<figure>
-					<img style="max-width: 920px" src="${contextpath}/resources/images/documentation/personal_data_modification.png">
+					<img alt="Screenshot" style="max-width: 920px" src="${contextpath}/resources/images/documentation/personal_data_modification.png">
 				</figure>
 			</p>
 			<p>

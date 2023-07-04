@@ -137,6 +137,7 @@ public class ExportService extends BasicService {
 			switch (export.getType())
 			{
 				case Statistics:
+				case PDFReport:
 					activityService.log(ActivityRegistry.ID_STATISTICS_EXPORT, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
 					break;
 				case Content:

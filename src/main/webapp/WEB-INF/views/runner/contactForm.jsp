@@ -4,7 +4,7 @@
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <%@ page contentType="text/html; charset=UTF-8" session="false" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.ContactForm" /></title>
 	<%@ include file="../includes.jsp" %>
@@ -203,7 +203,7 @@
 						<textarea class="form-control required" rows="10" name="message">${contactFormMessage}</textarea><br /><br />
 
 						<label><spring:message code="support.upload" /></label>
-						<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />" aria-label="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
+						<a role="button" data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />" aria-label="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
 						<div id="file-uploader-support"></div>
 						<div id="file-uploader-support-div"></div>
 

@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 
 <head>
 <title>EUSurvey - <spring:message code="label.Support" />
@@ -219,11 +219,12 @@
 				<spring:message code="support.oss.text" />
 			</c:when>
 			<c:otherwise>
-				<spring:message code="support.checkfaq" arguments="${contextpath}/home/documentation" />	<br /><br />
+				<span class="underlined">
+				<spring:message code="support.checkfaq" arguments="${contextpath}/home/documentation" /></span>	<br /><br />
 				
 				<form:form id="supportForm" method="POST" action="${contextpath}/home/support?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
-					<label><span class="mandatory">*</span><spring:message code="support.ContactReason" /></label><br />
-					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 425px" name="contactreason" id="contactreason">
+					<label id="contactreasonlabel"><span class="mandatory">*</span><spring:message code="support.ContactReason" /></label><br />
+					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 425px" name="contactreason" id="contactreason" aria-labelledby="contactreasonlabel">
 						<option value="generalquestion" id="generaloption"><spring:message code="support.GeneralQuestion" /></option>
 						<option value="technicalproblem" id="erroroption"><spring:message code="support.TechnicalProblem" /></option>
 						<option value="idea"><spring:message code="support.idea" /></option>
@@ -255,18 +256,18 @@
 						<input type="text" class="form-control" style="width: 425px" name="additionalsurveyinfoalias" id="additionalsurveyinfoalias" /><br /><br />
 					</div>
 					
-					<label><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
-					<input type="text" class="form-control required" style="width: 425px" name="name" id="yourname" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
+					<label id="namelabel"><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
+					<input type="text" class="form-control required" style="width: 425px" name="name" id="yourname" aria-labelledby="namelabel" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
 					
-					<label><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
-					<input type="text" class="form-control required email" style="width: 425px" id="supportemail" name="email" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
+					<label id="emaillabel"><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
+					<input type="text" class="form-control required email" style="width: 425px" id="supportemail" name="email" aria-labelledby="emaillabel" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
 					
-					<label><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
-					<input type="text" class="form-control required" name="subject" style="width: 425px" id="supportsubject" /><br /><br />
+					<label id="subjectlabel"><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
+					<input type="text" class="form-control required" name="subject" aria-labelledby="subjectlabel" style="width: 425px" id="supportsubject" /><br /><br />
 							
-					<label><span class="mandatory">*</span><spring:message code="support.yourmessagetous" /></label>
+					<label id="messagelabel"><span class="mandatory">*</span><spring:message code="support.yourmessagetous" /></label>
 					<div class="helptext"><spring:message code="support.yourmessagetoushelp" /></div>
-					<textarea class="form-control required" rows="10" name="message" id="supportmessage"></textarea><br /><br />
+					<textarea class="form-control required" rows="10" name="message" id="supportmessage" aria-labelledby="messagelabel"></textarea><br /><br />
 					
 					<div id="additionalinfodiv">
 						<label><spring:message code="support.additionalinfo" /></label>
@@ -276,7 +277,7 @@
 					</div>
 							
 					<label><spring:message code="support.upload" /></label>
-					<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />" aria-label="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
+					<a role="button" data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />" aria-label="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
 					<div id="file-uploader-support"></div>
 					<div id="file-uploader-support-div"></div>
 					

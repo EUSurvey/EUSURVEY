@@ -4,7 +4,7 @@
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <%@ page contentType="text/html; charset=UTF-8" session="false" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.Survey" /></title>
 	<%@ include file="../includes.jsp" %>
@@ -175,13 +175,13 @@
 							<div class='limits'><spring:message code="limits.MaxCharacters" arguments="${element.getMaxCharacters()}" /></div>
 						</c:when>
 						<c:when test="${element.getType() == 'MultipleChoiceQuestion' && element.getMinChoices() != null && element.getMinChoices() > 0 && element.getMaxChoices() != null && element.getMaxChoices() > 0}">
-							<div class='limits'><spring:message code="limits.MinMaxChoices" arguments="${element.getMinChoices()},${element.getMaxChoices()}" /></div>
+							<div class='limits'><spring:message code="limits.MinMaxChoicesNew" arguments="${element.getMinChoices()},${element.getMaxChoices()}" /></div>
 						</c:when>
 						<c:when test="${element.getType() == 'MultipleChoiceQuestion' && element.getMinChoices() != null && element.getMinChoices() > 0}">
-							<div class='limits'><spring:message code="limits.MinChoices" arguments="${element.getMinChoices()}" /></div>
+							<div class='limits'><spring:message code="limits.MinChoicesNew" arguments="${element.getMinChoices()}" /></div>
 						</c:when>
 						<c:when test="${element.getType() == 'MultipleChoiceQuestion' && element.getMaxChoices() != null && element.getMaxChoices() > 0}">
-							<div class='limits'><spring:message code="limits.MaxChoices" arguments="${element.getMaxChoices()}" /></div>
+							<div class='limits'><spring:message code="limits.MaxChoicesNew" arguments="${element.getMaxChoices()}" /></div>
 						</c:when>
 						<c:when test="${element.getType() == 'NumberQuestion' && element.getDisplay() != 'Slider' && element.getMin() != null && element.getMin() > 0 && element.getMax() != null && element.getMax() > 0}">
 							<div class='limits'><spring:message code="limits.MinMaxNumber" arguments="${element.getMinString()},${element.getMaxString()}" /></div>
@@ -482,13 +482,13 @@
 																<div class='limits'>${form.getMessage("limits.MaxCharacters", child.getMaxCharacters())}&nbsp;<span class="charactercounter"></span></div>
 															</c:when>
 															<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMinChoices() != null && child.getMinChoices() > 0 && child.getMaxChoices() != null && child.getMaxChoices() > 0}">
-																<div class='limits'>${form.getMessage("limits.MinMaxChoices", child.getMinChoices(), child.getMaxChoices())}</div>
+																<div class='limits'>${form.getMessage("limits.MinMaxChoicesNew", child.getMinChoices(), child.getMaxChoices())}</div>
 															</c:when>
 															<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMinChoices() != null && child.getMinChoices() > 0}">
-																<div class='limits'>${form.getMessage("limits.MinChoices", child.getMinChoices())}</div>
+																<div class='limits'>${form.getMessage("limits.MinChoicesNew", child.getMinChoices())}</div>
 															</c:when>
 															<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMaxChoices() != null && child.getMaxChoices() > 0}">
-																<div class='limits'>${form.getMessage("limits.MaxChoices", child.getMaxChoices())}</div>
+																<div class='limits'>${form.getMessage("limits.MaxChoicesNew", child.getMaxChoices())}</div>
 															</c:when>
 															<c:when test="${child.getCellType() == 'Number' && child.getMin() != null && child.getMax() != null}">
 																<div class='limits'>${form.getMessage("limits.MinMaxNumber", child.getMinString(), child.getMaxString())}</div>

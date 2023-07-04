@@ -364,6 +364,11 @@ public class CsvExportCreator extends ExportCreator {
 	@Override
 	void exportECFOrganizationalResults() throws Exception {
 		throw new NotImplementedException();
-	}	
+	}
+	
+	@Override
+	void exportPDFReport() throws Exception {
+		throw new NotImplementedException();
+	}
 
 }

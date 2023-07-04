@@ -111,4 +111,8 @@ public class ZipExportCreator extends ExportCreator {
 		throw new NotImplementedException();
 	}	
 
+	@Override
+	void exportPDFReport() throws Exception {
+		throw new NotImplementedException();
+	}
 }

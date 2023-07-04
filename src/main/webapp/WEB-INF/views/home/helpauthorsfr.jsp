@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html; charset=UTF-8" session="true" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.Documentation" /></title>	
 	<%@ include file="../includes.jsp" %>	
@@ -65,6 +65,10 @@
 			padding: 2px;
 			text-align: center;
 		}
+		
+		#faqcontent a {
+			text-decoration: underline;
+		}		
 
 	</style>
 
@@ -773,7 +777,7 @@
 				La «popup de motivation» est disponible dans les propriétés de l'enquête sous l'onglet Apparence.
 			</p>
 			<figure>
-				<img src="${contextpath}/resources/images/documentation/motivation_popup_1_FR.png" style="width: 75%"/>
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/motivation_popup_1_FR.png" style="width: 75%"/>
 				<figcaption>Motivation popup dans les propriétés de l’enquête</figcaption>
 			</figure>
 			<p>
@@ -790,7 +794,7 @@
 				Enfin, le texte est personnalisable à l'aide du dernier champ.
 			</p>
 			<figure>
-				<img src="${contextpath}/resources/images/documentation/motivation_popup_2_FR.png" style="width: 75%"/>
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/motivation_popup_2_FR.png" style="width: 75%"/>
 				<figcaption>Configuration de la «popup de motivation»</figcaption>
 			</figure>
 			<h1>
@@ -1290,7 +1294,7 @@
 			</p>
 			<p>
 				C'est pourquoi, il y a un petit indicateur dans le coin supérieur droit de l'éditeur du questionnaire:<br />
-				<img src="${contextpath}/resources/images/documentation/complexityFR.png" />
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/complexityFR.png" />
 			</p>
 			<p>
 				Votre enquête peut présenter un niveau de complexité élevé pour plusieurs raisons:
@@ -1339,7 +1343,7 @@
 				Lorsque vous utilisez une <strong>Section</strong> de premier niveau, vous avez la possibilité de conserver les questions/éléments situés en dessous dans leur ordre d'origine ou de rendre leur position aléatoire.
 				La randomisation peut être sélectionnée dans les propriétés de la section, juste à côté de l'ordre.
 			</p>
-			<img src="${contextpath}/resources/images/documentation/randomization_FR.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/randomization_FR.png" style="margin-bottom: 1em" />
 			<p>Veuillez également noter les points suivants:</p>
 			<ul>
 				<li>Tous les éléments de l'enquête (y compris les images et le texte statique) sont positionnés aléatoirement.</li>
@@ -1348,7 +1352,7 @@
 				<li>La version PDF de l'enquête (fonction «Télécharger la version PDF») montre toujours les questions dans l'ordre d’origine.</li>
 				<li>Les contributions PDF montrent toujours les questions dans l'ordre d’origine.</li>
 				<li>Si la numérotation des sections/questions est activée en même temps que la fonction de randomisation, les numéros des questions seront également randomisés avec les questions.
-					<div><img src="${contextpath}/resources/images/documentation/randomization_sections_FR.png" /></div>
+					<div><img alt="Screenshot" src="${contextpath}/resources/images/documentation/randomization_sections_FR.png" /></div>
 				</li>
 			</ul>
 			<p>Il y a un autre point spécifique aux enquêtes DELPHI:</p>
@@ -1360,43 +1364,43 @@
 				Ce type de question appelé « Formule » calcule et affiche une valeur basée sur les données saisies par le participant.
 				Il vous permet d'afficher un total ou une moyenne par exemple et ajoute un aspect interactif à votre enquête.
 			</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_1_FR.png" style="margin-bottom: 1em;" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_1_FR.png" style="margin-bottom: 1em;" />
 			<p>Principaux points de l'élément de question :</p>
 			<ul>
 				<li>
 					Des fonctions prêtes à l'emploi sont disponibles pour différents cas d'utilisation :<br>
-					<img src="${contextpath}/resources/images/documentation/formular_field_2_FR.png" style="margin-bottom: 1em" />
+					<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_2_FR.png" style="margin-bottom: 1em" />
 				</li>
 				<li>
 					Les utilisateurs peuvent également saisir leur formule dans le champ prévu à cet effet :<br>
-					<img src="${contextpath}/resources/images/documentation/formular_field_3_FR.png" style="margin-bottom: 1em" />
+					<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_3_FR.png" style="margin-bottom: 1em" />
 				</li>
 			</ul>
 			<p>Les ID des éléments sont utilisés pour composer la formule.
 				La liste des ID est affichée pour vous permettre de sélectionner directement les ID dont vous avez besoin.
 				Vous pouvez également les saisir directement dans le champ de saisie.</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_4_FR.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_4_FR.png" style="margin-bottom: 1em" />
 			<p>Veuillez noter que les ID des éléments sont visibles dans la section Avancé des propriétés de l'élément.</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_5_FR.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_5_FR.png" style="margin-bottom: 1em" />
 			<p><span style="text-decoration: underline;">Exemple 1 :</span><br>
 				Dans l'exemple ci-dessous, le champ « Formule » correspond à la somme des deux questions « Nombre/Curseur ».
 				Par conséquent, dès que le participant à l'enquête a saisi la deuxième valeur (5 dans notre exemple),
 				la somme est calculée et affichée en temps réel.
 			</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_6_FR.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_6_FR.png" style="margin-bottom: 1em" />
 			<p><span style="text-decoration: underline;">Exemple 2 :</span><br>
 				Dans l'exemple ci-dessous, vous pouvez demander à votre participant à l'enquête d'indiquer son loyer mensuel ou annuel.
 				L'application calculera automatiquement l'autre. Les deux champs restent modifiables par l'utilisateur.
 			</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_7_FR.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_7_FR.png" style="margin-bottom: 1em" />
 			<p>
 				<span style="font-style: italic;">Le participant à l'enquête a saisi 500 et 6000 a été calculé.</span>
 			</p>
 			<p><span style="text-decoration: underline;">Exemple 3 option « En lecture seule » :</span></p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_8_FR.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_8_FR.png" style="margin-bottom: 1em" />
 			<p>Dans l'exemple ci-dessous, la ligne 5 affiche le total de chaque colonne.
 				Ces champs utilisent l'option « En lecture seule », de sorte que le total ne peut être modifié par l'utilisateur.</p>
-			<img src="${contextpath}/resources/images/documentation/formular_field_9_FR.png" style="margin-bottom: 1em" />
+			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_9_FR.png" style="margin-bottom: 1em" />
 			<h1>
 				Sécurité des enquêtes
 			</h1>
@@ -1547,7 +1551,7 @@
 						Activez l'option «Permet aux participants d'imprimer leur contribution et de la recevoir au format PDF»
 					</li>
 				</ol>
-				<img src="${contextpath}/resources/images/documentation/printdownloadFR.png" />
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/printdownloadFR.png" />
 			</p>
 			<h2>
 				Comment puis-je permettre aux participants de modifier (éditer) leur contribution?
@@ -1571,7 +1575,7 @@
 						Activez l'option «Permettre aux participants de modifier leur contribution»
 					</li>
 				</ol>
-				<img src="${contextpath}/resources/images/documentation/changecontributionFR.png" />
+				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/changecontributionFR.png" />
 			</p>
 			<h1>
 				Tester une enquête
@@ -3443,17 +3447,17 @@
 				Utilisez les jetons créés pour créer des liens d'accès individuels que vous pouvez envoyer par courrier électronique aux participants en utilisant l'URL ci-dessous :
 			</p>
 			<p>
-				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>
+				https://ec.europa.eu/eusurvey/runner/<span style="color: #e50000; font-weight: bold">SurveyAlias</span>/<span style="color: #e50000; font-weight: bold">TOKEN</span>
 			</p>
 			<p>
 				Il suffit de remplacer :
 			</p>
 			<ul>
 				<li>
-					<span style="color: #f00; font-weight: bold">SurveyAlias</span> par <b>l’alias</b> <b>de votre enquête</b>
+					<span style="color: #e50000; font-weight: bold">SurveyAlias</span> par <b>l’alias</b> <b>de votre enquête</b>
 				</li>
 				<li>
-					<span style="color: #f00; font-weight: bold">TOKEN</span> avec un des jetons de la liste
+					<span style="color: #e50000; font-weight: bold">TOKEN</span> avec un des jetons de la liste
 				</li>
 			</ul>
 			<h1>
@@ -3716,7 +3720,7 @@
 			</p>
 			<p>
 				<figure>
-					<img style="max-width: 920px" src="${contextpath}/resources/images/documentation/personal_data_modification.png">
+					<img alt="Screenshot" style="max-width: 920px" src="${contextpath}/resources/images/documentation/personal_data_modification.png">
 				</figure>
 			</p>
 			<p>

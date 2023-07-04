@@ -1512,7 +1512,7 @@ public class ReportingService extends BasicService {
 				
 				RatingQuestion rating = (RatingQuestion) question;
 				
-				for(Element ratingQuestion: rating.getChildElements()) {
+				for(Element ratingQuestion: rating.getQuestions()) {
 					List<Answer> answers = answerSet.getAnswers(ratingQuestion.getUniqueId());
 					columns.add(ratingQuestion.getUniqueId());		
 					values.add(answers.isEmpty() ? null : "'" + answers.get(0).getValue() + "'");

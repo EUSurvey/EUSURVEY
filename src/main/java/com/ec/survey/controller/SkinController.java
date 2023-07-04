@@ -17,8 +17,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -177,13 +175,23 @@ public class SkinController extends BasicController {
 	}
 
 	@PostMapping(value = "/skin/save")
-	public ModelAndView saveSkin(@ModelAttribute Skin skin, BindingResult bindingresult, HttpServletRequest request,
+	public ModelAndView saveSkin(HttpServletRequest request,
 			Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 
 		User user = sessionService.getCurrentUser(request);
-		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
+		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request, true);
+		
+		Skin newSkin = new Skin(); 
+		
+		if (parameterMap.containsKey("id")) {
+			newSkin.setId(Integer.parseInt(parameterMap.get("id")[0]));
+		}
+		
+		if (parameterMap.containsKey("name")) {
+			newSkin.setName(parameterMap.get("name")[0]);
+		}		
 
-		for (SkinElement element : skin.getElements()) {
+		for (SkinElement element : newSkin.getElements()) {
 			if (parameterMap.containsKey("background-color" + element.getName())) {
 				element.setBackgroundColor(parameterMap.get("background-color" + element.getName())[0]);
 			}
@@ -204,21 +212,21 @@ public class SkinController extends BasicController {
 			}
 		}
 
-		if (skin.getId() != null && skin.getId() > 0) {
-			Skin existingSkin = skinService.get(skin.getId());
+		if (newSkin.getId() != null && newSkin.getId() > 0) {
+			Skin existingSkin = skinService.get(newSkin.getId());
 			if (!existingSkin.getOwner().getId().equals(user.getId())
 					&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
 				return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, resources.getMessage("error.SkinUnauthorized", null,
 						"You are not authorized to edit this skin.", locale));
 			}
 
-			if (!existingSkin.getName().equalsIgnoreCase(skin.getName())
-					&& skinService.nameAlreadyExists(skin.getName(), user.getId())) {
+			if (!existingSkin.getName().equalsIgnoreCase(newSkin.getName())
+					&& skinService.nameAlreadyExists(newSkin.getName(), user.getId())) {
 				Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
 				Form form = new Form(resources);
 				form.setSurvey(demoSurvey);
 				ModelAndView model = new ModelAndView("settings/skin");
-				model.addObject("skin", skin);
+				model.addObject("skin", newSkin);
 				model.addObject("form", form);
 				model.addObject(Constants.MESSAGE, resources.getMessage("error.NameAlreadyUsed", null,
 						"This name already exists. Please choose a unique one.", locale));
@@ -229,23 +237,21 @@ public class SkinController extends BasicController {
 			session.evict(existingSkin);
 		}
 
-		if (skin.getName().trim().length() == 0) {
+		if (newSkin.getName().trim().length() == 0) {
 			Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
 			Form form = new Form(resources);
 			form.setSurvey(demoSurvey);
 			ModelAndView model = new ModelAndView("settings/skin");
-			model.addObject("skin", skin);
+			model.addObject("skin", newSkin);
 			model.addObject("form", form);
 			model.addObject(Constants.MESSAGE,
 					resources.getMessage("error.ChoseName", null, "Please choose a unique name.", locale));
 			return model;
 		}
+		
+		newSkin.setOwner(user);		
 
-		if (skin.getOwner() == null) {
-			skin.setOwner(user);
-		}
-
-		skinService.save(skin);
+		skinService.save(newSkin);
 		return new ModelAndView("redirect:/settings/skin");
 	}
 

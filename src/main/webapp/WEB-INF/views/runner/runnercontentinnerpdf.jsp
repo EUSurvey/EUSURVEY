@@ -118,10 +118,10 @@
 									<div class='limits'>${form.getMessage("limits.MinMaxChoices", element.getMinChoices(), element.getMaxChoices())}</div>
 								</c:when>
 								<c:when test="${element.getType() == 'MultipleChoiceQuestion' && element.getMinChoices() != null && element.getMinChoices() > 0}">
-									<div class='limits'>${form.getMessage("limits.MinChoices", element.getMinChoices())}</div>
+									<div class='limits'>${form.getMessage("limits.MinChoicesNew", element.getMinChoices())}</div>
 								</c:when>
 								<c:when test="${element.getType() == 'MultipleChoiceQuestion' && element.getMaxChoices() != null && element.getMaxChoices() > 0}">
-									<div class='limits'>${form.getMessage("limits.MaxChoices", element.getMaxChoices())}</div>
+									<div class='limits'>${form.getMessage("limits.MaxChoicesNew", element.getMaxChoices())}</div>
 								</c:when>
 								<c:when test="${element.getType() == 'NumberQuestion' && element.getDisplay() != 'Slider' && element.getMin() != null && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MinMaxNumber", element.getMinString(), element.getMaxString())}</div>
@@ -453,13 +453,13 @@
 																		<div class='limits'>${form.getMessage("limits.MaxCharacters", child.getMaxCharacters())}&nbsp;<span class="charactercounter"></span></div>
 																	</c:when>
 																	<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMinChoices() != null && child.getMinChoices() > 0 && child.getMaxChoices() != null && child.getMaxChoices() > 0}">
-																		<div class='limits'>${form.getMessage("limits.MinMaxChoices", child.getMinChoices(), child.getMaxChoices())}</div>
+																		<div class='limits'>${form.getMessage("limits.MinMaxChoicesNew", child.getMinChoices(), child.getMaxChoices())}</div>
 																	</c:when>
 																	<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMinChoices() != null && child.getMinChoices() > 0}">
-																		<div class='limits'>${form.getMessage("limits.MinChoices", child.getMinChoices())}</div>
+																		<div class='limits'>${form.getMessage("limits.MinChoicesNew", child.getMinChoices())}</div>
 																	</c:when>
 																	<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMaxChoices() != null && child.getMaxChoices() > 0}">
-																		<div class='limits'>${form.getMessage("limits.MaxChoices", child.getMaxChoices())}</div>
+																		<div class='limits'>${form.getMessage("limits.MaxChoicesNew", child.getMaxChoices())}</div>
 																	</c:when>
 																	<c:when test="${child.getCellType() == 'Number' && child.getMin() != null && child.getMax() != null}">
 																		<div class='limits'>${form.getMessage("limits.MinMaxNumber", child.getMinString(), child.getMaxString())}</div>
@@ -663,7 +663,7 @@
 							<div class="questionhelp">${element.help}</div>									
 							<div class="files">
 								<c:forEach items="${element.files}" var="file">
-									<a class="visiblelink" target="_blank" href="${contextpath}/files/${file.uid}" style="margin-left: 5px;"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a> <br />
+									<a class="visiblelink" target="_blank" href="${serverprefix}files/${form.survey.uniqueId}/${file.uid}" style="margin-left: 5px;"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a> <br />
 								</c:forEach>
 							</div>															
 							
@@ -672,24 +672,14 @@
 						<c:if test="${element.getType() == 'Confirmation'}">
 							<div class="questiontitle confirmationelement">${form.getQuestionTitle(element)}</div>																			
 								<c:if test="${element.usetext}">
-									<a style="margin-left: 40px; cursor: pointer;" onclick="$('#confirmation-dialog${element.id}').modal('show')">${element.confirmationlabel}</a>
-									<div class="modal confirmation-dialog" id="confirmation-dialog${element.id}">
-										  <div class="modal-dialog modal-sm">
- 												  <div class="modal-content">
-										  <div class="modal-body">	
-										  	${element.confirmationtext}
-										  </div>
-										  <div class="modal-footer">
-											<a style="cursor: pointer" class="btn btn-primary" onclick="$('#confirmation-dialog${element.id}').modal('hide');"><spring:message code="label.Close" /></a>		
-										  </div>
-										  </div>
-										  </div>
+									<div style="margin-left: 20px;">
+										${element.confirmationtext}
 									</div>
 								</c:if>
 								<c:if test="${element.useupload}">					
 									<div class="files" style="margin-left: 40px; margin-top: 10px;">
 										<c:forEach items="${element.files}" var="file">
-											<a class="visiblelink" target="_blank" href="${contextpath}/files/${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a> <br />
+											<a class="visiblelink" target="_blank" href="${serverprefix}files/${form.survey.uniqueId}/${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a> <br />
 										</c:forEach>
 									</div>			
 								</c:if>	

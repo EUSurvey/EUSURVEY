@@ -848,7 +848,7 @@
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
 		<!-- ko if: display() == 'Slider' -->
-			<div tabindex="0" class="focussable" role="group" data-bind="hidden: isAnswered, attr: {'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questionhelp' + id()}">
+			<div role="group" data-bind="hidden: isAnswered, attr: {'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() + ' questionhelp' + id()}">
 		
 				<div class="limits" data-bind="hidden: isAnswered, attr: {id: 'questioninfo' + id()}">
 					<!-- ko ifnot: foreditor -->
@@ -1519,7 +1519,7 @@
 			<div class="col-md-6" style="padding:0;">
 				<!-- ko if: !foreditor -->
 				<div class="chart-wrapper-loader">
-					<img src="${contextpath}/resources/images/ajax-loader.gif">
+					<img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif">
 				</div>
 				<!-- /ko -->
 				<div class="chart-wrapper" data-bind="style: {float: ismobile || istablet ? 'left' : undefined}">
@@ -1547,7 +1547,7 @@
 				<div class="explanation-update-section">
 					<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
 					<span class="inline-loader">
-						<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
+						<img alt="wait animation" class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
 					</span>
 					
 					<br /><br />

@@ -68,7 +68,7 @@
 													<td style="width: 225px">${element.getStrippedTitle()}</td>
 													<td style="width: 50px">${scoring}</td>
 													<td style="width: 225px">
-														<div class="progress noprogressbackground" style="width: 200px; margin-bottom: 2px;">
+														<div class="progress" style="width: 200px; margin-bottom: 2px;">
 														  <div class="progress-bar" style="width: ${quiz.getSectionScoreValue(element.uniqueId) / quiz.getMaxSectionScore(element.uniqueId) * 100}%;"></div>
 														</div>
 													</td>

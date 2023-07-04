@@ -835,6 +835,10 @@ function initModals(item)
 	
 	function resetValidationErrors(parent)
 	{
+		if (requiredTextNewSurveyReverse !== null) {
+			requiredText = requiredTextNewSurveyReverse;
+		}
+
 		$(parent).find(".validation-error").each(function(){
 			$(this).remove();
 		});
@@ -1116,6 +1120,10 @@ function initModals(item)
 		resetValidationErrors(parent);		
 		
 		$(parent).find(".required").each(function(){
+
+			if ($(parent).attr('id') === "new-survey-table" && requiredTextNewSurvey !== null) {
+				requiredText = requiredTextNewSurvey;
+			}
 
 			if (isElementInvisible(this)) return;
 
@@ -2871,8 +2879,12 @@ function initModals(item)
 		    return true;
 		});
 		
+		$(dialog).on('shown.bs.modal', function() {
+		    $(dialog).find('a:visible,input:visible,select:visible,button:visible,textarea:visible').first().focus();
+		});
+		
 		$(dialog).modal("show");		
-		$(dialog).find('a:visible,input:visible,select:visible,button:visible,textarea:visible').first().focus();
+		
 		modalDialogCaller = caller;
 	}
 	

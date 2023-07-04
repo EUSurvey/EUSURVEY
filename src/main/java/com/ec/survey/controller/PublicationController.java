@@ -287,10 +287,10 @@ public class PublicationController extends BasicController {
 								&& matrixMapByUid.containsKey(answer.getPossibleAnswerUniqueId())) {
 							if (result.containsKey(answer.getQuestionUniqueId())) {
 								result.put(answer.getQuestionUniqueId(), result.get(answer.getQuestionUniqueId())
-										+ "<br />" + matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
+										+ "<br />" + matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getStrippedTitle());
 							} else {
 								result.put(answer.getQuestionUniqueId(),
-										matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
+										matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getStrippedTitle());
 							}
 						} else if (question == null && matrixMapByUid.containsKey(answer.getPossibleAnswerUniqueId())) {
 							if (result.containsKey(answer.getQuestionUniqueId())) {
@@ -307,6 +307,7 @@ public class PublicationController extends BasicController {
 												.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
 												.getTitle()
 										: "";
+							title = ConversionTools.removeHTML(title);
 
 							if (result.containsKey(answer.getQuestionUniqueId())) {
 								result.put(answer.getQuestionUniqueId(),
@@ -334,7 +335,7 @@ public class PublicationController extends BasicController {
 
 							Map<String, RankingItem> childs = ((RankingQuestion) question).getChildElementsByUniqueId();
 							for (int i = 0; i < answerSplit.length; i++){
-								answerSplit[i] = childs.get(answerSplit[i]).getTitle();
+								answerSplit[i] = childs.get(answerSplit[i]).getStrippedTitle();
 							}
 
 							String answerReadable = String.join("; ", answerSplit);
@@ -372,7 +373,7 @@ public class PublicationController extends BasicController {
 							if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
 								String title = item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
 												? item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
-												.getTitle()
+												.getStrippedTitle()
 												: "";
 
 								if (result.containsKey(answer.getQuestionUniqueId())) {

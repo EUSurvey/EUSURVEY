@@ -3,6 +3,7 @@ package com.ec.survey.model;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -10,6 +11,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "EXPORTS")
@@ -23,7 +26,7 @@ public class Export implements java.io.Serializable {
 	}
 
 	public enum ExportType {
-		Content, Statistics, Charts, AddressBook, Activity, Tokens, Files, VoterFiles, Survey, StatisticsQuiz, ECFGlobalResults, ECFProfileResults, ECFOrganizationResults
+		Content, Statistics, Charts, AddressBook, Activity, Tokens, Files, VoterFiles, Survey, StatisticsQuiz, ECFGlobalResults, ECFProfileResults, ECFOrganizationResults, PDFReport
 	}
 	
 	public enum ExportFormat
@@ -57,6 +60,7 @@ public class Export implements java.io.Serializable {
 	private String ecfProfileUid;
 
 	private String displayUsername;
+	private String charts;
 	
 	@Id
 	@Column(name = "EXPORT_ID")
@@ -179,7 +183,7 @@ public class Export implements java.io.Serializable {
 	
 	@Transient
 	public boolean isTypeStatistics() {
-		return type == ExportType.Statistics;
+		return type == ExportType.Statistics || type == ExportType.PDFReport;
 	}
 	
 	@Transient
@@ -279,6 +283,33 @@ public class Export implements java.io.Serializable {
 	public void setForArchiving(Boolean forArchiving) {
 		this.forArchiving = forArchiving;
 	}
+	
+	@Lob
+	@Column(name = "EXPORT_CHARTS")
+	public String getCharts() {
+		return charts;
+	}
+	public void setCharts(String charts) {
+		this.charts = charts;
+	}
+	
+	@JsonIgnore
+	@Transient
+	public Map<String, String> getChartsByQuestionUID() {
+		Map<String, String> chartsByQuestionUid = new HashMap<>();
+		
+		if (charts != null) {		
+			String[] entries = charts.split(",");
+			for (String pair : entries) {
+				String[] keyValue = pair.split(":");
+				if (keyValue.length > 1) {
+					chartsByQuestionUid.put(keyValue[0], keyValue[1]);
+				}
+			}		
+		}
+		
+		return chartsByQuestionUid;
+	}
 
 	@Transient
 	public String getDisplayUsername() {
@@ -288,6 +319,6 @@ public class Export implements java.io.Serializable {
 	@Transient
 	public void setDisplayUsername(String displayUsername) {
 		this.displayUsername = displayUsername;
-	}
+	}	
 }
 

@@ -385,6 +385,14 @@ public class PDFService extends BasicService {
 	}
 
 	public java.io.File createStatisticsPDF(Survey survey, String exportId) throws IOException {
+		return createStatisticsPDFReport(survey, exportId, false);
+	}
+	
+	public java.io.File createPDFReport(Survey survey, String exportId) throws IOException {
+		return createStatisticsPDFReport(survey, exportId, true);
+	}
+	
+	private java.io.File createStatisticsPDFReport(Survey survey, String exportId, boolean isPDFReport) throws IOException {
 		String shortname = survey.getShortname();
 		logger.info("Starting PDF creation for results (statistics) of survey " + shortname);
 		FileOutputStream os = null;
@@ -399,7 +407,12 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatistics/" + survey.getId() + Constants.PATH_DELIMITER + exportId, os);
+			
+			if (isPDFReport) {			
+				renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparepdfreport/" + survey.getId() + Constants.PATH_DELIMITER + exportId, os);
+			} else {
+				renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatistics/" + survey.getId() + Constants.PATH_DELIMITER + exportId, os);
+			}
 
 			return target;
 		} catch (Exception ex) {
@@ -418,7 +431,7 @@ public class PDFService extends BasicService {
 
 		return null;
 	}
-
+	
 	public java.io.File createStatisticsQuizPDF(Survey survey, String exportId) throws IOException {
 		String shortname = survey.getShortname();
 		logger.info("Starting PDF creation for quiz results (statistics) of survey " + shortname);
@@ -453,7 +466,7 @@ public class PDFService extends BasicService {
 
 		return null;
 	}
-
+	
 	public java.io.File createQuizPDF(AnswerSet answerSet) throws IOException {
 		logger.info("Starting PDF creation for results (quiz) for contribution " + answerSet.getId());
 		FileOutputStream os = null;
@@ -488,5 +501,4 @@ public class PDFService extends BasicService {
 
 		return null;
 	}
-
 }

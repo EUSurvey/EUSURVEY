@@ -244,7 +244,7 @@ public class Tools {
                  .escapeMode(EscapeMode.xhtml)
                  .prettyPrint(false);
 		
-		return Jsoup.clean(input, "", Whitelist.relaxed().addAttributes(":all", "style"), outputSettings);
+		return Jsoup.clean(input, "", Whitelist.relaxed().addEnforcedAttribute("a", "target", "_blank").addAttributes(":all", "style").addAttributes(":all", "class"), outputSettings);
 	}
 
 	public static String toUTF83Bytes(String input) {

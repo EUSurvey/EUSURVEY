@@ -1150,7 +1150,7 @@ public class WebServiceController extends BasicController {
 
 			for (int i = 0; i < values1.length; i++) {
 				// convert and replace invalid characters
-				String val = Ucs2Utf8.unconvert(values1[i]).replaceAll(re, "");
+				String val = Ucs2Utf8.unconvert(values1[i], request.getCharacterEncoding()).replaceAll(re, "");
 				values1[i] = val;
 			}
 
@@ -1319,6 +1319,12 @@ public class WebServiceController extends BasicController {
 					answerSet.addAnswer(answer);
 				}
 			}
+			
+			if (answerSet.getAnswers().isEmpty()) {
+				logger.error("prefill call rejected as the draft contribution would be empty: " + getFullURL(request));
+				response.setStatus(412);
+				return "";
+			}
 
 			try {
 				answerService.saveDraft(draft);
@@ -1334,6 +1340,17 @@ public class WebServiceController extends BasicController {
 			response.setStatus(412);
 			return "";
 		}
+	}
+	
+	private static String getFullURL(HttpServletRequest request) {
+	    StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
+	    String queryString = request.getQueryString();
+
+	    if (queryString == null) {
+	        return requestURL.toString();
+	    } else {
+	        return requestURL.append('?').append(queryString).toString();
+	    }
 	}
 
 	/// survey API

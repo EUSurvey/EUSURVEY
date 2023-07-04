@@ -1153,5 +1153,10 @@ public class XmlExportCreator extends ExportCreator {
 	void exportECFOrganizationalResults() {
 		throw new NotImplementedException();
 	}
+	
+	@Override
+	void exportPDFReport() throws Exception {
+		throw new NotImplementedException();
+	}
 
 }

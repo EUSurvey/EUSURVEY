@@ -47,15 +47,20 @@ public class UserController extends BasicController {
 		
 		if (request.getMethod().equals("POST") && !"true".equals(request.getParameter("clearFilter")))
 		{
-			filter = sessionService.getUserFilter(request);		
+			if (request.getParameter("target") != null && request.getParameter("target").equals("deleteUser")) {
+				filter = (UserFilter) request.getSession().getAttribute("lastUserFilter");
+			} else {			
+				filter = sessionService.getUserFilter(request);
+				request.getSession().setAttribute("lastUserFilter", filter);
+			}
 			
 			String newPage = request.getParameter("newPage");
 			newPage = newPage == null ? "1" : newPage;
 			Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 10);
 	    		    	
 			paging.setItemsPerPage(itemsPerPage);
-			int numberOfSurveys = administrationService.getNumberOfUsers(filter);
-			paging.setNumberOfItems(numberOfSurveys);
+			int numberOfUsers = administrationService.getNumberOfUsers(filter);
+			paging.setNumberOfItems(numberOfUsers);
 			paging.moveTo(newPage);
 			
             SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
@@ -266,8 +271,8 @@ public class UserController extends BasicController {
 			
 		try {
 			String id = request.getParameter("id");
-			String login = administrationService.deleteUser(Integer.parseInt(id));	
-			model.addAttribute("info", resources.getMessage("info.UserDeleted", new Object[] {login}, "Deletion failed", locale));
+			String login = administrationService.deleteUser(Integer.parseInt(id), true);	
+			model.addAttribute("info", resources.getMessage("info.UserDeletedFlag", new Object[] {login}, "Deletion", locale));
 			
 		} catch (DataIntegrityViolationException de) {
 			model.addAttribute("userreferenceserror",true);

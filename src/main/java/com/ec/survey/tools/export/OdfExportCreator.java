@@ -21,6 +21,7 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.*;
 import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
@@ -2804,4 +2805,8 @@ public class OdfExportCreator extends ExportCreator {
 
 	}
 
+	@Override
+	void exportPDFReport() throws Exception {
+		throw new NotImplementedException();
+	}
 }

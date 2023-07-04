@@ -31,14 +31,14 @@
 						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
 						
 							<tr>
-								<td>${question.title}</td>
+								<td>${question.getStrippedTitle()}</td>
 									<c:choose>
 										<c:when test="${question.getType() == 'Matrix'}">
 											<td>
 												<table class="table table-bordered">						
 													<c:forEach items="${question.questions}" var="matrixQuestion">
 														<tr>
-															<td>${matrixQuestion.title}</td>
+															<td>${matrixQuestion.getStrippedTitle()}</td>
 															<td class="questioncell" data-id="${matrixQuestion.id}" data-uid="${matrixQuestion.uniqueId}">
 																<!-- Set through JS; publication.jsp - individualsMoveTo(...) -->
 															</td>
@@ -55,10 +55,10 @@
 														<c:forEach var="c" begin="1" end="${question.columns}"> 	
 															<c:choose>
 																<c:when test="${r == 1}">
-																	<td>${question.childElements[c-1].title}</td>
+																	<td>${question.childElements[c-1].getStrippedTitle()}</td>
 																</c:when>
 																<c:when test="${c == 1}">
-																	<td>${question.childElements[question.columns + r - 2].title}</td>
+																	<td>${question.childElements[question.columns + r - 2].getStrippedTitle()}</td>
 																</c:when>
 																<c:otherwise>
 																	<td class="tablequestioncell" data-id="${question.id}" data-uid="${question.uniqueId}" data-row="${r-1}" data-column="${c-1}">
@@ -78,7 +78,7 @@
 												<table class="table table-bordered">						
 													<c:forEach items="${question.questions}" var="childQuestion">	
 														<tr>
-															<td>${childQuestion.title}</td>										
+															<td>${childQuestion.getStrippedTitle()}</td>
 															<td class="questioncell" data-id="${childQuestion.id}" data-uid="${childQuestion.uniqueId}">
 																<!-- Set through JS; publication.jsp - individualsMoveTo(...) -->
 															</td>

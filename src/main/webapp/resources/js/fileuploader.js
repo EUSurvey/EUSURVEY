@@ -1025,6 +1025,7 @@ qq.UploadButton.prototype = {
 
         input.setAttribute("type", "file");
         input.setAttribute("name", this._options.name);
+        input.setAttribute("aria-label", "file upload button");
 
         qq.css(input, {
             position: 'absolute',

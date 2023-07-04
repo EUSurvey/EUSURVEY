@@ -147,7 +147,12 @@ function loadPreview(c)
 	$('#preview-current').val(c+1);
 	
 	var currentcontactrow = $($("#tblInvitedFromSendInvitation tbody").find("input[type='checkbox']:checked")[c]).closest("tr");
-	var s = $("#text1").html() + "<br /><br />" + $("#url").html() + "<br /><br />" + $("#text2").html();
+	var s = $("#text1").html();
+	if (!$("#text1").html().endsWith("</p>")) {
+		s += "<br /><br />";
+	}
+	s += $("#url").html() + "<br /><br />" + $("#text2").html();
+
 	
 	s = replacePlaceholders(s, currentcontactrow);
 	

@@ -311,7 +311,7 @@
 				<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)"></span>
 			</div>
 			<form autocomplete="off">
-				<div data-bind="html: Cell().title"></div>
+				<div data-bind="html: getShortnedText(Cell().title())"></div>
 			</form>
 		</td>
 	</tr>
@@ -595,7 +595,7 @@
 				<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)"></span>
 			</div>
 			<form autocomplete="off">
-				<div data-bind="html: Cell().title"></div>
+				<div data-bind="html: getShortnedText(Cell().title())"></div>
 			</form>
 		</td>
 	</tr>

@@ -305,6 +305,7 @@ function createNewDelphiBasicViewModel() {
 		}
 	});
 	self.delphiTableTotalEntries = ko.observable(0);
+	self.delphiCommentOrderBy = ko.observable("OldestFirst");
 	self.delphiTableOrder = ko.observable("UpdateDesc");
 	self.showExplanationBox = ko.observable(true);
 }

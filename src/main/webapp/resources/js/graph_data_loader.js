@@ -162,7 +162,14 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 						legend: {display: legend},
 						animation: {
 							onComplete: function (animation) {
-								$(div).closest(".statelement-wrapper").find('.chart-download').attr({href: this.toBase64Image(), download: result.questionType + ".png"});
+								var base64 = this.toBase64Image();
+								
+								$(div).closest(".statelement-wrapper").find('.chart-download').attr({href: base64, download: result.questionType + ".png"});
+								
+								$(div).closest(".statelement-wrapper").find('.chart-clipboard').unbind('click');
+								$(div).closest(".statelement-wrapper").find('.chart-clipboard').click(function(){
+									 copyBase64ImageToClipboard(base64);
+								})
 							}
 						},
 						plugins: {

@@ -105,7 +105,7 @@ public class DeleteUserAccountsWorker implements Runnable {
 				}
 				
 				//Deletion of user from USERS table
-				administrationService.deleteUser(userid);				
+				administrationService.deleteUser(userid, false);				
 			}
 			
 		} catch (Exception e) {

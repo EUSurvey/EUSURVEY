@@ -4,7 +4,7 @@
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<!-- login version -->
 	<title>EUSurvey - <spring:message code="label.DoLogin" /></title>
@@ -128,7 +128,7 @@
 											<img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
 											</c:when>
 											<c:otherwise>
-												<span style="font-size: 25px; color: #45A0BC;"><spring:message code="login.externalTitle" /></span>
+												<span style="font-size: 25px; color: #4198b2;"><spring:message code="login.externalTitle" /></span>
 											</c:otherwise>
 										</c:choose>
 										
@@ -162,7 +162,7 @@
 										<img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
 										</c:when>
 										<c:otherwise>
-											<span style="font-size: 25px; color: #45A0BC;"><spring:message code="login.internalTitle" /></span>
+											<span style="font-size: 25px; color: #4198b2;"><spring:message code="login.internalTitle" /></span>
 										</c:otherwise>
 									</c:choose>
 									
@@ -185,7 +185,7 @@
 					
 					<div style="clear: both"></div>
 					
-					<div style="text-align: left; margin-top: 20px; font-size: 90%">
+					<div class="underlined" style="text-align: left; margin-top: 20px; font-size: 90%">
 						<spring:message code="label.NoEULoginAccount" />&nbsp;<a target="_blank" href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi"><spring:message code="label.CreateEULoginAccountNow" /></a><br />
 						<spring:message code="label.LearnEULogin" arguments="https://webgate.ec.europa.eu/cas/help.html" /><br />
 						<spring:message code="label.RegisterMobile" arguments="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi" /><br />

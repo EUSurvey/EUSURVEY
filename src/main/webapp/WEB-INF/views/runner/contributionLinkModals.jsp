@@ -33,7 +33,7 @@
 			</div>
 			<div class="modal-footer">
 				<a href="javascript:;" class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</a>
-				<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-email-dialog'))">${form.getMessage("label.Cancel")}</a>
+				<a href="javascript:;" class="btn btn-default" onclick="cancelDelphiMailLink()">${form.getMessage("label.Cancel")}</a>
 			</div>
 		</div>
 	</div>

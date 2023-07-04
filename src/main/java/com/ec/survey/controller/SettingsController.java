@@ -271,6 +271,7 @@ public class SettingsController extends BasicController {
 
 		ModelAndView result = new ModelAndView("settings/shares");
 
+		result.addObject("user", user);
 		result.addObject("shares", shares);
 		result.addObject("passiveShares", passiveShares);
 		result.addObject("attributeNames", user.getSelectedAttributes());

@@ -199,7 +199,7 @@ public class HomeController extends BasicController {
 		
 		String SMTServiceEnabled = settingsService.get(Setting.UseSMTService);
 		if (email.toLowerCase().endsWith("ec.europa.eu") && SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
-			return sendSupportSmt(request, locale, model);
+			return sendSupportSmt(request, locale, model, !incidentHost.endsWith("wsdl"));
 		} else {
 			return sendSupportEmail(request, locale, model);
 		}
@@ -317,7 +317,7 @@ public class HomeController extends BasicController {
 		return "home/documentation";
 	}
 
-	private String sendSupportSmt(HttpServletRequest request, Locale locale, ModelMap model) throws IOException, MessageException {
+	private String sendSupportSmt(HttpServletRequest request, Locale locale, ModelMap model, boolean useJSON) throws IOException, MessageException {
 		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
 		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
 		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
@@ -327,8 +327,9 @@ public class HomeController extends BasicController {
 		String additionalsurveyinfotitle = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfotitle"), true);
 		String additionalsurveyinfoalias = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfoalias"), true);
 		
-		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.xml");
-		String createTemplate = IOUtils.toString(inputStream, "UTF-8");
+		InputStream inputStreamXML = servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.xml");
+		InputStream inputStreamJSON = servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.json");
+		String createTemplate = IOUtils.toString(useJSON ? inputStreamJSON : inputStreamXML, "UTF-8");
 
 		createTemplate = createTemplate.replace("[MESSAGE]", message);
 		createTemplate = createTemplate.replace("[ADDITIONALINFOUSERNAME]", name);
@@ -346,8 +347,11 @@ public class HomeController extends BasicController {
 			sessionService.initializeProxy();
 			
 			HttpPost httppost = new HttpPost(incidentHost);
-			httppost.addHeader("Content-type", "text/xml;charset=UTF-8");
-			httppost.addHeader("SOAPAction", "Create");
+			httppost.addHeader("Content-type", useJSON ? "application/json" : "text/xml;charset=UTF-8");
+			
+			if (!useJSON) {
+				httppost.addHeader("SOAPAction", "Create");
+			}
 
 			if (smtpAuth != null) {
 				httppost.addHeader("Authorization", "Basic " + smtpAuth);
@@ -360,15 +364,20 @@ public class HomeController extends BasicController {
 			try {
 			
 				HttpEntity entity = response.getEntity();
-	
-				if (entity != null) {
-					String strResponse = EntityUtils.toString(entity, "UTF-8");
-					if (!strResponse.toLowerCase().contains("message=\"success\"")) {
-						logger.error(strResponse);
-						throw new MessageException("Calling SMT web service failed.");
-					}
-					logger.info(strResponse);
+				int statusCode = response.getStatusLine().getStatusCode();
+			
+				String strResponse = entity == null ? "" : EntityUtils.toString(entity, "UTF-8");
+				if (useJSON) {						
+					if (statusCode != 200)
+					{
+						logger.error(statusCode + " " + strResponse);
+						throw new MessageException("Calling ServiceNow UAT failed.");
+					}						
+				} else if (!strResponse.toLowerCase().contains("message=\"success\"")) {
+					logger.error(statusCode + " " +strResponse);
+					throw new MessageException("Calling SMT web service failed.");
 				}
+				logger.info(statusCode + " " +strResponse);				
 			
 			} finally{
 			   response.close();

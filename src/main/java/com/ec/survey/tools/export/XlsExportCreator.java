@@ -26,6 +26,7 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -2383,5 +2384,10 @@ public class XlsExportCreator extends ExportCreator {
 			wb.close();
 			outputStream.close();
 		}
+	}
+	
+	@Override
+	void exportPDFReport() throws Exception {
+		throw new NotImplementedException();
 	}
 }

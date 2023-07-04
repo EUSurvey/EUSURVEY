@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.Documentation" /></title>	
 	<%@ include file="../includes.jsp" %>	
@@ -257,7 +257,7 @@
 			
 			<br /><br /><br />
 			
-			<div class="well" style="font-size: 20px;">
+			<div class="well contrast underlined" style="font-size: 20px;">
 				<spring:message code="label.contactform" /><br />
 				<spring:message code="label.contactform2" arguments="${contextpath}/home/support" />
 			</div>

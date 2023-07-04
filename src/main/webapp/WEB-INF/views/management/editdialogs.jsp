@@ -334,17 +334,17 @@
 	 	}	 	
 	 	function getMinMaxChoice(min,max)
 	 	{
-	 		var s = '<spring:message code="limits.MinMaxChoices" arguments="[min],[max]" />';
+	 		var s = '<spring:message code="limits.MinMaxChoicesNew" arguments="[min],[max]" />';
 	 		return s.replace("[min]", min).replace("[max]", max);
 	 	}
 	 	function getMinChoice(min)
 	 	{
-	 		var s = '<spring:message code="limits.MinChoices" arguments="[min]" />';
+	 		var s = '<spring:message code="limits.MinChoicesNew" arguments="[min]" />';
 	 		return s.replace("[min]", min);
 	 	}
 	 	function getMaxChoice(max)
 	 	{
-	 		var s = '<spring:message code="limits.MaxChoices" arguments="[max]" />';
+	 		var s = '<spring:message code="limits.MaxChoicesNew" arguments="[max]" />';
 	 		return s.replace("[max]", max);
 	 	}
 	

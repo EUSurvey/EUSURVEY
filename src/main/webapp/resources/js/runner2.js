@@ -925,6 +925,20 @@ function getDelphiQuestionUid(element)
 	}
 }
 
+function sortComments(element, discussionSortingOrder, viewModel) {
+	if (viewModel == undefined) {
+		var surveyElement = $(element).closest(".survey-element");
+		var uid = $(surveyElement).attr("data-uid");
+		viewModel = modelsForDelphiQuestions[uid];
+	}
+
+	viewModel.delphiCommentOrderBy(discussionSortingOrder);
+	loadTableData(uid, viewModel);
+
+	$(element).parent().find(".btn-primary").removeClass("btn-primary");
+	$(element).addClass("btn-primary");
+}
+
 function sortDelphiTable(element, direction) {
 	var surveyElement = $(element).closest(".survey-element");
 	var uid = $(surveyElement).attr("data-uid");
@@ -958,11 +972,13 @@ function hideCommentAndReplyForms() {
 
 function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel) {
 	const orderBy = viewModel.delphiTableOrder();
+	const orderCommentsBy = viewModel.delphiCommentOrderBy();
 	const offset = viewModel.delphiTableOffset();
 	const limit = viewModel.delphiTableLimit();
 
 	const data = "surveyid=" + surveyId + "&questionuid=" + questionUid + "&languagecode=" + languageCode
-		+ "&uniquecode=" + uniqueCode + "&orderby=" + orderBy + "&offset=" + offset + "&limit=" + limit;
+		+ "&uniquecode=" + uniqueCode + "&orderby=" + orderBy + "&offset=" + offset + "&limit=" + limit
+		+ "&orderCommentsBy=" + orderCommentsBy;
 
 	$.ajax({
 		type: "GET",
@@ -1305,9 +1321,11 @@ function delphiUpdateContinued(div, successCallback) {
 			
 			const uniqueCode = $("#uniqueCode").val();
 			const key = HAS_SHOWN_SURVEY_LINK + uniqueCode;
+			let dialogShown = false;
 			if (localStorage.getItem(key) == null) {
 				localStorage.setItem(key, "true");
 				appendShowContributionLinkDialogToSidebar(div, data);
+				dialogShown = true;
 			}
 			
 			if (data.changedForMedian) {
@@ -1330,6 +1348,17 @@ function delphiUpdateContinued(div, successCallback) {
 				})
 			} else {
 				updateDelphiElement(div, successCallback);
+				if (!dialogShown) {
+					if ($(div).find("a[data-type='delphireturntostart']").length > 0) {
+						$(div).find("a[data-type='delphireturntostart']").focus();
+					} else if ($(div).find("a[data-type='delphitonextquestion']:visible").length > 0) {
+						$(div).find("a[data-type='delphitonextquestion']").focus();
+					} else if ($('#btnNext').is(":visible")) {
+						$('#btnNext').focus();
+					} else {
+						$('#btnSubmit').focus();
+					}
+				}
 			}
 
 			delphiUpdateFinished = true;
@@ -1343,10 +1372,16 @@ function appendShowContributionLinkDialogToSidebar(div, data) {
 		$("<br />").appendTo(".contact-and-pdf__delphi-section");
 		$('<a id="editYourContributionLink" href="javascript:;" onclick="showContributionLinkDialog(this)">' + labelEditYourContributionLater + '</a>')
 			.appendTo(".contact-and-pdf__delphi-section");
-		showContributionLinkDialog($(div).find("a[data-type='delphireturntostart']"), data.link);
+			
+		if ($(div).find("a[data-type='delphireturntostart']").length > 0) {
+			showContributionLinkDialog($(div).find("a[data-type='delphireturntostart']"), data.link);
+		} else {
+			showContributionLinkDialog($(div).find("a[data-type='delphitonextquestion']"), data.link);
+		}
 	}
 }
 
+let targetToDocus = null;
 function showContributionLinkDialog(caller, url) {
 	if (!url) {
 		const uniqueCode = $("#uniqueCode").val();
@@ -1356,6 +1391,7 @@ function showContributionLinkDialog(caller, url) {
 	$(link).attr("href", url).html(url);
 	$("#contribution-link-dialog__link").empty().append(link);
 	showModalDialog($("#contribution-link-dialog"), caller);
+	targetToDocus = $(caller);
 }
 
 function updateDelphiElement(element, successCallback) {
@@ -1525,7 +1561,58 @@ function deleteDelphiComment(button, viewModel, isReply, errorCallback, successC
 	$.ajax({
 		type: "POST",
 		url: contextpath + "/runner/deleteDelphiComment/" + encodeURIComponent(commentId),
-		data: "uniqueCode=" + answerSetUniqueCode,
+		data: "uniqueCode=" + answerSetUniqueCode + "&uniqueCode=" + answerSetUniqueCode,
+		beforeSend: function (xhr) {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(true);
+			}
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		complete: function () {
+			$(actions).show();
+		},
+		error: function() {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
+			errorCallback();
+		},
+		success: function() {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
+			successCallback();
+		}
+	});
+}
+
+function likeDelphiCommentFromRunner(image) {
+	var increaseLike = $(image).find(".likeImage").attr("id").startsWith("likeButtonDelphi");
+
+	const questionUid = $(image).closest(".survey-element").attr("data-uid");
+	const viewModel = modelsForDelphiQuestions[questionUid];
+
+	const errorCallback = () => {
+		showError("error");
+	}
+	const successCallback = () => {
+		loadTableData(questionUid, viewModel);
+	}
+
+	likeDelphiComment(image, viewModel, increaseLike, errorCallback, successCallback);
+}
+
+function likeDelphiComment(image, viewModel, increaseLike, errorCallback, successCallback) {
+	const actions = $(image).parent().parent().find(".delphi-comment__actions");
+
+	let commentId = $(image).closest(".delphi-comment").attr("data-id");
+
+	const answerSetUniqueCode = $("#uniqueCode").val();
+
+	$.ajax({
+		type: "POST",
+		url: contextpath + "/runner/likeDelphiComment/" + encodeURIComponent(commentId),
+		data: "increaseLike=" + encodeURIComponent(increaseLike) + "&uniqueCode=" + answerSetUniqueCode,
 		beforeSend: function (xhr) {
 			if (viewModel && viewModel.delphiTableLoading) {
 				viewModel.delphiTableLoading(true);
@@ -1630,10 +1717,20 @@ function sendDelphiMailLink() {
 		success: function(data)
 	    {
 			showSuccess(data);
+			if (targetToDocus != null) {
+				$(targetToDocus).focus();
+			}
 	    }
 	});
 	
 	$('#ask-email-dialog').modal('hide');
+}
+
+function cancelDelphiMailLink() {
+	hideModalDialog($('#ask-email-dialog'));
+	if (targetToDocus != null) {
+		$(targetToDocus).focus();
+	}
 }
 
 function hideTooltipsOnEscape(e) {

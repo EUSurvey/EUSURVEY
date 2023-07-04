@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.Shares" /></title>
 	
@@ -111,11 +111,11 @@
 										</td>		
 										<td>
 											<c:choose>
-												<c:when test="${!share.readonly}">
-													<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="iconbutton" rel="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+												<c:when test="${share.readonly && share.owner != user}">
+													<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="iconbutton" rel="tooltip" title="<spring:message code="label.Show" />"><i class="glyphicon glyphicon-info-sign"></i></a>
 												</c:when>
 												<c:otherwise>
-													<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="iconbutton" rel="tooltip" title="<spring:message code="label.Show" />"><i class="glyphicon glyphicon-info-sign"></i></a>
+													<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="iconbutton" rel="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
 												</c:otherwise>
 											</c:choose>
 											<a data-toggle="tooltip" onclick="showDeleteDialog('${share.id}');" class="iconbutton" rel="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>

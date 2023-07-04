@@ -87,12 +87,12 @@ public class ExportsController extends BasicController {
 					export.setActivityFilter(filter);
 					export.setSurvey(form.getSurvey());
 					break;
-					}
+				}
 				case Tokens: {
 					export.setParticipationGroup(Integer.parseInt(group));
 					export.setSurvey(form.getSurvey());
 					break;
-					}
+				}
 				case Files: {
 					boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
 					Survey survey = form.getSurvey();
@@ -106,7 +106,7 @@ public class ExportsController extends BasicController {
 					export.setResultFilter(filter);
 					form.setSurvey(survey);
 					break;
-					}
+				}
 				case VoterFiles: {
 					Form voterForm = sessionService.getForm(request, null, false, false);
 					User u = sessionService.getCurrentUser(request);
@@ -160,7 +160,7 @@ public class ExportsController extends BasicController {
 					export.setResultFilter(new ResultFilter());
 					form.setSurvey(survey);
 					break;
-					}
+				}
 				case ECFGlobalResults : {
 						ResultFilter lastResultFilter = sessionService.getLastResultFilter(request);
 						ResultFilter resultFilter = new ResultFilter();
@@ -178,23 +178,39 @@ public class ExportsController extends BasicController {
 								false);
 						export.setSurvey(survey);
 						break;
+				}					
+				case ECFProfileResults: {
+					ResultFilter lastResultFilter = sessionService.getLastResultFilter(request);
+					ResultFilter resultFilter = new ResultFilter();
+					resultFilter.setSurveyId(lastResultFilter.getSurveyId());
+					resultFilter.setSurveyShortname(lastResultFilter.getSurveyShortname());
+					resultFilter.setCompareToECFProfileUID(lastResultFilter.getCompareToECFProfileUID());
+					export.setResultFilter(resultFilter);
+					
+					Survey survey = form.getSurvey();
+					boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
+					survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
+							false);
+					export.setSurvey(survey);
+					break;
+				}
+				case PDFReport: {
+					boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
+					Survey survey = form.getSurvey();
+					survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
+							false);
+					export.setSurvey(survey);
+					
+					//TODO: add chart graphics
+					String charts = request.getParameter("charts");
+			
+					if (charts != null) {
+						charts = charts.replace("{", "").replace("}", "").replace("\"", "").replace("data:image/png;base64,", "");
+						export.setCharts(charts);						
 					}
 					
-					case ECFProfileResults: {
-						ResultFilter lastResultFilter = sessionService.getLastResultFilter(request);
-						ResultFilter resultFilter = new ResultFilter();
-						resultFilter.setSurveyId(lastResultFilter.getSurveyId());
-						resultFilter.setSurveyShortname(lastResultFilter.getSurveyShortname());
-						resultFilter.setCompareToECFProfileUID(lastResultFilter.getCompareToECFProfileUID());
-						export.setResultFilter(resultFilter);
-						
-						Survey survey = form.getSurvey();
-						boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
-						survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
-								false);
-						export.setSurvey(survey);
-						break;
-					}
+					form.setSurvey(survey);
+				}
 				default: {
 					boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
 					Survey survey = form.getSurvey();

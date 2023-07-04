@@ -6,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 		 pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 
 <head>
 	<title>EUSurvey - Data Processing Agreement</title>
@@ -114,9 +114,6 @@
 			<div class="page">
 				</c:otherwise>
 				</c:choose>
-
-				<form:form id="logoutform" action="${contextpath}/j_spring_security_logout" method="post">
-				</form:form>
 
 				<form:form id="dpa-form" action="${contextpath}/auth/dpa" method="post" onsubmit="return checkAnswer();">
 					<c:if test="${readonly == null}">
@@ -232,6 +229,11 @@
 		<c:if test="${readonly != null}">
 			<%@ include file="../footer.jsp"%>
 		</c:if>
+		
+		<c:if test="${readonly == null}">
+			<form:form id="logoutform" action="${contextpath}/j_spring_security_logout" method="post">
+		    </form:form>	
+		</c:if>		
 
 </body>
 

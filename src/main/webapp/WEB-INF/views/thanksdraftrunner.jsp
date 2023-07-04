@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <esapi:encodeForHTML>${surveyTitle}</esapi:encodeForHTML> - <spring:message code="label.Thanks" /></title>	
 	<%@ include file="includes.jsp" %>

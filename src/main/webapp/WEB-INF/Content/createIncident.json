@@ -1,0 +1,12 @@
+{
+ "incident": {
+         "short_description": "[SUBJECT]",
+         "description": "[MESSAGE]; User name: [ADDITIONALINFOUSERNAME]; User email: [ADDITIONALINFOEMAIL]; [ADDITIONALINFO]; Survey title: [ADDITIONALINFOSURVEYTITLE]; Survey alias: [ADDITIONALINFOSURVEYALIAS]",
+         "caller_id": "ZZZ_EXTERNAL USER EXTERNE",
+         "assignment_group": "DIGIT EUSURVEY SUPPORT",
+         "impact": "2",
+         "urgency": "1",
+         "work_notes": "work_notes: create new incident via API",
+         "comments": "Comment : create new incident via API"
+     }
+}

@@ -17,6 +17,10 @@
 <meta name="_csrf_header" content="${_csrf.headerName}"/>
 <meta name="Description" content="EUSurvey is an online survey-management system built for the creation and publishing of globally accessible forms, such as user satisfaction surveys and public consultations." />
 
+<c:if test="${allowIndex == null}">
+	<meta name="robots" content="noindex"></meta>
+</c:if>
+
 <link href="${contextpath}/resources/css/jquery-ui.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 <link href="${contextpath}/resources/css/jquery-ui.structure.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 <link href="${contextpath}/resources/css/jquery-ui.theme.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
@@ -64,6 +68,10 @@
 <meta itemprop="image" content="${contextpath}/resources/images/favicon5.ico" />
 <link rel="shortcut icon" href="${contextpath}/resources/images/favicon5.ico" type="image/x-icon"></link>
 
+<c:if test="${googlesiteverification != null}">
+	<meta name="google-site-verification" content="${googlesiteverification}" />
+</c:if>
+
 <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="version.txt" %>'></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery-1.12.3.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery-ui.min.js?version=<%@include file="version.txt" %>"></script>
@@ -103,6 +111,8 @@
 		<c:when test="${form != null && form.getResources() != null && resultType == null}">
 			var unsavedChangesText = "${form.getMessage("message.UnsavedChanges")}";	
 			var requiredText = "${form.getMessage("validation.required")}";
+			var requiredTextNewSurvey = "<spring:message code='validation.required' />";
+			var requiredTextNewSurveyReverse = "${form.getMessage("validation.required")}";
 			var confirmationMarkupError = "${form.getMessage("validation.confirmationMarkupError")}";
 			var nomatchText =  "${form.getMessage("validation.nomatch")}";
 			var shortnameText = "${form.getMessage("validation.name2")}";
@@ -118,8 +128,8 @@
 			var valuetoolarge = "${form.getMessage("validation.valueTooLarge")}";
 			var timevaluetoosmall = "${form.getMessage("validation.valueTooSmallTime")}";
 			var timevaluetoolarge = "${form.getMessage("validation.valueTooLargeTime")}";
-			var notenoughanswers = "${form.getMessage("validation.notEnoughAnswers")}";
-			var toomanyanswers = "${form.getMessage("validation.tooManyAnswers")}";
+			var notenoughanswers = "${form.getMessage("validation.notEnoughSelections")}";
+			var toomanyanswers = "${form.getMessage("validation.TooManySelections")}";
 			var noRegExmatchText = "${form.getMessage("validation.noRegExMatch")}";
 			var invalidDate = "${form.getMessage("validation.invalidDate")}";
 			var invalidTime = "${form.getMessage("validation.invalidTime")}";
@@ -196,6 +206,8 @@
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
 			var requiredText = "<spring:message code='validation.required' />";
+			var requiredTextNewSurvey = null;
+			var requiredTextNewSurveyReverse = null;
 			var confirmationMarkupError = "<spring:message code='validation.confirmationMarkupError' />";
 			var nomatchText =  "<spring:message code='validation.nomatch' />";
 			var shortnameText = "<spring:message code='validation.name2' />";
@@ -210,8 +222,8 @@
 			var valuetoolarge = "<spring:message code='validation.valueTooLarge' />";
 			var timevaluetoosmall = "<spring:message code='validation.valueTooSmallTime' />";
 			var timevaluetoolarge = "<spring:message code='validation.valueTooLargeTime' />";
-			var notenoughanswers = "<spring:message code='validation.notEnoughAnswers' />";
-			var toomanyanswers = "<spring:message code='validation.tooManyAnswers' />";
+			var notenoughanswers = "<spring:message code='validation.notEnoughSelections' />";
+			var toomanyanswers = "<spring:message code='validation.TooManySelections' />";
 			var noRegExmatchText = "<spring:message code='validation.noRegExMatch' />";
 			var invalidDate = "<spring:message code='validation.invalidDate' />";
 			var invalidTime = "<spring:message code='validation.invalidTime' />";

@@ -240,7 +240,7 @@
 		
 				<!-- ko if: !loaded() -->
 				<div>
-					<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
+					<img alt="wait animation" class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
 				</div>
 				<!-- /ko -->
 
@@ -342,7 +342,7 @@
 		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-header"><spring:message code="label.ResultsTable" /></div>
-				<div class="modal-body" style="padding-top: 30px;">
+				<div class="modal-body">
 					<div class="answers-table-modal-error"></div>
 					<%@ include file="delphiAnswersTable.jsp" %>
 				</div>
@@ -459,6 +459,44 @@
 				$(dialog).modal("hide");
 				deleteDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
 			});
+		}
+
+		function likeDelphiCommentFromStartPage(element) {
+			var increaseLike = $(element).find(".likeImage").attr("id").startsWith("likeButtonDelphi");
+
+			$('.answers-table-modal-error').hide();
+
+			const errorCallback = function() {
+				$('.answers-table-modal-error').show();
+				$('.answers-table-modal-error').text(errorDelphiTableContributionCouldNotBeSubmitted);
+			}
+			const successCallback = function() {
+				const languageCode = "${form.language.code}";
+				const answerSetUniqueCode = $('#uniqueCode').val();
+				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
+			}
+			likeDelphiComment(element, answersTableViewModel, increaseLike, errorCallback, successCallback);
+		}
+
+		function showOverlayMenuSortingOptionsStartPage(element) {
+			var overlay = $(element).parent().find('.overlaymenu').first();
+			var rectbtn = $(element)[0].getBoundingClientRect();
+			var table = document.getElementById("delphiDiscussionTable");
+
+			$(overlay).css("left", table.offsetWidth - $(overlay).width() + element.offsetWidth);
+			$(overlay).css("top", rectbtn.bottom - element.offsetHeight - 7);
+
+			showOverlayMenuSortingOptionsInner(element, answersTableViewModel);
+		}
+
+		function sortCommentsStartPage(element, discussionSortingOrder) {			
+			answersTableViewModel.delphiCommentOrderBy(discussionSortingOrder);
+			loadTableData(currentQuestionUidInModal, answersTableViewModel);
+
+			$(element).parent().find(".btn-primary").removeClass("btn-primary");
+			$(element).addClass("btn-primary");
+			
+			$(element).closest(".overlaymenu").hide();
 		}
 		
 		function toggle(element)

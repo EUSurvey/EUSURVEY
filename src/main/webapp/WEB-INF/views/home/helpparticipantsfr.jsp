@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html; charset=UTF-8" session="true" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.Documentation" /></title>	
 	<%@ include file="../includes.jsp" %>
@@ -76,14 +76,14 @@
 		<c:choose>
 			<c:when test="${USER != null && runnermode == null }">
 				<%@ include file="../menu.jsp" %>	
-				<div class="page" style="padding-top: 110px">
+				<div class="page underlined" style="padding-top: 110px">
 			</c:when>
 			<c:when test="${responsive != null}">
-				<div class="page" style="max-width: 100%; padding: 10px; padding-top: 40px;">
+				<div class="page underlined" style="max-width: 100%; padding: 10px; padding-top: 40px;">
 				<div class="alert alert-warning">Information important: Pour créer et gérer un questionnaire, veuillez accéder à EUSurvey à partir d'un ordinateur. Il n'est pas recommandé de se connecter à EUSurvey à partir d'un téléphone portable ou tablette.</div>
 			</c:when>
 			<c:otherwise>
-				<div class="page" style="padding-top: 40px;">
+				<div class="page underlined" style="padding-top: 40px;">
 			</c:otherwise>
 		</c:choose>	
 		

@@ -1626,7 +1626,7 @@ public class SurveyService extends BasicService {
 		if (!alreadyPublished)
 			reportingService.addToDo(ToDo.NEWSURVEY, draftSurvey.getUniqueId(), null);
 		
-		if (firstPublicationForUser) {
+		if (firstPublicationForUser && draftSurvey.getOwner().getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
 			sendFirstPublishedSurveyMail(draftSurvey);
 		}
 
@@ -1634,11 +1634,22 @@ public class SurveyService extends BasicService {
 	}
 	
 	public void sendFirstPublishedSurveyMail(Survey survey) throws Exception {
-		String body = "The user <b>" + survey.getOwner().getLogin() + "</b> - <b>" + survey.getOwner().getFirstLastName()
-				+ "</b> published the survey <b>" + survey.getTitleSort() + "</b> using the alias <b>" + survey.getShortname() + "</b>.<br /><br />"
-				+ "Links to the survey:<br />Administration: <a href=\"" + host	+ survey.getShortname() + "/management/overview\">" + host + survey.getShortname() + "/management/overview</a><br />"
-				+ "Runner: <a href=\"" + host	+ "runner/" + survey.getShortname() + "\">" + host + "runner/" + survey.getShortname() + "</a><br /><br />"
-				+ "Your EUSurvey Team";
+		String body = "<b>SURVEY MODERATION</b><br />" +
+				"<br />" +
+				"An external user has published his first survey.<br/>" +
+				"<br />" +
+				"Runner: <a href=\"" + host	+ "runner/" + survey.getShortname() + "\">" + host + "runner/" + survey.getShortname() + "</a><br />" +
+				"<br />" +
+				"<table>" +
+				"<tr><td><b>Username:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getOwner().getLogin() + "</td></tr>" +
+				"<tr><td><b>First name:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getOwner().getGivenName() + "</td></tr>" +
+				"<tr><td><b>Surname:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getOwner().getSurName() + "</td></tr>" +
+				"<tr><td><b>Email address:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getOwner().getEmail() + "</td></tr>" +
+				"<tr><td><b>Survey Title:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getTitle() + "</td></tr>" +
+				"<tr><td><b>Survey Alias:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getShortname() + "</td></tr>" +
+				"<tr><td><b>Survey UID:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getUniqueId() + "</td></tr>" +
+				"</table><br />" +
+				"Administration: <a href=\"" + host	+ survey.getShortname() + "/management/overview\">" + host + survey.getShortname() + "/management/overview</a><br />";
 
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);

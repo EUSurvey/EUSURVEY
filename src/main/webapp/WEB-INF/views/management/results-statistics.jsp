@@ -117,8 +117,11 @@
 	                                 <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
 	                                     <tr>
 	                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-									 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-								 </th>
+												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+												<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+													<i class="glyphicon glyphicon-copy"></i>
+												</a>
+								 			</th>
 	                                     </tr>
 	                                     <tr>
 	                                         <td style='padding-top:10px; padding-bottom:10px'>
@@ -291,6 +294,9 @@
 	                                       <tr>
 	                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
 												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+												<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+													<i class="glyphicon glyphicon-copy"></i>
+												</a>										
 											</th>
 	                                       </tr>
 	                                       <tr>
@@ -319,6 +325,9 @@
 	                                        <tr>
 	                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
 												    <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+											   		<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+														<i class="glyphicon glyphicon-copy"></i>
+													</a>											   
 											    </th>
 	                                        </tr>
 	                                        <tr>
@@ -424,6 +433,9 @@
 	                                       <tr>
 	                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
 												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+												<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+													<i class="glyphicon glyphicon-copy"></i>
+												</a>											
 											</th>
 	                                       </tr>
 	                                       <tr>
@@ -515,7 +527,10 @@
 	                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
 	                                        <tr>
 	                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-												 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+												<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+													<i class="glyphicon glyphicon-copy"></i>
+												</a>											
 											 </th>
 	                                        </tr>
 	                                        <tr>
@@ -628,6 +643,9 @@
 	                                       <tr>
 	                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
 												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+												<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+													<i class="glyphicon glyphicon-copy"></i>
+												</a>											
 											</th>
 	                                       </tr>
 	                                       <tr>
@@ -723,7 +741,10 @@
 					                                 <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
 					                                     <tr>
 					                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-																 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+																<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+																<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+																	<i class="glyphicon glyphicon-copy"></i>
+																</a>														
 															 </th>
 					                                     </tr>
 					                                     <tr>
@@ -752,6 +773,9 @@
 				                                        <tr>
 				                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
 															    <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+														    	<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+																	<i class="glyphicon glyphicon-copy"></i>
+																</a>														    
 														    </th>
 				                                        </tr>
 				                                        <tr>
@@ -842,8 +866,11 @@
 				                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
 				                                        <tr>
 				                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-															 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-														 </th>
+																<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+																<a class="chart-clipboard" data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />">
+																	<i class="glyphicon glyphicon-copy"></i>
+																</a>														
+														 	</th>
 				                                        </tr>
 				                                        <tr>
 				                                            <td style='padding-top:10px; padding-bottom:10px'>
@@ -858,10 +885,26 @@
 				                        </div>
 									</c:when>
 									
-								</c:choose>
+								</c:choose>								
+							
+								<c:if test="${charts.containsKey(child.uniqueId) && child.getCellType() != 'FreeText'}">
+									<div style="margin: 10px">
+										<img src="data:image/png;base64,${charts.get(child.uniqueId)}" />
+									</div>
+								</c:if>
+							
 							</c:forEach>															
 						</c:when>						
-					</c:choose>		
+					</c:choose>	
+					
+					<c:if test="${charts != null && charts.containsKey(question.uniqueId)}">
+						<c:if test="${question.getType() != 'FreeTextQuestion'}">
+							<div style="margin: 10px">
+								<img src="data:image/png;base64,${charts.get(question.uniqueId)}" />
+							</div>
+						</c:if>
+					</c:if>
+					
 				</c:if>
 			</c:if>		
 		</c:forEach>		

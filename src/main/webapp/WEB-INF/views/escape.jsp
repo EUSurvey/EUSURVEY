@@ -3,7 +3,7 @@
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>	
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.SurveyUnavailable" /></title>	
 	<%@ include file="includes.jsp" %>
@@ -13,7 +13,7 @@
 		<link href="${contextpath}/resources/css/ecnew.css" rel="stylesheet" type="text/css"></link>
 	</c:if>
 	<c:if test='${form.survey.skin != null && form.survey.skin.name.equals("ECA Skin")}'>
-			<link href="${contextpath}/resources/css/ecanew.css" rel="stylesheet" type="text/css"></link>
+		<link href="${contextpath}/resources/css/ecanew.css" rel="stylesheet" type="text/css"></link>
 	</c:if>
 	<c:if test='${form.survey.skin != null && form.survey.skin.name.equals("ECA 2023")}'>
 		<link href="${contextpath}/resources/css/eca2023.css" rel="stylesheet" type="text/css"></link>

@@ -222,6 +222,10 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 				
 				function save( dataBlob ){
 					$(button).show().attr({href: dataBlob, download: "WordCloud.png"});
+					
+					$(elementWrapper).find('.chart-clipboard').click(function(){
+						 copyBase64ImageToClipboard(dataBlob);
+					})
 				}			
 			
 			}, 1000);

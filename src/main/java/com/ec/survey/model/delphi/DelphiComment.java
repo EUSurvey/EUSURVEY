@@ -14,8 +14,10 @@ public class DelphiComment {
     private final String answerSetUniqueCode;
     private final List<DelphiComment> replies;
     private final boolean unread;
-    
-    public DelphiComment(String user, String text, Date date, int id, String answerSetUniqueCode, boolean unread) {
+    private List<String> likes;
+    private int numLikes;
+
+    public DelphiComment(String user, String text, Date date, int id, String answerSetUniqueCode, boolean unread, List<String> likes) {
     	this.user = user;
     	this.text = text;
     	this.date = ConversionTools.getFullString(date);
@@ -23,6 +25,8 @@ public class DelphiComment {
     	this.answerSetUniqueCode = answerSetUniqueCode;
     	this.replies = new ArrayList<>();
     	this.unread = unread;
+    	this.likes = likes;
+    	this.numLikes = likes.size();
     }
     
     public String getUser() {
@@ -50,4 +54,19 @@ public class DelphiComment {
     public boolean isUnread() {
         return unread;
     }
+
+    public List<String> getLikes() {
+        return this.likes;
+    }
+
+    public void setLikes(List<String> likes) {
+        this.likes = likes;
+        this.numLikes = likes.size();
+    }
+
+    public int getNumLikes() {
+        return this.numLikes;
+    }
+
+    //no setter as this shouldn't be set independently from likes
 }

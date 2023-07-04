@@ -6,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 
 <head>
 <title>EUSurvey - Privacy Statement</title>
@@ -53,21 +53,18 @@ body {
 	
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<div class="page" style="width: auto;">
+				<div class="page underlined" style="width: auto;">
 			</c:when>
 			<c:when
 				test="${USER != null && runnermode == null && readonly != null }">
 				<%@ include file="../menu.jsp"%>
-				<div class="page" style="margin-top: 110px">
+				<div class="page underlined" style="margin-top: 110px">
 			</c:when>
 			<c:otherwise>
-				<div class="page">
+				<div class="page underlined">
 			</c:otherwise>
 		</c:choose>	
-			
-		<form:form id="logoutform" action="${contextpath}/j_spring_security_logout" method="post">
-	    </form:form>
-	
+		
 		<form:form id="tos-form" action="${contextpath}/auth/ps" method="post">
 			<c:if test="${readonly == null}">
 				<input type="hidden" name="user" value="${user.id}" />
@@ -107,6 +104,11 @@ body {
 	</div>
 	<c:if test="${readonly != null}">
 		<%@ include file="../footer.jsp"%>
+	</c:if>
+	
+	<c:if test="${readonly == null}">
+		<form:form id="logoutform" action="${contextpath}/j_spring_security_logout" method="post">
+	    </form:form>	
 	</c:if>
 
 </body>

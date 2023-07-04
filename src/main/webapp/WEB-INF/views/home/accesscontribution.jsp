@@ -3,7 +3,7 @@
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="contribution.edit" /></title>	
 	<%@ include file="../includes.jsp" %>
@@ -27,8 +27,8 @@
 			
 			<form:form id="form" method="POST" action="editcontribution" modelAttribute="form">
 				<div>
-					<h5><spring:message code="label.ContributionId" />:</h5>
-					<input type="text" class="required uuid" name="uniqueCode" maxlength="36" value="${uniqueid}" />
+					<label for="uniqueCode"><spring:message code="label.ContributionId" />:</label><br />
+					<input type="text" class="required uuid" name="uniqueCode" id="uniqueCode" maxlength="36" value="${uniqueid}" />
 						<c:if test="${message != null}">
 							<div class="validation-error">${message}</div>
 						</c:if>

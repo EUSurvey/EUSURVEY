@@ -803,7 +803,7 @@ var closeOverlayDivsEnabled = false;
  			  });		
 			 
 			  $("#scrollarea").scroll(function() {
-				  $(".overlaymenu").hide();
+				  $(".overlaymenu").hide();		
 				  $(".overlay-validation-error").remove();
 				  
 				  $("#scrollareaheader").scrollLeft($("#scrollarea").scrollLeft());
@@ -1440,16 +1440,20 @@ var closeOverlayDivsEnabled = false;
 			const deletedCommentText = '[DELETED]';
 
 			$('.comment').each((index, element) => {
-				const text = extractTextFromComment($(element).find('span').text());
+				const text = extractTextFromComment($(element).find('span').find('span').first().text());
+				const element_to_append = $(element).find('span').find('div').find('span').first();
+
 				if (text !== deletedCommentText) {
-					$(element).append('<a onclick="editDelphiComment(this)"><spring:message code="label.Edit" /></a>');
+					$(element_to_append).before('<a onclick="editDelphiComment(this)"><spring:message code="label.Edit" /></a>');
 				}
 				if (text !== deletedCommentText
 					|| (text === deletedCommentText
 						&& $(element).next().length !== 0
 						&& !$(element).next().hasClass('reply'))) {
-					$(element).append('<a onclick="deleteDelphiComment(this)"><spring:message code="label.Delete" /></a>');
+					$(element_to_append).before('<a onclick="deleteDelphiComment(this)"><spring:message code="label.Delete" /></a>&nbsp;');
 				}
+				const element_to_append2 = $(element_to_append).find('span');
+				$(element_to_append2).before('<img aria-label="${form.getMessage("label.Likes")}" style="vertical-align: top; margin-left: 5px" src="${contextpath}/resources/images/hand-thumbs-up.svg" />');
 			});
 
 			$('.reply').each((index, element) => {

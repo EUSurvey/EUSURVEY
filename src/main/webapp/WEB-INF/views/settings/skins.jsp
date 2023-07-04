@@ -2,7 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
 	<title>EUSurvey - <spring:message code="label.Skins" /></title>
 	
@@ -29,7 +29,7 @@
 				{		    	
 			    	if (responseJSON.success)
 			    	{
-			    		window.location = "${contextpath}/settings/skin/edit/" + responseJSON.id;
+			    		window.location = "${contextpath}/settings/skin?skinuploaded=true";
 			    	} else {
 			    		
 			    		if (responseJSON.message == "invalidfiletype")
@@ -47,6 +47,10 @@
 			$(".qq-upload-drop-area").css("margin-left", "-1000px");
 			
 			$('[data-toggle="tooltip"]').tooltip(); 
+			
+			if (window.location.search.toLowerCase().includes("skinuploaded")){
+				$('#skintable tr:last')[0].scrollIntoView();
+			}
 		});	
 		
 		var selectedId = null;
@@ -85,7 +89,7 @@
 		<div class="page880" style="padding-bottom: 0px; min-height: 200px; padding-top:220px">
 		
 			<div style="margin-left: auto; margin-right: auto; width: 630px;">					
-				<table class="table table-striped table-bordered table-styled" cellpadding="0" cellspacing="0">
+				<table id="skintable" class="table table-striped table-bordered table-styled" cellpadding="0" cellspacing="0">
 					<thead>
 						<tr>
 							<th><spring:message code="label.Name" /></th>

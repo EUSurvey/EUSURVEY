@@ -9,10 +9,15 @@ import java.util.Map;
 
 public class Ucs2Utf8 {
 
-    public static String unconvert(String s) {
+    public static String unconvert(String s, String encoding) {
         if (s == null) {
             return null;
         }
+        
+        if (encoding.equalsIgnoreCase("UTF-8")) {
+        	return s;
+        }
+        
         StringBuilder buffer = new StringBuilder();
 
         char[] transl = s.toCharArray();
@@ -68,7 +73,7 @@ public class Ucs2Utf8 {
             {
 	            for (int i = 0; i < values.length; i++) {
 	                //convert and replace invalid characters
-	            	String val = Ucs2Utf8.unconvert(values[i]).replaceAll(re, "");
+	            	String val = Ucs2Utf8.unconvert(values[i], r.getCharacterEncoding()).replaceAll(re, "");
 	                values[i] = val;
 	            }
             }

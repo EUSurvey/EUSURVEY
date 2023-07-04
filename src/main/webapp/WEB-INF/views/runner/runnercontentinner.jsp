@@ -37,7 +37,7 @@
 	
 	<div id="delphi-hide-survey">
 		<div style="font-size: 25px; margin-bottom: 10px"><spring:message code="label.PleaseWait" /></div>
-		<img src="${contextpath}/resources/images/ajax-loader.gif"/>
+		<img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif"/>
 	</div>
 </c:if>
 
@@ -352,7 +352,7 @@
 																			</c:choose>
 																			<a class="survey-element-anchor"
 																			   id="E${element.id}"></a>
-																			<img src="${contextpath}/resources/images/ajax-loader.gif"/>
+																			<img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif"/>
 																		</div>
 																	</div>
 									</fieldset>
@@ -572,7 +572,7 @@
 								<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadPDFversion")}" id="download-survey-pdf-link" class="link visiblelink" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
 								<span id="download-survey-pdf-dialog-running" class="hideme">${form.getMessage("info.FileCreation")}</span>
 								<span id="download-survey-pdf-dialog-ready" class="hideme">${form.getMessage("info.FileCreated")}</span>
-								<div id="download-survey-pdf-dialog-spinner" class="hideme" style="padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>
+								<div id="download-survey-pdf-dialog-spinner" class="hideme" style="padding-left: 5px;"><img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif" /></div>
 								<br /><a style="white-space: nowrap; overflow-x: visible; display: none; margin-top: 10px" id="download-survey-pdf-dialog-result" target="_blank" class="btn btn-primary" href="<c:url value="/pdf/survey/${form.survey.id}?lang=${form.language.code}&unique=${uniqueCode}"/>">${form.getMessage("label.Download")}</a>
 								<div id="download-survey-pdf-dialog-error" class="hideme">${form.getMessage("error.OperationFailed")}</div>
 							</div>
@@ -666,17 +666,17 @@
 	 	}	 	
 	 	function getMinMaxChoice(min,max)
 	 	{
-	 		var s = '${form.getMessage("limits.MinMaxChoices", "[min]","[max]")}';
+	 		var s = '${form.getMessage("limits.MinMaxChoicesNew", "[min]","[max]")}';
 	 		return s.replace("[min]", min).replace("[max]", max);
 	 	}
 	 	function getMinChoice(min)
 	 	{
-	 		var s = '${form.getMessage("limits.MinChoices", "[min]")}';
+	 		var s = '${form.getMessage("limits.MinChoicesNew", "[min]")}';
 	 		return s.replace("[min]", min);
 	 	}
 	 	function getMaxChoice(max)
 	 	{
-	 		var s = '${form.getMessage("limits.MaxChoices", "[max]")}';
+	 		var s = '${form.getMessage("limits.MaxChoicesNew", "[max]")}';
 	 		return s.replace("[max]", max);
 	 	}
 	 	function getMaxSelections(max)

@@ -8,7 +8,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
-<div id="pathheader">
+<div id="pathheader" style="background-color: #F5F5F5">
 	<div class="lang-en" id="header">
 		<div style="float: left">
 			<a href="http://www.eca.europa.eu"

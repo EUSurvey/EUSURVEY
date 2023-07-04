@@ -414,6 +414,43 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional
+	public CommentLike getCommentLike(int answerCommentId, String uniqueCode) {
+		final Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createQuery(
+				"FROM CommentLike WHERE answerCommentId = :answerCommentId and uniqueCode = :uniqueCode ORDER BY id");
+		query.setInteger("answerCommentId", answerCommentId).setString("uniqueCode", uniqueCode);
+
+		return (CommentLike) query.uniqueResult();
+	}
+
+	@Transactional(readOnly = true)
+	public List<CommentLike> loadCommentLikes(int answerCommentId) {
+		final Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createQuery(
+				"FROM CommentLike WHERE answerCommentId = :answerCommentId ORDER BY id");
+		query.setInteger("answerCommentId", answerCommentId);
+
+		@SuppressWarnings("unchecked")
+		List<CommentLike> list = query.list();
+
+		return list;
+	}
+
+	@Transactional
+	public void addCommentLike(CommentLike commentLike) {
+		final Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(commentLike);
+	}
+
+	@Transactional
+	public void deleteCommentLike(CommentLike commentLike) {
+		final Session session = sessionFactory.getCurrentSession();
+		session.delete(commentLike);
+	}
+
+	@Transactional
 	public void deleteCommentsForDeletedAnswers(final AnswerSet answerSet) {
 
 		final Session session = sessionFactory.getCurrentSession();
@@ -545,6 +582,7 @@ public class AnswerExplanationService extends BasicService {
 		for (List<AnswerComment> list : commentsByParent.values()) {
 			boolean first = true;
 			for (AnswerComment comment : list) {
+				List<CommentLike> likes = loadCommentLikes(comment.getId());
 				String userPrefix = "";
 				
 				if (!comment.getText().equalsIgnoreCase(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
@@ -555,18 +593,29 @@ public class AnswerExplanationService extends BasicService {
 					s.append("<div class='");
 					if (first) {
 						s.append("comment");
-						first = false;
 					} else {
 						s.append("reply");
 					}
 
 					s.append("' data-id='").append(comment.getId()).append("' data-unique-code='")
-							.append(comment.getUniqueCode()).append("'>").append("<span>").append(userPrefix)
-							.append(ESAPI.encoder().encodeForHTML(comment.getText())).append("</span>").append("</div>");
+							.append(comment.getUniqueCode()).append("'>").append("<span>").append("<span>").append(userPrefix)
+							.append(ESAPI.encoder().encodeForHTML(comment.getText())).append("</span>");
+
+					if (first) {
+						s.append("<div> <span style='white-space:nowrap;'> <span>" + likes.size() + "</span> </span> </div>");
+						first = false;
+					}
+
+					s.append("</span>").append("</div>");
 				} else {
 					if (first) {
+						if (s.length() != 0) {
+							s.append("\n");
+						}
 						s.append(userPrefix).append(comment.getText());
 						first = false;
+
+						s.append("\n   Likes: " + likes.size());
 					} else {
 						s.append("\n   ").append(userPrefix).append(comment.getText());
 					}
