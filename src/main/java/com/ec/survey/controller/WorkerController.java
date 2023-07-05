@@ -223,6 +223,20 @@ public class WorkerController extends BasicController {
 		return "OK";
 	}
 	
+	@RequestMapping(value = "/deleteOldWebserviceExports", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
+	public @ResponseBody String deleteOldWebserviceExports(HttpServletRequest request, HttpServletResponse response) {	
+		
+		try {
+			exportService.deleteOldWebserviceExports();	
+		} catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage(), e);
+			return e.getLocalizedMessage();
+		}
+		
+		return "OK";
+	}
+	
 	@RequestMapping(value = "/startwebservice/{taskid}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
 	public @ResponseBody String startwebservice(@PathVariable String taskid, HttpServletRequest request, HttpServletResponse response) {	
 		
