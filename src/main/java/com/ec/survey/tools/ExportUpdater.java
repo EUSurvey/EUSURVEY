@@ -21,6 +21,8 @@ public class ExportUpdater implements Runnable {
 		try {	
 			exportService.applyExportTimeout();
 			
+			logger.info("Starting deletion of old webservice exports");
+			exportService.deleteOldWebserviceExports();
 			logger.info("Starting deletion of old exports");
 			exportService.deleteOldExports();			
 		} catch (Exception e) {

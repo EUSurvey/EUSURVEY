@@ -37,6 +37,7 @@ public class ExportsRemover implements Runnable {
 	@Override
 	public void run() {
 		try {
+			exportService.deleteOldWebserviceExports();
 			exportService.deleteOldExports();
 			WebserviceTask t = webserviceService.get(task);
 			t.setDone(true);
