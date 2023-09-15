@@ -19,6 +19,7 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.InvalidEmailException;
 import com.ec.survey.tools.MathUtils;
+import com.ec.survey.tools.MissingAnswersForReadonlyMandatoryQuestionException;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.SurveyHelper;
@@ -1597,12 +1598,29 @@ public class AnswerService extends BasicService {
 				.setString("questionUid", questionUid).setInteger("questionId", questionId);
 		return ConversionTools.getValue(query.uniqueResult());
 	}
+	
+	private boolean hasMissingAnswersForReadonlyMandatoryQuestions(AnswerSet answerSet) {
+		
+		for (Question q : answerSet.getSurvey().getQuestions()) {
+			if (q.getReadonly() && !q.getOptional()) {
+				if (answerSet.getAnswers(q.getId(), q.getUniqueId()).isEmpty()) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void saveDraft(Draft draft) throws InterruptedException {
+	public void saveDraft(Draft draft, boolean checkMissingAnswersForReadonlyMandatoryQuestions) throws Exception {
 		boolean saved = false;
 
 		int counter = 1;
+		
+		if (checkMissingAnswersForReadonlyMandatoryQuestions && hasMissingAnswersForReadonlyMandatoryQuestions(draft.getAnswerSet())) {
+			throw new MissingAnswersForReadonlyMandatoryQuestionException();
+		}
 
 		draft.getAnswerSet().setUpdateDate(new Date());
 

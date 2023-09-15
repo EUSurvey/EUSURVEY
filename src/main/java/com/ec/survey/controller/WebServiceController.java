@@ -10,6 +10,7 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.MissingAnswersForReadonlyMandatoryQuestionException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
 import com.ec.survey.tools.export.XmlExportCreator;
@@ -1333,7 +1334,11 @@ public class WebServiceController extends BasicController {
 			}
 			
 			try {
-				answerService.saveDraft(draft);
+				answerService.saveDraft(draft, true);
+			} catch (MissingAnswersForReadonlyMandatoryQuestionException me) {
+				logger.error(me.getLocalizedMessage(), me);
+				response.setStatus(412);
+				return "Missing Answers for readonly mandatory question";
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
 				response.setStatus(412);

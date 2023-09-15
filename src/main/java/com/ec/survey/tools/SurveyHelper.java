@@ -401,7 +401,11 @@ public class SurveyHelper {
 				draft.setAnswerSet(answerSet);
 			}
 
-			answerService.saveDraft(draft);
+			try {
+				answerService.saveDraft(draft, false);
+			} catch (Exception e) {
+				//ignore
+			}
 
 			result.put(new DraftIDElement(), uid);
 		}
