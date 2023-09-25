@@ -57,8 +57,9 @@
 						<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" style="max-width: 100%;" />
 					</div>
 				</c:when>
-			</c:choose>						
-				
+			</c:choose>
+
+				<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 				<div class="left-area">
 					<c:if test="${form.survey.motivationPopup}">
 						<div class="modal motivation-popup-modal not-shown" id="motivationPopup" style="padding-top: 50px;" role="dialog" data-popup="${form.survey.motivationPopup}" data-type="${form.survey.motivationType}" data-progress="${form.survey.motivationTriggerProgress}" data-timer="${form.survey.motivationTriggerProgress}">
@@ -67,7 +68,7 @@
 									<div class="modal-header" style="font-weight: bold;">
 										<c:choose>
 											<c:when test="${form.survey.motivationPopupTitle != null && form.survey.motivationPopupTitle.length() > 0}">
-												${form.survey.motivationPopupTitle}
+												${fn:escapeXml(form.survey.motivationPopupTitle)}
 											</c:when>
 											<c:otherwise>
 												<spring:message code="label.MotivationPopup" />
@@ -75,7 +76,7 @@
 										</c:choose>
 									</div>
 									<div class="modal-body">
-										<div class="modal-body">${form.survey.motivationText}</div>
+										<div class="modal-body" style="word-break: break-all">${form.survey.motivationText}</div>
 									</div>
 									<div class="modal-footer">
 										<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog('.motivation-popup-modal')">${form.getMessage("label.Close")}</a>
@@ -490,8 +491,8 @@
 							</label>
 
 							<c:choose>
-							<c:when test="${readonlyMode != null && readonlyMode == true}">
-							<select id="langSelectorRunner" name="langSelectorRunner" disabled="disabled">
+								<c:when test="${readonlyMode != null && readonlyMode == true}">
+									<select id="langSelectorRunner" name="langSelectorRunner" disabled="disabled">
 								</c:when>
 								<c:otherwise>
 								<select id="langSelectorRunner" name="langSelectorRunner"

@@ -65,6 +65,7 @@ public class Setting {
 	public static final String UseSMTService = "UseSMTService";
 	public static final String MaxSurveysPerUser = "MaxSurveysPerUser";
 	public static final String MaxSurveysTimespan = "MaxSurveysTimespan";
+	public static final String LastCheckedSurveyIDForZombieFiles = "LastCheckedSurveyIDForZombieFiles";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")

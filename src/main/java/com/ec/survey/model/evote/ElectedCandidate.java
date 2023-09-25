@@ -15,7 +15,7 @@ public class ElectedCandidate {
 	private boolean listNotAccepted;
 
 	public String getName() {
-		return Tools.escapeHTML(name);
+		return name;
 	}
 
 	public void setName(String name) {

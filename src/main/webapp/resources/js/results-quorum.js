@@ -53,7 +53,12 @@ var QuorumResults = function() {
 
 	let quorumChart;
 	this.updateQuorumChart = function(scale) {
-		if(quorumChart != null) quorumChart.destroy();
+		if(quorumChart != null) {
+			quorumChart.destroy();
+			$("#quorum").find('.chart-download').removeAttr('href');
+			$("#quorum").find('.chart-download').find('.glyphicon-save').toggleClass('glyphicon-save').toggleClass('glyphicon-refresh');
+			$("#quorum-chart-download").tooltip("disable");
+		}
 
 		let ctx = $("#quorumChart");
 		
@@ -113,6 +118,7 @@ var QuorumResults = function() {
 				animation: {
 					onComplete: function (animation) {
 						$("#quorum").find('.chart-download').attr({href: this.toBase64Image(), download: "quorum.png"});
+						$("#quorum").find('.chart-download').find('.glyphicon-refresh').toggleClass('glyphicon-refresh').toggleClass('glyphicon-save');
 						$('[data-toggle="tooltip"]').tooltip();
 					}
 				}

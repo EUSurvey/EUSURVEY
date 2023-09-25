@@ -19,6 +19,7 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.InvalidEmailException;
 import com.ec.survey.tools.MathUtils;
+import com.ec.survey.tools.MissingAnswersForReadonlyMandatoryQuestionException;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.SurveyHelper;
@@ -1297,8 +1298,18 @@ public class AnswerService extends BasicService {
 		if (answerSet.getSurvey().getIsDelphi()) {
 			answerExplanationService.deleteExplanationByAnswerSet(answerSet);
 		}
-
+		
 		Session session = sessionFactory.getCurrentSession();
+		
+		if (!answerSet.getIsDraft() && !answerSet.getSurvey().getIsDraft()) {
+			DeletedContribution deletedContribution = new DeletedContribution();
+			deletedContribution.setContributionCode(answerSet.getUniqueCode());
+			deletedContribution.setSurveyUid(answerSet.getSurvey().getUniqueId());
+			deletedContribution.setCreationDate(answerSet.getDate());
+			deletedContribution.setDeletionDate(new Date());
+			session.save(deletedContribution);
+		}
+		
 		session.delete(answerSet);
 		
 		if (!answerSet.getIsDraft()) {
@@ -1605,12 +1616,29 @@ public class AnswerService extends BasicService {
 				.setString("questionUid", questionUid);
 		return ConversionTools.getValue(query.uniqueResult());
 	}
+	
+	private boolean hasMissingAnswersForReadonlyMandatoryQuestions(AnswerSet answerSet) {
+		
+		for (Question q : answerSet.getSurvey().getQuestions()) {
+			if (q.getReadonly() && !q.getOptional()) {
+				if (answerSet.getAnswers(q.getUniqueId()).isEmpty()) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void saveDraft(Draft draft) throws InterruptedException {
+	public void saveDraft(Draft draft, boolean checkMissingAnswersForReadonlyMandatoryQuestions) throws Exception {
 		boolean saved = false;
 
 		int counter = 1;
+		
+		if (checkMissingAnswersForReadonlyMandatoryQuestions && hasMissingAnswersForReadonlyMandatoryQuestions(draft.getAnswerSet())) {
+			throw new MissingAnswersForReadonlyMandatoryQuestionException();
+		}
 
 		draft.getAnswerSet().setUpdateDate(new Date());
 
@@ -2790,5 +2818,32 @@ public class AnswerService extends BasicService {
 	private String getPercentage(double value) {
 	    int number = (int) Math.round(value * 100);
 	    return number + " %";
+	}
+
+	public String getDeletedContributionsXML(String uniqueId, String alias) {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
+		s.append("<DeletedContributions uid='").append(uniqueId).append("' alias='").append(alias).append("'>\n");
+		
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		Query<DeletedContribution> query = session.createQuery("From DeletedContribution d where d.surveyUid = :uniqueId").setParameter("uniqueId", uniqueId);
+
+		List<DeletedContribution> deletedContributions = query.list();
+		
+		for (DeletedContribution deletedContribution: deletedContributions) {
+			s.append("<Contribution id='").append(deletedContribution.getContributionCode())
+				.append("' created='")
+				.append(ConversionTools.getFullString4Webservice(deletedContribution.getCreationDate()))
+				.append("' deleted='")
+				.append(ConversionTools.getFullString4Webservice(deletedContribution.getDeletionDate()))
+				.append("' />\n");
+		}
+		
+		s.append("</DeletedContributions>");
+
+		return s.toString();
+
 	}
 }

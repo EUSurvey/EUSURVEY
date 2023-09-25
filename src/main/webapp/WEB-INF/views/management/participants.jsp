@@ -259,18 +259,13 @@
 													<!-- ko if: type() != 'Token' -->
 													<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
-													<!-- ko if: editEnabled() -->
-														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/participantsEdit?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
-													<!-- /ko -->
-													<!-- ko if: !editEnabled() -->
-														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
-													<!-- /ko -->
+													<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
 														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
 													<!-- /ko -->
 													<!-- ko if: detailsEnabled() -->
-														<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+														<a class="iconbutton" data-bind="click: showDetails" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
 													<!-- /ko -->
 													<!-- ko if: !detailsEnabled() -->
 														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
@@ -371,18 +366,13 @@
 													<!-- ko if: type() != 'Token' -->
 													<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
-													<!-- ko if: editEnabled() -->
-														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/participantsEdit?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
-													<!-- /ko -->
-													<!-- ko if: !editEnabled() -->
-														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
-													<!-- /ko -->
+													<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
 														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
 													<!-- /ko -->
 													<!-- ko if: detailsEnabled() -->
-														<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+														<a class="iconbutton" data-bind="click: showDetails" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
 													<!-- /ko -->
 													<!-- ko if: !detailsEnabled() -->
 														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>

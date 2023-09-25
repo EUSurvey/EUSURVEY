@@ -1116,6 +1116,39 @@
 			<p>In the example below, line 5 is showing the total for each column.
 				Those fields use the 'Read only' option, so that, the total cannot be modified by the user.</p>
 			<img alt="screenshot formular element" src="${contextpath}/resources/images/documentation/formular_field_9.png" style="margin-bottom: 1em" />
+			<h2>Complex Table</h2>
+			<p>'Complex Table' is a table-like survey element that allows you to compose other survey items in a more complex way.
+				It enables visual linking of different questions and layout of text passages (e.g. displaying text in columns).</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_1.png" style="margin-bottom: 1em; width: 20%" />
+			<p><b>How do I configure a 'Complex Table'?</b></p>
+			<p>In the survey 'Editor' add a 'Complex Table' element and select it.
+				The 'Element Properties' provide the same setting options as the regular 'Table' element.</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_2.png" style="margin-bottom: 1em; width: 30%" />
+			<p><b>How do I configure the 'Complex Table' single cells?</b></p>
+			<p>Select a single cell in the survey preview section.</p>
+			<p>You can specify different question types into different cells. Those types correspond to the standard question types.</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_3.png" style="margin-bottom: 1em; width: 25%" />
+			<p>'Static Text' can be displayed in columns by using the 'Column Span' property.
+				Note that it can only span subsequent cells, thereby removing the contents of those cells if they were already configured.</p>
+			<p>The other available cell types ('Free Text', 'Formula', 'Single Choice', 'Multiple Choice', 'Number')
+				are basically the same as their regular counterparts outside a 'Complex Table' and can be edited in the same way.</p>
+			<p><b>How to display text in columns?</b></p>
+			<p>Text passages can be displayed in columns by splitting the text over several 'Complex Table' cells.
+				Configure the type of the respective cells to 'Static Text'.
+				Under 'Element Properties > Text' the desired text can now be entered for each cell individually.</p>
+			<p><b>How can cells be configured so that they are not editable?</b></p>
+			<p>The cell types of the 'Complex Table' that cannot be edited are 'Static Text' and 'Empty'.</p>
+			<p>For other cell types, the 'Element Properties > Read only' can be used to prevent direct user input.</p>
+			<p><b>How can a cell be configured so that its text spans multiple columns?</b></p>
+			<p>Text in 'Complex Tables' can be configured to span across multiple columns. Select a cell with the 'Cell Type > Static Text'.
+				Under 'Element Properties', the 'Column Span' option is responsible for how many columns are covered.
+				Note that this function covers subsequent cells, thereby removing the contents of those cells if they were already configured.</p>
+			<p><b>How can I delete a question in a 'Complex Table' cell?</b></p>
+			<p>The content of cells in a 'Complex Table' cannot be removed individually using the editor's delete function.
+				Instead, the 'Cell Type' of the cell must be reset to 'Empty'.</p>
+			<p><b>How can I get a chart in the statistics screen?</b></p>
+			<p>Min and Max values must be set; At most 10 values are possible.</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_4.png" style="margin-bottom: 1em; max-width: 920px" />
 			<h1>
 				Survey security
 			</h1>

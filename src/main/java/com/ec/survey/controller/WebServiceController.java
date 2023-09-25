@@ -10,6 +10,7 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.MissingAnswersForReadonlyMandatoryQuestionException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
 import com.ec.survey.tools.export.XmlExportCreator;
@@ -1327,7 +1328,11 @@ public class WebServiceController extends BasicController {
 			}
 
 			try {
-				answerService.saveDraft(draft);
+				answerService.saveDraft(draft, true);
+			} catch (MissingAnswersForReadonlyMandatoryQuestionException me) {
+				logger.error(me.getLocalizedMessage(), me);
+				response.setStatus(412);
+				return "Missing Answers for readonly mandatory question";
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
 				response.setStatus(412);
@@ -1379,6 +1384,30 @@ public class WebServiceController extends BasicController {
 		return "";
 	}
 
+	@RequestMapping(value = "/getDeletedContributions/{alias}", method = { RequestMethod.GET,
+			RequestMethod.HEAD }, produces = "text/xml;charset=UTF-8")
+	public @ResponseBody String getDeletedContributions(@PathVariable String alias, HttpServletRequest request,
+			HttpServletResponse response) {
+		KeyValue credentials = getLoginAndPassword(request, response);
+		if (credentials != null) {
+			return getSurveyInfo("DeletedContributions", credentials.getKey(), credentials.getValue(), alias, request,
+					response);
+		}
+		return "";
+	}
+	
+	@RequestMapping(value = "/getPrivilegedUsers/{alias}", method = { RequestMethod.GET,
+			RequestMethod.HEAD }, produces = "text/xml;charset=UTF-8")
+	public @ResponseBody String getPrivilegedUsers(@PathVariable String alias, HttpServletRequest request,
+			HttpServletResponse response) {
+		KeyValue credentials = getLoginAndPassword(request, response);
+		if (credentials != null) {
+			return getSurveyInfo("PrivilegedUsers", credentials.getKey(), credentials.getValue(), alias, request,
+					response);
+		}
+		return "";
+	}
+	
 	@RequestMapping(value = "/publishSurvey/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String publishSurvey(@PathVariable String alias, HttpServletRequest request,
@@ -1569,6 +1598,14 @@ public class WebServiceController extends BasicController {
 				response.setStatus(200);
 				webserviceService.increaseServiceRequest(user.getId());
 				return surveyService.getSurveyMetaDataXML(survey);
+			case "DeletedContributions":
+				response.setStatus(200);
+				webserviceService.increaseServiceRequest(user.getId());
+				return answerService.getDeletedContributionsXML(survey.getUniqueId(), survey.getShortname());
+			case "PrivilegedUsers":
+				response.setStatus(200);
+				webserviceService.increaseServiceRequest(user.getId());
+				return surveyService.getPrivilegedUsersXML(survey.getUniqueId(), survey.getShortname());
 			default:
 				response.setStatus(412);
 				break;

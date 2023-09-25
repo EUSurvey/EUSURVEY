@@ -1648,7 +1648,7 @@ public class RunnerController extends BasicController {
 				}
 
 				try {
-					answerService.saveDraft(draft);
+					answerService.saveDraft(draft, true);
 					uid = draft.getUniqueId();
 				} catch (HibernateOptimisticLockingFailureException | ConstraintViolationException he) {
 					logger.info(he.getLocalizedMessage(), he);

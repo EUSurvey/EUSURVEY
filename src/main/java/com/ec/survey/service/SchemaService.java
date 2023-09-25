@@ -51,6 +51,24 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domaintWorker;
 	
 	@Transactional
+	public void step110() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.LastCheckedSurveyIDForZombieFiles);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.LastCheckedSurveyIDForZombieFiles);
+			s.setValue("1");
+			s.setFormat("Integer");
+			session.saveOrUpdate(s);
+		}
+	
+		status.setDbversion(110);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
 	public void step109() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

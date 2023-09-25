@@ -176,7 +176,11 @@ function checkHasValue(element) {
 		
 		return $(element).is(":checked");
 	}
-	
+
+	if ($(element).hasClass("confirmationCheckbox")) {
+		return $(element).is(":checked");
+	}
+
 	if ($(element).is(":checkbox")) {
 		if ($(element).closest('.matrix-cell').length > 0) {
 			return $(element).closest('.matrixtable').find("input:checked").length > 0;

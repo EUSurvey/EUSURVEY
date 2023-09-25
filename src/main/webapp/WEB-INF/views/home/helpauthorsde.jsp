@@ -1369,6 +1369,43 @@
 			<p>Im folgenden Beispiel wird in Zeile 5 die Summe für jede Spalte angezeigt.
 				Diese Felder verwenden die Option "Schreibgeschützt", so dass die Summe vom Benutzer nicht geändert werden kann.</p>
 			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_9_DE.png" style="margin-bottom: 1em" />
+			<h2>Komplexe Tabelle</h2>
+			<p>Die "Komplexe Tabelle" ist ein tabellenähnliches Umfrageelement, mit dem andere Umfrageelemente auf komplexe Weise miteinander kombiniert werden können.
+				Sie ermöglicht die visuelle Verknüpfung verschiedener Fragen und die Gestaltung von Textpassagen (z.B. die Darstellung von Text in mehreren Spalten).</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_1_DE.png" style="margin-bottom: 1em" />
+			<p><b>Wie konfiguriere ich eine komplexe Tabelle?</b></p>
+			<p>Fügen Sie im "Editor" ein Element "Komplexe Tabelle" hinzu und wählen Sie es aus.
+				Die Elementeigenschaften bieten die gleichen Einstellungsmöglichkeiten wie die reguläre "Tabelle".</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_2_DE.png" style="margin-bottom: 1em" />
+			<p><b>Wie konfiguriere ich einzelne Zellen einer komplexen Tabelle?</b></p>
+			<p>Wählen Sie eine einzelne Zelle im Vorschaubereich des Editors aus.</p>
+			<p>Sie können unterschiedliche Fragetypen für verschiedene Zellen festlegen.
+				Diese "Zelltypen" entsprechen denen der regulären Standardfragen.</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_3_DE.png" style="margin-bottom: 1em" />
+			<p>"Statischer Text" kann in Spalten angezeigt werden, indem die Eigenschaft "Zellen über Spalten hinweg verbinden" verwendet wird.
+				Beachten Sie, dass diese Eigenschaft nur auf aufeinanderfolgende Zellen in einer Tabellenzeile angewendet werden kann.
+				Wenn diese Zellen bereits konfiguriert waren, wird der Inhalt entfernt.</p>
+			<p>Die anderen verfügbaren Zellentypen ("Freier Text", "Formel", "Einfachauswahl", "Mehrfachauswahl", "Zahl")
+				sind identisch mit ihren regulären Gegenstücken außerhalb einer komplexen Tabelle und können auf die gleiche Weise bearbeitet werden.</p>
+			<p><b>Wie lässt sich Text in Spalten anzeigen?</b></p>
+			<p>Textpassagen können in Spalten angezeigt werden, indem der Text auf mehrere Zellen der komplexen Tabelle aufgeteilt wird.
+				Setzen Sie den Zellentyp der entsprechenden Zellen auf "Statischer Text".
+				Unter "Elementeigenschaften > Text" kann nun für jede Zelle der gewünschte Text separat eingegeben werden.</p>
+			<p><b>Wie können Zellen so konfiguriert werden, dass sie nicht bearbeitet werden können?</b></p>
+			<p>Die Zelltypen der komplexen Tabelle, die nicht bearbeitet werden können, sind "Statischer Text" und "leer".</p>
+			<p>Für andere Zellentypen können mit "Elementeigenschaften > Schreibgeschützt" direkte Benutzereingaben verhindert werden.</p>
+			<p><b>Wie kann eine Zelle so konfiguriert werden, dass sich ihr Text über mehrere Spalten erstreckt?</b></p>
+			<p>Text in komplexen Tabellen kann so konfiguriert werden, dass er sich über mehrere Spalten erstreckt.
+				Wählen Sie eine Zelle mit dem "Zellentyp > Statischer Text" aus.
+				Unter Elementeigenschaften ist die Option "Zellen über Spalten hinweg verbinden" dafür verantwortlich, wie viele Spalten zusammengeführt werden.
+				Beachten Sie, dass diese Funktion nachfolgende Zellen verdeckt und somit den Inhalt dieser Zellen entfernt, falls diese bereits konfiguriert waren.</p>
+			<p><b>Wie kann ich eine Frage in einer Zelle einer komplexen Tabelle löschen?</b></p>
+			<p>Der Inhalt einzelner Zellen einer komplexen Tabelle kann nicht mithilfe der Löschfunktion des Editors entfernt werden.
+				Stattdessen muss der Zellentyp der Zelle auf "leer" zurückgesetzt werden.</p>
+			<p><b>Wie kann ich ein Diagramm in der Statistikansicht anzeigen lassen?</b></p>
+			<p>Damit die entsprechenden Diagramme in der Statistikansicht angezeigt werden, müssen für die Zellentypen "Zahl" und "Formel" Werte für "min." und "max." festgelegt werden.
+				Insgesamt darf es maximal 10 Werte geben.</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_4_DE.png" style="margin-bottom: 1em; max-width: 920px" />
 			<h1>
 				Sicherheit der Umfrage
 			</h1>

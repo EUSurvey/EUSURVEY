@@ -975,7 +975,9 @@
 				{
 					$(this).prop("checked", "checked");
 				} else {
-					$(this).removeAttr("checked");
+					if (!$(this)[0].hasClass("always-checked")) {
+						$(this).removeAttr("checked");
+					}
 				}
 			});
 		}
@@ -1413,8 +1415,8 @@
 						
 					<c:if test="${form.getSurvey().isQuiz}">
 						<tr>
-							<td style="vertical-align: top;"><input checked="checked" disabled="disabled" type="checkbox" class="check" /></td>
-							<td style="vertical-align: top;"><input checked="checked" disabled="disabled" type="checkbox" class="check" /></td>
+							<td style="vertical-align: top;"><input checked="checked" disabled="disabled" type="checkbox" class="check always-checked" /></td>
+							<td style="vertical-align: top;"><input checked="checked" disabled="disabled" type="checkbox" class="check always-checked" /></td>
 							<td><spring:message code="label.TotalScore" /></td>
 						</tr>
 					</c:if>

@@ -3658,6 +3658,30 @@ public class ManagementController extends BasicController {
 
 		return null;
 	}
+
+	@RequestMapping(value = "/seatTestPossible", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@ResponseBody
+	public ResponseEntity<byte[]> seatTestPossible(HttpServletRequest request) {
+		final org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+		Form form;
+
+		try {
+			form = sessionService.getForm(request, null, false, false);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			headers.setContentType(MediaType.TEXT_PLAIN);
+			return new ResponseEntity<>(e.getLocalizedMessage().getBytes(), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		if (form != null) {
+			String uid = request.getParameter("surveyuid");
+			if (!uid.equals(form.getSurvey().getUniqueId())) {
+				return new ResponseEntity<>(("").getBytes(), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+
+		return null;
+	}
 	
 	@RequestMapping(value = "/seatExport", method = { RequestMethod.GET, RequestMethod.HEAD })
 	@ResponseBody
@@ -3681,8 +3705,9 @@ public class ManagementController extends BasicController {
 			
 			SeatCounting result = null;
 			String testdata = request.getParameter("testdata");
+			String surveyUid = request.getParameter("surveyuid");
 			if (testdata != null && testdata.equalsIgnoreCase("true")) {
-				result = (SeatCounting) request.getSession().getAttribute(LastEVoteTestResult);
+				result = (SeatCounting) request.getSession().getAttribute(LastEVoteTestResult + surveyUid);
 			}
 			if (result == null) {
 				result = eVoteService.getCounting(form.getSurvey().getUniqueId(), null, resources, new Locale("EN"), true);
@@ -3733,11 +3758,6 @@ public class ManagementController extends BasicController {
 				throw new ForbiddenURLException();
 			}
 			
-			String uid = request.getParameter("surveyuid");
-			if (!uid.equals(form.getSurvey().getUniqueId())) {
-				return null;
-			}
-			
 			eVoteResults results = eVoteService.getEmptyListResult(form.getSurvey());
 			results.setBlankVotes(getValue(request, "blankvotes"));
 			results.setSpoiltVotes(getValue(request, "spoiltvotes"));
@@ -3762,9 +3782,9 @@ public class ManagementController extends BasicController {
 			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), results, resources, locale, true);
 			
 			if (locale.getLanguage().equals("en")) {
-				request.getSession().setAttribute(LastEVoteTestResult, result);
+				request.getSession().setAttribute(LastEVoteTestResult + form.getSurvey().getUniqueId(), result);
 			} else {
-				request.getSession().setAttribute(LastEVoteTestResult, eVoteService.getCounting(form.getSurvey().getUniqueId(), results, resources, new Locale("EN"), true));
+				request.getSession().setAttribute(LastEVoteTestResult + form.getSurvey().getUniqueId(), eVoteService.getCounting(form.getSurvey().getUniqueId(), results, resources, new Locale("EN"), true));
 			}
 			
 			return result;

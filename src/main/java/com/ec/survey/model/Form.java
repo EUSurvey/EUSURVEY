@@ -507,8 +507,9 @@ public class Form {
 					titlePrefix.append("<img align='middle' style='margin-right: 7px;' src='").append(contextpath)
 							.append("/resources/images/checkbox.png' />");
 				} else {
-					titlePrefix.append("<input type='checkbox' class='required check' name='answer")
-							.append(question.getId()).append("' aria-labelledby='questiontitle").append(question.getId()).append("' /> ");
+					titlePrefix.append("<input type='checkbox' class='required check confirmationCheckbox' name='answer")
+							.append(question.getId()).append("' aria-labelledby='questiontitle").append(question.getId())
+							.append("' onclick='propagateChange(this);' /> ");
 				}
 			}
 		}

@@ -147,7 +147,7 @@ var SeatResults = function() {
 		const labels = [];
 		const votes = [];
 		this.counting().candidatesFromPreferentialVotes.forEach((ec) => {
-			labels.push(ec.name);
+			labels.push(normalizeLabel(ec.name));
 			votes.push(ec.votes);
 		});
 

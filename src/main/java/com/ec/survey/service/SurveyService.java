@@ -2198,6 +2198,9 @@ public class SurveyService extends BasicService {
 			NativeQuery query5 = session.createSQLQuery("DELETE FROM VALIDCODE WHERE VALIDCODE_SURVEYUID = :uid");
 			query5.setParameter("uid", uid).executeUpdate();
 			
+			NativeQuery query6 = session.createSQLQuery("DELETE FROM DELETEDCONTRIBUTIONS WHERE DELETEDCONTRIBUTIONS_SURVEY = :uid");
+			query6.setParameter("uid", uid).executeUpdate();
+			
 		}
 
 		NativeQuery query = session.createSQLQuery("DELETE FROM TRANSLATION WHERE SURVEY_ID = :id");
@@ -3222,7 +3225,9 @@ public class SurveyService extends BasicService {
 			hql += " AND a.owner = :user"; 
 		}
 		
-		hql += " ORDER BY a." + order + " DESC";
+		if (order != null) {
+			hql += " ORDER BY a." + order + " DESC";
+		}
 		
 		Query<ResultAccess> query = session.createQuery(hql, ResultAccess.class).setParameter("uid", uid);
 		
@@ -5205,6 +5210,8 @@ public class SurveyService extends BasicService {
 		s.append("<Survey id='").append(survey.getId()).append("' uid='").append(survey.getUniqueId()).append("' alias='").append(survey.getShortname())
 				.append("'>\n");
 
+		s.append("<ModifiedDate>").append(ConversionTools.getFullString4Webservice(survey.getUpdated())).append("</ModifiedDate>\n");
+		
 		s.append("<SurveyType>")
 				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : (survey.getIsDelphi() ? "Delphi" : "Standard")))
 				.append("</SurveyType>\n");
@@ -5332,6 +5339,18 @@ public class SurveyService extends BasicService {
 		s.append("</Survey>");
 
 		return s.toString();
+	}
+	
+	@Transactional(readOnly = true)
+	public String getSurveyUID(int surveyID) {
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "SELECT s.uniqueId FROM Survey s WHERE s.id = :id";
+
+		Query<String> query = session.createQuery(sql, String.class);
+		query.setParameter("id", surveyID);
+
+		String result = query.uniqueResult();
+		return result;
 	}
 
 	@Transactional(readOnly = true)
@@ -5796,5 +5815,48 @@ public class SurveyService extends BasicService {
 		if (result >= maxSurveysPerUser) {
 			throw new SurveyCreationLimitExceededException();
 		}
+	}
+
+	public String getPrivilegedUsersXML(String uniqueId, String alias) {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
+		s.append("<PrivilegedUsers uid='").append(uniqueId).append("' alias='").append(alias).append("'>\n");
+		
+		Survey draft = getSurvey(uniqueId,true, false, false, false, null, true, false, false, false);
+		
+		// owner
+		s.append("<User login='").append(draft.getOwner().getLogin()).append("'>");				
+		s.append("<PrivilegeType>OWNER</PrivilegeType>");			
+		s.append("<Access>ManageInvitations:2;FormManagement:2;AccessDraft:2;AccessResults:2;</Access>"); //owner has always full access
+		s.append("</User>");
+		
+		// standard access
+		List<Access> accesses = getAccesses(draft.getId());		
+		for (Access access: accesses) {
+			s.append("<User login='").append(access.getUser().getLogin()).append("'>");				
+			s.append("<PrivilegeType>STANDARD</PrivilegeType>");			
+			s.append("<Access>");
+			s.append(access.getPrivileges());
+			s.append("</Access>");
+			s.append("</User>");
+		}
+		
+		// privileged result access
+		List<ResultAccess> resultAccesses = getResultAccesses(null, uniqueId, 1, Integer.MAX_VALUE, null, null, null, null);
+		for (ResultAccess access: resultAccesses) {
+			User user = administrationService.getUser(access.getUser());			
+			s.append("<User login='").append(user.getLogin()).append("'>");				
+			s.append("<PrivilegeType>RESULTS</PrivilegeType>");			
+			s.append("<Access>");
+			s.append("<Access>ManageInvitations:0;FormManagement:0;AccessDraft:0;AccessResults:" + (access.isReadonly() ? "1" : "2") + ";</Access>"); //only access to results
+			s.append("</Access>");
+			s.append("</User>");
+		}
+		
+		s.append("</PrivilegedUsers>");
+
+		return s.toString();
+
 	}
 }

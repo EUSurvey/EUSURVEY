@@ -1100,6 +1100,38 @@ public class FileService extends BasicService {
 		return result;
 	}
 
+	public int deleteZombieExportFilesForSurvey(String surveyUID) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -1);
+		Date date = cal.getTime();
+		
+		int counter = 0;
+		
+		java.io.File dir = this.getSurveyExportsFolder(surveyUID);
+		if (dir.exists()) {
+			try {				
+				java.io.FileFilter fileFilter = new WildcardFileFilter("Export*.xls");
+				java.io.File[] files = dir.listFiles(fileFilter);
+				if (files != null) {
+					for (java.io.File file : files) {
+						if (file.exists()) {
+							Date modified = new Date(file.lastModified());
+							if (modified.before(date)) {
+								Files.delete(file.toPath());
+								counter++;
+							}
+						}
+					}
+				}				
+				
+				return counter;
+			} catch (IOException e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
+		}
+		return counter;
+	}
+	
 	public boolean deleteFilesForSurveys(String surveyUID) throws Exception {		
 		java.io.File folder = this.getSurveyFolder(surveyUID);
 		if (folder.exists()) {

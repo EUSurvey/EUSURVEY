@@ -1116,6 +1116,18 @@ var closeOverlayDivsEnabled = false;
 			
 			return null;
 		}
+
+		function escapeXml(unsafe) {
+			return unsafe.replace(/[<>&'"]/g, function (c) {
+				switch (c) {
+					case '<': return '&lt;';
+					case '>': return '&gt;';
+					case '&': return '&amp;';
+					case '\'': return '&apos;';
+					case '"': return '&quot;';
+				}
+			});
+		}
 		
 		var newPage = 1;
 		var endreached = false;
@@ -1291,7 +1303,7 @@ var closeOverlayDivsEnabled = false;
 														var td = document.createElement("td");
 														var div = document.createElement("div");
 														$(div).addClass("answercell tablecell");
-														$(div).append(list[i++]);
+														$(div).append(escapeXml(list[i++]));
 														$(td).append(div);
 														$(tr).append(td);
 														
@@ -1341,7 +1353,7 @@ var closeOverlayDivsEnabled = false;
 													var td = document.createElement("td");
 													var div = document.createElement("div");
 													$(div).addClass("answercell complextablecell");
-													$(div).append(list[i++]);
+													$(div).append(escapeXml(list[i++]));
 													$(td).append(div);
 													$(tr).append(td);
 												

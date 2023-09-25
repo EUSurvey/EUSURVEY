@@ -6,6 +6,8 @@ import com.ec.survey.model.Export.ExportFormat;
 import com.ec.survey.model.Export.ExportState;
 import com.ec.survey.model.Export.ExportType;
 import com.ec.survey.model.Form;
+import com.ec.survey.model.Setting;
+import com.ec.survey.model.WebserviceTask;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.ChoiceQuestion;
 import com.ec.survey.model.survey.Element;
@@ -31,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -709,6 +712,79 @@ public class ExportService extends BasicService {
 		
 		query.executeUpdate();		
 	}
+	
+	@Transactional
+	public void deleteExportZombieFiles() throws IOException {	
+		
+		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false"))
+		{
+			logger.info("calling worker server for deleting old export zombie files");
+			
+			try {			
+				URL workerurl = new URL(workerserverurl + "worker/deleteExportZombieFiles");
+				URLConnection wc = workerurl.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(wc.getInputStream()));
+				String inputLine;
+				StringBuilder result = new StringBuilder();
+				while ((inputLine = in.readLine()) != null) 
+					result.append(inputLine);
+				in.close();
+				
+				if (!result.toString().equals("OK"))
+				{
+					logger.error("calling worker server for deleting old export zombie files returned " + result);
+				}
+				return;
+			
+			} catch (ConnectException e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
+		}		
+		
+		
+		int minutes = Integer.parseInt(deleteexportstimeout);
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MINUTE, minutes);
+		Date endtime = cal.getTime();
+		Date currenttime = new Date();
+		
+		int counter = 0;
+		
+		int highestSurveyID = surveyService.getHighestSurveyId();
+		
+		int surveyID = Integer.parseInt(settingsService.get(Setting.LastCheckedSurveyIDForZombieFiles));
+		if (surveyID == -1) {
+			return; // nothing else to check
+		}
+		
+		Set<String> checkedSurveyUIDs = new HashSet<>();
+		while (currenttime.before(endtime) && surveyID <= highestSurveyID)
+		{
+			String surveyUID = surveyService.getSurveyUID(surveyID);
+			
+			//not all IDs are used as there could be deleted ones;
+			if (surveyUID != null) {
+				
+				//skip those that were already checked during this run
+				if (!checkedSurveyUIDs.contains(surveyUID)) {
+					counter += fileService.deleteZombieExportFilesForSurvey(surveyUID);
+					checkedSurveyUIDs.add(surveyUID);
+				}
+			}
+			
+			surveyID++;
+			
+			currenttime = new Date();
+		}
+		
+		if (surveyID > highestSurveyID) {
+			settingsService.update(Setting.LastCheckedSurveyIDForZombieFiles, "-1"); // -1 means that we successfully checked all existing surveys
+		} else {		
+			settingsService.update(Setting.LastCheckedSurveyIDForZombieFiles, Integer.toString(surveyID));
+		}
+		
+		logger.info(counter + " old export zombie files deleted");
+	}
 
 	@Transactional
 	public void deleteOldExports() throws IOException {
@@ -729,7 +805,7 @@ public class ExportService extends BasicService {
 				
 				if (!result.toString().equals("OK"))
 				{
-					logger.error("calling worker server for deleting old exports returned" + result);
+					logger.error("calling worker server for deleting old exports returned " + result);
 				}
 				return;
 			
@@ -774,6 +850,77 @@ public class ExportService extends BasicService {
 		}
 		
 		logger.info(counter + " old exports deleted");
+	}
+	
+	@Transactional
+	public void deleteOldWebserviceExports() throws IOException {
+		
+		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false"))
+		{
+			logger.info("calling worker server for deleting old webservice exports");
+			
+			try {			
+				URL workerurl = new URL(workerserverurl + "worker/deleteOldWebserviceExports");
+				URLConnection wc = workerurl.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(wc.getInputStream()));
+				String inputLine;
+				StringBuilder result = new StringBuilder();
+				while ((inputLine = in.readLine()) != null) 
+					result.append(inputLine);
+				in.close();
+				
+				if (!result.toString().equals("OK"))
+				{
+					logger.error("calling worker server for deleting old webservice exports returned " + result);
+				}
+				return;
+			
+			} catch (ConnectException e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
+		}		
+		
+		Session session = sessionFactory.getCurrentSession();
+		
+		int minutes = Integer.parseInt(deleteexportstimeout);
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MINUTE, minutes);
+		Date endtime = cal.getTime();
+		Date currenttime = new Date();
+	
+		cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -1);		
+		Date date = cal.getTime();
+		
+		int counter = 0;
+		
+		while (currenttime.before(endtime))
+		{
+			Query query = session.createQuery("FROM WebserviceTask t WHERE t.created < :date");
+			query.setTimestamp("date", date).setMaxResults(1000);
+			@SuppressWarnings("unchecked")
+			List<WebserviceTask> tasks = query.list();
+			
+			for (WebserviceTask task : tasks) {
+				if (task.isDone() && !task.isEmpty() && task.getResult() != null && task.getResult().length() > 0 && task.getSurveyUid() != null && task.getSurveyUid().length() > 0)
+				{
+					java.io.File target = fileService.getSurveyExportFile(task.getSurveyUid(), task.getResult());
+					if (target.exists() && target.delete()) {
+						counter++;
+					}
+				}
+				session.delete(task);
+			}
+			
+			if (tasks.size() < 1000)
+			{
+				break;
+			}
+			
+			currenttime = new Date();
+		}
+		
+		logger.info(counter + " old webservice exports deleted");
 	}
 
 	@Transactional(readOnly = true)

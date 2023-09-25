@@ -22,6 +22,23 @@
 		</c:if>
 	</c:forEach>
 
+	function testComputationPossible(shortname, surveyuid) {
+		var data = {surveyuid: surveyuid};
+
+		var request = $.ajax({
+			url: contextpath + "/" + shortname + "/management/seatTestPossible",
+			data:data,
+			cache: false,
+			success: function()
+			{
+				startTestComputation(surveyuid);
+			},
+			error: function() {
+				$('#doubleTestPage').modal("show");
+			}
+		});
+	}
+
 	function startTestComputation(surveyuid) {
 		var data = {surveyuid: surveyuid};
 		
@@ -46,6 +63,23 @@
 				$('[data-toggle="tooltip"]').tooltip();
 				$('#results-statistics-seats-link').show();
 				switchTo('seats');
+			}
+		});
+	}
+
+	function startTemplateDownload(shortname, surveyuid) {
+		var data = {surveyuid: surveyuid};
+
+		$.ajax({
+			url: contextpath + "/" + shortname + "/management/seatTestPossible",
+			data: data,
+			cache: false,
+			success: function()
+			{
+				window.location.href = "${contextpath}/" + shortname + "/management/seatTestDownload";
+			},
+			error: function() {
+				$('#doubleTestPage').modal("show");
 			}
 		});
 	}
@@ -166,9 +200,26 @@
 		</c:forEach>		
 	</table>
 	
-	<a class="btn btn-primary" onclick="startTestComputation('${form.survey.getUniqueId()}')"><spring:message code="label.ExecuteTest" /></a>
-	<a class="btn btn-default" href="${contextpath}/${form.survey.shortname}/management/seatTestDownload"><spring:message code="label.DownloadTemplateFile" /></a>
+	<a class="btn btn-primary" onclick="testComputationPossible('${form.survey.shortname}', '${form.survey.uniqueId}')"><spring:message code="label.ExecuteTest" /></a>
+	<a class="btn btn-default" onclick="startTemplateDownload('${form.survey.shortname}', '${form.survey.uniqueId}')"><spring:message code="label.DownloadTemplateFile" /></a>
 	<span id="seatTestUpload"></span>
 	<span id="uploadSeatTestError"></span>
+
+	<div id="doubleTestPage" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<spring:message code="label.RequestedActionNotPossible" />
+				</div>
+				<div class="modal-body">
+					<spring:message code="message.DoubleTestPage" />
+				</div>
+				<div class="modal-footer">
+					<a href="${contextpath}/${form.survey.uniqueId}/management/results" class="btn btn-primary"><spring:message code="label.Reload" /></a>
+					<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 </div>	

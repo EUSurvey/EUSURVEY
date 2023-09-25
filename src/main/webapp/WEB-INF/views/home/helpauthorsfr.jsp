@@ -1401,6 +1401,40 @@
 			<p>Dans l'exemple ci-dessous, la ligne 5 affiche le total de chaque colonne.
 				Ces champs utilisent l'option « En lecture seule », de sorte que le total ne peut être modifié par l'utilisateur.</p>
 			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_9_FR.png" style="margin-bottom: 1em" />
+			<h2>Tableau Complexe</h2>
+			<p>Le tableau complexe est un élément d'enquête semblable à un tableau qui vous permet de composer d'autres éléments d'enquête de manière plus complexe.
+				Il permet la liaison visuelle des différentes questions et la mise en page de texte (par exemple, l'affichage du texte en colonnes).</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_1_FR.png" style="margin-bottom: 1em" />
+			<p><b>Comment puis-je configurer un « Tableau Complexe » ?</b></p>
+			<p>Dans « l'éditeur » d'enquête, ajoutez un élément « Tableau complexe » et sélectionnez-le.
+				Les « Propriétés de l'élément » fournissent les mêmes options de configuration que l'élément classique « Tableau ».</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_2_FR.png" style="margin-bottom: 1em" />
+			<p><b>Comment puis-je configurer les cellules d’un « Tableau Complexe » ?</b></p>
+			<p>Sélectionnez une seule cellule dans l’éditeur de l'enquête.</p>
+			<p>Vous pouvez spécifier différents types de questions dans différentes cellules. Ces types correspondent aux types des questions standards.</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_3_FR.png" style="margin-bottom: 1em" />
+			<p>Le « Texte Statique » peut être affiché dans des colonnes à l'aide de la propriété « Column Span ».
+				Notez qu'il ne peut s'étendre que sur les cellules suivantes, supprimant ainsi le contenu de ces cellules si elles étaient déjà configurées.</p>
+			<p>Les autres types de cellules disponibles (« Texte libre », « Formule », « Choix unique », « Choix multiples », « Nombre »)
+				sont fondamentalement les mêmes que leurs homologues en dehors d'un tableau complexe et peuvent être modifiés de la même manière.</p>
+			<p><b>Comment afficher du texte en colonnes ?</b></p>
+			<p>Les passages de texte peuvent être affichés en colonnes en divisant le texte sur plusieurs cellules d’un tableau complexe.
+				Configurez le type des cellules en « Texte Statique ».
+				Sous « Propriétés des éléments > Texte », le texte souhaité peut maintenant être saisi individuellement pour chaque cellule.</p>
+			<p><b>Comment les cellules peuvent-elles être configurées pour qu'elles ne soient pas modifiables ?</b></p>
+			<p>Les types de cellule du tableau complexe qui ne peuvent pas être modifiés sont « Texte Statique » et « Vide ».</p>
+			<p>Pour les autres types de cellules, les « Propriétés de l'élément > Lecture seule » peuvent être utilisées pour empêcher la saisie directe de l'utilisateur.</p>
+			<p><b>Comment une cellule peut être configurée de sorte que le texte s’étende sur plusieurs colonnes ?</b></p>
+			<p>Le texte des tableaux complexes peut être configuré pour s'étendre sur plusieurs colonnes.
+				Sélectionnez une cellule avec « Type de cellule > Texte statique ».
+				Sous « Propriétés des éléments », l'option « Étendue des colonnes » est responsable du nombre de colonnes couvertes.
+				Notez que cette fonction couvre les cellules suivantes, supprimant ainsi le contenu de ces cellules si elles étaient déjà configurées.</p>
+			<p><b>Comment puis-je supprimer une question dans une cellule de tableau complexe ?</b></p>
+			<p>Le contenu des cellules d'un tableau complexe ne peut pas être supprimé individuellement à l'aide de la fonction de suppression de l'éditeur.
+				Au lieu de cela, le « Type de cellule » de la cellule doit être réinitialisé sur « Vide ».</p>
+			<p><b>Comment puis-je obtenir un graphique dans l'écran statistiques ?</b></p>
+			<p>Les valeurs Min et Max doivent être définies ; 10 valeurs au maximum sont possibles.</p>
+			<img alt="screenshot complex_table element" src="${contextpath}/resources/images/documentation/complex_table_4_FR.png" style="margin-bottom: 1em; max-width: 920px" />
 			<h1>
 				Sécurité des enquêtes
 			</h1>

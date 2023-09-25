@@ -17,7 +17,7 @@
 	<a class="btn btn-primary" data-bind="click: function() {toggleResults('${form.survey.uniqueId}')}"><spring:message code="label.DisplayResults" /></a>
 	<!-- ko if: counting() != null && counting().template != 'p' -->
 		<a class="btn btn-primary" id="btnAllocateSeats" data-bind="visible: showResults() && loaded(), click: function() {toggleSeats('${form.survey.uniqueId}')}"><spring:message code="label.AllocateSeats" /></a>
-		<a class="btn btn-primary" id="btnExportSeats" data-bind="visible: showResults() && showSeats(), attr: {href: '${contextpath}/${form.survey.shortname}/management/seatExport' + (useTestData() ? '?testdata=true' : '')}"><spring:message code="label.Export" /></a>
+		<a class="btn btn-primary" id="btnExportSeats" data-bind="visible: showResults() && showSeats(), attr: {href: '${contextpath}/${form.survey.shortname}/management/seatExport' + (useTestData() ? '?testdata=true&surveyuid=${form.survey.uniqueId}' : '?surveyuid=${form.survey.uniqueId}')}"><spring:message code="label.Export" /></a>
 	<!-- /ko -->
 
 	<div id="results-seats-counting" data-bind="visible: showResults()">
@@ -626,6 +626,5 @@
 
 		return "";
 	}
-
 </script>
 		

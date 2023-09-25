@@ -17,6 +17,7 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.RestoreExecutor;
+import com.ec.survey.tools.SurveyCreationLimitExceededException;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.stereotype.Controller;
@@ -460,7 +461,7 @@ public class SurveySearchController extends BasicController {
 	@RequestMapping(value = "/archive/restore/{id}")
 	public ModelAndView restore(@PathVariable String id, HttpServletRequest request, HttpServletResponse response)
 			throws InvalidURLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException,
-			ForbiddenURLException, IOException {
+			ForbiddenURLException, IOException, SurveyCreationLimitExceededException {
 		Archive archive = archiveService.get(Integer.parseInt(id));
 
 		if (archive == null || !archive.getFinished() || archive.getError() != null) {
@@ -473,6 +474,8 @@ public class SurveySearchController extends BasicController {
 		}
 
 		String alias = request.getParameter("alias");
+		
+		surveyService.checkSurveyCreationLimit(u.getId());	
 
 		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false")) {
 			logger.info("calling worker server for restoring archive " + archive.getId());

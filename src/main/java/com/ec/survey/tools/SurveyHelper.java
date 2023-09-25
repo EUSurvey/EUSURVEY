@@ -386,7 +386,11 @@ public class SurveyHelper {
 				draft.setAnswerSet(answerSet);
 			}
 
-			answerService.saveDraft(draft);
+			try {
+				answerService.saveDraft(draft, false);
+			} catch (Exception e) {
+				//ignore
+			}
 
 			result.put(new DraftIDElement(), uid);
 		}
@@ -3178,11 +3182,12 @@ public class SurveyHelper {
 		if (item.getCellType() == CellType.SingleChoice || item.getCellType() == CellType.MultipleChoice) {
 			String[] answers = getAnswers(parameterMap, id);
 			String[] originalAnswers = getOriginalAnswers(parameterMap, id);
+			String[] uniqueIDs = getUniqueIDs(parameterMap, id);
 			String[] shortnamesForAnswers = parameterMap.get("pashortname" + id);
 			if (!newElement) {
 				DeletePossibleAnswers(answers, originalAnswers, item.getPossibleAnswers());
 			}
-			getPossibleAnswers(answers, originalAnswers, null, shortnamesForAnswers, null, null, null, null, item.getPossibleAnswers(), survey, log220, new StringBuilder(), null);
+			getPossibleAnswers(answers, originalAnswers, uniqueIDs, null, shortnamesForAnswers, null, null, null, null, item.getPossibleAnswers(), survey, log220, new StringBuilder(), null);
 		}
 
 		if (log220 && oldValues.length() > 0) {
@@ -3225,7 +3230,7 @@ public class SurveyHelper {
 		}
 	}
 	
-	private static void getPossibleAnswers(String[] answers, String[] originalAnswers, String[] dependenciesForAnswers, String[] shortnamesForAnswers, String[] correctForAnswers, String[] pointsForAnswers, String[] feedbackForAnswers, String[] exclusiveForAnswers, List<PossibleAnswer> possibleAnswers, Survey survey, boolean log220, StringBuilder newAnswers, HashMap<PossibleAnswer, String> dependencies) {
+	private static void getPossibleAnswers(String[] answers, String[] originalAnswers, String[] uniqueIDs, String[] dependenciesForAnswers, String[] shortnamesForAnswers, String[] correctForAnswers, String[] pointsForAnswers, String[] feedbackForAnswers, String[] exclusiveForAnswers, List<PossibleAnswer> possibleAnswers, Survey survey, boolean log220, StringBuilder newAnswers, HashMap<PossibleAnswer, String> dependencies) {
 		PossibleAnswer p;
 		int j = 0;
 		String shortname;
@@ -3233,6 +3238,9 @@ public class SurveyHelper {
 
 			String answer = answers[k];
 			String originalAnswer = originalAnswers[k];
+			String uniqueID = "";
+			if (uniqueIDs != null && uniqueIDs.length > k)
+				uniqueID = uniqueIDs[k];
 			String answerDependencies = "";
 			if (dependenciesForAnswers != null && dependenciesForAnswers.length > k)
 				answerDependencies = dependenciesForAnswers[k];
@@ -3244,7 +3252,8 @@ public class SurveyHelper {
 			boolean found = false;
 
 			for (PossibleAnswer pa : possibleAnswers) {
-				if (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)) {
+				if ((uniqueIDs != null && pa.getUniqueId().equals(uniqueID)) ||
+					(uniqueIDs == null && (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)))) {
 					p = pa;
 					p.getDependentElements().getDependentElements().clear();
 					found = true;
@@ -3309,7 +3318,7 @@ public class SurveyHelper {
 	}
 
 	private static SingleChoiceQuestion getSingleChoice(Map<String, String[]> parameterMap, Element currentElement,
-			Survey survey, String id, String[] answers, String[] originalAnswers, String[] dependenciesForAnswers,
+			Survey survey, String id, String[] answers, String[] originalAnswers, String[] uniqueIDs, String[] dependenciesForAnswers,
 			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] correctForAnswers,
 			String[] pointsForAnswers, String[] feedbackForAnswers, ServletContext servletContext, boolean log220)
 			throws InvalidXHTMLException {
@@ -3475,7 +3484,7 @@ public class SurveyHelper {
 			}
 		}
 
-		getPossibleAnswers(answers, originalAnswers, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, null, singlechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
+		getPossibleAnswers(answers, originalAnswers, uniqueIDs, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, null, singlechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
 
 		if (log220 && !oldAnswers.toString().equals(newAnswers.toString())) {
 			oldValues += " answers: " + oldAnswers;
@@ -3491,7 +3500,7 @@ public class SurveyHelper {
 	}
 
 	private static MultipleChoiceQuestion getMultipleChoice(Map<String, String[]> parameterMap, Element currentElement,
-			Survey survey, String id, String[] answers, String[] originalAnswers, String[] dependenciesForAnswers,
+			Survey survey, String id, String[] answers, String[] originalAnswers, String[] uniqueIDs, String[] dependenciesForAnswers,
 			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] correctForAnswers,
 			String[] pointsForAnswers, String[] feedbackForAnswers, String[] exclusiveForAnswers, ServletContext servletContext, boolean log220)
 			throws InvalidXHTMLException {
@@ -3672,7 +3681,7 @@ public class SurveyHelper {
 			}
 		}
 
-		getPossibleAnswers(answers, originalAnswers, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, exclusiveForAnswers, multiplechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
+		getPossibleAnswers(answers, originalAnswers, uniqueIDs, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, exclusiveForAnswers, multiplechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
 
 		if (log220 && !oldAnswers.toString().equals(newAnswers.toString())) {
 			oldValues += " answers: " + oldAnswers;
@@ -4388,6 +4397,7 @@ public class SurveyHelper {
 		} else if (type.equalsIgnoreCase("choice")) {
 			String[] answers = getAnswers(parameterMap, id);
 			String[] originalAnswers = getOriginalAnswers(parameterMap, id);
+			String[] uniqueIDs = getUniqueIDs(parameterMap, id);
 			String[] dependenciesForAnswers = parameterMap.get("dependencies" + id);
 			String[] shortnamesForAnswers = parameterMap.get("pashortname" + id);
 			String[] correctForAnswers = parameterMap.get("correct" + id);
@@ -4398,11 +4408,11 @@ public class SurveyHelper {
 			boolean single = getBoolean(parameterMap, "single", id);
 
 			if (single) {
-				element = getSingleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, dependenciesForAnswers,
+				element = getSingleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, uniqueIDs, dependenciesForAnswers,
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
 						servletContext, log220);
 			} else {
-				element = getMultipleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, dependenciesForAnswers,
+				element = getMultipleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, uniqueIDs, dependenciesForAnswers,
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, exclusiveForAnswers,
 						servletContext, log220);
 			}
@@ -4542,6 +4552,26 @@ public class SurveyHelper {
 		scoringItem.setPoints(points);
 
 		return scoringItem;
+	}
+
+	private static String[] getUniqueIDs(Map<String, String[]> parameterMap, String id) {
+		String[] uniqueIDs = parameterMap.get("pauid" + id);
+
+		if (uniqueIDs == null) {
+			uniqueIDs = new String[0];
+		}
+
+		List<String> list = new ArrayList<>(Arrays.asList(uniqueIDs));
+		list.removeAll(Arrays.asList("", null));
+		uniqueIDs = list.toArray(new String[0]);
+
+		for (int i = 0; i < uniqueIDs.length; i++) {
+			if (uniqueIDs[i] != null) {
+				uniqueIDs[i] = Tools.filterHTML(uniqueIDs[i]);
+			}
+		}
+
+		return uniqueIDs;
 	}
 
 	public static Survey parseSurvey(HttpServletRequest request, SurveyService surveyService,

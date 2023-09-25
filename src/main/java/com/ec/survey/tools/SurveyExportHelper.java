@@ -884,7 +884,7 @@ public class SurveyExportHelper {
 				survey.setContact(location);
 			} 			
 			
-			survey.setShortname(AdministrationProperties.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent());
+			survey.setShortname(AdministrationProperties.getElementsByTagName("ShortName").item(0).getTextContent());
 		    String lang = AdministrationProperties.getElementsByTagName("PivotLanguage").item(0).getTextContent().toUpperCase();
 		    Language language = surveyService.getLanguage(lang);
 		    survey.setLanguage(language);
@@ -1094,7 +1094,7 @@ public class SurveyExportHelper {
 	private static Section parseSection(Element sectionElement, ImportResult result, Survey survey, ServletContext servletContext)
 	{
 		Section section = new Section();
-		section.setShortname(sectionElement.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent());
+		section.setShortname(sectionElement.getElementsByTagName("ShortName").item(0).getTextContent());
 		if (section.getShortname() != null)
 		{
 			section.setShortname(section.getShortname().replace("&", "and"));
@@ -1585,7 +1585,7 @@ public class SurveyExportHelper {
 		{		
 			question.setId(idcounter);
 			result.getOriginalIdsToNewIds().put(questionElement.getAttribute("id"), idcounter++);
-			question.setShortname(questionElement.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent());
+			question.setShortname(questionElement.getElementsByTagName("ShortName").item(0).getTextContent());
 			
 			if (question.getShortname() != null)
 			{

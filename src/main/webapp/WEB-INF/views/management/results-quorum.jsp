@@ -21,7 +21,7 @@
 			<option value="quorumDays" selected><spring:message code="label.CountEveryDay" /></option>
 			<option value="quorumHours"><spring:message code="label.CountEveryHour" /></option>
 		</select>
-		<a class="chart-download" style="float: none; margin-left: 10px;" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+		<a class="chart-download" id="quorum-chart-download" style="float: none; margin-left: 10px;" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
 		<div id="quorum-table" >
 			<canvas id="quorumChart"></canvas>
 		</div>

@@ -209,11 +209,39 @@ public class WorkerController extends BasicController {
 		return "OK";
 	}
 	
+	@RequestMapping(value = "/deleteExportZombieFiles", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
+	public @ResponseBody String deleteExportZombieFiles(HttpServletRequest request, HttpServletResponse response) {	
+		
+		try {
+			exportService.deleteExportZombieFiles();	
+		} catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage(), e);
+			return e.getLocalizedMessage();
+		}
+		
+		return "OK";
+	}
+	
 	@RequestMapping(value = "/deleteOldExports", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
 	public @ResponseBody String deleteOldExports(HttpServletRequest request, HttpServletResponse response) {	
 		
 		try {
 			exportService.deleteOldExports();	
+		} catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage(), e);
+			return e.getLocalizedMessage();
+		}
+		
+		return "OK";
+	}
+	
+	@RequestMapping(value = "/deleteOldWebserviceExports", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
+	public @ResponseBody String deleteOldWebserviceExports(HttpServletRequest request, HttpServletResponse response) {	
+		
+		try {
+			exportService.deleteOldWebserviceExports();	
 		} catch (Exception e)
 		{
 			logger.error(e.getLocalizedMessage(), e);
