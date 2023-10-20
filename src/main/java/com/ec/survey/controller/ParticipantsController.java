@@ -797,9 +797,9 @@ public class ParticipantsController extends BasicController {
 		paging.setItemsPerPage(itemsPerPage);
 		paging.setCurrentPage(Integer.parseInt(newPage));
 
-		List<EcasUser> users = ldapDBService.getECASUsers(name, department, email, domain, Integer.parseInt(newPage),
-				itemsPerPage);
-		paging.setItems(users);
+		//List<EcasUser> users = ldapDBService.getECASUsers(name, department, email, domain, Integer.parseInt(newPage),
+		//		itemsPerPage);
+		//paging.setItems(users);
 
 		return paging;
 	}
