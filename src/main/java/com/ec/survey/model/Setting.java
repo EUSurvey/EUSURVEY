@@ -62,6 +62,7 @@ public class Setting {
 	public static final String UseSMTService = "UseSMTService";
 	public static final String MaxSurveysPerUser = "MaxSurveysPerUser";
 	public static final String MaxSurveysTimespan = "MaxSurveysTimespan";
+	public static final String AutomaticDraftDeleteExceptions = "AutomaticDraftDeleteExceptions";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")

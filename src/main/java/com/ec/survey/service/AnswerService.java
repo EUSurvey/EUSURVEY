@@ -2087,10 +2087,18 @@ public class AnswerService extends BasicService {
 
 		@SuppressWarnings("unchecked")
 		List<Integer> drafts = query.list();
+		
+		String aliasesToSkipString = settingsService.get(Setting.AutomaticDraftDeleteExceptions);
+		List<String> aliasesToSkip = (aliasesToSkipString != null && aliasesToSkipString.length() > 0) ? Arrays.asList(aliasesToSkipString.split(";")) : new ArrayList<String>();
 
 		int counter = 0;
 		for (Integer draftid : drafts) {
 			Draft draft = (Draft) session.get(Draft.class, draftid);
+			
+			if (aliasesToSkip.contains(draft.getAnswerSet().getSurvey().getShortname())) {
+				continue;
+			}
+			
 			for (Answer answer : draft.getAnswerSet().getAnswers()) {
 				if (answer.getFiles() != null) {
 					for (File f : answer.getFiles()) {

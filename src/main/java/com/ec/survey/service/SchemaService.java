@@ -68,6 +68,20 @@ public class SchemaService extends BasicService {
 	}
 	
 	@Transactional
+	public void stepAssertAutomaticDraftDeleteExceptions() {
+		Session session = sessionFactory.getCurrentSession();
+
+		String existing = settingsService.get(Setting.AutomaticDraftDeleteExceptions);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.AutomaticDraftDeleteExceptions);
+			s.setValue("");
+			s.setFormat("Survey aliases separated by ;");
+			session.saveOrUpdate(s);
+		}
+	}
+	
+	@Transactional
 	public void step105() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

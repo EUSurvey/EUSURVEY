@@ -794,6 +794,8 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			status = schemaService.getStatus();
 		}
 		
+		schemaService.stepAssertAutomaticDraftDeleteExceptions();
+		
 		schemaService.stepNewECASkin();
 	}
 
