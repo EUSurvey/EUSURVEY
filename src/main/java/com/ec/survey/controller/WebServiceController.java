@@ -970,6 +970,9 @@ public class WebServiceController extends BasicController {
 
 			boolean addMeta = request.getParameter("meta") != null
 					&& request.getParameter("meta").equalsIgnoreCase("true");
+			
+			boolean xmlonly = request.getParameter("xmlonly") != null
+					&& request.getParameter("xmlonly").equalsIgnoreCase("true");
 
 			WebserviceTask task = new WebserviceTask(WebserviceTaskType.CreateResults);
 			task.setSurveyId(publishedsurvey.getId());
@@ -1017,6 +1020,7 @@ public class WebServiceController extends BasicController {
 			task.setUser(user);
 			task.setCreated(new Date());
 			task.setAddMeta(addMeta);
+			task.setXmlOnly(xmlonly);
 
 			webserviceService.save(task);
 			if (!webserviceService.startTask(task, locale)) {

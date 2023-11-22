@@ -33,6 +33,7 @@ public class WebserviceTask {
 	private int counter;
 	
 	private boolean empty;
+	private boolean xmlOnly;
 	
 	public WebserviceTask(WebserviceTaskType type)
 	{
@@ -215,6 +216,14 @@ public class WebserviceTask {
 	}
 	public void setEmpty(Boolean empty) {
 		this.empty = empty != null && empty;
+	}
+
+	@Column(name = "WST_XMLONLY")
+	public boolean isXmlOnly() {
+		return xmlOnly;
+	}
+	public void setXmlOnly(boolean xmlOnly) {
+		this.xmlOnly = xmlOnly;
 	}
 }
 
