@@ -237,7 +237,6 @@
 						data["captcha_token"] =  $('#captcha_token').val();
 						data["captcha_id"] =  $('#captcha_id').val();
 						data["captcha_useaudio"] =  $('#captcha_useaudio').val();
-						data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
 					}
 				
 					$.ajax({
@@ -338,7 +337,6 @@
 					data["captcha_token"] =  $('#captcha_token').val();
 					data["captcha_id"] =  $('#captcha_id').val();
 					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
-					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
 				}
 	
 				$.ajax({
