@@ -31,7 +31,6 @@
 					  <input type="hidden" name="captcha_token" id="captcha_token" />
 					  <input type="hidden" name="captcha_id" id="captcha_id" />
 					  <input type="hidden" name="captcha_useaudio" id="captcha_useaudio" />
-					  <input type="hidden" name="captcha_original_cookies" id="captcha_original_cookies" />
 					  
 					    <c:choose>
 							<c:when test="${form != null}">

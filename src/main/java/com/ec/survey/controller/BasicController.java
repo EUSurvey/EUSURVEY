@@ -555,7 +555,6 @@ public class BasicController implements BeanFactoryAware {
 					String token = request.getParameter("captcha_token");
 					String id = request.getParameter("captcha_id");
 					String useaudio = request.getParameter("captcha_useaudio");
-					String originalcookies = request.getParameter("captcha_original_cookies");
 					
 					if (token == null) {
 						String challenge = request.getParameter("recaptcha_challenge_field");
@@ -578,11 +577,6 @@ public class BasicController implements BeanFactoryAware {
 					conn.setRequestMethod("POST");
 					conn.setRequestProperty("x-jwtString", token);
 					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-					
-					String[] cookies = originalcookies.split("#");			
-					for (String cookie : cookies) {
-						conn.addRequestProperty("Cookie", cookie);
-					}	
 										
 					String postData = "captchaAnswer="  + str + "&useAudio=" + ("true".equalsIgnoreCase(useaudio));
 					byte[] postDataBytes = postData.getBytes("UTF-8");
