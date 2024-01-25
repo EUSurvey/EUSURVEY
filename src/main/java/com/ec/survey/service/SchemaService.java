@@ -48,8 +48,59 @@ public class SchemaService extends BasicService {
 	}
 
 	@Resource(name = "domainWorker")
-	private DomainUpdater domaintWorker;
-	
+	private DomainUpdater domainWorker;
+		
+	@Transactional
+	public void step113() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.EULoginWhitelist);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.EULoginWhitelist);
+			s.setValue("");
+			s.setFormat("EULogin users separated by ;");
+			session.saveOrUpdate(s);
+		}
+		
+		status.setDbversion(113);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step112() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		ensureActivity(ActivityRegistry.ID_RESULTS_ACCESS, session);
+
+		status.setDbversion(112);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step111() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		List<Skin> skins = skinService.getAll();
+		for (Skin s : skins) {
+			switch (s.getName())
+			{
+				case "ECA Skin":
+				case "EUSurvey.css":
+				case "Official EC Skin":
+					s.setIsPublic(false);
+				default:
+					break;
+			}
+		}
+
+		status.setDbversion(111);
+		session.saveOrUpdate(status);
+	}
+
 	@Transactional
 	public void step110() {
 		Session session = sessionFactory.getCurrentSession();
@@ -92,7 +143,6 @@ public class SchemaService extends BasicService {
 	@Transactional
 	public void step105a() {
 		Session session = sessionFactory.getCurrentSession();
-		Status status = getStatus();
 
 		String existing = settingsService.get(Setting.MaxSurveysPerUser);
 		if (existing == null) {
@@ -111,9 +161,6 @@ public class SchemaService extends BasicService {
 			s.setFormat("minutes");
 			session.saveOrUpdate(s);
 		}
-
-		status.setDbversion(105);
-		session.saveOrUpdate(status);
 	}
 
 	@Transactional
@@ -156,6 +203,20 @@ public class SchemaService extends BasicService {
 
 		status.setDbversion(106);
 		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void stepAssertAutomaticDraftDeleteExceptions() {
+		Session session = sessionFactory.getCurrentSession();
+
+		String existing = settingsService.get(Setting.AutomaticDraftDeleteExceptions);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.AutomaticDraftDeleteExceptions);
+			s.setValue("");
+			s.setFormat("Survey aliases separated by ;");
+			session.saveOrUpdate(s);
+		}
 	}
 
 	@Transactional
@@ -1622,7 +1683,7 @@ public class SchemaService extends BasicService {
 		queryCreateIndex.executeUpdate();
 
 		if (showecas.equalsIgnoreCase("true") && !isCasOss()) {
-			domaintWorker.run();
+			domainWorker.run();
 			copyEcasData();
 		}
 		// delete duplicates

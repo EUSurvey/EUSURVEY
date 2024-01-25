@@ -764,7 +764,12 @@ public class ReportingService extends BasicService {
 												ConversionTools.getValue(answerrow[1]), question.getUniqueId(),
 												survey.getUniqueId(), !forexport);
 										row.add(explanation);
+
+										int likes = answerExplanationService.getLikesForExplanation(
+												ConversionTools.getValue(answerrow[1]), question.getUniqueId());
+										row.add(String.valueOf(likes));
 									} catch (NoSuchElementException ex) {
+										row.add("");
 										row.add("");
 									}
 								}

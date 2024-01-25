@@ -66,8 +66,12 @@ public class DelphiController extends BasicController {
 			
 			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
 			DelphiExplanation delphiExplanation = new DelphiExplanation();
+			delphiExplanation.setExplanationId(explanation.getId());
 			delphiExplanation.setText(explanation.getText());
 			delphiExplanation.setFileInfoFromFiles(explanation.getFiles());
+
+			List<String> likes = answerExplanationService.loadExplanationLikes(explanation.getId());
+			delphiExplanation.setLikes(likes);
 			
 			if ((element instanceof SingleChoiceQuestion || element instanceof NumberQuestion)) {
 			
@@ -881,12 +885,7 @@ public class DelphiController extends BasicController {
 				}
 			}
 
-			List<String> likes = new ArrayList<>();
-			List<CommentLike> commentLikes = answerExplanationService.loadCommentLikes(comment.getId());
-			for (CommentLike commentLike : commentLikes) {
-				likes.add(commentLike.getUniqueCode());
-			}
-
+			List<String> likes = answerExplanationService.loadCommentLikesUIDs(comment.getId());
 			DelphiComment delphiComment = new DelphiComment(user, comment.getText(), date, comment.getId(), comment.getUniqueCode(), isUnread, likes);
 
 			if (parent == null) {
@@ -1021,12 +1020,6 @@ public class DelphiController extends BasicController {
 			} catch (Exception ignored) {
 			}
 
-			DelphiCommentsOrderBy orderCommentsBy = DelphiCommentsOrderBy.OldestFirst;
-			try {
-				orderCommentsBy = DelphiCommentsOrderBy.valueOf(request.getParameter("orderCommentsBy"));
-			} catch (Exception ignored) {
-			}
-
 			Integer answerSetId = answerSet != null ? answerSet.getId() : null;
 
 			DelphiTable result;
@@ -1045,30 +1038,13 @@ public class DelphiController extends BasicController {
 				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset, answerSetId);
 			}
 
+			result = orderByAnswerOrExplanation(result, orderBy);
+
 			result.setQuestionType(DelphiQuestionType.from(question));
 
 			for (DelphiTableEntry entry : result.getEntries()) {
 				boolean stopIteration = false;
 				List<DelphiComment> comments = entry.getComments();
-
-				//before processing comments order list first
-				switch(orderCommentsBy) {
-					case NewestFirst:
-						Collections.reverse(comments);
-						break;
-					case TopComments:
-						Comparator<DelphiComment> compareByLikes = new Comparator<DelphiComment>() {
-							@Override
-							public int compare(DelphiComment c1, DelphiComment c2) {
-								return c2.getNumLikes() - c1.getNumLikes();
-							}
-						};
-
-						Collections.sort(comments, compareByLikes);
-						break;
-					default:
-						//list already sorted correctly
-				}
 
 				for (DelphiComment comment : comments) {
 					if (comment.isUnread()) {
@@ -1102,6 +1078,57 @@ public class DelphiController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	private DelphiTable orderByAnswerOrExplanation(DelphiTable result, DelphiTableOrderBy orderBy) {
+		List<DelphiTableEntry> entries = result.getEntries();
+
+		Comparator<DelphiTableEntry> compareByAnswers = new Comparator<DelphiTableEntry>() {
+			@Override
+			public int compare(DelphiTableEntry e1, DelphiTableEntry e2) {
+				return e1.getAnswer().compareTo(e2.getAnswer());
+			}
+		};
+
+		Comparator<DelphiTableEntry> compareByLikes = new Comparator<DelphiTableEntry>() {
+			@Override
+			public int compare(DelphiTableEntry e1, DelphiTableEntry e2) {
+				if (e2.getExplanation() == null) {
+					return 0;
+				} else if (e1.getExplanation() == null) {
+					return -1;
+				}
+				return Integer.compare(e1.getExplanation().getNumLikes(), e2.getExplanation().getNumLikes());
+			}
+		};
+
+		switch (orderBy) {
+			case UpdateAsc:
+			case UpdateDesc:
+				break;
+
+			case AnswersAsc:
+				Collections.sort(entries, compareByAnswers);
+				break;
+
+			case AnswersDesc:
+				Collections.sort(entries, compareByAnswers);
+				Collections.reverse(entries);
+				break;
+
+			case ExplanationsMostLiked:
+				Collections.sort(entries, compareByLikes);
+				Collections.reverse(entries);
+				break;
+
+			case ExplanationsLessLiked:
+				Collections.sort(entries, compareByLikes);
+				break;
+
+		}
+
+		result.setEntries(entries);
+		return result;
 	}
 
 	/**
@@ -1168,7 +1195,11 @@ public class DelphiController extends BasicController {
 			DelphiContribution firstValue = entry.get(0);
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
-			tableEntry.setExplanation(firstValue.getExplanation());
+			AnswerExplanation explanation = answerExplanationService.getExplanationIfPossible(firstValue.getAnswerSetId(), question.getUniqueId());
+			if (explanation != null) {
+				List<String> likes = answerExplanationService.loadExplanationLikes(explanation.getId());
+				tableEntry.initializeExplanation(explanation, likes);
+			}
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 			loadComments(tableEntry, firstValue.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
@@ -1242,7 +1273,11 @@ public class DelphiController extends BasicController {
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
 			tableEntry.getAnswers().addAll(sortedAnswers);
-			tableEntry.setExplanation(firstValue.getExplanation());
+			AnswerExplanation explanation = answerExplanationService.getExplanationIfPossible(firstValue.getAnswerSetId(), question.getUniqueId());
+			if (explanation != null) {
+				List<String> likes = answerExplanationService.loadExplanationLikes(explanation.getId());
+				tableEntry.initializeExplanation(explanation, likes);
+			}
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 			loadComments(tableEntry, firstValue.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
@@ -1294,7 +1329,11 @@ public class DelphiController extends BasicController {
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
 			tableEntry.getAnswers().addAll(sortedAnswers);
-			tableEntry.setExplanation(firstValue.getExplanation());
+			AnswerExplanation explanation = answerExplanationService.getExplanationIfPossible(firstValue.getAnswerSetId(), question.getUniqueId());
+			if (explanation != null) {
+				List<String> likes = answerExplanationService.loadExplanationLikes(explanation.getId());
+				tableEntry.initializeExplanation(explanation, likes);
+			}
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 			loadComments(tableEntry, firstValue.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
@@ -1323,7 +1362,11 @@ public class DelphiController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
 			tableEntry.setAnswerSetUniqueCode(contrib.getAnswerSetUniqueCode());
-			tableEntry.setExplanation(contrib.getExplanation());
+			AnswerExplanation explanation = answerExplanationService.getExplanationIfPossible(contrib.getAnswerSetId(), question.getUniqueId());
+			if (explanation != null) {
+				List<String> likes = answerExplanationService.loadExplanationLikes(explanation.getId());
+				tableEntry.initializeExplanation(explanation, likes);
+			}
 			tableEntry.setUpdateDate(contrib.getUpdate());
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, value));
 			loadComments(tableEntry, contrib.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
@@ -1493,14 +1536,12 @@ public class DelphiController extends BasicController {
 			}
 
 			if (increaseLike.equalsIgnoreCase("true")) {
-				CommentLike commentLike = new CommentLike(idParsed, uniqueCode);
-				answerExplanationService.addCommentLike(commentLike);
+				DelphiCommentLike delphiCommentLike = new DelphiCommentLike(idParsed, uniqueCode);
+				answerExplanationService.addCommentLike(delphiCommentLike);
 			} else {
-				CommentLike commentLike = answerExplanationService.getCommentLike(idParsed, uniqueCode);
-				answerExplanationService.deleteCommentLike(commentLike);
+				DelphiCommentLike delphiCommentLike = answerExplanationService.getCommentLike(idParsed, uniqueCode);
+				answerExplanationService.deleteCommentLike(delphiCommentLike);
 			}
-
-			answerExplanationService.saveOrUpdateComment(comment);
 
 			return new ResponseEntity<>(null, HttpStatus.OK);
 		} catch (Exception e) {
@@ -1508,7 +1549,34 @@ public class DelphiController extends BasicController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
+	@PostMapping(value = "/likeDelphiExplanation/{id}")
+	public ResponseEntity<String> delphiLikeExplanation(@PathVariable String id, HttpServletRequest request) {
+		try {
+			final int explanationId = Integer.parseInt(id);
+
+			final String uniqueCode = request.getParameter("uniqueCode");
+			final String increaseLike = request.getParameter("increaseLike");
+
+			final AnswerExplanation explanation = answerExplanationService.getExplanation(explanationId);
+			if (explanation == null) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			if (increaseLike.equalsIgnoreCase("true")) {
+				DelphiExplanationLike delphiExplanationLike = new DelphiExplanationLike(explanation.getId(), uniqueCode);
+				answerExplanationService.addExplanationLike(delphiExplanationLike);
+			} else {
+				DelphiExplanationLike delphiExplanationLike = answerExplanationService.getExplanationLike(explanation.getId(), uniqueCode);
+				answerExplanationService.deleteExplanationLike(delphiExplanationLike);
+			}
+
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	@PostMapping(value = "/sendDelphiLink")
 	public ResponseEntity<String> sendDelphiLink(HttpServletRequest request, Locale locale) {
@@ -1568,7 +1636,11 @@ public class DelphiController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
 			tableEntry.setAnswerSetUniqueCode(contrib.getAnswerSetUniqueCode());
-			tableEntry.setExplanation(contrib.getExplanation());
+			AnswerExplanation explanation = answerExplanationService.getExplanationIfPossible(contrib.getAnswerSetId(), question.getUniqueId());
+			if (explanation != null) {
+				List<String> likes = answerExplanationService.loadExplanationLikes(explanation.getId());
+				tableEntry.initializeExplanation(explanation, likes);
+			}
 			tableEntry.setUpdateDate(contrib.getUpdate());
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
 			loadComments(tableEntry, contrib.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
@@ -1611,7 +1683,11 @@ public class DelphiController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
-			tableEntry.setExplanation(firstValue.getExplanation());
+			AnswerExplanation explanation = answerExplanationService.getExplanationIfPossible(firstValue.getAnswerSetId(), question.getUniqueId());
+			if (explanation != null) {
+				List<String> likes = answerExplanationService.loadExplanationLikes(explanation.getId());
+				tableEntry.initializeExplanation(explanation, likes);
+			}
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 
 			for (DelphiContribution contrib : entry) {

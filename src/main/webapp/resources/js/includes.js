@@ -654,7 +654,7 @@ function initModals(item)
 				{
 					first = counter + " selected";
 				}
-				$(cell).find(".nobreak").html(first);	
+				$(cell).find(".nobreak").text(first);	
 				$(cell).find(".nobreak").attr("data-text",first);
 				$(cell).attr("title",all).attr("rel","tooltip");
 				
@@ -1272,7 +1272,7 @@ function initModals(item)
 							} else if ($(this).closest(".confirmationitem").length > 0)
 							{
 								addValidationError.afterElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent().parent(), requiredText);
-							} else 	if ($(this).attr("name") == "radio-new-survey-dpa")
+							} else 	if ($(this).attr("name") == "radio-new-survey-dpa" || $(this).attr("name") == "radio-new-survey-tos")
 							{
 								addValidationError.toElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent().parent(), requiredText);
 							} else {							

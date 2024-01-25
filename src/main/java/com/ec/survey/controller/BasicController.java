@@ -39,6 +39,7 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.exception.TooManyFiltersException;
+import com.ec.survey.exception.AccessDeniedException;
 import com.ec.survey.exception.httpexception.ForbiddenException;
 import com.ec.survey.exception.httpexception.InternalServerErrorException;
 import com.ec.survey.exception.httpexception.NotFoundException;
@@ -280,6 +281,15 @@ public class BasicController implements BeanFactoryAware {
 		model.addObject("contextpath", contextpath);
 		return model;
 	}
+	
+	@ExceptionHandler(AccessDeniedException.class)
+	public ModelAndView handleAccessDeniedException(Exception e, HttpServletRequest request) {
+		logger.info(e.getLocalizedMessage(), e);
+		ModelAndView model = new ModelAndView("redirect:/errors/accessdenied.html");
+		model.addObject("contextpath", contextpath);
+		return model;
+	}
+	
 
 	@ExceptionHandler(NotAgreedToTosException.class)
 	public ModelAndView handleNotAgreedToTosException(Exception e, HttpServletRequest request) {
@@ -590,6 +600,7 @@ public class BasicController implements BeanFactoryAware {
 					String token = request.getParameter("captcha_token");
 					String id = request.getParameter("captcha_id");
 					String useaudio = request.getParameter("captcha_useaudio");
+					String originalcookies = request.getParameter("captcha_original_cookies");
 					
 					if (token == null) {
 						String challenge = request.getParameter("recaptcha_challenge_field");
@@ -612,6 +623,11 @@ public class BasicController implements BeanFactoryAware {
 					conn.setRequestMethod("POST");
 					conn.setRequestProperty("x-jwtString", token);
 					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+					
+					String[] cookies = originalcookies.split("#");			
+					for (String cookie : cookies) {
+						conn.addRequestProperty("Cookie", cookie);
+					}	
 										
 					String postData = "captchaAnswer="  + str + "&useAudio=" + ("true".equalsIgnoreCase(useaudio));
 					byte[] postDataBytes = postData.getBytes("UTF-8");

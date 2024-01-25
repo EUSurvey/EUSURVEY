@@ -290,6 +290,15 @@ function createNewDelphiBasicViewModel() {
 	self.delphiTableNewComments = ko.observable(false);
 	self.delphiTableOffset = ko.observable(0);
 	self.delphiTableQuestionType = ko.observable("");
+	self.delphiTableAnswerSorting = ko.computed(function () {
+		switch (self.delphiTableQuestionType()) {
+			case "SingleChoice":
+			case "MultipleChoice":
+				return true;
+			default:
+				return false;
+		}
+	});
 	self.delphiTableShowQuestionHtml = ko.computed(function () {
 		// used to decide whether Knockout's html or text binding should be used
 		switch (self.delphiTableQuestionType()) {
@@ -305,7 +314,6 @@ function createNewDelphiBasicViewModel() {
 		}
 	});
 	self.delphiTableTotalEntries = ko.observable(0);
-	self.delphiCommentOrderBy = ko.observable("OldestFirst");
 	self.delphiTableOrder = ko.observable("UpdateDesc");
 	self.showExplanationBox = ko.observable(true);
 }
@@ -383,7 +391,7 @@ function newBasicViewModel(element)
 			viewModel.delphiChartType = ko.observable(element.delphiChartType);
 			viewModel.editorRowsLocked = ko.observable(element.editorRowsLocked);
 			viewModel.editorColumnsLocked = ko.observable(element.editorColumnsLocked);
-	
+
 			if (element.scoringItems != null) {
 				for (var i = 0; i < element.scoringItems.length; i++) {
 					viewModel.scoringItems.push(newScoringViewModel(element.scoringItems[i]));

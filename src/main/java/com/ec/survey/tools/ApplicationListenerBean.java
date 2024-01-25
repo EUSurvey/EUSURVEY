@@ -782,6 +782,8 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			schemaService.step105();
 			status = schemaService.getStatus();
 		}
+		
+		schemaService.stepAssertAutomaticDraftDeleteExceptions();
 
 		if (status.getDbversion() < 106)
 		{
@@ -811,6 +813,24 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 		if (status.getDbversion() < 110){
 			logger.info("starting upgrade step 110");
 			schemaService.step110();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 111){
+			logger.info("starting upgrade step 111");
+			schemaService.step111();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 112){
+			logger.info("starting upgrade step 112");
+			schemaService.step112();
+			status = schemaService.getStatus();
+		}
+		
+		if (status.getDbversion() < 113){
+			logger.info("starting upgrade step 113");
+			schemaService.step113();
 			status = schemaService.getStatus();
 		}
 	}

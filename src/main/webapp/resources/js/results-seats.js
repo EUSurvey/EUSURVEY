@@ -167,12 +167,21 @@ var SeatResults = function() {
 					display: false
 				},
 				plugins: {
-					labels: false,
+					labels: false
+				},
+				tooltips: {
+					intersect: false
 				},
 				scales: {
 					yAxes: [{
 						ticks: {
-							autoSkip: false
+							autoSkip: false,
+							callback: function(value) {
+								if (value.length > 40) {
+									return value.substring(0,40) + "...";
+								}
+								return value;
+							}
 						}
 					}],
 					xAxes: [{

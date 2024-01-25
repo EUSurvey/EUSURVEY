@@ -179,7 +179,7 @@
 							
 						<span style="margin-right: 20px"><spring:message code="label.CreateNew" /></span>
 						<a onclick="_participants.newContactList()" class="btn btn-success"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.ContactList" /></a>
-						<a onclick="_participants.newEUList()" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.EUList" /></a>
+						<!-- <a onclick="_participants.newEUList()" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.EUList" /></a> -->
 						<a onclick="_participants.newTokenList()" class="btn btn-success"><span class="glyphicon glyphicon-barcode"></span> <spring:message code="label.TokenList" /></a>
 						
 						</c:if>
@@ -436,7 +436,7 @@
 															<a id="btnDeactivateFromParticipant" class="iconbutton disabled" data-class="deactivatebutton" onclick="return false;" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
 														<!-- /ko -->
 															<!-- ko if: editEnabled() -->
-															<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: edit"><span class='glyphicon glyphicon-pencil'></span></a>
+															<!-- <a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: edit"><span class='glyphicon glyphicon-pencil'></span></a> -->
 														<!-- /ko -->
 														<!-- ko if: !editEnabled() -->
 															<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
@@ -475,7 +475,7 @@
 														<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 														<!-- /ko -->
 														<!-- ko if: editEnabled() -->
-															<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/participantsEdit?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+															<!-- <a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/participantsEdit?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a> -->
 														<!-- /ko -->
 														<!-- ko if: !editEnabled() -->
 															<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
@@ -629,11 +629,11 @@
 									<spring:message code="label.ContactList" /><br /><br />
 									<span class="info"><spring:message code="info.ContactList" /></span>
 								</a>
-								<a onclick="_participants.newEUList()" class="btn btn-success createlist">
+								<!-- <a onclick="_participants.newEUList()" class="btn btn-success createlist">
 									<span class="glyphicon glyphicon-user"></span><br />
 									<spring:message code="label.EUList" /><br /><br />
 									<span class="info"><spring:message code="info.EUList" /></span>
-								</a>
+								</a> -->
 								<a onclick="_participants.newTokenList()" class="btn btn-success createlist">
 									<span class="glyphicon glyphicon-barcode"></span><br />
 									<spring:message code="label.TokenList" /><br /><br />

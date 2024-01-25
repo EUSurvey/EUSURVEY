@@ -190,6 +190,13 @@ public class OdfExportCreator extends ExportCreator {
 						font.setSize(10);
 						font.setFontStyle(FontStyle.BOLD);
 						cell.setFont(font);
+
+						cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+						cell.setStringValue(resources.getMessage("label.Likes", null, "likes", locale));
+						font = cell.getFont();
+						font.setSize(10);
+						font.setFontStyle(FontStyle.BOLD);
+						cell.setFont(font);
 					}
 
 					if (form.getSurvey().getIsDelphi() && question.isDelphiElement()
@@ -390,7 +397,7 @@ public class OdfExportCreator extends ExportCreator {
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, uploadedFilesByCodeAndQuestionUID,
-						uploadQuestionNicenames, null, null, explanationFilesOfSurvey, explanationFilesToExport);
+						uploadQuestionNicenames, null, null, null, explanationFilesOfSurvey, explanationFilesToExport);
 			}
 		} else {
 
@@ -399,6 +406,7 @@ public class OdfExportCreator extends ExportCreator {
 					.getAllExplanations(form.getSurvey());
 			Map<Integer, Map<String, String>> discussions = answerExplanationService
 					.getAllDiscussions(form.getSurvey());
+			Map<String, Integer> likesForExplanations = answerExplanationService.getAllLikesForExplanation(form.getSurvey());
 
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, parameters, true)
@@ -431,7 +439,7 @@ public class OdfExportCreator extends ExportCreator {
 				} else {
 					if (lastAnswerSet > 0) {
 						parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
-								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions,
+								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions, likesForExplanations,
 								explanationFilesOfSurvey, explanationFilesToExport);
 						session.flush();
 					}
@@ -453,7 +461,7 @@ public class OdfExportCreator extends ExportCreator {
 			}
 			if (lastAnswerSet > 0)
 				parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
-						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions,
+						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions, likesForExplanations,
 						explanationFilesOfSurvey, explanationFilesToExport);
 			results.close();
 		}
@@ -537,7 +545,7 @@ public class OdfExportCreator extends ExportCreator {
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
 			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations,
-			Map<Integer, Map<String, String>> discussions, FilesByTypes<Integer, String> explanationFilesOfSurvey,
+			Map<Integer, Map<String, String>> discussions, Map<String, Integer> likesForExplanations, FilesByTypes<Integer, String> explanationFilesOfSurvey,
 			FilesByTypes<String, String> explanationFilesToExport) throws Exception {
 		rowIndex++;
 		columnIndex = 0;
@@ -929,6 +937,27 @@ public class OdfExportCreator extends ExportCreator {
 								p.appendTextContent(";");
 							}
 						}
+					}
+
+					cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+					int likes = Integer.MAX_VALUE;
+					if (answerSet == null) {
+						String row = answerrow.get(answerrowcounter++);
+						if (row != "") {
+							likes = Integer.valueOf(row);
+						}
+					} else {
+						//likes = answerExplanationService.getLikesForExplanation(answerSet.getId(), questionUid);
+						String key = answerSet.getId() + "-" + questionUid;
+						if (likesForExplanations.containsKey(key)) {
+							likes = likesForExplanations.get(key);
+						}
+					}
+
+					if (likes != Integer.MAX_VALUE) {
+						cell.setDoubleValue((double) likes); 
+						cell.setValueType("float");
+						cell.setFormatString("0");
 					}
 				}
 

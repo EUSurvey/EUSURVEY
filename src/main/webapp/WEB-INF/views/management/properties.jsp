@@ -1037,11 +1037,14 @@
 									<c:forEach items="${skins}" var="skin">
 										<option value="${skin.id}" <c:if test="${form.survey.skin.id == skin.id}">selected="selected"</c:if>><esapi:encodeForHTML>${skin.displayName}</esapi:encodeForHTML></option>										
 									</c:forEach>
+									<c:if test="${form.survey.skin != null}">
+										<option value="${form.survey.skin.id}" selected="selected"><esapi:encodeForHTML>${form.survey.skin.displayName}</esapi:encodeForHTML></option>
+									</c:if>
 								</select>
 								<a href="${contextpath}/settings/skin" class="btn btn-default" style="margin-top: -2px;"><spring:message code="label.Manage" /></a>
 							</div>
 							<div style="clear: both"></div>
-							<div class="help hideme"><spring:message code="help.Skin" /></div>							
+							<div class="help hideme"><spring:message code="help.SkinNew" /></div>
 						</td>
 					</tr>	
 					<tr>
@@ -1591,6 +1594,16 @@
 											<span class="onoffswitch-switch"></span>
 										</label>
 									</div>
+								</div>
+							</td>
+						</tr>
+						<tr class="subelement" data-bind="visible: eVote">
+							<td>
+								<div style="float: left; max-width: 500px;">
+									<spring:message code="label.Template" />
+									</div>
+								<div style="float: right; text-align: right">
+									<spring:message code="${form.survey.geteVoteTemplateTitle()}" />
 								</div>
 							</td>
 						</tr>

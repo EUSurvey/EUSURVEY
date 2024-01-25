@@ -852,7 +852,7 @@
 		
 				<div class="limits" data-bind="hidden: isAnswered, attr: {id: 'questioninfo' + id()}">
 					<!-- ko ifnot: foreditor -->
-					${form.getMessage("info.MoveTheSliderOrAccept", "data-bind='click: markAsAnswered'")}
+					${form.getMessage("info.MoveTheSliderOrAccept", "click: markAsAnswered")}
 					<!-- /ko -->
 					<!-- ko if: foreditor -->
 					${form.getMessage("info.MoveTheSliderOrAccept", "")}

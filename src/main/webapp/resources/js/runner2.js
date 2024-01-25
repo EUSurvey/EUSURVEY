@@ -925,20 +925,6 @@ function getDelphiQuestionUid(element)
 	}
 }
 
-function sortComments(element, discussionSortingOrder, viewModel) {
-	if (viewModel == undefined) {
-		var surveyElement = $(element).closest(".survey-element");
-		var uid = $(surveyElement).attr("data-uid");
-		viewModel = modelsForDelphiQuestions[uid];
-	}
-
-	viewModel.delphiCommentOrderBy(discussionSortingOrder);
-	loadTableData(uid, viewModel);
-
-	$(element).parent().find(".btn-primary").removeClass("btn-primary");
-	$(element).addClass("btn-primary");
-}
-
 function sortDelphiTable(element, direction) {
 	var surveyElement = $(element).closest(".survey-element");
 	var uid = $(surveyElement).attr("data-uid");
@@ -972,13 +958,11 @@ function hideCommentAndReplyForms() {
 
 function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel) {
 	const orderBy = viewModel.delphiTableOrder();
-	const orderCommentsBy = viewModel.delphiCommentOrderBy();
 	const offset = viewModel.delphiTableOffset();
 	const limit = viewModel.delphiTableLimit();
 
 	const data = "surveyid=" + surveyId + "&questionuid=" + questionUid + "&languagecode=" + languageCode
-		+ "&uniquecode=" + uniqueCode + "&orderby=" + orderBy + "&offset=" + offset + "&limit=" + limit
-		+ "&orderCommentsBy=" + orderCommentsBy;
+		+ "&uniquecode=" + uniqueCode + "&orderby=" + orderBy + "&offset=" + offset + "&limit=" + limit;
 
 	$.ajax({
 		type: "GET",
@@ -1586,7 +1570,7 @@ function deleteDelphiComment(button, viewModel, isReply, errorCallback, successC
 	});
 }
 
-function likeDelphiCommentFromRunner(image) {
+function likeDelphiCommentOrExplanationFromRunner(image, isExplanation) {
 	var increaseLike = $(image).find(".likeImage").attr("id").startsWith("likeButtonDelphi");
 
 	const questionUid = $(image).closest(".survey-element").attr("data-uid");
@@ -1599,7 +1583,11 @@ function likeDelphiCommentFromRunner(image) {
 		loadTableData(questionUid, viewModel);
 	}
 
-	likeDelphiComment(image, viewModel, increaseLike, errorCallback, successCallback);
+	if (isExplanation) {
+		likeDelphiExplanation(image, viewModel, increaseLike, errorCallback, successCallback);
+	} else {
+		likeDelphiComment(image, viewModel, increaseLike, errorCallback, successCallback);
+	}
 }
 
 function likeDelphiComment(image, viewModel, increaseLike, errorCallback, successCallback) {
@@ -1621,6 +1609,40 @@ function likeDelphiComment(image, viewModel, increaseLike, errorCallback, succes
 		},
 		complete: function () {
 			$(actions).show();
+		},
+		error: function() {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
+			errorCallback();
+		},
+		success: function() {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
+			successCallback();
+		}
+	});
+}
+
+function likeDelphiExplanation(image, viewModel, increaseLike, errorCallback, successCallback) {
+	const explanation = $(image).closest("td");
+
+	const explanationId = $(image).closest(".delphi-explanation").attr("data-id");
+	const answerSetUniqueCode = $("#uniqueCode").val();
+
+	$.ajax({
+		type: "POST",
+		url: contextpath + "/runner/likeDelphiExplanation/" + encodeURIComponent(explanationId),
+		data: "increaseLike=" + encodeURIComponent(increaseLike) + "&uniqueCode=" + answerSetUniqueCode,
+		beforeSend: function (xhr) {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(true);
+			}
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		complete: function () {
+			$(explanation).show();
 		},
 		error: function() {
 			if (viewModel && viewModel.delphiTableLoading) {

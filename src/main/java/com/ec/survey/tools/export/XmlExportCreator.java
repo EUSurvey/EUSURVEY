@@ -48,6 +48,7 @@ public class XmlExportCreator extends ExportCreator {
 	private static final String ANSWER = "Answer";
 	private static final String EXPLANATION = "Explanation";
 	private static final String EXPLANATION_FILE = "ExplanationFile";
+	private static final String EXPLANATION_LIKE = "ExplanationLike";
 	private static final String EXPLANATION_TEXT = "ExplanationText";
 	private static final String DISCUSSION = "Discussion";
 
@@ -445,6 +446,12 @@ public class XmlExportCreator extends ExportCreator {
 				filterWithMeta.getVisibleQuestions().add("updated");
 				filterWithMeta.getVisibleQuestions().add("languages");
 			}
+			
+			filterWithMeta.getVisibleExplanations().clear();
+			filterWithMeta.getVisibleExplanations().addAll(filterWithMeta.getExportedExplanations());
+
+			filterWithMeta.getVisibleDiscussions().clear();
+			filterWithMeta.getVisibleDiscussions().addAll(filterWithMeta.getExportedDiscussions());
 		}
 
 		filterWithMeta.getVisibleQuestions().add("score");
@@ -487,7 +494,7 @@ public class XmlExportCreator extends ExportCreator {
 					questions = questionlists.get(lang);
 				}
 				parseAnswerSet(form.getSurvey(), writer, questions, null, row, row.get(1), filesByAnswer,
-						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail, null, null,
+						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail, null, null, null,
 						explanationFilesOfSurvey, explanationFilesToExport, rowPosMap);
 			}
 		} else {
@@ -495,6 +502,7 @@ public class XmlExportCreator extends ExportCreator {
 			//it is not possible to query the database after the result query was executed
 			Map<Integer, Map<String, String>> explanations = answerExplanationService.getAllExplanations(form.getSurvey());
 			Map<Integer, Map<String, String>> discussions = answerExplanationService.getAllDiscussions(form.getSurvey());
+			Map<String, Integer> likesForExplanations = answerExplanationService.getAllLikesForExplanation(form.getSurvey());
 					
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(),
@@ -527,7 +535,7 @@ public class XmlExportCreator extends ExportCreator {
 					if (lastAnswerSet > 0) {
 						parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()),
 								answerSet, null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(),
-								filterWithMeta, ECASUserLoginsByEmail, explanations, discussions,
+								filterWithMeta, ECASUserLoginsByEmail, explanations, discussions, likesForExplanations,
 								explanationFilesOfSurvey, explanationFilesToExport, null);
 					}
 
@@ -556,7 +564,7 @@ public class XmlExportCreator extends ExportCreator {
 			if (lastAnswerSet > 0)
 				parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()), answerSet,
 						null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta,
-						ECASUserLoginsByEmail, explanations, discussions, explanationFilesOfSurvey, explanationFilesToExport, null);
+						ECASUserLoginsByEmail, explanations, discussions, likesForExplanations, explanationFilesOfSurvey, explanationFilesToExport, null);
 			results.close();
 		}
 
@@ -733,7 +741,7 @@ public class XmlExportCreator extends ExportCreator {
 			List<String> row, String list, Map<Integer, List<File>> filesByAnswer,
 			Map<String, List<File>> uploadedFilesByQuestionUID, boolean meta, ResultFilter filter,
 			Map<String, String> ECASUserLoginsByEmail, Map<Integer, Map<String, String>> explanations,
-			Map<Integer, Map<String, String>> discussions, FilesByTypes<Integer, String> explanationFilesOfSurvey,
+			Map<Integer, Map<String, String>> discussions, Map<String, Integer> likesForExplanations, FilesByTypes<Integer, String> explanationFilesOfSurvey,
 			FilesByType<String> explanationFilesToExport, HashMap<String, Integer> rowPosMap) throws XMLStreamException {
 		writer.writeStartElement("AnswerSet");
 
@@ -815,6 +823,16 @@ public class XmlExportCreator extends ExportCreator {
 							}
 						}
 					}
+
+					if (answerSet == null) {
+						//catch case: explanation, likes and discussion shown at results page but not included in export
+						if (filter != null && filter.explanationVisible(question.getId().toString()) && !filter.explanationExported(question.getId().toString())) {
+							answerrowcounter += 2;	//skip explanation and likes of it
+						}
+						if (filter != null && filter.discussionVisible(question.getId().toString()) && !filter.discussionExported(question.getId().toString())) {
+							answerrowcounter++;		//skip discussion
+						}
+					}
 				} else if (question instanceof ComplexTable) {
 					ComplexTable table = (ComplexTable) question;
 					for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
@@ -884,6 +902,16 @@ public class XmlExportCreator extends ExportCreator {
 							}
 						}
 					}
+
+					if (answerSet == null) {
+						//catch case: explanation, likes and discussion shown at results page but not included in export
+						if (filter != null && filter.explanationVisible(question.getId().toString()) && !filter.explanationExported(question.getId().toString())) {
+							answerrowcounter += 2;	//skip explanation and likes of it
+						}
+						if (filter != null && filter.discussionVisible(question.getId().toString()) && !filter.discussionExported(question.getId().toString())) {
+							answerrowcounter++;		//skip discussion
+						}
+					}
 				} else if (question instanceof Table) {
 					Table table = (Table) question;
 
@@ -911,6 +939,16 @@ public class XmlExportCreator extends ExportCreator {
 							writer.writeEndElement(); // Answer
 						}
 					}
+
+					if (answerSet == null) {
+						//catch case: explanation, likes and discussion shown at results page but not included in export
+						if (filter != null && filter.explanationVisible(question.getId().toString()) && !filter.explanationExported(question.getId().toString())) {
+							answerrowcounter += 2;	//skip explanation and likes of it
+						}
+						if (filter != null && filter.discussionVisible(question.getId().toString()) && !filter.discussionExported(question.getId().toString())) {
+							answerrowcounter++;		//skip discussion
+						}
+					}
 				} else if (question instanceof Text) {
 					// ignore
 				} else if (question instanceof Question) {
@@ -920,6 +958,15 @@ public class XmlExportCreator extends ExportCreator {
 						} else {
 
 							String sanswers = row.get(answerrowcounter++);
+
+							//catch case: explanation, likes and discussion shown at results page but not included in export
+							if (filter != null && filter.explanationVisible(question.getId().toString()) && !filter.explanationExported(question.getId().toString())) {
+								answerrowcounter += 2;	//skip explanation and likes of it
+							}
+							if (filter != null && filter.discussionVisible(question.getId().toString()) && !filter.discussionExported(question.getId().toString())) {
+								answerrowcounter++;		//skip discussion
+							}
+
 							if (sanswers != null) {
 
 								String[] answers;
@@ -1066,6 +1113,24 @@ public class XmlExportCreator extends ExportCreator {
 							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(file.getNameForExport()));
 							writer.writeEndElement(); // EXPLANATION_FILE
 						}
+						
+						int likes = Integer.MAX_VALUE;
+						if (answerSet == null) {
+							String v = row.get(answerrowcounter++);
+							if (v != "") {
+								likes = Integer.valueOf(v);
+							}
+						} else {
+							//likes = answerExplanationService.getLikesForExplanation(answerSet.getId(), questionUid);
+							String key = answerSet.getId() + "-" + questionUid;
+							if (likesForExplanations.containsKey(key)) {
+								likes = likesForExplanations.get(key);
+							}
+						}
+						
+						writer.writeStartElement(EXPLANATION_LIKE);
+						writer.writeCharacters(Integer.toString(likes));
+						writer.writeEndElement(); // EXPLANATION_LIKES
 						writer.writeEndElement(); // EXPLANATION
 					}
 				}

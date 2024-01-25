@@ -1970,19 +1970,25 @@ function updateIdentifier(element, id, text, noundo)
 }
 
 function updateLogic(radio) {
-	var id = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+	$("#content").find(".selectedquestion").each(function(){
+		updateLogicOfQuestion(radio, this);
+	});
+}
+
+function updateLogicOfQuestion(radio, selectedquestion) {
+	var id = $(selectedquestion).closest(".survey-element").attr("data-id");
 	var element = _elements[id];
 		
-	if ($(_elementProperties.selectedelement).hasClass("matrix-header"))
+	if ($(selectedquestion).hasClass("matrix-header"))
 	{
-		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		var parentid = $(selectedquestion).closest(".survey-element").attr("data-id");
 		var parent = _elements[parentid];
-		if ($(_elementProperties.selectedelement).closest("tr").hasClass("matrix-question"))
+		if ($(selectedquestion).closest("tr").hasClass("matrix-question"))
 		{
-			var pos = $(_elementProperties.selectedelement).closest("tr").index();
+			var pos = $(selectedquestion).closest("tr").index();
 			element = parent.questionsOrdered()[pos];
 		} else {
-			var pos = $(_elementProperties.selectedelement).index();
+			var pos = $(selectedquestion).index();
 			element = parent.answers()[pos-1];
 		}
 	}	
@@ -1992,6 +1998,6 @@ function updateLogic(radio) {
 	
 	if (oldValue != newValue) {
 		element.useAndLogic(newValue);		
-		_undoProcessor.addUndoStep(["UseAndLogic", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
+		_undoProcessor.addUndoStep(["UseAndLogic", id, $(selectedquestion).index(), oldValue, newValue]);
 	}
 }

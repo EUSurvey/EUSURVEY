@@ -24,7 +24,7 @@ public class SkinService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Skin> getAllButEC(int userId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<Skin> query = session.createQuery("FROM Skin s WHERE (s.isPublic = true OR s.owner.id = :userId) AND NOT s.name LIKE 'Official EC Skin' AND NOT s.name LIKE 'New Official EC Skin' ", Skin.class).setParameter("userId", userId);
+		Query<Skin> query = session.createQuery("FROM Skin s WHERE (s.isPublic = true OR s.owner.id = :userId) AND NOT s.name LIKE 'ECA 2023' AND NOT s.name LIKE 'New Official EC Skin' ", Skin.class).setParameter("userId", userId);
 		return orderSkins(query.list());
 	}
 	
@@ -54,17 +54,8 @@ public class SkinService extends BasicService {
 					case "New Official EC Skin":
 						defaultSkins[1] = skin;
 						break;
-					case "ECA Skin":
-						defaultSkins[2] = skin;
-						break;
-					case "EUSurvey.css":
-						defaultSkins[3] = skin;
-						break;
-					case "Official EC Skin":
-						defaultSkins[4] = skin;
-						break;
 					case "ECA 2023":
-						defaultSkins[5] = skin;
+						defaultSkins[2] = skin;
 						break;
 					default:
 						result.add(skin);

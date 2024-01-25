@@ -800,8 +800,11 @@ public class EVoteService extends BasicService {
 				result.setTotalPreferentialVotes(sumAllPreferentialVotes);
 				result.setPreferentialVotesFinal(sumAllPreferentialVotes);
 				
-				votes = new Integer[] {result.getListVotesWeighted(), result.getTotalPreferentialVotes()};
-				seatsArray = computeSeats(survey, votes, result.getListVotesWeighted() + result.getTotalPreferentialVotes(), result.getMaxSeats(), null, null);
+				//votes = new Integer[] {result.getListVotesWeighted(), result.getTotalPreferentialVotes()};
+				//seatsArray = computeSeats(survey, votes, result.getListVotesWeighted() + result.getTotalPreferentialVotes(), result.getMaxSeats(), null, null);
+				
+				votes = new Integer[] {result.getListVotes(), result.getPreferentialVotes()};
+				seatsArray = computeSeats(survey, votes, result.getListVotes() + result.getPreferentialVotes(), result.getMaxSeats(), null, null);
 			}
 			
 			result.setListVotesSeats(seatsArray[0]);

@@ -35,6 +35,9 @@ public class EuCaptchaApiController extends BasicController {
 	    
 		String xjwtString = conn.getHeaderField("x-jwtString");		
 		response.setHeader("x-jwtString", xjwtString);
+		
+		List<String> cookies = conn.getHeaderFields().get("set-cookie");			
+		response.addHeader("original-cookie", cookies == null ? "" : String.join("#", cookies));
 
 		return readData(conn);
 	}
@@ -42,6 +45,9 @@ public class EuCaptchaApiController extends BasicController {
 	@RequestMapping(value = "/reloadCaptchaImg/{captchaId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody String reloadCaptchaImg(@PathVariable String captchaId, HttpServletRequest request, HttpServletResponse response) throws IOException {	
 		sessionService.initializeProxy();
+		
+		CookieManager cookieManager = new CookieManager();
+		CookieHandler.setDefault(cookieManager);
 		
 		String locale = request.getParameter("locale");
 		String capitalized = request.getParameter("capitalized");
@@ -52,7 +58,12 @@ public class EuCaptchaApiController extends BasicController {
 		
 		String xjwtString = request.getHeader("x-jwtstring");
 		conn.setRequestProperty("x-jwtString", xjwtString);
-				
+		
+		String[] cookies = request.getHeader("original-cookie").split("#");			
+		for (String cookie : cookies) {
+			conn.addRequestProperty("Cookie", cookie);
+		}
+		
 		xjwtString = conn.getHeaderField("x-jwtString");		
 		response.setHeader("x-jwtString", xjwtString);
 		

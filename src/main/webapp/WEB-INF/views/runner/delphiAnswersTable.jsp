@@ -22,54 +22,39 @@
 	<table class="table table-condensed table-striped table-bordered">
 		<thead>
 		<tr class="area-header">
-			<th style="width:33%">${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
+			<th style="width:33%">
+				<span>${form.getMessage("label.DelphiAnswersTableAnswer")}</span>
+				<!-- ko if: delphiTableAnswerSorting()-->
+					<div style="float: right">
+						<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortAlphanumericalAscending")}" aria-label="${form.getMessage("label.SortAlphanumericalAscending")}" onclick="sortDelphiTable(this,'AnswersAsc');" class="">
+							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a>
+						<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortAlphanumericalDescending")}" aria-label="${form.getMessage("label.SortAlphanumericalDescending")}" onclick="sortDelphiTable(this,'AnswersDesc');" class="">
+							<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+					</div>
+				<!-- /ko -->
+			</th>
 			<th style="min-width:${responsive != null ? "120" : "150"}px">
 				<span>${form.getMessage("label.DelphiAnswersTableUpdate")}</span>
 				<div style="float: right">
-					<a href="javascript:;" data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" aria-label="<spring:message code="label.SortAscending" />"
-					   onclick="sortDelphiTable(this,'UpdateAsc');" class="">
-						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-					</a>
-					<a href="javascript:;" data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" aria-label="<spring:message code="label.SortDescending" />" onclick="sortDelphiTable(this,'UpdateDesc');" class="">
-						<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-					</a>
+					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortDatesAscending")}" aria-label="${form.getMessage("label.SortDatesAscending")}" onclick="sortDelphiTable(this,'UpdateAsc');" class="">
+						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a>
+					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortDatesDescending")}" aria-label="${form.getMessage("label.SortDatesDescending")}" onclick="sortDelphiTable(this,'UpdateDesc');" class="">
+						<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 				</div>
 			</th>
 			<!-- ko if: showExplanationBox() -->
-			<th style="width:33%">${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
+			<th style="width:33%">
+				<span>${form.getMessage("label.DelphiAnswersTableExplanation")}</span>
+				<div style="float: right">
+					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortExplanationsLessLiked")}" aria-label="${form.getMessage("label.SortExplanationsLessLiked")}" onclick="sortDelphiTable(this,'ExplanationsLessLiked');" class="">
+						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a>
+					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortExplanationsMostLiked")}" aria-label="${form.getMessage("label.SortExplanationsMostLiked")}" onclick="sortDelphiTable(this,'ExplanationsMostLiked');" class="">
+						<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+				</div>
+			</th>
 			<!-- /ko -->
 			<th style="width:33%">
 				<span>${form.getMessage("label.Discussion")}</span>
-				<div style="float: right">
-					<c:choose>
-						<c:when test='${mode == "delphiStartPage"}'>
-							<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="<spring:message code="label.SortComments" />" aria-label="<spring:message code="label.SortComments" />"
-						   onclick="showOverlayMenuSortingOptionsStartPage(this)">
-						</c:when>
-						<c:otherwise>
-							<a href="javascript:;" data-toggle="tooltip" data-title="<spring:message code="label.SortComments" />" aria-label="<spring:message code="label.SortComments" />"
-							   onclick="showOverlayMenuSortingOptions(this)">
-						</c:otherwise>
-					</c:choose>
-						<span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
-					</a>
-					<div class="overlaymenu overlaymenu-sortingOptions hideme" role="group" id="sortingOptions">
-						<div class="btn-group-vertical">
-							<c:choose>
-								<c:when test='${mode == "delphiStartPage"}'>
-									<a class="btn btn-default" tabindex="0" id="sort-OldestFirst" onkeypress="sortCommentsStartPage(this, 'OldestFirst')" onclick="sortCommentsStartPage(this, 'OldestFirst')">${form.getMessage("label.OldestFirst")}</a>
-									<a class="btn btn-default" tabindex="0" id="sort-NewestFirst" onkeypress="sortCommentsStartPage(this, 'NewestFirst')" onclick="sortCommentsStartPage(this, 'NewestFirst')">${form.getMessage("label.NewestFirst")}</a>
-									<a class="btn btn-default" tabindex="0" id="sort-TopComments" onkeypress="sortCommentsStartPage(this, 'TopComments')" onclick="sortCommentsStartPage(this, 'TopComments')">${form.getMessage("label.TopComments")}</a>
-								</c:when>
-								<c:otherwise>
-									<a class="btn btn-default" tabindex="0" id="sort-OldestFirst" onkeypress="sortComments(this, 'OldestFirst')" onclick="sortComments(this, 'OldestFirst')">${form.getMessage("label.OldestFirst")}</a>
-									<a class="btn btn-default" tabindex="0" id="sort-NewestFirst" onkeypress="sortComments(this, 'NewestFirst')" onclick="sortComments(this, 'NewestFirst')">${form.getMessage("label.NewestFirst")}</a>
-									<a class="btn btn-default" tabindex="0" id="sort-TopComments" onkeypress="sortComments(this, 'TopComments')" onclick="sortComments(this, 'TopComments')">${form.getMessage("label.TopComments")}</a>
-								</c:otherwise>
-							</c:choose>
-						</div>
-					</div>
-				</div>
 			</th>
 		</tr>
 		</thead>
@@ -95,15 +80,40 @@
 			</td>
 			<td><span data-bind="html: update"></span></td>
 			<!-- ko if: $parent.showExplanationBox() -->
-			<td>
-				<input tabindex="-1" class="text-read-more-checkbox" type="checkbox" data-bind="attr: { 'id': 'expanded-explanation' + uid }">
-				<span class="text-to-be-truncated" data-bind="html: explanation"></span>
-				<label class="text-read-more-label" role="button" data-bind="attr: { 'for': 'expanded-explanation' + uid }">${form.getMessage("label.ShowAll")}</label>
-				<!-- ko if: files.length > 0 && explanation.length > 0 -->
+			<td data-bind="attr: {'data-id': answerSetId}">
+				<!-- ko if: explanation != null -->
+				<div class="delphi-explanation" data-bind="attr: {'data-id': explanation.explanationId}">
+					<input tabindex="-1" class="text-read-more-checkbox" type="checkbox" data-bind="attr: { 'id': 'expanded-explanation' + uid }">
+					<span class="text-to-be-truncated" data-bind="html: explanation.text"></span>
+					<span style="float:right">
+						<c:choose>
+							<c:when test='${mode == "delphiStartPage"}'>
+								<span style="white-space:nowrap;" href="javascript:;" tabindex="0" class="focussable" onkeypress="likeDelphiCommentOrExplanationFromStartPage(this, true)" onClick="likeDelphiCommentOrExplanationFromStartPage(this, true)">
+							</c:when>
+							<c:otherwise>
+								<span style="white-space:nowrap;" href="javascript:;" tabindex="0" class="focussable" onkeypress="likeDelphiCommentOrExplanationFromRunner(this, true)" onClick="likeDelphiCommentOrExplanationFromRunner(this, true)">
+							</c:otherwise>
+						</c:choose>
+
+						<!-- ko if: explanation.numLikes != 0-->
+							<span data-bind="html: explanation.numLikes"></span>
+						<!-- /ko -->
+						<!-- ko if: explanation.likes.includes("${uniqueCode}") -->
+							<img class="likeImage" data-bind="attr: {'id': 'unlikeButtonDelphi-' + explanation.id}"  data-toggle="tooltip" title="${form.getMessage("label.Unlike")}" aria-label="${form.getMessage("label.Unlike")}" src="${contextpath}/resources/images/hand-thumbs-up-fill.svg" />
+						<!-- /ko -->
+						<!-- ko ifnot: explanation.likes.includes("${uniqueCode}") -->
+							<img class="likeImage" data-bind="attr: {'id': 'likeButtonDelphi-' + explanation.id}" data-toggle="tooltip" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up.svg" />
+						<!-- /ko -->
+						</span>
+					</span>
+					<label class="text-read-more-label" role="button" data-bind="attr: { 'for': 'expanded-explanation' + uid }">${form.getMessage("label.ShowAll")}</label>
+				</div>
+				<!-- /ko -->
+				<!-- ko if: files.length > 0 && explanation.text.length > 0 -->
 				<br />
 				<!-- /ko -->
 				<!-- ko foreach: files -->
-				<a data-bind="attr: {href: '${contextpath}/files/${form.survey.uniqueId}/' + uid}, text: name"></a>
+					<a data-bind="attr: {href: '${contextpath}/files/${form.survey.uniqueId}/' + uid}, text: name"></a>
 				<!-- /ko -->
 			</td>
 			<!-- /ko -->
@@ -148,25 +158,27 @@
 								<!-- /ko -->
 							<!-- /ko -->
 
-							<c:choose>
-								<c:when test='${mode == "delphiStartPage"}'>
-									<span style="white-space:nowrap;" href="javascript:;" tabindex="0" class="focussable" onkeypress="likeDelphiCommentFromStartPage(this)" onClick="likeDelphiCommentFromStartPage(this)">
-								</c:when>
-								<c:otherwise>
-									<span style="white-space:nowrap;" href="javascript:;" tabindex="0" class="focussable" onkeypress="likeDelphiCommentFromRunner(this)" onClick="likeDelphiCommentFromRunner(this)">
-								</c:otherwise>
-							</c:choose>
+							<span style="float:right">
+								<c:choose>
+									<c:when test='${mode == "delphiStartPage"}'>
+										<span style="white-space:nowrap;" href="javascript:;" tabindex="0" class="focussable" onkeypress="likeDelphiCommentOrExplanationFromStartPage(this)" onClick="likeDelphiCommentOrExplanationFromStartPage(this)">
+									</c:when>
+									<c:otherwise>
+										<span style="white-space:nowrap;" href="javascript:;" tabindex="0" class="focussable" onkeypress="likeDelphiCommentOrExplanationFromRunner(this)" onClick="likeDelphiCommentOrExplanationFromRunner(this)">
+									</c:otherwise>
+								</c:choose>
 
-									<!-- ko if: likes.includes("${uniqueCode}") -->
-										<img class="likeImage" data-bind="attr: {'id': 'unlikeButtonDelphi-' + id}"  data-toggle="tooltip" title="${form.getMessage("label.Unlike")}" aria-label="${form.getMessage("label.Unlike")}" src="${contextpath}/resources/images/hand-thumbs-up-fill.svg" />
-									<!-- /ko -->
-									<!-- ko ifnot: likes.includes("${uniqueCode}") -->
-										<img class="likeImage" data-bind="attr: {'id': 'likeButtonDelphi-' + id}" data-toggle="tooltip" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up.svg" />
-									<!-- /ko -->
-									<!-- ko if: numLikes -->
-										<span data-bind="html: numLikes"></span>
-									<!-- /ko -->
-								</span>
+										<!-- ko if: numLikes -->
+											<span data-bind="html: numLikes"></span>
+										<!-- /ko -->
+										<!-- ko if: likes.includes("${uniqueCode}") -->
+											<img class="likeImage" data-bind="attr: {'id': 'unlikeButtonDelphi-' + id}"  data-toggle="tooltip" title="${form.getMessage("label.Unlike")}" aria-label="${form.getMessage("label.Unlike")}" src="${contextpath}/resources/images/hand-thumbs-up-fill.svg" />
+										<!-- /ko -->
+										<!-- ko ifnot: likes.includes("${uniqueCode}") -->
+											<img class="likeImage" data-bind="attr: {'id': 'likeButtonDelphi-' + id}" data-toggle="tooltip" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up.svg" />
+										<!-- /ko -->
+									</span>
+							</span>
 						</div>
 					</div>
 					<!-- ko foreach: replies -->
@@ -315,39 +327,4 @@
 		$(".overlaymenu").hide();
 	});
 
-	function showOverlayMenuSortingOptions(btn) {
-		var surveyElement = $(btn).closest(".survey-element");
-		var uid = $(surveyElement).attr("data-uid");
-		var viewModel = modelsForDelphiQuestions[uid];
-
-		var overlay = $(btn).parent().find('.overlaymenu').first();
-		var rect = $(btn).parent().parent()[0].getBoundingClientRect();
-		var rectbtn = $(btn)[0].getBoundingClientRect();
-
-		$(overlay).css("left", rect.right - $(overlay).width() - 2);
-		$(overlay).css("top", rectbtn.bottom + 8);
-
-		showOverlayMenuSortingOptionsInner(btn, viewModel);
-	}
-
-	function showOverlayMenuSortingOptionsInner(btn, viewModel)
-	{
-		closeOverlayDivsEnabled = false;
-		var overlay = $(btn).parent().find('.overlaymenu').first();
-
-		if ($(overlay).is(":visible"))
-		{
-			$(overlay).hide();
-			return;
-		}
-
-		$(".overlaymenu").find("#sort-" + viewModel.delphiCommentOrderBy()).addClass("btn-primary");
-
-		$(".overlaymenu").hide();
-
-		$(overlay).toggle();
-		$(btn).addClass("overlaybutton");
-
-		setTimeout(function(){closeOverlayDivsEnabled = true;},1000);
-	}
 </script>

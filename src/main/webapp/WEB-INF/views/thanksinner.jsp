@@ -41,7 +41,15 @@
 	
 	<c:if test="${opcredirection != null}">
 		<br /><br />
-		<a class="btn btn-primary" href="${opcredirection}"><spring:message code="label.ConsultationPage" /></a>
+		<c:choose>
+			<c:when test="${responsive != null}">
+				<a style="text-decoration: none; width: 100%;" class="btn btn-lg btn-primary" href="${opcredirection}"><spring:message code="label.ConsultationPageNew" /></a>
+			</c:when>
+			<c:otherwise>
+				<a class="btn btn-primary" href="${opcredirection}"><spring:message code="label.ConsultationPageNew" /></a>
+			</c:otherwise>
+		</c:choose>
+
 	</c:if>
 
 	<br /><br />
@@ -61,7 +69,7 @@
 	<c:if test="${form.survey.downloadContribution}">
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<a style="text-decoration: none" id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-lg btn-primary">${form.getMessage("label.Print")}</a>
+				<a style="text-decoration: none; width: 100%; margin-bottom: 10px;" id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-lg btn-primary">${form.getMessage("label.Print")}</a><br />
 			</c:when>
 			<c:when test="${runnermode == true}">
 				<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-primary">${form.getMessage("label.Print")}</a>
@@ -72,7 +80,7 @@
 		</c:choose>
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<a href="javascript:;" style="text-decoration: none" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-lg btn-primary">${form.getMessage("label.GetPDF")}</a>
+				<a href="javascript:;" style="text-decoration: none; width: 100%; margin-bottom: 10px;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-lg btn-primary">${form.getMessage("label.GetPDF")}</a><br />
 			</c:when>
 			<c:when test="${runnermode == true}">
 				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-primary">${form.getMessage("label.GetPDF")}</a>
@@ -86,7 +94,7 @@
 	<c:if test="${form.survey.changeContribution}">
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<a href="${contextpath}/editcontribution/${uniqueCode}" style="text-decoration: none" id="contributionEditInner" class="btn btn-lg btn-primary">${form.getMessage("label.Edit")}</a>
+				<a href="${contextpath}/editcontribution/${uniqueCode}" style="text-decoration: none; width: 100%;" id="contributionEditInner" class="btn btn-lg btn-primary">${form.getMessage("label.Edit")}</a>
 			</c:when>
 			<c:when test="${runnermode == true}">
 				<a href="${contextpath}/editcontribution/${uniqueCode}" class="btn btn-primary">${form.getMessage("label.Edit")}</a>
@@ -96,9 +104,6 @@
 			</c:otherwise>
 		</c:choose>
 	</c:if>
-
-
-
 
 	<c:if test="${asklogout != null}">
 		<div id="ask-logout-div" style="margin-top: 30px;">
@@ -227,6 +232,7 @@
 					data["captcha_token"] =  $('#captcha_token').val();
 					data["captcha_id"] =  $('#captcha_id').val();
 					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
 				}
 			
 				$.ajax({

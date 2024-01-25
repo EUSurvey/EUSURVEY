@@ -1,0 +1,1 @@
+This folder is only needed for Eclipse to compile

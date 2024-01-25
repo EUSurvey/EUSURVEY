@@ -89,13 +89,15 @@ public class Skin implements java.io.Serializable {
 				case "EUSurveyNew.css":
 					return "EUSurvey";
 				case "New Official EC Skin":
-					return "EC Official";
+					return "European Commission";
 				case "ECA Skin":
 					return "ECA Official";
 				case "EUSurvey.css":
 					return "EUSurvey (obsolete)";
 				case "Official EC Skin":
 					return "EC Official (obsolete)";
+				case "ECA 2023":
+					return "European Court of Auditors";
 				default:
 					break;
 			}	

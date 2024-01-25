@@ -49,7 +49,14 @@
 				unauthorized use of your account, of a survey of yours, or any other
 				breaches of security. DIGIT will not be liable for any acts or
 				omissions made by you, including any damages of any kind incurred as
-				a result of such acts or omissions.</li>
+				a result of such acts or omissions.<br/>
+				You are obliged to use the EUSurvey system sparingly and responsibly.
+				In particular, you are obliged to delete your survey once the collection
+				and analysis of contributions has been completed. You also accept our
+				automatic deletion process for surveys that have been inactive for more
+				than one year (an inactive survey is one that no longer receives
+				contributions and is no longer updated). In addition, we reserve the
+				right to delete any survey at any time at our sole discretion.</li>
 			<li><b>Responsibility of Authors.</b> If you create a survey,
 				upload material to one or link to material from your survey, or
 				otherwise make (or allow any third party to make) material available

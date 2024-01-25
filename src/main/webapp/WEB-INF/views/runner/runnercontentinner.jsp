@@ -850,7 +850,7 @@
 		 		</c:forEach>
 	 		</c:if>
 	 		
-	 		if ($("#survey.id").length > 0) {
+	 		if ($("#survey\\.id").length > 0) {
 	 			initializeBackupHelper();
 	 			restoreBackup();
 	 		}			

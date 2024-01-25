@@ -1273,7 +1273,7 @@ public class AddressBookController extends BasicController {
 		attendee.setHidden(true);		
 		attendeeService.update(attendee, true);
 
-		var httpHeaders = new HttpHeaders();
+		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
 
 		return new ResponseEntity<>("OK", httpHeaders, HttpStatus.OK);
@@ -1289,7 +1289,7 @@ public class AddressBookController extends BasicController {
 		taskExecutorLong.execute(updater);
 		request.getSession().removeAttribute("attendees-paging");
 
-		var httpHeaders = new HttpHeaders();
+		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(new MediaType("text", "plain", StandardCharsets.UTF_8));
 
 		return new ResponseEntity<>("OK", httpHeaders, HttpStatus.OK);

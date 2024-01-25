@@ -56,8 +56,6 @@
 		     
         .progress{
          height: 20px;
-            background-color: #F5F5F5 !important;
-            -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#F5F5F5', endColorstr='#F5F5F5')" !important;
         }
         .progress-bar{
          height: 20px;
@@ -74,6 +72,8 @@
             -webkit-box-shadow: inset 0 0 !important;
             
             height: 20px;
+            
+            border-radius: 5px;
         }
         
         .statistics-table th {
@@ -82,7 +82,9 @@
         
         .statistics-table th, .statistics-table td  {
         	border: 1px solid #999;
-        	vertical-align: top;
+        	vertical-align: middle;
+        	padding: 5px;
+        	font-size: 90%;
         }
         
 	  </style>

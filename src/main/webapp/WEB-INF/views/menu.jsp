@@ -512,17 +512,26 @@
 						</td>
 					</tr>
 				</c:if>
-				<c:if test="${USER.getGlobalPrivilegeValue('ECAccess') == 0}">
+				<c:if test="${!USER.isECUser()}">
 					<tr>
 						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.DPA" /></td>
 						<td>
 							<div style="float: left; height: 50px; margin-right: 10px;">
 								<input class="required check" type="checkbox" name="radio-new-survey-dpa" value="1" />
 							</div>
-							<spring:message code="message.dpa" arguments="${contextpath}/home/dpa"/>
+							<spring:message code="message.dpanew" arguments="${contextpath}/home/dpa"/>
 						</td>
 					</tr>
 				</c:if>
+				<tr>
+					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.TOS" /></td>
+					<td>
+						<div style="float: left; height: 50px; margin-right: 10px;">
+							<input class="required check" type="checkbox" name="radio-new-survey-tos" value="1" />
+						</div>
+						<spring:message code="message.tos" arguments="${contextpath}/home/tos"/>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 	</div>

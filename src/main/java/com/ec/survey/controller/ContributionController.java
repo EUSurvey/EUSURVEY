@@ -24,6 +24,7 @@ import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
+import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import com.ec.survey.tools.activity.ActivityRegistry;
@@ -618,6 +619,41 @@ public class ContributionController extends BasicController {
 			try {
 				answerSet = answerService.get(code);
 				if (answerSet != null) {
+					
+					User currentUser = null;					
+					try {
+						currentUser = this.sessionService.getCurrentUser(request);
+					} catch (NotAgreedToTosException | WeakAuthenticationException | NotAgreedToPsException e1) {
+						throw new ForbiddenException();
+					}
+
+					boolean authorized = currentUser != null && sessionService.userIsAnswerer(answerSet, currentUser); //userIsAnswerer is also true if user is owner of the survey
+					
+					if (!authorized) {
+						if (answerSet.getSurvey() != null) {
+							Survey draftSurvey = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false,
+									true);
+
+							//check if user is form manager
+							if (currentUser != null && sessionService.userIsResultReadAuthorized(draftSurvey, request)) {
+								authorized = true;
+							}
+							
+							if (!authorized) {						
+								//check session token								
+								String uniqueCode = (String) request.getSession().getAttribute(Constants.UNIQUECODE);
+
+								if (uniqueCode != null && uniqueCode.equals(code)) {
+									authorized = true;
+								}
+							}
+						}
+					}
+					
+					if (!authorized) {
+						throw new ForbiddenException();
+					}
+					
 					Form form = new Form(resources);
 					String lang = answerSet.getLanguageCode();
 

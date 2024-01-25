@@ -288,20 +288,20 @@ public class XlsxExportCreator {
 		addStringCell(row, 3, getMessage(resource, "label.seats.Prorata"), false);
 
 		row = sheet.createRow(rowCounter++);
-		addStringCell(row, 0, getMessage(resource, "label.seats.ListVotesWeighted"),false);
-		addNumberCell(row, 1, result.getListVotesWeighted(), false);
-		addStringCell(row, 2, format("%.2f", 100 * (double)result.getListVotesWeighted() / (double)(result.getListVotesWeighted() + result.getTotalPreferentialVotes())) + "%", false);
+		addStringCell(row, 0, getMessage(resource, "label.seats.ListVotes"),false);
+		addNumberCell(row, 1, result.getListVotes(), false);
+		addStringCell(row, 2, format("%.2f", 100 * (double)result.getListVotes() / (double)(result.getListVotes() + result.getPreferentialVotes())) + "%", false);
 		addNumberCell(row, 3, result.getListVotesSeats(), false);
 
 		row = sheet.createRow(rowCounter++);
-		addStringCell(row, 0, getMessage(resource, "label.seats.CandidateVotes"),false);
-		addNumberCell(row, 1, result.getTotalPreferentialVotes(), false);
-		addStringCell(row, 2, format("%.2f", 100 * (double)result.getTotalPreferentialVotes() / (double)(result.getListVotesWeighted() + result.getTotalPreferentialVotes())) + "%", false);
+		addStringCell(row, 0, getMessage(resource, "label.seats.PreferentialVotes"),false);
+		addNumberCell(row, 1, result.getPreferentialVotes(), false);
+		addStringCell(row, 2, format("%.2f", 100 * (double)result.getPreferentialVotes() / (double)(result.getListVotes() + result.getPreferentialVotes())) + "%", false);
 		addNumberCell(row, 3, result.getPreferentialVotesSeats(), false);
 
 		row = sheet.createRow(rowCounter++);
 		addStringCell(row, 0, getMessage(resource, "label.seats.Total"),false);
-		addNumberCell(row, 1, result.getListVotesWeighted() + result.getTotalPreferentialVotes(), false);
+		addNumberCell(row, 1, result.getListVotes() + result.getPreferentialVotes(), false);
 		addPercentCell(row, 2, 100, false);
 		addNumberCell(row, 3, result.getMaxSeats(), false);
 

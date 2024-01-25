@@ -731,10 +731,14 @@ public class ManagementController extends BasicController {
 		result.addObject("serverprefix", serverPrefix);
 
 		List<Skin> skins;
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) >= 1) {
-			skins = skinService.getAll(user.getId());
-		} else {
+		if (isOss()) {
 			skins = skinService.getAllButEC(user.getId());
+		} else {
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) >= 1) {
+				skins = skinService.getAll(user.getId());
+			} else {
+				skins = skinService.getAllButEC(user.getId());
+			}
 		}
 
 		Skin newdefault = null;
@@ -3066,6 +3070,28 @@ public class ManagementController extends BasicController {
 				"redirect:/" + survey.getShortname() + "/management/results?message=recalculatestarted");
 	}
 
+	@RequestMapping(value = "/results/access", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<Object> results_access_log(@PathVariable String shortname, HttpServletRequest request, Locale locale, @RequestParam("type") String type)
+			throws Exception {
+		Survey survey = null;
+		User u = sessionService.getCurrentUser(request);
+
+		survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
+		sessionService.upgradePrivileges(survey, u, request);
+		if (!u.getId().equals(survey.getOwner().getId())
+				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+				&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
+				&& u.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 2
+				&& u.getResultAccess() == null) {
+			throw new ForbiddenURLException();
+		}
+
+		activityService.log(ActivityRegistry.ID_RESULTS_ACCESS, null, type, u.getId(), survey.getUniqueId());
+
+		return new ResponseEntity<Object>(null,HttpStatus.OK);
+	}
+
 	@RequestMapping(value = "/results")
 	public ModelAndView results(@PathVariable String shortname, HttpServletRequest request, Locale locale)
 			throws Exception {
@@ -3514,8 +3540,13 @@ public class ManagementController extends BasicController {
 			} catch (Exception e) {
 				logger.warn(e.getLocalizedMessage(), e);
 			}
+			
+			if (request.getMethod().equalsIgnoreCase("GET")) {
+				activityService.log(ActivityRegistry.ID_RESULTS_ACCESS, null, "content", user.getId(), survey.getUniqueId());
+			}
 		}
 		result.addObject("contextpath", contextpath);
+		
 		return result;
 	}
 	
@@ -4051,7 +4082,12 @@ public class ManagementController extends BasicController {
 									final String explanation = answerExplanationService.getFormattedExplanationWithFiles(
 											answerSet.getId(), question.getUniqueId(), survey.getUniqueId(), true);
 									result.add(explanation);
+
+									int likes = answerExplanationService.getLikesForExplanation(
+											answerSet.getId(), question.getUniqueId());
+									result.add(String.valueOf(likes));
 								} catch (NoSuchElementException ex) {
+									result.add("");
 									result.add("");
 								}
 							}

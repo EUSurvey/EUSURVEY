@@ -349,6 +349,7 @@ public class RunnerController extends BasicController {
 					}
 
 					model.addObject(Constants.UNIQUECODE, uniqueCode);
+					request.getSession().setAttribute(Constants.UNIQUECODE, uniqueCode);
 
 					return model;
 				} else {

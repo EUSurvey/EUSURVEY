@@ -2105,6 +2105,25 @@
 			<p>
 				The score is calculated as being the average weight given by survey respondents.
 			</p>
+			<h2>
+				Export the dataset (i.e. survey's answers)
+			</h2>
+			<p>
+				You can export your survey's answers using the export feature.
+				This can be useful for further data processing in Excel for example.
+			</p>
+			<p>
+				To export your answers:
+			</p>
+			<ol>
+				<li>Go to the 'Results' tab (first screen, the tabular view).</li>
+				<li>Click on the 'Export' button (a popup opens).</li>
+				<li>Enter a name for your export.</li>
+				<li>Select the file format (when export file is generated, you will receive a notification).</li>
+				<li>Go to the 'Exports' tab.</li>
+				<li>Download your file.</li>
+			</ol>
+
 
 			<h1>
 				Design and layout
@@ -2777,6 +2796,27 @@
 			</p>
 			<p>
 				Regarding email addresses as well as first and last names, the other parts of the system where this data may be saved are the guest lists ('Participants' tab) or your 'Address Book'.
+			</p>
+			<h2>
+				Bulk deletion of answers
+			</h2>
+			<p>
+				You can delete an entire column from your survey results.
+				This will have the effect of 'emptying' (i.e. permanently deleting) all responses to the corresponding question.
+				This can be useful for anonymizing results, for example in the context of GDPR compliance.
+			</p>
+			<p>
+				To bulk delete answers:
+			</p>
+			<ol>
+				<li>Go to the 'Results' tab.</li>
+				<li>Find the column for which you want to delete the answers in bulk.</li>
+				<li>Click on the 3 dots icon.</li>
+				<li>Select 'Blank answers'.</li>
+				<li>Confirm the deletion.</li>
+			</ol>
+			<p>
+				All answers collected for the corresponding question will be permanently removed.
 			</p>
 	</div> <!-- faqcontent -->
 	</div>

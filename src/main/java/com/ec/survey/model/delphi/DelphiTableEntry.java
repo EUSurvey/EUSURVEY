@@ -1,13 +1,15 @@
 package com.ec.survey.model.delphi;
 
+import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.tools.ConversionTools;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class DelphiTableEntry {
     private final List<DelphiTableAnswer> answers = new ArrayList<>();
-    private String explanation;
+    private DelphiExplanation explanation;
 
     private String updateString;
     
@@ -16,12 +18,20 @@ public class DelphiTableEntry {
     private final List<DelphiComment> comments = new ArrayList<>();
     private final List<DelphiTableFile> files = new ArrayList<>();
 
-    public String getExplanation() {
+    public DelphiExplanation getExplanation() {
         return explanation;
     }
 
-    public void setExplanation(String explanation) {
+    public void setExplanation(DelphiExplanation explanation) {
         this.explanation = explanation;
+    }
+
+    public void initializeExplanation(AnswerExplanation explanation, List<String> likes) {
+        this.explanation = new DelphiExplanation();
+        this.explanation.setExplanationId(explanation.getId());
+        this.explanation.setText(explanation.getText());
+        this.explanation.setFileInfoFromFiles(explanation.getFiles());
+        this.explanation.setLikes(likes);
     }
 
     public String getUpdate() {
@@ -38,6 +48,19 @@ public class DelphiTableEntry {
 
     public List<DelphiTableAnswer> getAnswers() {
         return answers;
+    }
+
+    public String getAnswer() {
+        //manually construct view in results table
+        String finalAnswer = "";
+        for (DelphiTableAnswer answer : answers) {
+            if (answer.getQuestion() != null) {
+                finalAnswer = finalAnswer.concat(answer.getQuestion() + ":");
+            }
+            finalAnswer = finalAnswer.concat(answer.getValue());
+        }
+
+        return finalAnswer;
     }
     
     public int getAnswerSetId() {

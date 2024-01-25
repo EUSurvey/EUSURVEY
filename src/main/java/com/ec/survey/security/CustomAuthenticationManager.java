@@ -1,5 +1,8 @@
 package com.ec.survey.security;
 
+import com.ec.survey.exception.AccessDeniedException;
+import com.ec.survey.exception.ForbiddenURLException;
+import com.ec.survey.model.Setting;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
@@ -8,6 +11,7 @@ import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.EVoteService;
 import com.ec.survey.service.LdapService;
 import com.ec.survey.service.SessionService;
+import com.ec.survey.service.SettingsService;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.Bad2faCredentialsException;
 import com.ec.survey.tools.BadSurveyCredentialsException;
@@ -26,6 +30,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +53,9 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	
 	@Resource(name="eVoteService")
 	private EVoteService eVoteService;
+	
+	@Resource(name="settingsService")
+	private SettingsService settingsService;
 	
 	private @Value("${ecasvalidationhost}") String ecasvalidationhost;
 	private @Value("${server.prefix}") String host;
@@ -87,6 +95,14 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     			String username = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
     			String type = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:employeeType");	    				    			
 				String strength = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:strength");
+				
+				String whiteList = settingsService.get(Setting.EULoginWhitelist);
+				if (!surveyLoginMode && whiteList.trim().length() > 0) {
+					List<String> allowedUsers = Arrays.asList(whiteList.split(";"));
+					if (!allowedUsers.contains(username)) {
+						throw new AccessDeniedException("Ecas user not in whitelist");
+					}
+				}
 
 				boolean no2fa = strength.equalsIgnoreCase("PASSWORD") || strength.equalsIgnoreCase("STRONG");
 
@@ -203,7 +219,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					}
 				}
 				
-				Collection<GrantedAuthority> authorities = getAuthorities(user, true, weakAuthentication);
+				Collection<GrantedAuthority> authorities = getAuthorities(user, true, weakAuthentication, surveyLoginMode);
 				
 				checkUserNotBanned(user);
 				
@@ -285,7 +301,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 		return new UsernamePasswordAuthenticationToken(
 				auth.getName(), 
 				auth.getCredentials(), 
-				getAuthorities(user, false, false));
+				getAuthorities(user, false, false, surveyLoginMode));
 	}
 	
 	private void checkUserNotBanned(User user)
@@ -307,71 +323,73 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	 * @param ecas
      * @return
      */
-	public Collection<GrantedAuthority> getAuthorities(User user, boolean ecas, boolean weakAuthentication) {
+	public Collection<GrantedAuthority> getAuthorities(User user, boolean ecas, boolean weakAuthentication, boolean surveyLogin) {
 		List<GrantedAuthority> authList = new ArrayList<>();
 		
 		if (weakAuthentication)
 		{
 			authList.add(new SimpleGrantedAuthority("ROLE_WEAK_AUTHENTICATION"));
 		}
-
-		authList.add(new SimpleGrantedAuthority("ROLE_USER"));
 		
 		if (ecas) authList.add(new SimpleGrantedAuthority("ROLE_ECAS_USER"));
-			
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_FORM_ADMIN"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) >= 1)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_FORM_MANAGER"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.RightManagement) == 2)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_RIGHT_ADMIN"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.RightManagement) >= 1)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_RIGHT_MANAGER"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) == 2)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_USER_ADMIN"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) >= 1)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_USER_MANAGER"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) == 2)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_SYSTEM_ADMIN"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) >= 1)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_SYSTEM_MANAGER"));
-		}
 
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_CONTACT_ADMIN"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) >= 1)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_CONTACT_MANAGER"));
-		}
-		
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) >= 1)
-		{
-			authList.add(new SimpleGrantedAuthority("ROLE_EC_ACCESS"));
+		if (!surveyLogin) {
+			authList.add(new SimpleGrantedAuthority("ROLE_USER"));
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_FORM_ADMIN"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) >= 1)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_FORM_MANAGER"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.RightManagement) == 2)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_RIGHT_ADMIN"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.RightManagement) >= 1)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_RIGHT_MANAGER"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) == 2)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_USER_ADMIN"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) >= 1)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_USER_MANAGER"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) == 2)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_SYSTEM_ADMIN"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) >= 1)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_SYSTEM_MANAGER"));
+			}
+	
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_CONTACT_ADMIN"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) >= 1)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_CONTACT_MANAGER"));
+			}
+			
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) >= 1)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_EC_ACCESS"));
+			}
 		}
 		
 		// Return list of granted authorities

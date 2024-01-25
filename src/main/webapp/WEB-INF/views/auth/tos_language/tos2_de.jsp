@@ -57,7 +57,15 @@
 				andere Sicherheitsverletzungen informieren. Die DIGIT haftet nicht
 				für Handlungen oder Unterlassungen Ihrerseits, einschließlich
 				Schäden jeglicher Art, die infolge einer solchen Handlung oder
-				Unterlassung entstehen.</li>
+				Unterlassung entstehen.<br/>
+				Sie sind verpflichtet, das EUSurvey-System auf moderate und
+				verantwortungsvolle Weise zu nutzen. Insbesondere sind Sie verpflichtet,
+				Ihre Umfrage zu löschen, sobald die Sammlung und Auswertung der Beiträge
+				abgeschlossen ist. Sie stimmen ebenfalls unserem Verfahren zur
+				automatischen Löschung von Umfragen zu, die seit mehr als einem Jahr
+				inaktiv sind (eine inaktive Umfrage ist eine Umfrage, die keine Beiträge
+				mehr erhält und nicht mehr aktualisiert wird). Darüber hinaus behalten wir
+				uns das das Recht vor, Umfragen jederzeit nach eigenem Ermessen zu löschen.</li>
 			<li><b>Verantwortung der Autoren.</b> Wenn Sie eine Umfrage
 				erstellen, Material zu einer Umfrage hochladen oder Material aus
 				Ihrer Umfrage verlinken, bzw. wenn Sie Material anderweitig über die

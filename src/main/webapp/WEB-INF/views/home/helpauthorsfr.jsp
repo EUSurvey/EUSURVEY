@@ -2903,6 +2903,24 @@
 			<p>
 				Le score est calculé comme étant le poids moyen donné par les répondants à l'enquête.
 			</p>
+			<h2>
+				Exporter l'ensemble de données (c'est-à-dire les réponses à l'enquête)
+			</h2>
+			<p>
+				Vous pouvez exporter les réponses de votre enquête à l'aide de la fonction d'exportation.
+				Cela peut s'avérer utile, par exemple, pour le traitement ultérieur des données dans Excel.
+			</p>
+			<p>
+				Pour exporter vos réponses :
+			</p>
+			<ol>
+				<li>Allez dans l'onglet «Résultats» (premier écran, la vue tabulaire).</li>
+				<li>Cliquez sur le bouton «Exporter» (une fenêtre contextuelle s'ouvre).</li>
+				<li>Saisissez un nom pour votre export.</li>
+				<li>Sélectionnez le format de fichier (lorsque le fichier d'export est généré, vous recevez une notification).</li>
+				<li>Accédez à l'onglet «Exports».</li>
+				<li>Téléchargez votre fichier.</li>
+			</ol>
 			<h1>
 				Style et mise en page
 			</h1>
@@ -3759,6 +3777,27 @@
 			</p>
 			<p>
 				Concernant les adresses emails ainsi que les noms et prénoms, les autres parties du système où ces données peuvent éventuellement être enregistrées sont les listes d’invités (onglet Participants) ou votre carnet d’adresses.
+			</p>
+			<h2>
+				Suppression en bloc de plusieurs réponses
+			</h2>
+			<p>
+				Vous pouvez supprimer une colonne entière des résultats de votre enquête.
+				Cela aura pour effet de «vider» (c'est-à-dire de supprimer définitivement) toutes les réponses à la question correspondante.
+				Cela peut être utile pour rendre les résultats anonymes, par exemple dans le contexte de la conformité GDPR.
+			</p>
+			<p>
+				Pour supprimer des réponses en bloc :
+			</p>
+			<ol>
+				<li>Allez dans l'onglet «Résultats».</li>
+				<li>Recherchez la colonne pour laquelle vous souhaitez supprimer les réponses en bloc.</li>
+				<li>Cliquez sur l'icône 3 points.</li>
+				<li>Sélectionnez «Effacer les réponses».</li>
+				<li>Confirmez la suppression.</li>
+			</ol>
+			<p>
+				Toutes les réponses collectées pour la question correspondante seront définitivement supprimées.
 			</p>
 
 		</div>

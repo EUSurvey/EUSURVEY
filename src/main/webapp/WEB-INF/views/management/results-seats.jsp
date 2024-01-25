@@ -258,20 +258,20 @@
 						<th><spring:message code="label.seats.Prorata" /></th>
 					</tr>
 					<tr>
-						<td><spring:message code="label.seats.ListVotesWeighted" /></td>
-						<td data-bind="text: counting().listVotesWeighted"></td>
-						<td data-bind="text: getSeatPercent(counting().listVotesWeighted, counting().listVotesWeighted + counting().totalPreferentialVotes)"></td>
+						<td><spring:message code="label.seats.ListVotes" /></td>
+						<td data-bind="text: counting().listVotes"></td>
+						<td data-bind="text: getSeatPercent(counting().listVotes, counting().listVotes + counting().preferentialVotes)"></td>
 						<td data-bind="text: counting().listVotesSeats"></td>
 					</tr>
 					<tr>
-						<td><spring:message code="label.seats.CandidateVotes" /></td>
-						<td data-bind="text: counting().totalPreferentialVotes"></td>
-						<td data-bind="text: getSeatPercent(counting().totalPreferentialVotes, counting().listVotesWeighted + counting().totalPreferentialVotes)"></td>
+						<td><spring:message code="label.seats.PreferentialVotes" /></td>
+						<td data-bind="text: counting().preferentialVotes"></td>
+						<td data-bind="text: getSeatPercent(counting().preferentialVotes, counting().listVotes + counting().preferentialVotes)"></td>
 						<td data-bind="text: counting().preferentialVotesSeats"></td>
 					</tr>
 					<tr>
 						<td><spring:message code="label.seats.Total" /></td>
-						<td data-bind="text: counting().listVotesWeighted + counting().totalPreferentialVotes"></td>
+						<td data-bind="text: counting().listVotes + counting().preferentialVotes"></td>
 						<td>100%</td>
 						<td data-bind="text: counting().maxSeats"></td>
 					</tr>

@@ -1,10 +1,7 @@
 package com.ec.survey.service;
 
 import com.ec.survey.model.*;
-import com.ec.survey.model.delphi.DelphiContribution;
-import com.ec.survey.model.delphi.DelphiContributions;
-import com.ec.survey.model.delphi.DelphiMedian;
-import com.ec.survey.model.delphi.DelphiTableOrderBy;
+import com.ec.survey.model.delphi.*;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
@@ -51,6 +48,31 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public AnswerExplanation getExplanationIfPossible(int answerSetId, String questionUid) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createQuery(
+				"SELECT ex FROM AnswerExplanation ex WHERE answerSetId = :answerSetId AND questionUid = :questionUid")
+				.setInteger("answerSetId", answerSetId).setString("questionUid", questionUid);
+		AnswerExplanation explanation = (AnswerExplanation) query.uniqueResult();
+		return explanation;
+	}
+
+	@Transactional(readOnly = true)
+	public AnswerExplanation getExplanation(int explanationId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createQuery(
+				"SELECT ex FROM AnswerExplanation ex WHERE id = :explanationId")
+				.setInteger("explanationId", explanationId);
+		AnswerExplanation explanation = (AnswerExplanation) query.uniqueResult();
+		if (explanation == null) {
+			throw new NoSuchElementException();
+		}
+		return explanation;
+	}
+
+	@Transactional(readOnly = true)
 	public Map<Integer, Map<String, String>> getAllExplanations(Survey survey) {
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createSQLQuery(
@@ -76,6 +98,20 @@ public class AnswerExplanationService extends BasicService {
 			result.get(answerSetId).put(questionUid, explanation);
 		}
 
+		return result;
+	}
+	
+	@Transactional(readOnly = true)
+	public Map<String, Integer> getAllLikesForExplanation(Survey survey) {
+		Map<String, Integer> result = new HashMap<>();
+		
+		List<AnswerExplanation> explanations = getExplanationsOfSurvey(survey.getUniqueId(), survey.getIsDraft());
+		
+		for (AnswerExplanation explanation: explanations) {
+			List<DelphiExplanationLike> likes = answerExplanationService.loadExplanationLikesUIDs(explanation.getId());
+			result.put(explanation.getAnswerSetId() + "-" + explanation.getQuestionUid(), likes.size());
+		}
+		
 		return result;
 	}
 
@@ -203,18 +239,24 @@ public class AnswerExplanationService extends BasicService {
 		String orderByClauseOuter;
 
 		switch (orderBy) {
-		case UpdateAsc:
-			orderByClauseInner = "aset.ANSWER_SET_UPDATE ASC";
-			orderByClauseOuter = "`update` ASC, answerSetId";
-			break;
+			case AnswersAsc:
+			case AnswersDesc:
+			case ExplanationsMostLiked:
+			case ExplanationsLessLiked:
+				//has to be done later on; using UpdateDesc as default for now
 
-		case UpdateDesc:
-			orderByClauseInner = "aset.ANSWER_SET_UPDATE DESC";
-			orderByClauseOuter = "`update` DESC, answerSetId";
-			break;
+			case UpdateDesc:
+				orderByClauseInner = "aset.ANSWER_SET_UPDATE DESC";
+				orderByClauseOuter = "`update` DESC, answerSetId";
+				break;
 
-		default:
-			throw new IllegalStateException("Unexpected value: " + orderBy);
+			case UpdateAsc:
+				orderByClauseInner = "aset.ANSWER_SET_UPDATE ASC";
+				orderByClauseOuter = "`update` ASC, answerSetId";
+				break;
+
+			default:
+				throw new IllegalStateException("Unexpected value: " + orderBy);
 		}
 
 		String contributionsQueryText = "" + "SELECT\n" + "    aset.ANSWER_SET_ID answerSetId,\n"
@@ -394,6 +436,12 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional
+	public void saveOrUpdateExplanation(AnswerExplanation explanation) {
+		final Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(explanation);
+	}
+
+	@Transactional
 	public void deleteComment(AnswerComment comment) {
 		final Session session = sessionFactory.getCurrentSession();
 		session.delete(comment);
@@ -414,40 +462,103 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional
-	public CommentLike getCommentLike(int answerCommentId, String uniqueCode) {
+	public DelphiCommentLike getCommentLike(int answerCommentId, String uniqueCode) {
 		final Session session = sessionFactory.getCurrentSession();
 
 		Query query = session.createQuery(
-				"FROM CommentLike WHERE answerCommentId = :answerCommentId and uniqueCode = :uniqueCode ORDER BY id");
+				"FROM DelphiCommentLike WHERE answerCommentId = :answerCommentId and uniqueCode = :uniqueCode ORDER BY id");
 		query.setInteger("answerCommentId", answerCommentId).setString("uniqueCode", uniqueCode);
 
-		return (CommentLike) query.uniqueResult();
+		return (DelphiCommentLike) query.uniqueResult();
+	}
+
+	@Transactional
+	public DelphiExplanationLike getExplanationLike(int answerExplanationId, String uniqueCode) {
+		final Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createQuery(
+				"FROM DelphiExplanationLike WHERE answerExplanationId = :answerExplanationId and uniqueCode = :uniqueCode ORDER BY id");
+		query.setInteger("answerExplanationId", answerExplanationId).setString("uniqueCode", uniqueCode);
+
+		return (DelphiExplanationLike) query.uniqueResult();
 	}
 
 	@Transactional(readOnly = true)
-	public List<CommentLike> loadCommentLikes(int answerCommentId) {
+	public List<DelphiCommentLike> loadCommentLikes(int answerCommentId) {
 		final Session session = sessionFactory.getCurrentSession();
 
 		Query query = session.createQuery(
-				"FROM CommentLike WHERE answerCommentId = :answerCommentId ORDER BY id");
+				"FROM DelphiCommentLike WHERE answerCommentId = :answerCommentId ORDER BY id");
 		query.setInteger("answerCommentId", answerCommentId);
 
 		@SuppressWarnings("unchecked")
-		List<CommentLike> list = query.list();
+		List<DelphiCommentLike> list = query.list();
+
+		return list;
+	}
+
+	@Transactional(readOnly = true)
+	public List<String> loadCommentLikesUIDs(int answerCommentId) {
+		final Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createQuery(
+				"SELECT c.uniqueCode FROM DelphiCommentLike c WHERE answerCommentId = :answerCommentId ORDER BY id");
+		query.setInteger("answerCommentId", answerCommentId);
+
+		@SuppressWarnings("unchecked")
+		List<String> list = query.list();
+
+		return list;
+	}
+
+	@Transactional(readOnly = true)
+	public List<DelphiExplanationLike> loadExplanationLikesUIDs(int answerExplanationId) {
+		final Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createQuery(
+				"FROM DelphiExplanationLike WHERE answerExplanationId = :answerExplanationId");
+		query.setInteger("answerExplanationId", answerExplanationId);
+
+		List<DelphiExplanationLike> list = query.list();
+		return list;
+	}
+
+	@Transactional(readOnly = true)
+	public List<String> loadExplanationLikes(int answerExplanationId) {
+		final Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createQuery(
+				"SELECT e.uniqueCode FROM DelphiExplanationLike e WHERE answerExplanationId = :answerExplanationId ORDER BY id");
+		query.setInteger("answerExplanationId", answerExplanationId);
+
+		@SuppressWarnings("unchecked")
+		List<String> list = query.list();
 
 		return list;
 	}
 
 	@Transactional
-	public void addCommentLike(CommentLike commentLike) {
+	public void addCommentLike(DelphiCommentLike delphiCommentLike) {
 		final Session session = sessionFactory.getCurrentSession();
-		session.saveOrUpdate(commentLike);
+		session.saveOrUpdate(delphiCommentLike);
 	}
 
 	@Transactional
-	public void deleteCommentLike(CommentLike commentLike) {
+	public void addExplanationLike(DelphiExplanationLike delphiExplanationLike) {
 		final Session session = sessionFactory.getCurrentSession();
-		session.delete(commentLike);
+		session.saveOrUpdate(delphiExplanationLike);
+	}
+
+	@Transactional
+	public void deleteCommentLike(DelphiCommentLike delphiCommentLike) {
+		final Session session = sessionFactory.getCurrentSession();
+		session.delete(delphiCommentLike);
+	}
+
+	@Transactional
+	public void deleteExplanationLike(DelphiExplanationLike delphiExplanationLike) {
+		final Session session = sessionFactory.getCurrentSession();
+		session.delete(delphiExplanationLike);
 	}
 
 	@Transactional
@@ -582,7 +693,7 @@ public class AnswerExplanationService extends BasicService {
 		for (List<AnswerComment> list : commentsByParent.values()) {
 			boolean first = true;
 			for (AnswerComment comment : list) {
-				List<CommentLike> likes = loadCommentLikes(comment.getId());
+				List<DelphiCommentLike> likes = loadCommentLikes(comment.getId());
 				String userPrefix = "";
 				
 				if (!comment.getText().equalsIgnoreCase(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
@@ -658,6 +769,14 @@ public class AnswerExplanationService extends BasicService {
 			}
 		}
 		return stringBuilder.toString();
+	}
+
+	@Transactional(readOnly = true)
+	public int getLikesForExplanation(final int answerSetId, final String questionUid) {
+
+		final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
+		List<DelphiExplanationLike> likes = answerExplanationService.loadExplanationLikesUIDs(explanation.getId());
+		return likes.size();
 	}
 
 	@Transactional(readOnly = true)

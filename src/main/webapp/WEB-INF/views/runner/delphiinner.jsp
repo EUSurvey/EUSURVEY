@@ -461,7 +461,7 @@
 			});
 		}
 
-		function likeDelphiCommentFromStartPage(element) {
+		function likeDelphiCommentOrExplanationFromStartPage(element, isExplanation) {
 			var increaseLike = $(element).find(".likeImage").attr("id").startsWith("likeButtonDelphi");
 
 			$('.answers-table-modal-error').hide();
@@ -475,30 +475,14 @@
 				const answerSetUniqueCode = $('#uniqueCode').val();
 				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
 			}
-			likeDelphiComment(element, answersTableViewModel, increaseLike, errorCallback, successCallback);
+
+			if (isExplanation) {
+				likeDelphiExplanation(element, answersTableViewModel, increaseLike, errorCallback, successCallback);
+			} else {
+				likeDelphiComment(element, answersTableViewModel, increaseLike, errorCallback, successCallback);
+			}
 		}
 
-		function showOverlayMenuSortingOptionsStartPage(element) {
-			var overlay = $(element).parent().find('.overlaymenu').first();
-			var rectbtn = $(element)[0].getBoundingClientRect();
-			var table = document.getElementById("delphiDiscussionTable");
-
-			$(overlay).css("left", table.offsetWidth - $(overlay).width() + element.offsetWidth);
-			$(overlay).css("top", rectbtn.bottom - element.offsetHeight - 7);
-
-			showOverlayMenuSortingOptionsInner(element, answersTableViewModel);
-		}
-
-		function sortCommentsStartPage(element, discussionSortingOrder) {			
-			answersTableViewModel.delphiCommentOrderBy(discussionSortingOrder);
-			loadTableData(currentQuestionUidInModal, answersTableViewModel);
-
-			$(element).parent().find(".btn-primary").removeClass("btn-primary");
-			$(element).addClass("btn-primary");
-			
-			$(element).closest(".overlaymenu").hide();
-		}
-		
 		function toggle(element)
 		{
 			$(element).closest('.sectionwithquestions').find(".sectioncontent").toggle();

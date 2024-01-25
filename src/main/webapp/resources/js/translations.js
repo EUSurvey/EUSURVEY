@@ -650,7 +650,7 @@ function initEditMatrix()
 						$(input).text(t);
 						$(div).html(t);
 						
-						if ($(labels).first().text().length == 0)
+						if (t.length == 0)
 						{
 							if (!endsWith(key, "UNIT") && !endsWith(key, "help"))
 							{

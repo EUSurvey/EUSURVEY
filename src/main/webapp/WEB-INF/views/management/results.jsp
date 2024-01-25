@@ -389,6 +389,16 @@
 				
 		function switchTo(resultType)
 		{
+			$.ajax({
+				type : "GET",
+				url : '${contextpath}/${form.survey.shortname}/management/results/access?type=' + resultType,
+				dataType : "json",
+				crossDomain:true,
+				success : function(data) {
+				},
+				error : function(data) {
+				}
+			});
 			switch(resultType)
 			{
 				case 'content':
@@ -486,7 +496,6 @@
 		
 		// Shows all the elements present in the content
 		function showContent() {
-			console.log("showContent()");
 			$("#results-table-link").addClass("btn-primary");
 			$("#results-table").find("tbody").removeClass('hidden');
 			$("#results-table").find(".RowsPerPage").removeClass('hidden');
@@ -522,7 +531,6 @@
 		
 		// Hides all the elements present in the content
 		function hideContent() {
-			console.log("hideContent()");
 			$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
 			// $("#results-table").find("tbody").addClass('hidden');
 			$("#results-table").find(".RowsPerPage").addClass('hidden');
@@ -551,14 +559,12 @@
 		}
 		
 		function hideStatistics() {
-			console.log("hideStatistics()");
 			$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
 			$("#results-statistics").addClass('hidden');
 			$("#statistics-export-buttons").addClass('hidden');
 		}
 		
 		function showStatisticsQuiz() {
-			console.log("showStatisticsQuiz()")
 			$("#results-statistics-quiz-link").addClass("btn-primary");
 			$("#results-statistics-quiz").removeClass('hidden');
 			$("#statistics-quiz-export-buttons").removeClass('hidden');
@@ -570,7 +576,6 @@
 			$("#charts-export-buttons").addClass('hidden');
 		}
 		function hideStatisticsQuiz() {
-			console.log("hideStatisticsQuiz()");
 			$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
 			$("#results-statistics-quiz").addClass('hidden');
 			$("#statistics-quiz-export-buttons").addClass('hidden');
@@ -589,7 +594,6 @@
 		}
 		
 		function showECF() {
-			console.log('showECF()');
 			$("#results-table").addClass('hidden');
 			$("#results-ecf").addClass("btn-primary");
 			$("#ecf-results").removeClass('hidden');
@@ -601,7 +605,6 @@
 		}
 		
 		function hideECF() {
-			console.log('hideECF');
 			$("#results-table").removeClass('hidden');
 			$("#ecf-results").addClass('hidden');
 			$("#results-ecf").removeClass("btn-primary").addClass("btn-default");
@@ -609,7 +612,6 @@
 		}
 		
 		function showECF2() {
-			console.log('showECF2()');
 			$("#results-table").addClass('hidden');
 			$("#results-ecf2").addClass("btn-primary");
 			$("#ecf-results2").removeClass('hidden');
@@ -621,7 +623,6 @@
 		}
 		
 		function hideECF2() {
-			console.log('hideECF2');
 			$("#results-table").removeClass('hidden');
 			$("#ecf-results2").addClass('hidden');
 			$("#results-ecf2").removeClass("btn-primary").addClass("btn-default");
@@ -629,7 +630,6 @@
 		}
 		
 		function showECF3() {
-			console.log('showECF3()');
 			$("#results-table").addClass('hidden');
 			$("#results-ecf3").addClass("btn-primary");
 			$("#ecf-results3").removeClass('hidden');
@@ -641,7 +641,6 @@
 		}
 
 		function hideECF3() {
-			console.log('hideECF3');
 			$("#results-table").removeClass('hidden');
 			$("#ecf-results3").addClass('hidden');
 			$("#results-ecf3").removeClass("btn-primary").addClass("btn-default");
@@ -722,7 +721,7 @@
 			$('#export-name-type-dialog').find("input").first().focus();
 		}
 		
-		function checkAndStartExportNT(name, type)
+		function checkAndStartExportNT(name)
 		 {			 
 			$("#export-name-type-dialog").find(".validation-error").hide();
 			 
@@ -761,9 +760,14 @@
 	        } else if (exportType.indexOf("Files") == 0) {
 	        	format = "zip";
 	        }
-			
-	        startExport(name, format);
-	        $("#export-name-type-dialog").modal("hide");	 
+
+	        if (format === 'pdfReport') {
+				createPDFReport(name);
+			} else {
+				startExport(name, format);
+			}
+
+	        $("#export-name-type-dialog").modal("hide");
 		 }
 		
 		function startExport(name, format)
@@ -792,11 +796,15 @@
 			return false;
 		}
 		
-		function createPDFReport() {
+		function createPDFReport(exportName) {
 			var showshortnames = $("#show-assigned-values").is(":checked");
 			var allanswers = $("#allAnswers").val();
 			
 			var charts = {};
+
+			if (exportName == null) {
+				exportName = "PDF Report";
+			}
 			
 			$('.chart-download:visible').each(function(){
 				var questionUid = $(this).closest(".chart-wrapper").attr("data-question-uid");
@@ -807,7 +815,7 @@
 			$.ajax({
 	           type: "POST",
 	           url: "${contextpath}/exports/start/PDFReport/pdf",
-	           data: {exportName: "PDF Report", showShortnames: showshortnames, allAnswers: allanswers, group: "", charts: JSON.stringify(charts)},
+	           data: {exportName: exportName, showShortnames: showshortnames, allAnswers: allanswers, group: "", charts: JSON.stringify(charts)},
 	           beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 	           success: function(data)
 	           {
@@ -1219,15 +1227,19 @@
 									<span class="deactivatedexports">
 										<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
 									</span>
-									<span class="deactivatedexports">
-										<a class="btn btn-default disabled"><spring:message code="label.PDFReport" /></a>
-									</span>
+									<c:if test="${!form.survey.isDelphi}">
+										<span class="deactivatedexports">
+											<a class="btn btn-default disabled"><spring:message code="label.PDFReport" /></a>
+										</span>
+									</c:if>
 									<span class="activatedexports hideme">
 										<a class="btn btn-default" onclick="showExportDialog('Statistics')"><spring:message code="label.Export" /></a>
 									</span>
-									<span class="activatedexports hideme">
-										<a class="btn btn-default" onclick="createPDFReport()"><spring:message code="label.PDFReport" /></a>
-									</span>
+									<c:if test="${!form.survey.isDelphi}">
+										<span class="activatedexports hideme">
+											<a class="btn btn-default" onclick="createPDFReport()"><spring:message code="label.PDFReport" /></a>
+										</span>
+									</c:if>
 								</c:otherwise>
 							</c:choose>
 						</span>
@@ -1371,7 +1383,7 @@
 								<td style="vertical-align: top;"><input name="selectedexplanation${question.id}" <c:if test="${filter.explanationVisible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="explanation${question.id}" /></td>
 								<td style="vertical-align: top; "><input name="exportselectedexplanation${question.id}" <c:if test="${filter.explanationExported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="explanationexported${question.id}" /></td>
 
-								<td style="padding-left: 20px;"><spring:message code="label.Explanation" /></td>
+								<td style="padding-left: 20px;"><spring:message code="label.Explanation" />, <spring:message code="label.Likes" /></td>
 							</tr>
 							<tr>
 								<td style="vertical-align: top;"><input name="selecteddiscussion${question.id}" <c:if test="${filter.discussionVisible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="discussion${question.id}" /></td>
@@ -1543,6 +1555,9 @@
 							</select>
 							<select class="form-control" id="exportnt-format-statistics">
 								<option value="pdf">PDF</option>
+								<c:if test="${form.survey.isDelphi}">
+									<option value="pdfReport">PDF (+graphs)</option>
+								</c:if>
 								<option value="xls">XLS</option>
 								<option value="ods">ODS</option>
 								<option value="doc">DOC</option>
@@ -1572,7 +1587,7 @@
 		</div>
 		<div class="modal-footer">
 			<img alt="wait animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="okStartExportButton"  onclick="checkAndStartExportNT($('#exportnt-name').val(), $('#exportnt-format').val());"  class="btn btn-primary"><spring:message code="label.OK" /></a>	
+			<a id="okStartExportButton"  onclick="checkAndStartExportNT($('#exportnt-name').val());"  class="btn btn-primary"><spring:message code="label.OK" /></a>
 			<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>

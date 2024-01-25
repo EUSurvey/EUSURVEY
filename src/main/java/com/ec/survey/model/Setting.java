@@ -66,6 +66,8 @@ public class Setting {
 	public static final String MaxSurveysPerUser = "MaxSurveysPerUser";
 	public static final String MaxSurveysTimespan = "MaxSurveysTimespan";
 	public static final String LastCheckedSurveyIDForZombieFiles = "LastCheckedSurveyIDForZombieFiles";
+	public static final String AutomaticDraftDeleteExceptions = "AutomaticDraftDeleteExceptions";
+	public static final String EULoginWhitelist = "EULoginWhitelist";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")

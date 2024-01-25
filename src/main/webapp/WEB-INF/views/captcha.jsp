@@ -92,6 +92,7 @@
 			                xhr.crossDomain = true;
 			            },
 			            success: function (data, textStatus, request) {
+			            	EuCaptchaCookies = getCaptchaUrl.getResponseHeader("original-cookie");
 			            	EuCaptchaToken = getCaptchaUrl.getResponseHeader("x-jwtString");  //"token");
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
@@ -100,6 +101,7 @@
 			                $('#captcha_token').val(EuCaptchaToken);
 			                $('#captcha_id').val(jsonData.captchaId);
 			                $('#captcha_useaudio').val(false);
+			                $('#captcha_original_cookies').val(EuCaptchaCookies);
 			            }
 			        });
 				</c:when>

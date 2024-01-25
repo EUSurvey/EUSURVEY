@@ -297,7 +297,7 @@ public class ArchiveService extends BasicService {
 	@Transactional
 	public List<Archive> getArchivesForUser(int userid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Archive a WHERE a.userId = :userId").setInteger("userId", userid);
+		Query query = session.createQuery("FROM Archive a WHERE a.userId = :userId AND a.finished = true AND a.error IS NULL").setInteger("userId", userid);
 
 		@SuppressWarnings("unchecked")
 		List<Archive> result = query.list();

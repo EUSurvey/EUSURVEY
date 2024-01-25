@@ -22,6 +22,10 @@ public class DelphiExplanation {
 	private List<String> fileList = new ArrayList<>();
 	private boolean changedForMedian;
 
+	private int explanationId;
+	private List<String> likes = new ArrayList<>();
+	private int numLikes = 0;
+
 	public String getText() {
 		return text;
 	}
@@ -59,5 +63,28 @@ public class DelphiExplanation {
 
 	public void setChangedForMedian(boolean changedForMedian) {
 		this.changedForMedian = changedForMedian;
+	}
+
+	public int getExplanationId() {
+		return explanationId;
+	}
+
+	public void setExplanationId(int explanationId) {
+		this.explanationId = explanationId;
+	}
+
+	public List<String> getLikes() {
+		return this.likes;
+	}
+
+	public void setLikes(List<String> likes) {
+		if (likes != null) {
+			this.likes = likes;
+			this.numLikes = likes.size();
+		}
+	}
+
+	public int getNumLikes() {
+		return this.numLikes;
 	}
 }

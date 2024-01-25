@@ -1650,7 +1650,7 @@ var _surveyBackupIdentifier
 function getSurveyIdentifier() {
 
 	if (_surveyBackupIdentifier == null){
-		if ($("#survey.id").length == 0) return; // for example on the skin page
+		if ($("#survey\\.id").length == 0) return; // for example on the skin page
 		
 		let survey = $(document.getElementById("survey.id")).val();
 		let invitation = $(document.getElementById("invitation")).val();
@@ -1713,7 +1713,6 @@ function clearLocalBackupForPrefix(surveyprefix) {
 }
 
 function saveLocalBackup(){
-
 	const backup = $("#runnerForm").serializeArray()
 
 	let filesUploaded = $(".uploaditem .uploaded-files > div").length > 0
@@ -1727,7 +1726,6 @@ function saveLocalBackup(){
 }
 
 function restoreBackup(){
-
 	const key = getSurveyIdentifier();
 
 	const store = window.localStorage.getItem(key);

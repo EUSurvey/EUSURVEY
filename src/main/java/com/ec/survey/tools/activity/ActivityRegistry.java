@@ -184,6 +184,7 @@ public class ActivityRegistry {
             ID_DISPLAY_RESULTS = 317, //'Display Results' button on eVote results page was clicked
             ID_ALLOCATE_SEATS = 318, //'Allocate Seats' button on eVote results page was clicked
             ID_EXPORT_SEATS = 319, //'Export' button on eVote results page was clicked
+            ID_RESULTS_ACCESS = 320, //Results page was accessed
 
             ID_CONTRIBUTION_SUBMIT = 401, // Contribution has been submitted
             ID_CONTRIBUTION_DELETE = 402, // Contribution has been deleted
@@ -338,6 +339,8 @@ public class ActivityRegistry {
         register(PROP_NA, EVT_OPENED, ID_DISPLAY_RESULTS);
         register(PROP_NA, EVT_OPENED, ID_ALLOCATE_SEATS);
         register(PROP_NA, EVT_STARTED, ID_EXPORT_SEATS);
+
+        register(PROP_NA, EVT_OPENED, ID_RESULTS_ACCESS);
 
         //Activities 312
         register(PROP_EXPORT_ACTIVITIES, EVT_STARTED, ID_ACTIVITY_EXPORT);

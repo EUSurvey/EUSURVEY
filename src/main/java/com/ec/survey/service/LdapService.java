@@ -692,7 +692,7 @@ public class LdapService extends BasicService {
 			String searchString = "(& (objectClass=*)";
 						
 			if (name != null && name.length() > 0){
-				searchString += getFilterContains("uid", name);			
+				searchString += getFilterContainsOr("uid", ldapMappingUserEcMoniker, name);			
 			}
 			
 			if (isAttributeEligible(ldapMappingUserGivenName) && first != null && first.length() > 0){
@@ -824,6 +824,10 @@ public class LdapService extends BasicService {
 		return result;
 	}
 	
+	private String getFilterContainsOr(final String key, final String key2, final String search) {
+		String result = "(|(" + key + "=*" + search + "*)(" + key2 + "=*" + search + "*))";		
+		return result;
+	}
 	
 	private String getFilterStartsWith(final String key, final String search) {
 		String result="";

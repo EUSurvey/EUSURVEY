@@ -54,7 +54,15 @@
 				de l'une de vos enquêtes, ou de toute autre atteinte à la sécurité.
 				La DIGIT ne pourra en aucun cas être tenue responsable de toute
 				action ou omission de votre part, y compris de tout type de dommage
-				résultant de tels actes ou omissions.</li>
+				résultant de tels actes ou omissions.<br/>
+				Vous êtes tenu d'utiliser le système EUSurvey avec modération et
+				de manière responsable. En particulier, vous êtes tenu de supprimer
+				votre enquête une fois que la collecte et l'analyse des contributions
+				sont terminées. Vous acceptez également notre processus de suppression
+				automatique des enquêtes inactives depuis plus d'un an (une enquête
+				inactive est une enquête qui ne reçoit plus de contributions et qui
+				n'est plus mise à jour). En outre, nous nous réservons le droit de
+				supprimer toute enquête à tout moment et à notre entière discrétion.</li>
 			<li><b>Responsabilité des auteurs</b> Lorsque vous créez une
 				enquête, mettez en ligne des documents dans celle-ci ou créez des
 				liens vers des documents à partir de celle-ci, ou que vous mettez

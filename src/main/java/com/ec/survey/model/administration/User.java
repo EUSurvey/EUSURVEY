@@ -565,6 +565,12 @@ public class User implements java.io.Serializable {
 	public List<String> getDepartments() {
 		return departments;
 	}
+	
+	@Transient
+	@JsonIgnore
+	public boolean isECUser() {
+		return this.getEmail() != null && this.getEmail().toLowerCase().endsWith("ec.europa.eu");
+	}
 
 	public void setDepartments(List<String> departments) {
 		this.departments = departments;

@@ -2847,6 +2847,25 @@
 			<p>
 				Der Score errechnet sich aus der durchschnittlichen Gewichtung durch die Umfrageteilnehmer.
 			</p>
+			<h2>
+				Exportieren des Datensatzes (d. h. der Umfrageantworten)
+			</h2>
+			<p>
+				Sie können die Antworten Ihrer Umfrage mithilfe der Exportfunktion exportieren.
+				Dies kann z. B. für die weitere Datenverarbeitung in Excel nützlich sein.
+			</p>
+			<p>
+				Schritte zum Exportieren der Antworten:
+			</p>
+			</p>
+			<ol>
+				<li>Gehen Sie zur Registerkarte „Ergebnisse“ (erste Ansicht, Ergebnistabelle).</li>
+				<li>Klicken Sie „Exportieren“ (ein Dialogfenster öffnet sich).</li>
+				<li>Geben Sie einen Namen für Ihren Export ein.</li>
+				<li>Wählen Sie das Dateiformat aus (wenn die Exportdatei erstellt wurde, werden Sie eine Benachrichtigung erhalten).</li>
+				<li>Gehen Sie zur Seite „Exporte“.</li>
+				<li>Laden Sie Ihre Datei herunter.</li>
+			</ol>
 
 			<h1>
 				Design und Layout
@@ -3687,6 +3706,27 @@
 			</p>
 			<p>
 				Was E-Mail-Adressen sowie Vor- und Nachnamen betrifft, so sind die anderen Teile des Systems, in denen diese Daten gespeichert werden können, die Gästelisten (Registerkarte „Teilnehmer“) oder Ihr „Adressbuch“.
+			</p>
+			<h2>
+				Mehrere Antworten gleichzeitig löschen
+			</h2>
+			<p>
+				Sie können eine ganze Spalte aus Ihren Umfrageergebnissen löschen.
+				Dies hat zur Folge, dass alle Antworten der entsprechenden Frage „geleert“ (d. h. endgültig gelöscht) werden.
+				Das kann nützlich sein, um die Ergebnisse zu anonymisieren, z. B. im Zusammenhang mit der Einhaltung der Datenschutz-Grundverordnung (DSGVO).
+			</p>
+			<p>
+				Schritte zum Löschen mehrerer Antworten auf einmal:
+			</p>
+			<ol>
+				<li>Gehen Sie zur Registerkarte „Ergebnisse“.</li>
+				<li>Suchen Sie die Spalte, in der mehrere Antworten gleichzeitig gelöscht werden sollen.</li>
+				<li>Nutzen Sie das Drei-Punkte-Menü.</li>
+				<li>Wählen Sie „Antworten löschen“ aus.</li>
+				<li>Bestätigen Sie das Löschen.</li>
+			</ol>
+			<p>
+				Alle Antworten der ausgewählten Frage werden endgültig gelöscht.
 			</p>
 
 			</div>

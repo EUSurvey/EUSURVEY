@@ -75,6 +75,7 @@
 						</c:if>
 						<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleExplanations.contains(question.id.toString()))}">
 							<th class="topaligned"><spring:message code="label.Explanation" /></th>
+							<th class="topaligned"><spring:message code="label.Likes" /></th>
 						</c:if>
 						<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleDiscussions.contains(question.id.toString()))}">
 							<th class="topaligned"><spring:message code="label.Discussion" /></th>
@@ -487,6 +488,7 @@
 								</c:choose>		
 								
 								<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleExplanations.contains(question.id.toString()))}">
+									<th class="filtercell"></th>
 									<th class="filtercell"></th>
 								</c:if>
 								<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleDiscussions.contains(question.id.toString()))}">
@@ -1381,6 +1383,11 @@ var closeOverlayDivsEnabled = false;
 											var td = document.createElement("td");
 											td.style["overflow-wrap"] = "anywhere";
 											$(td).append(list[i++].stripStyleHtml());
+											$(tr).append(td);
+
+						  					td = document.createElement("td");
+											td.style["overflow-wrap"] = "anywhere";
+											$(td).append(list[i++]);
 											$(tr).append(td);
 										</c:if>
 										

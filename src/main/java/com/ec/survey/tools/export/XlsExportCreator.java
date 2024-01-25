@@ -197,6 +197,12 @@ public class XlsExportCreator extends ExportCreator {
 					cell.setCellStyle(questionTitleStyle);
 					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
 					checkColumnInsertHeader(export);
+
+					cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
+					cell.setCellValue(resources.getMessage("label.Likes", null, "Likes", locale));
+					cell.setCellStyle(questionTitleStyle);
+					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
+					checkColumnInsertHeader(export);
 				}
 
 				if (form.getSurvey().getIsDelphi() && question.isDelphiElement()
@@ -396,7 +402,7 @@ public class XlsExportCreator extends ExportCreator {
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, questions,
-						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, null, null,
+						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, null, null, null,
 						explanationFilesOfSurvey, explanationFilesToExport);
 			}
 		} else {
@@ -406,6 +412,7 @@ public class XlsExportCreator extends ExportCreator {
 					.getAllExplanations(form.getSurvey());
 			Map<Integer, Map<String, String>> discussions = answerExplanationService
 					.getAllDiscussions(form.getSurvey());
+			Map<String, Integer> likesForExplanations = answerExplanationService.getAllLikesForExplanation(form.getSurvey());
 
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, values, true)
@@ -463,7 +470,7 @@ public class XlsExportCreator extends ExportCreator {
 							session.flush();
 							parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
 									uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations,
-									discussions, explanationFilesOfSurvey, explanationFilesToExport);
+									discussions, likesForExplanations, explanationFilesOfSurvey, explanationFilesToExport);
 						}
 
 						answerSet = new AnswerSet();
@@ -482,7 +489,7 @@ public class XlsExportCreator extends ExportCreator {
 				}
 				if (lastAnswerSet > 0)
 					parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
-							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions,
+							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions, likesForExplanations,
 							explanationFilesOfSurvey, explanationFilesToExport);
 			} finally {
 				results.close();
@@ -596,7 +603,7 @@ public class XlsExportCreator extends ExportCreator {
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
 			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations,
-			Map<Integer, Map<String, String>> discussions, FilesByTypes<Integer, String> explanationFilesOfSurvey,
+			Map<Integer, Map<String, String>> discussions, Map<String, Integer> likesForExplanations,  FilesByTypes<Integer, String> explanationFilesOfSurvey,
 			FilesByTypes<String, String> explanationFilesToExport) throws IOException {
 		CreationHelper createHelper = wb.getCreationHelper();
 
@@ -1012,6 +1019,32 @@ public class XlsExportCreator extends ExportCreator {
 					}
 
 					enableLineBreaksInCell(cell);
+
+					Cell cell2 = checkColumnsParseAnswerSet();
+					int likes = Integer.MAX_VALUE;
+					if (answerSet == null) {
+						String row = answerrow.get(answerrowcounter++);
+						if (row != "") {
+							likes = Integer.valueOf(row);
+						}
+					} else {
+						//likes = answerExplanationService.getLikesForExplanation(answerSet.getId(), questionUid);
+						String key = answerSet.getId() + "-" + questionUid;
+						if (likesForExplanations.containsKey(key)) {
+							likes = likesForExplanations.get(key);
+						}
+					}
+
+					if (likes != Integer.MAX_VALUE) {
+						cell2.setCellValue((double) likes);
+						cell2.setCellType(Cell.CELL_TYPE_NUMERIC);
+
+						DataFormat format = sheet.getWorkbook().createDataFormat();
+						CellStyle style = sheet.getWorkbook().createCellStyle();
+						style.setDataFormat(format.getFormat("0"));
+
+						cell2.setCellStyle(style);
+					}
 				}
 
 				if (question.isDelphiElement() && filter.discussionExported(question.getId().toString())) {
