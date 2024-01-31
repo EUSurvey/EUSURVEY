@@ -49,6 +49,8 @@
 		});
 		
 		var request = $.ajax({
+			type:'POST',
+			beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 			url: contextpath + "/noform/management/seatCountingTest",
 			data:data,
 			dataType: "json",

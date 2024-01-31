@@ -3775,7 +3775,7 @@ public class ManagementController extends BasicController {
 		return 0;
 	}
 	
-	@RequestMapping(value = "/seatCountingTest", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@RequestMapping(value = "/seatCountingTest", method = { RequestMethod.POST })
 	public @ResponseBody SeatCounting seatCountingTest(HttpServletRequest request, Locale locale) {
 		try {
 			Form form = sessionService.getForm(request, null, false, false);
