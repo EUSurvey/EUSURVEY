@@ -667,7 +667,7 @@ public class LdapService extends BasicService {
 		return result;
 	}
 
-	public String[] getECASLogins(String name, String department, String type, String first, String last, String email, String order) throws NamingException {
+	public String[] getECASLogins(String name, String department, String type, String first, String last, String email, String order, int limit) throws NamingException {
 		
 		name = Tools.encodeForLDAP(name);
 		department = Tools.encodeForLDAP(department);
@@ -683,7 +683,7 @@ public class LdapService extends BasicService {
 		try {
 			SearchControls sc = getSearchControls(LdapSearchTypeEnum.LOGIN);
 			
-			sc.setCountLimit(100);
+			sc.setCountLimit(limit);
 			sc.setTimeLimit(60000);
 			
 			NamingEnumeration<SearchResult> ne = null; 

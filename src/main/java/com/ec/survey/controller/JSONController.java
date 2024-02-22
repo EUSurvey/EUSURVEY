@@ -6,7 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ec.survey.exception.ForbiddenException;
+import com.ec.survey.model.administration.User;
 import com.ec.survey.tools.Constants;
+import com.ec.survey.tools.NotAgreedToPsException;
+import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +44,10 @@ public class JSONController extends BasicController {
 	}
 	
 	@GetMapping(value = "/usersJSON", headers="Accept=*/*")
-	public @ResponseBody String[] participantsSearch(HttpServletRequest request, HttpServletResponse response ) throws NamingException {
+	public @ResponseBody String[] participantsSearch(HttpServletRequest request, HttpServletResponse response ) throws NamingException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException {
+		
+		User u = sessionService.getCurrentUser(request);
+		
 		String name = request.getParameter("name");
 		if (name != null) name = name.trim();
 		
@@ -54,11 +62,17 @@ public class JSONController extends BasicController {
 		if (department != null) department = department.trim();
 		String order = request.getParameter("order");
 		
+		if (u.isExternal()) {
+			if (type != "external") {
+				throw new ForbiddenException();
+			}
+		}
+		
 		if (!type.equalsIgnoreCase("system"))
 		{
-			return ldapService.getECASLogins(name, department, type, first, last, email, order);
+			return ldapService.getECASLogins(name, department, type, first, last, email, order, u.isExternal() ? 1 : 100);
 		} else {
-			return administrationService.getLoginsForPrefix(name, email, true);
+			return administrationService.getLoginsForPrefix(name, email, true);			
 		}
 	}
 
