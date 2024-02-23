@@ -698,17 +698,22 @@ public class AttendeeService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		for (AttributeName attributeName : attributeNames) {
-			Query query = session
-					.createQuery("SELECT a.value FROM Attribute a WHERE a.attributeName.id = :id ORDER BY a.value ASC")
-					.setInteger("id", attributeName.getId());
-			@SuppressWarnings("unchecked")
-			List<String> attributes = query.list();
-
 			List<String> currentList = new ArrayList<>();
-			for (String attribute : attributes) {
-				if (!currentList.contains(attribute))
-					currentList.add(attribute);
+			
+			if (attributeName.getOwnerId() != -1) {			
+				Query query = session
+						.createQuery("SELECT a.value FROM Attribute a WHERE a.attributeName.id = :id ORDER BY a.value ASC")
+						.setInteger("id", attributeName.getId());
+				@SuppressWarnings("unchecked")
+				List<String> attributes = query.list();
+	
+				
+				for (String attribute : attributes) {
+					if (!currentList.contains(attribute))
+						currentList.add(attribute);
+				}
 			}
+			
 			attributeValues.put(attributeName.getId(), currentList);
 		}
 
