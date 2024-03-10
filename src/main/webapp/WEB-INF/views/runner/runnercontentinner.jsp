@@ -693,7 +693,7 @@
 		}
 		function getInitialOrderInfoText()
 		{
-			return '${form.getMessage("label.InitialOrder")}';
+			return "${form.getMessage("label.InitialOrder")}";
 		}
 	 	
 	 	function round(value)
