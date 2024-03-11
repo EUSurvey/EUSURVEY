@@ -333,7 +333,7 @@ public class AdministrationService extends BasicService {
 
 		Query query = null;
 		if (emails != null && emails.size() > 0) {
-			query = session.createQuery("FROM User u where u.email IN :email and u.type = :type order by u.login asc").setString("type", User.SYSTEM).setParameter(Constants.EMAIL, emails);
+			query = session.createQuery("FROM User u where u.email IN :email order by u.login asc").setParameter(Constants.EMAIL, emails);
 		}
 
 		@SuppressWarnings("unchecked")
