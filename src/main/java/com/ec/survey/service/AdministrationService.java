@@ -426,7 +426,7 @@ public class AdministrationService extends BasicService {
 	public List<User> getUserLoginsByEmail(String email) {
 			Session session = sessionFactory.getCurrentSession();
 			email = "%" + email + "%";
-			Query query = session.createQuery("FROM User u where u.email like :email and u.type = :type order by u.login asc").setString("type", User.SYSTEM).setParameter(Constants.EMAIL, email);
+			Query query = session.createQuery("FROM User u where u.email like :email order by u.login asc").setParameter(Constants.EMAIL, email);
 			return query.setMaxResults(100).list();
 	}
 
