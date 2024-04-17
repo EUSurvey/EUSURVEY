@@ -9,8 +9,10 @@ import com.ec.survey.model.FilesByType;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.ComplexTableItem.CellType;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.model.survey.quiz.QuizResult;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.Tools;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -461,8 +463,9 @@ public class XmlExportCreator extends ExportCreator {
 		}
 
 		filterWithMeta.setExportedQuestions(filterWithMeta.getVisibleQuestions());
-		
-		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
+
+		// for quiz surveys we need the original answerSet instances in order to compute the scores
+		List<List<String>> answersets = form.getSurvey().getIsQuiz() ? null : reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
 				true, true, true, true, false);
 
 		Map<String, List<File>> uploadedFilesByQuestionUID = new HashMap<>();
@@ -1160,6 +1163,36 @@ public class XmlExportCreator extends ExportCreator {
 				}
 			}
 		}
+		
+		if (survey.getIsQuiz()) {
+			QuizResult quizResult = QuizHelper.getQuizResult(answerSet, survey);
+			writer.writeStartElement("Scores");
+			
+			if (survey.getScoresByQuestion()) {
+				for (Element element : survey.getQuestionsAndSections()) {
+					if (element instanceof Section) {
+						String score = quizResult.getSectionScore(element.getUniqueId());
+						if (!score.equals("0/0")) {
+							writer.writeStartElement("Section");
+							writer.writeAttribute("id", element.getUniqueId());	
+							writer.writeCharacters(score);							
+							writer.writeEndElement(); // Section
+						}
+					} else if (element instanceof ChoiceQuestion || element instanceof FreeTextQuestion || element instanceof NumberQuestion || element instanceof DateQuestion) {
+						Question question = (Question) element;
+						if (question.getScoring() > 0) {
+							writer.writeStartElement("Question");
+							writer.writeAttribute("id", element.getUniqueId());	
+							writer.writeCharacters(quizResult.getQuestionScore(element.getUniqueId()) + "/" + quizResult.getQuestionMaximumScore(element.getUniqueId()));							
+							writer.writeEndElement(); // Question
+						}
+					}		 			
+				}
+			}
+						
+			writer.writeEndElement(); // Score
+		}
+
 		writer.writeEndElement(); // AnswerSet
 	}
 
