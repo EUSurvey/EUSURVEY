@@ -779,7 +779,7 @@ public class XmlExportCreator extends ExportCreator {
 		if (meta || filter == null || filter.exported("invitation"))
 			writer.writeAttribute("invitation", answerSet == null ? row.get(rowPosMap.get("invitation"))
 					: answerSet.getInvitationId() != null ? answerSet.getInvitationId() : "");
-		if (survey.getIsOPC() && (meta || filter == null || filter.exported("user"))) {
+		if (meta || filter == null || filter.exported("user")) {
 			String suser = answerSet == null ? row.get(rowPosMap.get("user")) : answerSet.getResponderEmail();
 			if (suser != null && suser.contains("@") && ECASUserLoginsByEmail != null
 					&& ECASUserLoginsByEmail.containsKey(suser)) {
