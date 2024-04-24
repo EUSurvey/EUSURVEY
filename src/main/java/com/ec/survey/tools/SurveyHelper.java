@@ -788,6 +788,31 @@ public class SurveyHelper {
 			return false;
 		}
 	}
+	
+	public static Question getFirstUnansweredMandatoryReadonlyQuestion(AnswerSet answerSet) {
+		//check that all readonly mandatory questions are answered
+		for (Question question : answerSet.getSurvey().getQuestions()) {
+			if (question instanceof MatrixOrTable && question.getReadonly()) {
+				MatrixOrTable m = (MatrixOrTable) question;
+				for (Element sub : m.getQuestions()) {
+					if (sub instanceof Text) {
+						Text t = (Text)sub;
+						if (!t.getOptional()) {
+							if (answerSet.getAnswers(t.getUniqueId()).isEmpty()) {
+								return t;								
+							}
+						}
+					}
+				}
+			} else if (!question.getOptional() && question.getReadonly()) {
+				if (answerSet.getAnswers(question.getUniqueId()).isEmpty()) {
+					return question;
+				}
+			}				
+		}
+		
+		return null;
+	}
 
 	public static boolean checkDependencies(List<Element> questiondependencies, Element element, Question question, Matrix parent, AnswerSet answerSet, Set<String> invisibleElements) {
 		boolean found = false;
