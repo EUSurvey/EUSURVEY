@@ -319,7 +319,7 @@
 														 style="margin-top: 5px; display: none;">
 														</c:when>
 														<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-														<div class="emptyelement survey-element untriggered dependent 2" data-useAndLogic="${element.useAndLogic}"
+														<div class="emptyelement survey-element untriggered 2" data-useAndLogic="${element.useAndLogic}"
 															 id="${element.id}" data-id="${element.id}"
 															 data-uid="${element.uniqueId}"
 															 data-triggers="${element.triggers}" style="display: none;">
