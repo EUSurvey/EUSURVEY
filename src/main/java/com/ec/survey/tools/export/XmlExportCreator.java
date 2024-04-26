@@ -422,13 +422,7 @@ public class XmlExportCreator extends ExportCreator {
 		FilesByType<String> explanationFilesToExport = new FilesByType<>();
 
 		HashMap<String, Object> values = new HashMap<>();
-
-		Map<String, String> ECASUserLoginsByEmail = null;
-
-		if (export.getAddMeta()) {
-			ECASUserLoginsByEmail = administrationService.getECASUserLoginsByEmail();
-		}
-		
+				
 		ResultFilter origFilter = answerService.initialize(export.getResultFilter());
 		ResultFilter filterWithMeta = export == null ? null : origFilter.copy();
 
@@ -471,6 +465,12 @@ public class XmlExportCreator extends ExportCreator {
 		Map<String, List<File>> uploadedFilesByQuestionUID = new HashMap<>();
 
 		writer.writeStartElement("Answers");
+		
+		Map<String, String> ECASUserLoginsByEmail = null;
+
+		if (export.getAddMeta() || filterWithMeta.exported("user")) {
+			ECASUserLoginsByEmail = administrationService.getECASUserLoginsByEmail();
+		}
 
 		if (answersets != null) {
 
@@ -773,17 +773,25 @@ public class XmlExportCreator extends ExportCreator {
 		if (meta || filter == null || filter.exported("languages"))
 			writer.writeAttribute("lang", answerSet == null ? row.get(rowPosMap.get("languages")) : answerSet.getLanguageCode());
 
-		if (meta || filter == null || filter.exported("user"))
-			writer.writeAttribute("user", answerSet == null ? row.get(rowPosMap.get("user"))
-					: answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "");
+		if (meta || filter == null || filter.exported("user"))			
+			if (survey.getSecurity().contains("anonymous")) {
+				writer.writeAttribute("user", "Anonymous");
+			} else {
+				writer.writeAttribute("user", answerSet == null ? row.get(rowPosMap.get("user")): answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "");
+			}
+
 		if (meta || filter == null || filter.exported("invitation"))
 			writer.writeAttribute("invitation", answerSet == null ? row.get(rowPosMap.get("invitation"))
 					: answerSet.getInvitationId() != null ? answerSet.getInvitationId() : "");
 		if (meta || filter == null || filter.exported("user")) {
-			String suser = answerSet == null ? row.get(rowPosMap.get("user")) : answerSet.getResponderEmail();
-			if (suser != null && suser.contains("@") && ECASUserLoginsByEmail != null
-					&& ECASUserLoginsByEmail.containsKey(suser)) {
-				writer.writeAttribute("userlogin", ECASUserLoginsByEmail.get(suser));
+			if (survey.getSecurity().contains("anonymous")) {
+				writer.writeAttribute("userlogin", "Anonymous");
+			} else {
+				String suser = answerSet == null ? row.get(rowPosMap.get("user")) : answerSet.getResponderEmail();
+				if (suser != null && suser.contains("@") && ECASUserLoginsByEmail != null
+						&& ECASUserLoginsByEmail.containsKey(suser)) {
+					writer.writeAttribute("userlogin", ECASUserLoginsByEmail.get(suser));
+				}
 			}
 		}
 
