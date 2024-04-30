@@ -128,6 +128,22 @@
 		</div>
 		</div>
 	</div>
+
+	<div class="modal" id="warning-eVote" data-backdrop="static" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<spring:message code="label.Warning" />
+				</div>
+				<div class="modal-body">
+					<spring:message code="message.WarningEVote" />
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.GotIt" /></a>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 	<div class="modal" id="new-quiz-dialog" data-backdrop="static">
 		<div class="modal-dialog">
@@ -225,7 +241,7 @@
 					}
 				}
 			}
-			
+
 			<c:choose>
 				<c:when test="${saved != null}">
 					showSuccess("<spring:message code='message.SurveySaved' />");	
@@ -244,6 +260,13 @@
 					}
 				</c:otherwise>
 			</c:choose>
+
+			if (isEVote)
+			{
+				<c:if test="${invalidevote != null}">
+					$("#warning-eVote").modal("show");
+				</c:if>
+			}
 		});
 		
 		var _elements = {};

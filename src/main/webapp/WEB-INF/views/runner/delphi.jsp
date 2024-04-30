@@ -8,7 +8,7 @@
 	
 	<%@ include file="../includesrunner.jsp" %>
 	<%@ include file="../generic-messages.jsp" %>
-	
+
 	<link id="runnerCss" href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/graph_data_loader.js?version=<%@include file="../version.txt" %>"></script>

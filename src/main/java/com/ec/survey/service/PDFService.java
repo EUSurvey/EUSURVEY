@@ -177,7 +177,7 @@ public class PDFService extends BasicService {
 		AnswerSet answerSet = answerService.get(code);
 		AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
 		if (email != null) {
-			export.init(answerSet, email, sender, serverPrefix);
+			export.init(answerSet, email, sender, serverPrefix, false);
 		} else {
 			export.init(answerService.get(code));
 		}
@@ -185,7 +185,7 @@ public class PDFService extends BasicService {
 		return "success";
 	}
 
-	public String createDraftAnswerPDF(String code, String email) throws IOException {
+	public String createDraftAnswerPDF(String code, String email, boolean passwordauthentication) throws IOException {
 		logger.info("starting creation of draft answer pdf for contribution " + code + " to be sent to " + email);
 
 		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false")) {
@@ -193,9 +193,9 @@ public class PDFService extends BasicService {
 
 			URL workerurl;
 			if (email != null) {
-				workerurl = new URL(workerserverurl + "worker/createdraftanswerpdf/" + code + "?email=" + email);
+				workerurl = new URL(workerserverurl + "worker/createdraftanswerpdf/" + code + "?email=" + email + (passwordauthentication ? "&passwordauthentication=true" : ""));
 			} else {
-				workerurl = new URL(workerserverurl + "worker/createdraftanswerpdf/" + code);
+				workerurl = new URL(workerserverurl + "worker/createdraftanswerpdf/" + code + (passwordauthentication ? "?passwordauthentication=true" : ""));
 			}
 
 			try {
@@ -221,7 +221,7 @@ public class PDFService extends BasicService {
 		Draft draft = answerService.getDraftByAnswerUID(code);
 		AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
 		if (email != null) {
-			export.init(draft.getAnswerSet(), email, sender, serverPrefix);
+			export.init(draft.getAnswerSet(), email, sender, serverPrefix, passwordauthentication);
 		} else {
 			export.init(draft.getAnswerSet());
 		}

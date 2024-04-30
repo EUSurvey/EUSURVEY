@@ -12,10 +12,10 @@
 				<p>${form.getMessage("info.delphiLinkInSidebar")}</p>
 			</div>
 			<div class="modal-footer">
-				<a href="javascript:;" class="btn btn-default" onclick="openAskEmailToSendLinkDialog(this)">
+				<a tabindex="0" class="btn btn-default" onclick="openAskEmailToSendLinkDialog(this)">
 					${form.getMessage("label.SendByEmail")}
 				</a>
-				<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($('#contribution-link-dialog'))">${form.getMessage("label.Continue")}</a>
+				<a tabindex="0" class="btn btn-primary" onclick="hideModalDialog($('#contribution-link-dialog'))">${form.getMessage("label.Continue")}</a>
 			</div>
 		</div>
 	</div>
@@ -26,14 +26,15 @@
 		<div class="modal-content">
 			<div class="modal-body">
 				<p>${form.getMessage("info.delphilinkemail")}</p>
+				<label for="delphiemail"><spring:message code="label.Email" /></label>
 				<input class="form-control" type="text" maxlength="255" name="delphiemail" id="delphiemail" />
 				<p id="ask-delphi-email-dialog-error" class="validation-error-keep hideme">
 					${form.getMessage("message.ProvideEmail")}
 				</p>
 			</div>
 			<div class="modal-footer">
-				<a href="javascript:;" class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</a>
-				<a href="javascript:;" class="btn btn-default" onclick="cancelDelphiMailLink()">${form.getMessage("label.Cancel")}</a>
+				<a tabindex="0" class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</a>
+				<a tabindex="0" class="btn btn-default" onclick="cancelDelphiMailLink()">${form.getMessage("label.Cancel")}</a>
 			</div>
 		</div>
 	</div>

@@ -78,7 +78,7 @@
 		<div class="modal-dialog modal-sm">
     	<div class="modal-content">
 		<div class="modal-body" style="text-align: center; padding-top:30px;;">
-			<img src="${contextpath}/resources/images/ajax-loader.gif" />
+			<img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif" />
 		</div>
 		</div>
 		</div>

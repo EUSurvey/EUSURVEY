@@ -2208,6 +2208,9 @@ public class SurveyService extends BasicService {
 
 		query = session.createSQLQuery("DELETE FROM TRANSLATIONS WHERE SURVEY_ID = :id");
 		query.setParameter("id", id).executeUpdate();
+		
+		query = session.createSQLQuery("DELETE pae.* FROM POSSIBLEANSWER_ELEMENT pae LEFT JOIN ELEMENTS e3 ON e3.ID = pae.dependentElements_ID LEFT JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e3.ID LEFT JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE s.SURVEY_UID = :uid");
+		query.setParameter("uid", uid).executeUpdate();
 
 		if (deleteAccesses) {
 			List<Access> accesses = getAccesses(id);

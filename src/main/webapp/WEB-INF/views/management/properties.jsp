@@ -1686,7 +1686,7 @@
 						<tr class="subelement" data-bind="visible: eVote">
 							<td>
 								<div style="float: left; max-width: 500px;">
-									<spring:message code="label.EnableResultsTestPage" />
+									<spring:message code="label.ShowSimulationPage" />
 									<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
 									<div class="help hideme"><spring:message code="info.EnableResultsTestPage" /></div>
 								</div>

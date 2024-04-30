@@ -1394,13 +1394,13 @@
 	<%@ include file="../addressbook/configure.jsp" %>
 	
 	<script type="text/javascript">
-		var p_activated = '<spring:message code="message.ParticipantsGroupActivatedSuccessfully" />';
-		var p_deactivated = '<spring:message code="message.ParticipantsGroupDeactivatedSuccessfully" />';
-		var p_deleted = '<spring:message code="message.ParticipantsGroupDeletedSuccessfully" />';
-		var p_operations = '<spring:message code="message.OperationsExecutedSuccessfully" />';
-		var p_guestlistcreated = '<spring:message code="info.GuestListCreatedNew" />';
-		var p_guestlistsaved = '<spring:message code="info.GuestListSaved" />';
-		var p_mailsstarted = '<spring:message code="info.MailsStarted" />';
+		var p_activated = "<spring:message code="message.ParticipantsGroupActivatedSuccessfully" />";
+		var p_deactivated = "<spring:message code="message.ParticipantsGroupDeactivatedSuccessfully" />";
+		var p_deleted = "<spring:message code="message.ParticipantsGroupDeletedSuccessfully" />";
+		var p_operations = "<spring:message code="message.OperationsExecutedSuccessfully" />";
+		var p_guestlistcreated = "<spring:message code="info.GuestListCreatedNew" />";
+		var p_guestlistsaved = "<spring:message code="info.GuestListSaved" />";
+		var p_mailsstarted = "<spring:message code="info.MailsStarted" />";
 	</script>
 	
 	<c:if test="${action != null}">

@@ -35,15 +35,17 @@
 
 						<c:choose>
 							<c:when test="${form != null}">
+								<label for="internal_captcha_response">${form.getMessage("info.entertext")}</label>
 								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="${form.getMessage("info.entertext")}" style="width: 260px">
-
-								<a title='${form.getMessage("label.ReloadCaptcha")}' data-toggle="tooltip" href="javascript:;" class="btn btn-primary btn-sm" id="captchaReload"><span class="glyphicon glyphicon-refresh"></span></a>
+								
+								<button title='${form.getMessage("label.ReloadCaptcha")}' data-toggle="tooltip" type="button" class="btn btn-primary btn-sm" id="captchaReload"><span class="sr-only">${form.getMessage("label.ReloadCaptcha")}</span><span class="glyphicon glyphicon-refresh"></span></button>
 
 							</c:when>
 							<c:otherwise>
+								<label for="internal_captcha_response"><spring:message code="info.entertext" /></label>
 								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="<spring:message code="info.entertext" />" style="width: 260px">
-
-								<a title='<spring:message code="label.ReloadCaptcha" />' href="javascript:;" class="btn btn-primary btn-sm" id="captchaReload"><span class="glyphicon glyphicon-refresh"></span></a>
+								
+								<button title='<spring:message code="label.ReloadCaptcha" />' data-toggle="tooltip" type="button" class="btn btn-primary btn-sm" id="captchaReload"><span class="sr-only"><spring:message code="label.ReloadCaptcha" /></span><span class="glyphicon glyphicon-refresh"></span></button>
 
 							</c:otherwise>
 						</c:choose>
@@ -55,16 +57,18 @@
 				</c:when>
 				<c:when test='${captcha == "internal"}'>
 					<div class="internalcaptcha">
-						 <img id="captchaImage" src="<c:url value="/captcha.html?1"/>"/><br />
-						 
-						 <c:choose>
-							<c:when test="${form != null}">
-								 ${form.getMessage("info.entertext")}
-							</c:when>
-							<c:otherwise>
-								<spring:message code="info.entertext" />
-							</c:otherwise>
-						</c:choose>		
+						 <img alt="Captcha Loading" id="captchaImage" src="<c:url value="/captcha.html?1"/>"/><br />
+
+						 <label for="internal_captcha_response">
+							 <c:choose>
+								<c:when test="${form != null}">
+									 ${form.getMessage("info.entertext")}
+								</c:when>
+								<c:otherwise>
+									<spring:message code="info.entertext" />
+								</c:otherwise>
+							 </c:choose>
+						 </label>
 						 
 						<br />					 
 						<input id="internal_captcha_response" type="text" class="required" autocomplete="off" name="internal_captcha_response" />

@@ -165,7 +165,7 @@ public class ComplexTableItem extends Question {
         this.numRows = num;
     }
 
-    @OneToMany(targetEntity = PossibleAnswer.class, cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = PossibleAnswer.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
             name = "ELEMENTS_ELEMENTS",
             joinColumns = @JoinColumn(name = "ELEMENTS_ID"),

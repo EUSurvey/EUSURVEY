@@ -11,7 +11,7 @@ function toggleVisibility(span) {
 
 function addIconToHelp(help)
 {
-	return "<a href='javascript:;' tabindex='0' aria-label='Help' onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign focussable'></a><br />" +
+	return "<a tabindex='0' aria-label='Help' onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign focussable'></a><br />" +
 		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
 		"";
 }
@@ -1286,6 +1286,7 @@ function newNumberViewModel(element)
 		const input = $("#answer" + viewModel.id());
 		propagateChange($(input));
 	});
+
 	viewModel.markAsAnswered = function (data) {
 		const input = $("#answer" + viewModel.id());
 		input.val(viewModel.initialDefaultValue())

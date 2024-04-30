@@ -30,39 +30,54 @@
 		function checkCriticality()
 		{
 			setCriticalityImage();
-			
+
 			<c:forEach items="${message.types}" var="type">
 				if (criticality == '${type.criticality}')
 				{
-					$("#time").val('${type.defaultTime}');
+				$("#time").val('${type.defaultTime}');
 				}
 			</c:forEach>
 		}
-		
+
 		function setCriticalityImage()
 		{
-			$(".messageimage").hide();
 			var criticality = $("#criticality").val();
-			$("#img" + criticality).show();
+			let messageImage = $("#messageimage");
+			messageImage.removeClass();
+			if (criticality == 1)
+			{
+				messageImage.addClass("glyphicon glyphicon-ok");
+				messageImage.css("color", "#4caf50");
+			}
+			if (criticality == 2)
+			{
+				messageImage.addClass("glyphicon glyphicon-info-sign");
+				messageImage.css("color", "#337ab7");
+			}
+			if (criticality == 3)
+			{
+				messageImage.addClass("glyphicon glyphicon-exclamation-sign");
+				messageImage.css("color", "#c11c1c");
+			}
 		}
-		
-		function showConfiguration()
-		{
-			$('.validation-error').remove();
-			$('#configure-message-dialog').modal('show');
-		}
-		
-		function saveConfiguration()
-		{
-			var activate = $('#activetrue').is(":checked");
-			if (activate)
-			{				
-				
-				$('#configure-message-form').find(".validation-error").remove();
-				
-				if ($('#messagetext').val().trim().length == 0)
-				{
-					$('#messagetext').closest(".messagetextdiv").append("<div class='validation-error'>" + requiredText + "</div>");
+
+	function showConfiguration()
+	{
+	$('.validation-error').remove();
+	$('#configure-message-dialog').modal('show');
+	}
+
+	function saveConfiguration()
+	{
+	var activate = $('#activetrue').is(":checked");
+	if (activate)
+	{
+
+	$('#configure-message-form').find(".validation-error").remove();
+
+	if ($('#messagetext').val().trim().length == 0)
+	{
+	$('#messagetext').closest(".messagetextdiv").append("<div class='validation-error'>" + requiredText + "</div>");
 					return;
 				};
 				
@@ -607,9 +622,20 @@
 					</div>
 					
 					<div style="float: left; margin-left: 20px; padding-top: 10px;">
-						<c:forEach items="${message.types}" var="type">
-							<img class="messageimage" id="img<esapi:encodeForHTMLAttribute>${type.criticality}</esapi:encodeForHTMLAttribute>" src="${contextpath}/resources/images/<esapi:encodeForHTMLAttribute>${type.icon}</esapi:encodeForHTMLAttribute>" />
-						</c:forEach>
+						<c:choose>
+							<c:when test="${message.criticality == 1}">
+								<span id="messageimage" style="color: #4caf50; font-size: 3em;" class="glyphicon glyphicon-ok"></span>
+							</c:when>
+							<c:when test="${message.criticality == 2}">
+								<span id="messageimage" style="color: #337ab7; font-size: 3em;" class="glyphicon glyphicon-info-sign"></span>
+							</c:when>
+							<c:when test="${message.criticality == 3}">
+								<span id="messageimage" style="color: #c11c1c; font-size: 3em;" class="glyphicon glyphicon-exclamation-sign"></span>
+							</c:when>
+							<c:otherwise>
+								<span id="messageimage" style="color: #4caf50; font-size: 3em;" class="glyphicon glyphicon-ok"></span>
+							</c:otherwise>
+						</c:choose>
 					</div>
 					
 					<div class="timediv" style="float: left; margin-left: 50px;">

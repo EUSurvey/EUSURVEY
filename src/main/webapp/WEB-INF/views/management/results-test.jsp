@@ -202,7 +202,7 @@
 		</c:forEach>		
 	</table>
 	
-	<a class="btn btn-primary" onclick="testComputationPossible('${form.survey.shortname}', '${form.survey.uniqueId}')"><spring:message code="label.ExecuteTest" /></a>
+	<a class="btn btn-primary" onclick="testComputationPossible('${form.survey.shortname}', '${form.survey.uniqueId}')"><spring:message code="label.RunSimulation" /></a>
 	<a class="btn btn-default" onclick="startTemplateDownload('${form.survey.shortname}', '${form.survey.uniqueId}')"><spring:message code="label.DownloadTemplateFile" /></a>
 	<span id="seatTestUpload"></span>
 	<span id="uploadSeatTestError"></span>

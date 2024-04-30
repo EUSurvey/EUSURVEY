@@ -40,7 +40,7 @@
 					
 				<div style="float: right; line-height: 22px;">		
 				
-					<span id="messages-button" onclick="$('#messages-log-div').show()">
+					<span tabindex="0" id="messages-button" onclick="$('#messages-log-div').show()" onfocus="$('#loginBtnFromHeader').focus()">
 						<!-- ko if: messages().length > 0 || systemMessages.length > 0 -->
 						<span class="glyphicon glyphicon-bell" style="font-size: 17px;"></span>
 						<span class="badge" style="background-color: #e90000; margin-left: -10px; margin-top: -3px; z-index: 100;" data-bind="visible: totalMessages() > 0, text: totalMessages"></span>
@@ -90,7 +90,7 @@
 			  							<c:choose>	  							
 											<c:when test="${isthankspage != null || isdraftinfopage != null}">
 												<li>
-												<a href="javascript:;"><esapi:encodeForHTML>[${form.language.code}] ${form.language.name}</esapi:encodeForHTML></a>
+													<a tabindex="0"><esapi:encodeForHTML>[${form.language.code}] ${form.language.name}</esapi:encodeForHTML></a>
 												</li>
 											</c:when>
 											<c:otherwise>																				
@@ -104,10 +104,10 @@
 															<a href="?language=${lang.value.code}&surveylanguage=${lang.value.code}"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
 														</c:when>
 														<c:when test="${lang.value.code == form.language.code}">
-														<a href="javascript:;" class="skipScriptAnchor" onclick="$('.dropdown.open .dropdown-toggle').dropdown('toggle')"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
+															<a tabindex="0" class="skipScriptAnchor" onclick="$('.dropdown.open .dropdown-toggle').dropdown('toggle')"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
 			  											</c:when>
 														<c:otherwise>
-														<a href="javascript:;" class="skipScriptAnchor" onclick="changeLanguageSelectHeader('${mode}','<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>');"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
+															<a tabindex="0" class="skipScriptAnchor" onclick="changeLanguageSelectHeader('${mode}','<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>');"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
 			  											</c:otherwise>	
 			  										</c:choose>	 
 			  									</li> 									  									
@@ -130,7 +130,7 @@
 							</c:choose>
 							
 							<div id="dropDownHelp" class="dropdown" style="display: inline-block;">
-								<a href="javascript:;" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+								<a tabindex="0" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
 									<spring:message code="label.Help" />&nbsp;
 									<span class="caret"></span>
 		  						</a>
@@ -199,7 +199,7 @@
 			<div class="modal-dialog modal-sm">
 	    	<div class="modal-content">
 			<div class="modal-body" style="text-align: center; padding-top:30px;">
-				<img src="${contextpath}/resources/images/ajax-loader.gif" />
+				<img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif" />
 			</div>
 			</div>
 			</div>
@@ -210,7 +210,7 @@
 	    	<div class="modal-content">
 			<div class="modal-body" style="text-align: center; padding-top:30px;">
 				<spring:message code="info.SurveyDeleted" /><br /><br />
-				<img src="${contextpath}/resources/images/ajax-loader.gif" />
+				<img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif" />
 			</div>
 			</div>
 			</div>

@@ -8,13 +8,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.model.survey.*;
 import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
@@ -48,10 +51,6 @@ import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.administration.User;
-import com.ec.survey.model.survey.Element;
-import com.ec.survey.model.survey.Matrix;
-import com.ec.survey.model.survey.RatingQuestion;
-import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ActivityService;
 import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.AnswerExplanationService;
@@ -515,6 +514,36 @@ public class BasicController implements BeanFactoryAware {
 
 				Thread.sleep(1000);
 			}
+		}
+	}
+
+	public boolean parseEVoteSurvey(Survey survey) {
+		boolean passedSC = false;
+		PossibleAnswer linkedSCAnswer = null;
+		boolean passedMC = true;
+
+		for(Question q : survey.getQuestions()) {
+			if (q instanceof SingleChoiceQuestion) {
+				List<PossibleAnswer> pa = ((SingleChoiceQuestion) q).getPossibleAnswers();
+				for (PossibleAnswer answer : pa) {
+					if (answer.getTitle().equals("I want to vote")) {
+						passedSC = true;
+						linkedSCAnswer = answer;
+						break;
+					}
+				}
+			} else if (q instanceof MultipleChoiceQuestion) {
+				MultipleChoiceQuestion mq = ((MultipleChoiceQuestion) q);
+				if (passedSC && !(mq.getTriggers()).equals(linkedSCAnswer.getId() + ";")) {
+					passedMC = false;
+				}
+			}
+		}
+
+		if (passedSC && passedMC) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 

@@ -1238,7 +1238,7 @@ public class EVoteService extends BasicService {
 			seats += rv.seats;
 		}
 		
-		if (seats < maxSeats) {
+		if (seats > 0 && seats < maxSeats) {
 			Collections.sort(rvs, Comparator.comparingDouble(RemainderValue::getFraction).reversed());
 			
 			for (int i = 0; i < rvs.size(); i++) {

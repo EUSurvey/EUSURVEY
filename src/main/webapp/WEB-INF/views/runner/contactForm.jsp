@@ -190,17 +190,17 @@
 							<option <c:if test='${contactFormReason == OtherReason}'>selected="selected"</c:if>><c:out value="${OtherReason}" /></option>
 						</select><br /><br />
 
-						<label><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
-						<input type="text" class="form-control required" name="name" value='${contactFormName != null ? contactFormName : USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
+						<label for="yourName"><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
+						<input type="text" class="form-control required" id="yourName" name="name" value='${contactFormName != null ? contactFormName : USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
 
-						<label><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
+						<label for="supportemail"><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
 						<input type="text" class="form-control required email" id="supportemail" name="email" value='${contactFormMail != null ? contactFormMail : USER != null ? USER.getEmail() : "" }' /><br /><br />
 
-						<label><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
-						<input type="text" class="form-control required" name="subject" value="${contactFormSubject}" /><br /><br />
+						<label for="subject"><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
+						<input type="text" class="form-control required" id="subject" name="subject" value="${contactFormSubject}" /><br /><br />
 
-						<label><span class="mandatory">*</span><spring:message code="support.yourmessagetoowner" /></label>
-						<textarea class="form-control required" rows="10" name="message">${contactFormMessage}</textarea><br /><br />
+						<label for="message"><span class="mandatory">*</span><spring:message code="support.yourmessagetoowner" /></label>
+						<textarea class="form-control required" rows="10" id="message" name="message">${contactFormMessage}</textarea><br /><br />
 
 						<label><spring:message code="support.upload" /></label>
 						<a role="button" data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />" aria-label="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>

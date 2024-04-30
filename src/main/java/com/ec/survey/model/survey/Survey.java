@@ -16,6 +16,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import javax.persistence.*;
 import javax.persistence.Table;
+
+import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.ECFProfile;
 import com.ec.survey.model.Language;
 import com.ec.survey.model.Publication;
@@ -324,17 +326,6 @@ final public class Survey implements java.io.Serializable {
 
 	public void setConfirmationLink(String confirmationLink) {
 		this.confirmationLink = confirmationLink;
-	}
-
-	@Transient
-	public String getFinalConfirmationLink(String link, String language) {
-		return link == null ? null
-				: link.replace("{ALIAS}", shortname.toLowerCase()).replace("{LANGUAGE}", language.toLowerCase());
-	}
-
-	@Transient
-	public String getFinalConfirmationLink(String language) {
-		return getFinalConfirmationLink(getConfirmationLink(), language);
 	}
 
 	@Column(name = "ESCURL")

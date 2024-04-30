@@ -47,9 +47,9 @@
 	
 		<div class='${responsive != null ? "responsivepage" : "page"}' style='padding-top: 40px;'>
 	
-	 		<div style="font-size: 30px; text-align: center;">
+	 		<h1 style="font-size: 30px; text-align: center;">
 				${surveyname}
-			</div>
+			</h1>
 			
 		 	<c:if test="${info != null}">
 				<div id="login-info" class="alert alert-success">
@@ -97,7 +97,8 @@
 			<c:if test="${hidepassword == null}">
 				<div class="authenticationdiv">
 				 	<form:form action="${shortname}?surveylanguage=${lang}&draftid=${draftid}" method="post" >
-				 		<fieldset>			 				 	
+				 		<fieldset>
+							<legend style="display: none"><spring:message code="message.SurveyPassword" /></legend>
 				 			<input type="hidden" name="redirectFromCheckPassword" value="true" />
 							<input type="hidden" name="shortname" value="<esapi:encodeForHTMLAttribute>${shortname}</esapi:encodeForHTMLAttribute>" />
 							<input type="hidden" name="draftid" value="<esapi:encodeForHTMLAttribute>${draftid}</esapi:encodeForHTMLAttribute>" />

@@ -215,83 +215,86 @@
 				</c:otherwise>
 			</c:choose>
 		}
-		
-		$(document).ready(function(){
 
+		$("#copyme").click(function(){
 			if(!document.queryCommandSupported('copy'))
 			{
 				$("#copyme").hide();
 			}
-	
-			try 
-			{  
-				document.execCommand('copy');  
-			} 
-			catch(err) 
-			{  
+
+			try
+			{
+				var result = document.execCommand('copy');
+
+				if(result)
+				{
+					showSuccess('<spring:message code="message.copy.successCopyClipboardLink" />');
+				}
+			}
+			catch(err)
+			{
 				$("#copyme").hide();
 			}
-			  
 		});
 		
-			function sendMailLink()
-			{
-				
-				$("#ask-export-dialog").find(".validation-error").hide();
-				$("#ask-export-dialog").find(".validation-error-keep").hide();
-				
-				var mail = $("#ask-export-dialog").find("#email").val();
-				var linkDraft = '${url}';
-				
-				var challenge = getChallenge();
-			    var uresponse = getResponse($("#ask-export-dialog"));
-				
-				if (mail.trim().length == 0 || !validateEmail(mail))
-				{
-					$("#ask-email-dialog-error").show();
-					return;
-				}	
-				
-				if (uresponse.trim().length == 0)
-			    {
-					$("#ask-export-dialog").find("#runner-captcha-empty-error").show();
-			    	return;
-			    }
-				
-				var id = '${surveyID}';
-				
-				var data = {email : mail, link: linkDraft, id : id, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
-				if ($('#captcha_token').length > 0) {
-					data["captcha_token"] =  $('#captcha_token').val();
-					data["captcha_id"] =  $('#captcha_id').val();
-					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
-					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
-				}
-	
-				$.ajax({
-					type:'GET',
-					  url: "${contextpath}/runner/sendmaillink",
-					  data: data,
-					  cache: false,
-					  success: function( data ) {
+		function sendMailLink()
+		{
 
-						if (data == "success") {
-							$('#ask-export-dialog').modal('hide');
-							showSuccess(message_SuccessMailLinkDraft);
-						}
-						else if(data == "errorcaptcha")
-						{
-							$("#ask-export-dialog").find("#runner-captcha-error").show();
-						}
-						else {
-							showError(message_FailedMailLinkDraft);
-						}
-						
-						reloadCaptcha();
-					}
-				});				
-				
+			$("#ask-export-dialog").find(".validation-error").hide();
+			$("#ask-export-dialog").find(".validation-error-keep").hide();
+
+			var mail = $("#ask-export-dialog").find("#email").val();
+			var linkDraft = '${url}';
+
+			var challenge = getChallenge();
+			var uresponse = getResponse($("#ask-export-dialog"));
+
+			if (mail.trim().length == 0 || !validateEmail(mail))
+			{
+				$("#ask-email-dialog-error").show();
+				return;
 			}
+
+			if (uresponse.trim().length == 0)
+			{
+				$("#ask-export-dialog").find("#runner-captcha-empty-error").show();
+				return;
+			}
+
+			var id = '${surveyID}';
+
+			var data = {email : mail, link: linkDraft, id : id, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
+			if ($('#captcha_token').length > 0) {
+				data["captcha_token"] =  $('#captcha_token').val();
+				data["captcha_id"] =  $('#captcha_id').val();
+				data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+				data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
+			}
+
+			$.ajax({
+				type:'GET',
+				  url: "${contextpath}/runner/sendmaillink",
+				  data: data,
+				  cache: false,
+				  success: function( data ) {
+
+					if (data == "success") {
+						$('#ask-export-dialog').modal('hide');
+						showSuccess(message_SuccessMailLinkDraft);
+					}
+					else if(data == "errorcaptcha")
+					{
+						$("#ask-export-dialog").find("#runner-captcha-error").show();
+					}
+					else {
+						showError(message_FailedMailLinkDraft);
+					}
+
+					reloadCaptcha();
+				}
+			});
+
+		}
 		</script>
 	
 	</div>

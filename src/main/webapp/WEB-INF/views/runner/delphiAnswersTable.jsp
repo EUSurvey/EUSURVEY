@@ -26,9 +26,9 @@
 				<span>${form.getMessage("label.DelphiAnswersTableAnswer")}</span>
 				<!-- ko if: delphiTableAnswerSorting()-->
 					<div style="float: right">
-						<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortAlphanumericalAscending")}" aria-label="${form.getMessage("label.SortAlphanumericalAscending")}" onclick="sortDelphiTable(this,'AnswersAsc');" class="">
+						<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortAlphanumericalAscending")}" aria-label="${form.getMessage("label.SortAlphanumericalAscending")}" onclick="sortDelphiTable(this,'AnswersAsc');" class="overlaymenu-sortingOptions">
 							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a>
-						<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortAlphanumericalDescending")}" aria-label="${form.getMessage("label.SortAlphanumericalDescending")}" onclick="sortDelphiTable(this,'AnswersDesc');" class="">
+						<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortAlphanumericalDescending")}" aria-label="${form.getMessage("label.SortAlphanumericalDescending")}" onclick="sortDelphiTable(this,'AnswersDesc');" class="overlaymenu-sortingOptions">
 							<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 					</div>
 				<!-- /ko -->
@@ -36,9 +36,9 @@
 			<th style="min-width:${responsive != null ? "120" : "150"}px">
 				<span>${form.getMessage("label.DelphiAnswersTableUpdate")}</span>
 				<div style="float: right">
-					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortDatesAscending")}" aria-label="${form.getMessage("label.SortDatesAscending")}" onclick="sortDelphiTable(this,'UpdateAsc');" class="">
+					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortDatesAscending")}" aria-label="${form.getMessage("label.SortDatesAscending")}" onclick="sortDelphiTable(this,'UpdateAsc');" class="overlaymenu-sortingOptions">
 						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a>
-					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortDatesDescending")}" aria-label="${form.getMessage("label.SortDatesDescending")}" onclick="sortDelphiTable(this,'UpdateDesc');" class="">
+					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortDatesDescending")}" aria-label="${form.getMessage("label.SortDatesDescending")}" onclick="sortDelphiTable(this,'UpdateDesc');" class="overlaymenu-sortingOptions">
 						<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 				</div>
 			</th>
@@ -46,9 +46,9 @@
 			<th style="width:33%">
 				<span>${form.getMessage("label.DelphiAnswersTableExplanation")}</span>
 				<div style="float: right">
-					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortExplanationsLessLiked")}" aria-label="${form.getMessage("label.SortExplanationsLessLiked")}" onclick="sortDelphiTable(this,'ExplanationsLessLiked');" class="">
+					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortExplanationsLessLiked")}" aria-label="${form.getMessage("label.SortExplanationsLessLiked")}" onclick="sortDelphiTable(this,'ExplanationsLessLiked');" class="overlaymenu-sortingOptions">
 						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a>
-					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortExplanationsMostLiked")}" aria-label="${form.getMessage("label.SortExplanationsMostLiked")}" onclick="sortDelphiTable(this,'ExplanationsMostLiked');" class="">
+					<a href="javascript:;" data-toggle="tooltip" data-container="body" data-title="${form.getMessage("label.SortExplanationsMostLiked")}" aria-label="${form.getMessage("label.SortExplanationsMostLiked")}" onclick="sortDelphiTable(this,'ExplanationsMostLiked');" class="overlaymenu-sortingOptions">
 						<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 				</div>
 			</th>
@@ -82,7 +82,7 @@
 			<!-- ko if: $parent.showExplanationBox() -->
 			<td data-bind="attr: {'data-id': answerSetId}">
 				<!-- ko if: explanation != null -->
-				<div class="delphi-explanation" data-bind="attr: {'data-id': explanation.explanationId}">
+				<div class="delphi-explanation" data-bind="attr: {'data-id': explanation.explanationId, 'data-uid': answerSetUniqueCode}">
 					<input tabindex="-1" class="text-read-more-checkbox" type="checkbox" data-bind="attr: { 'id': 'expanded-explanation' + uid }">
 					<span class="text-to-be-truncated" data-bind="html: explanation.text"></span>
 					<span style="float:right">
@@ -99,13 +99,19 @@
 							<span data-bind="html: explanation.numLikes"></span>
 						<!-- /ko -->
 						<!-- ko if: explanation.likes.includes("${uniqueCode}") -->
-							<img class="likeImage" data-bind="attr: {'id': 'unlikeButtonDelphi-' + explanation.id}"  data-toggle="tooltip" title="${form.getMessage("label.Unlike")}" aria-label="${form.getMessage("label.Unlike")}" src="${contextpath}/resources/images/hand-thumbs-up-fill.svg" />
+							<img class="likeImage" data-bind="attr: {'id': 'unlikeButtonDelphi-' + explanation.explanationId}" data-toggle="tooltip" title="${form.getMessage("label.Unlike")}" aria-label="${form.getMessage("label.Unlike")}" src="${contextpath}/resources/images/hand-thumbs-up-fill.svg" />
 						<!-- /ko -->
 						<!-- ko ifnot: explanation.likes.includes("${uniqueCode}") -->
-							<img class="likeImage" data-bind="attr: {'id': 'likeButtonDelphi-' + explanation.id}" data-toggle="tooltip" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up.svg" />
+							<!-- ko if: answerSetUniqueCode === "${uniqueCode}" -->
+								<img class="likeImage" style="cursor: not-allowed;" data-bind="attr: {'id': 'likeButtonDelphi-' + explanation.explanationId}" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up-disabled.svg" />
+							<!-- /ko -->
+							<!-- ko ifnot: answerSetUniqueCode === "${uniqueCode}" -->
+								<img class="likeImage" data-bind="attr: {'id': 'likeButtonDelphi-' + explanation.explanationId}" data-toggle="tooltip" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up.svg" />
+							<!-- /ko -->
 						<!-- /ko -->
 						</span>
 					</span>
+
 					<label class="text-read-more-label" role="button" data-bind="attr: { 'for': 'expanded-explanation' + uid }">${form.getMessage("label.ShowAll")}</label>
 				</div>
 				<!-- /ko -->
@@ -119,7 +125,7 @@
 			<!-- /ko -->
 			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
 				<!-- ko foreach: comments -->
-				<div class="delphi-comment" data-bind="attr: {'data-id': id}, css: { 'new-delphi-comment': unread }">
+				<div class="delphi-comment" data-bind="attr: {'data-id': id, 'data-uid': answerSetUniqueCode}, css: { 'new-delphi-comment': unread }">
 					<div style="margin-top: 5px;">
 						<!-- ko if: user && date -->
 						<span class="delphi-comment__user" data-bind="html: user"></span>
@@ -168,16 +174,21 @@
 									</c:otherwise>
 								</c:choose>
 
-										<!-- ko if: numLikes -->
-											<span data-bind="html: numLikes"></span>
-										<!-- /ko -->
-										<!-- ko if: likes.includes("${uniqueCode}") -->
-											<img class="likeImage" data-bind="attr: {'id': 'unlikeButtonDelphi-' + id}"  data-toggle="tooltip" title="${form.getMessage("label.Unlike")}" aria-label="${form.getMessage("label.Unlike")}" src="${contextpath}/resources/images/hand-thumbs-up-fill.svg" />
-										<!-- /ko -->
-										<!-- ko ifnot: likes.includes("${uniqueCode}") -->
-											<img class="likeImage" data-bind="attr: {'id': 'likeButtonDelphi-' + id}" data-toggle="tooltip" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up.svg" />
-										<!-- /ko -->
-									</span>
+								<!-- ko if: numLikes -->
+									<span data-bind="html: numLikes"></span>
+								<!-- /ko -->
+								<!-- ko if: likes.includes("${uniqueCode}") -->
+									<img class="likeImage" data-bind="attr: {'id': 'unlikeButtonDelphi-' + id}"  data-toggle="tooltip" title="${form.getMessage("label.Unlike")}" aria-label="${form.getMessage("label.Unlike")}" src="${contextpath}/resources/images/hand-thumbs-up-fill.svg" />
+								<!-- /ko -->
+								<!-- ko ifnot: likes.includes("${uniqueCode}") -->
+									<!-- ko if: answerSetUniqueCode === "${uniqueCode}" -->
+										<img class="likeImage" style="cursor: not-allowed;" data-bind="attr: {'id': 'likeButtonDelphi-' + id}" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up-disabled.svg" />
+									<!-- /ko -->
+									<!-- ko ifnot: answerSetUniqueCode === "${uniqueCode}" -->
+										<img class="likeImage" data-bind="attr: {'id': 'likeButtonDelphi-' + id}" data-toggle="tooltip" title="${form.getMessage("label.Like")}" aria-label="${form.getMessage("label.Like")}" src="${contextpath}/resources/images/hand-thumbs-up.svg" />
+									<!-- /ko -->
+								<!-- /ko -->
+								</span>
 							</span>
 						</div>
 					</div>
@@ -291,38 +302,17 @@
 	}
 
 	.overlaymenu-sortingOptions {
-		padding: 0px;
-		border: 1px solid #ddd;
-
-		max-height: 200px;
-		overflow-y: scroll;
-	}
-
-	.overlaymenu-sortingOptions .btn-primary {
-		color: #fff;
-	}
-
-	.overlaymenu-sortingOptions .btn-primary:hover {
-		color: #fff;
-	}
-
-	.overlaymenu-sortingOptions .btn {
-		width: 100%;
-	}
-
-	.overlaymenu-sortingOptions a {
-		color: initial;
-	}
-
-	.overlaymenu-sortingOptions a:hover {
-		color: initial;
+		color: #fff !important;
 	}
 
 </style>
 
 <script type="text/javascript">
 
-	$(window).scroll(function() {$(".overlaymenu").hide();});
+	$(window).scroll(function() {
+		$(".overlaymenu").hide();
+		$('[data-toggle="tooltip"]').tooltip("hide");
+	});
 	$(window).resize(function() {
 		$(".overlaymenu").hide();
 	});

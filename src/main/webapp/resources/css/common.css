@@ -1296,7 +1296,7 @@ legend {
 }
 
 .mandatory {
-	color:#f00; font-weight: bold; white-space: pre; margin-right: 2px;
+	color:#e00; font-weight: bold; white-space: pre; margin-right: 2px; font-size: 14px !important;
 }
 
 .optional {
@@ -1462,6 +1462,10 @@ legend {
 
 .delphi.elementwrapper {
 	position: relative;
+}
+
+.delphi.elementwrapper a:not(.btn) {
+	color: #2C679B;
 }
 
 .delphi .slider-div {
@@ -1650,7 +1654,7 @@ div.medianpa {
 }
 
 .delphi .area-header {
-	background-color: #8a8989;
+	background-color: #666;
     color: #fff;
     font-size: 100%;
 }
@@ -1904,7 +1908,7 @@ div.medianpa {
 
 .limits {
 	font-style: italic;
-	color: #777;
+	color: #666;
 }
 
 .handsontable tableXXX {
@@ -2022,7 +2026,7 @@ div.draftDescription
 
 a.draftLink
 {
-	background-color: #0088cc;
+	background-color: #286090;
 	padding:20px;
 	margin:20px;
 	color:#FFF;
@@ -2790,4 +2794,8 @@ input[type=radio]:checked + .choice-button-label:hover{
 .choice-button-label span{
 	margin: 0;
 
+}
+
+.label-success {
+	background-color: #078707 !important;
 }

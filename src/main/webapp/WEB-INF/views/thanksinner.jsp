@@ -39,7 +39,7 @@
 		${notificationemailtext}
 	</c:if>
 	
-	<c:if test="${opcredirection != null}">
+	<c:if test="${opcredirection != null && opcredirection.length() > 0}">
 		<br /><br />
 		<c:choose>
 			<c:when test="${responsive != null}">
@@ -56,7 +56,7 @@
 	<c:if test="${!form.survey.isEVote}">
 		<div id="contribution-id-save-hint" style="color: #777; margin: 6px 0 0px 0;">
 			<spring:message code="label.ContributionSavingHint" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
-			<a href="javascript:;" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText(uniqueCode);" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
+			<a tabindex="0" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText(uniqueCode);" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
 				<i class="glyphicon glyphicon-copy copy-icon"></i>
 			</a>
 			<br />
@@ -178,16 +178,16 @@
 	<div class="modal-footer">
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-				<a href="javascript:;" style="text-decoration: none" class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+				<a tabindex="0" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>
+				<a tabindex="0" style="text-decoration: none" class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>
 			</c:when>
 			<c:when test="${runnermode == true}">
-				<a href="javascript:;" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-				<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+				<a tabindex="0" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>
+				<a tabindex="0" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>
 			</c:when>
 			<c:otherwise>
-				<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-				<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>		
+				<a tabindex="0" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>
+				<a tabindex="0" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>
 			</c:otherwise>	
 		</c:choose>				
 	</div>

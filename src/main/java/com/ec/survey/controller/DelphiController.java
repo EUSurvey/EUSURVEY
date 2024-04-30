@@ -230,21 +230,18 @@ public class DelphiController extends BasicController {
 			boolean allanswers = request.getSession().getAttribute("results-source-allanswers") != null && (boolean) request.getSession().getAttribute("results-source-allanswers");
 
 			ResultFilter filter = null;
-			User user = sessionService.getCurrentUser(request);
+			User user = sessionService.getCurrentUser(request, false, false);
 			if (resultsview) {
 				if (user != null) {
 					filter = sessionService.getLastResultFilter(request, user.getId(), survey.getId());
+					Survey draft = surveyService.getSurveyByShortname(survey.getShortname(), true, user, request, false, true, true, false);
+					sessionService.upgradePrivileges(draft, user, request);
 				}
 				if (allanswers && !survey.isMissingElementsChecked()) {
 					surveyService.checkAndRecreateMissingElements(survey, filter);
 				}
 			}
-			
-			if (user != null) {
-				Survey draft = surveyService.getSurveyByShortname(survey.getShortname(), true, user, request, false, true, true, false);
-				sessionService.upgradePrivileges(draft, user, request);
-			}
-			
+				
 			boolean privileged = resultsview && (survey.getOwner().getId().equals(user.getId()) ||
 					(user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) ||
 					(user.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0));
@@ -1526,12 +1523,17 @@ public class DelphiController extends BasicController {
 	public ResponseEntity<String> delphiLikeComment(@PathVariable String id, HttpServletRequest request) {
 		try {
 			final int idParsed = Integer.parseInt(id);
-			final String uniqueCode = request.getParameter("uniqueCode");
 
+			final String uniqueCode = request.getParameter("uniqueCode");
 			final String increaseLike = request.getParameter("increaseLike");
 
 			final AnswerComment comment = answerExplanationService.getComment(idParsed);
 			if (comment == null) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			if (comment.getUniqueCode().equals(uniqueCode)) {
+				//cant like comments/ explanations of own answer sets
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
@@ -1560,6 +1562,12 @@ public class DelphiController extends BasicController {
 
 			final AnswerExplanation explanation = answerExplanationService.getExplanation(explanationId);
 			if (explanation == null) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			AnswerSet answerSet = answerService.get(explanation.getAnswerSetId());
+			if (answerSet.getUniqueCode().equals(uniqueCode)) {
+				//cant like comments/ explanations of own answer sets
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 

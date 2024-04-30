@@ -56,23 +56,29 @@
 				<div style="padding: 10px;">
 					<input type="hidden" name="abuseSurvey" value="${AbuseSurvey}" />
 				
-					<input type="radio" name="abuseType" class="check" value="fake" /><spring:message code="info.ReportAbuseFake" /><br />
-					<input type="radio" name="abuseType" class="check" value="propaganda" /><spring:message code="info.ReportAbusePropaganda" /><br />
-					<input type="radio" name="abuseType" class="check" value="hate" /><spring:message code="info.ReportAbuseHate" /><br />
-					<input type="radio" name="abuseType" class="check" value="images" /><spring:message code="info.ReportAbuseImages" /><br />
-					<input type="radio" name="abuseType" class="check" value="promo" /><spring:message code="info.ReportAbusePromo" /><br />
-					<input type="radio" name="abuseType" class="check" value="others" /><spring:message code="info.ReportAbuseOthers" /><br />
+					<input type="radio" name="abuseType" class="check" id="abuseTypeFake" value="fake" />
+					<label for="abuseTypeFake"><spring:message code="info.ReportAbuseFake" /></label><br />
+					<input type="radio" name="abuseType" class="check" id="abuseTypePropaganda" value="propaganda" />
+					<label for="abuseTypePropaganda"><spring:message code="info.ReportAbusePropaganda" /></label><br />
+					<input type="radio" name="abuseType" class="check" id="abuseTypeHate" value="hate" />
+					<label for="abuseTypeHate"><spring:message code="info.ReportAbuseHate" /></label><br />
+					<input type="radio" name="abuseType" class="check" id="abuseTypeImages" value="images" />
+					<label for="abuseTypeImages"><spring:message code="info.ReportAbuseImages" /></label><br />
+					<input type="radio" name="abuseType" class="check" id="abuseTypePromo" value="promo" />
+					<label for="abuseTypePromo"><spring:message code="info.ReportAbusePromo" /></label><br />
+					<input type="radio" name="abuseType" class="check" id="abuseTypeOthers" value="others" />
+					<label for="abuseTypeOthers"><spring:message code="info.ReportAbuseOthers" /></label><br />
 					
 					<div tabindex="-1" id="ReportAbuse-error-noselection" class="validation-error hideme"> 
 						<spring:message code="message.NoElementSelected" />
 					</div>
 					
 					<br />
-					<label style="margin-top: 20px"><spring:message code="label.specifyissue" /></label><br />
+					<label for="abuseText" style="margin-top: 20px"><spring:message code="label.specifyissue" /></label><br />
 					<textarea id="abuseText" name="abuseText" maxlength="255">${AbuseText}</textarea>			
 	
 					<br />
-					<label style="margin-top: 20px"><spring:message code="label.youremail" /></label><br />
+					<label for="abuseEmail" style="margin-top: 20px"><spring:message code="label.youremail" /></label><br />
 					
 					<div class="input-group">
 						<div class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></div>

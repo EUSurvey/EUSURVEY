@@ -223,7 +223,7 @@ a.ratingitem {
 }
 
 .questionhelp {
-	color: #A6A6A6;
+	color: #666;
 	margin-left:5px
 }
 
@@ -598,7 +598,7 @@ legend {
 }
 
 .progress-bar-success {
-   background-color: #009200;
+   background-color: #39853c;
 }
 
 textarea:disabled, input:disabled {

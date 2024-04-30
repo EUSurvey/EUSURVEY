@@ -53,7 +53,7 @@ public class WorkerController extends BasicController {
 								
 				if (email != null)
 				{
-					export.init(answerSet, email, sender, serverPrefix);
+					export.init(answerSet, email, sender, serverPrefix, false);
 				} else {
 					export.init( answerService.get(code));
 				}
@@ -82,7 +82,7 @@ public class WorkerController extends BasicController {
 								
 				if (email != null)
 				{
-					export.init(draft.getAnswerSet(), email, sender, serverPrefix);
+					export.init(draft.getAnswerSet(), email, sender, serverPrefix, request.getSession().getAttribute("passwordauthentication") != null);
 				} else {
 					export.init(draft.getAnswerSet());
 				}

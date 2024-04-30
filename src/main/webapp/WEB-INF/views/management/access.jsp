@@ -65,6 +65,7 @@
 		var labelreadonly = '<spring:message code="label.ReadingAccess" />';
 		var labelreadwrite = '<spring:message code="label.ReadWriteAccess" />';
 		var errorOperationFailed = '<spring:message code="error.OperationFailed" />';
+		var atLestOneMail = '<spring:message code="label.AtLeastOneMail" />';
 		var page = ${resultspage};
 		var rows = 20;
 		
@@ -220,7 +221,10 @@
 					<div style="float: left; width: 250px;  margin-right: 10px;">
 						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
 						<input type="text" maxlength="500" id="add-user-email" style="min-width: 400px;"/>
-						<p class="help" style="min-width: 400px;"><spring:message code="info.AddUserFormManagerInstructions" /></p>
+						<p class="help" style="min-width: 400px;">
+							<spring:message code="info.AddUserFormManagerInstructions" /><br />
+							<spring:message code="info.AddUserFormManagerInstructions2" />
+						</p>
 					</div>
 					<div style="clear: both"></div>
 					<div style="margin-top: 20px">
@@ -282,7 +286,7 @@
 				</c:when>
 				<c:when test="${USER.type == 'SYSTEM'}">
 					<div style="float: left; width: 250px;  margin-right: 10px;">
-						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
+						<label for="add-user-email"><spring:message code="label.EmailAddress" /></label><br />
 						<input type="text" maxlength="255" id="add-user-email" />
 					</div>
 

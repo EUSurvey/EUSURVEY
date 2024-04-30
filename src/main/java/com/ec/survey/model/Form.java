@@ -508,7 +508,7 @@ public class Form {
 							.append("/resources/images/checkbox.png' />");
 				} else {
 					titlePrefix.append("<input type='checkbox' class='required check confirmationCheckbox' name='answer")
-							.append(question.getId()).append("' aria-labelledby='questiontitle").append(question.getId())
+							.append(question.getId()).append("' id='answer").append(question.getId()).append("' aria-labelledby='questiontitle").append(question.getId())
 							.append("' onclick='propagateChange(this);' /> ");
 				}
 			}
@@ -772,24 +772,40 @@ public class Form {
 		return milliSeconds / 1000;
 	}
 	
-	/**
-	 * Replaces the Hypertext Markup from the Confirmation Page text with the corresponding values at the end of a survey.
-	 * Possible Markups: {InvitationNumber} {ContributionID} {UserName} {CreationDate} {LastUpdate} {Language} Question - {IDs}
-	 * @return String with all Markups replaced
-	 */
-	public String replacedMarkupConfirmationPage() {
+	public String getFinalConfirmationLink(String link, String language, AnswerSet answerSet) {
+		if (link == null) return link;
+		
+		link = link.replace("{ALIAS}", survey.getShortname().toLowerCase()).replace("{LANGUAGE}", language.toLowerCase());
+		
+		return replacedMarkup(link);
+	}
 
+	public String getFinalConfirmationLink(String language, AnswerSet answerSet) {
+		return getFinalConfirmationLink(survey.getConfirmationLink(), language, answerSet);
+	}
+	
+	public String replacedMarkupConfirmationPage() {
+		
 		if(getAnswerSets().size() <= 0) {
 			return survey.getConfirmationPage();
 		}
-
-		String confPageText = survey.getConfirmationPage();
+		
+		return replacedMarkup(survey.getConfirmationPage());
+	}
+	
+	/**
+	 * Replaces the Hypertext Markup from theinput text with the corresponding values at the end of a survey.
+	 * Possible Markups: {InvitationNumber} {ContributionID} {UserName} {CreationDate} {LastUpdate} {Language} Question - {IDs}
+	 * @return String with all Markups replaced
+	 */
+	private String replacedMarkup(String input) {
+				
 		List<List<Element>> pages = getPages();
 
-		if(confPageText.length() <= 0)
+		if(input.length() <= 0)
 			return "";
 
-		Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(confPageText);
+		Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(input);
 		int lastIndex = 0;
 		StringBuilder replacedMsg = new StringBuilder();
 
@@ -797,22 +813,22 @@ public class Form {
 			String match = m.group(1);
 			switch(match){
 				case "InvitationNumber":
-					replacedMsg.append(confPageText, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getInvitationId()));
+					replacedMsg.append(input, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getInvitationId()));
 					break;
 				case "ContributionID":
-					replacedMsg.append(confPageText, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getUniqueCode()));
+					replacedMsg.append(input, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getUniqueCode()));
 					break;
 				case "UserName":
-					replacedMsg.append(confPageText, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getResponderEmail()));
+					replacedMsg.append(input, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getResponderEmail()));
 					break;
 				case "CreationDate":
-					replacedMsg.append(confPageText, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getDate(), ConversionTools.DateFormat));
+					replacedMsg.append(input, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getDate(), ConversionTools.DateFormat));
 					break;
 				case "LastUpdate":
-					replacedMsg.append(confPageText, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getUpdateDate(), ConversionTools.DateFormat));
+					replacedMsg.append(input, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getUpdateDate(), ConversionTools.DateFormat));
 					break;
 				case "Language":
-					replacedMsg.append(confPageText, lastIndex, m.start()).append(getAnswerSets().get(0).getLanguageCode());
+					replacedMsg.append(input, lastIndex, m.start()).append(getAnswerSets().get(0).getLanguageCode());
 					break;
 				default:
 					// is ID?
@@ -822,7 +838,7 @@ public class Form {
 								case "Matrix":
 									for(Element c : ((Matrix) e).getQuestions()){
 										if(c.getShortname().equals(match))
-											replacedMsg.append(confPageText, lastIndex, m.start()).append(getQuestionResult(c, true));
+											replacedMsg.append(input, lastIndex, m.start()).append(getQuestionResult(c, true));
 									}
 									break;
 								case "Table":
@@ -837,25 +853,25 @@ public class Form {
 												String cellAnswer = as.getTableAnswer(e,i+1, l, false);
 											    res += (cellAnswer == "" || cellAnswer == null) ? "-" : cellAnswer;
 											}
-											replacedMsg.append(confPageText, lastIndex, m.start()).append(res);    
+											replacedMsg.append(input, lastIndex, m.start()).append(res);    
 										}
 									}
 									break;
 								case "ComplexTable":
 									for(ComplexTableItem cti : ((ComplexTable) e).getChildElements()){
 										if(cti.getShortname().equals(match))
-											replacedMsg.append(confPageText, lastIndex, m.start()).append(getQuestionResult(cti, false));
+											replacedMsg.append(input, lastIndex, m.start()).append(getQuestionResult(cti, false));
 									}
 									break;
 								case "RatingQuestion":
 									for(Element rq : ((RatingQuestion) e).getChildElements()){
 										if(rq.getShortname().equals(match))
-											replacedMsg.append(confPageText, lastIndex, m.start()).append(getQuestionResult(rq, false));
+											replacedMsg.append(input, lastIndex, m.start()).append(getQuestionResult(rq, false));
 									}
 									break;
 								default:
 									if(e.getShortname().equals(match))
-										replacedMsg.append(confPageText, lastIndex, m.start()).append(getQuestionResult(e, false));
+										replacedMsg.append(input, lastIndex, m.start()).append(getQuestionResult(e, false));
 									break;
 							}
 						}
@@ -866,8 +882,8 @@ public class Form {
 		}
 
 		// add text after last replacement
-		if(lastIndex <= confPageText.length());
-			replacedMsg.append(confPageText, lastIndex, confPageText.length());
+		if(lastIndex <= input.length());
+			replacedMsg.append(input, lastIndex, input.length());
 
 		return replacedMsg.toString();
 	}

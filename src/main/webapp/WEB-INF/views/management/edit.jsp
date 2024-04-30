@@ -382,7 +382,7 @@
 			</ul>	
 		</div>
 	</form:form>
-	
+
 	<jsp:include page="../runner/elementtemplates.jsp" />
 	<jsp:include page="edittemplates.jsp" />
 	<jsp:include page="editdialogs.jsp" />

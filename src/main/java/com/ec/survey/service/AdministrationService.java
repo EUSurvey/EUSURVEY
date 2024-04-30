@@ -294,7 +294,7 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public String[] getLoginsForPrefix(String term, String emailterm, boolean forPrivileges) {
+	public String[] getLoginsForPrefix(String term, String emailterm, boolean forPrivileges, int maxResults) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Query query = null;
@@ -308,7 +308,7 @@ public class AdministrationService extends BasicService {
 		}
 
 		@SuppressWarnings("unchecked")
-		List<User> list = query.setMaxResults(100).list();
+		List<User> list = query.setMaxResults(maxResults).list();
 		String[] result = new String[list.size()];
 		int counter = 0;
 		for (User user : list) {
@@ -337,7 +337,7 @@ public class AdministrationService extends BasicService {
 		}
 
 		@SuppressWarnings("unchecked")
-		List<User> list = query.setMaxResults(100).list();
+		List<User> list = query.setMaxResults(5).list();
 		String[] result = new String[list.size()];
 		int counter = 0;
 		for (User user : list) {
@@ -423,11 +423,11 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<User> getUserLoginsByEmail(String email) {
+	public List<User> getUserLoginsByEmail(String email, int limit) {
 			Session session = sessionFactory.getCurrentSession();
 			email = "%" + email + "%";
 			Query query = session.createQuery("FROM User u where u.email like :email order by u.login asc").setParameter(Constants.EMAIL, email);
-			return query.setMaxResults(100).list();
+			return query.setMaxResults(limit).list();
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)

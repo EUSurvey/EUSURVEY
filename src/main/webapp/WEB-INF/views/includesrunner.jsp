@@ -202,6 +202,7 @@
 			var validationNotEnoughCandidates = "${form.getMessage("validation.NotEnoughCandidates")}";
 			var validationTooManyCandidates = "${form.getMessage("validation.TooManyCandidates")}";
 			var validationTooManyListVotes = "${form.getMessage("validation.TooManyListVotes")}";
+			var likeOwnCommentOrExplanation = "${form.getMessage("message.likeOwnCommentOrExplanation")}";
 		</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
@@ -295,6 +296,7 @@
 			var validationNotEnoughCandidates = "<spring:message code='validation.NotEnoughCandidates' />";
 			var validationTooManyCandidates = "<spring:message code='validation.TooManyCandidates'/>";
 			var validationTooManyListVotes = "<spring:message code='validation.TooManyListVotes'/>";
+			var likeOwnCommentOrExplanation = "<spring:message code='message.likeOwnCommentOrExplanation' />";
 		</c:otherwise>
 	</c:choose>
 	
@@ -388,7 +390,7 @@
 				s = '${form.getMessage("info.extensions", "[ex]")}';
 			</c:when>
 			<c:otherwise>
-			s = '<spring:message code="info.extensions" arguments="[ex]" />';
+				s = '<spring:message code="info.extensions" arguments="[ex]" />';
 			</c:otherwise>
 		</c:choose>
 		
@@ -427,7 +429,7 @@
 			 {
 				 el.find(".charactercounterdiv").css("color", "#f00");
 			 } else {
-				 el.find(".charactercounterdiv").css("color", "#777");
+				 el.find(".charactercounterdiv").css("color", "#666");
 			 }
 
 			 if(max > 0 && max - cs <= 0)
