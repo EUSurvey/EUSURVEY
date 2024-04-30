@@ -1647,7 +1647,17 @@ public class RunnerController extends BasicController {
 						&& user != null) {
 					draft.getAnswerSet().setResponderEmail(user.getEmail());
 				}
-
+				
+				//check that all readonly mandatory questions are answered
+				Question q = SurveyHelper.getFirstUnansweredMandatoryReadonlyQuestion(draft.getAnswerSet());
+				if (q != null) {
+					String errorMessage = "Save as draft rejected as the draft contribution would be missing a value for this mandatory read-only question: " + q.getUniqueId();
+					logger.error(errorMessage);
+					ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+					model.addObject(Constants.MESSAGE, errorMessage);
+					return model;
+				}
+				
 				try {
 					answerService.saveDraft(draft, true);
 					uid = draft.getUniqueId();

@@ -1237,7 +1237,7 @@ function handleElement(active, elementIds, i) {
 
 	if ($(element).hasClass("matrix-question")) {
 		var matrixItem = $(element).closest(".matrixitem");
-		if (matrixItem.length > 0 && !isTriggered(matrixItem, true)) {
+		if (matrixItem.length > 0 && $(matrixItem).hasClass("dependent") && !isTriggered(matrixItem, true)) {
 			//hide matrix if dependencies of matrix itself aren't fulfilled although a subquestion may be visible
 			matrixItem.addClass("untriggered").hide();
 			$(element).find(".matrix-question").each(function(){

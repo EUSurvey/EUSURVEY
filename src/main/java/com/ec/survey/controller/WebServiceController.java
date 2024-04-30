@@ -11,6 +11,7 @@ import com.ec.survey.service.*;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.MissingAnswersForReadonlyMandatoryQuestionException;
+import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
 import com.ec.survey.tools.export.XmlExportCreator;
@@ -1327,6 +1328,14 @@ public class WebServiceController extends BasicController {
 			
 			if (answerSet.getAnswers().isEmpty()) {
 				logger.error("prefill call rejected as the draft contribution would be empty: " + getFullURL(request));
+				response.setStatus(412);
+				return "";
+			}
+			
+			//check that all readonly mandatory questions are answered
+			Question q = SurveyHelper.getFirstUnansweredMandatoryReadonlyQuestion(draft.getAnswerSet());
+			if (q != null) {
+				logger.error("prefill call rejected as the draft contribution would be missing a value for this mandatory read-only question: " + q.getUniqueId());
 				response.setStatus(412);
 				return "";
 			}
