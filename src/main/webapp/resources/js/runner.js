@@ -299,11 +299,20 @@ function updateAllFormulas() {
 	}
 }
 
+let checkedFormularAliases = [];
 function updateFormulas(id, alias) {
+	checkedFormularAliases = [];
+	checkedFormularAliases.push(alias);
+	updateFormulasRecursive(id, alias);
+}
+	
+function updateFormulasRecursive(id, alias) {	
 	for (let i = 0; i < modelsForFormula.length; i++) {
-		if (id == null || modelsForFormula[i].id().toString() != id) { //check not to update itself
+		if (id == null || checkedFormularAliases.indexOf(modelsForFormula[i].shortname()) < 0) { //check not to update itself
 			if (modelsForFormula[i].dependsOn(alias)) { //check that the change influences the formula
 				modelsForFormula[i].refreshResult();
+				checkedFormularAliases.push(modelsForFormula[i].shortname());
+				updateFormulasRecursive(modelsForFormula[i].id().toString(), modelsForFormula[i].shortname())
 			}
 		}
 	}
