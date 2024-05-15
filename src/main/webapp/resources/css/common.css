@@ -183,6 +183,30 @@ table {
 	float: right;
 }
 
+.unstyledbutton {
+	border: 0;
+	color: #337ab7;
+	padding: 0;
+	background-color: transparent;
+}
+
+.unstyledbuttonlanguage { 
+	border: 0;
+	background-color: transparent; 
+	
+	display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857143;
+    white-space: nowrap;    
+    font-family: sans-serif;
+    font-size: 13px;
+    
+    width: 100%;
+    text-align: left;
+}
+
 .iconbutton, .switchiconbutton {
 	color: #333;
     font-size: 18px;
@@ -471,11 +495,11 @@ select {
 	text-decoration: none;
 }
 
-.header a:visited, .header a:link, header a:active {
+.header a:visited, .header a:link, header a:active, .header button:visited, .header button:link, header button:active {
 	color: #fff;
 }
 
-.header a:hover {
+.header a:hover, .header button:hover {
 	color: #fff;
 }
 
@@ -1728,7 +1752,9 @@ div.medianpa {
 }
 
 .dropdown-menu li > a:not(.menudropdownaction):hover,
-.dropdown-menu li > a:not(.menudropdownaction):focus
+.dropdown-menu li > a:not(.menudropdownaction):focus,
+.dropdown-menu li > button:not(.menudropdownaction):hover,
+.dropdown-menu li > button:not(.menudropdownaction):focus
 {
 	background-image: none !important;
 	background-color: #f5f5f5 !important;

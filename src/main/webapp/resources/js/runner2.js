@@ -1334,10 +1334,10 @@ function delphiUpdateContinued(div, successCallback) {
 			} else {
 				updateDelphiElement(div, successCallback);
 				if (!dialogShown) {
-					if ($(div).find("a[data-type='delphireturntostart']").length > 0) {
-						$(div).find("a[data-type='delphireturntostart']").focus();
-					} else if ($(div).find("a[data-type='delphitonextquestion']:visible").length > 0) {
-						$(div).find("a[data-type='delphitonextquestion']").focus();
+					if ($(div).find("button[data-type='delphireturntostart']").length > 0) {
+						$(div).find("button[data-type='delphireturntostart']").focus();
+					} else if ($(div).find("button[data-type='delphitonextquestion']:visible").length > 0) {
+						$(div).find("button[data-type='delphitonextquestion']").focus();
 					} else if ($('#btnNext').is(":visible")) {
 						$('#btnNext').focus();
 					} else {
@@ -1359,9 +1359,9 @@ function appendShowContributionLinkDialogToSidebar(div, data) {
 			.appendTo(".contact-and-pdf__delphi-section");
 			
 		if ($(div).find("a[data-type='delphireturntostart']").length > 0) {
-			showContributionLinkDialog($(div).find("a[data-type='delphireturntostart']"), data.link);
+			showContributionLinkDialog($(div).find("button[data-type='delphireturntostart']"), data.link);
 		} else {
-			showContributionLinkDialog($(div).find("a[data-type='delphitonextquestion']"), data.link);
+			showContributionLinkDialog($(div).find("button[data-type='delphitonextquestion']"), data.link);
 		}
 	}
 }

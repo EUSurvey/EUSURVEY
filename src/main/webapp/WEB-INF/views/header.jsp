@@ -90,7 +90,7 @@
 			  							<c:choose>	  							
 											<c:when test="${isthankspage != null || isdraftinfopage != null}">
 												<li>
-													<a tabindex="0"><esapi:encodeForHTML>[${form.language.code}] ${form.language.name}</esapi:encodeForHTML></a>
+													<button type="button"><esapi:encodeForHTML>[${form.language.code}] ${form.language.name}</esapi:encodeForHTML></button>
 												</li>
 											</c:when>
 											<c:otherwise>																				
@@ -104,10 +104,10 @@
 															<a href="?language=${lang.value.code}&surveylanguage=${lang.value.code}"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
 														</c:when>
 														<c:when test="${lang.value.code == form.language.code}">
-															<a tabindex="0" class="skipScriptAnchor" onclick="$('.dropdown.open .dropdown-toggle').dropdown('toggle')"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
+															<button type="button" class="unstyledbuttonlanguage skipScriptAnchor" onclick="$('.dropdown.open .dropdown-toggle').dropdown('toggle')"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></button>
 			  											</c:when>
 														<c:otherwise>
-															<a tabindex="0" class="skipScriptAnchor" onclick="changeLanguageSelectHeader('${mode}','<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>');"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
+															<button type="button" class="unstyledbuttonlanguage skipScriptAnchor" onclick="changeLanguageSelectHeader('${mode}','<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>');"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></button>
 			  											</c:otherwise>	
 			  										</c:choose>	 
 			  									</li> 									  									
@@ -130,10 +130,10 @@
 							</c:choose>
 							
 							<div id="dropDownHelp" class="dropdown" style="display: inline-block;">
-								<a tabindex="0" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+								<button type="button" class="unstyledbutton dropdown-toggle" style="color: #fff; font-size: 13px;" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
 									<spring:message code="label.Help" />&nbsp;
 									<span class="caret"></span>
-		  						</a>
+		  						</button>
 								<ul id="dropDownHelpHeader" class="dropdown-menu dropdown-menu-header" aria-labelledby="dropdownMenu1">
 									
 										<li><a id="linkHelpAbout" href="<c:url value="/home/about"/>"><spring:message code="label.About" /></a></li>
@@ -146,10 +146,10 @@
 							 |
 		
 							<div class="dropdown">
-								<a href="javascript:;" class="dropdown-toggle" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+								<button type="button" class="unstyledbutton dropdown-toggle" id="dropdownLang" style="color: #fff; font-size: 13px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
 									<spring:message code="label.Language" />&nbsp;
 									<span class="caret"></span>
-		  						</a>
+		  						</button>
 		  						<ul class="dropdown-menu dropdown-menu-right" id="dropdownLangElements" aria-labelledby="dropdownLang">				
 						 			<li><a href="?language=bg">Български</a></li>
 						 			<li><a href="?language=cs">Čeština</a></li>

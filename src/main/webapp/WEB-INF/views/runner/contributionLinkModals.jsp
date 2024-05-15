@@ -12,10 +12,10 @@
 				<p>${form.getMessage("info.delphiLinkInSidebar")}</p>
 			</div>
 			<div class="modal-footer">
-				<a tabindex="0" class="btn btn-default" onclick="openAskEmailToSendLinkDialog(this)">
+				<button type="button" class="btn btn-default" onclick="openAskEmailToSendLinkDialog(this)">
 					${form.getMessage("label.SendByEmail")}
-				</a>
-				<a tabindex="0" class="btn btn-primary" onclick="hideModalDialog($('#contribution-link-dialog'))">${form.getMessage("label.Continue")}</a>
+				</button>
+				<button type="button" class="btn btn-primary" onclick="hideModalDialog($('#contribution-link-dialog'))">${form.getMessage("label.Continue")}</button>
 			</div>
 		</div>
 	</div>
@@ -33,8 +33,8 @@
 				</p>
 			</div>
 			<div class="modal-footer">
-				<a tabindex="0" class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</a>
-				<a tabindex="0" class="btn btn-default" onclick="cancelDelphiMailLink()">${form.getMessage("label.Cancel")}</a>
+				<button type="button" class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</button>
+				<button type="button" class="btn btn-default" onclick="cancelDelphiMailLink()">${form.getMessage("label.Cancel")}</button>
 			</div>
 		</div>
 	</div>

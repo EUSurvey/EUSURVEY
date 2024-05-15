@@ -184,7 +184,7 @@
 					<c:if test="${form.survey.containsMandatoryQuestion()}">
 						<div class="info-box" style="width: 400px; max-width: 100%;">
 							<div style="float: right; margin-top: -5px; margin-right: -5px;">
-								<a tabindex="0" style="cursor: pointer" onclick="$(this).closest('.info-box').hide();" aria-label="${form.getMessage("label.CloseInfoMessage")}"><span class="glyphicon glyphicon-remove"></span></a>
+								<button type="button" class="unstyledbutton" onclick="$(this).closest('.info-box').hide();" aria-label="${form.getMessage("label.CloseInfoMessage")}"><span class="glyphicon glyphicon-remove"></span></button>
 							</div>		
 						
 							${form.getMessage("message.StarMandatory")}
@@ -202,7 +202,7 @@
 									</div>
 									<div style="float: right; margin-top: -15px; margin-right: -15px;">
 										<input type="hidden" id="disclaimerMinimized" name="disclaimerMinimized" value="${disclaimerMinimized}" />
-										<a tabindex="0" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.CloseDisclaimer")}"><span class="glyphicon glyphicon-remove"></span></a>
+										<button type="button" class="unstyledbutton" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.CloseDisclaimer")}"><span class="glyphicon glyphicon-remove"></span></button>
 									</div>								
 									<div style="clear: both"></div>
 								</div>
@@ -225,7 +225,7 @@
 								</p>					
 							</div>
 							<div style="float: right; margin-top: -15px; margin-right: -15px;">
-								<a style="cursor: pointer; tabindex=0;" onclick="$('#anonymousSurveyInfo').hide();" aria-label="${form.getMessage("label.CloseAnonymousInfo")}"><span class="glyphicon glyphicon-remove"></span></a>
+								<button type="button" class="unstyledbutton" onclick="$('#anonymousSurveyInfo').hide();" aria-label="${form.getMessage("label.CloseAnonymousInfo")}"><span class="glyphicon glyphicon-remove"></span></button>
 							</div>								
 							<div style="clear: both"></div>
 						</div>
@@ -378,34 +378,34 @@
 										<div style="text-align: center; margin-top: 20px;">
 											
 											<c:if test="${form.survey.preventGoingBack == false}">											
-												<a tabindex="0" id="btnPrevious" style="display: none;" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}"
+												<button type="button" id="btnPrevious" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToPreviousPage")}"
 													   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 													   title="${form.survey.isDelphi ? form.getMessage("label.PreviousPageDelphi") : ""}"
-													   onclick="previousPage();this.blur();" onfocusin="validateLastContainer()" class="btn btn-default">${form.getMessage("label.Previous")}</a>
+													   onclick="previousPage();this.blur();" onfocusin="validateLastContainer()" class="btn btn-default">${form.getMessage("label.Previous")}</button>
 											</c:if>
 											<c:choose>
 												<c:when test="${dialogmode != null }">
-													<a tabindex="0" id="btnSubmit" role="button"
+													<button type="button" id="btnSubmit" role="button"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
 														   onfocusin="validateLastContainer()"
-														   class="btn btn-primary">${form.getMessage("label.Save")}</a>
-													<a tabindex="0" id="btnSubmit2" role="button"
+														   class="btn btn-primary">${form.getMessage("label.Save")}</button>
+													<button type="button" id="btnSubmit2" role="button"
 														   onclick="window.open('', '_self', '');window.close();"
-														   class="btn btn-default">${form.getMessage("label.Close")}</a>
+														   class="btn btn-default">${form.getMessage("label.Close")}</button>
 												</c:when>
 												<c:otherwise>
-													<a tabindex="0" id="btnSubmit" role="button" id="btnSubmit"
+													<button type="button" role="button" id="btnSubmit"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
 														   onfocusin="validateLastContainer()"
-														   class="btn btn-primary hidden">${form.getMessage("label.Submit")}</a>
+														   class="btn btn-primary hidden">${form.getMessage("label.Submit")}</button>
 												</c:otherwise>
 											</c:choose>
-											<a id="btnNext" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToNextPage")}"
+											<button type="button" id="btnNext" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToNextPage")}"
 											   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 											   title="${form.survey.isDelphi ? form.getMessage("label.NextPageDelphi") : ""}"
 											   onclick="nextPage(); this.blur();"
 											   onfocusin="validateLastContainer()"
-											   class="btn btn-default btn-primary">${form.getMessage("label.Next")}</a>
+											   class="btn btn-default btn-primary">${form.getMessage("label.Next")}</button>
 
 											<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
 												<input type="button" id="btnSaveDraftMobile"
@@ -453,26 +453,26 @@
 									<c:when test="${readonlyMode != null && readonlyMode == true}">
 										<div id="normalcss" style="color: #ccc">
 												${form.getMessage("label.Standard")}&#160;
-											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
-											   style="color: #ccc">${form.getMessage("label.AccessibilityMode")}</a>
+											<button type="button" class="unstyledbutton link visiblelink css-switch disabled" id="css-switch-disabled"
+											   style="color: #ccc">${form.getMessage("label.AccessibilityMode")}</button>
 										</div>
 
 										<div id="enhancedcss" class="hideme" style="color: #ccc">
-											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
-											   style="color: #ccc">${form.getMessage("label.Standard")}</a>&#160;
+											<button type="button" class="unstyledbutton link css-switch normal" id="css-switch-normal"
+											   style="color: #ccc">${form.getMessage("label.Standard")}</button>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>
 									</c:when>
 									<c:otherwise>
 										<div id="normalcss">
 												${form.getMessage("label.Standard")}&#160;
-											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
-											   onclick="switchCss('${mode}','wcag');">${form.getMessage("label.AccessibilityMode")}</a>
+											<button type="button" class="unstyledbutton link visiblelink css-switch disabled" id="css-switch-disabled"
+											   onclick="switchCss('${mode}','wcag');">${form.getMessage("label.AccessibilityMode")}</button>
 										</div>
 
 										<div id="enhancedcss" class="hideme">
-											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
-											   onclick="switchCss('${mode}','standard');">${form.getMessage("label.Standard")}</a>&#160;
+											<button type="button" class="unstyledbutton link css-switch normal" id="css-switch-normal"
+											   onclick="switchCss('${mode}','standard');">${form.getMessage("label.Standard")}</button>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>
 									</c:otherwise>
@@ -611,8 +611,8 @@
 							<spring:message code="info.ConfirmExplanationDeletion" />
 						</div>
 						<div class="modal-footer">
-							<a tabindex="0" class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></a>
-							<a tabindex="0" class="btn btn-primary" onclick="hideModalDialog('.confirm-explanation-deletion-modal')"><spring:message code="label.Cancel" /></a>
+							<button type="button" class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></button>
+							<button type="button" class="btn btn-primary" onclick="hideModalDialog('.confirm-explanation-deletion-modal')"><spring:message code="label.Cancel" /></button>
 						</div>
 					</div>
 				</div>

@@ -17,7 +17,7 @@ Use to override some classes coming from bootstrap
     box-shadow: none;
 }
 
-.header .dropdown-menu li a:not(.pagebutton)
+.header .dropdown-menu li a:not(.pagebutton), .header .dropdown-menu li button:not(.pagebutton)
 {
 	color: #CDE8FF;
 }

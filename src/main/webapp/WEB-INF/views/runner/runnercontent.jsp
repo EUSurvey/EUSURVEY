@@ -104,8 +104,8 @@
 				<spring:message code="info.UnsavedDelphiChange" />
 			</div>
 			<div class="modal-footer">
-				<a tabindex="0" class="btn btn-default" id="unsaveddelphichangesdialoglink"><spring:message code="label.Yes" /></a>
-				<a tabindex="0" class="btn btn-primary" onclick="hideModalDialog($('#unsaveddelphichangesdialog'))"><spring:message code="label.Cancel" /></a>
+				<button type="button" class="btn btn-default" id="unsaveddelphichangesdialoglink"><spring:message code="label.Yes" /></button>
+				<button type="button" class="btn btn-primary" onclick="hideModalDialog($('#unsaveddelphichangesdialog'))"><spring:message code="label.Cancel" /></button>
 			</div>
 			</div>
 			</div>

@@ -193,7 +193,7 @@ function checkHasValue(element) {
 		return $(element).closest('.answers-table').find("input:checked").length > 0;
 	}
 	
-	if ($(element).is("a") || $(element).is("li.possible-answer")) {
+	if ($(element).is("a") || $(element).is("button") || $(element).is("li.possible-answer")) {
 		return $(element).closest(".listbox,.multiple-choice[role=listbox]").find("input:checked").length > 0;
 	}
 	

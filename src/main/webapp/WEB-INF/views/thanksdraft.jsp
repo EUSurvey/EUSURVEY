@@ -49,8 +49,8 @@
 				
 					<br/><br/>
 				
-					<a class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);"><spring:message code="label.SendLinkAsEmail" /></a>
-					<a href="javascript:;" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
+					<button type="button" class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);"><spring:message code="label.SendLinkAsEmail" /></button>
+					<button type="button" class="unstyledbutton aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></button>
 					<c:if test="${downloadContribution}">
 						<br /><br />
 						<h2><spring:message code="question.needcopydraft" /></h2>
@@ -116,18 +116,18 @@
 			</div>
 			<div class="modal-footer">
 				<div class="forexport">
-					<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-					<a href="javascript:;" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+					<button type="button" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></button>	
+					<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>		
 				</div>
 				<div class="foremail">
 					<c:choose>
 						<c:when test="${runnermode == true}">
-							<a  class="btn btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
-							<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+							<button type="button" class="btn btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</button>	
+							<button type="button" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</button>		
 						</c:when>
 						<c:otherwise>
-							<a  class="btn btn-primary"" onclick="sendMailLink()"><spring:message code="label.OK" /></a>	
-							<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+							<button type="button" class="btn btn-primary"" onclick="sendMailLink()"><spring:message code="label.OK" /></button>	
+							<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>		
 						</c:otherwise>	
 					</c:choose>	
 				</div>

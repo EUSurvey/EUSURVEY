@@ -378,10 +378,10 @@
 				<ul role="listbox" data-bind="foreach: orderedPossibleAnswers(false), attr: {'class':css + ' multiple-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 					<li role="listitem" data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion($parent.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '') }">
 						<label for="defaultMCListBoxTemplateID" data-bind="attr: {for: id()}">
-							<a tabindex="0" data-bind="attr: {'data-shortname': shortname(), 'onkeypress': $parent.readonly() || $parent.foreditor ? 'return false;' : 'preventScrollOnSpaceInput(event);findSurveyElementAndResetValidationErrors(this);selectMultipleChoiceAnswer(this);propagateChange(this);', 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
+							<button type="button" class="unstyledbutton" data-bind="attr: {'data-shortname': shortname(), 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
 								<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
 								<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
-							</a>
+							</button>
 						</label>
 						<input id="defaultMCListBoxTemplateID" data-bind="value: id(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id), attr: {'name': 'answer' + $parent.id(), 'id':id(), 'data-id': $parent.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />
 					</li>	
@@ -532,11 +532,11 @@
 		<div role="group" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questionhelp' + id() + ' listorderinfo' + id()}">
 
 			<!-- ko ifnot: foreditor -->
-				<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
+				<div class="ranking-question-initial-answer-message" data-bind="if: !isAnswered()">
 					${form.getMessage("label.HintOnInitialRankingOrder")}
 				</div>
-				<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
-					<a data-bind="click: resetOrder">${form.getMessage("label.ResetOrder")}</a>
+				<div class="question-reset-answer-message" data-bind="if: isAnswered()">
+					<button type="button" class="unstyledbutton" data-bind="click: resetOrder">${form.getMessage("label.ResetOrder")}</a>
 				</div>
 			<!-- /ko -->
 
@@ -556,8 +556,8 @@
 					<!-- ko foreach: orderedRankingItems() -->
 					<div role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
 						<div class="rankingitem-decoration">&#x283F;</div>
-						<a tabindex="0" role="button" class="rankingitem-button" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }, attr: {'aria-label' : title() + ' ${form.getMessage("label.MoveUp")}'}"><span class="glyphicon glyphicon-arrow-up"></span></a>
-						<a tabindex="0" role="button" class="rankingitem-button" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }, attr: {'aria-label' : title() + ' ${form.getMessage("label.MoveDown")}'}"><span class="glyphicon glyphicon-arrow-down"></span></a>
+						<button type="button" role="button" class="unstyledbutton rankingitem-button" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }, attr: {'aria-label' : title() + ' ${form.getMessage("label.MoveUp")}'}"><span class="glyphicon glyphicon-arrow-up"></span></button>
+						<button type="button" role="button" class="unstyledbutton rankingitem-button" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }, attr: {'aria-label' : title() + ' ${form.getMessage("label.MoveDown")}'}"><span class="glyphicon glyphicon-arrow-down"></span></button>
 						<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
 					</div>
 					<!-- /ko -->
@@ -740,14 +740,14 @@
 		</label>
 		
 		<!-- ko if: usetext -->																					
-			<a class="confirmationlabel" style="margin-left: 40px; cursor: pointer;" onclick="$(this).parent().find('.confirmation-dialog').modal('show')" data-bind="html:confirmationlabel"></a>
+			<button type="button" class="unstyledbutton confirmationlabel" style="margin-left: 40px; cursor: pointer;" onclick="$(this).parent().find('.confirmation-dialog').modal('show')" data-bind="html:confirmationlabel">Show</button>
 			<div class="modal confirmation-dialog">
 				  <div class="modal-dialog modal-sm runnerdialog">
 					  <div class="modal-content">
 						  <div class="modal-header">${form.getMessage("label.Confirmation")}</div>
 						  <div class="modal-body" data-bind="html: confirmationtext"></div>
 						  <div class="modal-footer">
-							<a style="cursor: pointer" class="btn btn-primary" onclick="$(this).closest('.confirmation-dialog').modal('hide');">${form.getMessage("label.Cancel")}</a>		
+							<button type="button" class="btn btn-primary" onclick="$(this).closest('.confirmation-dialog').modal('hide');">${form.getMessage("label.Cancel")}</button>		
 						  </div>
 					  </div>
 				  </div>
@@ -830,7 +830,7 @@
 							<input data-bind="value:getValueByQuestion(uniqueId(), true), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 			
 							<div data-bind="foreach: new Array($parent.numIcons())">
-								<a class="ratingitem" role="listitem" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
+								<button type="button" class="unstyledbutton ratingitem" role="listitem" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
 									<!-- ko if: $parents[1].iconType() == 0 -->
 								    <img src="${contextpath}/resources/images/star_grey.png" alt="${form.getMessage("form.RatingItem")}" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
@@ -840,7 +840,7 @@
 								    <!-- ko if: $parents[1].iconType() == 2 -->
 								    <img src="${contextpath}/resources/images/heart_grey.png" alt="${form.getMessage("form.RatingItem")}" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
-							    </a>
+							    </button>
 							</div>
 						<!-- /ko -->
 					</td>
@@ -849,7 +849,7 @@
 						<input data-bind="value:getValueByQuestion(uniqueId(), true), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 		
 						<div data-bind="foreach: new Array($parent.numIcons())">
-							<a class="ratingitem" role="listitem" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
+							<button type="button" class="unstyledbutton ratingitem" role="listitem" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
 								<!-- ko if: $parents[1].iconType() == 0 -->
 							    <img src="${contextpath}/resources/images/star_grey.png" alt="${form.getMessage("form.RatingItem")}" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 							    <!-- /ko -->
@@ -859,7 +859,7 @@
 							    <!-- ko if: $parents[1].iconType() == 2 -->
 							    <img src="${contextpath}/resources/images/heart_grey.png" alt="${form.getMessage("form.RatingItem")}" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 							    <!-- /ko -->
-						    </a>
+						    </button>
 						</div>
 					</td>
 					<!-- /ko -->
@@ -886,10 +886,10 @@
 		
 				<div class="limits" data-bind="hidden: isAnswered, attr: {id: 'questioninfo' + id()}">
 					<!-- ko ifnot: foreditor -->
-						${form.getMessage("info.MoveTheSliderOrAccept", "tabindex=\"0\" data-bind=\"click: markAsAnswered\"")}
+						${form.getMessage("info.MoveTheSliderOrAccept", "type=\"button\" class=\"unstyledbutton\" data-bind=\"click: markAsAnswered, attr: {'aria-hidden': isAnswered}\"")}
 					<!-- /ko -->
 					<!-- ko if: foreditor -->
-						${form.getMessage("info.MoveTheSliderOrAccept", "")}
+						${form.getMessage("info.MoveTheSliderOrAccept", "type=\"button\" class=\"unstyledbutton\"")}
 					<!-- /ko -->
 				</div>
 			
@@ -922,7 +922,7 @@
 		
 		<!-- ko if: display() == 'Slider' -->
 			<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
-				<a tabindex="0" data-bind="click: resetToInitialPosition, attr: {'aria-describedby' : 'questiontitle' + id()}">${form.getMessage("label.ResetToInitialPosition")}</a>
+				<button type="button" class="unstyledbutton" data-bind="click: resetToInitialPosition, attr: {'aria-describedby' : 'questiontitle' + id()}">${form.getMessage("label.ResetToInitialPosition")}</button>
 			</div>
 			<div data-bind="attr: {'class' : maxDistance() > -1 ? 'slider-div median' : 'slider-div'}">
 				<div style="float: left; margin-left: -20px; padding-bottom: 20px; max-width: 45%; text-align: center;" data-bind="html: minLabel()"></div>
@@ -1157,9 +1157,9 @@
 		<input id="defaultUploadTemplateID" type="hidden" data-bind="attr: {'id': 'answer' + id(), 'name':'answer' + id()}" value="files" />
 		<div class="uploaded-files" data-bind="foreach: getFileAnswer(uniqueId(), true)">
 			<div>
-				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}">
+				<button type="button" class="unstyledbutton" data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}">
 					<span style="margin-right: 10px;" class="glyphicon glyphicon-trash"></span>
-				</a>
+				</button>
 				<span data-bind="html: $data"></span>
 			</div>				
 		</div>				
@@ -1442,7 +1442,7 @@
 								<span class="matrixheadertitle" data-bind="html: title"></span>
 							</th>
 							<!-- ko foreach: $parent.answers -->
-								<td class="matrix-cell">
+								<td class="matrix-cell" data-bind="attr: {'data-originalposition': ($parent.originalIndex() * ($parents[1].columns() - 1)) + $index()}">
 									<input aria-labelledby="defaultMatrixTemplateID" type="radio" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {value: id(), 'data-shortname': $parent.shortname() + '|' + shortname(), onkeyup: 'singleKeyUp(event, this, '+$parents[1].readonly()+')', 'onclick': $parents[1].readonly() ? 'return false;' : 'findSurveyElementAndResetValidationErrors(this); checkSingleClick(this); event.stopImmediatePropagation();propagateChange(this);', 'id': $parent.id().toString() + id().toString(), 'data-id': $parent.id().toString() + id().toString(), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString(), 'class': $parent.css() + ' trigger', 'name': 'answer' + $parent.id(), 'data-dependencies': $parents[1].dependentElementsStrings()[$index() + ($parent.originalIndex() * ($parents[1].columns()-1))], 'data-cellid' : $parent.id() + '|' + id(), type: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', role: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', 'data-dummy': getPAByQuestion2($parent.uniqueId(), uniqueId(), id())}" />
 								</td>
 							 <!-- /ko -->
@@ -1569,10 +1569,10 @@
 									<div class="uploaded-files"
 										data-bind="foreach: getFileAnswer(uniqueId())">
 										<div>
-											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}, click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}">
+											<button type="button" class="unstyledbutton" data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}, click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}">
 												<span style="margin-right: 10px;"
 												class="glyphicon glyphicon-trash"></span>
-											</a> <span data-bind="html: $data"></span>
+											</button> <span data-bind="html: $data"></span>
 										</div>
 									</div>
 									<div data-bind="attr: {'class': 'file-uploader', 'data-id': id()}"
@@ -1613,17 +1613,17 @@
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 0px;">
 			<div class="col-md-12" style="padding:0;">
 				<div class="explanation-update-section">
-					<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
+					<button type="button" class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</button>
 					<span class="inline-loader">
 						<img alt="wait animation" class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
 					</span>
 					
 					<br /><br />
 					<c:if test="${form.survey.isDelphiShowStartPage}">
-						<a data-type="delphireturntostart" class="link" style="margin-right: 20px;"  onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</a>
+						<button type="button" data-type="delphireturntostart" class="unstyledbutton link" style="margin-right: 20px;"  onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</button>
 					</c:if>
 					
-					<a data-type="delphitonextquestion" class="link delphitonextquestion" onclick="goToNextQuestion(this)">${form.getMessage("label.GoToNextQuestion")}</a>
+					<button type="button" data-type="delphitonextquestion" class="unstyledbutton link delphitonextquestion" onclick="goToNextQuestion(this)">${form.getMessage("label.GoToNextQuestion")}</button>
 				</div>
 		
 				<div class="delphiupdatemessage"></div>
@@ -1833,11 +1833,13 @@
 									<!-- ko if: child && !child.useCheckboxes() -->	
 										<ul role="listbox" data-bind="attr: {'class': child.css() + ' multiple-choice', 'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}, foreach: child.orderedPossibleAnswers(false),">
 											<li role="listitem" data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion(child.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '')}">
-												<a tabindex="0" data-bind="attr: {'data-shortname': shortname(), 'onkeypress': child.readonly() || child.foreditor ? 'return false;' : 'preventScrollOnSpaceInput(event);findSurveyElementAndResetValidationErrors(this);selectMultipleChoiceAnswer(this);propagateChange(this);', 'onclick' : child.readonly() || child.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
-													<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
-													<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
-												</a>
-												<input aria-labelledby="defaultComplextableChildTemplateID" data-bind="value: id(), checked: getPAByQuestion2(child.uniqueId(), uniqueId(), id, $element), attr: {'name': 'answer' + child.id(), 'id':id(), 'data-id': child.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />
+												<label for="defaultComplexMCListBoxTemplateID" data-bind="attr: {for: id()}">
+													<button type="button" class="unstyledbutton" data-bind="attr: {'data-shortname': shortname(), 'onclick' : child.readonly() || child.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
+														<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
+														<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
+													</button>
+												</label>
+												<input id="defaultComplexMCListBoxTemplateID" data-bind="value: id(), checked: getPAByQuestion2(child.uniqueId(), uniqueId(), id, $element), attr: {'name': 'answer' + child.id(), 'id':id(), 'data-id': child.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />
 											</li>	
 										</ul>
 									<!-- /ko -->

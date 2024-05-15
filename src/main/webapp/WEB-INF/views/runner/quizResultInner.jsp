@@ -398,16 +398,16 @@
 			<div class="modal-footer">
 				<c:choose>
 					<c:when test="${responsive != null}">
-						<a tabindex="0" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>
-						<a tabindex="0" style="text-decoration: none"  class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>
+						<button type="button" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</button>
+						<button type="button" style="text-decoration: none"  class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 					</c:when>
 					<c:when test="${runnermode == true}">
-						<a tabindex="0" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>
-						<a tabindex="0" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>
+						<button type="button" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</button>
+						<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 					</c:when>
 					<c:otherwise>
-						<a tabindex="0" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>
-						<a tabindex="0" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>
+						<button type="button" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></button>
+						<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></button>
 					</c:otherwise>	
 				</c:choose>				
 			</div>

@@ -483,9 +483,9 @@ function initModals(item)
 	
 	function selectMultipleChoiceAnswer(link)
 	{
-		$(link).parent().toggleClass("selected-choice"); 
+		$(link).parent().parent().toggleClass("selected-choice"); 
 
-		$(link).parent().find("input[type='checkbox']").each(function(){
+		$(link).parent().parent().find("input[type='checkbox']").each(function(){
 			if ($(this).closest(".selected-choice").length > 0)
 			{
 				$(this).attr("checked","checked");
@@ -2062,11 +2062,11 @@ function initModals(item)
 	}
 	
 	function disableDelphiSaveButtons(parent) {
-		$(parent).find("a[data-type='delphisavebutton']").addClass("disabled").removeAttr("href");
+		$(parent).find("button[data-type='delphisavebutton']").addClass("disabled").removeAttr("href");
 	}
 
 	function enableDelphiSaveButtons(parent) {
-		$(parent).find("a[data-type='delphisavebutton']").removeClass("disabled").attr("href", "javascript:;");
+		$(parent).find("button[data-type='delphisavebutton']").removeClass("disabled").attr("href", "javascript:;");
 	}
 	
 	function isOneAnswerEmptyWhileItsExplanationIsNot(containers) {

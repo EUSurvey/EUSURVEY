@@ -270,7 +270,7 @@
 							<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid, 'data-question-uid': uid}">
 								<div class="question-title">
 									<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
-									<a tabindex="0" style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}" aria-label="${form.getMessage("tooltip.ExpandChart")}"></a>
+									<button type="button" style="display:none;" class="unstyledbutton glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}" aria-label="${form.getMessage("tooltip.ExpandChart")}"></button>
 								</div>
 	
 								<div class="no-graph-image">
@@ -360,8 +360,8 @@
 					<spring:message code="message.DelphiConfirmDeleteComment" />
 				</div>
 				<div class="modal-footer">
-					<a tabindex="0" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
-					<a tabindex="0" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Cancel" /></a>
+					<button type="button" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></button>
+					<button type="button" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Cancel" /></button>
 				</div>
 			</div>
 		</div>

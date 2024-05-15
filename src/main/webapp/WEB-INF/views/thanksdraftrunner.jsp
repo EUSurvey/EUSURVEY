@@ -48,14 +48,14 @@
 							
 							<c:choose>
 								<c:when test="${isecasuser != null}">
-									<a tabindex="0" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+									<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</button> <br /><br />
 								</c:when>
 								<c:otherwise>
-									<a tabindex="0" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="showAskEmailDialog(this)">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+									<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="showAskEmailDialog(this)">${form.getMessage("label.SendLinkAsEmail")}</button> <br /><br />
 								</c:otherwise>
 							</c:choose>
 
-							<a tabindex="0" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
+							<button type="button" class="unstyledbutton aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></button>
 						</c:when>
 						<c:otherwise>					
 							<a class="draftLink visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
@@ -63,20 +63,20 @@
 							
 							<c:choose>
 								<c:when test="${isecasuser != null}">
-									<a tabindex="0" class="btn btn-primary aSpaced" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</a>
+									<button type="button" class="btn btn-primary aSpaced" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</button>
 								</c:when>
 								<c:otherwise>
-									<a tabindex="0" class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);">${form.getMessage("label.SendLinkAsEmail")}</a>
+									<button type="button" tabindex="0" class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);">${form.getMessage("label.SendLinkAsEmail")}</button>
 								</c:otherwise>
 							</c:choose>
 
-							<a tabindex="0" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
+							<button type="button" class="unstyledbutton aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></button>
 						</c:otherwise>
 					</c:choose>	
 					<c:if test="${downloadContribution}">
 						<br /><br />
 						<h2><spring:message code="question.needcopydraft" /></h2>
-						<a tabindex="0" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a>
+						<button type="button" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></button>
 					</c:if> 
 				</div>				
 			</div>
@@ -168,32 +168,32 @@
 				<div class="forexport">
 					<c:choose>
 						<c:when test="${responsive != null}">
-							<a tabindex="0" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>
-							<a tabindex="0" style="text-decoration: none"  class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>
+							<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</button>
+							<button type="button" style="text-decoration: none" class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</button>
 						</c:when>
 						<c:when test="${runnermode == true}">
-							<a tabindex="0" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>
-							<a tabindex="0" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>
+							<button type="button" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</button>
 						</c:when>
 						<c:otherwise>
-							<a tabindex="0" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>
-							<a tabindex="0" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+							<button type="button" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></button>
+							<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>
 						</c:otherwise>	
 					</c:choose>
 				</div>
 				<div class="foremail">
 					<c:choose>
 						<c:when test="${responsive != null}">
-							<a tabindex="0" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>
-							<a tabindex="0" style="text-decoration: none" class="btn btn-lg btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>
+							<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</button>
+							<button type="button" style="text-decoration: none" class="btn btn-lg btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 						</c:when>
 						<c:when test="${runnermode == true}">
-							<a tabindex="0" class="btn btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>
-							<a tabindex="0" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>
+							<button type="button" class="btn btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</button>
+							<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 						</c:when>
 						<c:otherwise>
-							<a tabindex="0" class="btn btn-primary" onclick="sendMailLink(false)"><spring:message code="label.OK" /></a>
-							<a tabindex="0" class="btn btn-default"  onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>
+							<button type="button" class="btn btn-primary" onclick="sendMailLink(false)"><spring:message code="label.OK" /></button>
+							<button type="button" class="btn btn-default"  onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></button>
 						</c:otherwise>	
 					</c:choose>	
 				</div>		
