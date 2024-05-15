@@ -173,7 +173,7 @@ public class LdapService extends BasicService {
                 	groups.add(prefix);
                 }
                 
-            } else if (Objects.equals(employeeType, "f") || Objects.equals(employeeType, "x") || Objects.equals(employeeType, "i") || Objects.equals(employeeType, "xf")) {
+            } else if (Objects.equals(employeeType, "f") || Objects.equals(employeeType, "x") || Objects.equals(employeeType, "i") || Objects.equals(employeeType, "xf") || Objects.equals(employeeType, "q")) {
                 //internal                
             } else {
             	groups.add("external");
