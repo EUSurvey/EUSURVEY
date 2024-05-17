@@ -866,11 +866,11 @@ function newRankingViewModel(element)
 	}
 
 	viewModel.resetOrder = function(_, event) {
+		const thatRanking = $(event.target).closest(".rankingitem");
+		
 		//.slice() because originalItemUniqueIdOrder would otherwise be changed by moving the items
 		viewModel.answervalues(viewModel.originalItemUniqueIdOrder().slice());
 		viewModel.isAnswered(false);
-
-		const thatRanking = $(event.target).closest(".rankingitem");
 
 		const rankingItemsTexts = thatRanking.find(".rankingitemtext");
 		const rankingItemUniqueIds = $.map(rankingItemsTexts, that => viewModel.itemIdtoUniqueIdLookup[Number(that.id)]);
