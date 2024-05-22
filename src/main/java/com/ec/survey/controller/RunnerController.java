@@ -714,6 +714,11 @@ public class RunnerController extends BasicController {
 	public ModelAndView runnerToken(@PathVariable String shortname, @PathVariable String token,
 			HttpServletRequest request, Locale locale, Device device)
 			throws InvalidURLException, ForbiddenURLException, FrozenSurveyException {
+		
+		if (token.length() > 0 && !Tools.isUUID(token)) {
+			throw new ForbiddenURLException();
+		}
+		
 		Survey survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, true);
 	
 		if (survey == null) {
