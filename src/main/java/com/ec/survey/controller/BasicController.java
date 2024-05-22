@@ -156,6 +156,7 @@ public class BasicController implements BeanFactoryAware {
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${captcha.serverprefix}") String captchaserverprefix;
 	public @Value("${captcha.serverprefixtarget}") String captchaserverprefixtarget;
+	public @Value("${captcha.token}") String captchatoken;
 	public @Value("${ui.enableresponsive}") String enableresponsive;
 	private @Value("${ecaslogout}") String ecaslogout;
 	public @Value("${showecas}") String showecas;
@@ -626,23 +627,11 @@ public class BasicController implements BeanFactoryAware {
 						str = request.getParameter("g-recaptcha-response");
 					}
 					
-					String token = request.getParameter("captcha_token");
 					String id = request.getParameter("captcha_id");
 					String useaudio = request.getParameter("captcha_useaudio");
 					String originalcookies = request.getParameter("captcha_original_cookies");
-					
-					if (token == null) {
-						String challenge = request.getParameter("recaptcha_challenge_field");
-						if (challenge != null && challenge.contains("|"))
-						{
-							String[] pair = challenge.split("\\|");
-							id = pair[0];
-							token = pair[1];
-							useaudio = pair[2];
-						}
-					}
-					
-					if (str == null || id == null || token == null) {
+										
+					if (str == null || id == null) {
 						return false;
 					}
 					
@@ -650,7 +639,7 @@ public class BasicController implements BeanFactoryAware {
 					URL url = new URL(captchaserverprefixtarget + "validateCaptcha/" + id);
 					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 					conn.setRequestMethod("POST");
-					conn.setRequestProperty("x-jwtString", token);
+					conn.setRequestProperty("x-jwtString", captchatoken);
 					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 					
 					String[] cookies = originalcookies.split("#");			
