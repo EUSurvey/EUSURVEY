@@ -156,7 +156,7 @@ public class BasicController implements BeanFactoryAware {
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${captcha.serverprefix}") String captchaserverprefix;
 	public @Value("${captcha.serverprefixtarget}") String captchaserverprefixtarget;
-	public @Value("${captcha.token}") String captchatoken;
+	public @Value("${captcha.token:#{null}}") String captchatoken;
 	public @Value("${ui.enableresponsive}") String enableresponsive;
 	private @Value("${ecaslogout}") String ecaslogout;
 	public @Value("${showecas}") String showecas;
