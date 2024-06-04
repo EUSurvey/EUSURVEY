@@ -639,7 +639,7 @@ public class BasicController implements BeanFactoryAware {
 					URL url = new URL(captchaserverprefixtarget + "validateCaptcha/" + id);
 					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 					conn.setRequestMethod("POST");
-					conn.setRequestProperty("x-jwtString", captchatoken);
+					conn.setRequestProperty("xJwtString", captchatoken);
 					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 					
 					String[] cookies = originalcookies.split("#");			
