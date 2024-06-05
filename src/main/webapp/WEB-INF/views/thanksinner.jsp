@@ -228,8 +228,7 @@
 			    }
 
 				var data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
-				if ($('#captcha_token').length > 0) {
-					data["captcha_token"] =  $('#captcha_token').val();
+				if ($('#captcha_id').length > 0) {
 					data["captcha_id"] =  $('#captcha_id').val();
 					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
 					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
