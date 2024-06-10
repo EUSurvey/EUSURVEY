@@ -76,10 +76,6 @@ public class RunnerController extends BasicController {
 
 		ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, code);
 
-		if (survey.getIsOPC()) {
-			result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, lang));
-		}
-
 		if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 			result.addObject("participantsemail", answerSet.getResponderEmail());
 		}
@@ -90,12 +86,16 @@ public class RunnerController extends BasicController {
 		Form form = new Form(resources, surveyService.getLanguage(lang),
 				translationService.getActiveTranslationsForSurvey(survey.getId()), contextpath);
 		form.setSurvey(survey);
+		
+		if (survey.getIsOPC()) {
+			result.addObject("opcredirection", form.getFinalConfirmationLink(opcredirect, lang, answerSet));
+		}
 
 		result.addObject("form", form);
 		result.addObject("text", survey.getConfirmationPage());
 		if (answerSet.getSurvey().getConfirmationPageLink() != null && survey.getConfirmationPageLink()
 				&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
-			result.addObject("redirect", survey.getFinalConfirmationLink(lang));
+			result.addObject("redirect", form.getFinalConfirmationLink(lang, answerSet));
 		}
 		result.addObject("surveyprefix", survey.getId());
 
@@ -666,10 +666,6 @@ public class RunnerController extends BasicController {
 				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
 				result.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(survey, answerSet));
 			}
-
-			if (survey.getIsOPC()) {
-				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, lang));
-			}
 			
 			if (survey.getSendConfirmationEmail() && email != null && email.contains("@")) {
 				surveyService.sendNotificationEmail(survey, answerSet, email);
@@ -677,8 +673,6 @@ public class RunnerController extends BasicController {
 			}
 			
 			survey = surveyService.getSurvey(survey.getId(), lang);
-
-
 
 			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 				result.addObject("participantsemail", answerSet.getResponderEmail());
@@ -688,7 +682,11 @@ public class RunnerController extends BasicController {
 
 			Form form = new Form(resources, surveyService.getLanguage(lang),
 					translationService.getActiveTranslationsForSurvey(survey.getId()), contextpath);
-			form.setSurvey(survey);
+			form.setSurvey(survey);			
+
+			if (survey.getIsOPC()) {
+				result.addObject("opcredirection", form.getFinalConfirmationLink(opcredirect, lang, answerSet));
+			}
 
 			if(!survey.getConfirmationPageLink()){
 				form.getAnswerSets().add(answerSet);
@@ -698,7 +696,7 @@ public class RunnerController extends BasicController {
 			result.addObject("text", survey.getConfirmationPage());
 			if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
 					&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
-				result.addObject("redirect", survey.getFinalConfirmationLink(lang));
+				result.addObject("redirect", form.getFinalConfirmationLink(lang, answerSet));
 			}
 			result.addObject("isthankspage", true);
 			result.addObject("surveyprefix", survey.getId());
@@ -716,6 +714,11 @@ public class RunnerController extends BasicController {
 	public ModelAndView runnerToken(@PathVariable String shortname, @PathVariable String token,
 			HttpServletRequest request, Locale locale, Device device)
 			throws InvalidURLException, ForbiddenURLException, FrozenSurveyException {
+		
+		if (token.length() > 0 && !Tools.isUUID(token)) {
+			throw new ForbiddenURLException();
+		}
+		
 		Survey survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, true);
 	
 		if (survey == null) {
@@ -931,10 +934,10 @@ public class RunnerController extends BasicController {
 		}
 		String lang = request.getParameter("surveylanguage");
 
-		Survey survey = surveyService.getSurvey(uidorshortname, isDraft, true, false, false, lang, true, true);
+		Survey survey = surveyService.getSurvey(uidorshortname, isDraft, true, false, true, lang, true, true);
 
 		if (survey == null && readonlyMode) {
-			survey = surveyService.getSurvey(uidorshortname, isDraft, false, false, false, lang, true, true);
+			survey = surveyService.getSurvey(uidorshortname, isDraft, false, false, true, lang, true, true);
 		}
 
 		if (survey == null && !isDraft) {
@@ -955,7 +958,7 @@ public class RunnerController extends BasicController {
 			}
 
 			String urllang = request.getParameter("surveylanguage");
-			if (urllang != null) {
+			if (urllang != null && urllang.length() > 0) {
 				boolean validTranslationFound = false;
 				List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), true);
 				for (Translations trans : translations) {
@@ -1647,7 +1650,7 @@ public class RunnerController extends BasicController {
 						&& user != null) {
 					draft.getAnswerSet().setResponderEmail(user.getEmail());
 				}
-				
+
 				//check that all readonly mandatory questions are answered
 				Question q = SurveyHelper.getFirstUnansweredMandatoryReadonlyQuestion(draft.getAnswerSet());
 				if (q != null) {
@@ -1657,7 +1660,7 @@ public class RunnerController extends BasicController {
 					model.addObject(Constants.MESSAGE, errorMessage);
 					return model;
 				}
-				
+								
 				try {
 					answerService.saveDraft(draft, true);
 					uid = draft.getUniqueId();
@@ -1731,7 +1734,7 @@ public class RunnerController extends BasicController {
 		
 		boolean passwordauthenticated = request.getParameter("passwordauthenticated") != null && request.getParameter("passwordauthenticated").equalsIgnoreCase("true");
 		
-		String url = answerService.getDraftURL(draft.getAnswerSet(), draftid, passwordauthenticated ? null : sessionService.getCurrentUser(request, false, false));
+		String url = answerService.getDraftURL(draft.getAnswerSet(), draftid, passwordauthenticated);
 
 		ModelAndView result = new ModelAndView("thanksdraftrunner", "url", url);
 
@@ -1794,6 +1797,9 @@ public class RunnerController extends BasicController {
 					if (survey.getPassword() != null && survey.getPassword().trim().length() > 0
 							&& survey.getPassword().equals(password)) {
 						// authenticated
+						
+						request.getSession().setAttribute("passwordauthentication", true);
+						
 						loadSurvey(survey, request, locale, uidorshortname, true, false);
 						return new ModelAndView("redirect:/runner/" + uidorshortname + "?" + request.getQueryString() + "&pw=true");
 					}
@@ -2130,11 +2136,7 @@ public class RunnerController extends BasicController {
 			}
 
 			ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, answerSet.getUniqueCode());
-
-			if (survey.getIsOPC()) {
-				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, lang));
-			}
-			
+		
 			if (survey.getSendConfirmationEmail() && email != null && email.contains("@")) {
 				surveyService.sendNotificationEmail(survey, answerSet, email);
 				result.addObject("notificationemailtext", surveyService.getNotificationEmailText(survey, email, locale));
@@ -2161,16 +2163,18 @@ public class RunnerController extends BasicController {
 					translationService.getActiveTranslationsForSurvey(survey.getId()), contextpath);
 			sessionService.setFormStartDate(request, form, uniqueCode);
 			form.setSurvey(survey);
-
-			if(!survey.getConfirmationPageLink()){
-				form.getAnswerSets().add(answerSet);
+			
+			if (survey.getIsOPC()) {
+				result.addObject("opcredirection", form.getFinalConfirmationLink(opcredirect, lang, answerSet));
 			}
 
+			form.getAnswerSets().add(answerSet);
+		
 			result.addObject("form", form);
 			result.addObject("text", survey.getConfirmationPage());
 			if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
 					&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
-				result.addObject("redirect", survey.getFinalConfirmationLink(lang));
+				result.addObject("redirect", form.getFinalConfirmationLink(lang, answerSet));
 			} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null) {
 				result.addObject("asklogout", true);
 			}
@@ -2230,8 +2234,10 @@ public class RunnerController extends BasicController {
 			if (draft != null) {
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get(Constants.EMAIL)[0];
+				
+				boolean passwordauthentication = request.getParameter("passwordauthentication") != null;
 
-				return pdfService.createDraftAnswerPDF(code, email);
+				return pdfService.createDraftAnswerPDF(code, email, passwordauthentication);
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

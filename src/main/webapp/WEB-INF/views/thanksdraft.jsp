@@ -49,8 +49,8 @@
 				
 					<br/><br/>
 				
-					<a class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);"><spring:message code="label.SendLinkAsEmail" /></a>
-					<a href="javascript:;" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
+					<button type="button" class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);"><spring:message code="label.SendLinkAsEmail" /></button>
+					<button type="button" class="unstyledbutton aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></button>
 					<c:if test="${downloadContribution}">
 						<br /><br />
 						<h2><spring:message code="question.needcopydraft" /></h2>
@@ -116,18 +116,18 @@
 			</div>
 			<div class="modal-footer">
 				<div class="forexport">
-					<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-					<a href="javascript:;" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+					<button type="button" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></button>	
+					<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>		
 				</div>
 				<div class="foremail">
 					<c:choose>
 						<c:when test="${runnermode == true}">
-							<a  class="btn btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
-							<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+							<button type="button" class="btn btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</button>	
+							<button type="button" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</button>		
 						</c:when>
 						<c:otherwise>
-							<a  class="btn btn-primary"" onclick="sendMailLink()"><spring:message code="label.OK" /></a>	
-							<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+							<button type="button" class="btn btn-primary"" onclick="sendMailLink()"><spring:message code="label.OK" /></button>	
+							<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>		
 						</c:otherwise>	
 					</c:choose>	
 				</div>
@@ -167,8 +167,7 @@
 				    }
 				    
 				    var data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
-					if ($('#captcha_token').length > 0) {
-						data["captcha_token"] =  $('#captcha_token').val();
+					if ($('#captcha_id').length > 0) {
 						data["captcha_id"] =  $('#captcha_id').val();
 						data["captcha_useaudio"] =  $('#captcha_useaudio').val();
 						data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
@@ -215,83 +214,85 @@
 				</c:otherwise>
 			</c:choose>
 		}
-		
-		$(document).ready(function(){
 
+		$("#copyme").click(function(){
 			if(!document.queryCommandSupported('copy'))
 			{
 				$("#copyme").hide();
 			}
-	
-			try 
-			{  
-				document.execCommand('copy');  
-			} 
-			catch(err) 
-			{  
+
+			try
+			{
+				var result = document.execCommand('copy');
+
+				if(result)
+				{
+					showSuccess('<spring:message code="message.copy.successCopyClipboardLink" />');
+				}
+			}
+			catch(err)
+			{
 				$("#copyme").hide();
 			}
-			  
 		});
 		
-			function sendMailLink()
-			{
-				
-				$("#ask-export-dialog").find(".validation-error").hide();
-				$("#ask-export-dialog").find(".validation-error-keep").hide();
-				
-				var mail = $("#ask-export-dialog").find("#email").val();
-				var linkDraft = '${url}';
-				
-				var challenge = getChallenge();
-			    var uresponse = getResponse($("#ask-export-dialog"));
-				
-				if (mail.trim().length == 0 || !validateEmail(mail))
-				{
-					$("#ask-email-dialog-error").show();
-					return;
-				}	
-				
-				if (uresponse.trim().length == 0)
-			    {
-					$("#ask-export-dialog").find("#runner-captcha-empty-error").show();
-			    	return;
-			    }
-				
-				var id = '${surveyID}';
-				
-				var data = {email : mail, link: linkDraft, id : id, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
-				if ($('#captcha_token').length > 0) {
-					data["captcha_token"] =  $('#captcha_token').val();
-					data["captcha_id"] =  $('#captcha_id').val();
-					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
-					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
-				}
-	
-				$.ajax({
-					type:'GET',
-					  url: "${contextpath}/runner/sendmaillink",
-					  data: data,
-					  cache: false,
-					  success: function( data ) {
+		function sendMailLink()
+		{
 
-						if (data == "success") {
-							$('#ask-export-dialog').modal('hide');
-							showSuccess(message_SuccessMailLinkDraft);
-						}
-						else if(data == "errorcaptcha")
-						{
-							$("#ask-export-dialog").find("#runner-captcha-error").show();
-						}
-						else {
-							showError(message_FailedMailLinkDraft);
-						}
-						
-						reloadCaptcha();
-					}
-				});				
-				
+			$("#ask-export-dialog").find(".validation-error").hide();
+			$("#ask-export-dialog").find(".validation-error-keep").hide();
+
+			var mail = $("#ask-export-dialog").find("#email").val();
+			var linkDraft = '${url}';
+
+			var challenge = getChallenge();
+			var uresponse = getResponse($("#ask-export-dialog"));
+
+			if (mail.trim().length == 0 || !validateEmail(mail))
+			{
+				$("#ask-email-dialog-error").show();
+				return;
 			}
+
+			if (uresponse.trim().length == 0)
+			{
+				$("#ask-export-dialog").find("#runner-captcha-empty-error").show();
+				return;
+			}
+
+			var id = '${surveyID}';
+
+			var data = {email : mail, link: linkDraft, id : id, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
+			if ($('#captcha_id').length > 0) {
+				data["captcha_id"] =  $('#captcha_id').val();
+				data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+				data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
+			}
+
+			$.ajax({
+				type:'GET',
+				  url: "${contextpath}/runner/sendmaillink",
+				  data: data,
+				  cache: false,
+				  success: function( data ) {
+
+					if (data == "success") {
+						$('#ask-export-dialog').modal('hide');
+						showSuccess(message_SuccessMailLinkDraft);
+					}
+					else if(data == "errorcaptcha")
+					{
+						$("#ask-export-dialog").find("#runner-captcha-error").show();
+					}
+					else {
+						showError(message_FailedMailLinkDraft);
+					}
+
+					reloadCaptcha();
+				}
+			});
+
+		}
 		</script>
 	
 	</div>

@@ -266,7 +266,7 @@
 		</td>
 		<td class="propertycontent">
 			<a data-bind="click: function() {showFormulaDialog(FormulaInputId())}" class="btn btn-default btn-sm" style="height: 30px; padding: 3px;"><span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin: 4px;">fx</span></a>
-			<textarea class="form-control" maxlength="40" data-bind="value: Value(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='update(this)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
+			<textarea class="form-control" maxlength="80" data-bind="value: Value(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='update(this)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
 		</td>
 	</tr>
 	<tr class="propertyrow">
@@ -427,7 +427,7 @@
 		</td>
 		<td class="propertycontent">
 			<a data-bind="click: function() {showFormulaDialog(FormulaInputId())}" class="btn btn-default btn-sm" style="height: 30px; padding: 3px;"><span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin: 4px;">fx</span></a>
-			<textarea class="form-control" data-label="Formula" maxlength="40" data-bind="value: Cell().formulaChildren(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='changeChildren(this, event)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
+			<textarea class="form-control" data-label="Formula" maxlength="80" data-bind="value: Cell().formulaChildren(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='changeChildren(this, event)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
 		</td>
 	</tr>
 	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 3 ? '' : 'display: none;'}">
@@ -668,7 +668,7 @@
 		</td>
 		<td class="propertycontent">
 			<a data-bind="click: function() {showFormulaDialog(FormulaInputId())}" class="btn btn-default btn-sm" style="height: 30px; padding: 3px;"><span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin: 4px;">fx</span></a>
-			<textarea class="form-control" data-label="Formula" maxlength="40" data-bind="value: Cell().formula(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='update(this)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
+			<textarea class="form-control" data-label="Formula" maxlength="80" data-bind="value: Cell().formula(), attr:{id: FormulaInputId()}" onfocus='markActiveProperty(this)' onblur='update(this)' rows="1" style="display: inline; width: 160px; height: 30px; vertical-align: top;"></textarea>
 		</td>
 	</tr>
 	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 3 ? '' : 'display: none;'}">

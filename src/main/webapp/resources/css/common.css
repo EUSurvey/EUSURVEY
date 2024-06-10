@@ -183,6 +183,30 @@ table {
 	float: right;
 }
 
+.unstyledbutton {
+	border: 0;
+	color: #337ab7;
+	padding: 0;
+	background-color: transparent;
+}
+
+.unstyledbuttonlanguage { 
+	border: 0;
+	background-color: transparent; 
+	
+	display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857143;
+    white-space: nowrap;    
+    font-family: sans-serif;
+    font-size: 13px;
+    
+    width: 100%;
+    text-align: left;
+}
+
 .iconbutton, .switchiconbutton {
 	color: #333;
     font-size: 18px;
@@ -471,11 +495,11 @@ select {
 	text-decoration: none;
 }
 
-.header a:visited, .header a:link, header a:active {
+.header a:visited, .header a:link, header a:active, .header button:visited, .header button:link, header button:active {
 	color: #fff;
 }
 
-.header a:hover {
+.header a:hover, .header button:hover {
 	color: #fff;
 }
 
@@ -1296,7 +1320,7 @@ legend {
 }
 
 .mandatory {
-	color:#f00; font-weight: bold; white-space: pre; margin-right: 2px;
+	color:#e00; font-weight: bold; white-space: pre; margin-right: 2px; font-size: 14px !important;
 }
 
 .optional {
@@ -1462,6 +1486,10 @@ legend {
 
 .delphi.elementwrapper {
 	position: relative;
+}
+
+.delphi.elementwrapper a:not(.btn) {
+	color: #2C679B;
 }
 
 .delphi .slider-div {
@@ -1650,7 +1678,7 @@ div.medianpa {
 }
 
 .delphi .area-header {
-	background-color: #8a8989;
+	background-color: #666;
     color: #fff;
     font-size: 100%;
 }
@@ -1724,7 +1752,9 @@ div.medianpa {
 }
 
 .dropdown-menu li > a:not(.menudropdownaction):hover,
-.dropdown-menu li > a:not(.menudropdownaction):focus
+.dropdown-menu li > a:not(.menudropdownaction):focus,
+.dropdown-menu li > button:not(.menudropdownaction):hover,
+.dropdown-menu li > button:not(.menudropdownaction):focus
 {
 	background-image: none !important;
 	background-color: #f5f5f5 !important;
@@ -1904,7 +1934,7 @@ div.medianpa {
 
 .limits {
 	font-style: italic;
-	color: #777;
+	color: #666;
 }
 
 .handsontable tableXXX {
@@ -2022,7 +2052,7 @@ div.draftDescription
 
 a.draftLink
 {
-	background-color: #0088cc;
+	background-color: #286090;
 	padding:20px;
 	margin:20px;
 	color:#FFF;
@@ -2790,4 +2820,8 @@ input[type=radio]:checked + .choice-button-label:hover{
 .choice-button-label span{
 	margin: 0;
 
+}
+
+.label-success {
+	background-color: #078707 !important;
 }

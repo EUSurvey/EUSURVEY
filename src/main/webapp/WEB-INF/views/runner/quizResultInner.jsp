@@ -19,7 +19,7 @@
 		<div class="quizresultsdiv">
 			<img src="${contextpath}/resources/images/logo_Eusurvey.png" style="width: 200px" /><br />
 		
-			<div class="surveytitle">${form.survey.title} - <spring:message code="label.Results" /></div><br />
+			<h1 class="surveytitle">${form.survey.title} - <spring:message code="label.Results" /></h1><br />
 			<div style="margin-bottom: 20px;">${form.survey.quizResultsMessage}</div>
 		
 			<c:if test="${forpdf == null && form.survey.downloadContribution}">
@@ -30,13 +30,17 @@
 			
 			<c:if test="${form.survey.showTotalScore}">
 		
-				<div style="font-size: 20px; text-decoration: underline;"><spring:message code="label.Summary" /></div>
+				<div style="font-size: 25px;"><spring:message code="label.Summary" />:</div>
 			
 				<div style="float: right; width: 130px; height: 130px; margin-top: 0px;">
 					
 				</div>
 				
 				<table class="scoretable" style="margin-left: 30px;">
+					<tr>
+						<th class="sr-only" colspan="2"><spring:message code="label.Score" /></th>
+						<th class="sr-only"><spring:message code="label.DelphiChartPie" /></th>
+					</tr>
 					<tr style="font-size: 130%;">
 						<td style="padding: 15px; color: #337ab7;"><b><spring:message code="label.YourScore" /></b></td>
 						<td style="padding: 15px; color: #337ab7;">${quiz.score}</td>
@@ -81,9 +85,13 @@
 					</div>
 					</c:if>				
 				
-					<div style="font-size: 20px; text-decoration: underline;"><spring:message code="label.ScoresByQuestion" /></div>
+					<div style="font-size: 25px;"><spring:message code="label.ScoresByQuestion" />:</div>
 					
 					<table style="margin-top: 20px; margin-bottom: 20px; table-layout:fixed; max-width: 100%">
+						<tr>
+							<th class="sr-only" colspan="2"><spring:message code="label.Answer" /></th>
+							<th class="sr-only"><spring:message code="label.Score" /></th>
+						</tr>
 						<c:forEach var="page" items="${form.getPages()}" varStatus="rowCounter">
 				 			<c:forEach var="element" items="${page}">
 				 				<c:choose>
@@ -93,17 +101,17 @@
 				 					<c:when test="${element.getType() == 'Section'}">
 				 						<c:set var="scoring" value="${quiz.getSectionScore(element.uniqueId)}" />
 						 				<c:if test='${!scoring.equals("0/0")}'>		
-					 						<tr>
-					 							<td colspan="4" style="padding-top: 20px">
-					 								<div class="sectiontitle section${element.getLevel()}">
-					 									<c:if test="${scoring != null}">
-						 									<div style="float: right; font-size: 14px">
-						 										<spring:message code="label.ScoreForThisSection" />: ${scoring}
-						 									</div>
-						 								</c:if>
-					 									${element.getStrippedTitle()}
-					 								</div>
+					 						<tr class="sectiontitle section${element.getLevel()}">
+					 							<td colspan="2" style="padding-top: 20px">
+													${element.getStrippedTitle()}
 					 							</td>
+												<td colspan="2" style="padding-top: 20px;">
+													<c:if test="${scoring != null}">
+														<div style="float: right; font-size: 14px !important">
+															<spring:message code="label.ScoreForThisSection" />: ${scoring}
+														</div>
+													</c:if>
+												</td>
 					 						</tr>
 				 						</c:if>
 				 					</c:when>
@@ -272,6 +280,9 @@
 			<hr />
 			<table style="margin-left: 20px;">
 				<tr>
+					<th class="sr-only" colspan="2"><spring:message code="label.ResultDetails" /></th>
+				</tr>
+				<tr>
 					<td style="padding-right: 10px"><spring:message code="label.Contact" /></td>
 					<td>
 						<c:choose>
@@ -387,16 +398,16 @@
 			<div class="modal-footer">
 				<c:choose>
 					<c:when test="${responsive != null}">
-						<a href="javascript:;" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-						<a href="javascript:;" style="text-decoration: none"  class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+						<button type="button" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</button>
+						<button type="button" style="text-decoration: none"  class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 					</c:when>
 					<c:when test="${runnermode == true}">
-						<a href="javascript:;" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-						<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+						<button type="button" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</button>
+						<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 					</c:when>
 					<c:otherwise>
-						<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-						<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>		
+						<button type="button" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></button>
+						<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></button>
 					</c:otherwise>	
 				</c:choose>				
 			</div>
@@ -438,8 +449,7 @@
 					    var uresponse = getResponse();
 					    
 					    var data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
-						if ($('#captcha_token').length > 0) {
-							data["captcha_token"] =  $('#captcha_token').val();
+						if ($('#captcha_id').length > 0) {
 							data["captcha_id"] =  $('#captcha_id').val();
 							data["captcha_useaudio"] =  $('#captcha_useaudio').val();
 							data["captcha_original_cookies"] = $('#captcha_original_cookies').val();

@@ -2069,10 +2069,16 @@ public class AnswerService extends BasicService {
 					+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY HOUR(ANSWER_SET_DATE) ORDER BY ANSWER_SET_DATE";
 			
 			sqlVotesBefore += " AND ANSWER_SET_DATE >= :today";
+		};
+		
+		Date lastDay = this.getNewestAnswerDate(surveyId);
+		if (lastDay == null) {
+			lastDay = new Date();
 		}
-
-		if (span.equalsIgnoreCase("quorumDays")) {
-			cal.setTime(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH));
+		lastDay = DateUtils.truncate(lastDay, Calendar.DAY_OF_MONTH);		
+		
+		if (span.equalsIgnoreCase("quorumDays")) {					
+			cal.setTime(DateUtils.truncate(lastDay, Calendar.DAY_OF_MONTH));
 			cal.add(Calendar.DATE, -10);
 		} else if (span.equalsIgnoreCase("quorumHours")){
 			cal.setTime(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY));
@@ -2125,8 +2131,6 @@ public class AnswerService extends BasicService {
 		}
 
 		if (span.equalsIgnoreCase("quorumDays")) {
-			Date lastDay = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
-			System.out.println(lastDay);
 			if (first == null || first.after(firstDay)) result.put(firstDay, 0);
 
 			if (last == null || last.before(lastDay)) result.put(lastDay, counter);
@@ -2333,7 +2337,7 @@ public class AnswerService extends BasicService {
 		return filter;
 	}
 
-	public String getDraftURL(AnswerSet answerSet, String draftid, User user) throws MessageException {
+	public String getDraftURL(AnswerSet answerSet, String draftid, boolean pwAuthenticated) throws MessageException {
 		Survey survey = answerSet.getSurvey();
 		String mode = survey.getIsDraft() ? "test" : "runner";
 		String invitationId = answerSet.getInvitationId();
@@ -2353,7 +2357,7 @@ public class AnswerService extends BasicService {
 		} else if (mode.equalsIgnoreCase("test")) {
 			url = serverPrefix + survey.getShortname() + "/management/test?draftid=" + draftid;
 		} else if (mode.equalsIgnoreCase("runner")) {
-			if (survey.getEcasSecurity() && user != null) {
+			if (survey.getEcasSecurity() && !pwAuthenticated) {
 				url = serverPrefix + "runner/" + survey.getUniqueId();
 			} else {
 				url = serverPrefix + "runner/" + survey.getUniqueId() + "?draftid=" + draftid;

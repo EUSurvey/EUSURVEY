@@ -196,7 +196,7 @@
 						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
 						<span id="download-survey-pdf-dialog-running" style="display: none">${form.getMessage("info.FileCreation")}</span>
 						<div id="download-survey-pdf-dialog-ready" style="display: none;">${form.getMessage("info.FileCreated")}</div>
-						<div id="download-survey-pdf-dialog-spinner" style="display: none; padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>
+						<div id="download-survey-pdf-dialog-spinner" style="display: none; padding-left: 5px;"><img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif" /></div>
 						<a style="display: none; white-space: nowrap; overflow-x: visible; text-decoration: none; padding-bottom: 6px; padding-left: 12px; padding-right: 12px; padding-top: 6px;" id="download-survey-pdf-dialog-result" target="_blank" class="btn btn-default" href="<c:url value="/pdf/survey/${form.survey.id}?lang=${form.language.code}&unique=${uniqueCode}"/>">${form.getMessage("label.Download")}</a>
 						<div id="download-survey-pdf-dialog-error" style="display: none">${form.getMessage("error.OperationFailed")}</div>
 					</div>
@@ -256,7 +256,7 @@
 		<div class="modal-dialog modal-sm">
     	<div class="modal-content">
 		<div class="modal-body" style="text-align: center; padding-top:30px;;">
-			<img src="${contextpath}/resources/images/ajax-loader.gif" />
+			<img alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif" />
 		</div>
 		</div>
 		</div>

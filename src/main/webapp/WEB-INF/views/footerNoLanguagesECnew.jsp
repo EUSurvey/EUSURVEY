@@ -17,7 +17,7 @@
 		<div class="container-fluid">
 			<div class="row">
 	        	<div class="col-md-4 ecl-footer__column2" style="padding-left: 15px; padding-top: 8px;">
-			        <h4 style="font-weight: bold">EUSurvey</h4>
+			        <div style="font-weight: bold; font-size: 18px; margin-top: 10px; margin-bottom: 10px;">EUSurvey</div>
 	            </div>
 	            <div class="col-md-4 ecl-footer__column2">
 	            	 <ul class="footer-items ecl-footer__menu ecl-list--inline">
@@ -52,7 +52,7 @@
 		<div class="container-fluid">
 	  		<div class="row">
 	        	<div class="col-md-4 ecl-footer__column">
-			        <h4 class="ecl-h4 ecl-footer__title">European Commission</h4>
+			        <div style="font-weight: bold; font-size: 18px; margin-top: 10px;" class="ecl-h4 ecl-footer__title">European Commission</div>
 	                <ul class="ecl-footer__menu">
 		            	<li class="ecl-footer__menu-item">
 		        	    	<a class="ecl-link ecl-footer__link" href="https://ec.europa.eu/commission/index_en">Commission and its priorities</a>
@@ -63,7 +63,7 @@
 	                </ul>
 	            </div>
 	            <div class="col-md-4 ecl-footer__column">
-		            <h4 class="ecl-h4 ecl-footer__title">Follow the European Commission</h4>
+		           	<div style="font-weight: bold; font-size: 18px; margin-top: 10px;" class="ecl-h4 ecl-footer__title">Follow the European Commission</div>
 	                <ul class="ecl-footer__menu ecl-list--inline ecl-footer__social-links" style="margin-left: -8px; padding-right: 80px;">
 	    				<li class="ecl-footer__menu-item">
 	              			<a class="ecl-link ecl-footer__link" href="https://www.facebook.com/EuropeanCommission"><span class="ecl-icon ecl-icon--facebook ecl-footer__social-icon"></span>Facebook</a>
@@ -77,7 +77,7 @@
 	               	</ul>
 	            </div>
 	            <div class="col-md-4 ecl-footer__column">
-	                <h4 class="ecl-h4 ecl-footer__title">European Union</h4>
+	                <div style="font-weight: bold; font-size: 18px; margin-top: 10px;" class="ecl-h4 ecl-footer__title">European Union</div>
 	                <ul class="ecl-footer__menu">
 	                	<li class="ecl-footer__menu-item">
 	          				<a class="ecl-link ecl-footer__link ecl-link--external" href="https://europa.eu/european-union/about-eu/institutions-bodies_en">EU institutions</a>

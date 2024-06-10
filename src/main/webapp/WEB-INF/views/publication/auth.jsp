@@ -35,19 +35,17 @@
 		
 		<div class="login">
 		 	<form:form action="${shortname}" method="post" >
-		 		<fieldset>			 				 	
-		 			<p>
-						<label for="p_password"><spring:message code="label.Password" /></label>
-						<div class="controls">
-							<div class="input-prepend">
-								<span class="add-on"><i class="icon-lock"></i></span><input class="span2" id="p_password" name="publicationpassword" autocomplete="off" type="password" style="width: 300px;" />
-							</div>
-						</div>						
-					</p>
-					<div style="margin-top: 30px;">
-						<input class="btn btn-default" type="submit" value="<spring:message code="label.DoLogin" />"/>
+				<p>
+					<label for="p_password"><spring:message code="label.Password" /></label>
+					<div class="controls">
+						<div class="input-prepend">
+							<span class="add-on"><i class="icon-lock"></i></span><input class="span2" id="p_password" name="publicationpassword" autocomplete="off" type="password" style="width: 300px;" />
+						</div>
 					</div>
-		 		</fieldset>
+				</p>
+				<div style="margin-top: 30px;">
+					<input class="btn btn-default" type="submit" value="<spring:message code="label.DoLogin" />"/>
+				</div>
 			</form:form>
 		</div>	
 		

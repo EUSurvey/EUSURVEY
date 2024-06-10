@@ -403,9 +403,11 @@ function removeVisibility(triggerid, selectedquestionid)
 		
 		var parentid = $("input[data-cellid='" + triggerid + "']").parent().closest(".survey-element").attr("data-id");
 		var parent = _elements[parentid];		
-		var answerindex = $(trigger).index() - 1;
-		var questionindex = $(trigger).closest("tr").index();
-		var index = answerindex + (questionindex * (parent.columns()-1));
+		//var answerindex = $(trigger).index() - 1;
+		//var questionindex = $(trigger).closest("tr").index();
+		//var index = answerindex + (questionindex * (parent.columns()-1));
+		
+		var index = parseInt($(trigger).attr("data-originalposition"));
 		
 		while (parent.dependentElementsStrings().length <= index)
 		{

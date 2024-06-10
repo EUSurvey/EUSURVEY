@@ -39,7 +39,7 @@
 		${notificationemailtext}
 	</c:if>
 	
-	<c:if test="${opcredirection != null}">
+	<c:if test="${opcredirection != null && opcredirection.length() > 0}">
 		<br /><br />
 		<c:choose>
 			<c:when test="${responsive != null}">
@@ -56,9 +56,9 @@
 	<c:if test="${!form.survey.isEVote}">
 		<div id="contribution-id-save-hint" style="color: #777; margin: 6px 0 0px 0;">
 			<spring:message code="label.ContributionSavingHint" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
-			<a href="javascript:;" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText(uniqueCode);" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
+			<button type="button" class="unstyledbutton" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText(uniqueCode);" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
 				<i class="glyphicon glyphicon-copy copy-icon"></i>
-			</a>
+			</button>
 			<br />
 			<spring:message code="label.ContributionSavingExplanation" />
 		</div>
@@ -178,16 +178,16 @@
 	<div class="modal-footer">
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-				<a href="javascript:;" style="text-decoration: none" class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+				<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</button>
+				<button type="button" style="text-decoration: none" class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 			</c:when>
 			<c:when test="${runnermode == true}">
-				<a href="javascript:;" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-				<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+				<button type="button" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>
+				<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 			</c:when>
 			<c:otherwise>
-				<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-				<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>		
+				<button type="button" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>
+				<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></button>
 			</c:otherwise>	
 		</c:choose>				
 	</div>
@@ -228,8 +228,7 @@
 			    }
 
 				var data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
-				if ($('#captcha_token').length > 0) {
-					data["captcha_token"] =  $('#captcha_token').val();
+				if ($('#captcha_id').length > 0) {
 					data["captcha_id"] =  $('#captcha_id').val();
 					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
 					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();

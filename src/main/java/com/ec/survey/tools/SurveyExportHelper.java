@@ -265,11 +265,11 @@ public class SurveyExportHelper {
 			List<String> writtenFiles = new ArrayList<>();
 			
 			 try {
-				URL workerurl = new URL(host + "info/version");
+				URL url = new URL(host + "info/version");
 				String eusurveyversion = "unknown";
 				
 				try {                   
-					URLConnection wc = workerurl.openConnection();
+					URLConnection wc = url.openConnection();
 					BufferedReader in = new BufferedReader(new InputStreamReader(wc.getInputStream()));
 					String inputLine;
 					StringBuilder result = new StringBuilder();

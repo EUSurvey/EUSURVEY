@@ -171,8 +171,8 @@
 			var f = responseJSON.files[i];
 			var div = document.createElement("div");
 			
-			var del = document.createElement("a");
-			$(del).attr("href", "#").attr("data-toggle","tooltip").attr("title","${form.getMessage("label.RemoveUploadedFile")}").attr("aria-label",f).attr(
+			var del = document.createElement("button");
+			$(del).attr("type", "button").addClass("unstyledbutton").attr("data-toggle","tooltip").attr("title","${form.getMessage("label.RemoveUploadedFile")}").attr("aria-label",f).attr(
 					"onclick",
 					"deleteFile('" + $(element).attr('data-id') + "','"
 							+ $("#uniqueCode").val() + "','" + f + "', this);return false;");

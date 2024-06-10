@@ -11,12 +11,12 @@
 	<properties>
 		<java-version>11</java-version>
 		<org.springframework-version>5.3.20</org.springframework-version>
-		<org.springframework.security-version>5.7.1</org.springframework.security-version>
+		<org.springframework.security-version>5.7.5</org.springframework.security-version>
 		<org.aspectj-version>1.8.8</org.aspectj-version>
 		<org.slf4j-version>1.7.5</org.slf4j-version>
 		<version.number>444</version.number>
 		<svnName>1.1.9</svnName>
-		<camel.version>2.22.1</camel.version>
+		<camel.version>2.22.3</camel.version>
 		<svn.buildNumber.doUpdate>false</svn.buildNumber.doUpdate>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5.5</version>
+			<version>4.5.13</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20180130</version>
+			<version>20230227</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>
@@ -91,13 +91,13 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.54</version>
+			<version>1.66</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.8.3</version>
+			<version>1.14.2</version>
 		</dependency>
 
 		<dependency>
@@ -179,7 +179,7 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.3.3</version>
+			<version>1.5</version>
 		</dependency>
 
 		<dependency>
@@ -191,7 +191,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
-			<version>1.18</version>
+			<version>1.19</version>
 		</dependency>
 
 		<dependency>
@@ -203,7 +203,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
+			<version>2.7</version>
 		</dependency>
 
 		<dependency>
@@ -415,7 +415,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.26</version>
+			<version>8.0.28</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -537,19 +537,19 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.9.10</version>
+			<version>2.12.6</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.10.8</version>
+			<version>2.12.6.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.8</version>
+			<version>1.4.9</version>
 		</dependency>
 
 		<dependency>

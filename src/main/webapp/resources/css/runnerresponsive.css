@@ -191,7 +191,7 @@
 }
 
 .questionhelp {
-	color: #A6A6A6;
+	color: #666;
 }
 
 .limits {
@@ -584,7 +584,7 @@ legend {
 }
 
 .progress-bar-success {
-   background-color: #009200;
+   background-color: #39853c;
 }
 
 #progressBarLabel {

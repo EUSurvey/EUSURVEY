@@ -368,7 +368,14 @@
 
 		function addUserByEmail()
 		{
-			let emails =  $("#add-user-email").val().split(";").map(s => s.trim());
+			let mailInput = $("#add-user-email").val();
+			if (mailInput.length <= 0) {
+				$("#invalidEmailsIcon").show();
+				$("#invalidEmailsText").text(atLestOneMail);
+				return;
+			}
+
+			let emails = mailInput.split(";").map(s => s.trim());
 
 			$("#add-wait-animation").show();
 			$("#add-form-emails").val(emails);
@@ -422,10 +429,21 @@
 		}
 
 		function searchEmailUser(order) {
+			let mailInput = $("#add-user-email").val();
+			if (mailInput.length <= 0) {
+				$("#invalidEmailsIcon").show();
+				$("#invalidEmailsText").text(atLestOneMail);
+				return;
+			}
 
-			let allMails = $("#add-user-email").val().split(";").map(s => s.trim());
+			let allMails = mailInput.split(";").map(s => s.trim());
 			let validMails = allMails.filter(mail => validateEmail(mail));
 			let invalidMails = allMails.filter(mail => !validateEmail(mail) && mail != "");
+			
+			if (invalidMails.length > 0) {
+				setEmailCheckFeedback(0, invalidMails, 0);
+				return;
+			}
 
 			$.ajax({
 				type:'GET',
@@ -436,6 +454,7 @@
 				success: function( foundMails ) {
 					let notFoundMails = [];
 					for (let i = 0; i < validMails.length; i++) {
+						if (i > 4) break; // we only return at most 5 users
 						if(!foundMails.includes(validMails[i])) {
 							notFoundMails.push(validMails[i]);
 						}

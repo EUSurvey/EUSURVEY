@@ -422,7 +422,7 @@ public class XmlExportCreator extends ExportCreator {
 		FilesByType<String> explanationFilesToExport = new FilesByType<>();
 
 		HashMap<String, Object> values = new HashMap<>();
-				
+		
 		ResultFilter origFilter = answerService.initialize(export.getResultFilter());
 		ResultFilter filterWithMeta = export == null ? null : origFilter.copy();
 
@@ -457,7 +457,7 @@ public class XmlExportCreator extends ExportCreator {
 		}
 
 		filterWithMeta.setExportedQuestions(filterWithMeta.getVisibleQuestions());
-
+		
 		// for quiz surveys we need the original answerSet instances in order to compute the scores
 		List<List<String>> answersets = form.getSurvey().getIsQuiz() ? null : reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
 				true, true, true, true, false);
@@ -779,7 +779,6 @@ public class XmlExportCreator extends ExportCreator {
 			} else {
 				writer.writeAttribute("user", answerSet == null ? row.get(rowPosMap.get("user")): answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "");
 			}
-
 		if (meta || filter == null || filter.exported("invitation"))
 			writer.writeAttribute("invitation", answerSet == null ? row.get(rowPosMap.get("invitation"))
 					: answerSet.getInvitationId() != null ? answerSet.getInvitationId() : "");
@@ -1200,7 +1199,8 @@ public class XmlExportCreator extends ExportCreator {
 						
 			writer.writeEndElement(); // Score
 		}
-
+		
+		
 		writer.writeEndElement(); // AnswerSet
 	}
 

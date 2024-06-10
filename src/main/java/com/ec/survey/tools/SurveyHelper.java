@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -3213,6 +3214,9 @@ public class SurveyHelper {
 				DeletePossibleAnswers(answers, originalAnswers, item.getPossibleAnswers());
 			}
 			getPossibleAnswers(answers, originalAnswers, uniqueIDs, null, shortnamesForAnswers, null, null, null, null, item.getPossibleAnswers(), survey, log220, new StringBuilder(), null);
+		} else if (item.getPossibleAnswers() != null && !item.getPossibleAnswers().isEmpty()) {
+			// this means the type was SingleChoice/MultipleChoice before -> we need to delete the PossibleAnswers
+			DeletePossibleAnswers(new String[0], new String[0], item.getPossibleAnswers());		
 		}
 
 		if (log220 && oldValues.length() > 0) {

@@ -700,14 +700,13 @@ public class AttendeeService extends BasicService {
 		for (AttributeName attributeName : attributeNames) {
 			List<String> currentList = new ArrayList<>();
 			
-			if (attributeName.getOwnerId() != -1) {			
+			if (attributeName.getOwnerId() != -1) {
 				Query query = session
 						.createQuery("SELECT a.value FROM Attribute a WHERE a.attributeName.id = :id ORDER BY a.value ASC")
 						.setInteger("id", attributeName.getId());
 				@SuppressWarnings("unchecked")
 				List<String> attributes = query.list();
-	
-				
+		
 				for (String attribute : attributes) {
 					if (!currentList.contains(attribute))
 						currentList.add(attribute);

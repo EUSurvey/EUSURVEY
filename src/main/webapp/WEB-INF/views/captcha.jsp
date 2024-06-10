@@ -93,12 +93,10 @@
 			            },
 			            success: function (data, textStatus, request) {
 			            	EuCaptchaCookies = getCaptchaUrl.getResponseHeader("original-cookie");
-			            	EuCaptchaToken = getCaptchaUrl.getResponseHeader("x-jwtString");  //"token");
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
 			                $("#captchaImg").attr("captchaId", jsonData.captchaId);
 			                $("#audioCaptcha").attr("src", "data:audio/wav;base64," + jsonData.audioCaptcha);
-			                $('#captcha_token').val(EuCaptchaToken);
 			                $('#captcha_id').val(jsonData.captchaId);
 			                $('#captcha_useaudio').val(false);
 			                $('#captcha_original_cookies').val(EuCaptchaCookies);
@@ -125,18 +123,15 @@
 			            beforeSend: function (xhr) {
 			                xhr.setRequestHeader("Accept", "application/json");
 			                xhr.setRequestHeader("Content-Type", "application/json");
-			                xhr.setRequestHeader("x-jwtString", EuCaptchaToken);
 			                xhr.setRequestHeader("original-cookie", EuCaptchaCookies);
 			                xhr.withCredentials = true;
 			            },
 			            success: function (data) {
-			                EuCaptchaToken = reloadCaptchaUrl.getResponseHeader("x-jwtString"); 
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
 			                $("#captchaImg").attr("captchaId", jsonData.captchaId);
 			                $("#audioCaptcha").attr("src", "data:audio/wav;base64," + jsonData.audioCaptcha);
 			                $("#internal_captcha_response").val("");
-			                $('#captcha_token').val(EuCaptchaToken);
 			                $('#captcha_id').val(jsonData.captchaId);
 			                $('#captcha_useaudio').val(false);
 			                useAudio = false;

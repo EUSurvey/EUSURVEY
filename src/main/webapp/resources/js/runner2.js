@@ -926,6 +926,7 @@ function getDelphiQuestionUid(element)
 }
 
 function sortDelphiTable(element, direction) {
+	$('[data-toggle="tooltip"]').tooltip("hide");
 	var surveyElement = $(element).closest(".survey-element");
 	var uid = $(surveyElement).attr("data-uid");
 	var viewModel = modelsForDelphiQuestions[uid];
@@ -1333,10 +1334,10 @@ function delphiUpdateContinued(div, successCallback) {
 			} else {
 				updateDelphiElement(div, successCallback);
 				if (!dialogShown) {
-					if ($(div).find("a[data-type='delphireturntostart']").length > 0) {
-						$(div).find("a[data-type='delphireturntostart']").focus();
-					} else if ($(div).find("a[data-type='delphitonextquestion']:visible").length > 0) {
-						$(div).find("a[data-type='delphitonextquestion']").focus();
+					if ($(div).find("button[data-type='delphireturntostart']").length > 0) {
+						$(div).find("button[data-type='delphireturntostart']").focus();
+					} else if ($(div).find("button[data-type='delphitonextquestion']:visible").length > 0) {
+						$(div).find("button[data-type='delphitonextquestion']").focus();
 					} else if ($('#btnNext').is(":visible")) {
 						$('#btnNext').focus();
 					} else {
@@ -1358,9 +1359,9 @@ function appendShowContributionLinkDialogToSidebar(div, data) {
 			.appendTo(".contact-and-pdf__delphi-section");
 			
 		if ($(div).find("a[data-type='delphireturntostart']").length > 0) {
-			showContributionLinkDialog($(div).find("a[data-type='delphireturntostart']"), data.link);
+			showContributionLinkDialog($(div).find("button[data-type='delphireturntostart']"), data.link);
 		} else {
-			showContributionLinkDialog($(div).find("a[data-type='delphitonextquestion']"), data.link);
+			showContributionLinkDialog($(div).find("button[data-type='delphitonextquestion']"), data.link);
 		}
 	}
 }
@@ -1593,9 +1594,15 @@ function likeDelphiCommentOrExplanationFromRunner(image, isExplanation) {
 function likeDelphiComment(image, viewModel, increaseLike, errorCallback, successCallback) {
 	const actions = $(image).parent().parent().find(".delphi-comment__actions");
 
-	let commentId = $(image).closest(".delphi-comment").attr("data-id");
-
+	const commentId = $(image).closest(".delphi-comment").attr("data-id");
+	const commentUid = $(image).closest(".delphi-comment").attr("data-uid");
 	const answerSetUniqueCode = $("#uniqueCode").val();
+
+	if (commentUid === answerSetUniqueCode) {
+		//cant like comments/ explanations of own answer sets
+		showInfo(likeOwnCommentOrExplanation);
+		return;
+	}
 
 	$.ajax({
 		type: "POST",
@@ -1629,7 +1636,15 @@ function likeDelphiExplanation(image, viewModel, increaseLike, errorCallback, su
 	const explanation = $(image).closest("td");
 
 	const explanationId = $(image).closest(".delphi-explanation").attr("data-id");
+	const explanationUid = $(image).closest(".delphi-explanation").attr("data-uid");
 	const answerSetUniqueCode = $("#uniqueCode").val();
+
+	if (explanationUid === answerSetUniqueCode) {
+		//cant like comments/ explanations of own answer sets
+		showInfo(likeOwnCommentOrExplanation);
+		return;
+	}
+
 
 	$.ajax({
 		type: "POST",

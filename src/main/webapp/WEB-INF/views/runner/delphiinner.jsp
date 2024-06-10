@@ -110,7 +110,7 @@
 		position: absolute;
 		width: 100%;
 		padding-top: 45px;
-		color: #aaa;
+		color: #666;
 	}
 
 	.no-graph-image .glyphicon {
@@ -157,7 +157,7 @@
 					<label for="langSelectorRunner">
 						<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Languages")}</div>	
 					</label>
-					<select id="langSelectorRunner" name="langSelectorRunner" onchange="changeLanguageSelectOption('${mode}')">	
+					<select id="langSelectorRunner" name="langSelectorRunner" oninput="changeLanguageSelectOption('${mode}')">
 					<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
 						<c:choose>
 							<c:when test="${lang.value.code == form.language.code}">
@@ -270,7 +270,7 @@
 							<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid, 'data-question-uid': uid}">
 								<div class="question-title">
 									<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
-									<a href="javascript:;" style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}" aria-label="${form.getMessage("tooltip.ExpandChart")}"></a>
+									<button type="button" style="display:none;" class="unstyledbutton glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}" aria-label="${form.getMessage("tooltip.ExpandChart")}"></button>
 								</div>
 	
 								<div class="no-graph-image">
@@ -360,8 +360,8 @@
 					<spring:message code="message.DelphiConfirmDeleteComment" />
 				</div>
 				<div class="modal-footer">
-					<a href="javascript:;" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
-					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Cancel" /></a>
+					<button type="button" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></button>
+					<button type="button" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Cancel" /></button>
 				</div>
 			</div>
 		</div>
@@ -381,6 +381,7 @@
 			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
 			const uniqueCode = $('#uniqueCode').val();
 			loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel);
+			$('[data-toggle="tooltip"]').tooltip("hide");
 		}
 
 		function changeLanguageSelectOption(mode) {
@@ -623,5 +624,9 @@
 			ko.applyBindings(answersTableViewModel, $('.answers-table-modal').find('.modal-body')[0]);
 
 			loadSectionsAndQuestions();
+		});
+
+		$(window).scroll(function() {
+			$('[data-toggle="tooltip"]').tooltip("hide");
 		});
 	</script>

@@ -8,13 +8,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.model.survey.*;
 import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
@@ -48,10 +51,6 @@ import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.administration.User;
-import com.ec.survey.model.survey.Element;
-import com.ec.survey.model.survey.Matrix;
-import com.ec.survey.model.survey.RatingQuestion;
-import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ActivityService;
 import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.AnswerExplanationService;
@@ -157,6 +156,7 @@ public class BasicController implements BeanFactoryAware {
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${captcha.serverprefix}") String captchaserverprefix;
 	public @Value("${captcha.serverprefixtarget}") String captchaserverprefixtarget;
+	public @Value("${captcha.token:#{null}}") String captchatoken;
 	public @Value("${ui.enableresponsive}") String enableresponsive;
 	private @Value("${ecaslogout}") String ecaslogout;
 	public @Value("${showecas}") String showecas;
@@ -518,6 +518,36 @@ public class BasicController implements BeanFactoryAware {
 		}
 	}
 
+	public boolean parseEVoteSurvey(Survey survey) {
+		boolean passedSC = false;
+		PossibleAnswer linkedSCAnswer = null;
+		boolean passedMC = true;
+
+		for(Question q : survey.getQuestions()) {
+			if (q instanceof SingleChoiceQuestion) {
+				List<PossibleAnswer> pa = ((SingleChoiceQuestion) q).getPossibleAnswers();
+				for (PossibleAnswer answer : pa) {
+					if (answer.getTitle().equals("I want to vote")) {
+						passedSC = true;
+						linkedSCAnswer = answer;
+						break;
+					}
+				}
+			} else if (q instanceof MultipleChoiceQuestion) {
+				MultipleChoiceQuestion mq = ((MultipleChoiceQuestion) q);
+				if (passedSC && !(mq.getTriggers()).equals(linkedSCAnswer.getId() + ";")) {
+					passedMC = false;
+				}
+			}
+		}
+
+		if (passedSC && passedMC) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	public ModelAndView basicwelcome(HttpServletRequest request) {
 		ModelAndView model = new ModelAndView("home/welcome");
 		model.addObject("page", "welcome");
@@ -597,23 +627,11 @@ public class BasicController implements BeanFactoryAware {
 						str = request.getParameter("g-recaptcha-response");
 					}
 					
-					String token = request.getParameter("captcha_token");
 					String id = request.getParameter("captcha_id");
 					String useaudio = request.getParameter("captcha_useaudio");
 					String originalcookies = request.getParameter("captcha_original_cookies");
-					
-					if (token == null) {
-						String challenge = request.getParameter("recaptcha_challenge_field");
-						if (challenge != null && challenge.contains("|"))
-						{
-							String[] pair = challenge.split("\\|");
-							id = pair[0];
-							token = pair[1];
-							useaudio = pair[2];
-						}
-					}
-					
-					if (str == null || id == null || token == null) {
+										
+					if (str == null || id == null) {
 						return false;
 					}
 					
@@ -621,7 +639,7 @@ public class BasicController implements BeanFactoryAware {
 					URL url = new URL(captchaserverprefixtarget + "validateCaptcha/" + id);
 					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 					conn.setRequestMethod("POST");
-					conn.setRequestProperty("x-jwtString", token);
+					conn.setRequestProperty("xJwtString", captchatoken);
 					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 					
 					String[] cookies = originalcookies.split("#");			

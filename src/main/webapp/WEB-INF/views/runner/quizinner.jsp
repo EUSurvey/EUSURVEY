@@ -19,7 +19,7 @@
 					<label for="langSelectorRunner">
 						<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Languages")}</div>	
 					</label>
-					<select id="langSelectorRunner" name="langSelectorRunner" onchange="changeLanguageSelectOption('${mode}')">	
+					<select id="langSelectorRunner" name="langSelectorRunner" oninput="changeLanguageSelectOption('${mode}')">
 					<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
 						<c:choose>
 							<c:when test="${lang.value.code == form.language.code}">
@@ -72,7 +72,7 @@
 				</div>
 			</c:if>
 		
-			<div class="surveytitle">${form.survey.title}</div><br />
+			<h1 class="surveytitle">${form.survey.title}</h1><br />
 			
 			<div style="margin-bottom: 20px;">${form.survey.quizWelcomeMessage}</div>
 			

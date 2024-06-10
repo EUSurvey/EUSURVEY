@@ -49,6 +49,17 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domainWorker;
+	
+	@Transactional
+	public void step114() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		session.createSQLQuery("UPDATE WEBSERVICETASK SET WST_XMLONLY = 0 WHERE WST_XMLONLY is NULL;").executeUpdate();
+		
+		status.setDbversion(114);
+		session.saveOrUpdate(status);
+	}
 		
 	@Transactional
 	public void step113() {

@@ -813,7 +813,7 @@ public class HomeController extends BasicController {
 					taskExecutor.execute(export);
 				} else {				
 					AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
-					export.init(answerSet, email, sender, serverPrefix);
+					export.init(answerSet, email, sender, serverPrefix, request.getSession().getAttribute("passwordauthentication") != null);
 					taskExecutor.execute(export);
 				}
 			} else {

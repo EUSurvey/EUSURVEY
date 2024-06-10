@@ -23,6 +23,7 @@ import com.ec.survey.model.evote.eVoteResults;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ECService;
+import com.ec.survey.service.MailService;
 import com.ec.survey.service.SurveyException;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.service.mapping.PaginationMapper;
@@ -151,7 +152,7 @@ public class ManagementController extends BasicController {
 		if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 			result.addObject("participantsemail", answerSet.getResponderEmail());
 		}
-
+	
 		result.addObject("isthankspage", true);
 		result.addObject("runnermode", true);
 		result.addObject(new Form(resources, surveyService.getLanguage(lang),
@@ -159,7 +160,14 @@ public class ManagementController extends BasicController {
 		result.addObject("text", survey.getConfirmationPage());
 		if (answerSet.getSurvey().getConfirmationPageLink() != null && survey.getConfirmationPageLink()
 				&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
-			result.addObject("redirect", survey.getFinalConfirmationLink(lang));
+	
+			//only needed to compute FinalConfirmationLink
+			Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+					translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+			form.setSurvey(survey);
+			form.getAnswerSets().add(answerSet);
+			
+			result.addObject("redirect", form.getFinalConfirmationLink(lang, answerSet));
 		}
 		result.addObject("surveyprefix", survey.getId());
 
@@ -2507,6 +2515,13 @@ public class ManagementController extends BasicController {
 			result.addObject("saved", true);
 		}
 
+		if (form.getSurvey().getIsEVote()) {
+			boolean invalidEVote = parseEVoteSurvey(form.getSurvey());
+			if (invalidEVote) {
+				result.addObject("invalidevote", true);
+			}
+		}
+
 		return result;
 	}
 
@@ -2549,6 +2564,7 @@ public class ManagementController extends BasicController {
 			request.getSession().setAttribute("surveyeditorsaved", survey.getId());
 			return new ModelAndView("redirect:/" + editorredirect);
 		}
+
 		return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit?saved=true");
 	}
 
@@ -3029,16 +3045,14 @@ public class ManagementController extends BasicController {
 				translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
 		sessionService.setFormStartDate(request, form, uniqueCode);
 		form.setSurvey(survey);
-
-		if(!survey.getConfirmationPageLink()){
-			form.getAnswerSets().add(answerSet);
-		}
-
+		
+		form.getAnswerSets().add(answerSet);
+		
 		result.addObject(form);
 
 		if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
 				&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
-			result.addObject("redirect", survey.getFinalConfirmationLink(lang));
+			result.addObject("redirect", form.getFinalConfirmationLink(lang, answerSet));
 		}
 		result.addObject("surveyprefix", survey.getId());
 		return result;
@@ -5041,6 +5055,14 @@ public class ManagementController extends BasicController {
 	public ModelAndView addUserEmail(String shortname, String emails, HttpServletRequest request, Locale locale)
 			throws Exception {
 
+		if (emails.isEmpty()) {
+			ModelAndView result = access(shortname, request, locale);
+			String message = resources.getMessage("label.AtLeastOneMail", null,
+					"Please enter at least one email address", locale);
+			result.addObject(Constants.MESSAGE, message);
+			return result;
+		}
+
 		List<User> usersToAdd = new ArrayList<>();
 		String[] splittedEmails = Arrays.stream(emails.split(",")).map(String::trim).toArray(String[]::new);
 		boolean resultsPrivilege = request.getParameter("resultMode") != null && request.getParameter("resultMode").equalsIgnoreCase("true");
@@ -5055,8 +5077,12 @@ public class ManagementController extends BasicController {
 		}
 
 		try {
+			splittedEmails = new HashSet<String>(Arrays.asList(splittedEmails)).toArray(new String[0]);
 			for(String email : splittedEmails) {
-				usersToAdd.addAll(administrationService.getUserLoginsByEmail(email));
+				//validate mail with same regex as in frontend
+				if (MailService.isValidEmailAddress(email)) {
+					usersToAdd.addAll(administrationService.getUserLoginsByEmail(email, 5));
+				}
 			}
 		} catch (Exception e) {
 			// ignore
@@ -5064,9 +5090,13 @@ public class ManagementController extends BasicController {
 
 		if(usersToAdd == null || usersToAdd.size() <= 0) {
 			ModelAndView result = access(shortname, request, locale);
-			result.addObject(Constants.MESSAGE, "No Users found.");
+			String message = resources.getMessage("label.NoUsersFound", null,
+					"No Users found", locale);
+			result.addObject(Constants.MESSAGE, message);
 			return result;
 		}
+		
+		int counter = 0;
 
 		for (User user : usersToAdd) {
 			if (resultsPrivilege) {
@@ -5114,8 +5144,12 @@ public class ManagementController extends BasicController {
 				newAccess.setSurvey(form.getSurvey());
 				newAccess.setUser(user);
 				surveyService.saveAccess(newAccess);
+				
 				activityService.log(ActivityRegistry.ID_DELEGATE_MANAGER_ADD, null, user.getName() + " - no privileges",
-						sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
+				sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
+				
+				counter++;
+				if (counter > 4) break;
 			}
 		}
 		return access(shortname, request, locale);

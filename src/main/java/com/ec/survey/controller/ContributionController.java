@@ -481,16 +481,16 @@ public class ContributionController extends BasicController {
 
 				ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, oldAnswerSet.getUniqueCode());
 
-				if (origsurvey.getIsOPC()) {
-					result.addObject("opcredirection",
-							origsurvey.getFinalConfirmationLink(opcredirect, oldAnswerSet.getLanguageCode()));
-				}
-
 				result.addObject("runnermode", true);
 
 				Form form = new Form(resources, surveyService.getLanguage(oldAnswerSet.getLanguageCode()),
 						translationService.getActiveTranslationsForSurvey(origsurvey.getId()), contextpath);
 				form.setSurvey(origsurvey);
+				
+				if (origsurvey.getIsOPC()) {
+					result.addObject("opcredirection",
+							form.getFinalConfirmationLink(opcredirect, oldAnswerSet.getLanguageCode(), oldAnswerSet));
+				}
 
 				if(!origsurvey.getConfirmationPageLink()){
 					form.getAnswerSets().add(oldAnswerSet);
@@ -501,7 +501,7 @@ public class ContributionController extends BasicController {
 
 				if (origsurvey.getConfirmationPageLink() != null && origsurvey.getConfirmationPageLink()
 						&& origsurvey.getConfirmationLink() != null && origsurvey.getConfirmationLink().length() > 0) {
-					result.addObject("redirect", origsurvey.getFinalConfirmationLink(oldAnswerSet.getLanguageCode()));
+					result.addObject("redirect", form.getFinalConfirmationLink(oldAnswerSet.getLanguageCode(), oldAnswerSet));
 				} else if (origsurvey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null
 						&& oldAnswerSet.getInvitationId() == null) {
 					result.addObject("asklogout", true);

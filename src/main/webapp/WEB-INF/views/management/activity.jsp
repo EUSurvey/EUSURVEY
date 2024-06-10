@@ -263,7 +263,7 @@
 													<option value="${property}"><spring:message code="label.MainLanguage" /></option>
 												</c:when>
 												<c:otherwise>
-													<option value="${property}"><spring:message code="label.${property}" /></option>
+													<option value="${property}"><spring:message code="label.${property}" text="not found: ${property}" /></option>
 												</c:otherwise>
 											</c:choose>	
 										</c:forEach>			

@@ -49,15 +49,17 @@ public class AnswerExecutor implements Runnable {
 	private String email;
 	private String from;
 	private String host;
+	private boolean pwAuthenticated;
 	
 	private static final Logger logger = Logger.getLogger(AnswerExecutor.class);
 	
-	public void init(AnswerSet answerSet, String email, String from, String host)
+	public void init(AnswerSet answerSet, String email, String from, String host, boolean pwAuthenticated)
 	{
 		this.answerSet = answerSet;
 		this.email = email;
 		this.from = from;
 		this.host = host;
+		this.pwAuthenticated = pwAuthenticated;
 	}
 	
 	public void init(AnswerSet answerSet)
@@ -90,7 +92,7 @@ public class AnswerExecutor implements Runnable {
 			
 				if (answerSet.getIsDraft())
 				{
-					String link = answerService.getDraftURL(answerSet, draftid, null);
+					String link = answerService.getDraftURL(answerSet, draftid, pwAuthenticated);
 					body += "<br /><br />If you want to continue working on your draft contribution, please click on the link below.<br />";
 					body += "<a href=\"" + link + "\">" + link + "</a>";
 				}

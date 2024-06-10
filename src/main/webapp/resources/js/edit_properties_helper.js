@@ -666,7 +666,7 @@ function getVisibilityRow(multiselection, isVisible = true)
 				} else {
 					//triggered by a matrix cell
 					var ids = id.split("|");
-					var td = $("th[id=" + ids[1] + "]").first();
+					var td = $("td[id=" + ids[1] + "]").first();
 					var text = strip_tags($(td).find("textarea[name^='text']").text());
 					var pashortname = $(td).find("input[name^='shortname']").val()
 					
@@ -2414,7 +2414,7 @@ function edit(span)
 				
 				$(this).find("textarea[name^='answer']").each(function(){
 					var answerid = $(this).attr("data-id");
-					var answershortname = $(this).prevAll("input[name^='pashortname']").first().val();
+					var answershortname = $(this).parent().prevAll("input[name^='pashortname']").first().val();
 					if (triggers.indexOf(answerid) > -1)
 					{
 						$(div).append("<input type='checkbox' checked='checked' style='margin-left: 10px' value='" + answerid + "' /> <span>"  + strip_tags($(this).text()) + " (" + answershortname + ")" + "</span><br />");

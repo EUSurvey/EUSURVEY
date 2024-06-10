@@ -381,7 +381,7 @@
 				if (data == "success") {
 				   loadVoters();
 				} else {
-					showError('<spring:message code="error.DeletionFailed" />');
+					showError("<spring:message code="error.DeletionFailed" />");
 				}
 				_participants.ShowWait(false);
 			}, error: function() {

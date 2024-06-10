@@ -1,5 +1,5 @@
 <div>
-	<h2><spring:message code="label.ECF.SelfAssessmentResults" /></h2>
+	<h1><spring:message code="label.ECF.SelfAssessmentResults" /></h1>
 	<p>
 		<spring:message code="label.ECF.PleaseFindResults" />
 	</p>
@@ -9,7 +9,7 @@
 				<div class="form-group">
 					<label for="select-job-profiles"><spring:message code="label.ECF.ProfileFilter" /></label> 
 					<select
-						onchange="fetchECFResult()" class="form-control"
+						oninput="fetchECFResult()" class="form-control"
 						name="select-job-profiles" id="select-job-profiles">
 						<c:forEach var="profile" items="${ecfProfiles}" varStatus="loop">
 							<option value="${profile.profileUid}">

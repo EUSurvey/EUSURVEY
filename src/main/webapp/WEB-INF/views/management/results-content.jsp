@@ -1355,7 +1355,15 @@ var closeOverlayDivsEnabled = false;
 													var td = document.createElement("td");
 													var div = document.createElement("div");
 													$(div).addClass("answercell complextablecell");
-													$(div).append(escapeXml(list[i++]));
+													
+													<c:choose>										
+														<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'MultipleChoice'}">
+															$(div).append(list[i++]);
+														</c:when>
+														<c:otherwise>
+															$(div).append(escapeXml(list[i++]));
+														</c:otherwise>
+													</c:choose>
 													$(td).append(div);
 													$(tr).append(td);
 												

@@ -11,7 +11,7 @@ function toggleVisibility(span) {
 
 function addIconToHelp(help)
 {
-	return "<a href='javascript:;' tabindex='0' aria-label='Help' onclick='toggleVisibility($(this).next().next())' class='glyphicon glyphicon-question-sign focussable'></a><br />" +
+	return "<button type='button' aria-label='Help' onclick='toggleVisibility($(this).next().next())' class='unstyledbutton glyphicon glyphicon-question-sign focussable'></button><br />" +
 		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
 		"";
 }
@@ -866,11 +866,11 @@ function newRankingViewModel(element)
 	}
 
 	viewModel.resetOrder = function(_, event) {
+		const thatRanking = $(event.target).closest(".rankingitem");
+		
 		//.slice() because originalItemUniqueIdOrder would otherwise be changed by moving the items
 		viewModel.answervalues(viewModel.originalItemUniqueIdOrder().slice());
 		viewModel.isAnswered(false);
-
-		const thatRanking = $(event.target).closest(".rankingitem");
 
 		const rankingItemsTexts = thatRanking.find(".rankingitemtext");
 		const rankingItemUniqueIds = $.map(rankingItemsTexts, that => viewModel.itemIdtoUniqueIdLookup[Number(that.id)]);
@@ -1286,6 +1286,7 @@ function newNumberViewModel(element)
 		const input = $("#answer" + viewModel.id());
 		propagateChange($(input));
 	});
+
 	viewModel.markAsAnswered = function (data) {
 		const input = $("#answer" + viewModel.id());
 		input.val(viewModel.initialDefaultValue())

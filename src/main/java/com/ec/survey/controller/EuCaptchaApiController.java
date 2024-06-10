@@ -28,14 +28,12 @@ public class EuCaptchaApiController extends BasicController {
 		CookieManager cookieManager = new CookieManager();
 		CookieHandler.setDefault(cookieManager);
 		
-		URL url = new URL(captchaserverprefixtarget + "captchaImg?locale=" + locale + "&capitalized=" + capitalized);
+		URL url = new URL(captchaserverprefixtarget + "captchaImg?locale=" + locale + "&captchaLength=8&capitalized=" + capitalized);
 		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-	    
-		String xjwtString = conn.getHeaderField("x-jwtString");		
-		response.setHeader("x-jwtString", xjwtString);
-		
+		conn.setRequestProperty("xJwtString", captchatoken);	
+	    		
 		List<String> cookies = conn.getHeaderFields().get("set-cookie");			
 		response.addHeader("original-cookie", cookies == null ? "" : String.join("#", cookies));
 
@@ -56,16 +54,12 @@ public class EuCaptchaApiController extends BasicController {
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 		
-		String xjwtString = request.getHeader("x-jwtstring");
-		conn.setRequestProperty("x-jwtString", xjwtString);
+		conn.setRequestProperty("xJwtString", captchatoken);
 		
 		String[] cookies = request.getHeader("original-cookie").split("#");			
 		for (String cookie : cookies) {
 			conn.addRequestProperty("Cookie", cookie);
 		}
-		
-		xjwtString = conn.getHeaderField("x-jwtString");		
-		response.setHeader("x-jwtString", xjwtString);
 		
 		return readData(conn);
 	}

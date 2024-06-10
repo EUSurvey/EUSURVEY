@@ -41,21 +41,21 @@
 				<div style="text-align:center;">
 					<c:choose>
 						<c:when test="${responsive != null}">
-							<div style="background-color: #0088cc; color: #FFF; word-wrap: break-word; padding: 10px; border-radius: 6px;">
-							<a style="color: #FFF; font-weight: bold;" class="visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
+							<div style="background-color: #286090; color: #FFF; word-wrap: break-word; padding: 10px; border-radius: 6px;">
+								<a style="color: #FFF; font-weight: bold;" class="visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
 							</div>
 							<br/>
 							
 							<c:choose>
 								<c:when test="${isecasuser != null}">
-									<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+									<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</button> <br /><br />
 								</c:when>
 								<c:otherwise>
-									<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="showAskEmailDialog(this)">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+									<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="showAskEmailDialog(this)">${form.getMessage("label.SendLinkAsEmail")}</button> <br /><br />
 								</c:otherwise>
 							</c:choose>
 
-							<a href="javascript:;" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
+							<button type="button" class="unstyledbutton aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></button>
 						</c:when>
 						<c:otherwise>					
 							<a class="draftLink visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
@@ -63,20 +63,20 @@
 							
 							<c:choose>
 								<c:when test="${isecasuser != null}">
-									<a href="javascript:;" class="btn btn-primary aSpaced" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</a>
+									<button type="button" class="btn btn-primary aSpaced" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</button>
 								</c:when>
 								<c:otherwise>
-									<a href="javascript:;" class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);">${form.getMessage("label.SendLinkAsEmail")}</a>
+									<button type="button" tabindex="0" class="btn btn-primary aSpaced" onclick="showAskEmailDialog(this);">${form.getMessage("label.SendLinkAsEmail")}</button>
 								</c:otherwise>
 							</c:choose>
 
-							<a href="javascript:;" class="aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></a>
+							<button type="button" class="unstyledbutton aSpaced" id="copyme" onclick="navigator.clipboard.writeText('${url}');"><spring:message code="label.CopyToClipboard" /></button>
 						</c:otherwise>
 					</c:choose>	
 					<c:if test="${downloadContribution}">
 						<br /><br />
 						<h2><spring:message code="question.needcopydraft" /></h2>
-						<a href="javascript:;" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a>
+						<button type="button" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></button>
 					</c:if> 
 				</div>				
 			</div>
@@ -90,7 +90,7 @@
 			</div>
 			<div class="modal-body">
 				<div class="forexport">
-					<p>
+					<label for="email">
 						<c:choose>
 							<c:when test="${runnermode == true}">
 								${form.getMessage("question.EmailForPDF")}
@@ -99,7 +99,7 @@
 								<spring:message code="question.EmailForPDF" />
 							</c:otherwise>	
 						</c:choose>
-					</p>
+					</label>
 					
 					<c:choose>
 						<c:when test='${participantsemail != null && participantsemail.indexOf("@") > 0}'>
@@ -121,7 +121,7 @@
 					</span>
 				</div>
 				<div class="foremail">
-					<p>
+					<label for="linkemail">
 						<c:choose>
 							<c:when test="${runnermode == true}">
 								${form.getMessage("label.EmailAddress")}
@@ -130,7 +130,7 @@
 								<spring:message code="label.EmailAddress" />
 							</c:otherwise>	
 						</c:choose>
-					</p>
+					</label>
 					<input type="text" maxlength="255" name="email" id="linkemail" />
 					<span id="ask-email-dialog-error" class="validation-error hideme">
 						<c:choose>
@@ -168,32 +168,32 @@
 				<div class="forexport">
 					<c:choose>
 						<c:when test="${responsive != null}">
-							<a href="javascript:;" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-							<a href="javascript:;" style="text-decoration: none"  class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+							<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</button>
+							<button type="button" style="text-decoration: none" class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</button>
 						</c:when>
 						<c:when test="${runnermode == true}">
-							<a href="javascript:;" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-							<a href="javascript:;" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+							<button type="button" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</button>
 						</c:when>
 						<c:otherwise>
-							<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-							<a href="javascript:;" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+							<button type="button" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></button>
+							<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>
 						</c:otherwise>	
 					</c:choose>
 				</div>
 				<div class="foremail">
 					<c:choose>
 						<c:when test="${responsive != null}">
-							<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>	
-							<a href="javascript:;" style="text-decoration: none" class="btn btn-lg btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+							<button type="button" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</button>
+							<button type="button" style="text-decoration: none" class="btn btn-lg btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 						</c:when>
 						<c:when test="${runnermode == true}">
-							<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>	
-							<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
+							<button type="button" class="btn btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</button>
+							<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 						</c:when>
 						<c:otherwise>
-							<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink(false)"><spring:message code="label.OK" /></a>	
-							<a href="javascript:;" class="btn btn-default"  onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>		
+							<button type="button" class="btn btn-primary" onclick="sendMailLink(false)"><spring:message code="label.OK" /></button>
+							<button type="button" class="btn btn-default"  onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></button>
 						</c:otherwise>	
 					</c:choose>	
 				</div>		
@@ -233,8 +233,7 @@
 				    }
 				    
 				    var data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
-					if ($('#captcha_token').length > 0) {
-						data["captcha_token"] =  $('#captcha_token').val();
+					if ($('#captcha_id').length > 0) {
 						data["captcha_id"] =  $('#captcha_id').val();
 						data["captcha_useaudio"] =  $('#captcha_useaudio').val();
 						data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
@@ -281,14 +280,14 @@
 				</c:otherwise>
 			</c:choose>
 		}
-		
-		$(document).ready(function(){
+
+		$("#copyme").click(function(){
 			if(!document.queryCommandSupported('copy'))
 			{
 				$("#copyme").hide();
 			}
-			
-			try 
+
+			try
 			{
 				var result = document.execCommand('copy');
 
@@ -296,75 +295,71 @@
 				{
 					showSuccess('<spring:message code="message.copy.successCopyClipboardLink" />');
 				}
-			} 
-			catch(err) 
-			{  
+			}
+			catch(err)
+			{
 				$("#copyme").hide();
 			}
-			
 		});
-		
-		
-			function sendMailLink(skip)
-			{
-				$("#ask-export-dialog").find(".validation-error").hide();
-				$("#ask-export-dialog").find(".validation-error-keep").hide();
-				
-				var mail = $("#linkemail").val();
-				var linkDraft = '${url}';
-				
-				var challenge = getChallenge();
-			    var uresponse = getResponse($("#ask-export-dialog"));
-			    
-			    var id = '${surveyID}';
-			    
-			    if (!skip) {
-				
-					if (mail.trim().length == 0 || !validateEmail(mail))
-					{
-						$("#ask-email-dialog-error").show();
-						return;
-					}
-					
-					if (uresponse.trim().length == 0)
-				    {
-						$("#ask-export-dialog").find("#runner-captcha-empty-error").show();
-				    	return;
-				    }				
-				}
-			    
-			    var data = {email : mail, link: linkDraft, id : id, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
-				if ($('#captcha_token').length > 0) {
-					data["captcha_token"] =  $('#captcha_token').val();
-					data["captcha_id"] =  $('#captcha_id').val();
-					data["captcha_useaudio"] =  $('#captcha_useaudio').val();
-					data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
-				}
-	
-				$.ajax({
-					type:'GET',
-					  url: "${contextpath}/runner/sendmaillink",
-					  data: data,
-					  cache: false,
-					  success: function( data ) {
 
-						if (data == "success") {
-							$('#ask-export-dialog').modal('hide');
-							showSuccess(message_SuccessMailLinkDraft);
-						}
-						else if(data == "errorcaptcha")
-						{
-							$("#ask-export-dialog").find("#runner-captcha-error").show();
-						}
-						else {
-							showError(message_FailedMailLinkDraft);
-						}
-						
-						reloadCaptcha();
-					}
-				});				
-				
+		function sendMailLink(skip)
+		{
+			$("#ask-export-dialog").find(".validation-error").hide();
+			$("#ask-export-dialog").find(".validation-error-keep").hide();
+
+			var mail = $("#linkemail").val();
+			var linkDraft = '${url}';
+
+			var challenge = getChallenge();
+			var uresponse = getResponse($("#ask-export-dialog"));
+
+			var id = '${surveyID}';
+
+			if (!skip) {
+
+				if (mail.trim().length == 0 || !validateEmail(mail))
+				{
+					$("#ask-email-dialog-error").show();
+					return;
+				}
+
+				if (uresponse.trim().length == 0)
+				{
+					$("#ask-export-dialog").find("#runner-captcha-empty-error").show();
+					return;
+				}
 			}
+
+			var data = {email : mail, link: linkDraft, id : id, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse};
+			if ($('#captcha_id').length > 0) {
+				data["captcha_id"] =  $('#captcha_id').val();
+				data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+				data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
+			}
+
+			$.ajax({
+				type:'GET',
+				  url: "${contextpath}/runner/sendmaillink",
+				  data: data,
+				  cache: false,
+				  success: function( data ) {
+
+					if (data == "success") {
+						$('#ask-export-dialog').modal('hide');
+						showSuccess(message_SuccessMailLinkDraft);
+					}
+					else if(data == "errorcaptcha")
+					{
+						$("#ask-export-dialog").find("#runner-captcha-error").show();
+					}
+					else {
+						showError(message_FailedMailLinkDraft);
+					}
+
+					reloadCaptcha();
+				}
+			});
+		}
 		</script>
 	</div>
 
