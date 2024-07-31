@@ -340,11 +340,13 @@ public class HomeController extends BasicController {
 		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
 		
+		CloseableHttpClient httpclient = null;
+		
 		try {
 
 			sessionService.initializeProxy();
 			
-			CloseableHttpClient httpclient = HttpClients.createDefault();
+			httpclient = HttpClients.createDefault();
 			
 			HttpPost httppost = new HttpPost(incidentHost);
 			httppost.addHeader("Content-type", useJSON ? "application/json" : "text/xml;charset=UTF-8");
