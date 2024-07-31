@@ -339,12 +339,12 @@ public class HomeController extends BasicController {
 		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
 		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
-
-		CloseableHttpClient httpclient = HttpClients.createDefault();
 		
 		try {
 
 			sessionService.initializeProxy();
+			
+			CloseableHttpClient httpclient = HttpClients.createDefault();
 			
 			HttpPost httppost = new HttpPost(incidentHost);
 			httppost.addHeader("Content-type", useJSON ? "application/json" : "text/xml;charset=UTF-8");
