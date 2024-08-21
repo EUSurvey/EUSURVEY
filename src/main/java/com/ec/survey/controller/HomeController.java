@@ -346,7 +346,7 @@ public class HomeController extends BasicController {
 
 			sessionService.initializeProxy();
 			
-			httpclient = HttpClients.createDefault();
+			httpclient = HttpClients.createSystem();
 			
 			HttpPost httppost = new HttpPost(incidentHost);
 			httppost.addHeader("Content-type", useJSON ? "application/json" : "text/xml;charset=UTF-8");
