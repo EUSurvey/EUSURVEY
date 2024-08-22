@@ -6,6 +6,8 @@
          "assignment_group": "DIGIT EUSURVEY SUPPORT",
          "impact": "2",
          "urgency": "1",
+         "business_service": "[BUSINESSSERVICE]",
+         "service_offering": "[SERVICEOFFERING]",
          "work_notes": "work_notes: create new incident via API",
          "comments": "Comment : create new incident via API"
      }
