@@ -57,7 +57,7 @@
 							<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
 								<div class="survey-element untriggered 2" id="${element.id}" data-id="${element.id}" data-triggers="${element.triggers}" style="display: none;">
 							</c:when>
-							<c:when test="${element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
+							<c:when test="${((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
 								<div class="survey-element untriggered 3" id="${element.id}" data-id="${element.id}" data-triggers="${element.triggers}" style="display: none;">
 							</c:when>
 							<c:when test="${element.isDependent}">
@@ -825,7 +825,19 @@
 						
 						<c:if test="${element.getType() == 'SingleChoiceQuestion'}">
 							<c:choose>
-																
+								<c:when test="${element.getType() == 'SingleChoiceQuestion' && element.getIsTargetDatasetQuestion() == true && form.getValues(element).size() > 0}">
+									<div class="answer-columns">
+										<div class="answer-column" style="word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px;">
+											<div style="float: right"><i class="icon icon-chevron-down"></i></div>
+											<c:forEach items="${element.targetDatasets}" var="dataset">												
+												<c:if test="${form.getValues(element).contains(dataset.id.toString())}">
+													${dataset.name}
+												</c:if>																																
+											</c:forEach>			
+										</div>
+									</div>
+									<div style="clear: both"></div>
+								</c:when>					
 								<c:when test="${element.getType() == 'SingleChoiceQuestion' && element.getUseRadioButtons() == false && form.getValues(element).size() > 0 && form.wcagCompliance == false}">
 									<div class="answer-columns">
 										<div class="answer-column" style="word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px;">

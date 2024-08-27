@@ -65,6 +65,7 @@ import com.ec.survey.service.LdapDBService;
 import com.ec.survey.service.LdapService;
 import com.ec.survey.service.ParticipationService;
 import com.ec.survey.service.ReportingServiceProxy;
+import com.ec.survey.service.SelfAssessmentService;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.service.SettingsService;
 import com.ec.survey.service.SkinService;
@@ -152,6 +153,9 @@ public class BasicController implements BeanFactoryAware {
 	
 	@Resource(name = "eVoteService")
 	protected EVoteService eVoteService;
+	
+	@Resource(name = "selfassessmentService")
+	protected SelfAssessmentService selfassessmentService;
 	
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${captcha.serverprefix}") String captchaserverprefix;

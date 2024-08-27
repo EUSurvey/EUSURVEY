@@ -259,8 +259,8 @@
 					<label id="namelabel"><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
 					<input type="text" class="form-control required" style="width: 425px" name="name" id="yourname" aria-labelledby="namelabel" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
 					
-					<label id="emaillabel"><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
-					<input type="text" class="form-control required email" style="width: 425px" id="supportemail" name="email" aria-labelledby="emaillabel" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
+					<label id="emaillabel"><span class="mandatory">*</span><spring:message code="label.youremailorlogin" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
+					<input type="text" class="form-control required" style="width: 425px" id="supportemail" name="email" aria-labelledby="emaillabel" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
 					
 					<label id="subjectlabel"><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
 					<input type="text" class="form-control required" name="subject" aria-labelledby="subjectlabel" style="width: 425px" id="supportsubject" /><br /><br />

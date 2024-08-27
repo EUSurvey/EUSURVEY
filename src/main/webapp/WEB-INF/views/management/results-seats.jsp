@@ -579,7 +579,7 @@
 			<tr>
 				<td style="background-color: #FFC000; width: 50px;"></td>
 				<td style="padding-left: 10px;">
-					<spring:message code="label.seats.ElectedSinglePresident" />
+					<spring:message code="label.seats.ElectedStandard" />
 				</td>
 			</tr>
 		</table>

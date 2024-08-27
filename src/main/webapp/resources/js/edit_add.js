@@ -31,6 +31,7 @@ function getNewElement(item)
 		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
 		element.isDelphiQuestion = isDelphi;
+		element.isTargetDatasetQuestion = false;
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("rankingitem"))
@@ -327,6 +328,51 @@ function getNewElement(item)
 		element.childElements[6].cellType = 1;
 
 		updateComplexityScore("addTableOrMatrixQuestion");	
+	} else if (item.hasClass("targetdatasetitem")) {
+		
+		// check that there is only one target dataset selection
+		let problemFound = false;
+		$(".survey-element").each(function(){
+			if ($(this).hasClass("targetdatasetquestion")) {
+				$("#multipletargetdatasetselectionsdialog").modal('show');
+				problemFound = true;
+				return;
+			}
+		});
+		if (problemFound) return;		
+		
+		element = getBasicElement("SingleChoiceQuestion", true, "Target Dataset - Profiles Selection", item.attr("id"), true);
+		element.maxChoices = 0;
+		element.minChoices = 0;
+		element.choiceType = "select";
+		element.numColumns = 1;
+		element.order = 0;
+		element.possibleAnswers = [];
+		element.orderedPossibleAnswers = element.possibleAnswers;
+		element.isTargetDatasetQuestion = true;
+		element.targetDatasets = [];
+		
+		for (var i = 0; i < SADatasets.length; i++)
+		{
+			element.targetDatasets.push(SADatasets[i]);
+		}
+		
+		updateComplexityScore("addChoiceQuestion");
+		updateListSummary(item.attr("id"),"init", 2);
+	} else if (item.hasClass("saquestiontitem")) {
+		element = getBasicElement("SingleChoiceQuestion", true, "SA Single Choice", item.attr("id"), true);
+		element.maxChoices = 0;
+		element.minChoices = 0;
+		element.choiceType = "radio";
+		element.numColumns = 1;
+		element.order = 0;
+		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
+		element.orderedPossibleAnswers = element.possibleAnswers;
+		element.isTargetDatasetQuestion = false;
+		element.isSAQuestion = true;
+		element.evaluationCriterion = "";
+		updateComplexityScore("addChoiceQuestion");
+		updateListSummary(item.attr("id"),"init", 2);
 	}
 	
 	if (item.hasClass("quiz"))
@@ -350,6 +396,12 @@ function addNewElement(item, element)
 		item.attr("id", id).attr("data-id", id);
 		element = getNewElement(item);
 	}
+	
+	// remove item in case of a validation error
+	if (element == null) {
+		$(item).remove();
+		return false;
+	}
 
 	elemcounter++;
 	
@@ -359,6 +411,8 @@ function addNewElement(item, element)
 	
 	addElementHandler(item);
 	checkContent();
+	
+	return true;
 }
 
 function addElementHandler(item)

@@ -4,6 +4,7 @@ import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.ResultFilter;
+import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.FilesByType;
 import com.ec.survey.model.survey.*;
@@ -99,6 +100,7 @@ public class XmlExportCreator extends ExportCreator {
 		}
 
 		form.setSurvey(surveyService.initializeAndMergeSurvey(form.getSurvey()));
+		List<SATargetDataset> datasets = form.getSurvey().getIsSelfAssessment() ? selfassessmentService.getTargetDatasets(form.getSurvey().getUniqueId()) : null;
 
 		if (export != null && export.isAllAnswers() && !form.getSurvey().isMissingElementsChecked()) {
 			surveyService.checkAndRecreateMissingElements(form.getSurvey(), export.getResultFilter());
@@ -339,30 +341,47 @@ public class XmlExportCreator extends ExportCreator {
 
 					if (question instanceof ChoiceQuestion) {
 						ChoiceQuestion choice = (ChoiceQuestion) question;
-
-						for (PossibleAnswer answer : choice.getPossibleAnswers()) {
-							writer.writeStartElement(ANSWER);
-							writer.writeAttribute("id", answer.getUniqueId());
-							writer.writeAttribute("type", getNiceType(answer));
-
-							if (export != null && export.getShowShortnames()) {
-								writer.writeAttribute("bid", answer.getShortname());
+						
+						boolean isTargetDataset = false;
+						if (survey.getIsSelfAssessment() && question instanceof SingleChoiceQuestion) {
+							SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
+							if (scq.getIsTargetDatasetQuestion()) {
+								isTargetDataset = true;
 							}
-
-							String dependentElements = "";
-							for (Element element : answer.getDependentElements().getDependentElements()) {
-								if (dependentElements.length() > 0) {
-									dependentElements += ";";
+						}
+						
+						if (isTargetDataset && datasets != null) {
+							for (SATargetDataset dataset : datasets) {
+								writer.writeStartElement("TargetDataset");
+								writer.writeAttribute("id", dataset.getId().toString());
+								writer.writeCharacters(dataset.getName());
+								writer.writeEndElement(); // TargetDataset
+							}
+						} else {
+							for (PossibleAnswer answer : choice.getPossibleAnswers()) {
+								writer.writeStartElement(ANSWER);
+								writer.writeAttribute("id", answer.getUniqueId());
+								writer.writeAttribute("type", getNiceType(answer));
+	
+								if (export != null && export.getShowShortnames()) {
+									writer.writeAttribute("bid", answer.getShortname());
 								}
-								dependentElements += element.getUniqueId();
+	
+								String dependentElements = "";
+								for (Element element : answer.getDependentElements().getDependentElements()) {
+									if (dependentElements.length() > 0) {
+										dependentElements += ";";
+									}
+									dependentElements += element.getUniqueId();
+								}
+								if (dependentElements.length() > 0) {
+									writer.writeAttribute("dependentElements", dependentElements);
+								}
+	
+								writer.writeCharacters(answer.getTitle());
+	
+								writer.writeEndElement(); // Answer
 							}
-							if (dependentElements.length() > 0) {
-								writer.writeAttribute("dependentElements", dependentElements);
-							}
-
-							writer.writeCharacters(answer.getTitle());
-
-							writer.writeEndElement(); // Answer
 						}
 					} else if (question instanceof RatingQuestion) {
 						RatingQuestion rating = (RatingQuestion) question;
@@ -498,7 +517,7 @@ public class XmlExportCreator extends ExportCreator {
 				}
 				parseAnswerSet(form.getSurvey(), writer, questions, null, row, row.get(1), filesByAnswer,
 						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail, null, null, null,
-						explanationFilesOfSurvey, explanationFilesToExport, rowPosMap);
+						explanationFilesOfSurvey, explanationFilesToExport, rowPosMap, datasets);
 			}
 		} else {
 
@@ -539,7 +558,7 @@ public class XmlExportCreator extends ExportCreator {
 						parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()),
 								answerSet, null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(),
 								filterWithMeta, ECASUserLoginsByEmail, explanations, discussions, likesForExplanations,
-								explanationFilesOfSurvey, explanationFilesToExport, null);
+								explanationFilesOfSurvey, explanationFilesToExport, null, datasets);
 					}
 
 					answerSet = new AnswerSet();
@@ -567,7 +586,7 @@ public class XmlExportCreator extends ExportCreator {
 			if (lastAnswerSet > 0)
 				parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()), answerSet,
 						null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta,
-						ECASUserLoginsByEmail, explanations, discussions, likesForExplanations, explanationFilesOfSurvey, explanationFilesToExport, null);
+						ECASUserLoginsByEmail, explanations, discussions, likesForExplanations, explanationFilesOfSurvey, explanationFilesToExport, null, datasets);
 			results.close();
 		}
 
@@ -745,7 +764,7 @@ public class XmlExportCreator extends ExportCreator {
 			Map<String, List<File>> uploadedFilesByQuestionUID, boolean meta, ResultFilter filter,
 			Map<String, String> ECASUserLoginsByEmail, Map<Integer, Map<String, String>> explanations,
 			Map<Integer, Map<String, String>> discussions, Map<String, Integer> likesForExplanations, FilesByTypes<Integer, String> explanationFilesOfSurvey,
-			FilesByType<String> explanationFilesToExport, HashMap<String, Integer> rowPosMap) throws XMLStreamException {
+			FilesByType<String> explanationFilesToExport, HashMap<String, Integer> rowPosMap, List<SATargetDataset> datasets) throws XMLStreamException {
 		writer.writeStartElement("AnswerSet");
 
 		if (meta || filter == null || filter.exported("case")) {
@@ -990,39 +1009,56 @@ public class XmlExportCreator extends ExportCreator {
 								for (String answer : answers) {
 									if (answer.length() > 0) {
 										answer = answer.trim();
-										writer.writeStartElement(ANSWER);
-										writer.writeAttribute("qid", question.getUniqueId());
-										if (question instanceof ChoiceQuestion) {
-											writer.writeAttribute("aid", answer);
-										} else if (question instanceof Upload) {
-											StringBuilder text = new StringBuilder();
-											File file;
-											try {
-
-												if (answer.contains("|")) {
-													answer = answer.substring(0, answer.indexOf('|'));
-												}
-
-												file = fileService.get(answer);
-												if (!uploadedFilesByQuestionUID
-														.containsKey(question.getUniqueId())) {
-													uploadedFilesByQuestionUID.put(question.getUniqueId(),
-															new ArrayList<>());
-												}
-												uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
-
-												text.append((text.length() > 0) ? ";" : "").append(file.getName());
-											} catch (FileNotFoundException e) {
-												logger.error(e.getLocalizedMessage(), e);
+										
+										boolean isTargetDataset = false;
+										
+										if (survey.getIsSelfAssessment() && question instanceof SingleChoiceQuestion) {
+											SingleChoiceQuestion scq = (SingleChoiceQuestion)question;
+											if (scq.getIsTargetDatasetQuestion()) {												
+												isTargetDataset = true;									
 											}
-
-											writer.writeCharacters(text.toString());
-										} else {
-											writer.writeCharacters(
-													ConversionTools.removeInvalidHtmlEntities(answer));
 										}
-
-										writer.writeEndElement(); // Answer
+										
+										if (isTargetDataset) {
+											writer.writeStartElement("TargetDataset");
+											writer.writeAttribute("qid", question.getUniqueId());
+											writer.writeAttribute("id", answer);
+											writer.writeEndElement(); // TargetDataset	
+										} else {
+											writer.writeStartElement(ANSWER);
+											writer.writeAttribute("qid", question.getUniqueId());
+											if (question instanceof ChoiceQuestion) {
+												writer.writeAttribute("aid", answer);
+											} else if (question instanceof Upload) {
+												StringBuilder text = new StringBuilder();
+												File file;
+												try {
+	
+													if (answer.contains("|")) {
+														answer = answer.substring(0, answer.indexOf('|'));
+													}
+	
+													file = fileService.get(answer);
+													if (!uploadedFilesByQuestionUID
+															.containsKey(question.getUniqueId())) {
+														uploadedFilesByQuestionUID.put(question.getUniqueId(),
+																new ArrayList<>());
+													}
+													uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
+	
+													text.append((text.length() > 0) ? ";" : "").append(file.getName());
+												} catch (FileNotFoundException e) {
+													logger.error(e.getLocalizedMessage(), e);
+												}
+	
+												writer.writeCharacters(text.toString());
+											} else {
+												writer.writeCharacters(
+														ConversionTools.removeInvalidHtmlEntities(answer));
+											}
+	
+											writer.writeEndElement(); // Answer
+										}
 									}
 								}
 							}
@@ -1030,35 +1066,47 @@ public class XmlExportCreator extends ExportCreator {
 					} else {
 						List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 						for (Answer answer : answers) {
-							writer.writeStartElement(ANSWER);
-							writer.writeAttribute("qid", question.getUniqueId());
-
-							if (question instanceof ChoiceQuestion) {
-								writer.writeAttribute("aid",
-										answer.getPossibleAnswerUniqueId() != null
-												? answer.getPossibleAnswerUniqueId()
-												: "");
-							} else if (question instanceof RankingQuestion) {
-								writer.writeCharacters(answer.getValue());
-							} else if (question instanceof Upload) {
-								StringBuilder text = new StringBuilder();
-								if (filesByAnswer.containsKey(answer.getId())) {
-									for (File file : filesByAnswer.get(answer.getId())) {
-										if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId())) {
-											uploadedFilesByQuestionUID.put(question.getUniqueId(),
-													new ArrayList<>());
-										}
-										uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
-
-										text.append((text.length() > 0) ? ";" : "").append(file.getName());
-									}
+							
+							if ("TARGETDATASET".equals(answer.getPossibleAnswerUniqueId())) {
+								Optional<SATargetDataset> dataset = datasets.stream().filter(d -> d.getId() == Integer.parseInt(answer.getValue())).findFirst();
+								if (dataset.isPresent()) {
+									writer.writeStartElement("TargetDataset");
+									writer.writeAttribute("qid", question.getUniqueId());
+									writer.writeAttribute("id", dataset.get().getId().toString());
+									writer.writeEndElement(); // TargetDataset
 								}
-								writer.writeCharacters(text.toString());
-							} else {
-								writer.writeCharacters(form.getAnswerTitleStripInvalidXML(answer));
+							} else {							
+							
+								writer.writeStartElement(ANSWER);
+								writer.writeAttribute("qid", question.getUniqueId());
+	
+								if (question instanceof ChoiceQuestion) {
+									writer.writeAttribute("aid",
+											answer.getPossibleAnswerUniqueId() != null
+													? answer.getPossibleAnswerUniqueId()
+													: "");
+								} else if (question instanceof RankingQuestion) {
+									writer.writeCharacters(answer.getValue());
+								} else if (question instanceof Upload) {
+									StringBuilder text = new StringBuilder();
+									if (filesByAnswer.containsKey(answer.getId())) {
+										for (File file : filesByAnswer.get(answer.getId())) {
+											if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId())) {
+												uploadedFilesByQuestionUID.put(question.getUniqueId(),
+														new ArrayList<>());
+											}
+											uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
+	
+											text.append((text.length() > 0) ? ";" : "").append(file.getName());
+										}
+									}
+									writer.writeCharacters(text.toString());
+								} else {
+									writer.writeCharacters(form.getAnswerTitleStripInvalidXML(answer));
+								}
+	
+								writer.writeEndElement(); // Answer
 							}
-
-							writer.writeEndElement(); // Answer
 						}
 					}
 				}
@@ -1171,35 +1219,30 @@ public class XmlExportCreator extends ExportCreator {
 			}
 		}
 		
-		if (survey.getIsQuiz()) {
+		if (survey.getIsQuiz()) {		
 			QuizResult quizResult = QuizHelper.getQuizResult(answerSet, survey);
 			writer.writeStartElement("Scores");
-			
-			if (survey.getScoresByQuestion()) {
-				for (Element element : survey.getQuestionsAndSections()) {
-					if (element instanceof Section) {
-						String score = quizResult.getSectionScore(element.getUniqueId());
-						if (!score.equals("0/0")) {
-							writer.writeStartElement("Section");
-							writer.writeAttribute("id", element.getUniqueId());	
-							writer.writeCharacters(score);							
-							writer.writeEndElement(); // Section
-						}
-					} else if (element instanceof ChoiceQuestion || element instanceof FreeTextQuestion || element instanceof NumberQuestion || element instanceof DateQuestion) {
-						Question question = (Question) element;
-						if (question.getScoring() > 0) {
-							writer.writeStartElement("Question");
-							writer.writeAttribute("id", element.getUniqueId());	
-							writer.writeCharacters(quizResult.getQuestionScore(element.getUniqueId()) + "/" + quizResult.getQuestionMaximumScore(element.getUniqueId()));							
-							writer.writeEndElement(); // Question
-						}
-					}		 			
-				}
+			for (Element element : survey.getQuestionsAndSections()) {
+				if (element instanceof Section) {
+					String score = quizResult.getSectionScore(element.getUniqueId());
+					if (!score.equals("0/0")) {
+						writer.writeStartElement("Section");
+						writer.writeAttribute("id", element.getUniqueId());	
+						writer.writeCharacters(score);							
+						writer.writeEndElement(); // Section
+					}
+				} else if (element instanceof ChoiceQuestion || element instanceof FreeTextQuestion || element instanceof NumberQuestion || element instanceof DateQuestion) {
+					Question question = (Question) element;
+					if (question.getScoring() > 0) {
+						writer.writeStartElement("Question");
+						writer.writeAttribute("id", element.getUniqueId());	
+						writer.writeCharacters(quizResult.getQuestionScore(element.getUniqueId()) + "/" + quizResult.getQuestionMaximumScore(element.getUniqueId()));							
+						writer.writeEndElement(); // Question
+					}
+				}		 			
 			}
-						
 			writer.writeEndElement(); // Score
-		}
-		
+		}		
 		
 		writer.writeEndElement(); // AnswerSet
 	}

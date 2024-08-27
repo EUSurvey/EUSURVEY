@@ -20,10 +20,14 @@ import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.evote.SeatCounting;
 import com.ec.survey.model.evote.eVoteListResult;
 import com.ec.survey.model.evote.eVoteResults;
+import com.ec.survey.model.selfassessment.SACriterion;
+import com.ec.survey.model.selfassessment.SAReportConfiguration;
+import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ECService;
 import com.ec.survey.service.MailService;
+import com.ec.survey.service.SelfAssessmentService;
 import com.ec.survey.service.SurveyException;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.service.mapping.PaginationMapper;
@@ -110,6 +114,9 @@ public class ManagementController extends BasicController {
 	
 	@Resource(name = "ecService")
 	private ECService ecService;
+	
+	@Resource(name = "selfassessmentService")
+	protected SelfAssessmentService selfassessmentService;
 
 	private static final String[] KNOWN_RESULTTYPES = {
 			"content", "charts", "statistics", "ecf", "ecf2", "ecf3", "statistics-delphi", "statistics-quiz"
@@ -683,6 +690,34 @@ public class ManagementController extends BasicController {
 		}
 		return overview(shortname, request, locale);
 	}
+	
+	@RequestMapping(value = "/parameters", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public ModelAndView parameters(@PathVariable String shortname, HttpServletRequest request, Locale locale)
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, InvalidURLException,
+			ForbiddenURLException {
+		Form form;
+		User user = sessionService.getCurrentUser(request);
+
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
+		
+		if (!sessionService.userIsFormManager(survey, user, request) || !survey.getIsSelfAssessment()) {
+			throw new ForbiddenURLException();
+		}		
+		
+		form = new Form();
+		form.setResources(resources);
+		form.setSurvey(survey);
+		
+		ModelAndView result = new ModelAndView("management/parameters", "form", form);
+		
+		String tab = request.getParameter("tab");
+		
+		if (tab != null) {
+			result.addObject("tab", tab);
+		}
+
+		return result;
+	}
 
 	@RequestMapping(value = "/properties", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView properties(@PathVariable String shortname, HttpServletRequest request, Locale locale)
@@ -976,7 +1011,7 @@ public class ManagementController extends BasicController {
 					String template = request.getParameter("evotetemplate");
 					copy.seteVoteTemplate(template);
 				}
-
+				
 				try {
 
 					Map<String, String> convertedUIDs = surveyService.copyFiles(copy, new HashMap<>(), false, null, original.getUniqueId());
@@ -1027,6 +1062,8 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("delphi").equalsIgnoreCase("true"));
 					copy.setIsECF(request.getParameter("ecf") != null
 							&& request.getParameter("ecf").equalsIgnoreCase("true"));
+					copy.setIsSelfAssessment(request.getParameter("selfassessment") != null
+							&& request.getParameter("selfassessment").equalsIgnoreCase("true"));
 					copy.setIsEVote(request.getParameter("evote") != null
 							&& request.getParameter("evote").equalsIgnoreCase("true"));
 					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi() && !copy.getIsEVote());
@@ -1036,6 +1073,10 @@ public class ManagementController extends BasicController {
 					List<Translations> translations = translationService.getTranslationsForSurvey(original.getId(),
 							false, false);
 					surveyService.copyTranslations(translations, copy, oldToNewUniqueIds, null, newTitle, convertedUIDs);
+					
+					if (copy.getIsSelfAssessment() && original.getIsSelfAssessment()) {
+						selfassessmentService.copyData(original.getUniqueId(), copy);					
+					}
 
 					Form form = new Form(resources);
 					form.setSurvey(copy);
@@ -1073,12 +1114,14 @@ public class ManagementController extends BasicController {
 		boolean isOPC = survey.getIsOPC();
 		boolean isDelphi = survey.getIsDelphi();
 		boolean isEVote = survey.getIsEVote();
-		boolean isNormal = !(isQuiz || isOPC || isDelphi || isEVote);
-		if ( isNormal && !isQuiz && !isOPC && !isDelphi && !isEVote) return true;
-		if (!isNormal &&  isQuiz && !isOPC && !isDelphi && !isEVote) return true;
-		if (!isNormal && !isQuiz &&  isOPC && !isDelphi && !isEVote) return true;
-		if (!isNormal && !isQuiz && !isOPC &&  isDelphi && !isEVote) return true;
-		if (!isNormal && !isQuiz && !isOPC &&  !isDelphi && isEVote) return true;
+		boolean isSelfAssessment = survey.getIsSelfAssessment();
+		boolean isNormal = !(isQuiz || isOPC || isDelphi || isEVote || isSelfAssessment);
+		if ( isNormal && !isQuiz && !isOPC && !isDelphi && !isEVote && !isSelfAssessment) return true;
+		if (!isNormal &&  isQuiz && !isOPC && !isDelphi && !isEVote && !isSelfAssessment) return true;
+		if (!isNormal && !isQuiz &&  isOPC && !isDelphi && !isEVote && !isSelfAssessment) return true;
+		if (!isNormal && !isQuiz && !isOPC &&  isDelphi && !isEVote && !isSelfAssessment) return true;
+		if (!isNormal && !isQuiz && !isOPC &&  !isDelphi && isEVote && !isSelfAssessment) return true;
+		if (!isNormal && !isQuiz && !isOPC &&  !isDelphi && !isEVote && isSelfAssessment) return true;
 		return false;
 	}
 
@@ -1282,6 +1325,8 @@ public class ManagementController extends BasicController {
 					&& request.getParameter("delphi").equalsIgnoreCase("true"));
 			uploadedSurvey.setIsECF(
 					request.getParameter("ecf") != null && request.getParameter("ecf").equalsIgnoreCase("true"));
+			uploadedSurvey.setIsSelfAssessment(
+					request.getParameter("selfassessment") != null && request.getParameter("selfassessment").equalsIgnoreCase("true"));
 			uploadedSurvey.setIsEVote(
 					request.getParameter("evote") != null && request.getParameter("evote").equalsIgnoreCase("true"));
 			
@@ -1537,6 +1582,7 @@ public class ManagementController extends BasicController {
 					Survey::getIsOPC,
 					Survey::getIsDelphi,
 					Survey::getIsEVote,
+					Survey::getIsSelfAssessment,
 					Survey::getQuorum,
 					Survey::getMinListPercent,
 					Survey::getMaxPrefVotes,
@@ -1607,6 +1653,7 @@ public class ManagementController extends BasicController {
 		survey.setIsOPC(uploadedSurvey.getIsOPC());
 		survey.setIsDelphi(uploadedSurvey.getIsDelphi());
 		survey.setIsECF(uploadedSurvey.getIsECF());
+		survey.setIsSelfAssessment(uploadedSurvey.getIsSelfAssessment());
 		survey.setIsEVote(uploadedSurvey.getIsEVote());
 		survey.seteVoteTemplate(uploadedSurvey.geteVoteTemplate());
 
@@ -2262,6 +2309,10 @@ public class ManagementController extends BasicController {
 			activityService.log(ActivityRegistry.ID_SURVEY_CREATED, null, form.getSurvey().getId().toString(), u.getId(), survey.getUniqueId());
 
 			surveyService.setBrpAccess(survey);
+			
+			if (survey.getIsSelfAssessment()) {
+				return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/parameters");
+			}
 
 			return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit");
 		} else {
@@ -2521,6 +2572,46 @@ public class ManagementController extends BasicController {
 				result.addObject("invalidevote", true);
 			}
 		}
+		
+		if (form.getSurvey().getIsSelfAssessment()) {
+			List<SACriterion> criteria = selfassessmentService.getCriteria(form.getSurvey().getUniqueId());
+			StringBuilder builder = new StringBuilder();
+			builder.append("[");
+			boolean first = true;
+			for (SACriterion saCriterion : criteria) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(",");
+				}
+				builder.append("{");
+				builder.append("'id': '").append(saCriterion.getId()).append("',");
+				builder.append("'name': '").append(saCriterion.getName()).append("'");
+				builder.append("}");
+			}
+			builder.append("]");
+			
+			result.addObject("SACriteria", builder.toString());
+			
+			List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(form.getSurvey().getUniqueId());
+			builder = new StringBuilder();
+			builder.append("[");
+			first = true;
+			for (SATargetDataset dataset : datasets) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(",");
+				}
+				builder.append("{");
+				builder.append("'id': '").append(dataset.getId()).append("',");
+				builder.append("'name': '").append(dataset.getName()).append("'");
+				builder.append("}");
+			}
+			builder.append("]");
+			
+			result.addObject("SADatasets", builder.toString());
+		}
 
 		return result;
 	}
@@ -2581,7 +2672,7 @@ public class ManagementController extends BasicController {
 			String name = Tools.escapeHTML(parameterMap.get("template-name")[0]);
 			String id = Tools.escapeHTML(parameterMap.get("template-id")[0]);
 
-			Element element = SurveyHelper.parseElement(request, fileService, id, form.getSurvey(), servletContext,
+			Element element = SurveyHelper.parseElement(request, fileService, selfassessmentService, id, form.getSurvey(), servletContext,
 					activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED));
 
 			Template template = new Template();
@@ -3030,6 +3121,28 @@ public class ManagementController extends BasicController {
 			result.addObject("isquizresultpage", true);
 			return result;
 		}
+		
+		if (survey.getIsSelfAssessment()) {
+			ModelAndView result = new ModelAndView("management/testSAResult", Constants.UNIQUECODE,
+					answerSet.getUniqueCode());
+			Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+					translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+			form.setSurvey(survey);
+			form.getAnswerSets().add(answerSet);
+
+			result.addObject("invisibleElements", invisibleElements);
+			result.addObject(form);
+			result.addObject("surveyprefix", survey.getId());
+			result.addObject("issaresultpage", true);
+			
+			SAReportConfiguration config = selfassessmentService.getReportConfiguration(answerSet.getSurvey().getUniqueId());
+			result.addObject("SAReportConfiguration", config);
+			
+			List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(answerSet.getSurvey().getUniqueId());
+			result.addObject("SATargetDatasets", datasets);
+						
+			return result;
+		}
 
 		ModelAndView result = new ModelAndView("thanksloggedin", Constants.UNIQUECODE, answerSet.getUniqueCode());
 
@@ -3056,6 +3169,22 @@ public class ManagementController extends BasicController {
 		}
 		result.addObject("surveyprefix", survey.getId());
 		return result;
+	}
+	
+	private String toJSONArray(List<Object> elements) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		boolean first = true;
+		for (Object e : elements) {
+			if (first) {
+				first = false;
+			} else {
+				builder.append(",");
+			}
+			builder.append("'").append(e.toString()).append("'");
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 	@RequestMapping(value = "/recalculateScore")
@@ -3500,6 +3629,11 @@ public class ManagementController extends BasicController {
 			result.addObject("ecfSummaryResult", ecfSummaryResult);
 			
 			result.addObject("surveyShortname", shortname);
+		}
+		
+		if (survey.getIsSelfAssessment()) {
+			List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
+			result.addObject("targetdatasets", datasets);
 		}
 
 		result.addObject(Constants.FILTER, filter);
@@ -4074,7 +4208,10 @@ public class ManagementController extends BasicController {
 								}
 
 								if (question instanceof ChoiceQuestion || question instanceof RankingQuestion) {
-									if ("EVOTE-ALL".equals(answer.getValue())){
+									if ("TARGETDATASET".equals(answer.getPossibleAnswerUniqueId())) {
+										SATargetDataset dataset = selfassessmentService.getTargetDataset(Integer.parseInt(answer.getValue()));
+										s.append(dataset.getName());
+									} else if ("EVOTE-ALL".equals(answer.getValue())){
 										s.append(form.getMessage("label.EntireList"));
 									} else {
 										s.append(form.getAnswerTitle(answer));

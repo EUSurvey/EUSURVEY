@@ -31,11 +31,13 @@
 						padding: 10px;
 					}
 					.elementtitle {
-						font-size: 110%;						
+						font-size: 110%;
+						margin-bottom: 10px;
 					}
 					.sectiontitle {
 						font-size: 160%;
 						color: #004F98;
+						margin-bottom: 10px;
 					}
 					.elementshortname {
 						font-size: 90%;
@@ -74,7 +76,7 @@
 	<xsl:template match="Label">
        <xsl:copy-of select="node()"/>
     </xsl:template>
-	
+		
 	<xsl:template match="Element">
 		<div class="element">
 		
@@ -109,6 +111,8 @@
 				</xsl:when>
 				<xsl:when test="@type = 'FreeTextQuestion'"><input type="text" /></xsl:when>
 				<xsl:when test="@type = 'DateQuestion'"><input type="text" /></xsl:when>
+				<xsl:when test="@type = 'TimeQuestion'"><input type="text" /></xsl:when>
+				<xsl:when test="@type = 'FormulaQuestion'"><input type="text" /></xsl:when>
 				<xsl:when test="@type = 'EmailQuestion'"><input type="text" /></xsl:when>
 				<xsl:when test="@type = 'RegExQuestion'"><input type="text" /></xsl:when>
 				<xsl:when test="@type = 'NumberQuestion'">
@@ -128,6 +132,15 @@
 					<div>[you will an image in the real survey at this position]</div>
 				</xsl:when>
 				<xsl:when test="@type = 'Text'"></xsl:when>
+				
+				<xsl:when test="@type = 'RankingQuestion'">
+					<div>
+						Use drag&amp;drop or the up/down buttons to change the order or accept the intial order
+						<xsl:for-each select="Children/Element">
+							<div style="width: 200px; border: 1px solid #777; padding: 5px; margin: 5px; border-radius: 3px; background-color: #eee;">&#8593; &#8595; <xsl:apply-templates select="Label"/></div>
+						</xsl:for-each>
+					</div>
+				</xsl:when>
 				
 				<xsl:when test="@type = 'Table'">
 					<xsl:variable name="cols" select="number(@cols)"/>
@@ -187,13 +200,63 @@
 					</table>
 				</xsl:when>
 				
+				<xsl:when test="@type = 'ComplexTable'">
+					<xsl:variable name="cols" select="number(@cols)"/>
+					<xsl:variable name="rows" select="count(Children/Element) div ($cols+1)"/>
+					<xsl:variable name="element" select="."/>
+					
+					<table cellspacing="0" cellpadding="0">
+						<tbody>
+							<xsl:for-each select="Children/Element">
+								<xsl:variable name="child" select="."/>
+								<xsl:variable name="childPos" select="position()"/>
+								<xsl:variable name="childRow" select="@row"/>
+								<xsl:choose>
+									
+									<xsl:when test="@col = 0">
+										<tr>
+											<td>
+												<xsl:apply-templates select="Label"/>
+											</td>	
+											
+											<xsl:for-each select="$element/Children/Element">
+												<xsl:if test="@col &gt; 0">	
+													<xsl:if test="@row = $childRow">
+														<td>
+															<xsl:apply-templates select="Label"/><br />
+															<xsl:if test="Help">
+																<div class="elementhelp"><xsl:value-of select="Help"/></div>
+															</xsl:if>	
+															<xsl:for-each select="Answer">
+																<input type="radio" name="{id}"></input><xsl:apply-templates select="Label"/><br />
+															</xsl:for-each>
+															<xsl:if test="@celltype = 'FreeText'"><input type="text" /></xsl:if>
+															<xsl:if test="@celltype = 'Formula'"><input type="text" /></xsl:if>
+															<xsl:if test="@celltype = 'Number'">
+																<input type="text" /><xsl:value-of select="@Unit"/>
+															</xsl:if>
+														</td>
+													</xsl:if>
+												</xsl:if>
+											</xsl:for-each>
+										</tr>
+									</xsl:when>
+									<xsl:otherwise>
+
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:for-each>
+						</tbody>
+					</table>
+				</xsl:when>
+				
 				<xsl:when test="@type = 'RatingQuestion'">
 					<table cellspacing="0" cellpadding="0">
 						<tbody>					
 							<xsl:for-each select="Children/Element">
 								<tr>
 									<td><xsl:apply-templates select="Label"/></td>
-									<td style="font-size: 30px">☆☆☆☆☆</td>
+									<td style="font-size: 30px">&#9733;&#9733;&#9733;&#9733;&#9733;</td>
 								</tr>
 							</xsl:for-each>
 						</tbody>

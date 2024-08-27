@@ -105,6 +105,10 @@
 				updateEVoteStatus();
 				updateAllFormulas();
 				updateAllExclusiveAnswers();
+				
+				$(".targetdatasetselect").each(function() {
+					checkTargetDataset(this);
+				})
 			}
 		}
 		

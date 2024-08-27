@@ -259,7 +259,7 @@
 		$('#add-survey-dialog').modal();
 	}
 	
-	function copySurvey(id, title, lang, security, isQuiz, isDelphi, isEVote, eVoteTemplate)
+	function copySurvey(id, title, lang, security, isQuiz, isDelphi, isEVote, eVoteTemplate, isSelfAssessment)
 	{
 		let login = '${USER.login}';
 		let contact = '${USER.email}';
@@ -289,18 +289,28 @@
 		
 		if (isQuiz == 'true')
 		{
+			$("#new-survey-type-selfassessment").closest("label").removeClass("active");
 			$("#new-survey-type-normal").closest("label").removeClass("active");
 			$("#new-survey-type-delphi").closest("label").removeClass("active");
 			$("#new-survey-type-evote").closest("label").removeClass("active");
 			$("#new-survey-type-quiz").closest("label").addClass("active");
 			$("#new-survey-type-quiz").attr("checked", "checked");
 		} else  if (isDelphi == 'true') {
+			$("#new-survey-type-selfassessment").closest("label").removeClass("active");
 			$("#new-survey-type-normal").closest("label").removeClass("active");
 			$("#new-survey-type-quiz").closest("label").removeClass("active");
 			$("#new-survey-type-evote").closest("label").removeClass("active");
 			$("#new-survey-type-delphi").closest("label").addClass("active");
 			$("#new-survey-type-delphi").attr("checked", "checked");
+		} else  if (isSelfAssessment == 'true') {
+			$("#new-survey-type-normal").closest("label").removeClass("active");
+			$("#new-survey-type-quiz").closest("label").removeClass("active");
+			$("#new-survey-type-evote").closest("label").removeClass("active");
+			$("#new-survey-type-delphi").closest("label").removeClass("active");
+			$("#new-survey-type-selfassessment").closest("label").addClass("active");
+			$("#new-survey-type-selfassessment").attr("checked", "checked");
 		} else if (isEVote == "true") {
+			$("#new-survey-type-selfassessment").closest("label").removeClass("active");
 			$("#new-survey-type-normal").closest("label").removeClass("active");
 			$("#new-survey-type-quiz").closest("label").removeClass("active");
 			$("#new-survey-type-delphi").closest("label").removeClass("active");
@@ -312,6 +322,7 @@
 			$("#new-survey-security-open").attr("disabled", "disabled");
 			$("#evote-template").show();
 		} else {
+			$("#new-survey-type-selfassessment").closest("label").removeClass("active");
 			$("#new-survey-type-quiz").closest("label").removeClass("active");
 			$("#new-survey-type-delphi").closest("label").removeClass("active");
 			$("#new-survey-type-evote").closest("label").removeClass("active");
@@ -410,6 +421,12 @@
 								<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-ecf" value="ecf" />&#160;<spring:message code="label.ECF" />
 						  	</label>
 						  </c:if>
+						  <c:if test="${enableselfassessment}">
+							<label style="height: auto" class="btn btn-default" title="<spring:message code="info.SelfAssessment" />" aria-label="<spring:message code="info.SelfAssessment" />" data-toggle='tooltip'>
+								<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/table.png">
+								<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-selfassessment" value="selfassessment" />&#160;<spring:message code="label.SelfAssessment" />
+							</label>
+					      </c:if>
 						  <c:if test="${enabledelphi}">
 								<label style="height: auto" class="btn btn-default" title="<spring:message code="info.Delphi" />" aria-label="<spring:message code="info.Delphi" />" data-toggle='tooltip'>
 									<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/delphi.png">
@@ -432,7 +449,7 @@
 						<input type="radio" name="new-survey-template" value="i" style="margin-left: 20px;" />&#160;<spring:message code="label.IspraSeville" />
 						<input type="radio" name="new-survey-template" value="l" style="margin-left: 20px;" />&#160;<spring:message code="label.Luxembourg" />
 						<input type="radio" name="new-survey-template" value="o" style="margin-left: 20px;" />&#160;<spring:message code="label.OutsideCommunity" />
-						<input type="radio" name="new-survey-template" value="p" style="margin-left: 20px;" />&#160;<spring:message code="label.SinglePresident" />
+						<input type="radio" name="new-survey-template" value="p" style="margin-left: 20px;" />&#160;<spring:message code="label.Standard" />
 					</td>
 				</tr>				
 				<tr>
@@ -558,6 +575,7 @@
 	<input type="hidden" name="opc" id="create-survey-opc" value="" />
 	<input type="hidden" name="delphi" id="create-survey-delphi" value="" />
 	<input type="hidden" name="ecf" id="create-survey-ecf" value="" />
+	<input type="hidden" name="selfassessment" id="create-survey-selfassessment" value="" />
 	<input type="hidden" name="evote" id="create-survey-evote" value="" />
 	<input type="hidden" name="evotetemplate" id="create-survey-template" value="" />
 	<input type="hidden" name="contact" id="create-survey-contact" value="" />

@@ -29,6 +29,32 @@
 	 </div>
 	 </div>
 	 
+	 <div class="modal" id="multipletargetdatasetselectionsdialog" data-backdrop="static">
+	 <div class="modal-dialog modal-sm">
+     <div class="modal-content">
+	  <div class="modal-body">	
+	  	<spring:message code="error.multipletargetdatasetselections" />
+	  </div>
+	  <div class="modal-footer">
+		<a  class="btn btn-default" onclick="$('#multipletargetdatasetselectionsdialog').modal('hide');"><spring:message code="label.OK" /></a>		
+	  </div>
+	 </div>
+	 </div>
+	 </div>
+	 
+	  <div class="modal" id="targetdatasetselectionaftersaquestiondialog" data-backdrop="static">
+	  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+	  <div class="modal-body">	
+	  	<spring:message code="error.targetdatasetselectionaftersaquestion" />
+	  </div>
+	  <div class="modal-footer">
+		<a  class="btn btn-default" onclick="$('#targetdatasetselectionaftersaquestiondialog').modal('hide');"><spring:message code="label.OK" /></a>		
+	  </div>
+	  </div>
+	  </div>
+	  </div>
+	 
 	 <div class="modal" id="confirm-delete-dialog" data-backdrop="static">
 		<div class="modal-dialog">
 	    <div class="modal-content">
@@ -189,6 +215,7 @@
 		var isOPC = ${form.survey.isOPC};
 		var isDelphi = ${form.survey.isDelphi};
 		var isEVote = ${form.survey.isEVote};
+		var isSelfAssessment = ${form.survey.isSelfAssessment};
 		var eVoteTemplate = "${form.survey.eVoteTemplate}";
 		var automaticNumbering = ${form.survey.sectionNumbering != 0 || form.survey.questionNumbering != 0};
 		
@@ -724,7 +751,9 @@
 		strings["invalidRankItemDeletion"] = "<spring:message code="validation.invalidRankItemDeletion" />";
 		strings["invalidRatingDeletion"] = "<spring:message code="validation.invalidRatingDeletion" />";
 		strings["Exclusive"] = "<spring:message code="label.Exclusive" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Exclusive" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
-
+		strings["DisplayAllQuestions"] = "<spring:message code="label.DisplayAllQuestions" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.DisplayAllQuestions" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
+		strings["EvaluationCriteria"]= "<spring:message code="label.EvaluationCriteria" />";
+		
 	 	function getPropertyLabel(label)
 	 	{
 	 		if (!isNaN(label)) return label;

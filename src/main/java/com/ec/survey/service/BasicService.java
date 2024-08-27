@@ -83,6 +83,9 @@ public class BasicService implements BeanFactoryAware {
 	@Resource(name= "ecfService")
 	protected ECFService ecfService;
 	
+	@Resource(name = "selfassessmentService")
+	protected SelfAssessmentService selfassessmentService;
+	
 	@Autowired
 	protected MessageSource resources;
 	
