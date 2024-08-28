@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ ECAS Software
+  ~ Copyright (c) 2014 European Commission
+  ~ Licensed under the EUPL
+  ~ You may not use this work except in compliance with the Licence.
+  ~ You may obtain a copy of the Licence at:
+  ~ http://ec.europa.eu/idabc/eupl
+  ~
+  ~ This product includes the CAS software developed by Yale University,
+  ~ Copyright (c) 2000-2004 Yale University. All rights reserved.
+  ~ THE CAS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESS OR IMPLIED
+  ~ WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  ~ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE EXPRESSLY
+  ~ DISCLAIMED. IN NO EVENT SHALL YALE UNIVERSITY OR ITS EMPLOYEES BE
+  ~ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  ~ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED, THE COSTS OF
+  ~ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA OR
+  ~ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  ~ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  ~ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  ~ SOFTWARE, EVEN IF ADVISED IN ADVANCE OF THE POSSIBILITY OF SUCH
+  ~ DAMAGE.
+  -->
+
+<stsConfiguration xmlns="https://ecas.ec.europa.eu/cas/schemas/sts/stsConfiguration.xsd" version="4.3.0">
+    <stsCertificates>
+        <stsCertificate id="SIGNATURE_OLD">
+            MIIF8zCCA9ugAwIBAgIQE99Cv9GVttdXCQgWKWSHMDANBgkqhkiG9w0BAQ0FADCB
+            mTELMAkGA1UEBhMCQkUxETAPBgNVBAgMCEJydXNzZWxzMREwDwYDVQQHDAhCcnVz
+            c2VsczEcMBoGA1UECgwTRXVyb3BlYW4gQ29tbWlzc2lvbjEOMAwGA1UECwwFRElH
+            SVQxNjA0BgNVBAMMLUVDQVMgTW9jay1VcCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkg
+            KERldiBPbmx5KTAeFw0xNTA2MTQwODEwNDBaFw0xODA2MTYwODEwNDBaMIGWMQsw
+            CQYDVQQGEwJCRTERMA8GA1UEBwwIQnJ1c3NlbHMxHDAaBgNVBAoME0V1cm9wZWFu
+            IENvbW1pc3Npb24xDjAMBgNVBAsMBURJR0lUMSwwKgYJKoZIhvcNAQkBFh15b3Vy
+            LmVjYXMubW9ja3VwQGVjLmV1cm9wYS5ldTEYMBYGA1UEAwwPZWNhcy1tb2NrdXAt
+            c3RzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsyHV6EiUq4r29HRP
+            CQ+PrR2axyopDpiWO6p92KtCoRb8SP6KB3NoGd3LYnrsgbGtt22u+dhnkOtPmdlE
+            VeMDiSWJBe+Ui1K1QyQLAS+zYkbnmfcbbR0TuTIA/qa4uRqUL98HodBSL8Gp0fzl
+            s90MeeXbwdZQlxQ5RrRbirPXLEVFKHNLIRNOAPQT8+nfIdMWxB7KFRJFdPe6VInZ
+            HRel5SVseWhFhGVL6Ike+C4Jp1OHgvDY6LX9riHYgU4pFVJgyR/3ar6LuFFw/T2l
+            h7sutcBav/a7i0fq8HwcGvKzG5UQImIICfZ4r2lw1iOKQoj6Bqn6FmoDROXNpfWe
+            j5CdHQIDAQABo4IBNjCCATIwEQYJYIZIAYb4QgEBBAQDAgTwMB0GA1UdDgQWBBQ4
+            WdrbjJvCmHgWe2WpfS8RMiYv8jALBgNVHQ8EBAMCBPAwSgYDVR0RBEMwQYIKbW9j
+            a3VwaG9zdIIJMTI3LjAuMC4xgglsb2NhbGhvc3SBHXlvdXIuZWNhcy5tb2NrdXBA
+            ZWMuZXVyb3BhLmV1MAkGA1UdEwQCMAAwPAYDVR0fBDUwMzAxoC+gLYYraHR0cHM6
+            Ly9lY2FzZC5jYy5jZWMuZXUuaW50OjcwMDIvY2FzL2NhL2NybDA7BgNVHSUENDAy
+            BggrBgEFBQcDCAYIKwYBBQUHAwEGCCsGAQUFBwMCBggrBgEFBQcDAwYIKwYBBQUH
+            AwQwHwYDVR0jBBgwFoAUdea+mpws+tMG4gSSTyDo2fYfElowDQYJKoZIhvcNAQEN
+            BQADggIBAHxFUqMB4noep7Vb+kM3M1n8EhOZRFYEdp3r9Yn4cYvrFgKGDx7IhEL9
+            KBRl/TSSsGFGKLM1LZ1nakeiYLaghQTDcn7nJpe239vSHNLw6cDFKoblfnTokueU
+            DQu5zTGipvmPiQGTC6uemp3NmVk6E5aCEgUE2HJvSafBGivDpdtNyspSnKsptL6o
+            5QdawI6ig2cYfENubqQd3J7tLMG5TvgEZ6sdsx8P5khq1k5okASmrDd5YQrG3kvB
+            hb+WQPHZLze5u0d02ctFiL40anV2jolTNPv3V7MUI3ZZdYWXVhgaAbu+OEqNOYRE
+            qZTSGb33q1TjarpRqVE9K3OrKlXh5DvnGVdPH/wduqX1rDlq4718y369wfSD+rK/
+            WMT/472HoNck8lN+7awOnvx1bjMvr0sJJJIXC3t2nZfvTFfhbwxUbZDagVw+8Mpt
+            vclQYSQ+KIJl2ctg9059gXz0DwhIBH2zBdi/uzqD5cRvtQ8SplyTGtK69oFxGbgq
+            4BEJF1kG2BeY85QYkTjjO7qMZ2/y0Mbiy8djAAUPW5JU3Fm9McYEF6EfmKRbXcKG
+            TxE82Vk0EcZwi69inNsN6LxzoQZ6lL+Z3aOV5iNYZyiHMOJfFySGVcOmGf9ytGBM
+            GiHlENMMhZKvisP7sz/JtWneg6gYl7L3nfZ6UPuhQPZsbXHhPtUo
+        </stsCertificate>
+        <stsCertificate id="SIGNATURE_NEW">
+            MIIF8zCCA9ugAwIBAgIQQo5i8kWxuYByLXouRxKXdjANBgkqhkiG9w0BAQ0FADCB
+            mTELMAkGA1UEBhMCQkUxETAPBgNVBAgMCEJydXNzZWxzMREwDwYDVQQHDAhCcnVz
+            c2VsczEcMBoGA1UECgwTRXVyb3BlYW4gQ29tbWlzc2lvbjEOMAwGA1UECwwFRElH
+            SVQxNjA0BgNVBAMMLUVDQVMgTW9jay1VcCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkg
+            KERldiBPbmx5KTAeFw0xNTA2MTQwODEwMzlaFw0xODA2MTYwODEwMzlaMIGWMQsw
+            CQYDVQQGEwJCRTERMA8GA1UEBwwIQnJ1c3NlbHMxHDAaBgNVBAoME0V1cm9wZWFu
+            IENvbW1pc3Npb24xDjAMBgNVBAsMBURJR0lUMSwwKgYJKoZIhvcNAQkBFh15b3Vy
+            LmVjYXMubW9ja3VwQGVjLmV1cm9wYS5ldTEYMBYGA1UEAwwPZWNhcy1tb2NrdXAt
+            c3RzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyzLoNIG92XW5viSE
+            P9BWgoNEJAcrb3ewmSZm1lD2czhHIRNI0FhAdNvi6wtq8licLw46vMUtI+DDerHK
+            jc5CpOJGzLEesmEBSxWaVA5n2X+HLQXWDfbd2t0WSg3wgNK6adRai3BHc6BQuHLv
+            wyS6gLFvFeBR5kofYgGlbKOs4AV7e+TYvs8TIEm7XuGHUwlmeLJo0ivppFvBCtmM
+            BSKgLajTxSKsXfK40aMAjLmR6Ai1nA7iErGxAynIAqxCEfKTe7pcdwnLrtImWQGn
+            rCIf2UOlN1T8p4PhB1VRgt/Mkgcx7vqnrVpESxlBgLgHEXr5qqk89C5iwT6lQ6SF
+            +1ZwmQIDAQABo4IBNjCCATIwEQYJYIZIAYb4QgEBBAQDAgTwMB0GA1UdDgQWBBS1
+            vmfbuCIFUrG5ernADbJ0E6pNZDALBgNVHQ8EBAMCBPAwSgYDVR0RBEMwQYIKbW9j
+            a3VwaG9zdIIJMTI3LjAuMC4xgglsb2NhbGhvc3SBHXlvdXIuZWNhcy5tb2NrdXBA
+            ZWMuZXVyb3BhLmV1MAkGA1UdEwQCMAAwPAYDVR0fBDUwMzAxoC+gLYYraHR0cHM6
+            Ly9lY2FzZC5jYy5jZWMuZXUuaW50OjcwMDIvY2FzL2NhL2NybDA7BgNVHSUENDAy
+            BggrBgEFBQcDCAYIKwYBBQUHAwEGCCsGAQUFBwMCBggrBgEFBQcDAwYIKwYBBQUH
+            AwQwHwYDVR0jBBgwFoAUdea+mpws+tMG4gSSTyDo2fYfElowDQYJKoZIhvcNAQEN
+            BQADggIBAHxZG5DqDZZiNlwYXXKwJhBNIDW1f5DEAIX9sHL6WZfBekM3ChBVE+rm
+            hlQGyKjuvykcknxyyGOyU1bcGbGgsItzUJleZN8ZOmcOhaB5GITuQfiD2Sk9JEeM
+            CmxrIQPdQqyHRet7yye5kzu/7nZNHbn/9ZMhuq3+W0tjkpegujrVcDGsyWwokN0u
+            GqJM1uTL3Jj9fKUqDr5TDnz3AWK5en4v7DY9nevT81DmidYCfwI2vmjoM/jXLO7k
+            /jwqXig4tEZ1ZUYGwrKd3eF1OnXHCUWcIToZhFMXITkvfrBlCA3k5ILq8R/Mi+7F
+            69e06RdupJzpYhDh7ruS3YPDOIMA7sd8cOT01blME9XkUDR+B+rWS8MXQOEalQ7P
+            G6g6vT5FmswNbhzVKoUvEKdFPacy87NDilQg6xM/YwuO8dm/yRIKnd/VAks+F/US
+            +w3FAXudSllXZ6+ZD0Cxd5lPafuN0fUZ7HbcDtrbzaIYoMmsECpeA/JkURGHcWWk
+            JGUR84HoraRuvKYtXNShci4Eo1KusLdgaO05FdXY5aXLBzDGMh2txXs3cfgETgrF
+            Ad2Is1gNNMTUkCPN7W+o0KSHCqQuJU3HNz6fjWMzg6PJjsumaEYLCldIZjRPVH3o
+            ZAxD3Ig5aG9TRcbj3EQJlU0J89hH76nWWp1Onc1SZpSUoQlxZSmG
+        </stsCertificate>
+    </stsCertificates>
+    <claims>
+        <claim id="AGE_18_OR_OVER">
+            <name>age-18-or-over</name>
+            <namespace>http://schemas.informationcard.net/@ics</namespace>
+            <uri>http://schemas.informationcard.net/@ics/age-18-or-over/2008-11</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="AGE_21_OR_OVER">
+            <name>age-21-or-over</name>
+            <namespace>http://schemas.informationcard.net/@ics</namespace>
+            <uri>http://schemas.informationcard.net/@ics/age-21-or-over/2008-12</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="AUTHENTICATION_INSTANT">
+            <name>authenticationinstant</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationinstant</uri>
+            <mapping>loginTime</mapping>
+        </claim>
+        <claim id="AUTHENTICATION_METHOD">
+            <name>authenticationmethod</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod</uri>
+            <mapping>loginMethod</mapping>
+        </claim>
+        <claim id="COMMON_NAME">
+            <name>CommonName</name>
+            <namespace>http://schemas.xmlsoap.org/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/claims/CommonName</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="COUNTRY">
+            <name>country</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="DATE_OF_BIRTH">
+            <name>dateofbirth</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="DENYONLYPRIMARYGROUPSID">
+            <name>denyonlyprimarygroupsid</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/denyonlyprimarygroupsid</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="DENYONLYPRIMARYSID">
+            <name>denyonlyprimarysid</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/denyonlyprimarysid</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="DENYONLYSID">
+            <name>denyonlysid</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/denyonlysid</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="DEPARTMENT">
+            <name>department</name>
+            <namespace>http://schemas.ec.europa.eu/identity/claims</namespace>
+            <uri>http://schemas.ec.europa.eu/identity/claims/department</uri>
+            <mapping>userDetails.departmentNumber</mapping>
+        </claim>
+        <claim id="EMAIL">
+            <name>emailaddress</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress</uri>
+            <mapping>userDetails.email</mapping>
+        </claim>
+        <claim id="EMAIL_OLD">
+            <name>EmailAddress</name>
+            <namespace>http://schemas.xmlsoap.org/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/claims/EmailAddress</uri>
+            <mapping>userDetails.email</mapping>
+        </claim>
+        <claim id="EMPLOYEE_TYPE">
+            <name>employeeType</name>
+            <namespace>http://schemas.ec.europa.eu/identity/claims</namespace>
+            <uri>http://schemas.ec.europa.eu/identity/claims/employeeType</uri>
+            <mapping>userDetails.employeeType</mapping>
+        </claim>
+        <claim id="GIVEN_NAME">
+            <name>givenname</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname</uri>
+            <mapping>userDetails.firstName</mapping>
+        </claim>
+        <claim id="GROUP">
+            <name>Group</name>
+            <namespace>http://schemas.xmlsoap.org/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/claims/Group</uri>
+            <mapping>group</mapping>
+        </claim>
+        <claim id="GROUPSID">
+            <name>groupsid</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/groupsid</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="IDENTITY_PROVIDER">
+            <name>identityprovider</name>
+            <namespace>http://schemas.microsoft.com/accesscontrolservice/2010/07/claims</namespace>
+            <uri>http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="LOCALITY">
+            <name>locality</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="MOBILE_PHONE">
+            <name>mobilephone</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="NAME">
+            <name>name</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name</uri>
+            <mapping>uid</mapping>
+        </claim>
+        <claim id="NAME_IDENTIFIER">
+            <name>nameidentifier</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier</uri>
+            <mapping>uid</mapping>
+        </claim>
+        <claim id="ORGANISATION">
+            <name>organisation</name>
+            <namespace>http://schemas.ec.europa.eu/identity/claims</namespace>
+            <uri>http://schemas.ec.europa.eu/identity/claims/organisation</uri>
+            <mapping>userDetails.organisation</mapping>
+        </claim>
+        <claim id="OTHER_PHONE">
+            <name>otherphone</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/otherphone</uri>
+            <mapping>userDetails.telephoneNumber</mapping>
+        </claim>
+        <claim id="POSTAL_CODE">
+            <name>postalcode</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/postalcode</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="PPID">
+            <name>privatepersonalidentifier</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier</uri>
+            <mapping>uid</mapping>
+        </claim>
+        <claim id="PRIMARYGROUPSID">
+            <name>primarygroupsid</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/primarygroupsid</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="PRIMARYSID">
+            <name>primarysid</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="ROLE">
+            <name>role</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/role</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="STATE_OR_PROVINCE">
+            <name>stateorprovince</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="STREET_ADDRESS">
+            <name>streetaddress</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/streetaddress</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="SURNAME">
+            <name>surname</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname</uri>
+            <mapping>userDetails.lastName</mapping>
+        </claim>
+        <claim id="UPN">
+            <name>upn</name>
+            <namespace>http://schemas.xmlsoap.org/ws/2005/05/identity/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="UPN_OLD">
+            <name>UPN</name>
+            <namespace>http://schemas.xmlsoap.org/claims</namespace>
+            <uri>http://schemas.xmlsoap.org/claims/UPN</uri>
+            <mapping></mapping>
+        </claim>
+        <claim id="USERNAME">
+            <name>username</name>
+            <namespace>http://schemas.informationcard.net/@ics</namespace>
+            <uri>http://schemas.informationcard.net/@ics/username/2009-03</uri>
+            <mapping>uid</mapping>
+        </claim>
+        <claim id="WINDOWS_ACCOUNT_NAME">
+            <name>windowsaccountname</name>
+            <namespace>http://schemas.microsoft.com/ws/2008/06/identity/claims</namespace>
+            <uri>http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname</uri>
+            <mapping></mapping>
+        </claim>
+    </claims>
+    <identityProviders default="GENERIC_IDP_TEMPLATE">
+        <identityProvider id="GENERIC_IDP_TEMPLATE">
+            <certificate>
+                MIIC6DCCAdCgAwIBAgIQeev+RkPM765PSmS9TTNu/DANBgkqhkiG9w0BAQsFADAwMS4wLAYDVQQDEyVBREZTIFNpZ25pbmcgLSBTVFMuQ1AtREVWMS5jZWMuZXUuaW50MB4XDTEwMDgyNTEyMTQzN1oXDTExMDgyNTEyMTQzN1owMDEuMCwGA1UEAxMlQURGUyBTaWduaW5nIC0gU1RTLkNQLURFVjEuY2VjLmV1LmludDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJ1/0N7+8UDPCKfBAb5xyfhEKG1WW5qzrOWoR2E7eM9dOIqnyeWA/h7pJBjr9nwvEtP01uCquHMNRB+IPdV/IlHJOIr1pzyzIOImpqcvuVB/QLxA8nrUsh4LX6X71z4gLCWBj9dGdamvXFszniEQNP144z+c8GIMAxtqpwwAjtfuPeByOEMCAvqkkAFSU+OJO/9UZ/sdojSW1gb+FlNpSxJ00wc+bz4Vt+E2mUAgHMt27tdHRNlFvhcbmDA4Rt7znxLuGA/uTx+CBiS0PPuhCexyYbdgc0JXOPsMuXCt4SMWLAis97TeA5Cs2FUNV8sC++0XIG88zNZeT+L2DfmEWzsCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAB6KVLUEMjS/K/dDZVT+obyB/nliYVqphhehcDWOZbIo8mkhas1OXRsonkrmsKBtriFTgL3RynmZnEB3Vc0WgxRtCzl6U5Xx/7+/59jXO1DQX7Z05Q+qAijcPxK0bY/MeVHDirpM6uLhDmYj4oV9Nlc+DmNhuj8PChMaLxTomu7sQA78c+owsNaqNGrFPvILGjUoNLaDFEaPHxNfc8BDOwByEOtef3Fyuq7H+w5VSfcr0U8q2ZQijQQ+Y/mNNQm0dTE9JbGQ5od7HSBEq1YD+n+kjZqW+w0tzU/46IWUcqJARMsuX0/WSlueFmcQMXGexWm4xl0xl82PJvv9+jcrIWA==
+            </certificate>
+            <claimMappings>
+                <claimMapping>
+                    <claim ref="AUTHENTICATION_INSTANT"/>
+                    <mapping>loginTime</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="AUTHENTICATION_METHOD"/>
+                    <mapping>loginMethod</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="EMAIL"/>
+                    <mapping>userDetails.email</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="GIVEN_NAME"/>
+                    <mapping>userDetails.firstName</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="GROUP"/>
+                    <mapping>group</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="NAME_IDENTIFIER"/>
+                    <mapping>uid</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="SURNAME"/>
+                    <mapping>userDetails.lastName</mapping>
+                </claimMapping>
+            </claimMappings>
+            <lifeTimeMinutes>5</lifeTimeMinutes>
+            <signatureAlgorithm>SHA256withRSA</signatureAlgorithm>
+            <tokenType>SAML_20</tokenType>
+            <wsFederationMethod>HTTP_REDIRECT</wsFederationMethod>
+            <wsFederationPassiveUrl>https://some.template.eu/_trust</wsFederationPassiveUrl>
+            <wsFederationSendRequest>false</wsFederationSendRequest>
+            <wsTrustVersion>1.3</wsTrustVersion>
+            <ecasRealm>urn:ecast.cc.cec.eu.int:7002:generic_idp_template</ecasRealm>
+            <validateTimeInConditions>true</validateTimeInConditions>
+            <verifySignature>true</verifySignature>
+        </identityProvider>
+    </identityProviders>
+    <serviceProviders default="GENERIC_SP_TEMPLATE">
+        <serviceProvider id="GENERIC_SP_TEMPLATE">
+            <claimMappings>
+                <claimMapping>
+                    <claim ref="AUTHENTICATION_INSTANT"/>
+                    <mapping>loginTime</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="AUTHENTICATION_METHOD"/>
+                    <mapping>loginMethod</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="EMAIL"/>
+                    <mapping>userDetails.email</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="GIVEN_NAME"/>
+                    <mapping>userDetails.firstName</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="GROUP"/>
+                    <mapping>group</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="NAME_IDENTIFIER"/>
+                    <mapping>uid</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="SURNAME"/>
+                    <mapping>userDetails.lastName</mapping>
+                </claimMapping>
+            </claimMappings>
+            <lifeTimeMinutes>5</lifeTimeMinutes>
+            <signatureAlgorithm>SHA256withRSA</signatureAlgorithm>
+            <tokenType>SAML_20</tokenType>
+            <wsFederationMethod>HTTP_REDIRECT</wsFederationMethod>
+            <wsFederationPassiveUrl>http://some.sp.template.eu/_trust</wsFederationPassiveUrl>
+            <wsFederationSendRequest>false</wsFederationSendRequest>
+            <wsTrustVersion>1.3</wsTrustVersion>
+            <stsCertificate ref="SIGNATURE_NEW"/>
+            <certificateAliasInKeyStore>sp.template</certificateAliasInKeyStore>
+            <identityProvider ref="GENERIC_IDP_TEMPLATE"/>
+            <realm>urn:sp.template:ecas</realm>
+            <strengths>
+                <strength>BASIC</strength>
+                <strength>PASSWORD_SMS</strength>
+                <strength>CLIENT_CERT</strength>
+            </strengths>
+        </serviceProvider>
+        <serviceProvider id="YOUR_SP">
+            <claimMappings>
+                <claimMapping>
+                    <claim ref="EMAIL"/>
+                    <mapping>userDetails.email</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="GIVEN_NAME"/>
+                    <mapping>userDetails.firstName</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="GROUP"/>
+                    <mapping>group</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="NAME"/>
+                    <mapping>uid</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="NAME_IDENTIFIER"/>
+                    <mapping>uid</mapping>
+                </claimMapping>
+                <claimMapping>
+                    <claim ref="SURNAME"/>
+                    <mapping>userDetails.lastName</mapping>
+                </claimMapping>
+            </claimMappings>
+            <lifeTimeMinutes>30</lifeTimeMinutes>
+            <signatureAlgorithm>SHA256withRSA</signatureAlgorithm>
+            <tokenType>SAML_10</tokenType>
+            <wsFederationMethod>HTTP_REDIRECT</wsFederationMethod>
+            <wsFederationPassiveUrl>http://sp-passive-url/_trust</wsFederationPassiveUrl>
+            <wsFederationSendRequest>false</wsFederationSendRequest>
+            <wsTrustVersion>1.3</wsTrustVersion>
+            <stsCertificate ref="SIGNATURE_NEW"/>
+            <certificateAliasInKeyStore>your-sp</certificateAliasInKeyStore>
+            <identityProvider ref="GENERIC_IDP_TEMPLATE"/>
+            <realm>urn:sharepoint:your-sp:4444</realm>
+            <strengths>
+                <strength>BASIC</strength>
+                <strength>PASSWORD_SMS</strength>
+                <strength>PASSWORD_TOKEN</strength>
+            </strengths>
+        </serviceProvider>
+    </serviceProviders>
+</stsConfiguration>

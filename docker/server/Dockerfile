@@ -1,4 +1,4 @@
-FROM tomcat:8.5.41-jdk8
+FROM tomcat:8.5.100-jdk11
 
 # arguments
 # ./conf/eulogin.crt is a trusted certificate for SSO integration
@@ -7,10 +7,10 @@ FROM tomcat:8.5.41-jdk8
 # ./conf/setenv.sh is the environment variables configuration
 
 COPY ./conf/eulogin.crt eulogin.crt
-RUN echo yes | keytool -importcert -alias euloginCertAlias -storepass changeit -file eulogin.crt -keystore "$JAVA_HOME/jre/lib/security/cacerts"
+RUN echo yes | keytool -importcert -alias euloginCertAlias -storepass changeit -file eulogin.crt -keystore "$JAVA_HOME/lib/security/cacerts"
 
 RUN ["rm", "-fr", "/usr/local/tomcat/webapps/ROOT"]
 COPY ./dist/eusurvey.war /usr/local/tomcat/webapps/eusurvey.war
-COPY ./conf/setenv.sh /usr/local/tomcat/bin/setenv.sh
+#COPY ./conf/setenv.sh /usr/local/tomcat/bin/setenv.sh
 COPY ./conf/context.xml /usr/local/tomcat/conf/context.xml
 COPY ./conf/manager-context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml

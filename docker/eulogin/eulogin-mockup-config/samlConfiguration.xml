@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ ECAS Software
+  ~ Copyright (c) 2015 European Commission
+  ~ Licensed under the EUPL
+  ~ You may not use this work except in compliance with the Licence.
+  ~ You may obtain a copy of the Licence at:
+  ~ http://ec.europa.eu/idabc/eupl
+  ~
+  ~ This product includes the CAS software developed by Yale University,
+  ~ Copyright (c) 2000-2004 Yale University. All rights reserved.
+  ~ THE CAS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESS OR IMPLIED
+  ~ WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  ~ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE EXPRESSLY
+  ~ DISCLAIMED. IN NO EVENT SHALL YALE UNIVERSITY OR ITS EMPLOYEES BE
+  ~ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  ~ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED, THE COSTS OF
+  ~ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA OR
+  ~ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  ~ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  ~ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  ~ SOFTWARE, EVEN IF ADVISED IN ADVANCE OF THE POSSIBILITY OF SUCH
+  ~ DAMAGE.
+  -->
+
+<!--
+###############################################################################
+#                                                                             #
+#   ECAS Server SAML Configuration properties file - samlConfiguration.xml    #
+#                                                                             #
+#                                                                             #
+#   This file holds mutable SAML configuration information.                   #
+#                                                                             #
+# Any change in this file is reflected in the ECAS SAML component at runtime. #
+#                                                                             #
+###############################################################################
+ -->
+
+<samlConfiguration xmlns="https://ecas.ec.europa.eu/cas/schemas/saml/samlConfiguration.xsd" version="4.3.0"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="https://ecas.ec.europa.eu/cas/schemas/saml/samlConfiguration.xsd ">
+    <samlCertificates>
+        <samlCertificate id="SIGNATURE_OLD">
+            MIIF8zCCA9ugAwIBAgIQE99Cv9GVttdXCQgWKWSHMDANBgkqhkiG9w0BAQ0FADCB
+            mTELMAkGA1UEBhMCQkUxETAPBgNVBAgMCEJydXNzZWxzMREwDwYDVQQHDAhCcnVz
+            c2VsczEcMBoGA1UECgwTRXVyb3BlYW4gQ29tbWlzc2lvbjEOMAwGA1UECwwFRElH
+            SVQxNjA0BgNVBAMMLUVDQVMgTW9jay1VcCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkg
+            KERldiBPbmx5KTAeFw0xNTA2MTQwODEwNDBaFw0xODA2MTYwODEwNDBaMIGWMQsw
+            CQYDVQQGEwJCRTERMA8GA1UEBwwIQnJ1c3NlbHMxHDAaBgNVBAoME0V1cm9wZWFu
+            IENvbW1pc3Npb24xDjAMBgNVBAsMBURJR0lUMSwwKgYJKoZIhvcNAQkBFh15b3Vy
+            LmVjYXMubW9ja3VwQGVjLmV1cm9wYS5ldTEYMBYGA1UEAwwPZWNhcy1tb2NrdXAt
+            c3RzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsyHV6EiUq4r29HRP
+            CQ+PrR2axyopDpiWO6p92KtCoRb8SP6KB3NoGd3LYnrsgbGtt22u+dhnkOtPmdlE
+            VeMDiSWJBe+Ui1K1QyQLAS+zYkbnmfcbbR0TuTIA/qa4uRqUL98HodBSL8Gp0fzl
+            s90MeeXbwdZQlxQ5RrRbirPXLEVFKHNLIRNOAPQT8+nfIdMWxB7KFRJFdPe6VInZ
+            HRel5SVseWhFhGVL6Ike+C4Jp1OHgvDY6LX9riHYgU4pFVJgyR/3ar6LuFFw/T2l
+            h7sutcBav/a7i0fq8HwcGvKzG5UQImIICfZ4r2lw1iOKQoj6Bqn6FmoDROXNpfWe
+            j5CdHQIDAQABo4IBNjCCATIwEQYJYIZIAYb4QgEBBAQDAgTwMB0GA1UdDgQWBBQ4
+            WdrbjJvCmHgWe2WpfS8RMiYv8jALBgNVHQ8EBAMCBPAwSgYDVR0RBEMwQYIKbW9j
+            a3VwaG9zdIIJMTI3LjAuMC4xgglsb2NhbGhvc3SBHXlvdXIuZWNhcy5tb2NrdXBA
+            ZWMuZXVyb3BhLmV1MAkGA1UdEwQCMAAwPAYDVR0fBDUwMzAxoC+gLYYraHR0cHM6
+            Ly9lY2FzZC5jYy5jZWMuZXUuaW50OjcwMDIvY2FzL2NhL2NybDA7BgNVHSUENDAy
+            BggrBgEFBQcDCAYIKwYBBQUHAwEGCCsGAQUFBwMCBggrBgEFBQcDAwYIKwYBBQUH
+            AwQwHwYDVR0jBBgwFoAUdea+mpws+tMG4gSSTyDo2fYfElowDQYJKoZIhvcNAQEN
+            BQADggIBAHxFUqMB4noep7Vb+kM3M1n8EhOZRFYEdp3r9Yn4cYvrFgKGDx7IhEL9
+            KBRl/TSSsGFGKLM1LZ1nakeiYLaghQTDcn7nJpe239vSHNLw6cDFKoblfnTokueU
+            DQu5zTGipvmPiQGTC6uemp3NmVk6E5aCEgUE2HJvSafBGivDpdtNyspSnKsptL6o
+            5QdawI6ig2cYfENubqQd3J7tLMG5TvgEZ6sdsx8P5khq1k5okASmrDd5YQrG3kvB
+            hb+WQPHZLze5u0d02ctFiL40anV2jolTNPv3V7MUI3ZZdYWXVhgaAbu+OEqNOYRE
+            qZTSGb33q1TjarpRqVE9K3OrKlXh5DvnGVdPH/wduqX1rDlq4718y369wfSD+rK/
+            WMT/472HoNck8lN+7awOnvx1bjMvr0sJJJIXC3t2nZfvTFfhbwxUbZDagVw+8Mpt
+            vclQYSQ+KIJl2ctg9059gXz0DwhIBH2zBdi/uzqD5cRvtQ8SplyTGtK69oFxGbgq
+            4BEJF1kG2BeY85QYkTjjO7qMZ2/y0Mbiy8djAAUPW5JU3Fm9McYEF6EfmKRbXcKG
+            TxE82Vk0EcZwi69inNsN6LxzoQZ6lL+Z3aOV5iNYZyiHMOJfFySGVcOmGf9ytGBM
+            GiHlENMMhZKvisP7sz/JtWneg6gYl7L3nfZ6UPuhQPZsbXHhPtUo
+        </samlCertificate>
+        <samlCertificate id="SIGNATURE_NEW">
+            MIIF8zCCA9ugAwIBAgIQQo5i8kWxuYByLXouRxKXdjANBgkqhkiG9w0BAQ0FADCB
+            mTELMAkGA1UEBhMCQkUxETAPBgNVBAgMCEJydXNzZWxzMREwDwYDVQQHDAhCcnVz
+            c2VsczEcMBoGA1UECgwTRXVyb3BlYW4gQ29tbWlzc2lvbjEOMAwGA1UECwwFRElH
+            SVQxNjA0BgNVBAMMLUVDQVMgTW9jay1VcCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkg
+            KERldiBPbmx5KTAeFw0xNTA2MTQwODEwMzlaFw0xODA2MTYwODEwMzlaMIGWMQsw
+            CQYDVQQGEwJCRTERMA8GA1UEBwwIQnJ1c3NlbHMxHDAaBgNVBAoME0V1cm9wZWFu
+            IENvbW1pc3Npb24xDjAMBgNVBAsMBURJR0lUMSwwKgYJKoZIhvcNAQkBFh15b3Vy
+            LmVjYXMubW9ja3VwQGVjLmV1cm9wYS5ldTEYMBYGA1UEAwwPZWNhcy1tb2NrdXAt
+            c3RzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyzLoNIG92XW5viSE
+            P9BWgoNEJAcrb3ewmSZm1lD2czhHIRNI0FhAdNvi6wtq8licLw46vMUtI+DDerHK
+            jc5CpOJGzLEesmEBSxWaVA5n2X+HLQXWDfbd2t0WSg3wgNK6adRai3BHc6BQuHLv
+            wyS6gLFvFeBR5kofYgGlbKOs4AV7e+TYvs8TIEm7XuGHUwlmeLJo0ivppFvBCtmM
+            BSKgLajTxSKsXfK40aMAjLmR6Ai1nA7iErGxAynIAqxCEfKTe7pcdwnLrtImWQGn
+            rCIf2UOlN1T8p4PhB1VRgt/Mkgcx7vqnrVpESxlBgLgHEXr5qqk89C5iwT6lQ6SF
+            +1ZwmQIDAQABo4IBNjCCATIwEQYJYIZIAYb4QgEBBAQDAgTwMB0GA1UdDgQWBBS1
+            vmfbuCIFUrG5ernADbJ0E6pNZDALBgNVHQ8EBAMCBPAwSgYDVR0RBEMwQYIKbW9j
+            a3VwaG9zdIIJMTI3LjAuMC4xgglsb2NhbGhvc3SBHXlvdXIuZWNhcy5tb2NrdXBA
+            ZWMuZXVyb3BhLmV1MAkGA1UdEwQCMAAwPAYDVR0fBDUwMzAxoC+gLYYraHR0cHM6
+            Ly9lY2FzZC5jYy5jZWMuZXUuaW50OjcwMDIvY2FzL2NhL2NybDA7BgNVHSUENDAy
+            BggrBgEFBQcDCAYIKwYBBQUHAwEGCCsGAQUFBwMCBggrBgEFBQcDAwYIKwYBBQUH
+            AwQwHwYDVR0jBBgwFoAUdea+mpws+tMG4gSSTyDo2fYfElowDQYJKoZIhvcNAQEN
+            BQADggIBAHxZG5DqDZZiNlwYXXKwJhBNIDW1f5DEAIX9sHL6WZfBekM3ChBVE+rm
+            hlQGyKjuvykcknxyyGOyU1bcGbGgsItzUJleZN8ZOmcOhaB5GITuQfiD2Sk9JEeM
+            CmxrIQPdQqyHRet7yye5kzu/7nZNHbn/9ZMhuq3+W0tjkpegujrVcDGsyWwokN0u
+            GqJM1uTL3Jj9fKUqDr5TDnz3AWK5en4v7DY9nevT81DmidYCfwI2vmjoM/jXLO7k
+            /jwqXig4tEZ1ZUYGwrKd3eF1OnXHCUWcIToZhFMXITkvfrBlCA3k5ILq8R/Mi+7F
+            69e06RdupJzpYhDh7ruS3YPDOIMA7sd8cOT01blME9XkUDR+B+rWS8MXQOEalQ7P
+            G6g6vT5FmswNbhzVKoUvEKdFPacy87NDilQg6xM/YwuO8dm/yRIKnd/VAks+F/US
+            +w3FAXudSllXZ6+ZD0Cxd5lPafuN0fUZ7HbcDtrbzaIYoMmsECpeA/JkURGHcWWk
+            JGUR84HoraRuvKYtXNShci4Eo1KusLdgaO05FdXY5aXLBzDGMh2txXs3cfgETgrF
+            Ad2Is1gNNMTUkCPN7W+o0KSHCqQuJU3HNz6fjWMzg6PJjsumaEYLCldIZjRPVH3o
+            ZAxD3Ig5aG9TRcbj3EQJlU0J89hH76nWWp1Onc1SZpSUoQlxZSmG
+        </samlCertificate>
+    </samlCertificates>
+    <relyingParties>
+        <relyingParty id="sp-test">
+            <assertionConsumerServiceUrl>https://your-consumer-service-url</assertionConsumerServiceUrl>
+            <attributes>
+                <attribute>
+                    <name>user</name>
+                    <nameFormat>urn:oasis:names:tc:SAML:2.0:attrname-format:basic</nameFormat>
+                    <friendlyName>User Identifier</friendlyName>
+                    <mappings>
+                        <mapping>uid</mapping>
+                    </mappings>
+                </attribute>
+                <attribute>
+                    <name>email</name>
+                    <nameFormat>urn:oasis:names:tc:SAML:2.0:attrname-format:basic</nameFormat>
+                    <friendlyName>Email</friendlyName>
+                    <mappings>
+                        <mapping>userDetails.email</mapping>
+                    </mappings>
+                </attribute>
+                <attribute>
+                    <name>domain</name>
+                    <nameFormat>urn:oasis:names:tc:SAML:2.0:attrname-format:basic</nameFormat>
+                    <friendlyName>Organisation</friendlyName>
+                    <mappings>
+                        <mapping>userDetails.organisation</mapping>
+                    </mappings>
+                </attribute>
+                <attribute>
+                    <name>firstName</name>
+                    <nameFormat>urn:oasis:names:tc:SAML:2.0:attrname-format:basic</nameFormat>
+                    <friendlyName>First Name</friendlyName>
+                    <mappings>
+                        <mapping>userDetails.firstName</mapping>
+                    </mappings>
+                </attribute>
+                <attribute>
+                    <name>groups</name>
+                    <nameFormat>urn:oasis:names:tc:SAML:2.0:attrname-format:basic</nameFormat>
+                    <friendlyName>Groups</friendlyName>
+                    <mappings>
+                        <mapping>group</mapping>
+                    </mappings>
+                </attribute>
+                <attribute>
+                    <name>lastName</name>
+                    <nameFormat>urn:oasis:names:tc:SAML:2.0:attrname-format:basic</nameFormat>
+                    <friendlyName>Last Name</friendlyName>
+                    <mappings>
+                        <mapping>userDetails.lastName</mapping>
+                    </mappings>
+                </attribute>
+                <attribute>
+                    <name>domainUsername</name>
+                    <nameFormat>urn:oasis:names:tc:SAML:2.0:attrname-format:basic</nameFormat>
+                    <friendlyName>Organisation Username</friendlyName>
+                    <mappings>
+                        <mapping>userDetails.organisationUsername</mapping>
+                    </mappings>
+                </attribute>
+            </attributes>
+            <binding>urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</binding>
+            <issuerUri>your-entity-id</issuerUri>
+            <strengths>
+                <strength>BASIC</strength>
+                <strength>PASSWORD_SMS</strength>
+                <strength>PASSWORD_TOKEN</strength>
+            </strengths>
+            <samlCertificate ref="SIGNATURE_NEW"/>
+        </relyingParty>
+    </relyingParties>
+</samlConfiguration>
