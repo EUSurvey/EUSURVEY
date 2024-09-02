@@ -50,3 +50,6 @@ src/main/webapp/WEB-INF/views/version.txt
 .settings/
 .classpath
 .project
+
+docker/server/dist/
+src/main/webapp/WEB-INF/views/versionfooter.txt

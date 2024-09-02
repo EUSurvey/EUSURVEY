@@ -10,16 +10,31 @@ services:
     volumes:
         - ./mysql:/docker-entrypoint-initdb.d/:ro
     command: --lower_case_table_names=1 --transaction-isolation=READ-COMMITTED
+    networks:
+      - eusurvey_network
   server:
     build: server
+    container_name: eusurvey_server
     image: tomcat-eusurvey-server
     volumes:
       - type: bind
         source: ~/eusurveytemp
         target: /eusurveytemp/
     ports:
-      - "8888:8080"
+      - "8080:8080"
       - "8886:8886"
-    container_name: tomcat_eusurvey_server
     depends_on:
       - db
+    networks:
+      - eusurvey_network
+  maildev:
+    container_name: maildev
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - eusurvey_network
+networks:
+  eusurvey_network:
+    driver: bridge 

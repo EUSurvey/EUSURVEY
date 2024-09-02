@@ -1,0 +1,90 @@
+# AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
+# cudperson.schema converted via this command: slaptest -f conf -F /tmp/ldapconf
+
+dn: cn=cudperson,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: cudperson
+olcAttributeTypes: {0}( 1.3.6.1.4.1.10076.3.1.100.1 NAME 'building' EQUALITY
+  caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.1
+ 15.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {1}( 1.3.6.1.4.1.10076.3.1.100.10 NAME 'internalDGcode' E
+ QUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1
+ .1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {2}( 1.3.6.1.4.1.10076.3.1.100.11 NAME 'ecHostOU' DESC ''
+  EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4
+ .1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {3}( 1.3.6.1.4.1.10076.3.1.100.12 NAME 'ecInternationalTe
+ lephoneNumber' DESC 'CUD user full international telephone number' EQUALITY
+  caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.1
+ 15.121.1.50 )
+olcAttributeTypes: {4}( 1.3.6.1.4.1.10076.3.1.100.13 NAME 'ecJobID' DESC 'ID
+  of the main JOB_ID' EQUALITY caseIgnoreMatch SYNTAX 1.3.6.1.4.1.1466.115.1
+ 21.1.15 SINGLE-VALUE )
+olcAttributeTypes: {5}( 1.3.6.1.4.1.10076.3.1.100.14 NAME 'ecMoniker' DESC '
+ Local userid provided by another Institution' EQUALITY caseIgnoreMatch SUBS
+ TR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VA
+ LUE )
+olcAttributeTypes: {6}( 1.3.6.1.4.1.10076.3.1.100.15 NAME 'ecOrgId' DESC '' 
+ SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+olcAttributeTypes: {7}( 1.3.6.1.4.1.10076.3.1.100.16 NAME 'ecSYSPERNumber' D
+ ESC 'Numero de matricule SYSPER' EQUALITY caseIgnoreMatch SUBSTR caseIgnore
+ SubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {8}( 1.3.6.1.4.1.10076.3.1.100.17 NAME 'ecTfnId' DESC '' 
+ SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+olcAttributeTypes: {9}( 1.3.6.1.4.1.10076.3.1.100.18 NAME 'euEmployeeStatusD
+ etail' DESC '' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SY
+ NTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {10}( 1.3.6.1.4.1.10076.3.1.100.19 NAME 'euEmployeeSubtyp
+ e' DESC '' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX
+  1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {11}( 1.3.6.1.4.1.10076.3.1.100.2 NAME 'contractExpiryDat
+ e' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {12}( 1.3.6.1.4.1.10076.3.1.100.21 NAME 'locationGroup' D
+ ESC '' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3
+ .6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {13}( 1.3.6.1.4.1.10076.3.1.100.22 NAME 'modificationDate
+ ' DESC '' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {14}( 1.3.6.1.4.1.10076.3.1.100.24 NAME 'recordStatus' DE
+ SC '' EQUALITY caseIgnoreMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-
+ VALUE )
+olcAttributeTypes: {15}( 1.3.6.1.4.1.10076.3.1.100.25 NAME 'sec' DESC '' SYN
+ TAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {16}( 1.3.6.1.4.1.10076.3.1.100.26 NAME 'ser' DESC '' EQU
+ ALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1
+ 466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {17}( 1.3.6.1.4.1.10076.3.1.100.27 NAME 'sourceOrganisati
+ on' DESC '' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTA
+ X 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {18}( 1.3.6.1.4.1.10076.3.1.100.3 NAME 'cudgroup' EQUALIT
+ Y caseIgnoreMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+olcAttributeTypes: {19}( 1.3.6.1.4.1.10076.3.1.100.4 NAME 'dg' EQUALITY case
+ IgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.12
+ 1.1.15 SINGLE-VALUE )
+olcAttributeTypes: {20}( 1.3.6.1.4.1.10076.3.1.100.5 NAME 'dir' EQUALITY cas
+ eIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.1
+ 21.1.15 SINGLE-VALUE )
+olcAttributeTypes: {21}( 1.3.6.1.4.1.10076.3.1.100.6 NAME 'div' EQUALITY cas
+ eIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.1
+ 21.1.15 SINGLE-VALUE )
+olcAttributeTypes: {22}( 1.3.6.1.4.1.10076.3.1.100.7 NAME 'employeeStatus' E
+ QUALITY caseIgnoreMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {23}( 1.3.6.1.4.1.10076.3.1.100.8 NAME 'floor' EQUALITY c
+ aseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115
+ .121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {24}( 1.3.6.1.4.1.10076.3.1.100.9 NAME 'gestelNumber' EQU
+ ALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1
+ 466.115.121.1.15 )
+olcObjectClasses: {0}( 1.3.6.1.4.1.10076.3.1.100 NAME 'cudPerson' SUP inetOr
+ gPerson STRUCTURAL MAY ( building $ c $ contractExpiryDate $ cudgroup $ dg 
+ $ dir $ div $ employeeStatus $ floor $ gestelNumber $ internalDGcode $ loca
+ tionGroup $ modificationDate $ owner $ recordStatus $ sec $ ser $ sourceOrg
+ anisation $ euEmployeeStatusDetail $ euEmployeeSubtype $ ecSYSPERNumber $ e
+ cOrgId $ ecMoniker $ ecHostOU $ ecJobID $ ecTfnId $ ecInternationalTelephon
+ eNumber ) )
+structuralObjectClass: olcSchemaConfig
+entryUUID: 482a843a-cdd8-1037-9b85-b1185665cc0e
+creatorsName: cn=config
+createTimestamp: 20180406112040Z
+entryCSN: 20180406112040.144556Z#000000#000#000000
+modifiersName: cn=config
+modifyTimestamp: 20180406112040Z
