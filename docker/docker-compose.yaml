@@ -16,6 +16,8 @@ services:
     build: server
     container_name: eusurvey_server
     image: tomcat-eusurvey-server
+    environment:
+    - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - type: bind
         source: ~/eusurveytemp
