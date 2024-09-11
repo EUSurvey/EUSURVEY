@@ -4,10 +4,10 @@ EUSurvey is the official online survey management tool of the European Commissio
 * [Latest Sonar Cloud analysis](https://sonarcloud.io/dashboard?id=EUSURVEY) ![Bugs](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=bugs) ![Code smells](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=code_smells) ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=coverage)
 
 ## Installation requirements
-1. Tomcat 8
-1. Java 8
-1. MySQL 5.7
-1. Maven
+* Tomcat 8
+* Java 8
+* MySQL 5.7
+* Maven
 
 ## Quick start
 Extensive installation guidelines may be found [here](https://joinup.ec.europa.eu/sites/default/files/document/2017-08/eusurvey_oss_installation_guide_v1_4_0_1.pdf). We give a summary of installation guidelines here.
