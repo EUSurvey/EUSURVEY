@@ -1,5 +1,6 @@
 package com.ec.survey.model;
 
+import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.Element;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -167,6 +168,22 @@ public class Statistics {
 	}
 	public void setInvalid(Boolean invalid) {
 		this.invalid = invalid;
+	}
+	
+	@Transient
+	public int getRequestedRecordsForTargetDataset(Element question, SATargetDataset dataset)
+	{
+		String id = question.getUniqueId() + "-" + dataset.getId().toString();
+		Object result = requestedRecords.get(id);
+		return (int) (result != null ? result : 0);
+	}
+	
+	@Transient
+	public double getRequestedRecordsPercentForTargetDataset(Element question, SATargetDataset dataset)
+	{
+		String id = question.getUniqueId() + "-" + dataset.getId().toString();
+		Object result = requestedRecordsPercent.get(id);
+		return (double) (result != null ? result : 0);
 	}
 	
 	@Transient

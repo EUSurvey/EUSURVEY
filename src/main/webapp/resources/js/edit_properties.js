@@ -424,28 +424,34 @@ var ElementProperties = function() {
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				let editenabled = !element.editorRowsLocked()
-				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
-				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
-
-				getChoosePropertiesRow("Style", "RadioButton,SelectBox,Buttons" + (isDelphi ? ",LikertScale" : ""), false, false, element.styleType());
 				
-				var subType = $(e).find("input[name^='subType']").val()
-				if (subType === "euCountries" || subType === "unCountries")
-				{
-					getChoosePropertiesRow("Display", "CountryOnly,ISOOnly,ISO+Country,Country+ISO", false, false, parseInt($(e).find("input[name^='displayMode']").val()));
-				}	 		
+				if (element.isTargetDatasetQuestion()) {		
+					getTargetDatasetsRow();				
+				} else {		
+					getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
 			
-				if (isDelphi && element.likert())
-				{
-					getChoosePropertiesRow("MaxDistanceToMedian", "Ignore,0,1,2,3,4,5", false, false, $(e).find("input[name^='maxDistance']").val());
-				} else {				
-					getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
-				}
+					getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
+
+					getChoosePropertiesRow("Style", "RadioButton,SelectBox,Buttons" + (isDelphi ? ",LikertScale" : ""), false, false, element.styleType());
+					
+					var subType = $(e).find("input[name^='subType']").val()
+					if (subType === "euCountries" || subType === "unCountries")
+					{
+						getChoosePropertiesRow("Display", "CountryOnly,ISOOnly,ISO+Country,Country+ISO", false, false, parseInt($(e).find("input[name^='displayMode']").val()));
+					}	 		
 				
-				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
-				getVisibilityRow(false, !isDelphiQuestion);
-				
+					if (isDelphi && element.likert())
+					{
+						getChoosePropertiesRow("MaxDistanceToMedian", "Ignore,0,1,2,3,4,5", false, false, $(e).find("input[name^='maxDistance']").val());
+					} else {				
+						getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
+					}
+						
+					getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
+					getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+					getVisibilityRow(false, !isDelphiQuestion);
+				} 
+								
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
@@ -467,6 +473,16 @@ var ElementProperties = function() {
 					getECFPropertiesRow();
 					getECFPropertiesContent();
 				}
+				
+				if (element.isSAQuestion()) {	
+					getSAQuestionRow(element);
+				}
+				
+				if (element.isTargetDatasetQuestion()) {		
+					getTargetDatasetsRow2();
+					getCheckPropertiesRow("DisplayAllQuestions", $(e).find("input[name^='displayAllQuestions']").val() == 'true');	
+				}
+				
 			} else if ($(e).hasClass("multiplechoiceitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';

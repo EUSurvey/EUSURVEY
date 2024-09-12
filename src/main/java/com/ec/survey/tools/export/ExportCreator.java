@@ -73,6 +73,9 @@ public abstract class ExportCreator implements Runnable {
 	@Resource(name = "reportingServiceProxy")
 	protected ReportingServiceProxy reportingService;
 	
+	@Resource(name = "selfassessmentService")
+	protected SelfAssessmentService selfassessmentService;
+	
 	@Resource(name = "ecfService")
 	protected ECFService ecfService;
 	

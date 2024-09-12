@@ -8,6 +8,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
@@ -327,6 +328,7 @@ public class OdfExportCreator extends ExportCreator {
 
 		Map<String, Map<String, List<File>>> uploadedFilesByCodeAndQuestionUID = new HashMap<>();
 		Map<String, String> uploadQuestionNicenames = new HashMap<>();
+		Map<Integer, String> targetDatasetNames = selfassessmentService.getTargetDatasetNames(survey);
 
 		/// here starts the db stuff
 
@@ -397,7 +399,7 @@ public class OdfExportCreator extends ExportCreator {
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, uploadedFilesByCodeAndQuestionUID,
-						uploadQuestionNicenames, null, null, null, explanationFilesOfSurvey, explanationFilesToExport);
+						uploadQuestionNicenames, null, null, null, explanationFilesOfSurvey, explanationFilesToExport, targetDatasetNames);
 			}
 		} else {
 
@@ -440,7 +442,7 @@ public class OdfExportCreator extends ExportCreator {
 					if (lastAnswerSet > 0) {
 						parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
 								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions, likesForExplanations,
-								explanationFilesOfSurvey, explanationFilesToExport);
+								explanationFilesOfSurvey, explanationFilesToExport, targetDatasetNames);
 						session.flush();
 					}
 
@@ -462,7 +464,7 @@ public class OdfExportCreator extends ExportCreator {
 			if (lastAnswerSet > 0)
 				parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
 						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions, likesForExplanations,
-						explanationFilesOfSurvey, explanationFilesToExport);
+						explanationFilesOfSurvey, explanationFilesToExport, targetDatasetNames);
 			results.close();
 		}
 
@@ -546,7 +548,7 @@ public class OdfExportCreator extends ExportCreator {
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
 			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations,
 			Map<Integer, Map<String, String>> discussions, Map<String, Integer> likesForExplanations, FilesByTypes<Integer, String> explanationFilesOfSurvey,
-			FilesByTypes<String, String> explanationFilesToExport) throws Exception {
+			FilesByTypes<String, String> explanationFilesToExport, Map<Integer, String> targetDatasetNames) throws Exception {
 		rowIndex++;
 		columnIndex = 0;
 
@@ -888,10 +890,16 @@ public class OdfExportCreator extends ExportCreator {
 
 								StringBuilder cellValue = new StringBuilder();
 								for (Answer answer : answers) {
-									cellValue.append((cellValue.length() > 0) ? ";" : "")
-											.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
-									if (export != null && export.getShowShortnames()) {
-										cellValue.append(" ").append(form.getAnswerShortname(answer));
+									
+									if ("TARGETDATASET".equals(answer.getPossibleAnswerUniqueId())) {
+										String dataset = targetDatasetNames.get(Integer.parseInt(answer.getValue()));
+										cellValue.append(dataset);
+									} else {
+										cellValue.append((cellValue.length() > 0) ? ";" : "")
+												.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+										if (export != null && export.getShowShortnames()) {
+											cellValue.append(" ").append(form.getAnswerShortname(answer));
+										}
 									}
 								}
 								cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
@@ -1200,6 +1208,47 @@ public class OdfExportCreator extends ExportCreator {
 
 					CreateTableForAnswerStat(cellValue);
 					ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
+					
+					if (question instanceof SingleChoiceQuestion) {
+						SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
+						if (scq.getIsTargetDatasetQuestion()) {
+							List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
+							for (SATargetDataset dataset : datasets) {
+								String key = scq.getUniqueId() + "-" + dataset.getId();
+								rowIndex++;
+
+								cellValue = ConversionTools.removeHTMLNoEscape(dataset.getName());
+							
+								cell = sheet.getCellByPosition(0, rowIndex);
+								cell.setStringValue(cellValue);
+								cell.setDisplayText(cellValue);
+								cell.setValueType(Constants.STRING);
+
+								Double percent = statistics.getRequestedRecordsPercent().get(key);
+
+								cell = sheet.getCellByPosition(1, rowIndex);
+								cell.removeContent();
+
+								if (percent > 0) {
+									drawImage(percent);
+								}
+
+								cell = sheet.getCellByPosition(2, rowIndex);
+								cell.setDoubleValue(
+										(double) statistics.getRequestedRecords().get(key));
+								cell.setDisplayText(
+										statistics.getRequestedRecords().get(key).toString());
+
+								cell = sheet.getCellByPosition(3, rowIndex);
+								cell.setPercentageValue(
+										statistics.getRequestedRecordsPercent().get(key));
+								cell.setDisplayText(df.format(
+										statistics.getRequestedRecordsPercent().get(key)) + "%");
+								addDummyCells();
+							}
+						}
+					}	
+					
 					for (PossibleAnswer possibleAnswer : choiceQuestion.getAllPossibleAnswers()) {
 						rowIndex++;
 
@@ -1925,6 +1974,35 @@ public class OdfExportCreator extends ExportCreator {
 
 					org.odftoolkit.simple.table.Table table = CreateTableForAnswer(document, cellValue);
 					ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
+					
+					if (question instanceof SingleChoiceQuestion) {
+						SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
+						if (scq.getIsTargetDatasetQuestion()) {
+							List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
+							for (SATargetDataset dataset : datasets) {
+								String key = scq.getUniqueId() + "-" + dataset.getId();
+								Row row = table.appendRow();
+
+								cellValue = ConversionTools.removeHTMLNoEscape(dataset.getName());
+								
+								row.getCellByIndex(0).setStringValue(cellValue);
+								row.getCellByIndex(0).setValueType(Constants.STRING);
+
+								Double percent = statistics.getRequestedRecordsPercent().get(key);
+
+								if (percent > 0) {
+									drawChart(percent, row);
+								}
+								row.getCellByIndex(2).setDoubleValue(
+										(double) statistics.getRequestedRecords().get(key));
+								row.getCellByIndex(2).setStringValue(Integer
+										.toString(statistics.getRequestedRecords().get(key)));
+								row.getCellByIndex(3).setPercentageValue(percent);
+								row.getCellByIndex(3).setStringValue(df.format(percent) + "%");
+							}
+						}
+					}					
+					
 					for (PossibleAnswer possibleAnswer : choiceQuestion.getAllPossibleAnswers()) {
 						Row row = table.appendRow();
 
@@ -1947,7 +2025,6 @@ public class OdfExportCreator extends ExportCreator {
 								.toString(statistics.getRequestedRecords().get(possibleAnswer.getId().toString())));
 						row.getCellByIndex(3).setPercentageValue(percent);
 						row.getCellByIndex(3).setStringValue(df.format(percent) + "%");
-
 					}
 
 					Row row = table.appendRow();

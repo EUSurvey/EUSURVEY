@@ -159,7 +159,17 @@
 				</li>
 			</ul>
 			
-
+			<c:if test="${form.survey.isSelfAssessment}">
+				<div class="toolboxgroup accordion-group group-selfassessment disallowed" style="margin-top: 5px;">
+					<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapseSA" aria-expanded="true"><spring:message code="label.SelfAssessment" /></a></div>
+					<div id="collapseSA" class="accordion-body collapse in">
+						<ul>
+							<li title="<spring:message code="form.targetdataset.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_targetdataset" class="toolboxitem targetdatasetitem draggable"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="label.TargetDataset" /></li>
+							<li title="<spring:message code="form.saquestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_saquestion" class="toolboxitem saquestiontitem draggable"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="label.SAQuestion" /></li>
+						</ul>
+					</div>
+				</div>	
+			</c:if>
 			
 			<div class="toolboxgroup accordion-group group-structure disallowed" style="margin-top: 5px;">
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapseStructure" aria-expanded="true"><spring:message code="label.Structure" /></a></div>
@@ -345,6 +355,22 @@
 					<!--  ko if: Type() == 'quizanswers' -->
 						<!-- ko template: { name: 'quizanswers-template' } --><!-- /ko -->
 					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'targetdataset' -->
+						<!-- ko template: { name: 'targetdataset-template' } --><!-- /ko -->
+					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'targetdataset2' -->
+						<!-- ko template: { name: 'targetdataset-template2' } --><!-- /ko -->
+					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'saquestion' -->
+						<!-- ko template: { name: 'saquestion-template' } --><!-- /ko -->
+					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'saanswers' -->
+						<!-- ko template: { name: 'saanswers-template' } --><!-- /ko -->
+					<!-- /ko -->
 				<!-- /ko -->
 			</table>
 		</div>
@@ -391,6 +417,11 @@
 	<script>
 		//Recalc here so that the right elements show up -> remove .disallowed
 		eVoteRuleEvaluator.recalculate()
+		
+		<c:if test="${form.survey.isSelfAssessment}">
+			var SACriteria = ${SACriteria};
+			var SADatasets = ${SADatasets};
+		</c:if>
 	</script>
 
 </body>

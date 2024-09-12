@@ -1059,6 +1059,27 @@ function checkInterdependent(input) {
 	return true;
 }
 
+function checkTargetDataset(input) {
+	if (!$(input).closest(".survey-element").hasClass("targetdatasetquestion")) return;
+	
+	const v = $(input).val();
+	
+	if (v.length == 0) {
+		// show all SA questions
+		$(".saquestion").show();
+	} else {
+		const c = "sahidden" + v;
+		
+		$(".saquestion").each(function(){
+			 if ($(this).hasClass(c)) {
+				 $(this).hide();
+			 } else {
+				 $(this).show();
+			 }
+		 });
+	}
+}
+
 function checkDependenciesAsync(input, override) {
 	if ($(input).closest(".elementwrapper").find("input[data-dependencies], option[data-dependencies]").length > 0 )
 	{
@@ -1999,7 +2020,7 @@ function updateEVoteStatus() {
 	votedLists += $(".evote-brussels .entire-list:checked").length;
 	votedLists += $(".evote-ispra .entire-list:checked").length;
 
-	//no list votes for outside, luxembourg and single president
+	//no list votes for outside, luxembourg and standard
 	votedCandidates = 0;
 	votedCandidates += $(".survey-element:not(.untriggered) .evote-candidate:checked").length;
 

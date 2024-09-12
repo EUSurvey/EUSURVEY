@@ -99,8 +99,14 @@ var Actions = function() {
 			var oldid = $(this).attr("id");
 			var originalmodel = _elements[oldid];
 			var copiedmodel = originalmodel.copy();
-			model.copiedElements[model.copiedElements.length] = copiedmodel;
+			if (copiedmodel != null) {
+				model.copiedElements[model.copiedElements.length] = copiedmodel;
+			}
 		});
+		
+		if (this.copiedElements.length == 0) {
+			return;
+		}
 		
 		if (this.copiedElements.length == 1 && this.copiedElements[0].type == "Section")
 		{
@@ -388,7 +394,7 @@ var Actions = function() {
     this.pasteElementAfter = function()
     {    	
     	if ($("#pasteButton").hasClass("disabled")) return;
-
+    
     	let copiedtoolboxitem = $("#copiedtoolboxitem");
     	let cuttoolboxitem = $("#cuttoolboxitem");
     	let isClipboardCopy = true

@@ -1137,8 +1137,6 @@
 	<tr>
 		<td colspan="2" style="border-bottom: 1px dashed #ccc; text-align: right"></td>
 	</tr>
-	
-	
 	<!-- /ko -->	
 </script>
 
@@ -1166,6 +1164,74 @@
 	</tr>	
 	
 	<!-- /ko -->	
+</script>
+
+<script type="text/html" id="targetdataset-template">	
+	<tr class="firstpropertyrow collapsiblerow">
+		<td colspan='2' style="text-align: left; border-bottom: 0px;">
+			<div style="padding: 10px"><spring:message code="info.targetdatasetcontent" arguments="${contextpath}/${sessioninfo.shortname}/management/parameters?tab=datasets" /></div>
+		</td>
+	</tr>
+</script>
+
+<script type="text/html" id="targetdataset-template2">	
+	<tr>
+		<td colspan="2">
+			<div class="toolboxheader">
+				<a>
+					<span class="glyphicon glyphicon-chevron-down" onclick="showHideSAProperties(this)"></span>
+					<spring:message code="label.SAProperties" />
+				</a>
+			</div>
+		</td>
+	</tr>	
+</script>
+
+<script type="text/html" id="saquestion-template">	
+	<tr class="firstpropertyrow collapsiblerow">
+		<td colspan='2' style="text-align: left; border-bottom: 0px;">
+			<div class="toolboxheader">
+				<a>
+					<span class="glyphicon glyphicon-chevron-down" onclick="showHideSAProperties(this)"></span>
+					<spring:message code="label.SAProperties" />
+				</a>
+			</div>
+		</td>
+	</tr>	
+	<tr class="firstpropertyrow collapsiblerow">
+		<td colspan='2' style="text-align: left; border-bottom: 0px;">
+			<div style="padding: 5px"><spring:message code="info.saquestioncontent" arguments="${contextpath}/${sessioninfo.shortname}/management/parameters" /></div>
+		</td>
+	</tr>
+</script>	
+
+<script type="text/html" id="saanswers-template">	
+	<tr class="firstpropertyrow">
+		<td class="propertylabel" style="border-bottom: 0px;"><spring:message code="label.Answers" /></td>
+	</tr>
+
+	<!--  ko foreach: ContentItems() -->
+	<tr>
+		<td class="propertylabel" style="border-bottom: 0px; vertical-align: middle !important; padding-bottom: 10px !important;"></td>
+		<td class="propertycontent" style="border-bottom: 0px; padding-bottom:10px !important">			
+			<span data-bind="html: title"></span>
+		</td>	
+	</tr>
+	<tr>
+		<td class="propertylabel" style="border-bottom: 0px; padding-top: 10px !important;"><spring:message code="label.ECF.AnswerScore" /><a style='margin-left: 2px'><span data-toggle='tooltip' title='<spring:message code="label.ECF.AnswerScore" />' class='glyphicon glyphicon glyphicon-question-sign'></span></a></td>
+		</td>
+
+		<td class="propertycontent" style="border-bottom: 0px;">
+			<form autocomplete="off">
+				<input data-label="sascore" class="saspinner spinner form-control" style="width:80px !important;" type="number" data-bind="value: ecfScore, attr: {'data-id': id}" onfocus='markActiveProperty(this)' onblur='update(this)'/>
+			</form>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" style="border-bottom: 1px dashed #ccc; text-align: right"></td>
+	</tr>
+	<!-- /ko -->	
+
 </script>
 
 <div class="modal" id="FormulaDialog" data-backdrop="static">

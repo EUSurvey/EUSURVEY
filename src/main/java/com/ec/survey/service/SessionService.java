@@ -419,6 +419,8 @@ public class SessionService extends BasicService {
 					&& request.getParameter("surveyEVote").equalsIgnoreCase("evote");
 			boolean filterECF = request.getParameter("surveyECF") != null
 					&& request.getParameter("surveyECF").equalsIgnoreCase("ecf");
+			boolean filterSelfAssessment = request.getParameter("surveySelfAssessment") != null
+					&& request.getParameter("surveySelfAssessment").equalsIgnoreCase("selfassessment");
 
 			String status = "";
 			if (filterDraft)
@@ -473,6 +475,11 @@ public class SessionService extends BasicService {
 				filter.addSurveyType("ecf");
 			} else {
 				filter.removeSurveyType("ecf");
+			}
+			if (filterSelfAssessment) {
+				filter.addSurveyType("selfassessment");
+			} else {
+				filter.removeSurveyType("selfassessment");
 			}
 
 			if (request.getParameter("sortkey") == null) {

@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Set;
 
 import com.ec.survey.model.survey.*;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Statistics;
+import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 
@@ -90,6 +93,32 @@ public class DocExportCreator extends ExportCreator {
 					
 					XWPFTable table = createTableForAnswer(cellValue);
 					ChoiceQuestion choiceQuestion = (ChoiceQuestion)question;
+					
+					if (question instanceof SingleChoiceQuestion) {
+						SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
+						if (scq.getIsTargetDatasetQuestion()) {
+							List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
+							for (SATargetDataset dataset : datasets) {
+								String key = scq.getUniqueId() + "-" + dataset.getId();
+								XWPFTableRow row = table.createRow();				
+								
+								cellValue = ConversionTools.removeHTMLNoEscape(dataset.getName());
+								
+								row.getCell(0).setText(cellValue);
+								
+								Double percent = statistics.getRequestedRecordsPercent().get(key);
+								
+								if (percent > 0)
+								{						
+									drawChart(percent, row);
+								}
+								
+								row.getCell(2).setText(statistics.getRequestedRecords().get(key).toString());
+								row.getCell(3).setText(df.format(statistics.getRequestedRecordsPercent().get(key)) + "%");	
+							}
+						}
+					}	
+					
 					for (PossibleAnswer possibleAnswer : choiceQuestion.getAllPossibleAnswers()) {
 						XWPFTableRow row = table.createRow();				
 						

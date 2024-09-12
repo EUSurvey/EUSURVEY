@@ -197,12 +197,12 @@ public class HomeController extends BasicController {
 		
 		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
 		
-		String SMTServiceEnabled = settingsService.get(Setting.UseSMTService);
-		if (email.toLowerCase().endsWith("ec.europa.eu") && SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
+		//String SMTServiceEnabled = settingsService.get(Setting.UseSMTService);
+		//if (email.toLowerCase().endsWith("ec.europa.eu") && SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
 			return sendSupportSmt(request, locale, model, !incidentHost.endsWith("wsdl"));
-		} else {
-			return sendSupportEmail(request, locale, model);
-		}
+		//} else {
+		//	return sendSupportEmail(request, locale, model);
+		//}
 	}
 	
 	private String GetLabelForReason(String reason, Locale locale) {
@@ -328,19 +328,22 @@ public class HomeController extends BasicController {
 		String additionalsurveyinfoalias = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfoalias"), true);
 		
 		InputStream inputStreamXML = servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.xml");
-		InputStream inputStreamJSON = servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.json");
+		InputStream inputStreamJSON = (!email.contains("@") || email.toLowerCase().endsWith("ec.europa.eu")) ? servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.json") : servletContext.getResourceAsStream("/WEB-INF/Content/createIncidentExternal.json");
 		String createTemplate = IOUtils.toString(useJSON ? inputStreamJSON : inputStreamXML, "UTF-8");
 
 		createTemplate = createTemplate.replace("[MESSAGE]", message);
 		createTemplate = createTemplate.replace("[ADDITIONALINFOUSERNAME]", name);
 		createTemplate = createTemplate.replace("[ADDITIONALINFOEMAIL]", email);
+		createTemplate = createTemplate.replace("[CALLER]", email);
 		createTemplate = createTemplate.replace("[ADDITIONALINFO]", additionalinfo);
 		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYTITLE]", additionalsurveyinfotitle);
 		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
 		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
+		createTemplate = createTemplate.replace("[BUSINESSSERVICE]", "Survey solutions");
+		createTemplate = createTemplate.replace("[SERVICEOFFERING]", "EU Survey");
 
-		CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpClient httpclient = HttpClients.createSystem();
 		
 		try {
 
@@ -368,7 +371,7 @@ public class HomeController extends BasicController {
 			
 				String strResponse = entity == null ? "" : EntityUtils.toString(entity, "UTF-8");
 				if (useJSON) {						
-					if (statusCode != 200)
+					if (statusCode != 200 && statusCode != 201)
 					{
 						logger.error(statusCode + " " + strResponse);
 						throw new MessageException("Calling ServiceNow UAT failed.");

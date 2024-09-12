@@ -1,0 +1,13 @@
+{
+    "incident": {
+        "short_description": "[SUBJECT]",
+        "description": "[MESSAGE]; User name: [ADDITIONALINFOUSERNAME]; User email: [ADDITIONALINFOEMAIL]; [ADDITIONALINFO]; Survey title: [ADDITIONALINFOSURVEYTITLE]; Survey alias: [ADDITIONALINFOSURVEYALIAS]",
+        "assignment_group": "DIGIT EUSURVEY Support",
+        "business_service": "[BUSINESSSERVICE]",
+        "service_offering": "[SERVICEOFFERING]",
+        "category": "incident",
+        "caller_id": "guest",
+        "u_external_email": "[ADDITIONALINFOEMAIL]",
+        "u_external_last_name": "[ADDITIONALINFOUSERNAME]"
+    }
+}

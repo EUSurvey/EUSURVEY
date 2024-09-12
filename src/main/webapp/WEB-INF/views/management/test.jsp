@@ -111,6 +111,9 @@
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");
 				$('[data-toggle="tooltip"]').tooltip(); 
+				$(".targetdatasetselect").each(function() {
+					checkTargetDataset(this);
+				})
 			}
 		}
 	

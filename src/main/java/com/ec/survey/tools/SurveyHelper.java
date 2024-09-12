@@ -3,6 +3,7 @@ package com.ec.survey.tools;
 import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.selfassessment.SACriterion;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.ComplexTableItem.CellType;
 import com.ec.survey.model.survey.base.File;
@@ -14,8 +15,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
-import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
@@ -162,10 +161,12 @@ public class SurveyHelper {
 								answer.setValue(value);
 
 								if (question instanceof ChoiceQuestion) {
-									if (!"EVOTE-ALL".equals(value)){
-										int paid = Integer.parseInt(value);
-
-										ChoiceQuestion cq = (ChoiceQuestion) question;
+									ChoiceQuestion cq = (ChoiceQuestion) question;
+									
+									if (cq instanceof SingleChoiceQuestion && ((SingleChoiceQuestion)cq).getIsTargetDatasetQuestion()) {
+										answer.setPossibleAnswerUniqueId("TARGETDATASET");
+									} else if (!"EVOTE-ALL".equals(value)){
+										int paid = Integer.parseInt(value);									
 										answer.setPossibleAnswerUniqueId(cq.getPossibleAnswer(paid).getUniqueId());
 									} else {
 										answer.setPossibleAnswerUniqueId("EVOTE-ALL");
@@ -299,6 +300,24 @@ public class SurveyHelper {
 		}
 
 		boolean lastSectionInvisible = false;
+		
+		if (answerSet.getSurvey().getIsSelfAssessment()) {
+			SingleChoiceQuestion targetDatasetQuestion = null;
+			
+			for (Question question : answerSet.getSurvey().getQuestions()) {
+				if (question instanceof SingleChoiceQuestion) {
+					SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
+					if (scq.getIsTargetDatasetQuestion()) {
+						targetDatasetQuestion = scq;
+						break;
+					}
+				}
+			}
+			
+			if (targetDatasetQuestion != null) {
+				answerService.addHiddenSAQuestions(answerSet, invisibleElements, targetDatasetQuestion);
+			}
+		}
 
 		for (Element element : elements) {
 			element.setSurvey(answerSet.getSurvey());
@@ -502,6 +521,16 @@ public class SurveyHelper {
 
 				} else {
 
+					if (element instanceof SingleChoiceQuestion) {
+						SingleChoiceQuestion scq = (SingleChoiceQuestion) element;
+						if (scq.getIsSAQuestion() && invisibleElements.contains(scq.getUniqueId())) {
+							for (Answer answer : answers) {
+								answerSet.getAnswers().remove(answer);
+							}
+							return true;
+						}
+					}
+					
 					if (!(element instanceof Matrix) && !(element instanceof RatingQuestion) && !question.getOptional()
 							&& answers.isEmpty()
 							&& (parentElement == null || !invisibleElements.contains(parentElement.getUniqueId()))) {
@@ -3329,6 +3358,22 @@ public class SurveyHelper {
 				p.getScoring().setCorrect(correct);
 				p.getScoring().setPoints(points);
 				p.getScoring().setFeedback(feedback);
+			} else if (survey.getIsSelfAssessment()) {
+				int points = 0;
+				if (pointsForAnswers != null && pointsForAnswers.length > k && pointsForAnswers[k].length() > 0)
+				{
+					try {
+						points = Integer.parseInt(pointsForAnswers[k]);
+						p.setEcfScore(points);
+						
+						if (p.getScoring() == null) {
+							p.setScoring(new ScoringItem());
+						}
+						p.getScoring().setPoints(points);
+					} catch (NumberFormatException nfe) {
+						logger.error(nfe.getLocalizedMessage(), nfe);
+					}
+				}
 			}
 
 			j++;
@@ -3349,7 +3394,7 @@ public class SurveyHelper {
 	private static SingleChoiceQuestion getSingleChoice(Map<String, String[]> parameterMap, Element currentElement,
 			Survey survey, String id, String[] answers, String[] originalAnswers, String[] uniqueIDs, String[] dependenciesForAnswers,
 			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] correctForAnswers,
-			String[] pointsForAnswers, String[] feedbackForAnswers, ServletContext servletContext, boolean log220)
+			String[] pointsForAnswers, String[] feedbackForAnswers, ServletContext servletContext, boolean log220, List<SACriterion> criteria)
 			throws InvalidXHTMLException {
 		String oldValues = "";
 		String newValues = "";
@@ -3365,6 +3410,20 @@ public class SurveyHelper {
 			singlechoice = (SingleChoiceQuestion) currentElement;
 			DeletePossibleAnswers(answers, originalAnswers, singlechoice.getPossibleAnswers());
 		}
+		
+		Boolean isTargetDatasetQuestion = getBoolean(parameterMap, "isTargetDatasetQuestion", id);
+		if (log220 && !isTargetDatasetQuestion.equals(singlechoice.getIsTargetDatasetQuestion())) {
+			oldValues += " isTargetDatasetQuestion: " + singlechoice.getIsTargetDatasetQuestion();
+			newValues += " isTargetDatasetQuestion: " + isTargetDatasetQuestion;
+		}
+		singlechoice.setIsTargetDatasetQuestion(isTargetDatasetQuestion);
+		
+		Boolean isSAQuestion = getBoolean(parameterMap, "isSAQuestion", id);
+		if (log220 && !isSAQuestion.equals(singlechoice.getIsSAQuestion())) {
+			oldValues += " isSAQuestion: " + singlechoice.getIsSAQuestion();
+			newValues += " isSAQuestion: " + isSAQuestion;
+		}
+		singlechoice.setIsSAQuestion(isSAQuestion);
 
 		String title = getString(parameterMap, "text", id, servletContext);
 		if (log220 && !singlechoice.getTitle().equals(title)) {
@@ -3505,19 +3564,43 @@ public class SurveyHelper {
 		}
 		singlechoice.setMaxDistance(maxDistance);
 		
-		StringBuilder oldAnswers = new StringBuilder();
-		StringBuilder newAnswers = new StringBuilder();
-		if (log220) {
-			for (PossibleAnswer pa : singlechoice.getPossibleAnswers()) {
-				oldAnswers.append(pa.getTitle()).append("(").append(pa.getShortname()).append("),");
-			}
+		if (isSAQuestion) {			
+			String evaluationCriterion = getString(parameterMap, "evaluationCriterion", id, servletContext);
+			if (evaluationCriterion != null && evaluationCriterion.length() > 0) {
+				int critId = Integer.parseInt(evaluationCriterion);
+				Optional<SACriterion> c = criteria.stream().filter(cr -> cr.getId().equals(critId)).findFirst();
+				singlechoice.setEvaluationCriterion(c.get());
+			} else {
+				singlechoice.setEvaluationCriterion(null);
+			}			
 		}
-
-		getPossibleAnswers(answers, originalAnswers, uniqueIDs, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, null, singlechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
-
-		if (log220 && !oldAnswers.toString().equals(newAnswers.toString())) {
-			oldValues += " answers: " + oldAnswers;
-			newValues += " answers: " + newAnswers;
+		
+		if (isTargetDatasetQuestion) {
+			
+			Boolean displayAllQuestions = getBoolean(parameterMap, "displayAllQuestions", id);
+			if (log220 && !displayAllQuestions.equals(singlechoice.getDisplayAllQuestions())) {
+				oldValues += " displayAllQuestions: " + singlechoice.getDisplayAllQuestions();
+				newValues += " displayAllQuestions: " + displayAllQuestions;
+			}
+			singlechoice.setDisplayAllQuestions(displayAllQuestions);
+			
+		} else {
+		
+			StringBuilder oldAnswers = new StringBuilder();
+			StringBuilder newAnswers = new StringBuilder();
+			if (log220) {
+				for (PossibleAnswer pa : singlechoice.getPossibleAnswers()) {
+					oldAnswers.append(pa.getTitle()).append("(").append(pa.getShortname()).append("),");
+				}
+			}
+	
+			getPossibleAnswers(answers, originalAnswers, uniqueIDs, dependenciesForAnswers, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, null, singlechoice.getPossibleAnswers(), survey, log220, newAnswers, dependencies);
+	
+			if (log220 && !oldAnswers.toString().equals(newAnswers.toString())) {
+				oldValues += " answers: " + oldAnswers;
+				newValues += " answers: " + newAnswers;
+			}
+		
 		}
 
 		if (log220 && oldValues.length() > 0) {
@@ -4323,13 +4406,13 @@ public class SurveyHelper {
 		return table;
 	}
 
-	public static Element parseElement(HttpServletRequest request, FileService fileService, String id, Survey survey,
+	public static Element parseElement(HttpServletRequest request, FileService fileService, SelfAssessmentService selfassessmentService, String id, Survey survey,
 			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
-		return parseElement(request, fileService, id, survey, new HashMap<>(), new HashMap<>(), new HashMap<>(),
+		return parseElement(request, fileService, selfassessmentService, id, survey, new HashMap<>(), new HashMap<>(), new HashMap<>(),
 				servletContext, log220, new HashMap<>());
 	}
 
-	private static Element parseElement(HttpServletRequest request, FileService fileService, String id, Survey survey,
+	private static Element parseElement(HttpServletRequest request, FileService fileService, SelfAssessmentService selfassessmentService, String id, Survey survey,
 			Map<Integer, Element> elementsById,
 			HashMap<PossibleAnswer, String> dependencies, HashMap<Matrix, HashMap<Integer, String>> matrixDependencies,
 			ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID)
@@ -4435,11 +4518,16 @@ public class SurveyHelper {
 			String[] exclusiveForAnswers = parameterMap.get("exclusive" + id);
 
 			boolean single = getBoolean(parameterMap, "single", id);
+			
+			List<SACriterion> criteria = null;
+			if (survey.getIsSelfAssessment()) {
+				criteria = selfassessmentService.getCriteria(survey.getUniqueId());
+			}
 
 			if (single) {
 				element = getSingleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, uniqueIDs, dependenciesForAnswers,
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
-						servletContext, log220);
+						servletContext, log220, criteria);
 			} else {
 				element = getMultipleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, uniqueIDs, dependenciesForAnswers,
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers, exclusiveForAnswers,
@@ -4603,8 +4691,8 @@ public class SurveyHelper {
 		return uniqueIDs;
 	}
 
-	public static Survey parseSurvey(HttpServletRequest request, SurveyService surveyService,
-			FileService fileService, ServletContext servletContext, boolean log217, boolean log220,
+	public static Survey parseSurvey(HttpServletRequest request, SurveyService surveyService, 
+			FileService fileService, SelfAssessmentService selfassessmentService, ServletContext servletContext, boolean log217, boolean log220,
 			Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException {
 		Map<Integer, String[]> activitiesToLog = new HashMap<>();
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
@@ -4651,7 +4739,7 @@ public class SurveyHelper {
 			for (int i = 0; i < ids.length; i++) {
 				String id = ids[i];
 				if (!id.equalsIgnoreCase("undefined")) {
-					Element element = parseElement(request, fileService, id, survey, elementsById,
+					Element element = parseElement(request, fileService, selfassessmentService, id, survey, elementsById,
 							dependencies, matrixDependencies, servletContext, log220, fileIDsByUID);
 					if (element != null) {
 						if (element.getId() == null) {

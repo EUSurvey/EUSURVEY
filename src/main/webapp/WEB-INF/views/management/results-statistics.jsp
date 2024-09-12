@@ -40,7 +40,7 @@
 				<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
 				
 					<c:choose>
-				
+						
 						<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion' }">
 						
 							<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
@@ -79,6 +79,30 @@
 												</c:choose>		
 											</tr>
 										</c:forEach>
+										<c:if test="${question.getType() == 'SingleChoiceQuestion' && question.getIsTargetDatasetQuestion() }">
+											<c:forEach items="${targetdatasets}" var="dataset" varStatus="status">
+												<tr data-position="${status.count}" data-value="${statistics.getRequestedRecordsPercentForTargetDataset(question, dataset)}">
+													<td>${dataset.getName()}</td>
+									
+													<td>
+														<div class="progress" style="width: 200px; margin-bottom: 2px;">
+														  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.uniqueId}-${dataset.id}" style="width: ${statistics.getRequestedRecordsPercentForTargetDataset(question, dataset)}%;"></div>
+														</div>
+													</td>	
+									
+													<c:choose>
+														<c:when test="${statistics != null}">						
+															<td class="statRequestedRecords" data-id="${dataset.id}">${statistics.getRequestedRecordsForTargetDataset(question, dataset)}</td>			
+															<td class="statRequestedRecordsPercent" data-id="${dataset.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.getRequestedRecordsPercentForTargetDataset(question, dataset)}"/> %</td>		
+														</c:when>
+														<c:otherwise>
+															<td id="awaitingResult" class="statRequestedRecords" data-id="${question.uniqueId}-${dataset.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+															<td id="awaitingResultPercent" class="statRequestedRecordsPercent" data-id="${question.uniqueId}-${dataset.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+														</c:otherwise>
+													</c:choose>		
+												</tr>
+											</c:forEach>
+										</c:if>				
 										<tr data-position="10000" class="noanswer">
 											<td><spring:message code="label.NoAnswer" /></td>
 											<td>

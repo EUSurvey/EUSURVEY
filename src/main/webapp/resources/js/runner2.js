@@ -233,6 +233,18 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		modelsForNumber[modelsForNumber.length] = viewModel;
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
 		$(container).addClass("singlechoiceitem forprogress");
+		if (viewModel.isTargetDatasetQuestion()) {
+			$(container).addClass("targetdatasetquestion");
+		}
+		if (viewModel.isSAQuestion()) {
+			$(container).addClass("saquestion");
+			
+			if (viewModel.hiddenTargetDatasetIds() != null) {
+				for (const id of viewModel.hiddenTargetDatasetIds()) {
+				  $(container).addClass("sahidden" + id);
+				}
+			}
+		}
 		var s = $("#single-choice-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'MultipleChoiceQuestion') {
@@ -434,7 +446,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		  lastEditDate = new Date();
 	});	
 	
-	$(container).find("select.single-choice").not(".complex").prepend("<option value=''></option>");
+	$(container).find("select.single-choice").not(".complex").not(".targetdatasetselect").prepend("<option value=''></option>");
 				
 	$(container).find(".tabletable").find("textarea").each(function(){
 		var height = $(this).parent().height();

@@ -1026,6 +1026,10 @@
 	 		return "";
 	 	}
 	 	
+	 	function getTargetDatasetByQuestion(uniqueId) {
+	 		return values[uniqueId];
+	 	}
+	 	
 	 	function getIdForUniqueId(uniqueId)
 	 	{
 	 		return typeof idsforuids[uniqueId] != 'undefined' ? idsforuids[uniqueId] : "";

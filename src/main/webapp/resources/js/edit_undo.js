@@ -814,6 +814,12 @@ var UndoProcessor = function() {
 				element = parent.getChild(id);
 				element.exclusive(step[3]);
 				break;
+			case "DisplayAllQuestions":
+				element.displayAllQuestions(step[3]);
+				break;
+			case "EvaluationCriteria":
+				element.evaluationCriterion(step[3]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -1401,6 +1407,12 @@ var UndoProcessor = function() {
 				var parent = _elements[parentid];
 				element = parent.getChild(id);
 				element.exclusive(step[4]);
+				break;
+			case "DisplayAllQuestions":
+				element.displayAllQuestions(step[4]);
+				break;
+			case "EvaluationCriteria":
+				element.evaluationCriterion(step[4]);
 				break;
 		}
 		

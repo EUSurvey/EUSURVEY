@@ -12,11 +12,14 @@ import com.ec.survey.model.Form;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.selfassessment.SAReportConfiguration;
+import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.exception.ECFException;
 import com.ec.survey.model.ECFProfile;
 import com.ec.survey.model.survey.ecf.ECFIndividualResult;
+import com.ec.survey.service.SelfAssessmentService;
 import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
@@ -24,7 +27,6 @@ import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
-import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import com.ec.survey.tools.activity.ActivityRegistry;
@@ -58,6 +60,9 @@ public class ContributionController extends BasicController {
 
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
+	
+	@Resource(name = "selfassessmentService")
+	protected SelfAssessmentService selfassessmentService;
 
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
@@ -322,6 +327,11 @@ public class ContributionController extends BasicController {
 				model.addObject("isdelphipage", true);
 				model.addObject("iseditcontribution", true);
 			}
+			
+			
+			if (f.getSurvey().getIsSelfAssessment() && isPDF) {
+				selfassessmentService.initializeForm(f, invisibleElements);
+			}
 
 			model.addObject("submit", true);
 			model.addObject("answerSet", answerSet.getId());
@@ -458,7 +468,6 @@ public class ContributionController extends BasicController {
 				}
 
 				if (origsurvey.getIsQuiz()) {
-
 					String lang = locale.getLanguage();
 					if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 						lang = request.getParameter("language.code");
@@ -476,6 +485,34 @@ public class ContributionController extends BasicController {
 					result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 					result.addObject("isquizresultpage", true);
 					result.addObject("invisibleElements", invisibleElements);
+					return result;
+				}
+				
+				if (origsurvey.getIsSelfAssessment()) {
+					String lang = locale.getLanguage();
+					if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
+						lang = request.getParameter("language.code");
+					}
+
+					AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, u);
+					
+					ModelAndView result = new ModelAndView("runner/saResult", Constants.UNIQUECODE,
+							answerSet.getUniqueCode());
+					Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+							translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+					form.setSurvey(origsurvey);
+					form.getAnswerSets().add(answerSet);
+					result.addObject("invisibleElements", invisibleElements);
+					result.addObject(form);
+					result.addObject("surveyprefix", origsurvey.getId());
+					result.addObject("issaresultpage", true);
+					
+					SAReportConfiguration config = selfassessmentService.getReportConfiguration(answerSet.getSurvey().getUniqueId());
+					result.addObject("SAReportConfiguration", config);
+					
+					List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(answerSet.getSurvey().getUniqueId());
+					result.addObject("SATargetDatasets", datasets);
+								
 					return result;
 				}
 
@@ -680,6 +717,10 @@ public class ContributionController extends BasicController {
 					}
 
 					form.getAnswerSets().add(answerSet);
+					
+					if (form.getSurvey().getIsSelfAssessment()) {
+						selfassessmentService.initializeForm(form, invisibleElements);
+					}
 
 					ModelAndView contributionsPrintModel = new ModelAndView("contributions/print", "form", form);
 					contributionsPrintModel.addObject("answerSet", answerSet.getId());

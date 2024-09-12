@@ -28,6 +28,7 @@
 			<form:input type="hidden" path="survey.isEVote" />
 			<form:input type="hidden" path="survey.eVoteTemplate" />
 			<form:input type="hidden" path="survey.isECF" />
+			<form:input type="hidden" path="survey.isSelfAssessment" />
 			
 			<div class="actions">
 				<div style="width: 950px; margin-left: auto; margin-right: auto;">
@@ -1323,7 +1324,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr  data-bind="visible: !opc() && !eVote()">
+					<tr data-bind="visible: !opc() && !eVote() && !selfAssessment()">
 						<td>
 							<div style="float: left"><spring:message code="label.EnableQuiz" /></div>
 							<div style="float: right">
@@ -1483,7 +1484,7 @@
 						</td> 
 					</tr>
 					<c:if test="${enabledelphi || form.survey.isDelphi}">
-						<tr data-bind="visible: !opc() && !eVote()">
+						<tr data-bind="visible: !opc() && !eVote() && !selfAssessment()">
 							<td>
 								<div style="float: left"><spring:message code="label.EnableDelphi" /></div>
 								<div style="float: right">
@@ -1581,6 +1582,23 @@
 							</td>
 						</tr>
 					</c:if>
+					
+					<c:if test="${form.survey.isSelfAssessment}">
+						<tr>
+							<td>
+								<div style="float: left"><spring:message code="label.SelfAssessment" /></div>
+								<div style="float: right">
+									<div class="onoffswitch">
+										<input checked="checked" disabled="disabled" type="checkbox" class="onoffswitch-checkbox" id="myonoffswitchselfassessment">
+										<label class="onoffswitch-label disabled" for="myonoffswitchselfassessment">
+											<span class="onoffswitch-inner"></span>
+											<span class="onoffswitch-switch"></span>
+										</label>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</c:if>	
 
 					<c:if test="${form.survey.isEVote}">
 						<tr>
