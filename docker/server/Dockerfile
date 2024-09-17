@@ -1,16 +1,16 @@
-FROM tomcat:8.5.100-jdk11
+FROM bitnami/tomcat:8.5.100-debian-12-r5
 
-# arguments
-# ./conf/eulogin.crt is a trusted certificate for SSO integration
-# ./conf/context.xml is the context configuration for tomcat
-# ./conf/manager-context.xml is the tomcat's manager context configuration
-# ./conf/setenv.sh is the environment variables configuration
+USER root
+
+RUN apt-get update && \
+    apt-get install -y fontconfig fonts-dejavu && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY ./conf/eulogin.crt eulogin.crt
-RUN echo yes | keytool -importcert -alias euloginCertAlias -storepass changeit -file eulogin.crt -keystore "$JAVA_HOME/lib/security/cacerts"
+RUN echo yes | keytool -importcert -alias euloginCertAlias -storepass changeit -file eulogin.crt -cacerts
+RUN rm eulogin.crt
 
-RUN ["rm", "-fr", "/usr/local/tomcat/webapps/ROOT"]
-COPY ./dist/eusurvey.war /usr/local/tomcat/webapps/eusurvey.war
-#COPY ./conf/setenv.sh /usr/local/tomcat/bin/setenv.sh
-COPY ./conf/context.xml /usr/local/tomcat/conf/context.xml
-COPY ./conf/manager-context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
+RUN rm -rf /opt/bitnami/tomcat/webapps/*
+COPY ./dist/eusurvey.war /opt/bitnami/tomcat/webapps/eusurvey.war
+
+USER 1001

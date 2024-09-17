@@ -16,10 +16,10 @@ services:
       - './imports/ldifs:/ldifs'
       - './imports/schema/cudperson.ldif:/schema/custom.ldif'
     networks:
-      - docker_eusurvey_network
+      - docker_eusurvey-network
 volumes:
   openldap_data:
     driver: local
 networks:
-  docker_eusurvey_network:
+  docker_eusurvey-network:
     external: true

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+
+<diskStore path="java.io.tmpdir"/>
+ <defaultCache eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"/>
+
+<cache name="com.ec.survey.model.survey.Survey"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+        
+<cache name="com.ec.survey.model.Translations"
+		eternal="false" maxEntriesLocalHeap="10000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />     
+        
+<cache name="com.ec.survey.model.Translation"
+		eternal="false" maxEntriesLocalHeap="10000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />     
+
+<cache name="com.ec.survey.model.attendees.Attribute"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.survey.Element"
+		eternal="false" maxEntriesLocalHeap="100000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.ParticipationGroup"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.SkinElement"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Department"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Language"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Template"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Draft"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.ResultFilter"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.UsersConfiguration"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.attendees.Invitation"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Export"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.administration.Role"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.attendees.AttendeeFilter"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Skin"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Dashboard"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Publication"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.survey.Widget"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.attendees.Share"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.survey.base.File"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Status"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.WrongAttempts"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.administration.User"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.administration.EcasUser"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+<cache name="com.ec.survey.model.attendees.AttributeName"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.Access"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.survey.DependencyItem"
+		eternal="false" maxEntriesLocalHeap="100000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="com.ec.survey.model.attendees.Attendee"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="org.hibernate.cache.spi.UpdateTimestampsCache"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+<cache name="org.hibernate.cache.internal.StandardQueryCache"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />           
+
+<cache name="com.ec.survey.model.Domain"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />        
+
+
+</ehcache>
