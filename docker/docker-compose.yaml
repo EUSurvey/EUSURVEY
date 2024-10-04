@@ -1,25 +1,40 @@
-version: "3.7"
+version: '3.8'
 services:
-  db:
-    container_name: db
-    image: mysql:5.6
-    ports:
-      - "3306:3306"
+  eusurvey-mysql:
+    container_name: eusurvey-mysql
+    image: 'bitnami/mysql:8.0.37-debian-12-r2'
     environment:
-        - MYSQL_ROOT_PASSWORD=password
-    volumes:
-        - ./mysql:/docker-entrypoint-initdb.d/:ro
-    command: --lower_case_table_names=1 --transaction-isolation=READ-COMMITTED
-  server:
-    build: server
-    image: tomcat-eusurvey-server
-    volumes:
-      - type: bind
-        source: ~/eusurveytemp
-        target: /eusurveytemp/
+      MYSQL_ROOT_PASSWORD: password
     ports:
-      - "8888:8080"
-      - "8886:8886"
-    container_name: tomcat_eusurvey_server
-    depends_on:
-      - db
+      - '3306:3306'
+    volumes:
+      - eusurvey-mysql-data:/bitnami/mysql/data
+      - ./mysql/init-db/:/docker-entrypoint-initdb.d/
+      - ./mysql/my.cnf:/opt/bitnami/mysql/conf/my_custom.cnf  
+    networks:
+      - eusurvey-network
+
+  eusurvey-tomcat:
+    container_name: eusurvey-tomcat
+    build: server
+    image: eusurvey-tomcat:latest
+    ports:
+      - '8080:8080'
+      - '8889:8889'
+    environment:
+      - CATALINA_OPTS="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8889" 
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - /path/on/host/tmp-instance1:/eusurveytemp/tmp      
+      - /path/on/host/files:/eusurveytemp/files           
+      - /path/on/host/surveys:/eusurveytemp/surveys        
+      - /path/on/host/users:/eusurveytemp/users            
+      - /path/on/host/archive:/eusurveytemp/archive       
+    networks:
+      - eusurvey-network   
+volumes:
+  eusurvey-mysql-data:
+
+networks:
+  eusurvey-network:
+    driver: bridge
