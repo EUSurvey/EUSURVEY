@@ -1,9 +1,7 @@
 package com.ec.survey.config;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -14,26 +12,22 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 @Configuration(proxyBeanMethods = false)
 @EnableRedisHttpSession
+@Conditional(RedisConfigCondition.class) 
 public class RedisHttpSessionConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(RedisHttpSessionConfig.class);
-
-    @Value("${spring.redis.host}")
+    @Value("${spring.redis.host:}")
     private String redisHost;
 
-    @Value("${spring.redis.port}")
+    @Value("${spring.redis.port:6379}")
     private int redisPort;
-
-
 
     @Bean
     public LettuceConnectionFactory connectionFactory() {
-            
-            RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
-            redisConfig.setHostName(redisHost);
-            redisConfig.setPort(redisPort);
-            return new LettuceConnectionFactory(redisConfig);
-        }
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        redisConfig.setHostName(redisHost);
+        redisConfig.setPort(redisPort);
+        return new LettuceConnectionFactory(redisConfig);
+    }
 
     @Bean
     public RedisTemplate<Object, Object> redisTemplate() {

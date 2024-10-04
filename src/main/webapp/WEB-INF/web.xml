@@ -13,7 +13,7 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-  <filter>
+  <!-- filter>
     <filter-name>springSessionRepositoryFilter</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     <init-param>
@@ -24,7 +24,7 @@
   <filter-mapping>
     <filter-name>springSessionRepositoryFilter</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>
+  </filter-mapping -->
 
 
   <filter>
