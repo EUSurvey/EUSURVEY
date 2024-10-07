@@ -23,7 +23,24 @@ tomcat:
   lifecycleHooks:
     postStart:
       exec:
-        command: ["/bin/sh", "-c", "mv /usr/local/share/eusurvey.war /opt/bitnami/tomcat/webapps/eusurvey.war"]
+        command:
+          - /bin/sh
+          - -c
+          - |
+            # Move the WAR file if the directory doesn't exist
+            if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
+              mv /usr/local/share/eusurvey.war /opt/bitnami/tomcat/webapps/eusurvey.war;
+            fi
+
+            # Redirect eusurvey-error.log to stderr
+            if [ ! -L /opt/bitnami/tomcat/logs/eusurvey-error.log ]; then
+              ln -sf /dev/stderr /opt/bitnami/tomcat/logs/eusurvey-error.log;
+            fi
+
+            # Redirect eusurvey-info.log to stdout
+            if [ ! -L /opt/bitnami/tomcat/logs/eusurvey-info.log ]; then
+              ln -sf /dev/stdout /opt/bitnami/tomcat/logs/eusurvey-info.log;
+            fi
 
   extraVolumeMounts:
   - name: usr-local-share-volume  
@@ -61,7 +78,17 @@ tomcat:
     - name: copy-eusurvey-war
       image: ghcr.io/circabc/tomcat-eusurvey-server-k8s:latest
       imagePullPolicy: IfNotPresent 
-      command: ["/bin/sh", "-c", "mv /opt/bitnami/tomcat/webapps/eusurvey.war /usr/local/share/eusurvey.war"]
+      command:
+        - /bin/sh
+        - -c
+        - |
+          # Move the WAR file if the directory doesn't exist
+          if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
+            mv /opt/bitnami/tomcat/webapps/eusurvey.war /usr/local/share/eusurvey.war;
+          fi
+  
+
+
       volumeMounts:
         - name: usr-local-share-volume  
           mountPath: /usr/local/share
