@@ -190,12 +190,12 @@ commonWaitForFirstTomcat: &wait-for-first-tomcat
     - /bin/sh
     - -c
     - |
-      echo "Waiting for the first tomcat instance (tomcat-0) to be ready...";
-      while ! wget -q --spider http://eusurvey-tomcat-0:8080; do
-        echo "Waiting for tomcat-0...";
+      echo "Waiting for the first tomcat instance to be ready...";
+      while ! wget -q --spider http://eusurvey-tomcat:8080; do
+        echo "Waiting for the first tomcat instance to be ready...";
         sleep 5;
       done;
-      echo "tomcat-0 is ready!"
+      echo "Tomcat is ready!"
 commonCopyEusurveyWar: &copy-eusurvey-war
   name: copy-eusurvey-war
   image: ghcr.io/circabc/tomcat-eusurvey-server-k8s:latest
