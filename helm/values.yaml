@@ -27,20 +27,16 @@ tomcat:
           - /bin/sh
           - -c
           - |
-            # Move the WAR file if the directory doesn't exist
             if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
-              mv /usr/local/share/eusurvey.war /opt/bitnami/tomcat/webapps/eusurvey.war;
-            fi
-
-            # Redirect eusurvey-error.log to stderr
-            if [ ! -L /opt/bitnami/tomcat/logs/eusurvey-error.log ]; then
-              ln -sf /dev/stderr /opt/bitnami/tomcat/logs/eusurvey-error.log;
-            fi
-
-            # Redirect eusurvey-info.log to stdout
-            if [ ! -L /opt/bitnami/tomcat/logs/eusurvey-info.log ]; then
-              ln -sf /dev/stdout /opt/bitnami/tomcat/logs/eusurvey-info.log;
-            fi
+              mkdir -p /tmp/eusurvey
+              mv /usr/local/share/eusurvey.war /tmp/eusurvey/eusurvey.war
+              cd /tmp/eusurvey
+              jar -xvf eusurvey.war
+              rm eusurvey.war
+              cp /etc/config/secrets/spring.properties ./WEB-INF/spring.properties
+              cp /etc/config/secrets/ehcache.xml ./WEB-INF/classes/ehcache.xml
+              mv /tmp/eusurvey /opt/bitnami/tomcat/webapps/eusurvey
+              rm -rf /tmp/eusurvey
 
   extraVolumeMounts:
   - name: usr-local-share-volume  
@@ -55,6 +51,14 @@ tomcat:
     mountPath: /eusurveytemp/users
   - name: eusurvey-archive
     mountPath: /eusurveytemp/archive
+  - name: spring-properties-volume
+    mountPath: /etc/config/secrets/spring.properties
+    subPath: spring.properties
+    readOnly: true
+  - name: cache-config-volume
+    mountPath: /etc/config/secrets/ehcache.xml
+    subPath: ehcache.xml
+    readOnly: true
 
   extraVolumes:
     - name: usr-local-share-volume  
@@ -73,6 +77,12 @@ tomcat:
     - name: eusurvey-archive
       persistentVolumeClaim:
         claimName: '{{ include "common.names.fullname" . }}-archive'
+    - name: spring-properties-volume
+      secret:
+        secretName: '{{ include "common.names.fullname" . }}-spring-properties-secret'  
+    - name: cache-config-volume
+      secret:
+        secretName: '{{ include "common.names.fullname" . }}-cache-config-secret'  
 
   initContainers:
     - name: copy-eusurvey-war
@@ -82,13 +92,10 @@ tomcat:
         - /bin/sh
         - -c
         - |
-          # Move the WAR file if the directory doesn't exist
           if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
             mv /opt/bitnami/tomcat/webapps/eusurvey.war /usr/local/share/eusurvey.war;
           fi
   
-
-
       volumeMounts:
         - name: usr-local-share-volume  
           mountPath: /usr/local/share
