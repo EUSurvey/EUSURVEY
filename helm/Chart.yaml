@@ -9,7 +9,7 @@ dependencies:
     version: "10.2.4"
     repository: "https://charts.bitnami.com/bitnami"
   - name: tomcat
-    version: "11.2.19"
+    version: "11.2.21"
     repository: "https://charts.bitnami.com/bitnami"
   - name: redis
     version: "17.9.5"
