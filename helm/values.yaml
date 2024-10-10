@@ -2,10 +2,11 @@
 global:
   defaultStorageClass: "standard"
 
-tomcat:
+commonTomcatConfig: &commonTomcatConfig
   replicaCount: 2
   deployment:
     type: statefulset
+  podManagementPolicy: OrderedReady
   service:
     type: ClusterIP
     ports: 
@@ -22,7 +23,6 @@ tomcat:
     limits:
       memory: "2Gi"    
       cpu: "1000m"     
-  
   lifecycleHooks:
     postStart:
       exec:
@@ -36,33 +36,55 @@ tomcat:
               cd /tmp/eusurvey && jar -xvf /tmp/eusurvey.war 2>&1
               cp /etc/config/secrets/spring.properties /tmp/eusurvey/WEB-INF/spring.properties 2>&1
               cp /etc/config/secrets/ehcache.xml /tmp/eusurvey/WEB-INF/classes/ehcache.xml 2>&1
+
+              sed -i "s/^host.executing.task=.*/host.executing.task=tomcat-task/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+              sed -i "s/^host.executing.ldaptask=.*/host.executing.ldaptask=tomcat-ldap-task/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+              sed -i "s/^host.executing.todotask=.*/host.executing.todotask=tomcat-todotask/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+
+              case "$TASK_TYPE" in
+                task)
+                  sed -i "s/^host.executing.task=.*/host.executing.task=/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+                  ;;
+                ldaptask)
+                  sed -i "s/^host.executing.ldaptask=.*/host.executing.ldaptask=/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+                  ;;
+                todotask)
+                  sed -i "s/^host.executing.todotask=.*/host.executing.todotask=/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+                  ;;
+                "")
+                  # No specific task, leave all values as defaults
+                  ;;
+                *)
+                  echo "No matching task type for $TASK_TYPE" 2>&1
+                  ;;
+              esac
+
               rm /tmp/eusurvey.war 2>&1
               mv /tmp/eusurvey /opt/bitnami/tomcat/webapps/eusurvey 2>&1
               rm -rf /tmp/eusurvey 2>&1
             fi
-            
 
   extraVolumeMounts:
-  - name: usr-local-share-volume  
-    mountPath: /usr/local/share
-  - name: tmp-volume
-    mountPath: /eusurveytemp/tmp
-  - name: eusurvey-files
-    mountPath: /eusurveytemp/files
-  - name: eusurvey-surveys
-    mountPath: /eusurveytemp/surveys
-  - name: eusurvey-users
-    mountPath: /eusurveytemp/users
-  - name: eusurvey-archive
-    mountPath: /eusurveytemp/archive
-  - name: spring-properties-volume
-    mountPath: /etc/config/secrets/spring.properties
-    subPath: spring.properties
-    readOnly: true
-  - name: cache-config-volume
-    mountPath: /etc/config/secrets/ehcache.xml
-    subPath: ehcache.xml
-    readOnly: true
+    - name: usr-local-share-volume  
+      mountPath: /usr/local/share
+    - name: tmp-volume
+      mountPath: /eusurveytemp/tmp
+    - name: eusurvey-files
+      mountPath: /eusurveytemp/files
+    - name: eusurvey-surveys
+      mountPath: /eusurveytemp/surveys
+    - name: eusurvey-users
+      mountPath: /eusurveytemp/users
+    - name: eusurvey-archive
+      mountPath: /eusurveytemp/archive
+    - name: spring-properties-volume
+      mountPath: /etc/config/secrets/spring.properties
+      subPath: spring.properties
+      readOnly: true
+    - name: cache-config-volume
+      mountPath: /etc/config/secrets/ehcache.xml
+      subPath: ehcache.xml
+      readOnly: true
 
   extraVolumes:
     - name: usr-local-share-volume  
@@ -70,23 +92,23 @@ tomcat:
     - name: tmp-volume
       emptyDir: {}
     - name: eusurvey-files
-      persistentVolumeClaim:
-        claimName: '{{ include "common.names.fullname" . }}-files'
+      persistentVolumeClaim: 
+        claimName: '{{ .Release.Name }}-tomcat-files'
     - name: eusurvey-surveys
       persistentVolumeClaim:
-        claimName: '{{ include "common.names.fullname" . }}-surveys'
+        claimName: '{{ .Release.Name }}-tomcat-surveys'
     - name: eusurvey-users
       persistentVolumeClaim:
-        claimName: '{{ include "common.names.fullname" . }}-users'
+        claimName: '{{ .Release.Name }}-tomcat-users'
     - name: eusurvey-archive
       persistentVolumeClaim:
-        claimName: '{{ include "common.names.fullname" . }}-archive'
+        claimName: '{{ .Release.Name }}-tomcat-archive'
     - name: spring-properties-volume
       secret:
-        secretName: '{{ include "common.names.fullname" . }}-spring-properties-secret'  
+        secretName: '{{ .Release.Name }}-tomcat-spring-properties-secret'  
     - name: cache-config-volume
       secret:
-        secretName: '{{ include "common.names.fullname" . }}-cache-config-secret'  
+        secretName: '{{ .Release.Name }}-tomcat-cache-config-secret'  
 
   initContainers:
     - name: copy-eusurvey-war
@@ -159,6 +181,78 @@ tomcat:
       - ReadWriteOnce
     size: 250Mi
 
+
+commonWaitForFirstTomcat: &wait-for-first-tomcat
+  name: wait-for-first-tomcat
+  image: busybox:1.35
+  imagePullPolicy: IfNotPresent
+  command:
+    - /bin/sh
+    - -c
+    - |
+      echo "Waiting for the first tomcat instance (tomcat-0) to be ready...";
+      while ! wget -q --spider http://eusurvey-tomcat-0:8080; do
+        echo "Waiting for tomcat-0...";
+        sleep 5;
+      done;
+      echo "tomcat-0 is ready!"
+commonCopyEusurveyWar: &copy-eusurvey-war
+  name: copy-eusurvey-war
+  image: ghcr.io/circabc/tomcat-eusurvey-server-k8s:latest
+  imagePullPolicy: IfNotPresent 
+  command:
+    - /bin/sh
+    - -c
+    - |
+      if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
+        mv /opt/bitnami/tomcat/webapps/eusurvey.war /usr/local/share/eusurvey.war;
+      fi
+  volumeMounts:
+    - name: usr-local-share-volume  
+      mountPath: /usr/local/share
+
+tomcat:
+  <<: *commonTomcatConfig
+  replicaCount: 2
+  extraEnvVars:
+    - name: TASK_TYPE
+      value: ""
+  initContainers: 
+    - <<: *copy-eusurvey-war
+  
+tomcat-task:
+  <<: *commonTomcatConfig
+  replicaCount: 1
+  nameOverride: "tomcat-task"
+  extraEnvVars:
+    - name: TASK_TYPE
+      value: "task"
+  initContainers:
+    - <<: *wait-for-first-tomcat
+    - <<: *copy-eusurvey-war
+
+tomcat-ldap-task:
+  <<: *commonTomcatConfig
+  replicaCount: 1
+  nameOverride: "tomcat-ldap-task"
+  extraEnvVars:
+    - name: TASK_TYPE
+      value: "ldaptask"
+  initContainers: 
+    - <<: *wait-for-first-tomcat
+    - <<: *copy-eusurvey-war
+
+tomcat-todo-task:
+  <<: *commonTomcatConfig
+  replicaCount: 1
+  nameOverride: "tomcat-todo-task"
+  extraEnvVars:
+    - name: TASK_TYPE
+      value: "todotask"
+  initContainers: 
+    - <<: *wait-for-first-tomcat
+    - <<: *copy-eusurvey-war
+    
 mysql:
   auth:
     rootPassword: "password"
