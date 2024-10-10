@@ -1,0 +1,2790 @@
+
+dn: dc=cec,dc=eu,dc=int
+dc: cec
+o: example
+objectClass: dcObject
+objectClass: organization
+
+dn: ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: organizationalUnit
+objectClass: top
+ou: AuthenticationDomains
+
+dn: cn=eu.europa.eca,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eca
+o: eu.europa.eca
+sn: eu.europa.eca
+recordStatus: a
+description: European Court of Auditors
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0YHQvNC10YLQvdCwINC/0LDQu9
+ Cw0YLQsA==
+description;lang-cs:: RXZyb3Bza8O9IMO6xI1ldG7DrSBkdsWvcg==
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFJldmlzaW9uc3JldA==
+description;lang-de:: RXVyb3DDpGlzY2hlciBSZWNobnVuZ3Nob2Y=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6VzrvOtc6zzrrPhM65zrrPjCDOo8
+ +Fzr3Orc60z4HOuc6/
+description;lang-en: European Court of Auditors
+description;lang-es: Tribunal de Cuentas Europeo
+description;lang-et: Euroopa Kontrollikoda
+description;lang-fi: Euroopan tilintarkastustuomioistuin
+description;lang-fr:: Q291ciBkZXMgY29tcHRlcyBldXJvcMOpZW5uZQ==
+description;lang-ga:: Q8O6aXJ0IEluacO6Y2jDs2lyw60gbmEgaEVvcnBh
+description;lang-hr: Europski revizorski sud
+description;lang-hu:: RXVyw7NwYWkgU3rDoW12ZXbFkXN6w6lr
+description;lang-it: Corte dei conti europea
+description;lang-lt:: RXVyb3BvcyBBdWRpdG8gUsWrbWFp
+description;lang-lv:: RWlyb3BhcyBSZXbEq3ppamFzIHBhbMSBdGE=
+description;lang-mt: Qorti Ewropea tal-Awdituri
+description;lang-nl: Europese Rekenkamer
+description;lang-pl:: RXVyb3BlanNraSBUcnlidW5hxYIgT2JyYWNodW5rb3d5
+description;lang-pt: Tribunal de Contas Europeu
+description;lang-ro:: Q3VydGVhIGRlIENvbnR1cmkgRXVyb3BlYW7Egw==
+description;lang-sk:: RXVyw7Nwc2t5IGR2b3IgYXVkw610b3Jvdg==
+description;lang-sl:: RXZyb3Bza28gcmHEjXVuc2tvIHNvZGnFocSNZQ==
+description;lang-sv:: RXVyb3BlaXNrYSByZXZpc2lvbnNyw6R0dGVu
+
+dn: cn=eu.europa.easo,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.easo
+o: eu.europa.easo
+sn: eu.europa.easo
+recordStatus: a
+description: European Asylum Support Office
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0YHQu9GD0LbQsdCwINC30LAg0L
+ /QvtC00LrRgNC10L/QsCDQsiDQvtCx0LvQsNGB0YLRgtCwINC90LAg0YPQsdC10LbQuNGJ0LXRg
+ tC+
+description;lang-cs:: RXZyb3Bza8O9IHBvZHDFr3Juw70gw7rFmWFkIHBybyBvdMOhemt5IG
+ F6eWx1
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEFzeWxzdMO4dHRla29udG9y
+description;lang-de:: RXVyb3DDpGlzY2hlcyBVbnRlcnN0w7x0enVuZ3Niw7xybyBmw7xyIE
+ FzeWxmcmFnZW4=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6lz4DOt8+BzrXPg86vzrEgzqXPgM
+ 6/z4PPhM6uz4HOuc6+zrfPgiDOs865zrEgz4TOvyDOhs+Dz4XOu86/
+description;lang-en: European Asylum Support Office
+description;lang-es: Oficina Europea de Apoyo al Asilo
+description;lang-et:: RXVyb29wYSBWYXJqdXBhaWdha8O8c2ltdXN0ZSBUdWdpYW1ldA==
+description;lang-fi: Euroopan turvapaikka-asioiden tukivirasto
+description;lang-fr:: QnVyZWF1IGV1cm9ww6llbiBk4oCZYXBwdWkgZW4gbWF0acOocmUgZO
+ KAmWFzaWxl
+description;lang-ga:: T2lmaWcgRW9ycGFjaCB1bSBUaGFjYcOtb2NodCBkb24gQ2jDs3Jhcy
+ BUZWFybWFpbm4=
+description;lang-hr: Europski potporni ured za azil
+description;lang-hu:: RXVyw7NwYWkgTWVuZWvDvGx0w7xneWkgVMOhbW9nYXTDoXNpIEhpdm
+ F0YWw=
+description;lang-it:: VWZmaWNpbyBldXJvcGVvIGRpIHNvc3RlZ25vIHBlciBs4oCZYXNpbG
+ 8=
+description;lang-lt:: RXVyb3BvcyBwcmllZ2xvYnPEjWlvIHBhcmFtb3MgYml1cmFz
+description;lang-lv:: RWlyb3BhcyBQYXR2xJNydW1hIGF0YmFsc3RhIGJpcm9qcw==
+description;lang-mt:: bC1VZmZpxIvEi2p1IEV3cm9wZXcgdGHigJkgQXBwb8ShxKEgZmlsLX
+ Fhc2FtIHRhbC1Bc2ls
+description;lang-nl: Europees Ondersteuningsbureau voor asielzaken
+description;lang-pl:: RXVyb3BlanNraSBVcnrEhWQgV3NwYXJjaWEgdyBkemllZHppbmllIE
+ F6eWx1
+description;lang-pt:: R2FiaW5ldGUgRXVyb3BldSBkZSBBcG9pbyBlbSBtYXTDqXJpYSBkZS
+ BBc2lsbw==
+description;lang-ro: Biroul European de Sprijin pentru Azil
+description;lang-sk:: RXVyw7Nwc2t5IHBvZHBvcm7DvSDDunJhZCBwcmUgYXp5bA==
+description;lang-sl: Evropski azilni podporni urad
+description;lang-sv:: RXVyb3BlaXNrYSBzdMO2ZGtvbnRvcmV0IGbDtnIgYXN5bGZyw6Vnb3
+ I=
+
+dn: cn=eu.europa.echa,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.echa
+o: eu.europa.echa
+sn: eu.europa.echa
+recordStatus: a
+description: European Chemicals Agency
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LDQs9C10L3RhtC40Y8g0L/Qvi
+ DRhdC40LzQuNC60LDQu9C40YLQtQ==
+description;lang-cs:: RXZyb3Bza8OhIGFnZW50dXJhIHBybyBjaGVtaWNrw6kgbMOhdGt5
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEtlbWlrYWxpZWFnZW50dXI=
+description;lang-de:: RXVyb3DDpGlzY2hlIENoZW1pa2FsaWVuYWdlbnR1cg==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+Mz4Igzp/Pgc6zzrHOvc65z4POvM+Mz4
+ IgzqfOt868zrnOus+Ozr0gzqDPgc6/z4rPjM69z4TPic69
+description;lang-en: European Chemicals Agency
+description;lang-es:: QWdlbmNpYSBFdXJvcGVhIGRlIFN1c3RhbmNpYXMgeSBNZXpjbGFzIF
+ F1w61taWNhcw==
+description;lang-et: Euroopa Kemikaaliamet
+description;lang-fi: Euroopan kemikaalivirasto
+description;lang-fr:: QWdlbmNlIGV1cm9ww6llbm5lIGRlcyBwcm9kdWl0cyBjaGltaXF1ZX
+ M=
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBFb3JwYWNoIENlaW1pY2XDoW4=
+description;lang-hr: Europska agencija za kemikalije
+description;lang-hu:: RXVyw7NwYWkgVmVneWlhbnlhZy3DvGd5bsO2a3PDqWc=
+description;lang-it: Agenzia europea per le sostanze chimiche
+description;lang-lt:: RXVyb3BvcyBjaGVtaW5pxbMgbWVkxb5pYWfFsyBhZ2VudMWrcmE=
+description;lang-lv:: RWlyb3BhcyDEtsSrbWlza28gdmllbHUgYcSjZW50xatyYQ==
+description;lang-mt:: bC1BxKFlbnppamEgRXdyb3BlYSBnxKdhcy1TdXN0YW56aSBLaW1pxI
+ tp
+description;lang-nl: Europees Agentschap voor chemische stoffen
+description;lang-pl:: RXVyb3BlanNrYSBBZ2VuY2phIENoZW1pa2FsacOzdw==
+description;lang-pt:: QWfDqm5jaWEgRXVyb3BlaWEgZG9zIFByb2R1dG9zIFF1w61taWNvcw
+ ==
+description;lang-ro:: QWdlbsibaWEgRXVyb3BlYW7EgyBwZW50cnUgUHJvZHVzZSBDaGltaW
+ Nl
+description;lang-sk:: RXVyw7Nwc2thIGNoZW1pY2vDoSBhZ2VudMO6cmE=
+description;lang-sl: Evropska agencija za kemikalije
+description;lang-sv: Europeiska kemikaliemyndigheten
+
+dn: cn=eu.europa.easa,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.easa
+o: eu.europa.easa
+sn: eu.europa.easa
+recordStatus: a
+description: European Aviation Safety Agency
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LDQs9C10L3RhtC40Y8g0LfQsC
+ DQsNCy0LjQsNGG0LjQvtC90L3QsCDQsdC10LfQvtC/0LDRgdC90L7RgdGC
+description;lang-cs:: RXZyb3Bza8OhIGFnZW50dXJhIHBybyBiZXpwZWNub3N0IGxldGVjdH
+ bDrQ==
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEx1ZnRmYXJ0c3Npa2tlcmhlZHNhZ2VudH
+ Vy
+description;lang-de:: RXVyb3DDpGlzY2hlIEFnZW50dXIgZsO8ciBGbHVnc2ljaGVyaGVpdA
+ ==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+Mz4Igzp/Pgc6zzrHOvc65z4POvM+Mz4
+ IgzpHPg8+GzqzOu861zrnOsc+CIM+EzrfPgiDOkc61z4HOv8+Azr/Pgc6vzrHPgg==
+description;lang-en: European Aviation Safety Agency
+description;lang-es:: QWdlbmNpYSBFdXJvcGVhIGRlIFNlZ3VyaWRhZCBBw6lyZWE=
+description;lang-et: Euroopa Lennundusohutusamet
+description;lang-fi: Euroopan lentoturvallisuusvirasto
+description;lang-fr:: QWdlbmNlIGV1cm9ww6llbm5lIGRlIGxhIHPDqWN1cml0w6kgYcOpcm
+ llbm5l
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBFb3JwYWNoIHVtIFNow6FiaMOhaW
+ x0ZWFjaHQgRWl0bMOtb2NodGE=
+description;lang-hr:: RXVyb3Bza2EgYWdlbmNpamEgemEgc2lndXJub3N0IHpyYcSNbm9nIH
+ Byb21ldGE=
+description;lang-hu:: RXVyw7NwYWkgUmVww7xsw6lzYml6dG9uc8OhZ2kgw5xneW7Dtmtzw6
+ ln
+description;lang-it: Agenzia europea per la sicurezza aerea
+description;lang-lt: Europos aviacijos saugos agentura
+description;lang-lv:: RWlyb3BhcyBBdmnEgWNpamFzIGRyb8WhxKtiYXMgYcSjZW50xatyYQ
+ ==
+description;lang-mt:: TC1BZ2VuemlqYSBFd3JvcGVhIHRhcy1TaWd1cnTDoCB0YScgbC1Bdm
+ phenpqb25p
+description;lang-nl: Europees Agentschap voor de veiligheid van de luchtvaar
+ t
+description;lang-pl: Europejska Agencja Bezpieczenstwa Lotniczego
+description;lang-pt:: QWfDqm5jaWEgRXVyb3BlaWEgcGFyYSBhIFNlZ3VyYW7Dp2EgZGEgQX
+ ZpYcOnw6Nv
+description;lang-ro: Agentia Europeana de Siguranta a Aviatiei
+description;lang-sk:: RXVyw7Nwc2thIGFnZW50w7pyYSBwcmUgYmV6cGVjbm9zdCBsZXRlY3
+ R2YQ==
+description;lang-sl: Evropska agencija za varnost v letalstvu
+description;lang-sv:: RXVyb3BlaXNrYSBieXLDpW4gZsO2ciBsdWZ0ZmFydHNzw6RrZXJoZX
+ Q=
+
+dn: cn=eu.europa.euipo,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.euipo
+o: eu.europa.euipo
+sn: eu.europa.euipo
+recordStatus: a
+description: European Union Intellectual Property Office
+description;lang-bg:: 0KHQu9GD0LbQsdCwINC90LAg0JXQstGA0L7Qv9C10LnRgdC60LjRjy
+ DRgdGK0Y7QtyDQt9CwINC40L3RgtC10LvQtdC60YLRg9Cw0LvQvdCwINGB0L7QsdGB0YLQstC10
+ L3QvtGB0YI=
+description;lang-cs:: w5rFmWFkIEV2cm9wc2vDqSB1bmllIHBybyBkdcWhZXZuw60gdmxhc3
+ RuaWN0dsOt
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFVuaW9ucyBLb250b3IgZm9yIGludGVsbG
+ VrdHVlbCBFamVuZG9tc3JldA==
+description;lang-de:: QW10IGRlciBFdXJvcMOkaXNjaGVuIFVuaW9uIGbDvHIgZ2Vpc3RpZ2
+ VzIEVpZ2VudHVt
+description;lang-el:: zpPPgc6xz4bOtc6vzr8gzpTOuc6xzr3Ov863z4TOuc66zq7PgiDOmc
+ 60zrnOv866z4TOt8+Dzq/Osc+CIM+EzrfPgiDOlc+Fz4HPic+AzrHPis66zq7PgiDOiM69z4nPg
+ 863z4I=
+description;lang-en: European Union Intellectual Property Office
+description;lang-es:: T2ZpY2luYSBkZSBQcm9waWVkYWQgSW50ZWxlY3R1YWwgZGUgbGEgVW
+ 5pw7NuIEV1cm9wZWE=
+description;lang-et: Euroopa Liidu Intellektuaalomandi Amet
+description;lang-fi: Euroopan unionin teollisoikeuksien virasto
+description;lang-fr:: T2ZmaWNlIGRlIGzigJlVbmlvbiBldXJvcMOpZW5uZSBwb3VyIGxhIH
+ Byb3ByacOpdMOpIGludGVsbGVjdHVlbGxl
+description;lang-ga:: T2lmaWcgTWFvaW5lIEludGxlYWNodMO6bGEgYW4gQW9udGFpcyBFb3
+ JwYWlnaA==
+description;lang-hr:: VXJlZCBFdXJvcHNrZSB1bmlqZSB6YSBpbnRlbGVrdHVhbG5vIHZsYX
+ NuacWhdHZv
+description;lang-hu:: RXVyw7NwYWkgVW5pw7MgU3plbGxlbWkgVHVsYWpkb25pIEhpdmF0YW
+ xh
+description;lang-it:: VWZmaWNpbyBkZWxsJ1VuaW9uZSBldXJvcGVhIHBlciBsYSBwcm9wcm
+ lldMOgIGludGVsbGV0dHVhbGU=
+description;lang-lt:: RXVyb3BvcyBTxIVqdW5nb3MgaW50ZWxla3RpbsSXcyBudW9zYXZ5Ys
+ SXcyB0YXJueWJh
+description;lang-lv:: RWlyb3BhcyBTYXZpZW7Eq2JhcyBJbnRlbGVrdHXEgWzEgSDEq3Bhxa
+ F1bWEgYmlyb2pz
+description;lang-mt:: VWZmacSLxItqdSB0YWwtUHJvcHJqZXTDoCBJbnRlbGxldHR3YWxpIH
+ RhbC1VbmpvbmkgRXdyb3BlYQ==
+description;lang-nl: Bureau voor intellectuele eigendom van de Europese Unie
+description;lang-pl:: VXJ6xIVkIFVuaWkgRXVyb3BlanNraWVqIGRzLiBXxYJhc25vxZtjaS
+ BJbnRlbGVrdHVhbG5lag==
+description;lang-pt:: SW5zdGl0dXRvIGRhIFByb3ByaWVkYWRlIEludGVsZWN0dWFsIGRhIF
+ VuacOjbyBFdXJvcGVpYQ==
+description;lang-ro:: T2ZpY2l1bCBVbml1bmlpIEV1cm9wZW5lIHBlbnRydSBQcm9wcmlldG
+ F0ZSBJbnRlbGVjdHVhbMSD
+description;lang-sk:: w5pyYWQgRXVyw7Nwc2tlaiDDum5pZSBwcmUgZHXFoWV2bsOpIHZsYX
+ N0bsOtY3R2bw==
+description;lang-sl: Urad Evropske unije za intelektualno lastnino
+description;lang-sv:: RXVyb3BlaXNrYSB1bmlvbmVucyBpbW1hdGVyaWFscsOkdHRzbXluZG
+ lnaGV0
+
+dn: cn=eu.europa.edps,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.edps
+o: eu.europa.edps
+sn: eu.europa.edps
+recordStatus: a
+description: European Data Protection Supervisor
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0L3QsNC00LfQvtGA0LXQvSDQvt
+ GA0LPQsNC9INC/0L4g0LfQsNGJ0LjRgtCwINC90LAg0LTQsNC90L3QuNGC0LU=
+description;lang-cs:: RXZyb3Bza8O9IGluc3Bla3RvciBvY2hyYW55IMO6ZGFqxa8=
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFRpbHN5bnNmw7hyZW5kZSBmb3IgRGF0YW
+ Jlc2t5dHRlbHNl
+description;lang-de:: RXVyb3DDpGlzY2hlciBEYXRlbnNjaHV0emJlYXVmdHJhZ3Rlcg==
+description;lang-el:: zpXPhc+Bz4nPgM6xzq/Ov8+CIM6Vz4DPjM+Az4TOt8+CIM6gz4HOv8
+ +Dz4TOsc+Dzq/Osc+CIM6UzrXOtM6/zrzOrc69z4nOvQ==
+description;lang-en: European Data Protection Supervisor
+description;lang-es:: U3VwZXJ2aXNvciBFdXJvcGVvIGRlIFByb3RlY2Npw7NuIGRlIERhdG
+ 9z
+description;lang-et: Euroopa Andmekaitseinspektor
+description;lang-fi: Euroopan tietosuojavaltuutettu
+description;lang-fr:: Q29udHLDtGxldXIgZXVyb3DDqWVuIGRlIGxhIHByb3RlY3Rpb24gZG
+ VzIGRvbm7DqWVz
+description;lang-ga:: QW4gTWFvaXJzZW9pciBFb3JwYWNoIGFyIENob3NhaW50IFNvbnJhw6
+ 0=
+description;lang-hr:: RXVyb3Bza2kgbmFkem9ybmlrIHphIHphxaF0aXR1IHBvZGF0YWth
+description;lang-hu:: RXVyw7NwYWkgYWRhdHbDqWRlbG1pIGJpenRvcw==
+description;lang-it: Garante europeo della protezione dei dati
+description;lang-lt:: RXVyb3BvcyBkdW9tZW7FsyBhcHNhdWdvcyBwcmllxb5pxatyb3MgcG
+ FyZWlnxatuYXM=
+description;lang-lv:: RWlyb3BhcyBEYXR1IGFpenNhcmR6xKtiYXMgdXpyYXVkesSrdMSBan
+ M=
+description;lang-mt:: S29udHJvbGx1ciBFd3JvcGV3IGfEp2FsbC1Qcm90ZXp6am9uaSB0YW
+ QtRGF0YQ==
+description;lang-nl: Europese Toezichthouder voor gegevensbescherming
+description;lang-pl: Europejski Inspektor Ochrony Danych
+description;lang-pt:: QXV0b3JpZGFkZSBFdXJvcGVpYSBwYXJhIGEgUHJvdGVjw6fDo28gZG
+ UgRGFkb3M=
+description;lang-ro:: QXV0b3JpdGF0ZWEgRXVyb3BlYW7EgyBwZW50cnUgUHJvdGVjxaNpYS
+ BEYXRlbG9y
+description;lang-sk:: RXVyw7Nwc2t5IGRvem9ybsO9IMO6cmFkbsOtayBwcmUgb2NocmFudS
+ DDumRham92
+description;lang-sl: Evropski nadzornik za varstvo podatkov
+description;lang-sv: Europeiska datatillsynsmannen
+
+dn: cn=eu.europa.eba,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eba
+o: eu.europa.eba
+sn: eu.europa.eba
+recordStatus: a
+description: European Banking Authority
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0LHQsNC90LrQvtCyINC+0YDQs9
+ Cw0L0=
+description;lang-cs:: RXZyb3Bza8O9IG9yZ8OhbiBwcm8gYmFua292bmljdHbDrQ==
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIEJhbmt0aWxzeW5zbXluZGlnaGVk
+description;lang-de:: RXVyb3DDpGlzY2hlIEJhbmtlbmF1ZnNpY2h0c2JlaMO2cmRl
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6Rz4HPh86uIM6kz4HOsc+AzrXOts
+ +Ozr0=
+description;lang-en: European Banking Authority
+description;lang-es: Autoridad Bancaria Europea
+description;lang-et:: RXVyb29wYSBQYW5nYW5kdXNqw6RyZWxldmFsdmU=
+description;lang-fi: Euroopan pankkiviranomainen
+description;lang-fr:: QXV0b3JpdMOpIGJhbmNhaXJlIGV1cm9ww6llbm5l
+description;lang-ga:: YW4gdMOaZGFyw6FzIEVvcnBhY2ggQmFpbmPDqWlyZWFjaHRh
+description;lang-hr: Europsko nadzorno tijelo za bankarstvo
+description;lang-hu:: RXVyw7NwYWkgQmFua2hhdMOzc8OhZw==
+description;lang-it:: QXV0b3JpdMOgIGJhbmNhcmlhIGV1cm9wZWE=
+description;lang-lt:: RXVyb3BvcyBiYW5raW5pbmt5c3TEl3MgaW5zdGl0dWNpamE=
+description;lang-lv:: RWlyb3BhcyBCYW5rdSBpZXN0xIFkZQ==
+description;lang-mt:: QXd0b3JpdMOgIEJhbmthcmphIEV3cm9wZWE=
+description;lang-nl: Europese Bankautoriteit
+description;lang-pl:: RXVyb3BlanNraSBVcnrEhWQgTmFkem9ydSBCYW5rb3dlZ28=
+description;lang-pt:: QXV0b3JpZGFkZSBCYW5jw6FyaWEgRXVyb3BlaWE=
+description;lang-ro:: QXV0b3JpdGF0ZWEgQmFuY2FyxIMgRXVyb3BlYW7Egw==
+description;lang-sk:: RXVyw7Nwc2t5IG9yZ8OhbiBwcmUgYmFua292bsOtY3R2bw==
+description;lang-sl:: RXZyb3Bza2kgYmFuxI1uaSBvcmdhbg==
+description;lang-sv: Europeiska bankmyndigheten
+
+dn: cn=eu.europa.berec,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.berec
+o: eu.europa.berec
+sn: eu.europa.berec
+recordStatus: a
+description: The BEREC Office
+description;lang-bg:: 0KHQu9GD0LbQsdCwINC90LAg0J7QldCg0JXQoQ==
+description;lang-cs:: w5rFmWFkIEJFUkVD
+description;lang-da:: QkVSRUMtc3TDuHR0ZWtvbnRvcmV0
+description;lang-de:: RGFzIEdFUkVLLULDvHJv
+description;lang-el:: zpcgzqXPgM63z4HOtc+Dzq/OsSDPhM6/z4UgQkVSRUM=
+description;lang-en: The BEREC Office
+description;lang-es: La Oficina BEREC
+description;lang-et:: QkVSRUNpIGLDvHJvbw==
+description;lang-fi: BERECin toimisto
+description;lang-fr:: T2ZmaWNlIGRlIGzigJlPUkVDRQ==
+description;lang-ga: Oifig BEREC
+description;lang-hr:: VGlqZWxvIGV1cm9wc2tpaCByZWd1bGF0b3JhIHphIGVsZWt0cm9uac
+ SNa2Uga29tdW5pa2FjaWpl
+description;lang-hu: Az BEREC Iroda
+description;lang-it:: TOKAmXVmZmljaW8gQkVSRUM=
+description;lang-lt: EERRI biuras
+description;lang-lv: BEREC birojs
+description;lang-mt:: TC1VZmZpxIvEi2p1IEJFUkVD
+description;lang-nl: Het BEREC-Bureau
+description;lang-pl:: VXJ6xIVkIEJFUkVD
+description;lang-pt: O Gabinete do ORECE
+description;lang-ro: Oficiul OAREC
+description;lang-sk:: w7pyYWQgb3Jnw6FudSBCRVJFQw==
+description;lang-sl: Urad BEREC
+description;lang-sv:: QkVSRUMtYnlyw6Vu
+
+dn: cn=eu.europa.cepol,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.cepol
+o: eu.europa.cepol
+sn: eu.europa.cepol
+recordStatus: a
+description: European Union Agency for Law Enforcement Training
+description;lang-bg:: 0JDQs9C10L3RhtC40Y8g0L3QsCDQldCy0YDQvtC/0LXQudGB0LrQuN
+ GPINGB0YrRjtC3INC30LAg0L7QsdGD0YfQtdC90LjQtSDQsiDQvtCx0LvQsNGB0YLRgtCwINC90
+ LAg0L/RgNCw0LLQvtC/0YDQuNC70LDQs9Cw0L3QtdGC0L4=
+description;lang-cs:: QWdlbnR1cmEgRXZyb3Bza8OpIHVuaWUgcHJvIHZ6ZMSbbMOhdsOhbs
+ OtIGEgdsO9Y3ZpayB2IG9ibGFzdGkgcHJvc2F6b3bDoW7DrSBwcsOhdmE=
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFVuaW9ucyBBZ2VudHVyIGZvciBVZGRhbm
+ 5lbHNlIGluZGVuIGZvciBSZXRzaMOlbmRow6Z2ZWxzZQ==
+description;lang-de:: QWdlbnR1ciBkZXIgRXVyb3DDpGlzY2hlbiBVbmlvbiBmw7xyIGRpZS
+ BBdXMtIHVuZCBGb3J0YmlsZHVuZyBhdWYgZGVtIEdlYmlldCBkZXIgU3RyYWZ2ZXJmb2xndW5n
+description;lang-el:: zp/Pgc6zzrHOvc65z4POvM+Mz4Igz4TOt8+CIM6Vz4XPgc+Jz4DOsc
+ +KzrrOrs+CIM6Izr3Pic+DzrfPgiDOs865zrEgz4TOt869IM6azrHPhM6sz4HPhM65z4POtyDPg
+ 8+Ezr/OvSDOpM6/zrzOrc6xIM+EzrfPgiDOlc+AzrnOss6/zrvOrs+CIM+Ezr/PhSDOnc+MzrzO
+ v8+F
+description;lang-en: European Union Agency for Law Enforcement Training
+description;lang-es:: QWdlbmNpYSBkZSBsYSBVbmnDs24gRXVyb3BlYSBwYXJhIGxhIEZvcm
+ 1hY2nDs24gUG9saWNpYWw=
+description;lang-et:: RXVyb29wYSBMaWlkdSDDlWlndXNrYWl0c2Vrb29saXR1c2UgQW1ldA
+ ==
+description;lang-fi: Euroopan unionin lainvalvontakoulutusvirasto
+description;lang-fr:: QWdlbmNlIGRlIGzigJlVbmlvbiBldXJvcMOpZW5uZSBwb3VyIGxhIG
+ Zvcm1hdGlvbiBkZXMgc2VydmljZXMgcsOpcHJlc3NpZnM=
+description;lang-ga:: R27DrW9taGFpcmVhY2h0IGFuIEFvbnRhaXMgRW9ycGFpZ2ggdW0gT2
+ lsacO6aW50IGkgYmhGb3JmaGVpZGhtacO6IGFuIERsw60=
+description;lang-hr:: QWdlbmNpamEgRXVyb3Bza2UgdW5pamUgemEgb3Nwb3NvYmxqYXZhbm
+ plIHUgcG9kcnXEjWp1IGl6dnLFoWF2YW5qYSB6YWtvbm9kYXZzdHZh
+description;lang-hu:: QXogRXVyw7NwYWkgVW5pw7MgQsWxbsO8bGTDtnrDqXNpIEvDqXB6w6
+ lzaSDDnGd5bsO2a3PDqWdl
+description;lang-it:: QWdlbnppYSBkZWxs4oCZVW5pb25lIGV1cm9wZWEgcGVyIGxhIGZvcm
+ 1hemlvbmUgZGVsbGUgYXV0b3JpdMOgIGRpIGNvbnRyYXN0bw==
+description;lang-lt:: RXVyb3BvcyBTxIVqdW5nb3MgdGVpc8SXc2F1Z29zIG1va3ltbyBhZ2
+ VudMWrcmE=
+description;lang-lv:: RWlyb3BhcyBTYXZpZW7Eq2JhcyBUaWVzxKtiYWl6c2FyZHrEq2Jhcy
+ BhcG3EgWPEq2JhcyBhxKNlbnTFq3Jh
+description;lang-mt:: bC1BxKFlbnppamEgdGFsLVVuam9uaSBFd3JvcGVhIGfEp2F0LVRhxK
+ dyacShIGZsLUluZnVyemFyIHRhbC1MacShaQ==
+description;lang-nl: Agentschap van de Europese Unie voor opleiding op het g
+ ebied van rechtshandhaving
+description;lang-pl:: QWdlbmNqYSBVbmlpIEV1cm9wZWpza2llaiBkcy4gU3prb2xlbmlhIH
+ cgRHppZWR6aW5pZSDFmmNpZ2FuaWE=
+description;lang-pt:: QWfDqm5jaWEgZGEgVW5pw6NvIEV1cm9wZWlhIHBhcmEgYSBGb3JtYc
+ Onw6NvIFBvbGljaWFs
+description;lang-ro:: QWdlbsibaWEgVW5pdW5paSBFdXJvcGVuZSBwZW50cnUgRm9ybWFyZS
+ DDrm4gTWF0ZXJpZSBkZSBBcGxpY2FyZSBhIExlZ2lp
+description;lang-sk:: QWdlbnTDunJhIEV1csOzcHNrZWogw7puaWUgcHJlIG9kYm9ybsO6IH
+ Byw61wcmF2dSB2IG9ibGFzdGkgcHJlc2Fkem92YW5pYSBwcsOhdmE=
+description;lang-sl:: QWdlbmNpamEgRXZyb3Bza2UgdW5pamUgemEgdXNwb3NhYmxqYW5qZS
+ BuYSBwb2Ryb8SNanUgcHJlcHJlxI1ldmFuamEsIG9ka3JpdmFuamEgaW4gcHJlaXNrb3ZhbmphI
+ Gthem5pdmloIGRlamFuag==
+description;lang-sv:: RXVyb3BlaXNrYSB1bmlvbmVucyBieXLDpSBmw7ZyIHV0YmlsZG5pbm
+ cgYXYgdGrDpG5zdGVtw6RuIGlub20gYnJvdHRzYmVrw6RtcG5pbmc=
+
+dn: cn=eu.europa.enisa,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.enisa
+o: eu.europa.enisa
+sn: eu.europa.enisa
+recordStatus: a
+description: European Union Agency for network and information security
+description;lang-bg:: 0JDQs9C10L3RhtC40Y8g0L3QsCDQldCy0YDQvtC/0LXQudGB0LrQuN
+ GPINGB0YrRjtC3INC30LAg0LzRgNC10LbQvtCy0LAg0Lgg0LjQvdGE0L7RgNC80LDRhtC40L7Qv
+ dC90LAg0YHQuNCz0YPRgNC90L7RgdGC
+description;lang-cs:: QWdlbnR1cmEgRXZyb3Bza8OpIHVuaWUgcHJvIGJlenBlxI1ub3N0IH
+ PDrXTDrSBhIGluZm9ybWFjw60=
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFVuaW9ucyBBZ2VudHVyIGZvciBOZXQtIG
+ 9nIEluZm9ybWF0aW9uc3Npa2tlcmhlZA==
+description;lang-de:: QWdlbnR1ciBkZXIgRXVyb3DDpGlzY2hlbiBVbmlvbiBmw7xyIE5ldH
+ otIHVuZCBJbmZvcm1hdGlvbnNzaWNoZXJoZWl0
+description;lang-el:: zp/Pgc6zzrHOvc65z4POvM+Mz4Igz4TOt8+CIM6Vz4XPgc+Jz4DOsc
+ +KzrrOrs+CIM6Izr3Pic+DzrfPgiDOs865zrEgz4TOt869IM6Rz4PPhs6szrvOtc65zrEgzpTOu
+ c66z4TPjc+Jzr0gzrrOsc65IM6gzrvOt8+Bzr/Phs6/z4HOuc+Ozr0=
+description;lang-en: European Union Agency for network and information secur
+ ity
+description;lang-es:: QWdlbmNpYSBkZSBSZWRlcyB5IFNlZ3VyaWRhZCBkZSBsYSBJbmZvcm
+ 1hY2nDs24gZGUgbGEgVW5pw7NuIEV1cm9wZWE=
+description;lang-et:: RXVyb29wYSBWw7VyZ3UtIGphIEluZm90dXJiZWFtZXQ=
+description;lang-fi: Euroopan unionin verkko- ja tietoturvavirasto
+description;lang-fr:: TOKAmUFnZW5jZSBkZSBs4oCZVW5pb24gRXVyb3DDqWVubmUgY2hhcm
+ fDqWUgZGUgbGEgc8OpY3VyaXTDqSBkZXMgcsOpc2VhdXggZXQgZGUgbOKAmWluZm9ybWF0aW9u
+description;lang-ga:: R27DrW9taGFpcmVhY2h0IGFuIEFvbnRhaXMgRW9ycGFpZ2ggdW0gU2
+ hsw6FuZMOhaWwgTMOtb25yYSBhZ3VzIEZhaXNuw6lpc2U=
+description;lang-hr:: QWdlbmNpamEgRXVyb3Bza2UgdW5pamUgemEgc2lndXJub3N0IG1yZc
+ W+YSBpIHBvZGF0YWth
+description;lang-hu:: RXVyw7NwYWkgVW5pw7NzIEjDoWzDs3phdC0gw6lzIEluZm9ybcOhY2
+ nDs2JpenRvbnPDoWdpIMOcZ3luw7Zrc8OpZw==
+description;lang-it:: QWdlbnppYSBkZWxs4oCZVW5pb25lIGV1cm9wZWEgcGVyIGxhIHNpY3
+ VyZXp6YSBkZWxsZSByZXRpIGUgZGVsbOKAmWluZm9ybWF6aW9uZQ==
+description;lang-lt:: RXVyb3BvcyBTxIVqdW5nb3MgdGlua2zFsyBpciBpbmZvcm1hY2lqb3
+ MgYXBzYXVnb3MgYWdlbnTFq3Jh
+description;lang-lv:: RWlyb3BhcyBUxKtrbHUgdW4gaW5mb3JtxIFjaWphcyBkcm/FocSrYm
+ FzIGHEo2VudMWrcmE=
+description;lang-mt:: TC1BxKFlbnppamEgRXdyb3BlYSBkd2FyIGlzLVNpZ3VydMOgIHRhbi
+ 1OZXR3b3JrcyB1IGwtSW5mb3JtYXp6am9uaQ==
+description;lang-nl: Agentschap van de Europese Unie voor netwerk- en inform
+ atiebeveiliging
+description;lang-pl:: QWdlbmNqYSBVbmlpIEV1cm9wZWpza2llaiBkcy4gQmV6cGllY3plxY
+ RzdHdhIFNpZWNpIGkgSW5mb3JtYWNqaQ==
+description;lang-pt:: QWfDqm5jaWEgZGEgVW5pw6NvIEV1cm9wZWlhIHBhcmEgYSBTZWd1cm
+ Fuw6dhIGRhcyBSZWRlcyBlIGRhIEluZm9ybWHDp8Ojbw==
+description;lang-ro:: QWdlbsibaWEgVW5pdW5paSBFdXJvcGVuZSBwZW50cnUgU2VjdXJpdG
+ F0ZWEgUmXIm2VsZWxvciDImWkgYSBJbmZvcm1hyJtpaWxvcg==
+description;lang-sk:: QWdlbnTDunJhIEV1csOzcHNrZWogw7puaWUgcHJlIHNpZcWlb3bDui
+ BhIGluZm9ybWHEjW7DuiBiZXpwZcSNbm9zxaU=
+description;lang-sl:: QWdlbmNpamEgRXZyb3Bza2UgdW5pamUgemEgdmFybm9zdCBvbXJlxb
+ 5paiBpbiBpbmZvcm1hY2lq
+description;lang-sv:: RXVyb3BlaXNrYSB1bmlvbmVucyBieXLDpSBmw7ZyIG7DpHQtIG9jaC
+ BpbmZvcm1hdGlvbnNzw6RrZXJoZXQ=
+
+dn: cn=eu.europa.esma,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.esma
+o: eu.europa.esma
+sn: eu.europa.esma
+recordStatus: a
+description: European Securities and Markets Authority
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0L7RgNCz0LDQvSDQt9CwINGG0L
+ XQvdC90Lgg0LrQvdC40LbQsCDQuCDQv9Cw0LfQsNGA0Lg=
+description;lang-cs:: RXZyb3Bza8OpaG8gb3Jnw6FudSBwcm8gY2VubsOpIHBhcMOtcnkgYS
+ B0cmh5
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFbDpnJkaXBhcGlyLSBvZyBNYXJrZWRzdG
+ lsc3luc215bmRpZ2hlZA==
+description;lang-de:: RXVyb3DDpGlzY2hlIFdlcnRwYXBpZXItIHVuZCBNYXJrdGF1ZnNpY2
+ h0c2JlaMO2cmRl
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6Rz4HPh86uIM6azrnOvc63z4TPjs
+ 69IM6Rzr7Ouc+Ozr0gzrrOsc65IM6RzrPOv8+Bz47OvQ==
+description;lang-en: European Securities and Markets Authority
+description;lang-es: Autoridad Europea de Valores y Mercados
+description;lang-et:: RXVyb29wYSBWw6TDpHJ0cGFiZXJpdHVydWrDpHJlbGV2YWx2ZQ==
+description;lang-fi: Euroopan arvopaperimarkkinaviranomainen
+description;lang-fr:: QXV0b3JpdMOpIGV1cm9ww6llbm5lIGRlcyBtYXJjaMOpcyBmaW5hbm
+ NpZXJz
+description;lang-ga:: QW4gdMOaZGFyw6FzIEVvcnBhY2ggdW0gVXJyw7ppcyBhZ3VzIE1hcm
+ dhw60=
+description;lang-hr:: RXVyb3Bza28gbmFkem9ybm8gdGlqZWxvIHphIHZyaWplZG5vc25lIH
+ BhcGlyZSBpIHRyxb5pxaF0YSBrYXBpdGFsYQ==
+description;lang-hu:: RXVyw7NwYWkgw4lydMOpa3BhcMOtci1waWFjaSBIYXTDs3PDoWc=
+description;lang-it:: QXV0b3JpdMOgIGV1cm9wZWEgZGVnbGkgc3RydW1lbnRpIGZpbmFuem
+ lhcmkgZSBkZWkgbWVyY2F0aQ==
+description;lang-lt:: RXVyb3BvcyB2ZXJ0eWJpbmnFsyBwb3BpZXJpxbMgaXIgcmlua8WzIH
+ ZhbGTFvmlvcyBpbnN0aXR1Y2lqYQ==
+description;lang-lv:: RWlyb3BhcyBWxJNydHNwYXDEq3J1IHVuIHRpcmd1IGllc3TEgWRp
+description;lang-mt:: QXd0b3JpdMOgIEV3cm9wZWEgdGF0LVRpdG9saSB1IHMtU3dpZXE=
+description;lang-nl: Europese Autoriteit voor effecten en markten
+description;lang-pl:: RXVyb3BlanNraWVnbyBVcnrEmWR1IE5hZHpvcnUgR2llxYJkIGkgUG
+ FwaWVyw7N3IFdhcnRvxZtjaW93eWNo
+description;lang-pt:: QXV0b3JpZGFkZSBFdXJvcGVpYSBkb3MgVmFsb3JlcyBNb2JpbGnDoX
+ Jpb3MgZSBkb3MgTWVyY2Fkb3M=
+description;lang-ro:: QXV0b3JpdGF0ZWEgZXVyb3BlYW7EgyBwZW50cnUgdmFsb3JpIG1vYm
+ lsaWFyZSDImWkgcGllyJtl
+description;lang-sk:: RXVyw7Nwc2t5IG9yZ8OhbiBwcmUgY2VubsOpIHBhcGllcmUgYSB0cm
+ h5
+description;lang-sl: Evropski organ za vrednostne papirje in trge
+description;lang-sv:: RXVyb3BlaXNrYSB2w6RyZGVwYXBwZXJzLSBvY2ggbWFya25hZHNteW
+ 5kaWdoZXRlbg==
+
+dn: cn=eu.europa.s2r,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.s2r
+o: eu.europa.s2r
+sn: eu.europa.s2r
+recordStatus: a
+description: Shift2Rail Joint Undertaking
+description;lang-bg:: Q9GK0LLQvNC10YHRgtC90L4g0L/RgNC10LTQv9GA0LjRj9GC0LjQtS
+ BTaGlmdDJSYWls
+description;lang-cs:: c3BvbGXEjW7DvSBwb2RuaWsgU2hpZnQyUmFpbA==
+description;lang-da:: ZsOmbGxlc2ZvcmV0YWdlbmRldCBTaGlmdDJSYWls
+description;lang-de: Gemeinsames Unternehmen Shift2Rail
+description;lang-el:: zrrOv865zr3OriDOtc+AzrnPh861zq/Pgc63z4POtyBTaGlmdDJSYW
+ ls
+description;lang-en: Shift2Rail Joint Undertaking
+description;lang-es:: RW1wcmVzYSBDb23Dum4gU2hpZnQyUmFpbA==
+description;lang-et:: w7xoaXNldHRldsO1dGUgU2hpZnQyUmFpbA==
+description;lang-fi: Shift2Rail-yhteisyritys
+description;lang-fr: entreprise commune Shift2Rail
+description;lang-ga:: Q29taGdobsOzdGhhcyBTaGlmdDJSYWls
+description;lang-hr:: WmFqZWRuacSNa28gcG9kdXplxIdlIFNoaWZ0MlJhaWw=
+description;lang-hu:: U2hpZnQyUmFpbCBrw7Z6w7ZzIHbDoWxsYWxrb3rDoXM=
+description;lang-it: impresa comune Shift2Rail
+description;lang-lt:: YmVuZHJvamkgxK9tb27ElyDigJ5TaGlmdDJSYWls4oCc
+description;lang-lv:: a29wdXrFhsSTbXVtcyBTaGlmdDJSYWls
+description;lang-mt:: bC1JbXByacW8YSBLb27EoXVudGEgU2hpZnQyUmFpbA==
+description;lang-nl: Gemeenschappelijke Onderneming Shift2Rail
+description;lang-pl:: V3Nww7NsbmUgUHJ6ZWRzacSZd3ppxJljaWUgU2hpZnQyUmFpbA==
+description;lang-pt: Empresa Comum Shift2Rail
+description;lang-ro:: w65udHJlcHJpbmRlcmVhIGNvbXVuxIMgU2hpZnQyUmFpbA==
+description;lang-sk:: c3BvbG/EjW7DvSBwb2RuaWsgU2hpZnQyUmFpbA==
+description;lang-sl: Skupno podjetje Shift2Rail
+description;lang-sv:: Z2VtZW5zYW1tYSBmw7ZyZXRhZ2V0IFNoaWZ0MlJhaWw=
+
+dn: cn=eu.europa.cor,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.cor
+o: eu.europa.cor
+sn: eu.europa.cor
+recordStatus: a
+description: Committee of the Regions
+description;lang-bg:: 0JrQvtC80LjRgtC10YIg0L3QsCDRgNC10LPQuNC+0L3QuNGC0LU=
+description;lang-cs:: VsO9Ym9yIHJlZ2lvbsWv
+description;lang-da: Regionsudvalget
+description;lang-de: Ausschuss der Regionen
+description;lang-el:: zpXPgM65z4TPgc6/z4DOriDPhM+Jzr0gzqDOtc+BzrnPhs61z4HOtc
+ 65z47OvQ==
+description;lang-en: Committee of the Regions
+description;lang-es:: Q29taXTDqSBkZSBsYXMgUmVnaW9uZXM=
+description;lang-et: Regioonide Komitee
+description;lang-fi: Alueiden komitea
+description;lang-fr:: Q29taXTDqSBkZXMgUsOpZ2lvbnM=
+description;lang-ga:: Q29pc3RlIFLDqWlnacO6aW4gYW4gQW9udGFpcyBFb3JwYWlnaA==
+description;lang-hr: Odbor regija Europske unije
+description;lang-hu:: UsOpZ2nDs2sgQml6b3R0c8OhZ2E=
+description;lang-it: Comitato delle regioni
+description;lang-lt:: UmVnaW9uxbMga29taXRldGFz
+description;lang-lv:: UmXEo2lvbnUga29taXRlamE=
+description;lang-mt:: S3VtaXRhdCB0YXItUmXEoWp1bmk=
+description;lang-nl:: Q29taXTDqSB2YW4gZGUgUmVnaW8ncw==
+description;lang-pl:: S29taXRldCBSZWdpb27Ds3c=
+description;lang-pt:: Q29taXTDqSBkYXMgUmVnacO1ZXM=
+description;lang-ro: Comitetul Regiunilor
+description;lang-sk:: VsO9Ym9yIHJlZ2nDs25vdg==
+description;lang-sl: Odbor regij
+description;lang-sv:: UmVnaW9ua29tbWl0dMOpbg==
+
+dn: cn=eu.europa.eda,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eda
+o: eu.europa.eda
+sn: eu.europa.eda
+recordStatus: a
+description: European Defence Agency
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0JDQs9C10L3RhtC40Y8g0J/Qvi
+ DQntGC0LHRgNCw0L3QsA==
+description;lang-cs:: RXZyb3Bza8OhICBPYnJhbm7DoSBBZ2VudHVyYQ==
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEZvcnN2YXJzYWdlbnR1cg==
+description;lang-de:: RXVyb3DDpGlzY2hlIFZlcnRlaWRpZ3VuZ3NhZ2VudHVy
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+Mz4Igzp/Pgc6zzrHOvc65z4POvM+Mz4
+ IgzobOvM+Fzr3Osc+C
+description;lang-en: European Defence Agency
+description;lang-es: Agencia Europea de Defensa
+description;lang-et: Euroopa  Kaitseagentuur
+description;lang-fi: Euroopan Puolustusvirasto
+description;lang-fr:: QWdlbmNlIEV1cm9ww6llbm5lIGRlIETDqWZlbnNl
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBFb3JwYWNoIHVtIENob3NhaW50
+description;lang-hr: Europska obrambena agencija
+description;lang-hu:: RXVyw7NwYWkgVsOpZGVsbWkgw5xneW7Dtmtzw6ln
+description;lang-it: Agenzia Europea per la Difesa
+description;lang-lt:: RXVyb3BvcyBHeW55Ym9zIEFnZW50xatyYQ==
+description;lang-lv:: RWlyb3BhcyBBaXpzYXJkesSrYmFzIEHEo2VudMWrcmE=
+description;lang-mt:: QcShZW56aWphIEV3cm9wZWEgZ8SnYWQtRGlmacW8YQ==
+description;lang-nl: Europees Defensieagentschap
+description;lang-pl: Europejska Agencja Obrony
+description;lang-pt:: QWfDqm5jaWEgRXVyb3BlaWEgZGUgRGVmZXNh
+description;lang-ro:: QWdlbsWjaWEgRXVyb3BlYW7EgyBkZSBBcMSDcmFyZQ==
+description;lang-sl: Evropska Obrambna Agencija
+description;lang-sv:: RXVyb3BlaXNrYSBmw7Zyc3ZhcnNieXLDpW4=
+
+dn: cn=eu.europa.fra,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.fra
+o: eu.europa.fra
+sn: eu.europa.fra
+recordStatus: a
+description: European Union Agency for Fundamental Rights
+description;lang-bg:: 0JDQs9C10L3RhtC40Y8g0L3QsCDQldCy0YDQvtC/0LXQudGB0LrQuN
+ GPINGB0YrRjtC3INC30LAg0L7RgdC90L7QstC90LjRgtC1INC/0YDQsNCy0LA=
+description;lang-cs:: QWdlbnR1cmEgRXZyb3Bza8OpIHVuaWUgcHJvIHrDoWtsYWRuw60gcH
+ LDoXZh
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFVuaW9ucyBBZ2VudHVyIGZvciBHcnVuZG
+ zDpmdnZW5kZSBSZXR0aWdoZWRlcg==
+description;lang-de:: QWdlbnR1ciBkZXIgRXVyb3DDpGlzY2hlbiBVbmlvbiBmw7xyIEdydW
+ 5kcmVjaHRl
+description;lang-el:: zp/Pgc6zzrHOvc65z4POvM+Mz4IgzpjOtc68zrXOu865z4nOtM+Ozr
+ 0gzpTOuc66zrHOuc+JzrzOrM+Ez4nOvSDPhM63z4IgzpXPhc+Bz4nPgM6xz4rOus6uz4IgzojOv
+ c+Jz4POt8+C
+description;lang-en: European Union Agency for Fundamental Rights
+description;lang-es:: QWdlbmNpYSBkZSBsb3MgRGVyZWNob3MgRnVuZGFtZW50YWxlcyBkZS
+ BsYSBVbmnDs24gRXVyb3BlYQ==
+description;lang-et:: RXVyb29wYSBMaWlkdSBQw7VoacO1aWd1c3RlIEFtZXQ=
+description;lang-fi: Euroopan unionin perusoikeusvirasto
+description;lang-fr:: QWdlbmNlIGRlcyBkcm9pdHMgZm9uZGFtZW50YXV4IGRlIGzigJlVbm
+ lvbiBldXJvcMOpZW5uZQ==
+description;lang-ga:: R27DrW9taGFpcmVhY2h0IGFuIEFvbnRhaXMgRW9ycGFpZ2ggdW0gQ2
+ hlYXJ0YSBCdW7DunNhY2hh
+description;lang-hr: Agencija Europske unije za temeljna prava
+description;lang-hu:: QXogRXVyw7NwYWkgVW5pw7MgQWxhcGpvZ2kgw5xneW7Dtmtzw6lnZQ
+ ==
+description;lang-it:: QWdlbnppYSBkZWxs4oCZVW5pb25lIGV1cm9wZWEgcGVyIGkgZGlyaX
+ R0aSBmb25kYW1lbnRhbGk=
+description;lang-lt:: RXVyb3BvcyBTxIVqdW5nb3MgcGFncmluZGluacWzIHRlaXNpxbMgYW
+ dlbnTFq3Jh
+description;lang-lv:: RWlyb3BhcyBTYXZpZW7Eq2JhcyBQYW1hdHRpZXPEq2J1IGHEo2VudM
+ WrcmE=
+description;lang-mt:: bC1BxKFlbnppamEgdGFsLVVuam9uaSBFd3JvcGVhIGfEp2FkLURyaX
+ R0aWppZXQgRnVuZGFtZW50YWxp
+description;lang-nl: Bureau van de Europese Unie voor de grondrechten
+description;lang-pl: Agencja Praw Podstawowych Unii Europejskiej
+description;lang-pt:: QWfDqm5jaWEgZG9zIERpcmVpdG9zIEZ1bmRhbWVudGFpcyBkYSBVbm
+ nDo28gRXVyb3BlaWE=
+description;lang-ro:: QWdlbsibaWEgcGVudHJ1IERyZXB0dXJpIEZ1bmRhbWVudGFsZSBhIF
+ VuaXVuaWkgRXVyb3BlbmU=
+description;lang-sk:: QWdlbnTDunJhIEV1csOzcHNrZWogw7puaWUgcHJlIHrDoWtsYWRuw6
+ kgcHLDoXZh
+description;lang-sl: Agencija Evropske unije za temeljne pravice
+description;lang-sv:: RXVyb3BlaXNrYSB1bmlvbmVucyBieXLDpSBmw7ZyIGdydW5kbMOkZ2
+ dhbmRlIHLDpHR0aWdoZXRlcg==
+
+dn: cn=eu.europa.eib,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eib
+o: eu.europa.eib
+sn: eu.europa.eib
+recordStatus: a
+description: European Investment Bank
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LjQvdCy0LXRgdGC0LjRhtC40L
+ 7QvdC90LAg0LHQsNC90LrQsA==
+description;lang-cs:: RXZyb3Bza8OhIGludmVzdGnEjW7DrSBiYW5rYQ==
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIEludmVzdGVyaW5nc2Jhbms=
+description;lang-de:: RXVyb3DDpGlzY2hlIEludmVzdGl0aW9uc2Jhbms=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6kz4HOrM+AzrXOts6xIM6Vz4DOtc
+ 69zrTPjc+DzrXPic69
+description;lang-en: European Investment Bank
+description;lang-es: Banco Europeo de Inversiones
+description;lang-et: Euroopa Investeerimispank
+description;lang-fi: Euroopan investointipankki
+description;lang-fr:: QmFucXVlIGV1cm9ww6llbm5lIGTigJlpbnZlc3Rpc3NlbWVudA==
+description;lang-ga:: QW4gQmFuYyBFb3JwYWNoIEluZmhlaXN0w61vY2h0YQ==
+description;lang-hr: Europska investicijska banka
+description;lang-hu:: RXVyw7NwYWkgQmVydWjDoXrDoXNpIEJhbms=
+description;lang-it: Banca europea per gli investimenti
+description;lang-lt:: RXVyb3BvcyBpbnZlc3RpY2lqxbMgYmFua2Fz
+description;lang-lv:: RWlyb3BhcyBJbnZlc3TEq2NpanUgYmFua2E=
+description;lang-mt: Bank Ewropew tal-Investiment
+description;lang-nl: Europese Investeringsbank
+description;lang-pl: Europejski Bank Inwestycyjny
+description;lang-pt: Banco Europeu de Investimento
+description;lang-ro:: QmFuY2EgRXVyb3BlYW7EgyBkZSBJbnZlc3RpxaNpaQ==
+description;lang-sk:: RXVyw7Nwc2thIGludmVzdGnEjW7DoSBiYW5rYQ==
+description;lang-sl: Evropska investicijska banka
+description;lang-sv: Europeiska investeringsbanken
+
+dn: cn=eu.europa.europol,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.europol
+o: eu.europa.europol
+sn: eu.europa.europol
+recordStatus: a
+description: European Police Office
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0L/QvtC70LjRhtC10LnRgdC60L
+ Ag0YHQu9GD0LbQsdCw
+description;lang-cs:: RXZyb3Bza8O9IHBvbGljZWpuw60gw7rFmWFk
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFBvbGl0aWVuaGVk
+description;lang-de:: RXVyb3DDpGlzY2hlcyBQb2xpemVpYW10
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6Rz4PPhM+Fzr3Ov868zrnOus6uIM
+ 6lz4DOt8+BzrXPg86vzrE=
+description;lang-en: European Police Office
+description;lang-es:: T2ZpY2luYSBFdXJvcGVhIGRlIFBvbGljw61h
+description;lang-et: Euroopa Politseiamet
+description;lang-fi: Euroopan poliisivirasto
+description;lang-fr:: T2ZmaWNlIGV1cm9ww6llbiBkZSBwb2xpY2U=
+description;lang-ga:: QW4gT2lmaWcgRW9ycGFjaCBQw7NpbMOtbsOt
+description;lang-hr: Europski policijski ured
+description;lang-hu:: RXVyw7NwYWkgUmVuZMWRcnPDqWdpIEhpdmF0YWw=
+description;lang-it: Ufficio europeo di polizia
+description;lang-lt: Europos policijos biuras
+description;lang-lv: Eiropas Policijas birojs
+description;lang-mt:: bC1VZmZpxIvEi2p1IEV3cm9wZXcgdGFsLVB1bGl6aWph
+description;lang-nl: Europese Politiedienst
+description;lang-pl:: RXVyb3BlanNraSBVcnrEhWQgUG9saWNqaQ==
+description;lang-pt:: U2VydmnDp28gRXVyb3BldSBkZSBQb2zDrWNh
+description;lang-ro:: T2ZpY2l1bCBFdXJvcGVhbiBkZSBQb2xpyJtpZQ==
+description;lang-sk:: RXVyw7Nwc2t5IHBvbGljYWpuw70gw7pyYWQ=
+description;lang-sl: Evropski policijski urad
+description;lang-sv:: RXVyb3BlaXNrYSBwb2xpc2J5csOlbg==
+
+dn: cn=eu.europa.efsa,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.efsa
+o: eu.europa.efsa
+sn: eu.europa.efsa
+recordStatus: a
+description: European Food Safety Authority
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0L7RgNCz0LDQvSDQt9CwINCx0L
+ XQt9C+0L/QsNGB0L3QvtGB0YIg0L3QsCDRhdGA0LDQvdC40YLQtQ==
+description;lang-cs:: RXZyb3Bza8O9IMO6xZlhZCBwcm8gYmV6cGXEjW5vc3QgcG90cmF2aW
+ 4=
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIEbDuGRldmFyZXNpa2tlcmhlZHNhdXRvcm
+ l0ZXQ=
+description;lang-de:: RXVyb3DDpGlzY2hlIEJlaMO2cmRlIGbDvHIgTGViZW5zbWl0dGVsc2
+ ljaGVyaGVpdA==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6Rz4HPh86uIM6zzrnOsSDPhM63zr
+ 0gzpHPg8+GzqzOu861zrnOsSDPhM+Jzr0gzqTPgc6/z4bOr868z4nOvQ==
+description;lang-en: European Food Safety Authority
+description;lang-es: Autoridad Europea de Seguridad Alimentaria
+description;lang-et: Euroopa Toiduohutusamet
+description;lang-fi: Euroopan elintarviketurvallisuusviranomainen
+description;lang-fr:: QXV0b3JpdMOpIGV1cm9ww6llbm5lIGRlIHPDqWN1cml0w6kgZGVzIG
+ FsaW1lbnRz
+description;lang-ga:: QW4gdMOaZGFyw6FzIEVvcnBhY2ggdW0gU2jDoWJow6FpbHRlYWNodC
+ BCaWE=
+description;lang-hr: Europska agencija za sigurnost hrane
+description;lang-hu:: RXVyw7NwYWkgw4lsZWxtaXN6ZXItYml6dG9uc8OhZ2kgSGF0w7Nzw6
+ Fn
+description;lang-it:: QXV0b3JpdMOgIGV1cm9wZWEgcGVyIGxhIHNpY3VyZXp6YSBhbGltZW
+ 50YXJl
+description;lang-lt: Europos maisto saugos tarnyba
+description;lang-lv:: RWlyb3BhcyBQxIFydGlrYXMgbmVrYWl0xKtndW1hIGllc3TEgWRl
+description;lang-mt:: QXd0b3JpdMOgIEV3cm9wZWEgZHdhciBpcy1TaWd1cnTDoCBmbCAtSW
+ tlbA==
+description;lang-nl: Europese Autoriteit voor voedselveiligheid
+description;lang-pl:: RXVyb3BlanNraSBVcnrEhWQgZHMuIEJlenBpZWN6ZcWEc3R3YSDFu3
+ l3bm/Fm2Np
+description;lang-pt:: QXV0b3JpZGFkZSBFdXJvcGVpYSBwYXJhIGEgU2VndXJhbsOnYSBkb3
+ MgQWxpbWVudG9z
+description;lang-ro:: QXV0b3JpdGF0ZWEgRXVyb3BlYW7EgyBwZW50cnUgU2lndXJhbsWjYS
+ BBbGltZW50YXLEgw==
+description;lang-sk:: RXVyw7Nwc2t5IMO6cmFkIHByZSBiZXpwZcSNbm9zxaUgcG90cmF2w6
+ 1u
+description;lang-sl: Evropska agencija za varnost hrane
+description;lang-sv:: RXVyb3BlaXNrYSBteW5kaWdoZXRlbiBmw7ZyIGxpdnNtZWRlbHNzw6
+ RrZXJoZXQ=
+
+dn: cn=eu.europa.ecb,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.ecb
+o: eu.europa.ecb
+sn: eu.europa.ecb
+recordStatus: a
+description: European Central Bank
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0YbQtdC90YLRgNCw0LvQvdCwIN
+ Cx0LDQvdC60LA=
+description;lang-cs:: RXZyb3Bza8OhIGNlbnRyw6FsbsOtIGJhbmth
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIENlbnRyYWxiYW5r
+description;lang-de:: RXVyb3DDpGlzY2hlIFplbnRyYWxiYW5r
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6azrXOvc+Ez4HOuc66zq4gzqTPgc
+ 6sz4DOtc62zrE=
+description;lang-en: European Central Bank
+description;lang-es: Banco Central Europeo
+description;lang-et: Euroopa Keskpank
+description;lang-fi: Euroopan keskuspankki
+description;lang-fr:: QmFucXVlIGNlbnRyYWxlIGV1cm9ww6llbm5l
+description;lang-ga: An Banc Ceannais Eorpach
+description;lang-hr:: RXVyb3Bza2Egc3JlZGnFoW5qYSBiYW5rYQ==
+description;lang-hu:: RXVyw7NwYWkgS8O2enBvbnRpIEJhbms=
+description;lang-it: Banca centrale europea
+description;lang-lt: Europos Centrinis Bankas
+description;lang-lv:: RWlyb3BhcyBDZW50csSBbMSBIGJhbmth
+description;lang-mt:: aWwtQmFuayDEimVudHJhbGkgRXdyb3Bldw==
+description;lang-nl: Europese Centrale Bank
+description;lang-pl: Europejski Bank Centralny
+description;lang-pt: Banco Central Europeu
+description;lang-ro:: QmFuY2EgQ2VudHJhbMSDIEV1cm9wZWFuxIM=
+description;lang-sk:: RXVyw7Nwc2thIGNlbnRyw6FsbmEgYmFua2E=
+description;lang-sl: Evropska centralna banka
+description;lang-sv: Europeiska centralbanken
+
+dn: cn=eu.europa.european-council,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.european-council
+o: eu.europa.european-council
+sn: eu.europa.european-council
+recordStatus: a
+description: European Council
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0YHRitCy0LXRgg==
+description;lang-cs:: RXZyb3Bza8OhIHJhZGE=
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIFLDpWQ=
+description;lang-de:: RXVyb3DDpGlzY2hlciBSYXQ=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6jz4XOvM6yzr/Pjc67zrnOvw==
+description;lang-en: European Council
+description;lang-es: Consejo Europeo
+description;lang-et:: RXVyb29wYSDDnGxlbWtvZ3U=
+description;lang-fi: Eurooppa-neuvosto
+description;lang-fr:: Q29uc2VpbCBldXJvcMOpZW4=
+description;lang-ga: An Chomhairle Eorpach
+description;lang-hr:: RXVyb3Bza28gdmlqZcSHZQ==
+description;lang-hu:: RXVyw7NwYWkgVGFuw6Fjcw==
+description;lang-it: Consiglio europeo
+description;lang-lt:: RXVyb3BvcyBWYWRvdsWzIFRhcnliYQ==
+description;lang-lv: Eiropadome
+description;lang-mt: Kunsill Ewropew
+description;lang-nl: Europese Raad
+description;lang-pl: Rada Europejska
+description;lang-pt: Conselho Europeu
+description;lang-ro: Consiliul European
+description;lang-sk:: RXVyw7Nwc2thIHJhZGE=
+description;lang-sl: Evropski svet
+description;lang-sv:: RXVyb3BlaXNrYSByw6VkZXQ=
+
+dn: cn=eu.europa.curia,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.curia
+o: eu.europa.curia
+sn: eu.europa.curia
+recordStatus: a
+description: Court of Justice of the European Union
+description;lang-bg:: 0KHRitC0INC90LAg0JXQstGA0L7Qv9C10LnRgdC60LjRjyDRgdGK0Y
+ 7Qtw==
+description;lang-cs:: U291ZG7DrSBkdsWvciBFdnJvcHNrw6kgdW5pZQ==
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFVuaW9ucyBEb21zdG9s
+description;lang-de:: R2VyaWNodHNob2YgZGVyIEV1cm9ww6Rpc2NoZW4gVW5pb24=
+description;lang-el:: zpTOuc66zrHPg8+Ezq7Pgc65zr8gz4TOt8+CIM6Vz4XPgc+Jz4DOsc
+ +KzrrOrs+CIM6Izr3Pic+DzrfPgg==
+description;lang-en: Court of Justice of the European Union
+description;lang-es:: VHJpYnVuYWwgZGUgSnVzdGljaWEgZGUgbGEgVW5pw7NuIEV1cm9wZW
+ E=
+description;lang-et: Euroopa Liidu Kohus
+description;lang-fi: Euroopan unionin tuomioistuin
+description;lang-fr:: Q291ciBkZSBqdXN0aWNlIGRlIGwnVW5pb24gZXVyb3DDqWVubmU=
+description;lang-ga:: Q8O6aXJ0IEJocmVpdGhpw7puYWlzIGFuIEFvbnRhaXMgRW9ycGFpZ2
+ g=
+description;lang-hr: Sud Europske unije
+description;lang-hu:: YXogRXVyw7NwYWkgVW5pw7MgQsOtcsOzc8OhZ2E=
+description;lang-it: Corte di giustizia dell'Unione europea
+description;lang-lt:: RXVyb3BvcyBTxIVqdW5nb3MgVGVpc2luZ3VtbyBUZWlzbWFz
+description;lang-lv:: RWlyb3BhcyBTYXZpZW7Eq2JhcyBUaWVzYQ==
+description;lang-mt:: SWwtUW9ydGkgdGFsLcSgdXN0aXp6amEgdGFsLVVuam9uaSBFd3JvcG
+ Vh
+description;lang-nl: Hof van Justitie van de Europese Unie
+description;lang-pl:: VHJ5YnVuYcWCIFNwcmF3aWVkbGl3b8WbY2kgVW5paSBFdXJvcGVqc2
+ tpZWo=
+description;lang-pt:: VHJpYnVuYWwgZGUgSnVzdGnDp2EgZGEgVW5pw6NvIEV1cm9wZWlh
+description;lang-ro:: Q3VydGVhIGRlIEp1c3RpyJtpZSBhIFVuaXVuaWkgRXVyb3BlbmU=
+description;lang-sk:: U8O6ZG55IGR2b3IgRXVyw7Nwc2tlaiDDum5pZQ==
+description;lang-sl:: U29kacWhxI1lIEV2cm9wc2tlIHVuaWpl
+description;lang-sv: Europeiska unionens domstol
+
+dn: cn=eu.europa.eulisa,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eulisa
+o: eu.europa.eulisa
+sn: eu.europa.eulisa
+recordStatus: a
+description: eu-LISA
+description;lang-bg: eu-LISA
+description;lang-cs: eu-LISA
+description;lang-da: eu-LISA
+description;lang-de: eu-LISA
+description;lang-el: eu-LISA
+description;lang-en: eu-LISA
+description;lang-es: eu-LISA
+description;lang-et: eu-LISA
+description;lang-fi: eu-LISA
+description;lang-fr: eu-LISA
+description;lang-ga: eu-LISA
+description;lang-hr: eu-LISA
+description;lang-hu: eu-LISA
+description;lang-it: eu-LISA
+description;lang-lt: eu-LISA
+description;lang-lv: eu-LISA
+description;lang-mt: eu-LISA
+description;lang-nl: eu-LISA
+description;lang-pl: eu-LISA
+description;lang-pt: eu-LISA
+description;lang-ro: eu-LISA
+description;lang-sk: eu-LISA
+description;lang-sl: eu-LISA
+description;lang-sv: eu-LISA
+
+dn: cn=eu.europa.emcdda,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.emcdda
+o: eu.europa.emcdda
+sn: eu.europa.emcdda
+recordStatus: a
+description: European Monitoring Centre for Drugs and Drug Addiction
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0YbQtdC90YLRitGAINC30LAg0L
+ zQvtC90LjRgtC+0YDQuNC90LMg0L3QsCDQvdCw0YDQutC+0YLQuNGG0Lgg0Lgg0L3QsNGA0LrQv
+ tC80LDQvdC40Lg=
+description;lang-cs:: RXZyb3Bza8OpIG1vbml0b3JvdmFjw60gY2VudHJ1bSBwcm8gZHJvZ3
+ kgYSBkcm9nb3ZvdSB6w6F2aXNsb3N0
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIE92ZXJ2w6VnbmluZ3NjZW50ZXIgZm9yIE
+ 5hcmtvdGlrYSBvZyBOYXJrb3Rpa2FtaXNicnVn
+description;lang-de:: RXVyb3DDpGlzY2hlIEJlb2JhY2h0dW5nc3N0ZWxsZSBmw7xyIERyb2
+ dlbiB1bmQgRHJvZ2Vuc3VjaHQ=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6azq3Ovc+Ez4HOvyDOoM6xz4HOsc
+ 66zr/Ou86/z43OuM63z4POt8+CIM6dzrHPgc66z4nPhM65zrrPjs69IM66zrHOuSDOpM6/zr7Ou
+ c66zr/OvM6xzr3Or86xz4I=
+description;lang-en: European Monitoring Centre for Drugs and Drug Addiction
+description;lang-es:: T2JzZXJ2YXRvcmlvIEV1cm9wZW8gZGUgbGFzIERyb2dhcyB5IGxhcy
+ BUb3hpY29tYW7DrWFz
+description;lang-et: Euroopa Narkootikumide ja Narkomaania Seirekeskus
+description;lang-fi:: RXVyb29wYW4gaHV1bWF1c2FpbmVpZGVuIGphIG5paWRlbiB2w6TDpH
+ JpbmvDpHl0w7ZuIHNldXJhbnRha2Vza3Vz
+description;lang-fr:: T2JzZXJ2YXRvaXJlIGV1cm9ww6llbiBkZXMgZHJvZ3VlcyBldCBkZX
+ MgdG94aWNvbWFuaWVz
+description;lang-ga:: QW4gTMOhcmlvbmFkIEZhaXJlYWNow6FpbiBFb3JwYWNoIHVtIERocn
+ VnYcOtIGFndXMgdW0gQW5kw7ppbCBpIG5EcnVnYcOt
+description;lang-hr:: RXVyb3Bza2kgY2VudGFyIHphIHByYcSHZW5qZSBkcm9nYSBpIG92aX
+ Nub3N0aSBvIGRyb2dhbWE=
+description;lang-hu:: QSBLw6Fiw610w7NzemVyIMOpcyBhIEvDoWLDrXTDs3N6ZXJmw7xnZ8
+ WRc8OpZyBFdXLDs3BhaSBNZWdmaWd5ZWzFkWvDtnpwb250amE=
+description;lang-it: Osservatorio europeo delle droghe e delle tossicodipend
+ enze
+description;lang-lt:: RXVyb3BvcyBuYXJrb3Rpa8WzIGlyIG5hcmtvbWFuaWpvcyBzdGVixJ
+ dzZW5vcyBjZW50cmFz
+description;lang-lv:: RWlyb3BhcyBOYXJrb3Rpa3UgdW4gbmFya29txIFuaWphcyB1enJhdW
+ R6xKtiYXMgY2VudHJz
+description;lang-mt:: acSLLcSKZW50cnUgRXdyb3BldyBnxKdhbGwtTW9uaXRvcmHEocShIH
+ RhZC1Ecm9nYSB1IGQtRGlwZW5kZW56YSBmdXEgaWQtRHJvZ2E=
+description;lang-nl: Europees Waarnemingscentrum voor drugs en drugsverslavi
+ ng
+description;lang-pl:: RXVyb3BlanNraWUgQ2VudHJ1bSBNb25pdG9yb3dhbmlhIE5hcmtvdH
+ lrw7N3IGkgTmFya29tYW5paQ==
+description;lang-pt:: T2JzZXJ2YXTDs3JpbyBFdXJvcGV1IGRhIERyb2dhIGUgZGEgVG94aW
+ NvZGVwZW5kw6puY2lh
+description;lang-ro:: T2JzZXJ2YXRvcnVsIEV1cm9wZWFuIHBlbnRydSBEcm9ndXJpIMWfaS
+ BUb3hpY29tYW5pZQ==
+description;lang-sk:: RXVyw7Nwc2tlIG1vbml0b3JvdmFjaWUgY2VudHJ1bSBwcmUgZHJvZ3
+ kgYSBkcm9nb3bDuiB6w6F2aXNsb3PFpQ==
+description;lang-sl: Evropski center za spremljanje drog in zasvojenosti z d
+ rogami
+description;lang-sv:: RXVyb3BlaXNrYSBjZW50cnVtZXQgZsO2ciBrb250cm9sbCBhdiBuYX
+ Jrb3Rpa2Egb2NoIG5hcmtvdGlrYW1pc3NicnVr
+
+dn: cn=eu.europa.ema,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.ema
+o: eu.europa.ema
+sn: eu.europa.ema
+recordStatus: a
+description: European Medicines Agency
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LDQs9C10L3RhtC40Y8g0L/Qvi
+ DQu9C10LrQsNGA0YHRgtCy0LDRgtCw
+description;lang-cs:: RXZyb3Bza8OhIGFnZW50dXJhIHBybyBsw6nEjWl2YQ==
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEzDpmdlbWlkZGVsYWdlbnR1cg==
+description;lang-de:: RXVyb3DDpGlzY2hlIEFyem5laW1pdHRlbC1BZ2VudHVy
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+Mz4Igzp/Pgc6zzrHOvc65z4POvM+Mz4
+ IgzqbOsc+BzrzOrM66z4nOvQ==
+description;lang-en: European Medicines Agency
+description;lang-es: Agencia Europea de Medicamentos
+description;lang-et: Euroopa Ravimiamet
+description;lang-fi:: RXVyb29wYW4gbMOkw6RrZXZpcmFzdG8=
+description;lang-fr:: QWdlbmNlIGV1cm9ww6llbm5lIGRlcyBtw6lkaWNhbWVudHM=
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBMZWlnaGVhc3JhIEVvcnBhY2g=
+description;lang-hr: Europska agencija za lijekove
+description;lang-hu:: RXVyw7NwYWkgR3nDs2d5c3plcsO8Z3luw7Zrc8OpZw==
+description;lang-it: Agenzia europea per i medicinali
+description;lang-lt:: RXVyb3BvcyB2YWlzdMWzIGFnZW50xatyYQ==
+description;lang-lv:: RWlyb3BhcyBaxIHEvHUgYcSjZW50xatyYQ==
+description;lang-mt:: TC1BxKFlbnppamEgRXdyb3BlYSB0YWwtTWVkacSLaW5p
+description;lang-nl: Europees Geneesmiddelenbureau
+description;lang-pl:: RXVyb3BlanNrYSBBZ2VuY2phIGRzLiBMZWvDs3c=
+description;lang-pt:: QWfDqm5jaWEgRXVyb3BlaWEgZGUgTWVkaWNhbWVudG9z
+description;lang-ro:: QWdlbsWjaWEgRXVyb3BlYW7EgyBwZW50cnUgTWVkaWNhbWVudGU=
+description;lang-sk:: RXVyw7Nwc2thIGFnZW50w7pyYSBwcmUgbGlla3k=
+description;lang-sl: Evropska agencija za zdravila
+description;lang-sv:: RXVyb3BlaXNrYSBsw6RrZW1lZGVsc215bmRpZ2hldGVu
+
+dn: cn=eu.europa.srb,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.srb
+o: eu.europa.srb
+sn: eu.europa.srb
+recordStatus: a
+description: Single Resolution Board
+description;lang-bg:: 0JXQtNC40L3QtdC9INGB0YrQstC10YIg0LfQsCDQv9GA0LXRgdGC0Y
+ DRg9C60YLRg9GA0LjRgNCw0L3QtQ==
+description;lang-cs:: SmVkbm90bsO9IHbDvWJvciBwcm8gxZllxaFlbsOtIGtyaXrDrQ==
+description;lang-da:: RGVuIEbDpmxsZXMgQWZ2aWtsaW5nc2luc3RhbnM=
+description;lang-de: Einheitlicher Abwicklungsausschuss
+description;lang-el:: zpXOvc65zrHOr86/IM6jz4XOvM6yzr/Pjc67zrnOvyDOlc6+z4XOs8
+ 6vzrHOvc+DzrfPgg==
+description;lang-en: Single Resolution Board
+description;lang-es:: SnVudGEgw5puaWNhIGRlIFJlc29sdWNpw7Nu
+description;lang-et:: w5xodG5lIEtyaWlzaWxhaGVuZHVzbsO1dWtvZ3U=
+description;lang-fi: yhteinen kriisinratkaisuneuvosto
+description;lang-fr:: Q29uc2VpbCBkZSByw6lzb2x1dGlvbiB1bmlxdWU=
+description;lang-ga:: YW4gQm9yZCBSw6lpdGlnaCBBb25haXI=
+description;lang-hr: Jedinstveni sanacijski odbor
+description;lang-hu:: RWd5c8OpZ2VzIFN6YW7DoWzDoXNpIFRlc3TDvGxldA==
+description;lang-it: Comitato di risoluzione unico
+description;lang-lt: Bendra pertvarkymo valdyba
+description;lang-lv:: Vmllbm90xIEgbm9yZWd1bMSTanVtYSB2YWxkZQ==
+description;lang-mt:: aWwtQm9yZCBVbmlrdSB0YeKAmSBSacW8b2x1enpqb25p
+description;lang-nl: Gemeenschappelijke Afwikkelingsraad
+description;lang-pl:: SmVkbm9saXRhIFJhZGEgZHMuIFJlc3RydWt0dXJ5emFjamkgaSBVcG
+ 9yesSFZGtvd2FuZWogTGlrd2lkYWNqaQ==
+description;lang-pt:: Q29uc2VsaG8gw5puaWNvIGRlIFJlc29sdcOnw6Nv
+description;lang-ro:: Q29taXRldHVsIHVuaWMgZGUgcmV6b2x1yJtpZQ==
+description;lang-sk:: SmVkbm90bsOhIHJhZGEgcHJlIHJpZcWhZW5pZSBrcsOtem92w71jaC
+ BzaXR1w6FjacOt
+description;lang-sl:: RW5vdG5pIG9kYm9yIHphIHJlxaFldmFuamU=
+description;lang-sv:: R2VtZW5zYW1tYSByZXNvbHV0aW9uc27DpG1uZGVu
+
+dn: cn=eu.europa.cpvo,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.cpvo
+o: eu.europa.cpvo
+sn: eu.europa.cpvo
+recordStatus: a
+description: Community Plant Variety Office
+description;lang-bg:: 0KHQu9GD0LbQsdCwINC90LAg0J7QsdGJ0L3QvtGB0YLRgtCwINC30L
+ Ag0YHQvtGA0YLQvtCy0LXRgtC1INGA0LDRgdGC0LXQvdC40Y8=
+description;lang-cs:: T2Ryxa9kb3bDvSDDusWZYWQgU3BvbGXEjWVuc3R2w60=
+description;lang-da: EF-Sortsmyndigheden
+description;lang-de: Gemeinschaftliches Sortenamt
+description;lang-el:: zprOv865zr3Ov8+EzrnOus+MIM6Tz4HOsc+GzrXOr86/IM6mz4XPhM
+ 65zrrPjs69IM6gzr/Ouc66zrnOu865z47OvQ==
+description;lang-en: Community Plant Variety Office
+description;lang-es: Oficina Comunitaria de Variedades Vegetales
+description;lang-et:: w5xoZW5kdXNlIFNvcmRpYW1ldA==
+description;lang-fi:: eWh0ZWlzw7ZuIGthc3ZpbGFqaWtldmlyYXN0bw==
+description;lang-fr:: T2ZmaWNlIGNvbW11bmF1dGFpcmUgZGVzIHZhcmnDqXTDqXMgdsOpZ8
+ OpdGFsZXM=
+description;lang-ga:: QW4gT2lmaWcgQ2hvbWhwaG9iYWlsIHVtIENoaW5lw6FsYWNoYSBQbG
+ FuZGHDrQ==
+description;lang-hr: Ured Zajednice za biljne sorte
+description;lang-hu:: S8O2esO2c3PDqWdpIE7DtnbDqW55ZmFqdGEtaGl2YXRhbA==
+description;lang-it:: VWZmaWNpbyBjb211bml0YXJpbyBkZWxsZSB2YXJpZXTDoCB2ZWdldG
+ FsaQ==
+description;lang-lt:: QmVuZHJpam9zIGF1Z2FsxbMgdmVpc2xpxbMgdGFybnliYQ==
+description;lang-lv:: S29waWVuYXMgQXVndSDFocS3aXLFhnUgYmlyb2pz
+description;lang-mt:: bC1VZmZpxIvEi2p1IEtvbXVuaXRhcmp1IHRhbC1WYXJqZXRhamlldC
+ B0YWwtUGphbnRp
+description;lang-nl: Communautair Bureau voor plantenrassen
+description;lang-pl:: V3Nww7Nsbm90b3d5IFVyesSFZCBPY2hyb255IE9kbWlhbiBSb8WbbG
+ lu
+description;lang-pt:: SW5zdGl0dXRvIENvbXVuaXTDoXJpbyBkYXMgVmFyaWVkYWRlcyBWZW
+ dldGFpcw==
+description;lang-ro: Oficiul Comunitar pentru Soiuri de Plante
+description;lang-sk:: w5pyYWQgU3BvbG/EjWVuc3R2YSBwcmUgb2Ryb2R5IHJhc3Rsw61u
+description;lang-sl: Urad Skupnosti za rastlinske sorte
+description;lang-sv:: R2VtZW5za2FwZW5zIHbDpHh0c29ydHNteW5kaWdoZXQ=
+
+dn: cn=eu.europa.osha,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.osha
+o: eu.europa.osha
+sn: eu.europa.osha
+recordStatus: a
+description: European Agency for Safety and Health at Work
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LDQs9C10L3RhtC40Y8g0LfQsC
+ DQsdC10LfQvtC/0LDRgdC90L7RgdGCINC4INC30LTRgNCw0LLQtSDQv9GA0Lgg0YDQsNCx0L7Rg
+ tCw
+description;lang-cs:: RXZyb3Bza8OhIGFnZW50dXJhIHBybyBiZXpwZcSNbm9zdCBhIG9jaH
+ JhbnUgemRyYXbDrSBwxZlpIHByw6FjaQ==
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEFyYmVqZHNtaWxqw7hhZ2VudHVy
+description;lang-de:: RXVyb3DDpGlzY2hlIEFnZW50dXIgZsO8ciBTaWNoZXJoZWl0IHVuZC
+ BHZXN1bmRoZWl0c3NjaHV0eiBhbSBBcmJlaXRzcGxhdHo=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+Mz4Igzp/Pgc6zzrHOvc65z4POvM+Mz4
+ IgzrPOuc6xIM+EzrfOvSDOkc+Dz4bOrM67zrXOuc6xIM66zrHOuSDPhM63zr0gzqXOs861zq/Os
+ SDPg8+EzrfOvSDOlc+BzrPOsc+Dzq/OsQ==
+description;lang-en: European Agency for Safety and Health at Work
+description;lang-es: Agencia Europea para la Seguridad y la Salud en el Trab
+ ajo
+description;lang-et:: RXVyb29wYSBUw7bDtm9odXR1c2UgamEgVMO2w7Z0ZXJ2aXNob2l1IE
+ FnZW50dXVy
+description;lang-fi:: RXVyb29wYW4gdHnDtnRlcnZleXMtIGphIHR5w7Z0dXJ2YWxsaXN1dX
+ N2aXJhc3Rv
+description;lang-fr:: QWdlbmNlIGV1cm9ww6llbm5lIHBvdXIgbGEgc8OpY3VyaXTDqSBldC
+ BsYSBzYW50w6kgYXUgdHJhdmFpbA==
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBFb3JwYWNoIHVtIFNow6FiaMOhaW
+ x0ZWFjaHQgYWd1cyBTbMOhaW50ZSBhZyBhbiBPYmFpcg==
+description;lang-hr: Europska agencija za sigurnost i zdravlje na radu
+description;lang-hu:: RXVyw7NwYWkgTXVua2FoZWx5aSBCaXp0b25zw6FnaSDDqXMgRWfDqX
+ N6c8OpZ3bDqWRlbG1pIMOcZ3luw7Zrc8OpZw==
+description;lang-it: Agenzia europea per la sicurezza e la salute sul lavoro
+description;lang-lt:: RXVyb3BvcyBzYXVnb3MgaXIgc3ZlaWthdG9zIGRhcmJlIGFnZW50xa
+ tyYQ==
+description;lang-lv:: RWlyb3BhcyBEYXJiYSBkcm/FocSrYmFzIHVuIHZlc2VsxKtiYXMgYW
+ l6c2FyZHrEq2JhcyBhxKNlbnTFq3Jh
+description;lang-mt:: bC1BxKFlbnppamEgRXdyb3BlYSBnxKdhcy1TYcSnxKdhIHUgcy1TaW
+ d1cnTDoCBmdXEgaWwtUG9zdCB0YXgtWG9nxKdvbA==
+description;lang-nl: Europees Agentschap voor veiligheid en gezondheid op he
+ t werk
+description;lang-pl:: RXVyb3BlanNrYSBBZ2VuY2phIEJlenBpZWN6ZcWEc3R3YSBpIFpkcm
+ 93aWEgdyBQcmFjeQ==
+description;lang-pt:: QWfDqm5jaWEgRXVyb3BlaWEgcGFyYSBhIFNlZ3VyYW7Dp2EgZSBhIF
+ Nhw7pkZSBubyBUcmFiYWxobw==
+description;lang-ro:: QWdlbsibaWEgRXVyb3BlYW7EgyBwZW50cnUgU8SDbsSDdGF0ZSDImW
+ kgU2VjdXJpdGF0ZSDDrm4gTXVuY8SD
+description;lang-sk:: RXVyw7Nwc2thIGFnZW50w7pyYSBwcmUgYmV6cGXEjW5vc8WlIGEgb2
+ NocmFudSB6ZHJhdmlhIHByaSBwcsOhY2k=
+description;lang-sl: Evropska agencija za varnost in zdravje pri delu
+description;lang-sv:: RXVyb3BlaXNrYSBhcmJldHNtaWxqw7ZieXLDpW4=
+
+dn: cn=eu.europa.ecsel,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.ecsel
+o: eu.europa.ecsel
+sn: eu.europa.ecsel
+recordStatus: a
+description: ECSEL JU
+description;lang-bg: ECSEL JU
+description;lang-cs: ECSEL JU
+description;lang-da: ECSEL JU
+description;lang-de: ECSEL JU
+description;lang-el: ECSEL JU
+description;lang-en: ECSEL JU
+description;lang-es: ECSEL JU
+description;lang-et: ECSEL JU
+description;lang-fi: ECSEL JU
+description;lang-fr: ECSEL JU
+description;lang-ga: ECSEL JU
+description;lang-hr: ECSEL JU
+description;lang-hu: ECSEL JU
+description;lang-it: ECSEL JU
+description;lang-lt: ECSEL JU
+description;lang-lv: ECSEL JU
+description;lang-mt: ECSEL JU
+description;lang-nl: ECSEL JU
+description;lang-pl: ECSEL JU
+description;lang-pt: ECSEL JU
+description;lang-ro: ECSEL JU
+description;lang-sk: ECSEL JU
+description;lang-sl: ECSEL JU
+description;lang-sv: ECSEL JU
+
+dn: cn=eu.europa.eit,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eit
+o: eu.europa.eit
+sn: eu.europa.eit
+recordStatus: a
+description: European Institute of Innovation and Technology
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LjRj9GCINC40L3RgdGC0LjRgtGD0Y
+ Ig0LfQsCDQuNC90L7QstCw0YbQuNC4INC4INGC0LXRhdC90L7Qu9C+0LPQuNC4
+description;lang-cs:: RXZyb3Bza8O9IGlub3ZhxI1uw60gYSB0ZWNobm9sb2dpY2vDvSBpbn
+ N0aXR1dA==
+description;lang-da:: RXVyb3DDpmlza2UgSW5zdGl0dXQgZm9yIElubm92YXRpb24gb2cgVG
+ Vrbm9sb2dp
+description;lang-de:: RXVyb3DDpGlzY2hlcyBJbm5vdmF0aW9ucy0gdW5kIFRlY2hub2xvZ2
+ llaW5zdGl0dXQ=
+description;lang-el:: zqTOvyDOlc+Fz4HPic+AzrHPis66z4wgzpnOvc+Dz4TOuc+Ezr/Pjc
+ +Ezr8gzprOsc65zr3Ov8+Ezr/OvM6vzrHPgiDOus6xzrkgzqTOtc+Hzr3Ov867zr/Os86vzrHPg
+ g==
+description;lang-en: European Institute of Innovation and Technology
+description;lang-es:: SW5zdGl0dXRvIEV1cm9wZW8gZGUgSW5ub3ZhY2nDs24geSBUZWNub2
+ xvZ8OtYQ==
+description;lang-et: Euroopa Innovatsiooni- ja Tehnoloogiainstituut
+description;lang-fi: Euroopan innovaatio- ja teknologiainstituutti
+description;lang-fr:: SW5zdGl0dXQgZXVyb3DDqWVuIGQnaW5ub3ZhdGlvbiBldCBkZSB0ZW
+ Nobm9sb2dpZQ==
+description;lang-ga:: SW5zdGl0acO6aWQgRW9ycGFjaCB1bSBOdcOhaWwgYWd1cyBUZWljbm
+ VvbGHDrW9jaHQ=
+description;lang-hr: Europski institut za inovacije i tehnologiju
+description;lang-hu:: QXogRXVyw7NwYWkgSW5ub3bDoWNpw7NzIMOpcyBUZWNobm9sw7NnaW
+ FpIEludMOpemV0
+description;lang-it: Istituto europeo di innovazione e tecnologia
+description;lang-lt: Europos inovacijos ir technologijos institutas
+description;lang-lv:: RWlyb3BhcyBJbm92xIFjaWp1IHVuIHRlaG5vbG/Eo2lqdSBpbnN0aX
+ TFq3Rz
+description;lang-mt:: SXN0aXR1dCBFd3JvcGV3IHRhbC1Jbm5vdmF6empvbmkgdSB0LVRla2
+ 5vbG/EoWlqYQ==
+description;lang-nl: Europees instituut voor innovatie en technologie
+description;lang-pl: Europejski Instytut Innowacji i Technologii
+description;lang-pt:: SW5zdGl0dXRvIEV1cm9wZXUgZGUgSW5vdmHDp8OjbyBlIFRlY25vbG
+ 9naWE=
+description;lang-ro:: SW5zdGl0dXR1bCBFdXJvcGVhbiBkZSBJbm92YXJlIMWfaSBUZWhub2
+ xvZ2ll
+description;lang-sk:: RXVyw7Nwc2t5IGlub3ZhxI1uw70gYSB0ZWNobm9sb2dpY2vDvSBpbs
+ WhdGl0w7p0
+description;lang-sl:: RXZyb3Bza2kgaW7FoXRpdHV0IHphIGlub3ZhY2lqZSBpbiB0ZWhub2
+ xvZ2lqbw==
+description;lang-sv:: RXVyb3BlaXNrYSBpbnN0aXR1dGV0IGbDtnIgaW5ub3ZhdGlvbiBvY2
+ ggdGVrbmlr
+
+dn: cn=eu.europa.eeas,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eeas
+o: eu.europa.eeas
+sn: eu.europa.eeas
+recordStatus: a
+description: European External Action Service
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0YHQu9GD0LbQsdCwINC30LAg0L
+ LRitC90YjQvdCwINC00LXQudC90L7RgdGC
+description;lang-cs:: RXZyb3Bza8OhIHNsdcW+YmEgcHJvIHZuxJtqxaHDrSDEjWlubm9zdA
+ ==
+description;lang-da: EU-udenrigstjenesten
+description;lang-de:: RXVyb3DDpGlzY2hlciBBdXN3w6RydGlnZXIgRGllbnN0
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6lz4DOt8+BzrXPg86vzrEgzpXOvs
+ +Jz4TOtc+BzrnOus6uz4IgzpTPgc6sz4POt8+C
+description;lang-en: European External Action Service
+description;lang-es:: U2VydmljaW8gRXVyb3BlbyBkZSBBY2Npw7NuIEV4dGVyaW9y
+description;lang-et:: RXVyb29wYSB2w6RsaXN0ZWVuaXN0dXM=
+description;lang-fi: Euroopan ulkosuhdehallinto
+description;lang-fr:: U2VydmljZSBldXJvcMOpZW4gcG91ciBs4oCZYWN0aW9uIGV4dMOpcm
+ lldXJl
+description;lang-ga:: QW4gdFNlaXJiaMOtcyBFb3JwYWNoIEduw61vbWhhw61vY2h0YSBTZW
+ FjaHRyYcOt
+description;lang-hr:: RXVyb3Bza2Egc2x1xb5iYSB6YSB2YW5qc2tvIGRqZWxvdmFuamU=
+description;lang-hu:: RXVyw7NwYWkgS8O8bMO8Z3lpIFN6b2xnw6FsYXQ=
+description;lang-it:: U2Vydml6aW8gZXVyb3BlbyBwZXIgbOKAmWF6aW9uZSBlc3Rlcm5h
+description;lang-lt:: RXVyb3BvcyBpxaFvcsSXcyB2ZWlrc23FsyB0YXJueWJh
+description;lang-lv:: RWlyb3BhcyDEgHLEk2rEgXMgZGFyYsSrYmFzIGRpZW5lc3Rz
+description;lang-mt:: U2Vydml6eiBFd3JvcGV3IGfEp2FsbC1Benpqb25pIEVzdGVybmE=
+description;lang-nl: Europese Dienst voor extern optreden
+description;lang-pl:: RXVyb3BlanNrYSBTxYJ1xbxiYSBEemlhxYJhxYQgWmV3bsSZdHJ6bn
+ ljaA==
+description;lang-pt:: U2VydmnDp28gRXVyb3BldSBwYXJhIGEgQWPDp8OjbyBFeHRlcm5h
+description;lang-ro:: U2VydmljaXVsIEV1cm9wZWFuIGRlIEFjxaNpdW5lIEV4dGVybsSD
+description;lang-sk:: RXVyw7Nwc2thIHNsdcW+YmEgcHJlIHZvbmthasWhaXUgxI1pbm5vc8
+ Wl
+description;lang-sl:: RXZyb3Bza2Egc2x1xb5iYSB6YSB6dW5hbmplIGRlbG92YW5qZQ==
+description;lang-sv:: RXVyb3BlaXNrYSBhdmRlbG5pbmdlbiBmw7ZyIHl0dHJlIMOldGfDpH
+ JkZXI=
+
+dn: cn=eu.europa.eige,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eige
+o: eu.europa.eige
+sn: eu.europa.eige
+recordStatus: a
+description: European Institute for Gender Equality
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0LjQvdGB0YLQuNGC0YPRgiDQt9
+ CwINGA0LDQstC10L3RgdGC0LLQviDQvNC10LbQtNGDINC/0L7Qu9C+0LLQtdGC0LU=
+description;lang-cs:: RXZyb3Bza8O9IGluc3RpdHV0IHBybyByb3Zub3N0IMW+ZW4gYSBtdc
+ W+xa8=
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEluc3RpdHV0IGZvciBMaWdlc3RpbGxpbm
+ cgbWVsbGVtIE3Dpm5kIG9nIEt2aW5kZXI=
+description;lang-de:: RXVyb3DDpGlzY2hlcyBJbnN0aXR1dCBmw7xyIEdsZWljaHN0ZWxsdW
+ 5nc2ZyYWdlbg==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6Zzr3Pg8+EzrnPhM6/z43PhM6/IM
+ 6zzrnOsSDPhM63zr0gzpnPg8+Mz4TOt8+EzrEgz4TPic69IM6mz43Ou8+Jzr0=
+description;lang-en: European Institute for Gender Equality
+description;lang-es:: SW5zdGl0dXRvIEV1cm9wZW8gZGUgbGEgSWd1YWxkYWQgZGUgR8Opbm
+ Vybw==
+description;lang-et:: RXVyb29wYSBTb29saXNlIFbDtXJkw7VpZ3VzbGlra3VzZSBJbnN0aX
+ R1dXQ=
+description;lang-fi: Euroopan tasa-arvoinstituutti
+description;lang-fr:: SW5zdGl0dXQgZXVyb3DDqWVuIHBvdXIgbOKAmcOpZ2FsaXTDqSBlbn
+ RyZSBsZXMgaG9tbWVzIGV0IGxlcyBmZW1tZXM=
+description;lang-ga:: QW4gSW5zdGl0acO6aWQgRW9ycGFjaCB1bSBDaG9taGlvbmFubmFzIE
+ luc2NuZQ==
+description;lang-hr: Europski institut za jednakost spolova
+description;lang-hu:: QSBOZW1layBLw7Z6w7Z0dGkgRWd5ZW5sxZFzw6lnIEV1csOzcGFpIE
+ ludMOpemV0ZQ==
+description;lang-it:: SXN0aXR1dG8gZXVyb3BlbyBwZXIgbOKAmXVndWFnbGlhbnphIGRpIG
+ dlbmVyZQ==
+description;lang-lt:: RXVyb3BvcyBsecSNacWzIGx5Z3lixJdzIGluc3RpdHV0YXM=
+description;lang-lv:: RWlyb3BhcyBEemltdW11IGzEq2R6dGllc8SrYmFzIGluc3RpdMWrdH
+ M=
+description;lang-mt:: bC1Jc3RpdHV0IEV3cm9wZXcgZ8SnYWxsLVVnd2FsamFuemEgYmVqbi
+ Bpcy1TZXNzaQ==
+description;lang-nl: Europees Instituut voor gendergelijkheid
+description;lang-pl:: RXVyb3BlanNraSBJbnN0eXR1dCBkcy4gUsOzd25vxZtjaSBLb2JpZX
+ QgaSBNxJnFvGN6eXpu
+description;lang-pt:: SW5zdGl0dXRvIEV1cm9wZXUgcGFyYSBhIElndWFsZGFkZSBkZSBHw6
+ luZXJv
+description;lang-ro:: SW5zdGl0dXR1bCBFdXJvcGVhbiBwZW50cnUgRWdhbGl0YXRlYSBkZS
+ DImGFuc2Ugw65udHJlIEZlbWVpIMiZaSBCxINyYmHIm2k=
+description;lang-sk:: RXVyw7Nwc2t5IGluxaF0aXTDunQgcHJlIHJvZG92w7ogcm92bm9zxa
+ U=
+description;lang-sl:: RXZyb3Bza2kgaW7FoXRpdHV0IHphIGVuYWtvc3Qgc3BvbG92
+description;lang-sv:: RXVyb3BlaXNrYSBqw6Rtc3TDpGxsZGhldHNpbnN0aXR1dGV0
+
+dn: cn=eu.europa.cedefop,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.cedefop
+o: eu.europa.cedefop
+sn: eu.europa.cedefop
+recordStatus: a
+description: European Centre for the Development of Vocational Training
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0YbQtdC90YLRitGAINC30LAg0Y
+ DQsNC30LLQuNGC0LjQtSDQvdCwINC/0YDQvtGE0LXRgdC40L7QvdCw0LvQvdC+0YLQviDQvtCx0
+ YPRh9C10L3QuNC1
+description;lang-cs:: RXZyb3Bza8OpIHN0xZllZGlza28gcHJvIHJvenZvaiBvZGJvcm7DqW
+ hvIHZ6ZMSbbMOhdsOhbsOt
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIENlbnRlciBmb3IgVWR2aWtsaW5nIGFmIE
+ VyaHZlcnZzdWRkYW5uZWxzZQ==
+description;lang-de:: RXVyb3DDpGlzY2hlcyBaZW50cnVtIGbDvHIgZGllIEbDtnJkZXJ1bm
+ cgZGVyIEJlcnVmc2JpbGR1bmc=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6azq3Ovc+Ez4HOvyDOs865zrEgz4
+ TOt869IM6Rzr3OrM+Az4TPhc6+zrcgz4TOt8+CIM6Vz4DOsc6zzrPOtc67zrzOsc+EzrnOus6uz
+ 4IgzprOsc+EzqzPgc+EzrnPg863z4I=
+description;lang-en: European Centre for the Development of Vocational Train
+ ing
+description;lang-es:: Q2VudHJvIEV1cm9wZW8gcGFyYSBlbCBEZXNhcnJvbGxvIGRlIGxhIE
+ Zvcm1hY2nDs24gUHJvZmVzaW9uYWw=
+description;lang-et:: RXVyb29wYSBLdXRzZcO1cHBlIEFyZW5kdXNrZXNrdXM=
+description;lang-fi:: RXVyb29wYW4gYW1tYXRpbGxpc2VuIGtvdWx1dHVrc2VuIGtlaGl0dM
+ OkbWlza2Vza3Vz
+description;lang-fr:: Q2VudHJlIGV1cm9ww6llbiBwb3VyIGxlIGTDqXZlbG9wcGVtZW50IG
+ RlIGxhIGZvcm1hdGlvbiBwcm9mZXNzaW9ubmVsbGU=
+description;lang-ga:: QW4gTMOhcmlvbmFkIEVvcnBhY2ggdW0gRmhvYmFpcnQgbmEgR2Fpcm
+ 1vaWxpw7puYQ==
+description;lang-hr: Europski centar za razvoj strukovnog osposobljavanja
+description;lang-hu:: RXVyw7NwYWkgU3pha2vDqXB6w6lzZmVqbGVzenTDqXNpIEvDtnpwb2
+ 50
+description;lang-it: Centro europeo per lo sviluppo della formazione profess
+ ionale
+description;lang-lt:: RXVyb3BvcyBwcm9mZXNpbmlvIG1va3ltbyBwbMSXdHJvcyBjZW50cm
+ Fz
+description;lang-lv:: RWlyb3BhcyBQcm9mZXNpb27EgWzEgXMgaXpnbMSrdMSrYmFzIGF0dM
+ Src3TEq2JhcyBjZW50cnM=
+description;lang-mt:: acSLLcSKZW50cnUgRXdyb3BldyBnxKdhbGwtScW8dmlsdXBwIHRh4o
+ CZIFRhxKdyacShIFByb2Zlc3Nqb25hbGk=
+description;lang-nl: Europees Centrum voor de ontwikkeling van de beroepsopl
+ eiding
+description;lang-pl:: RXVyb3BlanNraWUgQ2VudHJ1bSBSb3p3b2p1IEtzenRhxYJjZW5pYS
+ BaYXdvZG93ZWdv
+description;lang-pt:: Q2VudHJvIEV1cm9wZXUgcGFyYSBvIERlc2Vudm9sdmltZW50byBkYS
+ BGb3JtYcOnw6NvIFByb2Zpc3Npb25hbA==
+description;lang-ro:: Q2VudHJ1bCBFdXJvcGVhbiBwZW50cnUgRGV6dm9sdGFyZWEgRm9ybc
+ SDcmlpIFByb2Zlc2lvbmFsZQ==
+description;lang-sk:: RXVyw7Nwc2tlIHN0cmVkaXNrbyBwcmUgcm96dm9qIG9kYm9ybsOpaG
+ 8gdnpkZWzDoXZhbmlh
+description;lang-sl: Evropski center za razvoj poklicnega usposabljanja
+description;lang-sv:: RXVyb3BlaXNrdCBjZW50cnVtIGbDtnIgdXR2ZWNrbGluZyBhdiB5cm
+ tlc3V0YmlsZG5pbmc=
+
+dn: cn=eu.europa.ombudsman,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.ombudsman
+o: eu.europa.ombudsman
+sn: eu.europa.ombudsman
+recordStatus: a
+description: European Ombudsman
+description;lang-bg:: RdCy0YDQvtC/0LXQudGB0LrQuCDQvtC80LHRg9C00YHQvNCw0L0=
+description;lang-cs:: RXZyb3Bza8O9IHZlxZllam7DvSBvY2hyw6FuY2UgcHLDoXY=
+description;lang-da:: RXVyb3DDpmlzayBPbWJ1ZHNtYW5k
+description;lang-de:: RGVyIEV1cm9ww6Rpc2NoZSBCw7xyZ2VyYmVhdWZ0cmFndGU=
+description;lang-el:: zpXPhc+Bz4nPgM6xzq/Ov8+CIM6UzrnOsc68zrXPg86/zrvOsc6yzr
+ fPhM6uz4I=
+description;lang-en: European Ombudsman
+description;lang-es: Defensor del Pueblo Europeo
+description;lang-et: Euroopa Ombudsman
+description;lang-fi: Euroopan oikeusasiamies
+description;lang-fr:: TcOpZGlhdGV1ciBldXJvcMOpZW4=
+description;lang-ga: Ombudsman Eorpach
+description;lang-hr: Europski ombudsman
+description;lang-hu:: RXVyw7NwYWkgT21idWRzbWFu
+description;lang-it: Mediatore europeo
+description;lang-lt: Europos ombudsmenas
+description;lang-lv: Eiropas ombuds
+description;lang-mt: Ombudsman Ewropew
+description;lang-nl: Europese Ombudsman
+description;lang-pl: Europejski Rzecznik Praw Obywatelskich
+description;lang-pt:: UHJvdmVkb3IgZGUgSnVzdGnDp2EgRXVyb3BldQ==
+description;lang-ro: Ombudsmanul European
+description;lang-sk:: RXVyw7Nwc2t5IG9tYnVkc21hbg==
+description;lang-sl:: RXZyb3Bza2kgdmFydWggxI1sb3Zla292aWggcHJhdmlj
+description;lang-sv: Europeiska ombudsmannen
+
+dn: cn=eu.europa.era,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.era
+o: eu.europa.era
+sn: eu.europa.era
+recordStatus: a
+description: European Union Agency for Railways
+description;lang-bg:: 0JDQs9C10L3RhtC40Y8g0LfQsCDQttC10LvQtdC30L7Qv9GK0YLQtd
+ C9INGC0YDQsNC90YHQv9C+0YDRgiDQvdCwINCV0LLRgNC+0L/QtdC50YHQutC40Y8g0YHRitGO0
+ Lc=
+description;lang-cs:: QWdlbnR1cmEgRXZyb3Bza8OpIHVuaWUgcHJvIMW+ZWxlem5pY2U=
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFVuaW9ucyBKZXJuYmFuZWFnZW50dXI=
+description;lang-de:: RWlzZW5iYWhuYWdlbnR1ciBkZXIgRXVyb3DDpGlzY2hlbiBVbmlvbg
+ ==
+description;lang-el:: zp/Pgc6zzrHOvc65z4POvM+Mz4IgzqPOuc60zrfPgc6/zrTPgc+Mzr
+ zPic69IM+EzrfPgiDOlc+Fz4HPic+AzrHPis66zq7PgiDOiM69z4nPg863z4I=
+description;lang-en: European Union Agency for Railways
+description;lang-es:: QWdlbmNpYSBGZXJyb3ZpYXJpYSBkZSBsYSBVbmnDs24gRXVyb3BlYQ
+ ==
+description;lang-et: Euroopa Liidu Raudteeamet
+description;lang-fi: Euroopan unionin rautatievirasto
+description;lang-fr:: QWdlbmNlIGRlIGzigJlVbmlvbiBldXJvcMOpZW5uZSBwb3VyIGxlcy
+ BjaGVtaW5zIGRlIGZlcg==
+description;lang-ga:: R27DrW9taGFpcmVhY2h0IElhcm5yw7NpZCBhbiBBb250YWlzIEVvcn
+ BhaWdo
+description;lang-hr:: QWdlbmNpamEgRXVyb3Bza2UgdW5pamUgemEgxb5lbGplem5pY2U=
+description;lang-hu:: QXogRXVyw7NwYWkgVW5pw7MgVmFzw7p0aSDDnGd5bsO2a3PDqWdl
+description;lang-it:: QWdlbnppYSBkZWxs4oCZVW5pb25lIGV1cm9wZWEgcGVyIGxlIGZlcn
+ Jvdmll
+description;lang-lt:: RXVyb3BvcyBTxIVqdW5nb3MgZ2VsZcW+aW5rZWxpxbMgYWdlbnTFq3
+ Jh
+description;lang-lv:: RWlyb3BhcyBTYXZpZW7Eq2JhcyBEemVsemNlxLx1IGHEo2VudMWrcm
+ E=
+description;lang-mt:: bC1BxKFlbnppamEgdGFsLVVuam9uaSBFd3JvcGVhIGfEp2FsbC1GZX
+ Jyb3Zpamk=
+description;lang-nl: Spoorwegbureau van de Europese Unie
+description;lang-pl: Agencja Kolejowa Unii Europejskiej
+description;lang-pt:: QWfDqm5jaWEgRmVycm92acOhcmlhIGRhIFVuacOjbyBFdXJvcGVpYQ
+ ==
+description;lang-ro:: QWdlbsibaWEgVW5pdW5paSBFdXJvcGVuZSBwZW50cnUgQ8SDaWxlIE
+ ZlcmF0ZQ==
+description;lang-sk:: xb1lbGV6bmnEjW7DoSBhZ2VudMO6cmEgRXVyw7Nwc2tlaiDDum5pZQ
+ ==
+description;lang-sl:: QWdlbmNpamEgRXZyb3Bza2UgdW5pamUgemEgxb5lbGV6bmljZQ==
+description;lang-sv:: RXVyb3BlaXNrYSB1bmlvbmVucyBqw6RybnbDpGdzYnlyw6U=
+
+dn: cn=eu.europa.bbi,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.bbi
+o: eu.europa.bbi
+sn: eu.europa.bbi
+recordStatus: a
+description: BBI Joint Undertaking
+description;lang-bg:: 0KHRitCy0LzQtdGB0YLQvdC+0YLQviDQv9GA0LXQtNC/0YDQuNGP0Y
+ LQuNC1IOKAntCR0J/igJw=
+description;lang-cs:: U3BvbGXEjW7DvSBwb2RuaWsgcHJvIHByxa9teXNsIHphbG/FvmVuw7
+ 0gbmEgYmlvdGVjaG5vbG9nacOtY2g=
+description;lang-da:: RsOmbGxlc2ZvcmV0YWdlbmRldCBCQkk=
+description;lang-de:: R3LDvG5kdW5nIGRlcyBHZW1laW5zYW1lbiBVbnRlcm5laG1lbnMgZs
+ O8ciBiaW9iYXNpZXJ0ZSBJbmR1c3RyaWV6d2VpZ2UgKEdVQkJJKQ==
+description;lang-el:: SCDOus6/zrnOvc6uIM61z4DOuc+HzrXOr8+BzrfPg863IM6SzpLOmQ
+ ==
+description;lang-en: BBI Joint Undertaking
+description;lang-es:: TGEgRW1wcmVzYSBDb23Dum4gQkJJ
+description;lang-et:: QlBUIMO8aGlzZXR0ZXbDtXR0ZQ==
+description;lang-fi: BBI-yhteisyrityksen
+description;lang-fr:: TOKAmWVudHJlcHJpc2UgY29tbXVuZSBCaW8taW5kdXN0cmllcw==
+description;lang-ga:: Q29taGdobsOzdGhhcyBCQkk=
+description;lang-hr:: emFqZWRuacSNa29nIHBvZHV6ZcSHYSB6YSBiaW9pbmR1c3RyaWp1
+description;lang-hu:: QkJJIEvDtnrDtnMgVsOhbGxhbGtvesOhcw==
+description;lang-it:: TOKAmWltcHJlc2EgY29tdW5lIEJpb2luZHVzdHJpZQ==
+description;lang-lt:: QlBTIGJlbmRyb3Npb3MgxK9tb27El3M=
+description;lang-lv:: S29wdXrFhsSTbXVtYSBCQkk=
+description;lang-mt:: TC1JbXByacW8YSBLb27EoXVudGEgQkI=
+description;lang-nl: Gemeenschappelijke Onderneming BBI
+description;lang-pl:: V3Nww7NsbmUgUHJ6ZWRzacSZd3ppxJljaWUgQkJJ
+description;lang-pt: Empresa Comum BBI
+description;lang-ro:: w45udHJlcHJpbmRlcmVhIGNvbXVuxIMgcGVudHJ1IGJpb2luZHVzdH
+ JpaQ==
+description;lang-sk:: U3BvbG/EjW7DvSBwb2RuaWsgQkJJ
+description;lang-sl: Skupno podjetje BBI
+description;lang-sv:: Z2VtZW5zYW1tYSBmw7ZyZXRhZ2V0IEJCSQ==
+
+dn: cn=eu.europa.f4e,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.f4e
+o: eu.europa.f4e
+sn: eu.europa.f4e
+recordStatus: a
+description: European Joint Undertaking for ITER and the Development of Fusi
+ on Energy
+description;lang-bg:: 0KHRitCy0LzQtdGB0YLQvdC+INC10LLRgNC+0L/QtdC50YHQutC+IN
+ C/0YDQtdC00L/RgNC40Y/RgtC40LUg0LfQsCBJVEVSINC4INGA0LDQt9Cy0LjRgtC40LUg0L3Qs
+ CDRgtC10YDQvNC+0Y/QtNGA0LXQvdCw0YLQsCDQtdC90LXRgNCz0LjRjw==
+description;lang-cs:: c3BvbGXEjW7DvSBldnJvcHNrw70gcG9kbmlrIHBybyBJVEVSIGEgcm
+ 96dm9qIGVuZXJnaWUgeiBqYWRlcm7DqSBzeW50w6l6eQ==
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEbDpmxsZXNmb3JldGFnZW5kZSBmb3IgSV
+ RFUiBvZyBGdXNpb25zZW5lcmdpdWR2aWtsaW5n
+description;lang-de:: RXVyb3DDpGlzY2hlcyBnZW1laW5zYW1lcyBVbnRlcm5laG1lbiBmw7
+ xyIGRlbiBJVEVSIHVuZCBkaWUgRW50d2lja2x1bmcgZGVyIEZ1c2lvbnNlbmVyZ2ll
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM66zr/Ouc69zq4gzrXPgM65z4fOtc
+ 6vz4HOt8+DzrcgzrPOuc6xIM+Ezr/OvSBJVEVSIM66zrHOuSDPhM63zr0gzrHOvc6sz4DPhM+Fz
+ r7OtyDPhM63z4IgzrXOvc6tz4HOs861zrnOsc+CIM+Dz43Ovc+EzrfOvs63z4I=
+description;lang-en: European Joint Undertaking for ITER and the Development
+  of Fusion Energy
+description;lang-es:: RW1wcmVzYSBDb23Dum4gRXVyb3BlYSBwYXJhIGVsIElURVIgeSBlbC
+ BEZXNhcnJvbGxvIGRlIGxhIEVuZXJnw61hIGRlIEZ1c2nDs24=
+description;lang-et:: SVRFUmkgamEgdHV1bWFzw7xudGVlc2llbmVyZ2VldGlrYSBhcmVuZG
+ FtaXNlIEV1cm9vcGEgw7xoaXNldHRldsO1dGU=
+description;lang-fi:: ZXVyb29wcGFsYWluZW4geWh0ZWlzeXJpdHlzIGthbnNhaW52w6RsaX
+ N0w6QgZnV1c2lva29lcmVha3RvcmlhIElURVJpw6QgamEgZnV1c2lvZW5lcmdpYW4ga2VoaXR0w
+ 6RtaXN0w6Q=
+description;lang-fr:: RW50cmVwcmlzZSBjb21tdW5lIGV1cm9ww6llbm5lIHBvdXIgSVRFUi
+ BldCBsZSBkw6l2ZWxvcHBlbWVudCBkZSBsJ8OpbmVyZ2llIGRlIGZ1c2lvbg==
+description;lang-ga:: QW4gR27Ds3RoYXMgQ29taHBow6FpcnRlYWNoIEVvcnBhY2ggdW0gSV
+ RFUiBhZ3VzIHVtIEZodWlubmVhbWggQ29taGxlw6EgYSBGaG9yYmFpcnQ=
+description;lang-hr:: WmFqZWRuacSNa28gcG9kdXplxIdlIOKAnkZ1emlqYSB6YSBlbmVyZ2
+ lqdeKAnQ==
+description;lang-hu:: QSBGw7p6acOzc2VuZXJnaWEtZmVqbGVzenTDqXNpIMOpcyBJVEVSIE
+ V1csOzcGFpIEvDtnrDtnMgVsOhbGxhbGtvesOhcw==
+description;lang-it: Impresa comune europea per il progetto ITER e lo svilup
+ po dell'energia da fusione
+description;lang-lt:: RXVyb3BvcyBJVEVSIMSvZ3l2ZW5kaW5pbW8gaXIgYnJhbmR1b2xpxb
+ Mgc2ludGV6xJdzIGVuZXJnZXRpa29zIHZ5c3R5bW8gYmVuZHJvamkgxK9tb27ElyDigJ5GdXNpb
+ 24gZm9yIEVuZXI=
+description;lang-lv:: RWlyb3BhcyBrb3B1esWGxJNtdW1zIElURVIgdW4ga29kb2xzaW50xJ
+ N6ZXMgZW5lcsSjaWphcyBhdHTEq3N0xKtiYXMgdmFqYWR6xKtixIFt
+description;lang-mt:: TC1JbXByacW8YSBLb27EoXVudGEgRXdyb3BlYSBnxKdhbGwtSVRFUi
+ B1IGwtScW8dmlsdXBwIHRhJyBsLUVuZXLEoWlqYSBtaWxsLUZ1xbxqb25p
+description;lang-nl: Europese gemeenschappelijke onderneming voor ITER en de
+  ontwikkeling van fusie-energie
+description;lang-pl:: RXVyb3BlanNraWUgV3Nww7NsbmUgUHJ6ZWRzacSZd3ppxJljaWUgbm
+ EgcnplY3ogUmVhbGl6YWNqaSBQcm9qZWt0dSBJVEVSIGkgUm96d29qdSBFbmVyZ2lpIFRlcm1va
+ sSFZHJvd2U=
+description;lang-pt:: RW1wcmVzYSBDb211bSBFdXJvcGVpYSBwYXJhIG8gSVRFUiBlIG8gRG
+ VzZW52b2x2aW1lbnRvIGRhIEVuZXJnaWEgZGUgRnVzw6Nv
+description;lang-ro:: w45udHJlcHJpbmRlcmVhIGNvbXVuxIMgZXVyb3BlYW7EgyBwZW50cn
+ UgSVRFUiDFn2kgZGV6dm9sdGFyZWEgZW5lcmdpZWkgZGUgZnV6aXVuZQ==
+description;lang-sk:: SmFkcm92w6Egc3ludMOpemEgcHJlIGVuZXJnaXUg4oCTIEV1csOzcH
+ NreSBzcG9sb8SNbsO9IHBvZG5payBwcmUgSVRFUiBhIHJvenZvaiBlbmVyZ2llIGphZHJvdmVqI
+ HN5bnTDqXp5
+description;lang-sl: Evropsko skupno podjetje za ITER in razvoj fuzijske ene
+ rgije
+description;lang-sv:: RGV0IGV1cm9wZWlza2EgZ2VtZW5zYW1tYSBmw7ZyZXRhZ2V0IGbDtn
+ IgSVRFUiBvY2ggdXR2ZWNrbGluZyBhdiBmdXNpb25zZW5lcmdp
+
+dn: cn=eu.europa.cleansky,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.cleansky
+o: eu.europa.cleansky
+sn: eu.europa.cleansky
+recordStatus: a
+description: Clean Sky Joint Undertaking
+description;lang-bg:: 0KHRitCy0LzQtdGB0YLQvdC+INC/0YDQtdC00L/RgNC40Y/RgtC40L
+ Ug4oCe0KfQuNGB0YLQviDQvdC10LHQteKAnA==
+description;lang-cs:: c3BvbGXEjW7DvSBwb2RuaWsgQ2xlYW4gU2t5
+description;lang-da:: ZsOmbGxlc2ZvcmV0YWdlbmRldCBDbGVhbiBTa3k=
+description;lang-de: Gemeinsames Unternehmen Clean Sky
+description;lang-el:: zrrOv865zr3OriDOtc+AzrnPh861zq/Pgc63z4POtyBDbGVhbiBTa3
+ k=
+description;lang-en: Clean Sky Joint Undertaking
+description;lang-es:: RW1wcmVzYSBDb23Dum4gQ2xlYW4gU2t5
+description;lang-et:: w5xoaXNldHRldsO1dGUgQ2xlYW4gU2t5
+description;lang-fi: Clean Sky -yhteisyritys
+description;lang-fr: entreprise commune Clean Sky
+description;lang-ga:: QW4gQ29taGdobsOzdGhhcyBTcMOpaXJlIEdsYWluZQ==
+description;lang-hr:: WmFqZWRuacSNa28gcG9kdXplxIdlIOKAnkNsZWFuIFNreeKAnQ==
+description;lang-hu:: VGlzenRhIMOJZ2JvbHQga8O2esO2cyB2w6FsbGFsa296w6Fz
+description;lang-it: impresa comune Clean Sky
+description;lang-lt:: YmVuZHJvamkgxK9tb27ElyDigJ7FoHZhcnVzIGRhbmd1c+KAnA==
+description;lang-lv:: a29wdXrFhsSTbXVtcyBDbGVhbiBTa3k=
+description;lang-mt:: bC1JbXByacW8YSBLb27EoXVudGEg4oCcQ2xlYW4gU2t54oCd
+description;lang-nl: Gemeenschappelijke Onderneming Clean Sky
+description;lang-pl:: V3Nww7NsbmUgcHJ6ZWRzacSZYmlvcnN0d28g4oCeQ3p5c3RlIG5pZW
+ Jv4oCd
+description;lang-pt: Empresa Comum Clean Sky
+description;lang-ro:: w65udHJlcHJpbmRlcmVhIGNvbXVuxIMgQ2xlYW4gU2t5
+description;lang-sk:: c3BvbG/EjW7DvSBwb2RuaWsgxIxpc3TDqSBuZWJv
+description;lang-sl:: U2t1cG5vIHBvZGpldGplIOKAnsSMaXN0byBuZWJv4oCc
+description;lang-sv:: Z2VtZW5zYW1tYSBmw7ZyZXRhZ2V0IENsZWFuIFNreQ==
+
+dn: cn=eu.europa.sesar,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.sesar
+o: eu.europa.sesar
+sn: eu.europa.sesar
+recordStatus: a
+description: SESAR Joint Undertaking
+description;lang-bg:: 0KHRitCy0LzQtdGB0YLQvdC+INC/0YDQtdC00L/RgNC40Y/RgtC40L
+ UgU0VTQVI=
+description;lang-cs:: c3BvbGXEjW7DvSBwb2RuaWsgU0VTQVI=
+description;lang-da:: U0VTQVItZsOmbGxlc2ZvcmV0YWdlbmRldA==
+description;lang-de: gemeinsames Unternehmen SESAR
+description;lang-el:: zrrOv865zr3OriDOtc+AzrnPh861zq/Pgc63z4POtyBTRVNBUg==
+description;lang-en: SESAR Joint Undertaking
+description;lang-es:: RW1wcmVzYSBDb23Dum4gU0VTQVI=
+description;lang-et:: w5xoaXNldHRldsO1dGUgU0VTQVI=
+description;lang-fi: SESAR-yhteisyritys
+description;lang-fr: entreprise commune SESAR
+description;lang-ga:: Q29taGdobsOzdGhhcyBTRVNBUg==
+description;lang-hr:: WmFqZWRuacSNa28gcG9kdXplxIdlIOKAnlNFU0FS4oCd
+description;lang-hu:: U0VTQVIga8O2esO2cyB2w6FsbGFsa296w6Fz
+description;lang-it: impresa comune SESAR
+description;lang-lt:: YmVuZHJhIMSvbW9uxJcgU0VTQVI=
+description;lang-lv:: U0VTQVIga29wdXrFhsSTbXVtcw==
+description;lang-mt:: bC1JbXByacW8YSBLb27EoXVudGEgU0VTQVI=
+description;lang-nl: Gemeenschappelijke Onderneming Sesar
+description;lang-pl:: V3Nww7NsbmUgcHJ6ZWRzacSZd3ppxJljaWUgU0VTQVI=
+description;lang-pt: Empresa Comum SESAR
+description;lang-ro:: w65udHJlcHJpbmRlcmVhIGNvbXVuxIMgU0VTQVI=
+description;lang-sk:: c3BvbG/EjW7DvSBwb2RuaWsgU0VTQVI=
+description;lang-sl: Skupno podjetje SESAR
+description;lang-sv:: Z2VtZW5zYW1tYSBTZXNhci1mw7ZyZXRhZ2V0
+
+dn: cn=eu.europa.eurofound,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eurofound
+o: eu.europa.eurofound
+sn: eu.europa.eurofound
+recordStatus: a
+description: European Foundation for the Improvement of Living and Working C
+ onditions
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0YTQvtC90LTQsNGG0LjRjyDQt9
+ CwINC/0L7QtNC+0LHRgNGP0LLQsNC90LUg0L3QsCDRg9GB0LvQvtCy0LjRj9GC0LAg0L3QsCDQt
+ tC40LLQvtGCINC4INGC0YDRg9C0
+description;lang-cs:: RXZyb3Bza8OhIG5hZGFjZSBwcm8gemxlcMWhZW7DrSDFvml2b3Ruw6
+ 1jaCBhIHByYWNvdm7DrWNoIHBvZG3DrW5law==
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEluc3RpdHV0IHRpbCBGb3JiZWRyaW5nIG
+ FmIExldmUtIG9nIEFyYmVqZHN2aWxrw6VyZW5l
+description;lang-de:: RXVyb3DDpGlzY2hlIFN0aWZ0dW5nIHp1ciBWZXJiZXNzZXJ1bmcgZG
+ VyIExlYmVucy0gdW5kIEFyYmVpdHNiZWRpbmd1bmdlbg==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6KzrTPgc+FzrzOsSDOs865zrEgz4
+ TOtyDOks61zrvPhM6vz4nPg863z4TPic69IM6jz4XOvc64zrfOus+Ozr0gzpTOuc6xzrLOr8+Jz
+ 4POt8+CIM66zrHOuSDOlc+BzrPOsc+Dzq/Osc+C
+description;lang-en: European Foundation for the Improvement of Living and W
+ orking Conditions
+description;lang-es:: RnVuZGFjacOzbiBFdXJvcGVhIHBhcmEgbGEgTWVqb3JhZGUgbGFzIE
+ NvbmRpY2lvbmVzIGRlIFZpZGEgeSBkZSBUcmFiYWpv
+description;lang-et:: RXVyb29wYSBFbHUtIGphIFTDtsO2dGluZ2ltdXN0ZSBQYXJhbmRhbW
+ lzZSBGb25k
+description;lang-fi:: RXVyb29wYW4gZWxpbi0gamEgdHnDtm9sb2plbiBrZWhpdHTDpG1pc3
+ PDpMOkdGnDtg==
+description;lang-fr:: Rm9uZGF0aW9uIGV1cm9ww6llbm5lIHBvdXIgbOKAmWFtw6lsaW9yYX
+ Rpb24gZGVzIGNvbmRpdGlvbnMgZGUgdmllIGV0IGRlIHRyYXZhaWw=
+description;lang-ga:: QW4gRm9yYXMgRW9ycGFjaCBjaHVuIETDoWxhw60gTWFpcmVhY2h0w6
+ FsYSBhZ3VzIE9pYnJlIGEgRmhlYWJoc8O6
+description;lang-hr:: RXVyb3Bza2EgemFrbGFkYSB6YSBwb2JvbGrFoWFuamUgxb5pdm90bm
+ loIGkgcmFkbmloIHV2amV0YQ==
+description;lang-hu:: RXVyw7NwYWkgQWxhcMOtdHbDoW55IGF6IMOJbGV0LSDDqXMgTXVua2
+ Frw7Zyw7xsbcOpbnllayBKYXbDrXTDoXPDocOpcnQ=
+description;lang-it: Fondazione europea per il miglioramento delle condizion
+ i di vita e di lavoro
+description;lang-lt:: RXVyb3BvcyBneXZlbmltbyBpciBkYXJibyBzxIVseWfFsyBnZXJpbm
+ ltbyBmb25kYXM=
+description;lang-lv:: RWlyb3BhcyBEesSrdmVzIHVuIGRhcmJhIGFwc3TEgWvEvHUgdXpsYW
+ JvxaFhbmFzIGZvbmRz
+description;lang-mt:: aWwtRm9uZGF6empvbmkgRXdyb3BlYSBnxKdhdC1UaXRqaWIgdGFsLU
+ tvbmRpenpqb25pamlldCB0YWwtxKZhamphIHUgdGF4LVhvZ8Snb2w=
+description;lang-nl: Europese Stichting tot verbetering van de levens- en ar
+ beidsomstandigheden
+description;lang-pl:: RXVyb3BlanNrYSBGdW5kYWNqYSBuYSByemVjeiBQb3ByYXd5IFdhcn
+ Vua8OzdyDFu3ljaWEgaSBQcmFjeQ==
+description;lang-pt:: RnVuZGHDp8OjbyBFdXJvcGVpYSBwYXJhIGEgTWVsaG9yaWEgZGFzIE
+ NvbmRpw6fDtWVzIGRlIFZpZGEgZSBkZSBUcmFiYWxobw==
+description;lang-ro:: RnVuZGHIm2lhIEV1cm9wZWFuxIMgcGVudHJ1IMOObWJ1bsSDdMSDyJ
+ tpcmVhIENvbmRpyJtpaWxvciBkZSBWaWHIm8SDIMiZaSBkZSBNdW5jxIM=
+description;lang-sk:: RXVyw7Nwc2thIG5hZMOhY2lhIHByZSB6bGVwxaFvdmFuaWUgxb5pdm
+ 90bsO9Y2ggYSBwcmFjb3Zuw71jaCBwb2RtaWVub2s=
+description;lang-sl:: RXZyb3Bza2EgZnVuZGFjaWphIHphIGl6Ym9sasWhYW5qZSDFvml2bG
+ plbmpza2loIGluIGRlbG92bmloIHJhem1lcg==
+description;lang-sv:: RXVyb3BlaXNrYSBpbnN0aXR1dGV0IGbDtnIgZsO2cmLDpHR0cmluZy
+ BhdiBsZXZuYWRzLSBvY2ggYXJiZXRzdmlsbGtvcg==
+
+dn: cn=eu.europa.eea,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eea
+o: eu.europa.eea
+sn: eu.europa.eea
+recordStatus: a
+description: European Environment Agency
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LDQs9C10L3RhtC40Y8g0LfQsC
+ DQvtC60L7Qu9C90LAg0YHRgNC10LTQsA==
+description;lang-cs:: RXZyb3Bza8OhIGFnZW50dXJhIHBybyDFvml2b3Ruw60gcHJvc3TFmW
+ Vkw60=
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIE1pbGrDuGFnZW50dXI=
+description;lang-de:: RXVyb3DDpGlzY2hlIFVtd2VsdGFnZW50dXI=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+Mz4Igzp/Pgc6zzrHOvc65z4POvM+Mz4
+ IgzqDOtc+BzrnOss6szrvOu86/zr3PhM6/z4I=
+description;lang-en: European Environment Agency
+description;lang-es: Agencia Europea de Medio Ambiente
+description;lang-et: Euroopa Keskkonnaagentuur
+description;lang-fi:: RXVyb29wYW4geW1ww6RyaXN0w7ZrZXNrdXM=
+description;lang-fr:: QWdlbmNlIGV1cm9ww6llbm5lIHBvdXIgbOKAmWVudmlyb25uZW1lbn
+ Q=
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBFb3JwYWNoIENob21oc2hhb2ls
+description;lang-hr:: RXVyb3Bza2EgYWdlbmNpamEgemEgb2tvbGnFoQ==
+description;lang-hu:: RXVyw7NwYWkgS8O2cm55ZXpldHbDqWRlbG1pIMOcZ3luw7Zrc8OpZw
+ ==
+description;lang-it:: QWdlbnppYSBldXJvcGVhIGRlbGzigJlhbWJpZW50ZQ==
+description;lang-lt:: RXVyb3BvcyBhcGxpbmtvcyBhZ2VudMWrcmE=
+description;lang-lv:: RWlyb3BhcyBWaWRlcyBhxKNlbnTFq3Jh
+description;lang-mt:: TC1BxKFlbnppamEgRXdyb3BlYSB0YeKAmSBsLUFtYmplbnQ=
+description;lang-nl: Europees Milieu Agentschap
+description;lang-pl:: RXVyb3BlanNrYSBBZ2VuY2phIMWacm9kb3dpc2th
+description;lang-pt:: QWfDqm5jaWEgRXVyb3BlaWEgZG8gQW1iaWVudGU=
+description;lang-ro:: QWdlbsWjaWEgRXVyb3BlYW7EgyBkZSBNZWRpdQ==
+description;lang-sk:: RXVyw7Nwc2thIGVudmlyb25tZW50w6FsbmEgYWdlbnTDunJh
+description;lang-sl: Evropska agencija za okolje
+description;lang-sv:: RXVyb3BlaXNrYSBtaWxqw7ZieXLDpW4=
+
+dn: cn=external,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: external
+o: external
+sn: external
+recordStatus: a
+description: External
+description;lang-bg:: 0JLRitC90YjQtdC9
+description;lang-cs:: RXh0ZXJuw60=
+description;lang-da: Ekstern
+description;lang-de: Extern
+description;lang-el:: zpXOvs+Jz4TOtc+BzrnOus+Mz4I=
+description;lang-en: External
+description;lang-es: Externo
+description;lang-et:: VsOkbGluZQ==
+description;lang-fi: Ulkopuolinen
+description;lang-fr: Externe
+description;lang-ga: Seachtracha
+description;lang-hr: Vanjski korisnici
+description;lang-hu:: S8O8bHPFkQ==
+description;lang-it: Esterno
+description;lang-lt:: ScWhb3Jpbmlz
+description;lang-lv:: xIByxJNqcw==
+description;lang-mt: Estern
+description;lang-nl: Extern
+description;lang-pl:: WmV3bsSZdHJ6bmE=
+description;lang-pt: Externo
+description;lang-ro: Extern
+description;lang-sk:: RXh0ZXJuw6E=
+description;lang-sl: Zunanja domena
+description;lang-sv: Extern
+
+dn: cn=eu.europa.eurojust,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eurojust
+o: eu.europa.eurojust
+sn: eu.europa.eurojust
+recordStatus: a
+description: Eurojust
+description;lang-bg:: 0JXQstGA0L7RjtGB0YI=
+description;lang-cs: Eurojust
+description;lang-da: Eurojust
+description;lang-de: Eurojust
+description;lang-el: Eurojust
+description;lang-en: Eurojust
+description;lang-es: Eurojust
+description;lang-et: Eurojust
+description;lang-fi: Eurojust
+description;lang-fr: Eurojust
+description;lang-ga: Eurojust
+description;lang-hr: Eurojust
+description;lang-hu: Eurojust
+description;lang-it: Eurojust
+description;lang-lt: Eurojustas
+description;lang-lv: Eurojust
+description;lang-mt: Eurojust
+description;lang-nl: Eurojust
+description;lang-pl: Eurojust
+description;lang-pt: Eurojust
+description;lang-ro: Eurojust
+description;lang-sk: Eurojust
+description;lang-sl: Eurojust
+description;lang-sv: Eurojust
+
+dn: cn=eu.europa.acer,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.acer
+o: eu.europa.acer
+sn: eu.europa.acer
+recordStatus: a
+description: Agency for the Cooperation of Energy Regulators
+description;lang-bg:: 0JDQs9C10L3RhtC40Y8g0LfQsCDRgdGK0YLRgNGD0LTQvdC40YfQtd
+ GB0YLQstC+INC90LAg0LXQvdC10YDQs9C40LnQvdC40YLQtSDRgNC10LPRg9C70LDRgtC+0YDQu
+ A==
+description;lang-cs:: QWdlbnR1cmEgcHJvIHNwb2x1cHLDoWNpIGVuZXJnZXRpY2vDvWNoIH
+ JlZ3VsYcSNbsOtY2ggb3Jnw6Fuxa8=
+description;lang-da: Agentur for samarbejde mellem energi reguleringsmyndigh
+ eder
+description;lang-de:: QWdlbnR1ciBmw7xyIGRpZSBadXNhbW1lbmFyYmVpdCBkZXIgRW5lcm
+ dpZXJlZ3VsaWVydW5nc2JlaMO2cmRlbg==
+description;lang-el:: zp/Pgc6zzrHOvc65z4POvM+Mz4IgzqPPhc69zrXPgc6zzrHPg86vzr
+ HPgiDPhM+Jzr0gzqHPhc64zrzOuc+Dz4TOuc66z47OvSDOkc+Bz4fPjs69IM6Vzr3Otc+BzrPOt
+ c6vzrHPgg==
+description;lang-en: Agency for the Cooperation of Energy Regulators
+description;lang-es:: QWdlbmNpYSBkZSBDb29wZXJhY2nDs24gZGUgbG9zIFJlZ3VsYWRvcm
+ VzIGRlIGxhIEVuZXJnw61h
+description;lang-et:: RW5lcmdlZXRpa2FzZWt0b3JpdCBSZWd1bGVlcml2YXRlIEFzdXR1c3
+ RlIEtvb3N0w7bDtmFtZXQ=
+description;lang-fi:: RW5lcmdpYS1hbGFuIHPDpMOkbnRlbHl2aXJhbm9tYWlzdGVuIHlodG
+ Vpc3R5w7Z2aXJhc3Rv
+description;lang-fr:: QWdlbmNlIGRlIGNvb3DDqXJhdGlvbiBkZXMgcsOpZ3VsYXRldXJzIG
+ RlIGzigJnDqW5lcmdpZQ==
+description;lang-ga:: R27DrW9taGFpcmVhY2h0IHVtIENob21oYXIgaWRpciBSaWFsw6FsYW
+ l0aGUgRnVpbm5pbWg=
+description;lang-hr: Agencija za suradnju energetskih regulatora
+description;lang-hu:: RW5lcmdpYXN6YWLDoWx5b3rDs2sgRWd5w7x0dG3FsWvDtmTDqXNpIM
+ OcZ3luw7Zrc8OpZ2U=
+description;lang-it:: QWdlbnppYSBwZXIgbGEgY29vcGVyYXppb25lIGZyYSBpIHJlZ29sYX
+ RvcmkgbmF6aW9uYWxpIGRlbGzigJllbmVyZ2lh
+description;lang-lt:: RW5lcmdldGlrb3MgcmVndWxpYXZpbW8gaW5zdGl0dWNpasWzIGJlbm
+ RyYWRhcmJpYXZpbW8gYWdlbnTFq3LEhQ==
+description;lang-lv:: RW5lcmdvcmVndWxhdG9ydSBzYWRhcmLEq2JhcyBhxKNlbnTFq3Jh
+description;lang-mt:: QcShZW56aWphIGfEp2FsbC1Lb3BlcmF6empvbmkgdGFyLVJlZ29sYX
+ R1cmkgdGFsLUVuZXLEoWlqYQ==
+description;lang-nl: Agentschap voor de samenwerking tussen energieregulator
+ en
+description;lang-pl:: QWdlbmNqxJkgZHMuIFdzcMOzxYJwcmFjeSBPcmdhbsOzdyBSZWd1bG
+ FjamkgRW5lcmdldHlraQ==
+description;lang-pt:: QWfDqm5jaWEgZGUgQ29vcGVyYcOnw6NvIGRvcyBSZWd1bGFkb3Jlcy
+ BkYSBFbmVyZ2lh
+description;lang-ro:: QWdlbsWjaWEgcGVudHJ1IENvb3BlcmFyZWEgQXV0b3JpdMSDxaNpbG
+ 9yIGRlIFJlZ2xlbWVudGFyZSBkaW4gRG9tZW5pdWwgRW5lcmdpZWk=
+description;lang-sk:: QWdlbnTDunJhIHByZSBzcG9sdXByw6FjdSByZWd1bGHEjW7DvWNoIG
+ 9yZ8Ohbm92IHYgb2JsYXN0aSBlbmVyZ2V0aWt5
+description;lang-sl: Agencija za sodelovanje energetskih regulatorjev
+description;lang-sv:: Qnlyw6VuIGbDtnIgc2FtYXJiZXRlIG1lbGxhbiBlbmVyZ2l0aWxsc3
+ luc215bmRpZ2hldGVy
+
+dn: cn=eu.europa.frontex,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.frontex
+o: eu.europa.frontex
+sn: eu.europa.frontex
+recordStatus: a
+description: Frontex | European Union Agency
+description;lang-bg:: RnJvbnRleCB8INCQ0LPQtdC90YbQuNGPINC90LAg0JXQstGA0L7Qv9
+ C10LnRgdC60LjRjyDRgdGK0Y7QtyA=
+description;lang-cs:: RnJvbnRleCB8IEFnZW50dXJhIEV2cm9wc2vDqSB1bmllIA==
+description;lang-da:: RnJvbnRleCB8IERlbiBFdXJvcMOmaXNrZSBVbmlvbnMgQWdlbnR1ci
+ A=
+description;lang-de:: RnJvbnRleCB8IEFnZW50dXIgZGVyIEV1cm9ww6Rpc2NoZW4gVW5pb2
+ 4=
+description;lang-el:: RnJvbnRleCB8IM6Vz4XPgc+Jz4DOsc+KzrrOriDOiM69z4nPg863IM
+ 6fz4HOs86xzr3Ouc+DzrzPjM+C
+description;lang-en: Frontex | European Union Agency
+description;lang-es:: RnJvbnRleCB8IEFnZW5jaWEgZGUgbGEgVW5pw7NuIEV1cm9wZWE=
+description;lang-et:: RnJvbnRleCB8IEV1cm9vcGEgTGlpZHUgUMO1aGnDtWlndXN0ZSBBbW
+ V0
+description;lang-fi: Frontex | Euroopan unionin perusoikeusviraston
+description;lang-fr:: RnJvbnRleCB8IEFnZW5jZSBkZSBsJ1VuaW9uIGV1cm9ww6llbm5l
+description;lang-ga:: RnJvbnRleCB8IEFvbnRhcyBFb3JwYWNoIEdobsOtb21oYWlyZWFjaH
+ Q=
+description;lang-hr: Frontex | Agencija Europske unije
+description;lang-hu:: RnJvbnRleCB8IEF6IEV1csOzcGFpIFVuacOzIEFsYXBqb2dpIMOcZ3
+ luw7Zrc8OpZ2U=
+description;lang-it: Frontex | Agenzia dell'Unione europea
+description;lang-lt:: RnJvbnRleCB8IEV1cm9wb3MgU8SFanVuZ29zIGFnZW50xatyYQ==
+description;lang-lv:: RnJvbnRleCB8IEVpcm9wYXMgU2F2aWVuxKtiYXMgYcSjZW50xatyYX
+ M=
+description;lang-mt:: RnJvbnRleCB8IEV3cm9wZWEgQcShZW56aWphIHRhbC1Vbmpvbmk=
+description;lang-nl: Frontex | Europese Unie Agentschap
+description;lang-pl: Frontex | Agencja Unii Europejskiej
+description;lang-pt:: RnJvbnRleCB8IEFnw6puY2lhIGRhIFVuacOjbyBFdXJvcGVpYQ==
+description;lang-ro:: RnJvbnRleCB8IEFnZW7Im2lhIFVuaXVuaWkgRXVyb3BlbmU=
+description;lang-sk:: RnJvbnRleCB8IEFnZW50w7pyYSBFdXLDs3Bza2VqIMO6bmll
+description;lang-sl: Frontex | Agencija Evropske unije
+description;lang-sv:: RnJvbnRleCB8IEV1cm9wZWlza2EgdW5pb25lbnMgYnlyw6U=
+
+dn: cn=eu.europa.efca,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.efca
+o: eu.europa.efca
+sn: eu.europa.efca
+recordStatus: a
+description: European Fisheries Control Agency
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LDQs9C10L3RhtC40Y8g0LfQsC
+ DQutC+0L3RgtGA0L7QuyDQvdCwINGA0LjQsdCw0YDRgdGC0LLQvtGC0L4=
+description;lang-cs:: RXZyb3Brw6EgYWdlbnR1cmEgcHJvIGtvbnRyb2x1IHJ5Ym9sb3Z1
+description;lang-da: EU-fikerikontrolagenturet
+description;lang-de:: RXVyb3DDpGljaGUgRmlzY2hlcmVpYXVmc2ljaHRzYWdlbnR1cg==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6lz4DOt8+BzrXPg86vzrEgzpXOu8
+ 6tzrPPh86/z4Ugz4TOt8+CIM6RzrvOuc61zq/Osc+C
+description;lang-en: European Fisheries Control Agency
+description;lang-es: Agencia Europea de Control de la Peca
+description;lang-et: Euroopa Kalandukontrolli Amet
+description;lang-fi: Euroopan kalatuksenvalvontavirasto
+description;lang-fr:: QWdlbmNlIGV1cm9ww6llbm5lIGRlIGNvbnRyw7RsZSBkZSBww6pjaG
+ Vz
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBFb3JwYWNoIHVtIFJpYWzDuiBhci
+ BJYWNhY2g=
+description;lang-hr: Europska agencija za kontrolu ribarstva
+description;lang-hu:: RXVyw7NwYWkgSGFsw6F6YXRpIEVsbGVuxZFyesWRIEhpdmF0YWw=
+description;lang-it: Agenzia europea di controllo della peca
+description;lang-lt:: RXVyb3BvIMW+dXZpbmlua3lzdMSXcyBrb250cm9sxJdzIGFnZW50xa
+ tyYQ==
+description;lang-lv:: RWlyb3BhIFppdnNhaW1uaWVjxKtiYXMga29udHJvbGVzIGHEo2VudM
+ WrcmE=
+description;lang-mt:: TC1BxKFlbnppamEgRXdyb3BlYSBnxKdhbGwtS29udHJvbGwgdGEtU2
+ FqZA==
+description;lang-nl: Europee Bureau voor visserijcontrole
+description;lang-pl:: RXVyb3BlamthIEFnZW5jamEgS29udHJvbGkgUnlib8WCw7N3c3R3YQ
+ ==
+description;lang-pt:: QWfDqm5jaWEgRXVyb3BlaWEgZGUgQ29udHJvbG8gZGEgUGVzY2Fz
+description;lang-ro:: QWdlbsibaWEgRXVyb3BlYW7EgyBwZW50cnUgQ29udHJvbHVsIFBlY3
+ VpdHVsdWk=
+description;lang-sk:: RXVyw7Nwa2Egcnliw6Fyc2thIGFnZW50w7pyYQ==
+description;lang-sl:: RXZyb3BrYSBhZ2VuY2lqYSB6YSBuYWR6b3IgcmliacWhdHZh
+description;lang-sv:: RXVyb3BlaWthIGZpc2tlcmlrb250cm9sbGJ5csOlbg==
+
+dn: cn=eu.europa.eesc,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eesc
+o: eu.europa.eesc
+sn: eu.europa.eesc
+recordStatus: a
+description: European Economic and Social Committee
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0LjQutC+0L3QvtC80LjRh9C10Y
+ HQutC4INC4INGB0L7RhtC40LDQu9C10L0g0LrQvtC80LjRgtC10YI=
+description;lang-cs:: RXZyb3Bza8O9IGhvc3BvZMOhxZlza8O9IGEgc29jacOhbG7DrSB2w7
+ 1ib3I=
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIMOYa29ub21pc2tlIG9nIFNvY2lhbGUgVW
+ R2YWxn
+description;lang-de:: RXVyb3DDpGlzY2hlciBXaXJ0c2NoYWZ0cy0gdW5kIFNvemlhbGF1c3
+ NjaHVzcw==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6fzrnOus6/zr3Ov868zrnOus6uIM
+ 66zrHOuSDOms6/zrnOvc+Jzr3Ouc66zq4gzpXPgM65z4TPgc6/z4DOrg==
+description;lang-en: European Economic and Social Committee
+description;lang-es:: Q29taXTDqSBFY29uw7NtaWNvIHkgU29jaWFsIEV1cm9wZW8=
+description;lang-et: Euroopa Majandus- ja Sotsiaalkomitee
+description;lang-fi: Euroopan talous- ja sosiaalikomitea
+description;lang-fr:: Q29taXTDqSDDqWNvbm9taXF1ZSBldCBzb2NpYWwgZXVyb3DDqWVu
+description;lang-ga:: Q29pc3RlIEVhY25hbWHDrW9jaCBhZ3VzIFPDs2lzaWFsdGEgbmEgaE
+ VvcnBh
+description;lang-hr: Europski gospodarski i socijalni odbor
+description;lang-hu:: RXVyw7NwYWkgR2F6ZGFzw6FnaSDDqXMgU3pvY2nDoWxpcyBCaXpvdH
+ Rzw6Fn
+description;lang-it: Comitato economico e sociale europeo
+description;lang-lt:: RXVyb3BvcyBla29ub21pa29zIGlyIHNvY2lhbGluacWzIHJlaWthbM
+ WzIGtvbWl0ZXRhcw==
+description;lang-lv:: RWlyb3BhcyBFa29ub21pa2FzIHVuIHNvY2nEgWxvIGxpZXR1IGtvbW
+ l0ZWph
+description;lang-mt:: S3VtaXRhdCBFa29ub21pa3UgdSBTb8SLamFsaSBFd3JvcGV3
+description;lang-nl:: RXVyb3BlZXMgRWNvbm9taXNjaCBlbiBTb2NpYWFsIENvbWl0w6k=
+description;lang-pl:: RXVyb3BlanNraSBLb21pdGV0IEVrb25vbWljem5vLVNwb8WCZWN6bn
+ k=
+description;lang-pt:: Q29taXTDqSBFY29uw7NtaWNvIGUgU29jaWFsIEV1cm9wZXU=
+description;lang-ro:: Q29taXRldHVsIEVjb25vbWljIMWfaSBTb2NpYWwgRXVyb3BlYW4=
+description;lang-sk:: RXVyw7Nwc2t5IGhvc3BvZMOhcnNreSBhIHNvY2nDoWxueSB2w71ib3
+ I=
+description;lang-sl: Evropski ekonomsko-socialni odbor
+description;lang-sv:: RXVyb3BlaXNrYSBla29ub21pc2thIG9jaCBzb2NpYWxhIGtvbW1pdH
+ TDqW4=
+
+dn: cn=eu.europa.eui,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eui
+o: eu.europa.eui
+sn: eu.europa.eui
+recordStatus: a
+description: European University Institute
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0YPQvdC40LLQtdGA0YHQuNGC0L
+ XRgtGB0LrQuCDQmNC90YHRgtC40YLRg9GC
+description;lang-cs:: RXZyb3Bza8O9IFVuaXZlcnppdG7DrSBJbnN0aXR1dA==
+description;lang-da: Det Europaeisk Universitetsinstitut
+description;lang-de:: RXVyb3DDpGlzY2hlcyBIb2Noc2NodWxpbnN0aXR1dA==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6gzrHOvc61z4DOuc+Dz4TOt868zr
+ nOsc66z4wgzpnOvc+Dz4TOuc+Ezr/Pjc+Ezr8=
+description;lang-en: European University Institute
+description;lang-es: Instituto Universitario Europeo
+description;lang-et:: RXVyb29wYSDDnGxva29vbC1JbnN0aXR1dXQ=
+description;lang-fi: Ylopistollinen Eurooppa-Instituutti
+description;lang-fr:: SW5zdGl0dXQgVW5pdmVyc2l0YWlyZSBFdXJvcMOpZW4=
+description;lang-ga: Institiuid Ollscoile Eorpach
+description;lang-hr:: RXVyb3Bza2kgU3ZldcSNaWxpxaFuaSBJbnN0aXR1dA==
+description;lang-hu:: RXVyw7NwYWkgRWd5ZXRlbWkgSW50w6l6ZXQ=
+description;lang-it: Istituto Universitario Europeo
+description;lang-lt: Europos Universitetinis Institutas
+description;lang-lv:: RWlyb3BhcyBVbml2ZXJzaXTEgXRlcyBJbnN0aXTFq3Rz
+description;lang-mt: Istitut Univerju Ewropew
+description;lang-nl: Europees Universitair Instituut
+description;lang-pl: Europejski Instytut Uniwersytecki
+description;lang-pt: Instituto Universitario Europeu
+description;lang-ro: Institutul Universitar European
+description;lang-sk:: RXVyw7Nwc2t5IFVuaXZlcnppdG7DvSBJbsWhdGl0w7p0
+description;lang-sl:: RXZyb3Bza2kgVW5pdmVyeml0ZXRuaSBJbsWhdGl0dXQ=
+description;lang-sv: Europeiska Universitetsinstitutet
+
+dn: cn=eu.europa.europarl,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.europarl
+o: eu.europa.europarl
+sn: eu.europa.europarl
+recordStatus: a
+description: European Parliament
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0L/QsNGA0LvQsNC80LXQvdGC
+description;lang-cs:: RXZyb3Bza8O9IHBhcmxhbWVudA==
+description;lang-da: Europa-Parlamentet
+description;lang-de:: RXVyb3DDpGlzY2hlcyBQYXJsYW1lbnQ=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6azr/Ouc69zr/Oss6/z43Ou865zr
+ 8=
+description;lang-en: European Parliament
+description;lang-es: Parlamento Europeo
+description;lang-et: Euroopa Parlament
+description;lang-fi: Euroopan parlamentti
+description;lang-fr:: UGFybGVtZW50IGV1cm9ww6llbg==
+description;lang-ga: Parlaimint na hEorpa
+description;lang-hr: Europski parlament
+description;lang-hu:: RXVyw7NwYWkgUGFybGFtZW50
+description;lang-it: Parlamento Europeo
+description;lang-lt: Europos Parlamentas
+description;lang-lv: Eiropas Parlaments
+description;lang-mt: Parlament Ewropew
+description;lang-nl: Europees Parlement
+description;lang-pl: Parlament Europejski
+description;lang-pt: Parlamento Europeu
+description;lang-ro: Parlamentul European
+description;lang-sk:: RXVyw7Nwc2t5IHBhcmxhbWVudA==
+description;lang-sl: Evropski parlament
+description;lang-sv: Europaparlamentet
+
+dn: cn=eu.europa.emsa,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.emsa
+o: eu.europa.emsa
+sn: eu.europa.emsa
+recordStatus: a
+description: European Maritime Safety Agency
+description;lang-bg:: 0JDQs9C10L3RhtC40Y8g0LfQsCDQvtC/0LDQt9Cy0LDQvdC1INC90L
+ Ag0LzQvtGA0YHQutC40Y8g0YLRgNCw0L3RgdC/0L7RgNGC
+description;lang-cs:: RXZyb3Bza8OhIGFnZW50dXJhIHBybyBuw6Ftb8WZbsOtIGJlenBlxI
+ 1ub3N0
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIFPDuGZhcnRzc2lra2VyaGVkc2FnZW50dX
+ I=
+description;lang-de:: RXVyb3DDpGlzY2hlIEFnZW50dXIgZsO8ciBkaWUgU2ljaGVyaGVpdC
+ BkZXMgU2VldmVya2VocnM=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+Mz4Igzp/Pgc6zzrHOvc65z4POvM+Mz4
+ IgzrPOuc6xIM+EzrfOvSDOkc+Dz4bOrM67zrXOuc6xIM+Dz4TOtyDOmM6szrvOsc+Dz4POsQ==
+description;lang-en: European Maritime Safety Agency
+description;lang-es:: QWdlbmNpYSBFdXJvcGVhIGRlIFNlZ3VyaWRhZCBNYXLDrXRpbWE=
+description;lang-et:: RXVyb29wYSBNZXJlc8O1aWR1b2h1dHVzZSBBbWV0
+description;lang-fi: Euroopan meriturvallisuusvirasto
+description;lang-fr:: QWdlbmNlIGV1cm9ww6llbm5lIHBvdXIgbGEgc8OpY3VyaXTDqSBtYX
+ JpdGltZQ==
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBFb3JwYWNoIHVtIFNow6FiaMOhaW
+ x0ZWFjaHQgTWh1aXLDrQ==
+description;lang-hr: Europska agencija za pomorsku sigurnost
+description;lang-hu:: RXVyw7NwYWkgVGVuZ2VyYml6dG9uc8OhZ2kgw5xneW7Dtmtzw6ln
+description;lang-it: Agenzia europea per la sicurezza marittima
+description;lang-lt:: RXVyb3Bvc2rFq3LFsyBzYXVndW1vYWdlbnRh
+description;lang-lv:: RWlyb3BhcyBKxatyYXMgZHJvxaHEq2JhcyBhxKNlbnTFq3Jh
+description;lang-mt:: TC1BxKFlbnppamEgRXdyb3BlYSBnxKdhcy1TaWd1cnTDoCBNYXJpdH
+ RpbWE=
+description;lang-nl: Europees Agentschap voor maritieme veiligheid
+description;lang-pl:: RXVyb3BlanNrYSBBZ2VuY2phIGRzLiBCZXpwaWVjemXFhHN0d2Egbm
+ EgTW9yenU=
+description;lang-pt:: QWfDqm5jaWEgRXVyb3BlaWEgZGEgU2VndXJhbsOnYSBNYXLDrXRpbW
+ E=
+description;lang-ro:: QWdlbsWjaWEgRXVyb3BlYW7EgyBwZW50cnUgU2lndXJhbsWjYSBNYX
+ JpdGltxIM=
+description;lang-sk:: RXVyw7Nwc2thIG7DoW1vcm7DoSBiZXpwZcSNbm9zdG7DoSBhZ2VudM
+ O6cmE=
+description;lang-sl: Evropska agencija za pomorsko varnost
+description;lang-sv:: RXVyb3BlaXNrYSBzasO2c8Oka2VyaGV0c2J5csOlbg==
+
+dn: cn=eu.europa.fch,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.fch
+o: eu.europa.fch
+sn: eu.europa.fch
+recordStatus: a
+description:: Sm9pbnQgVW5kZXJ0YWtpbmcgwqtGdWVsIENlbGxzIGFuZCBIeWRyb2dlbsK7
+description;lang-bg:: 0YHRitCy0LzQtdGB0YLQvdC+0YLQviDQv9GA0LXQtNC/0YDQuNGP0Y
+ LQuNC1IOKAntCT0L7RgNC40LLQvdC4INC60LvQtdGC0LrQuCDQuCDQstC+0LTQvtGA0L7QtOKAn
+ A==
+description;lang-cs:: U3BvbGXEjW7DvSBwb2RuaWt1IHBybyBwYWxpdm92w6kgxI1sw6Fua3
+ kgYSB2b2TDrWs=
+description;lang-da:: ZsOmbGxlc2ZvcmV0YWdlbmRldCBmb3IgYnLDpm5kc2Vsc2NlbGxlci
+ BvZyBicmludA==
+description;lang-de:: R2VtZWluc2FtZXMgVW50ZXJuZWhtZW4g4oCeQnJlbm5zdG9mZnplbG
+ xlbiB1bmQgV2Fzc2Vyc3RvZmY=
+description;lang-el:: zrrOv865zr3Ors+CIM61z4DOuc+HzrXOr8+BzrfPg863z4IgwqvOms
+ +Fz4jOrc67zrXPgiDOus6xz4XPg86vzrzOv8+FIM66zrHOuSDPhc60z4HOv86zz4zOvc6/z4XCu
+ w==
+description;lang-en:: Sm9pbnQgVW5kZXJ0YWtpbmcgwqtGdWVsIENlbGxzIGFuZCBIeWRyb2
+ dlbsK7
+description;lang-es:: RW1wcmVzYSBDb23Dum4gUGlsYXMgZGUgQ29tYnVzdGlibGUgZSBIaW
+ Ryw7NnZW5v
+description;lang-et:: dmFsZGtvbm5hIMO8aGlzZXR0ZXbDtXR0ZSByYWtlbmR1c2thdmEgcm
+ FhbWVz
+description;lang-fi:: dG90ZXV0dXNzdXVubml0ZWxtYWFuIGxpaXR0eXbDpCBlaGRvdHVzcH
+ l5bnTDtg==
+description;lang-fr:: RW50cmVwcmlzZSBjb21tdW5lIOKAnFBpbGVzIMOgIGNvbWJ1c3RpYm
+ xlIGV0IEh5ZHJvZ8OobmXigJ0=
+description;lang-ga:: Q29taGdobsOzdGhhcyB1bSBDaGVhbGxhIEJyZW9zbGEgYWd1cyB1bS
+ BIaWRyaWdpbiAy
+description;lang-hr:: WmFqZWRuacSNa29nIHBvZHV6ZcSHYSB6YSBnb3Jpdm5lIMSNbGFua2
+ UgaSB2b2RpayAyIA==
+description;lang-hu:: w5x6ZW1hbnlhZ2NlbGxhLSDDqXMgSGlkcm9nw6ludGVjaG5vbMOzZ2
+ lhaSBLw7Z6w7Zz
+description;lang-it:: SW1wcmVzYSBjb211bmUgwqtDZWxsZSBhIGNvbWJ1c3RpYmlsZSBlIG
+ lkcm9nZW5vwrs=
+description;lang-lt:: dmFuZGVuaWxpbyBiZW5kcm9zaW9zIMSvbW9uxJdzIMSvZ3l2ZW5kaW
+ 5pbW8gKHRiYyk=
+description;lang-lv:: a29wdXrFhsSTbXVtYW0g4oCcS3VyaW7EgW3EgSBlbGVtZW50aSB1bi
+ DFq2RlxYZyYWRpc+KAnQ==
+description;lang-mt:: SW1wcmnFvGEgS29uxKF1bnRhIHRhxIstxIplbGxvbGkgdGFsLUZqdX
+ dpbCB1IGwtSWRyb8ShZW51
+description;lang-nl: gemeenschappelijke onderneming brandstofcellen en water
+ stof
+description;lang-pl:: cHJ6ZWRzacSZYmlvcnN0d2EgbmEgcnplY3ogdGVjaG5vbG9naWkgb2
+ duaXcgcGFsaXdvd3ljaA==
+description;lang-pt:: RW1wcmVzYSBDb211bSDCq1BpbGhhcyBkZSBDb21idXN0w612ZWwgZS
+ BIaWRyb2fDqW5pb8K7
+description;lang-ro:: w45udHJlcHJpbmRlcmlpIENvbXVuZSDigJ5QaWxlIGRlIGNvbWJ1c3
+ RpZSDImWkgaGlkcm9nZW7igJ0=
+description;lang-sk:: c3BvbG/EjW7DqWhvIHBvZG5pa3UgbmEgcGFsaXZvdsOpIMSNbMOhbm
+ t5IGEgdm9kw61r
+description;lang-sl: Skupnega podjetja za gorivne celice in vodik
+description;lang-sv:: Z2VtZW5zYW1tYSBmw7ZyZXRhZ2V0IGbDtnIgYnLDpG5zbGVjZWxsZX
+ Igb2NoIHbDpHRl
+
+dn: cn=eu.europa.cdt,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.cdt
+o: eu.europa.cdt
+sn: eu.europa.cdt
+recordStatus: a
+description: Translation Centre
+description;lang-bg:: 0KbQtdC90YLRitGAINC30LAg0L/RgNC10LLQvtC00Lg=
+description;lang-cs:: UMWZZWtsYWRhdGVsc2vDqSBzdMWZZWRpc2tv
+description;lang-da:: T3ZlcnPDpnR0ZWxzZXNjZW50cmV0
+description;lang-de:: w5xiZXJzZXR6dW5nc3plbnRydW0=
+description;lang-el:: zprOrc69z4TPgc6/IM6czrXPhM6sz4bPgc6xz4POt8+C
+description;lang-en: Translation Centre
+description;lang-es:: Q2VudHJvIGRlIFRyYWR1Y2Npw7Nu
+description;lang-et:: VMO1bGtla2Vza3Vz
+description;lang-fi:: S8Okw6RubsO2c2tlc2t1cw==
+description;lang-fr: Centre de traduction
+description;lang-ga:: SW9uYWQgQWlzdHJpw7pjaMOhaW4gQ2hvbWhsYWNodGHDrSBhbiBBb2
+ 50YWlzIEVvcnBhaWdo
+description;lang-hr: Prevoditeljski centar za tijela Europske unije
+description;lang-hu:: Rm9yZMOtdMOza8O2enBvbnQ=
+description;lang-it: Centro di traduzione
+description;lang-lt: Vertimo centras
+description;lang-lv:: VHVsa2/FoWFuYXMgY2VudHJz
+description;lang-mt:: xIplbnRydSB0YXQtVHJhZHV6empvbmk=
+description;lang-nl: Vertaalcentrum
+description;lang-pl:: Q2VudHJ1bSBUxYJ1bWFjemXFhA==
+description;lang-pt:: Q2VudHJvIGRlIFRyYWR1w6fDo28=
+description;lang-ro: Centrul de Traduceri
+description;lang-sk:: UHJla2xhZGF0ZcS+c2vDqSBzdHJlZGlza28=
+description;lang-sl: Prevajalski center
+description;lang-sv:: w5Z2ZXJzw6R0dG5pbmdzY2VudHJ1bWV0
+
+dn: cn=eu.europa.ecdc,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.ecdc
+o: eu.europa.ecdc
+sn: eu.europa.ecdc
+recordStatus: a
+description: European Centre for Disease Prevention and Control
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0YbQtdC90YLRitGAINC30LAg0L
+ /RgNC+0YTQuNC70LDQutGC0LjQutCwINC4INC60L7QvdGC0YDQvtC7INC90LAg0LHQvtC70LXRg
+ dGC0LjRgtC1
+description;lang-cs:: RXZyb3Bza8OpIFN0xZllZGlza28gcHJvIFByZXZlbmNpIGEgS29udH
+ JvbHUgTmVtb2Np
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIENlbnRlciBmb3IgRm9yZWJ5Z2dlbHNlIG
+ FmIE9nIEtvbnRyb2wgbWVkIFN5Z2RvbW1l
+description;lang-de:: RXVyb3DDpGlzY2hlcyBaZW50cnVtIGbDvHIgZGllIFByw6R2ZW50aW
+ 9uIHVuZCBkaWUgS29udHJvbGxlIHZvbiBLcmFua2hlaXRlbg==
+description;lang-el:: zpXOs3DPic+AYc6Qa28gS2VudHBvIM6gcG/Ou2jPiGjPgiBrYWkgRc
+ 67Zc6zeG/OsyB0z4luIE5vz4PPiW4=
+description;lang-en: European Centre for Disease Prevention and Control
+description;lang-es:: Q2VudHJvIEV1cm9wZW8gcGFyYSBsYSBQcmV2ZW5jacOzbiB5IGVsIE
+ NvbnRyb2wgZGUgbGFzIEVuZmVybWVkYWRlcw==
+description;lang-et:: SGFpZ3VzdGUgRW5uZXR1c2UgamEgVMO1cmplIEV1cm9vcGEgS2Vza3
+ Vz
+description;lang-fi:: RXVyb29wYW4gVGF1dGllbmVoa8OkaXN5LSBqYSBWYWx2b250YWtlc2
+ t1cw==
+description;lang-fr:: Q2VudHJlIEV1cm9ww6llbiBkZSBQcsOpdmVudGlvbiBldCBkZSBDb2
+ 50csO0bGUgZGVzIE1hbGFkaWVz
+description;lang-ga:: QW4gTMOhcmlvbmFkIEVvcnBhY2ggdW0gR2hhbGFpciBhIENob3NjIG
+ FndXMgYSBSaWFsw7o=
+description;lang-hr:: cHNraSBjZW50YXIgemEgc3ByZcSNYXZhbmplIGkga29udHJvbHUgYm
+ 9sZXN0aQ==
+description;lang-hu:: RXVyw7NwYWkgQmV0ZWdzw6lnbWVnZWzFkXrDqXNpIMOpcyBKw6Fyds
+ Ohbnl2w6lkZWxtaSBLw7Z6cG9udA==
+description;lang-it: Centro Europeo per la Prevenzione e il Controllo delle 
+ Malattie
+description;lang-lt:: RXVyb3BvcyBsaWfFsyBQcmV2ZW5jaWpvcyBpciBLb250cm9sxJdzIE
+ NlbnRyYXM=
+description;lang-lv:: RWlyb3BhcyBTbGltxKtidSBQcm9maWxha3NlcyB1biBLb250cm9sZX
+ MgQ2VudHJz
+description;lang-mt:: ScSLLcSKZW50cnUgRXdyb3BldyBHxKdhbGwtUHJldmVuempvbmkgdS
+ BMLUtvbnRyb2xsIFRhbC1NYXJk
+description;lang-nl: Europees Centrum voor Ziektepreventie en -Bestrijding
+description;lang-pl:: RXVyb3BlanNraWUgQ2VudHJ1bSBaYXBvYmllZ2lhbmEgaSBLb250cm
+ 9saSBDaG9yw7Ni
+description;lang-pt:: Q2VudHJvIEV1cm9wZXUgZGUgUHJldmVuw6fDo28gZSBDb250cm9sby
+ BkYXMgRG9lbsOnYXM=
+description;lang-ro:: Q2VudHJ1bCBFdXJvcGVhbiBkZSBQcmV2ZW5pcmUgxZ9pIENvbnRyb2
+ wgYWwgQm9saWxvcg==
+description;lang-sk:: RXVyw7Nwc2tlIENlbnRydW0gcHJlIFByZXZlbmNpdSBhIEtvbnRyb2
+ x1IENob3LDtGI=
+description;lang-sl:: RXZyb3Bza2kgQ2VudGVyIHphIE5hemRvciBpbiBQcmVwcmXEjWV2YW
+ 5qZSBCb2xlem5p
+description;lang-sv:: RXVyb3BlaXNrdCBDZW50cnVtIGbDtnIgRsO2cmVieWdnYW5kZSBvY2
+ ggS29udHJvbGwgYXYgU2p1a2RvbWFy
+
+dn: cn=eu.europa.gsa,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.gsa
+o: eu.europa.gsa
+sn: eu.europa.gsa
+recordStatus: a
+description: European GNSS Agency
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LDQs9C10L3RhtC40Y8g0LfQsC
+ DQk9Cd0KHQoQ==
+description;lang-cs:: QWdlbnR1cmEgcHJvIGV2cm9wc2vDvSBHTlNT
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEdOU1MtYWdlbnR1cg==
+description;lang-de:: QWdlbnR1ciBmw7xyIGRhcyBFdXJvcMOkaXNjaGUgR05TUw==
+description;lang-el:: zp/Pgc6zzrHOvc65z4POvM+Mz4Igz4TOv8+FIM61z4XPgc+Jz4DOsc
+ +KzrrOv8+NIEdOU1M=
+description;lang-en: European GNSS Agency
+description;lang-es: Agencia del GNSS Europeo
+description;lang-et: Euroopa GNSSi Agentuur
+description;lang-fi: Euroopan GNSS-virasto
+description;lang-fr:: QWdlbmNlIGR1IEdOU1MgZXVyb3DDqWVu
+description;lang-ga:: QW4gR2huw61vbWhhaXJlYWNodCBFb3JwYWNoIEdOU1M=
+description;lang-hr: Agencija za europski GNSS
+description;lang-hu:: RXVyw7NwYWkgR05TUyDDnGd5bsO2a3PDqWc=
+description;lang-it: Agenzia del GNSS europeo
+description;lang-lt:: RXVyb3BvcyBHTlNTIGFnZW50xatyYQ==
+description;lang-lv:: RWlyb3BhcyBHTlNTIGHEo2VudMWrcmE=
+description;lang-mt:: bC1BxKFlbnppamEgRXdyb3BlYSBHTlNT
+description;lang-nl: Europees GNSS-Agentschap
+description;lang-pl: Agencja Europejskiego GNSS
+description;lang-pt:: QWfDqm5jaWEgZG8gR05TUyBFdXJvcGV1
+description;lang-ro:: QWdlbsWjaWEgR05TUyBFdXJvcGVhbg==
+description;lang-sk:: QWdlbnTDunJhIHByZSBldXLDs3Bza3kgR05TUw==
+description;lang-sl: Agencija za evropski GNSS
+description;lang-sv:: RXVyb3BlaXNrYSBieXLDpW4gZsO2ciBHTlNT
+
+dn: cn=eu.europa.consilium,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.consilium
+o: eu.europa.consilium
+sn: eu.europa.consilium
+recordStatus: a
+description: Council of the European Union
+description;lang-bg:: 0KHRitCy0LXRgiDQvdCwINCV0LLRgNC+0L/QtdC50YHQutC40Y8g0Y
+ HRitGO0Lc=
+description;lang-cs:: UmFkYSBFdnJvcHNrw6kgdW5pZQ==
+description;lang-da:: UsOlZGV0IGZvciBEZW4gRXVyb3DDpmlza2UgVW5pb24=
+description;lang-de:: UmF0IGRlciBFdXJvcMOkaXNjaGVuIFVuaW9u
+description;lang-el:: zqPPhc68zrLOv8+NzrvOuc6/IM+EzrfPgiDOlc+Fz4HPic+AzrHPis
+ 66zq7PgiDOiM69z4nPg863z4I=
+description;lang-en: Council of the European Union
+description;lang-es:: Q29uc2VqbyBkZSBsYSBVbmnDs24gRXVyb3BlYQ==
+description;lang-et:: RXVyb29wYSBMaWlkdSBOw7V1a29ndQ==
+description;lang-fi: Euroopan unionin neuvosto
+description;lang-fr:: Q29uc2VpbCBkZSBsJ1VuaW9uIGV1cm9ww6llbm5l
+description;lang-ga: Comhairle an Aontais Eorpaigh
+description;lang-hr:: VmlqZcSHZSBFdXJvcHNrZSB1bmlqZQ==
+description;lang-hu:: QXogRXVyw7NwYWkgVW5pw7MgVGFuw6Fjc2E=
+description;lang-it:: Q29uc2lnbGlvIGRlbGzigJlVbmlvbmUgZXVyb3BlYQ==
+description;lang-lt:: RXVyb3BvcyBTxIVqdW5nb3MgVGFyeWJh
+description;lang-lv:: RWlyb3BhcyBTYXZpZW7Eq2JhcyBQYWRvbWU=
+description;lang-mt: Kunsill tal-Unjoni Ewropea
+description;lang-nl: Raad van de Europese Unie
+description;lang-pl: Rada Unii Europejskiej
+description;lang-pt:: Q29uc2VsaG8gZGEgVW5pw6NvIEV1cm9wZWlh
+description;lang-ro: Consiliul Uniunii Europene
+description;lang-sk:: UmFkYSBFdXLDs3Bza2VqIMO6bmll
+description;lang-sl: Svet Evropske unije
+description;lang-sv:: UsOlZGV0
+
+dn: cn=eu.europa.eiopa,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eiopa
+o: eu.europa.eiopa
+sn: eu.europa.eiopa
+recordStatus: a
+description: European Insurance and Occupational Pensions Authority
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0L7RgNCz0LDQvSDQt9CwINC30L
+ DRgdGC0YDQsNGF0L7QstCw0L3QtSDQuCDQv9GA0L7RhNC10YHQuNC+0L3QsNC70L3QviDQv9C10
+ L3RgdC40L7QvdC90L4g0L7RgdC40LPRg9GA0Y/QstCw0L3QtQ==
+description;lang-cs:: RXZyb3Bza8OpaG8gb3Jnw6FudSBwcm8gcG9qacWhxaVvdm5pY3R2w6
+ 0gYSB6YW3Em3N0bmFuZWNrw6kgcGVuemlqbsOtIHBvamnFoXTEm27DrQ==
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIFRpbHN5bnNteW5kaWdoZWQgZm9yIEZvcn
+ Npa3JpbmdzLSBvZyBBcmJlamRzbWFya2Vkc3BlbnNpb25zb3JkbmluZ2Vy
+description;lang-de:: RXVyb3DDpGlzY2hlIEF1ZnNpY2h0c2JlaMO2cmRlIGbDvHIgZGFzIF
+ ZlcnNpY2hlcnVuZ3N3ZXNlbiB1bmQgZGllIGJldHJpZWJsaWNoZSBBbHRlcnN2ZXJzb3JndW5n
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6Rz4HPh86uIM6Rz4PPhs6xzrvOr8
+ +DzrXPic69IM66zrHOuSDOlc+AzrHOs86zzrXOu868zrHPhM65zrrPjs69IM6jz4XOvc+EzqzOv
+ s61z4nOvQ==
+description;lang-en: European Insurance and Occupational Pensions Authority
+description;lang-es:: QXV0b3JpZGFkIEV1cm9wZWEgZGUgU2VndXJvcyB5IFBlbnNpb25lcy
+ BkZSBKdWJpbGFjacOzbg==
+description;lang-et:: RXVyb29wYSBLaW5kbHVzdHVzLSBqYSBUw7bDtmFuZGphcGVuc2lvbm
+ lkZSBKw6RyZWxldmFsdmU=
+description;lang-fi:: RXVyb29wYW4gdmFrdXV0dXMtIGphIGxpc8OkZWzDpGtldmlyYW5vbW
+ FpbmVu
+description;lang-fr:: QXV0b3JpdMOpIGV1cm9ww6llbm5lIGRlcyBhc3N1cmFuY2VzIGV0IG
+ RlcyBwZW5zaW9ucyBwcm9mZXNzaW9ubmVsbGVz
+description;lang-ga:: QW4gdMOaZGFyw6FzIEVvcnBhY2ggdW0gw4FyYWNoYXMgYWd1cyBQaW
+ 5zaW4gQ2hlaXJkZQ==
+description;lang-hr: Europsko nadzorno tijelo za osiguranje i strukovno miro
+ vinsko osiguranje
+description;lang-hu:: YXogRXVyw7NwYWkgQml6dG9zw610w6FzLSDDqXMgRm9nbGFsa296dG
+ F0w7Npbnl1Z2TDrWotaGF0w7Nzw6Fn
+description;lang-it:: QXV0b3JpdMOgIGV1cm9wZWEgZGVsbGUgYXNzaWN1cmF6aW9uaSBlIG
+ RlbGxlIHBlbnNpb25pIGF6aWVuZGFsaSBlIHByb2Zlc3Npb25hbGk=
+description;lang-lt:: RXVyb3BvcyBkcmF1ZGltbyBpciBwcm9mZXNpbmnFsyBwZW5zaWrFsy
+ BpbnN0aXR1Y2lqYQ==
+description;lang-lv:: RWlyb3BhcyBBcGRyb8WhaW7EgcWhYW5hcyB1biBhcm9kYSBwZW5zaW
+ p1IGllc3TEgWRp
+description;lang-mt:: QXd0b3JpdMOgIEV3cm9wZWEgdGFsLUFzc2lndXJhenpqb25pIHUgbC
+ 1QZW5zam9uaWppZXQgdGF4LVhvZ8Snb2w=
+description;lang-nl: Europese Autoriteit voor verzekeringen en bedrijfspensi
+ oenen
+description;lang-pl:: RXVyb3BlanNraWVnbyBVcnrEmWR1IE5hZHpvcnUgVWJlenBpZWN6Zc
+ WEIGkgUHJhY293bmljenljaCBQcm9ncmFtw7N3IEVtZXJ5dGFsbnljaA==
+description;lang-pt:: QXV0b3JpZGFkZSBFdXJvcGVpYSBkb3MgU2VndXJvcyBlIFBlbnPDtW
+ VzIENvbXBsZW1lbnRhcmVzIGRlIFJlZm9ybWE=
+description;lang-ro:: QXV0b3JpdGF0ZWEgZXVyb3BlYW7EgyBkZSBhc2lndXLEg3JpIMiZaS
+ BwZW5zaWkgb2N1cGHIm2lvbmFsZQ==
+description;lang-sk:: RXVyw7Nwc2t5IG9yZ8OhbiBwcmUgcG9pc8Wlb3Zuw61jdHZvIGEgZM
+ O0Y2hvZGtvdsOpIHBvaXN0ZW5pZSB6YW1lc3RuYW5jb3Y=
+description;lang-sl: Evropski organ za zavarovanja in poklicne pokojnine
+description;lang-sv:: RXVyb3BlaXNrYSBmw7Zyc8Oka3JpbmdzLSBvY2ggdGrDpG5zdGVwZW
+ 5zaW9uc215bmRpZ2hldGVu
+
+dn: cn=eu.europa.imi,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.imi
+o: eu.europa.imi
+sn: eu.europa.imi
+recordStatus: a
+description: IMI Joint Undertaking
+description;lang-bg:: 0YHRitCy0LzQtdGB0YLQvdC+INC/0YDQtdC00L/RgNC40Y/RgtC40L
+ Ug0L3QsCDQmNCY0Js=
+description;lang-cs:: c3BvbGXEjW7DvSBwb2RuaWsgSUlM
+description;lang-da:: ZsOmbGxlc2ZvcmV0YWdlbmRldCBmb3IgSU1J
+description;lang-de: Gemeinsames Unternehmen IMI
+description;lang-el:: zprOv865zr3OriDOtc+AzrnPh861zq/Pgc63z4POtyDOoM6azqY=
+description;lang-en: IMI Joint Undertaking
+description;lang-es:: RW1wcmVzYSBDb23Dum4gSU1J
+description;lang-et:: w7xoaXNldHRldsO1dGUgSU1J
+description;lang-fi: IMI-yhteisyritys
+description;lang-fr:: RW50cmVwcmlzZSBjb21tdW5lIElNSQ0K
+description;lang-ga:: Q29taGdobsOzdGhhcyBJTUkgMg==
+description;lang-hr:: WmFqZWRuacSNa28gcG9kdXplxIdlIOKAnklNSeKAnQ==
+description;lang-hu:: SU1JIGvDtnrDtnMgdsOhbGxhbGtvesOhcw==
+description;lang-it: Impresa comune IMI
+description;lang-lt:: QsSuIE5WSQ==
+description;lang-lv:: SU1JIGtvcHV6xYbEk211bXM=
+description;lang-mt:: bC1JbXByacW8YSBLb27EoXVudGEgZ8SnYWxsLUlNSQ==
+description;lang-nl: Gemeenschappelijke Onderneming IMI
+description;lang-pl:: d3Nww7NsbmUgcHJ6ZWRzacSZYmlvcnN0d28gSU1J
+description;lang-pt: Empresa comum IMI
+description;lang-ro:: w65udHJlcHJpbmRlcmVhIGNvbXVuxIMgSU1J
+description;lang-sk:: c3BvbG/EjW7DvSBwb2RuaWsgSUlM
+description;lang-sl: Skupno podjetje IMI
+description;lang-sv:: Z2VtZW5zYW1tYSBmw7ZyZXRhZ2V0IElNSQ==
+
+dn: cn=eu.europa.eif,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eif
+o: eu.europa.eif
+sn: eu.europa.eif
+recordStatus: a
+description: European Investment Fund
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60Lgg0LjQvdCy0LXRgdGC0LjRhtC40L
+ 7QvdC10L0g0YTQvtC90LQ=
+description;lang-cs:: RXZyb3Bza8O9IGludmVzdGnEjW7DrSBmb25k
+description;lang-da:: RGVuIEV1cm9ww6Zpc2tlIEludmVzdGVyaW5nc2ZvbmQ=
+description;lang-de:: RXVyb3DDpGlzY2hlciBJbnZlc3RpdGlvbnNmb25kcw==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6kzrHOvM61zq/OvyDOlc+AzrXOvc
+ 60z43Pg861z4nOvQ==
+description;lang-en: European Investment Fund
+description;lang-es: Fondo Europeo de Inversiones
+description;lang-et: Euroopa Investeerimisfond
+description;lang-fi: Euroopan investointirahasto
+description;lang-fr:: Rm9uZHMgZXVyb3DDqWVuIGTigJlpbnZlc3Rpc3NlbWVudA==
+description;lang-ga:: YW4gQ2lzdGUgRW9ycGFjaCBJbmZoZWlzdMOtb2NodGE=
+description;lang-hr: Europski investicijski fond
+description;lang-hu:: RXVyw7NwYWkgQmVydWjDoXrDoXNpIEFsYXA=
+description;lang-it: Fondo europeo per gli investimenti
+description;lang-lt:: RXVyb3BvcyBpbnZlc3RpY2lqxbMgZm9uZGFz
+description;lang-lv:: RWlyb3BhcyBJbnZlc3TEq2NpanUgZm9uZHM=
+description;lang-mt: il-Fond Ewropew tal-Investiment
+description;lang-nl: Europees Investeringsfonds
+description;lang-pl: Europejski Fundusz Inwestycyjny
+description;lang-pt: Fundo Europeu de Investimento
+description;lang-ro:: Rm9uZHVsIEV1cm9wZWFuIGRlIEludmVzdGnIm2lp
+description;lang-sk:: RXVyw7Nwc2t5IGludmVzdGnEjW7DvSBmb25k
+description;lang-sl: Evropski investicijski sklad
+description;lang-sv: Europeiska investeringsfonden
+
+dn: cn=eu.europa.ec,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.ec
+o: eu.europa.ec
+sn: eu.europa.ec
+recordStatus: a
+description: European Commission
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0LrQvtC80LjRgdC40Y8=
+description;lang-cs:: RXZyb3Bza8OhIGtvbWlzZQ==
+description;lang-da: Europa-Kommissionen
+description;lang-de:: RXVyb3DDpGlzY2hlIEtvbW1pc3Npb24=
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus6uIM6Vz4DOuc+Ez4HOv8+Azq4=
+description;lang-en: European Commission
+description;lang-es:: Q29taXNpw7NuIEV1cm9wZWE=
+description;lang-et: Euroopa Komisjon
+description;lang-fi: Euroopan komissio
+description;lang-fr:: Q29tbWlzc2lvbiBldXJvcMOpZW5uZQ==
+description;lang-ga:: QW4gQ29pbWlzacO6biBFb3JwYWNo
+description;lang-hr: Europska komisija
+description;lang-hu:: RXVyw7NwYWkgQml6b3R0c8OhZw==
+description;lang-it: Commissione europea
+description;lang-lt: Europos Komisija
+description;lang-lv: Eiropas Komisija
+description;lang-mt: Kummissjoni Ewropea
+description;lang-nl: Europese Commissie
+description;lang-pl: Komisja Europejska
+description;lang-pt:: Q29taXNzw6NvIEV1cm9wZWlh
+description;lang-ro:: Q29taXNpYSBFdXJvcGVhbsSD
+description;lang-sk:: RXVyw7Nwc2thIGtvbWlzaWE=
+description;lang-sl: Evropska komisija
+description;lang-sv: EU-kommissionen
+
+dn: cn=eu.europa.etf,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.etf
+o: eu.europa.etf
+sn: eu.europa.etf
+recordStatus: a
+description: European Training Foundation
+description;lang-bg:: 0JXQstGA0L7Qv9C10LnRgdC60LAg0YTQvtC90LTQsNGG0LjRjyDQt9
+ CwINC+0LHRg9GH0LXQvdC40LU=
+description;lang-cs:: RXZyb3Bza8OhIG5hZGFjZSBvZGJvcm7DqWhvIHZ6ZMSbbMOhdsOhbs
+ Ot
+description;lang-da:: RGV0IEV1cm9ww6Zpc2tlIEVyaHZlcnZzdWRkYW5uZWxzZXNpbnN0aX
+ R1dA==
+description;lang-de:: RXVyb3DDpGlzY2hlIFN0aWZ0dW5nIGbDvHIgQmVydWZzYmlsZHVuZw
+ ==
+description;lang-el:: zpXPhc+Bz4nPgM6xz4rOus+MIM6KzrTPgc+FzrzOsSDOlc+AzrHOs8
+ 6zzrXOu868zrHPhM65zrrOrs+CIM6VzrrPgM6xzq/OtM61z4XPg863z4I=
+description;lang-en: European Training Foundation
+description;lang-es:: RnVuZGFjacOzbiBFdXJvcGVhIGRlIEZvcm1hY2nDs24=
+description;lang-et: Euroopa Koolitusfond
+description;lang-fi:: RXVyb29wYW4ga291bHV0dXNzw6TDpHRpw7Y=
+description;lang-fr:: Rm9uZGF0aW9uIGV1cm9ww6llbm5lIHBvdXIgbGEgZm9ybWF0aW9u
+description;lang-ga:: QW4gRmhvbmTDumlyZWFjaHQgRW9ycGFjaCBPaWxpw7puYQ==
+description;lang-hr: Europska zaklada za izobrazbu
+description;lang-hu:: RXVyw7NwYWkgS8OpcHrDqXNpIEFsYXDDrXR2w6FueQ==
+description;lang-it: Fondazione europea per la formazione
+description;lang-lt: Europos mokymo fondas
+description;lang-lv:: RWlyb3BhcyBJemdsxKt0xKtiYXMgZm9uZHM=
+description;lang-mt:: aWwtRm9uZGF6empvbmkgRXdyb3BlYSBnxKdhdC1UYcSncmnEoQ==
+description;lang-nl: Europese Stichting voor opleiding
+description;lang-pl:: RXVyb3BlanNrYSBGdW5kYWNqYSBLc3p0YcWCY2VuaWE=
+description;lang-pt:: RnVuZGHDp8OjbyBFdXJvcGVpYSBwYXJhIGEgRm9ybWHDp8Ojbw==
+description;lang-ro:: RnVuZGHIm2lhIEV1cm9wZWFuxIMgZGUgRm9ybWFyZQ==
+description;lang-sk:: RXVyw7Nwc2thIG5hZMOhY2lhIHByZSBvZGJvcm7DqSB2emRlbMOhdm
+ FuaWU=
+description;lang-sl: Evropska fundacija za usposabljanje
+description;lang-sv: Europeiska yrkesutbildningsstiftelsen
+
+dn: cn=eu.europa.satcen,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.satcen
+o: eu.europa.satcen
+sn: eu.europa.satcen
+recordStatus: a
+description: European Union Satellite Centre
+description;lang-bg:: 0KHQsNGC0LXQu9C40YLQtdC9INGG0LXQvdGC0YrRgCDQvdCwINCV0L
+ LRgNC+0L/QtdC50YHQutC40Y8g0YHRitGO0Lc=
+description;lang-cs:: U2F0ZWxpdG7DrSBzdMWZZWRpc2tvIEV2cm9wc2vDqSB1bmll
+description;lang-da: EU-Satellitcentret
+description;lang-de:: U2F0ZWxsaXRlbnplbnRydW0gZGVyIEV1cm9ww6Rpc2NoZW4gVW5pb2
+ 4=
+description;lang-el:: zpTOv8+Bz4XPhs6/z4HOuc66z4wgzprOrc69z4TPgc6/IM+EzrfPgi
+ DOlc+Fz4HPic+AzrHPis66zq7PgiDOiM69z4nPg863z4I=
+description;lang-en: European Union Satellite Centre
+description;lang-es:: Q2VudHJvIGRlIFNhdMOpbGl0ZXMgZGUgbGEgVW5pw7NuIEV1cm9wZW
+ E=
+description;lang-et: Euroopa Liidu Satelliidikeskus
+description;lang-fi: Euroopan unionin satelliittikeskus
+description;lang-fr:: Q2VudHJlIHNhdGVsbGl0YWlyZSBkZSBs4oCZVW5pb24gZXVyb3DDqW
+ VubmU=
+description;lang-ga:: TMOhcmlvbmFkIFNhdGFpbMOtdGUgYW4gQW9udGFpcyBFb3JwYWlnaA
+ ==
+description;lang-hr: Satelitski centar Europske unije
+description;lang-hu:: QXogRXVyw7NwYWkgVW5pw7MgTcWxaG9sZGvDtnpwb250amE=
+description;lang-it:: Q2VudHJvIHNhdGVsbGl0YXJlIGRlbGzigJlVbmlvbmUgZXVyb3BlYQ
+ ==
+description;lang-lt:: RXVyb3BvcyBTxIVqdW5nb3MgcGFseWRvdsWzIGNlbnRyYXM=
+description;lang-lv:: RWlyb3BhcyBTYXZpZW7Eq2JhcyBTYXRlbMSrdGNlbnRycw==
+description;lang-mt:: acSLLcSKZW50cnUgU2F0ZWxsaXRhcmkgdGFsLVVuam9uaSBFd3JvcG
+ Vh
+description;lang-nl: Satellietcentrum van de Europese Unie
+description;lang-pl: Centrum Satelitarne Unii Europejskiej
+description;lang-pt:: Q2VudHJvIGRlIFNhdMOpbGl0ZXMgZGEgVW5pw6NvIEV1cm9wZWlh
+description;lang-ro: Centrul Satelitar al Uniunii Europene
+description;lang-sk:: U2F0ZWxpdG7DqSBzdHJlZGlza28gRXVyw7Nwc2tlaiDDum5pZQ==
+description;lang-sl: Satelitski center Evropske unije
+description;lang-sv: Europeiska unionens satellitcentrum
+
+dn: cn=eu.europa.eurohpc,ou=AuthenticationDomains,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: eu.europa.eurohpc
+o: eu.europa.eurohpc
+sn: eu.europa.eurohpc
+recordStatus: a
+description: European High-Performance Computing Joint Undertaking
+description;lang-bg:: 0KHRitCy0LzQtdGB0YLQvdC+INC/0YDQtdC00L/RgNC40Y/RgtC40L
+ Ug0LfQsCDQtdCy0YDQvtC/0LXQudGB0LrQuCDQstC40YHQvtC60L7Qv9GA0L7QuNC30LLQvtC00
+ LjRgtC10LvQvdC4INC40LfRh9C40YHQu9C40YLQtdC70L3QuCDRgtC10YXQvdC+0LvQvtCz0LjQ
+ uA==
+description;lang-cs:: ZXZyb3Bza8O9IHNwb2xlxI1uw70gcG9kbmlrIHBybyB2eXNvY2Ugds
+ O9a29ubm91IHbDvXBvxI1ldG7DrSB0ZWNobmlrdQ==
+description;lang-da:: ZsOmbGxlc2ZvcmV0YWdlbmRldCBmb3IgZXVyb3DDpmlzayBow7hqdH
+ lkZW5kZSBkYXRhYmVoYW5kbGluZw==
+description;lang-de:: R2VtZWluc2FtZXMgVW50ZXJuZWhtZW4gZsO8ciBldXJvcMOkaXNjaG
+ VzIEhvY2hsZWlzdHVuZ3NyZWNobmVu
+description;lang-el:: zrrOv865zr3OriDOtc+AzrnPh861zq/Pgc63z4POtyDOs865zrEgz4
+ TOt869IM61z4XPgc+Jz4DOsc+KzrrOriDPhc+Azr/Ou86/zrPOuc+Dz4TOuc66zq4gz4XPiM63z
+ rvPjs69IM61z4DOuc60z4zPg861z4nOvQ==
+description;lang-en: European High-Performance Computing Joint Undertaking
+description;lang-es:: RW1wcmVzYSBDb23Dum4gZGUgSW5mb3Jtw6F0aWNhIGRlIEFsdG8gUm
+ VuZGltaWVudG8gRXVyb3BlYQ==
+description;lang-et:: RXVyb29wYSBrw7VyZ2rDtXVkbHVzZWdhIGFuZG1ldMO2w7Z0bHVzZS
+ DDvGhpc2V0dGV2w7V0ZQ==
+description;lang-fi: Euroopan suurteholaskennan yhteisyritys
+description;lang-fr:: ZW50cmVwcmlzZSBjb21tdW5lIHBvdXIgbGUgY2FsY3VsIMOgIGhhdX
+ RlIHBlcmZvcm1hbmNlIGV1cm9ww6llbg==
+description;lang-ga:: Q29taGdobsOzdGhhcyByw61vbWhhaXJlYWNodGEgYXJkZmhlaWRobc
+ Otb2NodGEgRW9ycGFjaA==
+description;lang-hr:: WmFqZWRuacSNa28gcG9kdXplxIdlIHphIGV1cm9wc2tvIHJhxI11bm
+ Fsc3R2byB2aXNva2loIHBlcmZvcm1hbnNp
+description;lang-hu:: ZXVyw7NwYWkgbmFneSB0ZWxqZXPDrXRtw6luecWxIHN6w6Ftw610w6
+ FzdGVjaG5pa2Ega8O2esO2cyB2w6FsbGFsa296w6Fz
+description;lang-it: impresa comune per il calcolo ad alte prestazioni europ
+ eo
+description;lang-lt:: RXVyb3BvcyBuYcWhaW9zaW9zIGtvbXBpdXRlcmlqb3MgYmVuZHJvam
+ kgxK9tb27Elw==
+description;lang-lv:: RWlyb3BhcyBhdWdzdGFzIHZlaWt0c3DEk2phcyBkYXRvxaFhbmFzIG
+ tvcHV6xYbEk211bXM=
+description;lang-mt:: bC1JbXByacW8YSBLb27EoXVudGEgZ8SnYWxsLUNvbXB1dGluZyB0Ye
+ KAmSBQcmVzdGF6empvbmkgR8Snb2xqYSBFd3JvcGV3
+description;lang-nl: Gemeenschappelijke Onderneming Europese high-performanc
+ e computing
+description;lang-pl:: V3Nww7NsbmUgUHJ6ZWRzacSZd3ppxJljaWUgdyBkemllZHppbmllIE
+ V1cm9wZWpza2ljaCBPYmxpY3plxYQgV2llbGtpZWogU2thbGk=
+description;lang-pt:: RW1wcmVzYSBDb211bSBwYXJhIGEgQ29tcHV0YcOnw6NvIEV1cm9wZW
+ lhIGRlIEFsdG8gRGVzZW1wZW5obw==
+description;lang-ro:: w65udHJlcHJpbmRlcmVhIGNvbXVuxIMgcGVudHJ1IGNhbGN1bHVsIG
+ V1cm9wZWFuIGRlIMOubmFsdMSDIHBlcmZvcm1hbsibxIM=
+description;lang-sk:: c3BvbG/EjW7DvSBwb2RuaWsgcHJlIGV1csOzcHNrdSB2eXNva292w7
+ 1rb25uw7ogdsO9cG/EjXRvdsO6IHRlY2huaWt1
+description;lang-sl:: U2t1cG5vIHBvZGpldGplIHphIGV2cm9wc2tvIHZpc29rb3ptb2dsam
+ l2b3N0bm8gcmHEjXVuYWxuacWhdHZv
+description;lang-sv:: ZGV0IGdlbWVuc2FtbWEgZsO2cmV0YWdldCBmw7ZyIGV0dCBldXJvcG
+ Vpc2t0IGjDtmdwcmVzdGVyYW5kZSBkYXRvcnN5c3RlbQ==
+ 

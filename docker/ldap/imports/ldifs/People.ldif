@@ -1,0 +1,71 @@
+
+dn: ou=People,dc=cec,dc=eu,dc=int
+objectClass: organizationalUnit
+objectClass: top
+ou: people
+description: CUD users
+
+dn: uid=bournja,ou=people,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: Jason BOURNE
+sn: BOURNE
+cudgroup: MEDUSA
+cudgroup: TREADSTONE
+departmentNumber: DIGIT.X.1.001
+ecMoniker: bournja
+employeeType: f
+employeeNumber: 00000001
+euEmployeeStatusDetail: A
+givenName: Jason
+mail: Jason.BOURNE@ec.europa.eu
+modificationDate: 20150101100000Z
+recordStatus: a
+o: eu.europa.ec
+
+
+dn: uid=chucknorris,ou=people,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: Chuck NORRIS
+sn: NORRIS
+cudgroup: MEDUSA
+cudgroup: TREADSTONE
+departmentNumber: DIGIT.X.1.001
+ecMoniker: chucknorris
+employeeType: f
+employeeNumber: 00000001
+euEmployeeStatusDetail: A
+givenName: Chuck
+mail: Chuck.NORRIS@ec.europa.eu
+modificationDate: 20150101100000Z
+recordStatus: a
+o: eu.europa.ec
+
+dn: uid=jb007,ou=people,dc=cec,dc=eu,dc=int
+objectClass: cudperson
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: person
+objectClass: top
+cn: BOND James
+sn: BOND
+cudgroup: MI6
+cudgroup: DOUBLE_KILL
+cudgroup: DIGIT_CIRCABC
+cudgroup: AIDA_SELFRG
+departmentNumber: DIGIT.A.3.001
+ecMoniker: bond007
+employeeType: n
+givenName: James
+mail: 007@mi6.eu
+modificationDate: 20150101100000Z
+o: external
+ou: people
+recordStatus: a

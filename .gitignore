@@ -6,6 +6,8 @@ src/main/webapp/WEB-INF/Content/EC/mailtemplateecofficial.html
 #### CONFIGURATION FILES ####
 /src/main/config/*
 !/src/main/config/oss
+!/src/main/config/ossdocker
+!/src/main/config/ossk8s
 !/src/main/config/oss/*
 
 #### TARGET AND GENERATED FILES ####
@@ -50,3 +52,16 @@ src/main/webapp/WEB-INF/views/version.txt
 .settings/
 .classpath
 .project
+
+docker/server/dist/
+src/main/webapp/WEB-INF/views/versionfooter.txt
+docker/eulogin/eulogin-mockup-config/
+helm/Chart.lock
+helm/charts/
+
+src/main/java/com/ec/survey/config/RedisSessionBrowser.java
+docker/update.sh
+helm/clean.sh
+
+
+

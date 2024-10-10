@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  eulogin:
+    image: ghcr.io/circabc/circabc_rest/eulogin/mockserver:9.10.6
+    container_name: eulogin
+    hostname: eulogin
+    extra_hosts:
+      - "eulogin:127.0.0.1"
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "7001:7001"
+      - "7002:7002"
+      - "7003:7003"
+    volumes:
+      - ./eulogin-mockup-config:/data/ecas-mock-server-shared
+    stdin_open: true
+    tty: true
+    networks:
+      - docker_eusurvey-network
+networks:
+  docker_eusurvey-network:
+    external: true

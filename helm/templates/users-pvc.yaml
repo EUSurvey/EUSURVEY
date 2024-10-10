@@ -1,0 +1,21 @@
+
+{{- if and .Values.persistence.users.enabled (not .Values.persistence.users.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "common.names.fullname" . }}-tomcat-users
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    {{- range .Values.persistence.users.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.users.size | quote }}
+  {{- include "common.storage.class" (dict "persistence" .Values.persistence.users "global" .Values.global) | nindent 2 }}
+{{- end -}}

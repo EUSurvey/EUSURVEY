@@ -3,7 +3,7 @@ package com.ec.survey.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Paging<T> {
+public class Paging<T> implements java.io.Serializable {
 
 	private int firstItemOnPage;
 	private int lastItemOnPage;

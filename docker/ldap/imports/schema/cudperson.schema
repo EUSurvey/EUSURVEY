@@ -1,0 +1,156 @@
+#This file has been converted from the user99.ldif provded by the CED Team
+#Unfortunalty this ldif was containing some errors or missing info that was compsated by the iPlanet runtime use for th CED
+#Thereore we add 'EQUALITY caseIgnoreMatch' on Strings field as 'SUBSTR caseIgnoreSubstringsMatch' as well (where we think is needed) to be sure that all those string can be potentially queried
+
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.1 NAME 'building'
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.10 NAME 'internalDGcode'
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.11 NAME 'ecHostOU'
+	DESC ''
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch	
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.12 NAME 'ecInternationalTelephoneNumber'
+	DESC 'CUD user full international telephone number'
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch	
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.50
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.13 NAME 'ecJobID'
+	DESC 'ID of the main JOB_ID'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.14 NAME 'ecMoniker'
+	DESC 'Local userid provided by another Institution'
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.15 NAME 'ecOrgId'
+	DESC ''
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.16 NAME 'ecSYSPERNumber'
+	DESC 'Numero de matricule SYSPER'
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.17 NAME 'ecTfnId'
+	DESC ''
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.18 NAME 'euEmployeeStatusDetail'
+	DESC ''
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch	
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.19 NAME 'euEmployeeSubtype'
+	DESC ''
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch	
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.2 NAME 'contractExpiryDate'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.21 NAME 'locationGroup'
+	DESC ''
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.22 NAME 'modificationDate'
+	DESC ''
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.24 NAME 'recordStatus'
+	DESC ''
+    EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.25 NAME 'sec'
+	DESC ''
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.26 NAME 'ser'
+	DESC ''
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.27 NAME 'sourceOrganisation'
+	DESC ''
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.3 NAME 'cudgroup'
+    EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.4 NAME 'dg'
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.5 NAME 'dir'
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.6 NAME 'div'
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.7 NAME 'employeeStatus'
+    EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.8 NAME 'floor'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch	
+	SINGLE-VALUE
+	USAGE userApplications )
+attributetype ( 1.3.6.1.4.1.10076.3.1.100.9 NAME 'gestelNumber'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	USAGE userApplications )
+objectclass ( 1.3.6.1.4.1.10076.3.1.100 NAME 'cudPerson'
+    SUP inetOrgPerson
+	STRUCTURAL
+	MAY ( building $ c $ contractExpiryDate $ cudgroup $ dg $ dir $ div $ employeeStatus $ floor $ gestelNumber $ internalDGcode $ locationGroup $ modificationDate $ owner $ recordStatus $ sec $ ser $ sourceOrganisation $ euEmployeeStatusDetail $ euEmployeeSubtype $ ecSYSPERNumber $ ecOrgId $ ecMoniker $ ecHostOU $ ecJobID $ ecTfnId $ ecInternationalTelephoneNumber ) )
