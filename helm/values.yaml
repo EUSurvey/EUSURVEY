@@ -63,16 +63,16 @@ tomcat:
       emptyDir: {}
     - name: eusurvey-files
       persistentVolumeClaim:
-        claimName: eusurvey-files
+        claimName: '{{ include "common.names.fullname" . }}-files'
     - name: eusurvey-surveys
       persistentVolumeClaim:
-        claimName: eusurvey-surveys
+        claimName: '{{ include "common.names.fullname" . }}-surveys'
     - name: eusurvey-users
       persistentVolumeClaim:
-        claimName: eusurvey-users
+        claimName: '{{ include "common.names.fullname" . }}-users'
     - name: eusurvey-archive
       persistentVolumeClaim:
-        claimName: eusurvey-archive
+        claimName: '{{ include "common.names.fullname" . }}-archive'
 
   initContainers:
     - name: copy-eusurvey-war
