@@ -3,7 +3,9 @@ global:
   defaultStorageClass: "standard"
 
 tomcat:
-  replicaCount: 2 
+  replicaCount: 2
+  deployment:
+    type: statefulset
   service:
     type: ClusterIP
     ports: 
@@ -20,6 +22,7 @@ tomcat:
     limits:
       memory: "2Gi"    
       cpu: "1000m"     
+  
   lifecycleHooks:
     postStart:
       exec:
@@ -27,16 +30,17 @@ tomcat:
           - /bin/sh
           - -c
           - |
-            if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
-              mkdir -p /tmp/eusurvey
-              mv /usr/local/share/eusurvey.war /tmp/eusurvey/eusurvey.war
-              cd /tmp/eusurvey
-              jar -xvf eusurvey.war
-              rm eusurvey.war
-              cp /etc/config/secrets/spring.properties ./WEB-INF/spring.properties
-              cp /etc/config/secrets/ehcache.xml ./WEB-INF/classes/ehcache.xml
-              mv /tmp/eusurvey /opt/bitnami/tomcat/webapps/eusurvey
-              rm -rf /tmp/eusurvey
+            if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then  
+              mv /usr/local/share/eusurvey.war /tmp/eusurvey.war 2>&1
+              mkdir -p /tmp/eusurvey 2>&1
+              cd /tmp/eusurvey && jar -xvf /tmp/eusurvey.war 2>&1
+              cp /etc/config/secrets/spring.properties /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+              cp /etc/config/secrets/ehcache.xml /tmp/eusurvey/WEB-INF/classes/ehcache.xml 2>&1
+              rm /tmp/eusurvey.war 2>&1
+              mv /tmp/eusurvey /opt/bitnami/tomcat/webapps/eusurvey 2>&1
+              rm -rf /tmp/eusurvey 2>&1
+            fi
+            
 
   extraVolumeMounts:
   - name: usr-local-share-volume  
