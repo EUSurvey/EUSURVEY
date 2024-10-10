@@ -562,7 +562,7 @@
 															<!-- /ko -->
 															
 														<!-- ko if: formManagementRights && canCreateSurveys -->
-														<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', isQuiz == null ? '' : isQuiz.toString(), isDelphi == null ? '' : isDelphi.toString(), isEVote == null ? '' : isEVote.toString(), isSelfAssessment == null ? '' : isSelfAssessment.toString()); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+														<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', isQuiz == null ? '' : isQuiz.toString(), isDelphi == null ? '' : isDelphi.toString(), isEVote == null ? '' : isEVote.toString()); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 														<!-- /ko -->
 														
 															<!-- ko if: formManagementRights -->

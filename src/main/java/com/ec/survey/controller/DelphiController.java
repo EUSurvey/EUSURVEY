@@ -8,7 +8,6 @@ import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.delphi.*;
-import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
@@ -318,7 +317,6 @@ public class DelphiController extends BasicController {
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
 			Map<String, Integer> numberOfAnswersMapNumberQuestion = new HashMap<>();
 			Map<String, Map<Integer, Integer>> numberOfAnswersMapRankingQuestion = new HashMap<>();
-			Map<String, Map<Integer, Integer>> mapTargetDatasetQuestion = new HashMap<>();
 
 			creator.getAnswers4Statistics(
 					survey,
@@ -329,11 +327,10 @@ public class DelphiController extends BasicController {
 					multipleChoiceSelectionsByAnswerset,
 					numberOfAnswersMapRatingQuestion,
 					numberOfAnswersMapNumberQuestion,
-					numberOfAnswersMapRankingQuestion,
-					mapTargetDatasetQuestion);
+					numberOfAnswersMapRankingQuestion);
 
 			if (question instanceof ChoiceQuestion) {
-				return handleDelphiGraphChoiceQuestion(survey, (ChoiceQuestion) question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset, mapTargetDatasetQuestion);
+				return handleDelphiGraphChoiceQuestion(survey, (ChoiceQuestion) question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
 			}
 
 			if (question instanceof Matrix) {
@@ -351,7 +348,7 @@ public class DelphiController extends BasicController {
 			if (question instanceof ComplexTableItem) {
 				ComplexTableItem item = (ComplexTableItem) question;
 				if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
-					return handleDelphiGraphChoiceQuestion(survey, question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset, mapTargetDatasetQuestion);
+					return handleDelphiGraphChoiceQuestion(survey, question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
 				}
 				if (item.getCellType() == ComplexTableItem.CellType.Number || item.getCellType() == ComplexTableItem.CellType.Formula) {
 					NumberQuestionStatistics numberQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, item);
@@ -597,13 +594,13 @@ public class DelphiController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphChoiceQuestion(Survey survey, Question question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset, Map<String, Map<Integer, Integer>> mapTargetDatasetQuestion) throws Exception {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphChoiceQuestion(Survey survey, Question question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) throws Exception {
 		if (numberOfAnswersMap.get(question.getId()) == 0 || (survey.getIsDelphi() && numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics())) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 
-		creator.addChoiceStatistics(survey, question, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset, mapTargetDatasetQuestion);
+		creator.addChoiceStatistics(survey, question, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
 
 		ResultFilter resultFilter = new ResultFilter();
 		resultFilter.setVisibleQuestions(new HashSet<>(question.getId()));
@@ -627,21 +624,6 @@ public class DelphiController extends BasicController {
 			result.setQuestionType(DelphiQuestionType.MultipleChoice);
 		} else {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-		}
-		
-		if (survey.getIsSelfAssessment() && question instanceof SingleChoiceQuestion) {
-			SingleChoiceQuestion scq = (SingleChoiceQuestion)question;
-			
-			if (scq.getIsTargetDatasetQuestion()) {
-				List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
-				
-				for (SATargetDataset dataset : datasets) {
-					DelphiGraphEntry entry = new DelphiGraphEntry();
-					entry.setLabel(dataset.getName());
-					entry.setValue(statistics.getRequestedRecords().get(scq.getUniqueId() + "-" + dataset.getId().toString()));
-					result.addEntry(entry);
-				}
-			}
 		}
 
 		List<PossibleAnswer> answers = question instanceof ChoiceQuestion ? ((ChoiceQuestion)question).getAllPossibleAnswers() : ((ComplexTableItem)question).getPossibleAnswers();

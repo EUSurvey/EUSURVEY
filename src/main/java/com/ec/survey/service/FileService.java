@@ -1110,8 +1110,8 @@ public class FileService extends BasicService {
 		java.io.File dir = this.getSurveyExportsFolder(surveyUID);
 		if (dir.exists()) {
 			try {				
-				//java.io.FileFilter fileFilter = new WildcardFileFilter("Export*.xls");
-				java.io.File[] files = dir.listFiles();
+				java.io.FileFilter fileFilter = new WildcardFileFilter("Export*.xls");
+				java.io.File[] files = dir.listFiles(fileFilter);
 				if (files != null) {
 					for (java.io.File file : files) {
 						if (file.exists()) {

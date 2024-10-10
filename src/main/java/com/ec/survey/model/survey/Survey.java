@@ -155,7 +155,6 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isDelphi;
 	private Boolean isOPC;
 	private Boolean isECF;
-	private Boolean isSelfAssessment;
 	private Boolean isEVote;
 	private Boolean showResultsTestPage = false;
 	private Boolean showQuizIcons;
@@ -1577,15 +1576,6 @@ final public class Survey implements java.io.Serializable {
 		}
 		return new HashSet<>();
 	}
-	
-	@Column(name = "SELFASSESSMENT")
-	public Boolean getIsSelfAssessment() {
-		return isSelfAssessment != null ? isSelfAssessment : false;
-	}
-
-	public void setIsSelfAssessment(Boolean isSelfAssessment) {
-		this.isSelfAssessment = isSelfAssessment != null ? isSelfAssessment : false;
-	}
 
 	@Column(name = "SHOWSCORE")
 	public Boolean getShowTotalScore() {
@@ -1754,7 +1744,7 @@ final public class Survey implements java.io.Serializable {
 			case "o":
 				return "label.OutsideCommunity";
 		}
-		return "label.Standard";
+		return "label.SinglePresident";
 	}
 	
 	
@@ -1917,7 +1907,6 @@ final public class Survey implements java.io.Serializable {
 		copy.isOPC = isOPC;
 		copy.isECF = isECF;
 		copy.isEVote = isEVote;
-		copy.isSelfAssessment = isSelfAssessment;
 		copy.eVoteTemplate = eVoteTemplate;
 		copy.quorum = quorum;
 		copy.minListPercent = minListPercent;

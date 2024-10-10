@@ -6,10 +6,6 @@
 		<div id="overview-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/overview"/>"><spring:message code="label.Overview" /></a></div>
 	</c:if>
 	
-	<c:if test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 0) && form.survey.isSelfAssessment}">
-		<div id="parameters-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/parameters"/>"><spring:message code="label.Parameters" /></a></div>
-	</c:if>
-	
 	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
 		<div id="preview-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/edit"/>"><spring:message code="label.Editor" /></a></div>	
 	</c:if>

@@ -2177,7 +2177,7 @@ function initModals(item)
 	}
 
 	function isElementInvisible(element) {
-		return $(element).closest(".survey-element").hasClass("untriggered") || ($(element).closest(".survey-element").hasClass("saquestion") && $(element).closest(".survey-element").is(":hidden"));
+		return $(element).closest(".survey-element").hasClass("untriggered");
 	}
 	
 	function parseDate2(dateString)
@@ -2444,13 +2444,6 @@ function initModals(item)
 			$("#create-survey-ecf").val("true");
 		} else {
 			$("#create-survey-ecf").val("false");
-		}
-		
-		if ($("#new-survey-type-selfassessment:checked").length > 0)
-		{
-			$("#create-survey-selfassessment").val("true");
-		} else {
-			$("#create-survey-selfassessment").val("false");
 		}
 		
 		if ($("#new-survey-type-evote:checked").length > 0)

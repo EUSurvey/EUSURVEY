@@ -269,8 +269,6 @@
 					$(td).append("<spring:message code="label.eVote"/>");
 				} else if (list[i].isECF) {
 					$(td).append("<spring:message code="label.ECF"/>");
-				} else if (list[i].isSelfAssessment) {
-					$(td).append("<spring:message code="label.SelfAssessment"/>");
 				} else {
 					$(td).append("<spring:message code="label.StandardSurvey"/>");
 				}
@@ -1288,14 +1286,6 @@
 												</c:when>
 												<c:otherwise>
 													<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveyECF" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.ECF" /></li>
-												</c:otherwise>
-											</c:choose>
-											<c:choose>
-												<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("selfassessment")}'>
-													<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveySelfAssessment" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.SelfAssessment" /></li>
-												</c:when>
-												<c:otherwise>
-													<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="surveySelfAssessment" type="checkbox" class="check" style="width: auto !important;" value="true" /><spring:message code="label.SelfAssessment" /></li>
 												</c:otherwise>
 											</c:choose>
 										</ul>

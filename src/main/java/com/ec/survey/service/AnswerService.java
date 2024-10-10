@@ -12,8 +12,6 @@ import com.ec.survey.model.attendees.Attribute;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.delphi.DelphiMedian;
-import com.ec.survey.model.selfassessment.SAScore;
-import com.ec.survey.model.selfassessment.SAScoreCard;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
@@ -63,9 +61,6 @@ public class AnswerService extends BasicService {
 
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
-	
-	@Resource(name = "selfassessmentService")
-	protected SelfAssessmentService selfassessmentService;
 	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void internalSaveAnswerSet(AnswerSet answerSet, String fileDir, String draftid,
@@ -570,6 +565,10 @@ public class AnswerService extends BasicService {
 
 		if (filter != null) {
 
+//			if (filter.getFilterValues() != null && filter.getFilterValues().size() > 3) {
+//				throw new TooManyFiltersException("too many result filters");
+//			}
+
 			if (filter.getStatus() != null && filter.getStatus().length() > 0
 					&& !filter.getStatus().equalsIgnoreCase("All")) {
 				where.append(" AND ans.ISDRAFT = :status");
@@ -663,7 +662,6 @@ public class AnswerService extends BasicService {
 			if (filterValues != null && filterValues.size() > 0) {
 				Set<String> rankingQuestionUids = surveyId > -1 ? surveyService.getRankingQuestionUids(surveyId) : new HashSet<>();	
 				Set<String> galleryQuestionUids = surveyId > -1 ? surveyService.getGalleryQuestionUids(surveyId) : new HashSet<>();	
-				Set<String> targetDatasetQuestionUids = surveyId > -1 ? surveyService.getTargetDatasetQuestionUids(surveyId) : new HashSet<>();
 				
 				int i = 0;
 				for (Entry<String, String> item : filterValues.entrySet()) {
@@ -736,8 +734,6 @@ public class AnswerService extends BasicService {
 											// the filter on ranking questions is basically the first element in the sorted list
 											if (rankingQuestionUids.contains(questionUid)) {
 												values.put(Constants.ANSWER + i, answer + "%");
-											} else if (targetDatasetQuestionUids.contains(questionUid)) {
-												values.put(Constants.ANSWER + i, answer.substring(answer.lastIndexOf("-")+1));
 											} else {
 												if (NumberUtils.isNumber(answer) && answer.endsWith(".0")) {
 													values.put(Constants.ANSWER + i, "%" + answer.replace(".0", "") + "%");
@@ -2861,35 +2857,5 @@ public class AnswerService extends BasicService {
 
 		return s.toString();
 
-	}
-
-	public void addHiddenSAQuestions(AnswerSet answerSet, Set<String> invisibleElements, SingleChoiceQuestion targetDatasetQuestion) {
-		List<Answer> answers = answerSet.getAnswers(targetDatasetQuestion.getUniqueId());
-		if (!answers.isEmpty()) {
-			int dataset = Integer.parseInt(answers.get(0).getValue());
-			SAScoreCard card = selfassessmentService.getScoreCard(dataset);
-			List<Integer> hiddenCriteriaIDs = new ArrayList<>();
-			if (card != null) {
-				for (SAScore score : card.getScores()) {
-					if (score.getNotRelevant() && !hiddenCriteriaIDs.contains(score.getCriterion())) {
-						hiddenCriteriaIDs.add(score.getCriterion());
-					}
-				}
-				
-				if (!hiddenCriteriaIDs.isEmpty()) {
-					for (Question question : answerSet.getSurvey().getQuestions()) {
-						if (question instanceof SingleChoiceQuestion) {
-							SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
-							if (scq.getIsSAQuestion() && scq.getEvaluationCriterion() != null && hiddenCriteriaIDs.contains(scq.getEvaluationCriterion().getId())) {
-								if (!invisibleElements.contains(scq.getUniqueId())) {
-									invisibleElements.add(scq.getUniqueId());
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
 	}
 }

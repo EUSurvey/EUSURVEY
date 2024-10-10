@@ -103,7 +103,7 @@
 	var isresponsive = ${responsive != null};
 	var isdelphi = ${form != null && form.survey.getIsDelphi()};
 	var isevote = ${form != null && form.survey.getIsEVote()};
-	var delphiStartPageUrl = '<c:out value='${pageContext.request.getAttribute("javax.servlet.forward.request_uri")}?${pageContext.request.getQueryString().replace("startDelphi=true&", "").replace("startDelphi=true", "?")}' />';
+	var delphiStartPageUrl = '${pageContext.request.getAttribute("javax.servlet.forward.request_uri")}?${pageContext.request.getQueryString().replace("startDelphi=true&", "").replace("startDelphi=true", "?")}';
 
 	var maxEVoteCandidates = "${form.survey.maxPrefVotes}"
 

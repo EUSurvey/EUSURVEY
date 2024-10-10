@@ -7,7 +7,6 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
-import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
@@ -399,14 +398,12 @@ public class XlsExportCreator extends ExportCreator {
 					export != null && export.getShowShortnames());
 		}
 		List<Question> questions = form.getSurvey().getQuestions();
-		
-		Map<Integer, String> targetDatasetNames = selfassessmentService.getTargetDatasetNames(survey);
-		
+
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, questions,
 						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, null, null, null,
-						explanationFilesOfSurvey, explanationFilesToExport, targetDatasetNames);
+						explanationFilesOfSurvey, explanationFilesToExport);
 			}
 		} else {
 
@@ -473,7 +470,7 @@ public class XlsExportCreator extends ExportCreator {
 							session.flush();
 							parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
 									uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations,
-									discussions, likesForExplanations, explanationFilesOfSurvey, explanationFilesToExport, targetDatasetNames);
+									discussions, likesForExplanations, explanationFilesOfSurvey, explanationFilesToExport);
 						}
 
 						answerSet = new AnswerSet();
@@ -493,7 +490,7 @@ public class XlsExportCreator extends ExportCreator {
 				if (lastAnswerSet > 0)
 					parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
 							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions, likesForExplanations,
-							explanationFilesOfSurvey, explanationFilesToExport, targetDatasetNames);
+							explanationFilesOfSurvey, explanationFilesToExport);
 			} finally {
 				results.close();
 			}
@@ -607,7 +604,7 @@ public class XlsExportCreator extends ExportCreator {
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
 			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations,
 			Map<Integer, Map<String, String>> discussions, Map<String, Integer> likesForExplanations,  FilesByTypes<Integer, String> explanationFilesOfSurvey,
-			FilesByTypes<String, String> explanationFilesToExport, Map<Integer, String> targetDatasetNames) throws IOException {
+			FilesByTypes<String, String> explanationFilesToExport) throws IOException {
 		CreationHelper createHelper = wb.getCreationHelper();
 
 		// Excel older than 2007 has a limit on the number of rows
@@ -956,11 +953,8 @@ public class XlsExportCreator extends ExportCreator {
 
 						StringBuilder cellValue = new StringBuilder();
 						for (Answer answer : answers) {
-							
-							if ("TARGETDATASET".equals(answer.getPossibleAnswerUniqueId())) {
-								String dataset = targetDatasetNames.get(Integer.parseInt(answer.getValue()));
-								cellValue.append(dataset);
-							} else if (question instanceof FreeTextQuestion) {
+
+							if (question instanceof FreeTextQuestion) {
 								cellValue.append((cellValue.length() > 0) ? ";" : "")
 										.append(form.getAnswerTitle(answer));
 							} else {
@@ -1266,36 +1260,6 @@ public class XlsExportCreator extends ExportCreator {
 
 					CreateTableForAnswer(cellValue, boldstyle);
 					ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
-					
-					if (question instanceof SingleChoiceQuestion) {
-						SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
-						if (scq.getIsTargetDatasetQuestion()) {
-							List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
-							for (SATargetDataset dataset : datasets) {
-								String key = scq.getUniqueId() + "-" + dataset.getId();
-								row = sheet.createRow(rowIndex++);
-
-								cellValue = ConversionTools.removeHTMLNoEscape(dataset.getName());
-								row.createCell(0).setCellValue(cellValue);
-
-								Double percent = statistics.getRequestedRecordsPercent().get(key);
-
-								if (percent == null)
-									percent = 0.0;
-
-								drawChart(percent, helper, drawing);
-
-								if (statistics.getRequestedRecords().get(key) != null) {
-									row.createCell(2).setCellValue(
-											statistics.getRequestedRecords().get(key));
-								}
-								Cell pcell = row.createCell(3);
-								pcell.setCellValue(percent / 100);
-								pcell.setCellStyle(percentStyle);
-							}
-						}
-					}						
-					
 					for (PossibleAnswer possibleAnswer : choiceQuestion.getAllPossibleAnswers()) {
 						row = sheet.createRow(rowIndex++);
 

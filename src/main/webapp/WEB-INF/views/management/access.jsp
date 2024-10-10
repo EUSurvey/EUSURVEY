@@ -65,8 +65,7 @@
 		var labelreadonly = '<spring:message code="label.ReadingAccess" />';
 		var labelreadwrite = '<spring:message code="label.ReadWriteAccess" />';
 		var errorOperationFailed = '<spring:message code="error.OperationFailed" />';
-		var atLeastOneMail = '<spring:message code="label.AtLeastOneMail" />';
-		var noEmptySearch = '<spring:message code="label.NoEmptySearch" />';
+		var atLestOneMail = '<spring:message code="label.AtLeastOneMail" />';
 		var page = ${resultspage};
 		var rows = 20;
 		
@@ -283,13 +282,7 @@
 							</c:forEach>
 						</select>	
 					</div>
-					<div style="clear: both"></div>
-					<div style="margin-top: 20px">
-						<div id="noEmptySearch" style="margin-bottom: 0.8rem; display: inline-flex">
-							<img id="noEmptySearchIcon" src="${contextpath}/resources/images/exclamation-triangle.svg" style="display: none; height: 2rem; margin-right: 8px;"></img>
-							<div id="noEmptySearchText" style="color: red"></div>
-						</div>
-					</div>
+					
 				</c:when>
 				<c:when test="${USER.type == 'SYSTEM'}">
 					<div style="float: left; width: 250px;  margin-right: 10px;">

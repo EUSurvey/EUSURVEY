@@ -124,7 +124,7 @@
 			<c:forEach var="element" items="${page}">
 								
 				<c:choose>
-					<c:when test="${invisibleElements != null && invisibleElements.contains(element.uniqueId)}">
+					<c:when test="${element.isDependent && invisibleElements != null && invisibleElements.contains(element.uniqueId)}">
 						<div class="survey-element" id="${element.id}" style="margin: 5px; margin-top: 25px; display: none;">
 					</c:when>
 					<c:otherwise>
@@ -753,17 +753,6 @@
 				<c:if test="${element.getType() == 'SingleChoiceQuestion'}">
 					<div class="answer-columns">
 						<c:choose>
-							<c:when test="${element.getType() == 'SingleChoiceQuestion' && element.getIsTargetDatasetQuestion() == true}">
-								<div class="answer-column" style="word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px;">
-									<div style="float: right"><i class="icon icon-chevron-down"></i></div>
-									<c:forEach items="${element.targetDatasets}" var="dataset">												
-										<c:if test="${form.getValues(element).contains(dataset.id.toString())}">
-											${dataset.name}
-										</c:if>																																
-									</c:forEach>			
-								</div>
-							</c:when>	
-																	
 							<c:when test="${element.getUseRadioButtons() == false && form.getValues(element).size() > 0}">
 								<div class="answer-column" style="word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px;">
 									<div style="float: right"><i class="icon icon-chevron-down"></i></div>

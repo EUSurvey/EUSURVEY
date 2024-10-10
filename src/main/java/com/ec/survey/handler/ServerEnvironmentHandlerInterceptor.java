@@ -61,9 +61,6 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public static final String APPLICATION_ECF = "enableecf";
 	public @Value("${ui.enableecf}") String enableecf;
 	
-	public static final String APPLICATION_SELFASSESSMENT = "enableselfassessment";
-	public @Value("${ui.enableselfassessment}") String enableselfassessment;
-	
 	public static final String APPLICATION_PUBLICSURVEYS = "enablepublicsurveys";
 	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
 	
@@ -103,7 +100,6 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 
 		request.setAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
 		request.setAttribute(APPLICATION_ECF, enableecf != null && enableecf.equalsIgnoreCase("true"));
-		request.setAttribute(APPLICATION_SELFASSESSMENT, enableselfassessment != null && enableselfassessment.equalsIgnoreCase("true"));
 		request.setAttribute(APPLICATION_DELPHI, enabledelphi != null && enabledelphi.equalsIgnoreCase("true"));
 		request.setAttribute(APPLICATION_EVOTE, enableevote != null && enableevote.equalsIgnoreCase("true"));
 		request.setAttribute("languages", surveyService.getLanguages());
@@ -131,7 +127,6 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE, enableevote != null && enableevote.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_ECF, enableecf != null && enableecf.equalsIgnoreCase("true"));
-            modelAndView.getModelMap().addAttribute(APPLICATION_SELFASSESSMENT, enableselfassessment != null && enableselfassessment.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_PUBLICSURVEYS, enablepublicsurveys != null && enablepublicsurveys.equalsIgnoreCase("true"));
                         
             modelAndView.getModelMap().addAttribute(APPLICATION_FILEMANAGEMENT, enablefilemanagement != null && enablefilemanagement.equalsIgnoreCase("true"));

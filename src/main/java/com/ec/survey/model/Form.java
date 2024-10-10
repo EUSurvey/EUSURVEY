@@ -947,24 +947,4 @@ public class Form {
 		}
 		return res;
 	}
-	
-	public int getInitialTargetDataset() {
-		if (survey.getIsSelfAssessment() & !answerSets.isEmpty()) {
-			for (Question q : survey.getQuestions()) {
-				if (q instanceof SingleChoiceQuestion) {
-					SingleChoiceQuestion scq = (SingleChoiceQuestion)q;
-					if (scq.getIsTargetDatasetQuestion()) {
-						List<Answer> answers = answerSets.get(0).getAnswers(scq.getUniqueId());
-						if (!answers.isEmpty()) {
-							return Integer.parseInt(answers.get(0).getValue());
-						}
-						
-						break;
-					}
-				}
-			}
-		}
-		
-		return 0;
-	}
 }

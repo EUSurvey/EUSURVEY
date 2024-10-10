@@ -403,14 +403,9 @@ function newBasicViewModel(element)
 	
 	viewModel.copy = function()
 	{
-
-		if (viewModel.type == 'SingleChoiceQuestion' && viewModel.isTargetDatasetQuestion()) {
-			$("#multipletargetdatasetselectionsdialog").modal('show');
-			return null;
-		}
-
 		//Create a deep clone that transforms all observables to default js values
 		let copy = ko.toJS(viewModel);
+
 
 		notAViewModel(copy);
 
@@ -723,6 +718,7 @@ function newSingleChoiceViewModel(element)
 		return viewModel.choiceType() === "buttons"
 	});
 
+
 	viewModel.styleType = ko.pureComputed(function() {
 		switch (viewModel.choiceType()){
 			case "radio":
@@ -735,20 +731,6 @@ function newSingleChoiceViewModel(element)
 				return "Buttons"
 		}
 	});
-	
-	viewModel.isTargetDatasetQuestion = ko.observable(element.isTargetDatasetQuestion);
-	viewModel.displayAllQuestions = ko.observable(element.displayAllQuestions);
-	viewModel.isSAQuestion = ko.observable(element.isSAQuestion);
-	if (element.evaluationCriterion instanceof Object)
-	{
-		// this probably comes from a copy operation where the properties differ a bit from the jSON produces by the server
-		viewModel.evaluationCriterion = ko.observable(element.evaluationCriterion != null ? element.evaluationCriterion.id : null);
-	} else {	
-		viewModel.evaluationCriterion = ko.observable(element.evaluationCriterion);
-	}
-	
-	viewModel.hiddenTargetDatasetIds = ko.observableArray(element.hiddenTargetDatasetIds);
-	viewModel.targetDatasets = ko.observableArray(element.targetDatasets);
 
 	//Knockout when so this is not just a one time if but a constant rule
 	//This rules removes the choice type likert if this is not a delphi
@@ -795,7 +777,7 @@ function newMultipleChoiceViewModel(element)
 				case "i": return "evote-ispra";
 				case "l": return "evote-luxembourg";
 				case "o": return "evote-outside";
-				case "p": return "evote-standard";
+				case "p": return "evote-president";
 			}
 		} else {
 			return viewModel.choiceType()
@@ -876,7 +858,6 @@ function newRankingViewModel(element)
 
 	viewModel.acceptInitialAnswer = function(data, event) {
 		const rankingItemList = $(event.target).closest(".rankingitem").find(".rankingitem-list")[0];
-		rankingItemList.firstElementChild.children[1].focus();
 		viewModel.isAnswered(true);
 		propagateChange(rankingItemList);
 		if (isdelphi) {
@@ -886,7 +867,7 @@ function newRankingViewModel(element)
 
 	viewModel.resetOrder = function(_, event) {
 		const thatRanking = $(event.target).closest(".rankingitem");
-
+		
 		//.slice() because originalItemUniqueIdOrder would otherwise be changed by moving the items
 		viewModel.answervalues(viewModel.originalItemUniqueIdOrder().slice());
 		viewModel.isAnswered(false);
@@ -901,10 +882,6 @@ function newRankingViewModel(element)
 			const thatItemDiv = $(rankingItemFormDatas).eq(permuteIndex);
 			$(rankingItemList).append(thatItemDiv);
 		});
-
-		var acceptInitialButton = document.getElementById('acceptInitialRanking' + viewModel.id());
-		acceptInitialButton.focus();
-
 		propagateChange(rankingItemList);
 		const surveyElement = $(rankingItemList).parents(".survey-element").last();
 		enableDelphiSaveButtons(surveyElement);
@@ -1317,9 +1294,6 @@ function newNumberViewModel(element)
 		var explanationBox = tinyMCE.get('explanation' + data.id());
 		if (explanationBox != null) {
 			explanationBox.execCommand('mceFocus',false);
-		} else {
-			var slider = $(input).closest(".elementwrapper").find("div.slider-handle");
-			slider.focus();
 		}
 		updateFormulas(this.id(), this.shortname());
 	};
@@ -1331,10 +1305,6 @@ function newNumberViewModel(element)
 		$(input).bootstrapSlider().bootstrapSlider("setValue", initialDefaultValue);
 		$(input).val("");
 		viewModel.isAnswered(false);
-
-		var acceptInitialButton = document.getElementById('acceptInitialSlider' + viewModel.id());
-		acceptInitialButton.focus();
-
 		propagateChange($(input));
 		const surveyElement = $(input).parents(".survey-element").last();
 		enableDelphiSaveButtons(surveyElement);

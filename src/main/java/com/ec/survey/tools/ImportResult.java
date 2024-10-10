@@ -4,10 +4,6 @@ import com.ec.survey.model.AnswerComment;
 import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Translations;
-import com.ec.survey.model.selfassessment.SACriterion;
-import com.ec.survey.model.selfassessment.SAReportConfiguration;
-import com.ec.survey.model.selfassessment.SAScoreCard;
-import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
 
@@ -37,10 +33,6 @@ public class ImportResult {
 	private List<AnswerExplanation> activeExplanations;
 	private List<AnswerComment> comments;
 	private List<AnswerComment> activeComments;
-	private List<SATargetDataset> targetDatasets;
-	private List<SACriterion> criteria;
-	private List<SAScoreCard> scoreCards;
-	private SAReportConfiguration reportConfiguration;
 	
 	public Survey getSurvey() {
 		return survey;
@@ -161,30 +153,6 @@ public class ImportResult {
 	}
 	public void setActiveComments(List<AnswerComment> activeComments) {
 		this.activeComments = activeComments;
-	}
-	public List<SATargetDataset> getTargetDatasets() {
-		return targetDatasets;
-	}
-	public void setTargetDatasets(List<SATargetDataset> targetDatasets) {
-		this.targetDatasets = targetDatasets;
-	}
-	public List<SACriterion> getCriteria() {
-		return criteria;
-	}
-	public void setCriteria(List<SACriterion> criteria) {
-		this.criteria = criteria;
-	}
-	public List<SAScoreCard> getScoreCards() {
-		return scoreCards;
-	}
-	public void setScoreCards(List<SAScoreCard> scoreCards) {
-		this.scoreCards = scoreCards;
-	}
-	public SAReportConfiguration getReportConfiguration() {
-		return reportConfiguration;
-	}
-	public void setReportConfiguration(SAReportConfiguration reportConfiguration) {
-		this.reportConfiguration = reportConfiguration;
 	}	
 
 }

@@ -32,8 +32,8 @@ public class EuCaptchaApiController extends BasicController {
 		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-		conn.setRequestProperty("xJwtString", captchatoken);	    
-		
+		conn.setRequestProperty("xJwtString", captchatoken);	
+	    		
 		List<String> cookies = conn.getHeaderFields().get("set-cookie");			
 		response.addHeader("original-cookie", cookies == null ? "" : String.join("#", cookies));
 

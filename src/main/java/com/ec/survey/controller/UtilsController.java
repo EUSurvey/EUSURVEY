@@ -319,10 +319,12 @@ public class UtilsController extends BasicController {
 		dgList.put("ECHO",resources.getMessage("label.dgnew.ECHO",null,locale));
 		dgList.put("NEAR",resources.getMessage("label.dgnew.NEAR",null,locale));
 		dgList.put("EPSO",resources.getMessage("label.dgnew.EPSO",null,locale));
+		dgList.put("ERCEA",resources.getMessage("label.dgnew.ERCEA",null,locale));
 		dgList.put("ESOA",resources.getMessage("label.dgnew.ESOA",null,locale));
 		dgList.put("ESTAT",resources.getMessage("label.dgnew.ESTAT",null,locale));
+		dgList.put("EASME",resources.getMessage("label.dgnew.EASME",null,locale));
 		dgList.put("FISMA",resources.getMessage("label.dgnew.FISMA",null,locale));
-		dgList.put("FPI",resources.getMessage("label.dg.FPI",null,locale));
+		dgList.put("FPI",resources.getMessage("label.dgnew.FPI",null,locale));
 		dgList.put("SANTE",resources.getMessage("label.dgnew.SANTE",null,locale));
 		dgList.put("HAS",resources.getMessage("label.dgnew.HAS",null,locale));
 		dgList.put("HR",resources.getMessage("label.dgnew.HR",null,locale));
@@ -335,6 +337,7 @@ public class UtilsController extends BasicController {
 		dgList.put("GROW",resources.getMessage("label.dgnew.GROW",null,locale));
 		dgList.put("INTPA",resources.getMessage("label.dgnew.INTPA",null,locale));
 		dgList.put("SCIC",resources.getMessage("label.dgnew.SCIC",null,locale));
+		dgList.put("JRC",resources.getMessage("label.dgnew.JRC",null,locale));
 		dgList.put("JUST",resources.getMessage("label.dgnew.JUST",null,locale));
 		dgList.put("SJ",resources.getMessage("label.dgnew.SJ",null,locale));
 		dgList.put("LERC",resources.getMessage("label.dgnew.LERC",null,locale));
@@ -351,10 +354,6 @@ public class UtilsController extends BasicController {
 		dgList.put("TAXUD",resources.getMessage("label.dgnew.TAXUD",null,locale));
 		dgList.put("TRADE",resources.getMessage("label.dgnew.TRADE",null,locale));
 		dgList.put("DGT",resources.getMessage("label.dgnew.DGT",null,locale));
-		dgList.put("HERA",resources.getMessage("label.dgnew.HERA",null,locale));
-		dgList.put("EISMEA",resources.getMessage("label.dgnew.EISMEA",null,locale));
-		dgList.put("ERC",resources.getMessage("label.dgnew.ERC",null,locale));
-		dgList.put("HADEA",resources.getMessage("label.dgnew.HADEA",null,locale));
 			
 		dgList = Tools.sortByComparator(dgList);
 		return dgList;

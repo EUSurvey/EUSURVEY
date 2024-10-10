@@ -51,17 +51,6 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domainWorker;
 	
 	@Transactional
-	public void step115() {
-		Session session = sessionFactory.getCurrentSession();
-		Status status = getStatus();
-
-		session.createSQLQuery("UPDATE SURVEYS SET SELFASSESSMENT = 0 WHERE SELFASSESSMENT is NULL;").executeUpdate();
-		
-		status.setDbversion(115);
-		session.saveOrUpdate(status);
-	}
-	
-	@Transactional
 	public void step114() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

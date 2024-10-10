@@ -2,10 +2,6 @@ package com.ec.survey.tools;
 
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
-import com.ec.survey.model.selfassessment.SACriterion;
-import com.ec.survey.model.selfassessment.SAReportConfiguration;
-import com.ec.survey.model.selfassessment.SAScoreCard;
-import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
@@ -255,7 +251,7 @@ public class SurveyExportHelper {
 	public static java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers,
 			TranslationService translationService, AnswerService answerService, String fileDir,
 			SessionService sessionService, FileService fileService, Session session, String host,
-			AnswerExplanationService answerExplanationService, SelfAssessmentService selfAssessmentService) {
+			AnswerExplanationService answerExplanationService) {
 		
 		try {
 			
@@ -339,26 +335,6 @@ public class SurveyExportHelper {
 						}
 			    	}
 			    }			    
-		    }
-		    
-		    if (survey.getIsSelfAssessment()) {
-		    	List<SATargetDataset> datasets = selfAssessmentService.getTargetDatasets(survey.getUniqueId());
-		    	addObjectAsFileToOutputStream(datasets, "targetdatasets.eus", os, session, fileService);
-		    	
-		    	List<SACriterion> criteria = selfAssessmentService.getCriteria(survey.getUniqueId());
-		    	addObjectAsFileToOutputStream(criteria, "criteria.eus", os, session, fileService);
-		    	
-		    	List<SAScoreCard> cards = new ArrayList<>();
-		    	for (SATargetDataset dataset : datasets) {
-					SAScoreCard card = selfAssessmentService.getScoreCard(dataset.getId(), true);
-					if (card != null) {
-						cards.add(card);
-					}
-		    	}		    
-		    	addObjectAsFileToOutputStream(cards, "scorecards.eus", os, session, fileService);
-		    	
-		    	SAReportConfiguration config = selfAssessmentService.getReportConfiguration(survey.getUniqueId());
-		    	addObjectAsFileToOutputStream(config, "reportconfiguration.eus", os, session, fileService);
 		    }
 			
 		    //create answers file
@@ -706,14 +682,6 @@ public class SurveyExportHelper {
 				} else if (name.equalsIgnoreCase("comments-active.eus"))
 				{
 					result.setActiveComments((List<AnswerComment>)getObject(zipFile, zipEntry, fileService));		
-				} else if (name.equalsIgnoreCase("targetdatasets.eus")) {	
-					result.setTargetDatasets((List<SATargetDataset>)getObject(zipFile, zipEntry, fileService));
-				} else if (name.equalsIgnoreCase("criteria.eus")) {	
-					result.setCriteria((List<SACriterion>)getObject(zipFile, zipEntry, fileService));
-				} else if (name.equalsIgnoreCase("scorecards.eus")) {	
-					result.setScoreCards((List<SAScoreCard>)getObject(zipFile, zipEntry, fileService));
-				} else if (name.equalsIgnoreCase("reportconfiguration.eus")) {	
-					result.setReportConfiguration((SAReportConfiguration)getObject(zipFile, zipEntry, fileService));
 				} else if (name.endsWith("fil"))
 	        	{
 					String fileUID = name.replace(".fil", "");

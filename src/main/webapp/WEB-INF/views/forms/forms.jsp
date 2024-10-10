@@ -202,10 +202,6 @@
 						  {							 
 							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.ECF" />").attr("src", contextpath + "/resources/images/icons/32/user_square.png");
 						  }
-						  else if (list[i].isSelfAssessment)
-						  {							 
-							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.SelfAssessment" />").attr("src", contextpath + "/resources/images/icons/32/user_square.png");
-						  }
 						  else if (list[i].isEVote)
 						  {
 							  img = document.createElement("div");
@@ -334,7 +330,7 @@
 							  if(list[i].formManagementRights && list[i].canCreateSurveys)
 							  {
 							     $(acopy).addClass("actionRowAction").append("<span class='glyphicon glyphicon-copy'></span>");
-							     $(acopy).attr('onclick', "copySurvey('" + list[i].id + "','" + list[i].title + "','" + list[i].language.code + "', '" + list[i].security+ "', '" + list[i].isQuiz + "', '" + list[i].isDelphi + "', '" + list[i].isEVote + "', '" + list[i].isSelfAssessment + ");");
+							     $(acopy).attr('onclick', "copySurvey('" + list[i].id + "','" + list[i].title + "','" + list[i].language.code + "', '" + list[i].security+ "', '" + list[i].isQuiz + "', '" + list[i].isDelphi + "', '" + list[i].isEVote + "');");
 							  } else {
 								  $(acopy).addClass("disabled actionRowAction").append("<span style='color: #ccc' class='glyphicon glyphicon-copy'></span>");
 							  }							     
@@ -643,17 +639,6 @@
 									</c:otherwise>
 								</c:choose>
 							</c:if>
-							<c:if test="${enableselfassessment}">
-								<br />
-								<c:choose>
-									<c:when test='${filter.surveyTypes != null && filter.containsSurveyType("selfassessment")}'>
-										<input class="check" checked="checked" value="selfassessment" type="checkbox" name="surveySelfAssessment" /> <spring:message code="label.SelfAssessment" />
-									</c:when>
-									<c:otherwise>
-										<input class="check" value="selfassessment" type="checkbox" name="surveySelfAssessment" /> <spring:message code="label.SelfAssessment" />
-									</c:otherwise>
-								</c:choose>
-							</c:if>
 
 							<h4 style="margin-top: 20px;"><spring:message code="label.Status" />:</h4>					
 					
@@ -756,7 +741,7 @@
 											<spring:message code="warning.ReportedSurvey" arguments="${survey.numberOfReports}" />
 										</div>
 									</c:if>
-			
+								
 									<div class="typeicon">
 										<c:choose>
 											<c:when test="${survey.isQuiz}">
@@ -766,10 +751,7 @@
 												<img data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
 											</c:when>
 											<c:when test="${survey.isECF}">
-												<span data-toggle="tooltip" title="<spring:message code="label.ECF" />" class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
-											</c:when>
-											<c:when test="${survey.isSelfAssessment}">
-												<span data-toggle="tooltip" title="<spring:message code="label.SelfAssessment" />" class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
+												<span data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
 											</c:when>
 											<c:when test="${survey.isEVote}">
 												<span data-toggle="tooltip" title="<spring:message code="label.eVote" />"  class="glyphicon glyphicon-ok" style="border: 2px solid #333; padding: 3px; font-size: 21px; color: #333"></span>
@@ -877,7 +859,7 @@
 											
 												<c:choose>
 													<c:when test="${survey.formManagementRights && survey.canCreateSurveys}">
-														<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}', '${survey.isDelphi}', '${survey.isEVote}', '${survey.eVoteTemplate}', '${survey.isSelfAssessment}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
+														<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}', '${survey.isDelphi}', '${survey.isEVote}', '${survey.eVoteTemplate}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
 														<a href="<c:url value="/noform/management/exportSurvey/false/${survey.shortname}"/>" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></</span></a>
 													</c:when>
 													<c:otherwise>

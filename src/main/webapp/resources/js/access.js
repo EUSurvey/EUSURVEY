@@ -284,11 +284,9 @@
 		
 		function checkUserType()
 		{
-			$("#noEmptySearchIcon").hide();
-			$("#noEmptySearchText").text('');
-
 			$("#search-results").find("tbody").empty();
-
+			var thead = document.createElement("thead");
+			
 			if ($("#add-user-type-ecas").val() != "system" && $("#add-user-type-ecas").val() != "external")
 			{
 				$("#add-user-department-div").show();
@@ -373,7 +371,7 @@
 			let mailInput = $("#add-user-email").val();
 			if (mailInput.length <= 0) {
 				$("#invalidEmailsIcon").show();
-				$("#invalidEmailsText").text(atLeastOneMail);
+				$("#invalidEmailsText").text(atLestOneMail);
 				return;
 			}
 
@@ -434,7 +432,7 @@
 			let mailInput = $("#add-user-email").val();
 			if (mailInput.length <= 0) {
 				$("#invalidEmailsIcon").show();
-				$("#invalidEmailsText").text(atLeastOneMail);
+				$("#invalidEmailsText").text(atLestOneMail);
 				return;
 			}
 
@@ -469,44 +467,23 @@
 				}});
 		}
 
-		function resetEmailFeedback() {
-			$("#foundEmailUsers").text("");
-			$("#invalidEmailsText").text("");
-			$("#invalidEmailsIcon").hide();
-			$("#notFoundEmailsIcon").hide();
-			$("#notFoundEmailsText").text("");
-		}
+	function resetEmailFeedback() {
+		$("#foundEmailUsers").text("");
+		$("#invalidEmailsText").text("");
+		$("#invalidEmailsIcon").hide();
+		$("#notFoundEmailsIcon").hide();
+		$("#notFoundEmailsText").text("");
+	}
 
 		function searchUser(order)
 		{
-			$("#noEmptySearchIcon").hide();
-			$("#noEmptySearchText").text("");
-
 			var name = $("#add-user-name").val();
 			var first = $("#add-first-name").val();
 			var last = $("#add-last-name").val();
 			var email = $("#add-user-email").val();
-			var department = $("#add-department-name").val();
 			var type = $("#add-user-type-ecas").val();
-
-			if (type != "system" && type != "external")
-			{
-				//case eu.europa.ec: Admin and form manager EC
-				if (!(email != '' || department != '' || first != '' || last != '' || name != '')) {
-					$("#noEmptySearchIcon").show();
-					$("#noEmptySearchText").text(noEmptySearch);
-					return;
-				}
-			} else if (type == "system")
-			{
-				//case system
-				if (!(email != '' || name != '')) {
-					$("#noEmptySearchIcon").show();
-					$("#noEmptySearchText").text(noEmptySearch);
-					return;
-				}
-			}
-
+			var department = $("#add-department-name").val();
+			
 			var s = "name=" + name + "&type=" + type + "&department=" + department+ "&email=" + email + "&first=" + first + "&last=" + last + "&order=" + order;
 			
 			$("#add-user-dialog").modal('hide');
@@ -521,6 +498,7 @@
 				  dataType: 'json',
 				  cache: false,
 				  success: function( users ) {
+					  console.log(users);
 					  $("#search-results").find("tbody").empty();
 					  var body = $("#search-results").find("tbody").first();
 					  

@@ -14,6 +14,7 @@ import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
@@ -120,7 +121,6 @@ public class SurveyService extends BasicService {
 				" ,s.DELPHI" +
 				" ,s.ECF" +
 				" ,s.EVOTE" +
-				" ,s.SELFASSESSMENT" +
 				" from SURVEYS s" +
 				" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID" +
 				" where s.ISDRAFT = 1 and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)";
@@ -174,8 +174,7 @@ public class SurveyService extends BasicService {
 			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
 			survey.setIsDelphi((Boolean) row[rowIndex++]);// 21
 			survey.setIsECF((Boolean) row[rowIndex++]);
-			survey.setIsEVote((Boolean) row[rowIndex++]);	
-			survey.setIsSelfAssessment((Boolean) row[rowIndex]);	
+			survey.setIsEVote((Boolean) row[rowIndex]);	
 
 			surveys.add(survey);
 		}
@@ -281,7 +280,6 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(", s.DELPHI");
 		stringBuilder.append(", s.EVOTE");
 		stringBuilder.append(", s.ECF");
-		stringBuilder.append(", s.SELFASSESSMENT");
 
 		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {
 			stringBuilder.append(", npa.PUBLISHEDANSWERS as replies");// 7
@@ -341,7 +339,6 @@ public class SurveyService extends BasicService {
 			survey.setIsDelphi((Boolean) row[columnNum++]);
 			survey.setIsEVote((Boolean) row[columnNum++]);
 			survey.setIsECF((Boolean) row[columnNum++]);
-			survey.setIsSelfAssessment((Boolean) row[columnNum++]);
 
 			if (this.isReportingDatabaseEnabled() && !filter.getSortKey().equalsIgnoreCase("REPLIES")) {
 				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(false, survey.getUniqueId()));
@@ -586,7 +583,7 @@ public class SurveyService extends BasicService {
 
 				switch (type) {
 					case "standard":
-						sql.append(" (s.QUIZ = 0 AND s.ECF = 0 AND s.EVOTE = 0 AND s.OPC = 0 AND s.DELPHI = 0 AND s.SELFASSESSMENT = 0) ");
+						sql.append(" (s.QUIZ = 0 AND s.ECF = 0 AND s.EVOTE = 0 AND s.OPC = 0 AND s.DELPHI = 0) ");
 						break;
 					default:
 						sql.append(" s." + type.toUpperCase() + " = 1");
@@ -1979,7 +1976,7 @@ public class SurveyService extends BasicService {
 		oldsurvey = (Survey) session.merge(oldsurvey);
 		session.update(oldsurvey);
 
-		Survey survey = SurveyHelper.parseSurvey(request, this, fileService, selfassessmentService, servletContext,
+		Survey survey = SurveyHelper.parseSurvey(request, this, fileService, servletContext,
 				activityService.isEnabled(ActivityRegistry.ID_ELEMENT_ORDER), activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), fileIDsByUID);
 
 		Map<Element, Integer> pendingChanges = surveyService.getPendingChanges(survey);
@@ -2206,8 +2203,7 @@ public class SurveyService extends BasicService {
 			
 		}
 
-		//NativeQuery query = session.createSQLQuery("DELETE FROM TRANSLATION WHERE SURVEY_ID = :id");
-		NativeQuery query = session.createSQLQuery("DELETE t FROM TRANSLATION t JOIN TRANSLATIONS ts ON t.TRANS_ID = ts.TRANSLATIONS_ID WHERE ts.SURVEY_ID = :id");
+		NativeQuery query = session.createSQLQuery("DELETE FROM TRANSLATION WHERE SURVEY_ID = :id");
 		query.setParameter("id", id).executeUpdate();
 
 		query = session.createSQLQuery("DELETE FROM TRANSLATIONS WHERE SURVEY_ID = :id");
@@ -2293,9 +2289,6 @@ public class SurveyService extends BasicService {
 				}
 			}
 		}
-
-		if (s.getIsSelfAssessment())
-			selfassessmentService.deleteData(s.getUniqueId());
 
 		java.io.File folder = fileService.getSurveyFolder(s.getUniqueId());
 		try {
@@ -2675,8 +2668,6 @@ public class SurveyService extends BasicService {
 			files = result.getFiles();
 			explanations = result.getExplanations();
 			comments = result.getComments();
-			
-			selfassessmentService.importData(result, survey);
 		} else {
 			if (surveyid.equals(result.getActiveSurvey().getId())) {
 				translations = result.getActiveTranslations();
@@ -4624,7 +4615,7 @@ public class SurveyService extends BasicService {
 
 	public java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers) {
 		return SurveyExportHelper.exportSurvey(shortname, surveyService, answers, translationService, answerService,
-				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host, answerExplanationService, selfassessmentService);
+				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host, answerExplanationService);
 	}
 
 	@Transactional(readOnly = true)
@@ -5760,24 +5751,6 @@ public class SurveyService extends BasicService {
 		for (Element element : survey.getElements()) {
 			if (element instanceof GalleryQuestion) {
 				result.add(element.getUniqueId());
-			}
-		}
-		return result;
-	}
-	
-	@Transactional
-	public Set<String> getTargetDatasetQuestionUids(int surveyId) {
-		Survey survey = getSurvey(surveyId);
-		Set<String> result = new HashSet<>();
-		if (survey.getIsSelfAssessment()) {
-			for (Element element : survey.getElements()) {
-				if (element instanceof SingleChoiceQuestion) {
-					SingleChoiceQuestion scq = (SingleChoiceQuestion)element;
-					if (scq.getIsTargetDatasetQuestion()) {
-						result.add(element.getUniqueId());
-						break; // there can be only one in a survey
-					}
-				}
 			}
 		}
 		return result;

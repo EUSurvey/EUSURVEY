@@ -90,12 +90,15 @@ function showHideQuizProperties(span)
 
 function showHideECFProperties(span)
 {
+	console.log("showHideECFProperties(span)");
 	var tr = $(span).closest("tr");
 	if ($(span).hasClass("glyphicon-chevron-down"))
 	{
+		//lastQuizPropertiesVisible = false;
 		$(tr).nextAll().hide(400);
 		$(span).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
 	} else {
+		//lastQuizPropertiesVisible = true;
 		if ($(tr).next().find(".ecfquestioncheck").first().is(":checked"))
 		{
 			$(tr).nextAll().not(".hideme").show(400);
@@ -103,19 +106,6 @@ function showHideECFProperties(span)
 			$(tr).next().show(400);
 		}		
 		
-		$(span).removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
-	}
-}
-
-function showHideSAProperties(span)
-{
-	var tr = $(span).closest("tr");
-	if ($(span).hasClass("glyphicon-chevron-down"))
-	{
-		$(tr).nextAll().hide(400);
-		$(span).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
-	} else {
-		$(tr).nextAll().show(400);
 		$(span).removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
 	}
 }
@@ -737,6 +727,7 @@ function getVisibilityRow(multiselection, isVisible = true)
 var quizanswersrow;
 
 function getECFPropertiesContent() {
+	console.log("getECFPropertiesContent()");
 	let selectedelement = $("#content").find(".selectedquestion").first();
 	let element = _elements[$(selectedelement).attr("data-id")];
 		
@@ -756,7 +747,16 @@ function getECFPropertiesContent() {
 	_elementProperties.propertyRows.push(row);
 
 	// ECF PROFILE SELECTION
-	if (selected) {	
+	if (selected) {
+		// row = new PropertyRow();
+		// row.Element(element);
+		// row.Type("first");
+		// row.ContentType("ecfCompetencySelection");
+		// row.Label("ECFSelectedProfile");
+		// row.LabelTitle(getPropertyLabel("ECFSelectedProfile")); 
+		// row.Value("");
+		// _elementProperties.propertyRows.push(row);
+		
 		row = new PropertyRow();
 		row.Element(element);
 		row.Type("ecfAnswersToProfiles");
@@ -1167,74 +1167,6 @@ function getRegistrationFormRow(attrvalue, namevalue)
 	row.Content(namevalue);	
 	var id = "id" + idcounter++;	
 	_elementProperties.propertyRows.push(row);
-}
-
-function getTargetDatasetsRow()
-{
-	var row = new PropertyRow();
-	row.Type("targetdataset")
-	_elementProperties.propertyRows.push(row);
-}
-
-function getTargetDatasetsRow2()
-{
-	var row = new PropertyRow();
-	row.Type("targetdataset2")
-	_elementProperties.propertyRows.push(row);
-}
-
-
-function getSAQuestionRow(element) {
-	var row = new PropertyRow();
-	row.Type("saquestion")
-	_elementProperties.propertyRows.push(row);
-	
-	row = new PropertyRow();
-	row.Type("first");
-
-	row.LabelTitle(getPropertyLabel("EvaluationCriteria"));
-	row.Label("EvaluationCriteria");
-	row.ContentType("select");
-	
-	var item = new ContentItem();
-	item.Value("");
-	item.Label("");
-	row.ContentItems.push(item);
-	
-	for (var i = 0; i < SACriteria.length; i++)
-	{
-		item = new ContentItem();
-		item.Value(SACriteria[i].id);
-		item.Label(SACriteria[i].name);
-				
-		if (SACriteria[i].id == element.evaluationCriterion())
-		{
-			item.Selected(true);
-		}
-		
-		row.ContentItems.push(item);
-	}
-		
-	_elementProperties.propertyRows.push(row);
-	
-	row = new PropertyRow();
-	row.Type("saanswers");
-	
-	for (let i = 0; i < element.possibleAnswers().length; i++)
-	{
-		let pa = element.possibleAnswers()[i];
-		row.ContentItems.push(pa);
-	}
-	
-	_elementProperties.propertyRows.push(row);
-	
-	$('.saspinner').each(function(){
-		var input = this;
-		$(input).spinner({ decimals:0, min:0, max:1000, start:"", allowNull: true });
-		$(input).parent().find('.ui-spinner-button').click(function() {
-	  		update(input);
-		});
-	})
 }
 
 function createDatePickerForEditor(instance, othervalue)

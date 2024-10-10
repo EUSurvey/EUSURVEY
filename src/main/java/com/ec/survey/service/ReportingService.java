@@ -36,7 +36,6 @@ import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.ResultFilter.ResultFilterSortKey;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.SqlPagination;
-import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.ChoiceQuestion;
 import com.ec.survey.model.survey.ComplexTable;
 import com.ec.survey.model.survey.ComplexTableItem;
@@ -120,6 +119,11 @@ public class ReportingService extends BasicService {
 		
 		if (filter != null) {
 			
+//			if ( filter.getFilterValues() != null &&  filter.getFilterValues().size() > 3)
+//			{
+//				throw new TooManyFiltersException("too many result filters");
+//			}			
+			
 			if (filter.getInvitation() != null && filter.getInvitation().length() > 0)
 			{
 				if (where.length() == 0)
@@ -187,28 +191,6 @@ public class ReportingService extends BasicService {
 				values.put("generatedTo", Tools.getFollowingDay(filter.getGeneratedTo()));
 				values.put("updateDateFrom", filter.getUpdatedFrom());
 				values.put("updateDateTo", Tools.getFollowingDay(filter.getUpdatedTo()));
-			} else if (filter.getCreatedOrUpdated() != null && filter.getCreatedOrUpdated() && filter.getGeneratedFrom() != null && filter.getUpdatedFrom() != null) {
-				if (where.length() == 0)
-				{
-					where += " WHERE";
-				} else {
-					where += " AND";
-				}
-				
-				where += " (QCREATED >= :generatedFrom OR QUPDATED >= :updateDateFrom)";
-				values.put("generatedFrom", filter.getGeneratedFrom());
-				values.put("updateDateFrom", filter.getUpdatedFrom());		
-			} else if (filter.getCreatedOrUpdated() != null && filter.getCreatedOrUpdated() && filter.getGeneratedTo() != null && filter.getUpdatedTo() != null) {
-				if (where.length() == 0)
-				{
-					where += " WHERE";
-				} else {
-					where += " AND";
-				}
-				
-				where += " (QCREATED <= :generatedTo OR QUPDATED <= :updateDateTo)";
-				values.put("generatedTo", filter.getGeneratedTo());
-				values.put("updateDateTo", filter.getUpdatedTo());
 			} else {
 				if (filter.getGeneratedFrom() != null) {
 					if (where.length() == 0)
@@ -340,16 +322,9 @@ public class ReportingService extends BasicService {
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i, "%" + answer + "%");
 								} else if (question instanceof SingleChoiceQuestion) {
-									SingleChoiceQuestion scq = (SingleChoiceQuestion)question;
-									if (scq.getIsTargetDatasetQuestion()) {
-										String datasetid = answer.substring(answer.lastIndexOf('-')+1);
-										where += columnname + " = :answer" + i;
-										values.put(Constants.ANSWER + i, datasetid);
-									} else {									
-										String answerUid = answer.substring(answer.indexOf('|')+1);
-										where += columnname + " = :answer" + i;
-										values.put(Constants.ANSWER + i, answerUid);
-									}
+									String answerUid = answer.substring(answer.indexOf('|')+1);
+									where += columnname + " = :answer" + i;
+									values.put(Constants.ANSWER + i, answerUid);
 								} else if (question instanceof MultipleChoiceQuestion) {
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
@@ -616,45 +591,24 @@ public class ReportingService extends BasicService {
 								ChoiceQuestion choicequestion = (ChoiceQuestion) question;
 								String[] answerids = item.toString().split(";");
 								String v = "";
-								
-								boolean isTargetDatasetQuestion = false; 
-								if (survey.getIsSelfAssessment() && question instanceof SingleChoiceQuestion ) {
-									SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
-									if (scq.getIsTargetDatasetQuestion()) {
-										isTargetDatasetQuestion = true;
-									}
-								}								
-								
 								for (String answerid : answerids) {
 									if (v.length() > 0) v += "; ";
-									
-									if (isTargetDatasetQuestion) {
-										
+									Element answer = choicequestion.getPossibleAnswerByUniqueId(answerid);
+									if (answer != null) {
 										if (doNotReplaceAnswerIDs) {
 											v += answerid;
 										} else {
-											SATargetDataset dataset = selfassessmentService.getTargetDataset(Integer.parseInt(answerid));
-											v += dataset.getName();
+											v += answer.getStrippedTitle();
 										}
-										
-									} else {									
-										Element answer = choicequestion.getPossibleAnswerByUniqueId(answerid);
-										if (answer != null) {
-											if (doNotReplaceAnswerIDs) {
-												v += answerid;
-											} else {
-												v += answer.getStrippedTitle();
-											}
-	
-											if (showShortnames) {
-												v += "<span class='assignedValue hideme'>(" + answer.getShortname() + ")</span>";
-											}
-										} else if ("EVOTE-ALL".equals(answerid)) {
-											String languageCode = survey.getLanguage().getCode();
-											if (languageCode == null)
-												languageCode = "en";
-											v += resources.getMessage("label.EntireList", new Object[0], "Entire List", new Locale(languageCode));
+
+										if (showShortnames) {
+											v += "<span class='assignedValue hideme'>(" + answer.getShortname() + ")</span>";
 										}
+									} else if ("EVOTE-ALL".equals(answerid)) {
+										String languageCode = survey.getLanguage().getCode();
+										if (languageCode == null)
+											languageCode = "en";
+										v += resources.getMessage("label.EntireList", new Object[0], "Entire List", new Locale(languageCode));
 									}
 								}
 								row.add(v.length() > 0 ? v : null);
@@ -1462,11 +1416,7 @@ public class ReportingService extends BasicService {
 					v = "'";
 					for (Answer answer : answers)
 					{
-						if (answer.getPossibleAnswerUniqueId().equalsIgnoreCase("TARGETDATASET")) {
-							v += answer.getValue();
-						} else {
-							v += answer.getPossibleAnswerUniqueId();
-						}
+						v += answer.getPossibleAnswerUniqueId();
 						if (question instanceof MultipleChoiceQuestion) v += ";";
 					}
 					v += "'";

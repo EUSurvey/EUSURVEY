@@ -7,8 +7,6 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
-import com.ec.survey.model.selfassessment.SAReportConfiguration;
-import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
@@ -51,9 +49,6 @@ public class RunnerController extends BasicController {
 
 	@Resource(name = "pdfService")
 	private PDFService pdfService;
-	
-	@Resource(name = "selfassessmentService")
-	protected SelfAssessmentService selfassessmentService;
 
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
@@ -660,26 +655,6 @@ public class RunnerController extends BasicController {
 				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
 				result.addObject("invisibleElements", invisibleElements);
-				return result;
-			}
-			
-			if (survey.getIsSelfAssessment()) {
-				ModelAndView result = new ModelAndView("runner/saResult", Constants.UNIQUECODE,	answerSet.getUniqueCode());
-				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
-						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
-				form.setSurvey(survey);
-				form.getAnswerSets().add(answerSet);
-				result.addObject("invisibleElements", invisibleElements);
-				result.addObject(form);
-				result.addObject("surveyprefix", survey.getId());
-				result.addObject("issaresultpage", true);
-				
-				SAReportConfiguration config = selfassessmentService.getReportConfiguration(answerSet.getSurvey().getUniqueId());
-				result.addObject("SAReportConfiguration", config);
-				
-				List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(answerSet.getSurvey().getUniqueId());
-				result.addObject("SATargetDatasets", datasets);
-							
 				return result;
 			}
 
@@ -2159,27 +2134,6 @@ public class RunnerController extends BasicController {
 				result.addObject("invisibleElements", invisibleElements);
 				return result;
 			}
-			
-			if (survey.getIsSelfAssessment()) {
-				ModelAndView result = new ModelAndView("runner/saResult", Constants.UNIQUECODE,
-						answerSet.getUniqueCode());
-				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
-						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
-				form.setSurvey(survey);
-				form.getAnswerSets().add(answerSet);
-				result.addObject("invisibleElements", invisibleElements);
-				result.addObject(form);
-				result.addObject("surveyprefix", survey.getId());
-				result.addObject("issaresultpage", true);
-				
-				SAReportConfiguration config = selfassessmentService.getReportConfiguration(answerSet.getSurvey().getUniqueId());
-				result.addObject("SAReportConfiguration", config);
-				
-				List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(answerSet.getSurvey().getUniqueId());
-				result.addObject("SATargetDatasets", datasets);
-							
-				return result;
-			}
 
 			ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, answerSet.getUniqueCode());
 		
@@ -2463,7 +2417,7 @@ public class RunnerController extends BasicController {
 				((Question)element).setIsDelphiQuestion(false);
 			}
 		}
-				
+
 		for (Element element : result) {
 			if (foreditor && hasGlobalAdminRights) {
 				element.setLocked(false);
@@ -2482,7 +2436,6 @@ public class RunnerController extends BasicController {
 				if (foreditor) {
 					q.setForeditor(true);
 				}
-				
 				for (Element e : q.getPossibleAnswers()) {
 					PossibleAnswer a = (PossibleAnswer) e;
 					a.clearForJSON();
@@ -2494,10 +2447,6 @@ public class RunnerController extends BasicController {
 			}
 		}
 
-		if (survey.getIsSelfAssessment()) {
-			selfassessmentService.initializeElements(result, survey.getUniqueId());
-		}
-		
 		return result;
 	}
 

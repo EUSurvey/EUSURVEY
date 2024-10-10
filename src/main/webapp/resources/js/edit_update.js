@@ -1383,27 +1383,6 @@ function update(input)
 			element.exclusive(checked);
 			_undoProcessor.addUndoStep(["Exclusive", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			break;
-		case "DisplayAllQuestions":
-			var checked = $(input).is(":checked");
-			element.displayAllQuestions(checked);
-			_undoProcessor.addUndoStep(["DisplayAllQuestions", id, $(_elementProperties.selectedelement).index(), !checked, checked]);
-			break;
-		case "EvaluationCriteria":
-			var c = $(input).val();
-			var old = element.evaluationCriterion();
-			element.evaluationCriterion(c);
-			_undoProcessor.addUndoStep(["EvaluationCriteria", id, $(_elementProperties.selectedelement).index(), old, c]);
-			break;
-		case "sascore":
-			var score = parseInt($(input).val());
-			var paid = $(input).attr("data-id");
-			var answerPos = element.possibleAnswers().findIndex(pa => paid == pa.id());
-			var answer = element.possibleAnswers()[answerPos];
-			var old = answer.ecfScore();
-			answer.ecfScore(score);
-			answer.scoring.points(score);
-			_actions.SaveEnabled(true);
-			break;
 		default:
 			throw label + " not implemented"; 
 	}	

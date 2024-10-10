@@ -146,7 +146,6 @@
 	</div>
 	
 	<div id="single-choice-template">
-
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -229,22 +228,9 @@
 				<!-- /ko -->
 				<!-- ko if: useSelectBox -->
 				<div class="answer-column">		
-				
-					<!-- ko if: isTargetDatasetQuestion() -->
-					<select id="defaultSCSelectTemplateID" data-bind="value: getTargetDatasetByQuestion(uniqueId()), attr: {'id': 'dataset' + id(), 'oninput': !foreditor ? 'checkTargetDataset(this);' : '', 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-value': getTargetDatasetByQuestion(uniqueId()), 'class': css + ' single-choice targetdatasetselect', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questionhelp' + id()}" >
-						<option value=''></option>
-						<!-- ko foreach: targetDatasets() -->
-						<option data-bind="html: strip_tags(name), attr: {value: id}"></option>
-						<!-- /ko -->
-					</select>					
-					<!-- /ko -->
-					
-					<!-- ko if: !isTargetDatasetQuestion() -->				
 					<select id="defaultSCSelectTemplateID" data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'oninput': !foreditor ? 'validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);' : '', 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questionhelp' + id()}" >
 						<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
 					</select>
-					<!-- /ko -->
-					
 					<label for="defaultSCSelectTemplateID" data-bind="attr: {'for': 'answer' + id()}" hidden>
 						<span class="screen-reader-only">${form.getMessage("html.SelectBox")}</span>
 					</label>
@@ -309,10 +295,7 @@
 				
 				<input type="hidden" data-bind="value: maxDistance, attr: {'name': 'maxDistance' + id()}" />
 				<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
-				<input type="hidden" data-bind="value: isTargetDatasetQuestion(), attr: {'name': 'isTargetDatasetQuestion' + id()}" />
-				<input type="hidden" data-bind="value: displayAllQuestions, attr: {'name': 'displayAllQuestions' + id()}" />
-				<input type="hidden" data-bind="value: isSAQuestion(), attr: {'name': 'isSAQuestion' + id()}" />
-				<input type="hidden" data-bind="value: evaluationCriterion(), attr: {'name': 'evaluationCriterion' + id()}" />
+
 
 				<tr class="hideme">
 					<td>
@@ -542,7 +525,7 @@
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 
 			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
-				${form.getMessage("label.HintOnInitialRankingOrder", "type=\"button\" class=\"unstyledbutton ranking-question-initial-answer-clickable\" data-bind=\"attr: {'aria-owns': 'ranking-item-list-container' + id()}\"")}
+				${form.getMessage("label.HintOnInitialRankingOrderEditor")}
 			</div>
 		<!-- /ko -->
 		
@@ -550,7 +533,7 @@
 
 			<!-- ko ifnot: foreditor -->
 				<div class="ranking-question-initial-answer-message" data-bind="if: !isAnswered()">
-					${form.getMessage("label.HintOnInitialRankingOrder", "type=\"button\" class=\"unstyledbutton ranking-question-initial-answer-clickable\" data-bind=\"click: acceptInitialAnswer, attr: {'aria-owns': id(), id: 'acceptInitialRanking' + id(), 'aria-describedby' : 'listorderinfo' + id()}\"")}
+					${form.getMessage("label.HintOnInitialRankingOrder")}
 				</div>
 				<div class="question-reset-answer-message" data-bind="if: isAnswered()">
 					<button type="button" class="unstyledbutton" data-bind="click: resetOrder">${form.getMessage("label.ResetOrder")}</a>
@@ -903,7 +886,7 @@
 		
 				<div class="limits" data-bind="hidden: isAnswered, attr: {id: 'questioninfo' + id()}">
 					<!-- ko ifnot: foreditor -->
-						${form.getMessage("info.MoveTheSliderOrAccept", "type=\"button\" class=\"unstyledbutton\" data-bind=\"click: markAsAnswered, attr: {'aria-hidden': isAnswered, id: 'acceptInitialSlider' + id()}\"")}
+						${form.getMessage("info.MoveTheSliderOrAccept", "type=\"button\" class=\"unstyledbutton\" data-bind=\"click: markAsAnswered, attr: {'aria-hidden': isAnswered}\"")}
 					<!-- /ko -->
 					<!-- ko if: foreditor -->
 						${form.getMessage("info.MoveTheSliderOrAccept", "type=\"button\" class=\"unstyledbutton\"")}
@@ -939,7 +922,7 @@
 		
 		<!-- ko if: display() == 'Slider' -->
 			<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
-				<button type="button" class="unstyledbutton" data-bind="click: resetToInitialPosition, attr: {id: 'resetSlider' + id(), 'aria-describedby' : 'questiontitle' + id()}">${form.getMessage("label.ResetToInitialPosition")}</button>
+				<button type="button" class="unstyledbutton" data-bind="click: resetToInitialPosition, attr: {'aria-describedby' : 'questiontitle' + id()}">${form.getMessage("label.ResetToInitialPosition")}</button>
 			</div>
 			<div data-bind="attr: {'class' : maxDistance() > -1 ? 'slider-div median' : 'slider-div'}">
 				<div style="float: left; margin-left: -20px; padding-bottom: 20px; max-width: 45%; text-align: center;" data-bind="html: minLabel()"></div>

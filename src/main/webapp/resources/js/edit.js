@@ -30,11 +30,10 @@ $(function() {
 				checkContent();	
 			} else if (ui.item.hasClass("toolboxitem"))
 			{
-				if (addNewElement(ui.item, null)) {
-					_undoProcessor.addUndoStep(["ADD", $(ui.item).attr("id"), $(ui.item).index()]);
-					goTo($(ui.item).attr("id"));
-					addToNavigation(ui.item, $(ui.item).index());
-				}
+				addNewElement(ui.item, null);
+				_undoProcessor.addUndoStep(["ADD", $(ui.item).attr("id"), $(ui.item).index()]);
+				goTo($(ui.item).attr("id"));
+				addToNavigation(ui.item, $(ui.item).index());
 			} else {
 				if (checkDependenciesAfterMove(ui.item))
 				{
@@ -103,11 +102,10 @@ $(function() {
 		} else {
 			var item = $(this).clone();
 			$("#content").append(item);
-			if (addNewElement(item, null)) {
-				_undoProcessor.addUndoStep(["ADD", $(item).attr("id"), $(item).index()]);
-				goTo($(item).attr("id"));
-				addToNavigation(item, $(item).index());
-			}
+			addNewElement(item, null);
+			_undoProcessor.addUndoStep(["ADD", $(item).attr("id"), $(item).index()]);
+			goTo($(item).attr("id"));
+			addToNavigation(item, $(item).index());
 		}
 		
 		updateTitles();
@@ -670,11 +668,6 @@ function getPAByQuestionCheckBox(a,b,c)
 	return "";
 }
 
-function getTargetDatasetByQuestion(a)
-{
-	return "";
-}
-
 function checkSingleClick(t)
 {}
 
@@ -734,39 +727,9 @@ function saveForm(close)
 			internalClose = close;
 			$("#invalid-regform-dialog").modal('show');
 			return;
-		}
+		}				
+		
 	}
-	
-	if (isSelfAssessment) {
-		let targetDatasetSelectionFound = false;
-		let saquestionFound = false;
-		let problemFound = false;
-		
-		// check that there is only one target dataset selection
-		$(".survey-element").each(function(){
-			if ($(this).hasClass("targetdatasetquestion")) {
-				if (targetDatasetSelectionFound) {
-					$("#multipletargetdatasetselectionsdialog").modal('show');
-					problemFound = true;
-					return;
-				}
-				if (saquestionFound) {
-					$("#targetdatasetselectionaftersaquestiondialog").modal('show');
-					problemFound = true;
-					return;
-				}
-				targetDatasetSelectionFound = true;
-			}
-			if ($(this).hasClass("saquestion")) {
-				saquestionFound = true;
-			}
-		});
-		
-		// check that there is no SA single choice question before a target dataset selection
-		
-		if (problemFound) return;
-	}
-	
 	internalSave(close);
 }
 

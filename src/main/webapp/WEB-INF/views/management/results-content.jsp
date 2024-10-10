@@ -353,23 +353,6 @@
 													  
 													  <div class="overlaymenu hideme maxH">
 													  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
-													  	
-													  	<c:if test="${question.getType() == 'SingleChoiceQuestion' && question.getIsTargetDatasetQuestion() }">
-															<c:forEach items="${targetdatasets}" var="dataset" varStatus="status">
-																<div>
-															    	<c:choose>
-																		<c:when test="${filter.containsTargetDataset(question.uniqueId, dataset.id) }">
-																			<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${question.uniqueId}-${dataset.id}">${dataset.name}</input>
-																		</c:when>
-																		<c:otherwise>
-																			<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${question.uniqueId}-${dataset.id}">${dataset.name}</input>
-																		</c:otherwise>
-																	</c:choose>
-														    	</div>
-															</c:forEach>
-														</c:if>
-													  	
-													  	
 													  	 <c:forEach items="${question.allPossibleAnswers}" var="possibleanswer" varStatus="status">
 													    	<div>
 														    	<c:choose>

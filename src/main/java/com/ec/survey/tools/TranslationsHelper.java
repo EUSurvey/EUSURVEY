@@ -762,28 +762,6 @@ public class TranslationsHelper {
 			return "";
 		}
 	}
-	
-	private static org.w3c.dom.Element getEmptyElementNode(Document doc, int row, int col) {
-		org.w3c.dom.Element elementNode = doc.createElement("Element");
-		
-		Attr attr = doc.createAttribute("type");
-		attr.setValue("ComplexTableItem");
-		elementNode.setAttributeNode(attr);
-		
-		attr = doc.createAttribute("col");
-		attr.setValue(col + "");
-		elementNode.setAttributeNode(attr);
-		
-		attr = doc.createAttribute("row");
-		attr.setValue(row + "");
-		elementNode.setAttributeNode(attr);
-		
-		attr = doc.createAttribute("celltype");
-		attr.setValue("EmptyCell");
-		elementNode.setAttributeNode(attr);
-		
-		return elementNode;
-	}
 
 	private static org.w3c.dom.Element getElementNode(Element element, Document doc,
 			HashMap<String, String> translationByKey) {
@@ -806,12 +784,6 @@ public class TranslationsHelper {
 		if (element instanceof Matrix) {
 			attr = doc.createAttribute("cols");
 			attr.setValue(((Matrix) element).getColumns() + "");
-			elementNode.setAttributeNode(attr);
-		}
-		
-		if (element instanceof ComplexTable) {
-			attr = doc.createAttribute("cols");
-			attr.setValue(((ComplexTable) element).getColumns() + "");
 			elementNode.setAttributeNode(attr);
 		}
 
@@ -989,55 +961,15 @@ public class TranslationsHelper {
 
 			ComplexTable table = (ComplexTable) element;
 			org.w3c.dom.Element childrenElement = doc.createElement("Children");
-			
-			Map<Integer, Map<Integer, org.w3c.dom.Element>> childrenByRowAndColumn = new TreeMap<Integer, Map<Integer, org.w3c.dom.Element>>();
-			for (int r = 0; r <= table.getRows(); r++) {
-				Map<Integer, org.w3c.dom.Element> list = new TreeMap<Integer, org.w3c.dom.Element>();
-				childrenByRowAndColumn.put(r, list);
-				for (int c = 0; c <= table.getColumns(); c++) {
-					list.put(c, null);
-				}
-			}
 
 			for (ComplexTableItem child : table.getChildElements()) {
-				//childrenElement.appendChild(getElementNode(child, doc, translationByKey));
-				childrenByRowAndColumn.get(child.getRow()).put(child.getColumn(), getElementNode(child, doc, translationByKey));
+				childrenElement.appendChild(getElementNode(child, doc, translationByKey));
 			}
-			
-			// we add dummy entries for the XSL to be able to create a view of the translation
-			for (int r = 0; r <= table.getRows(); r++) {
-				for (int c = 0; c <= table.getColumns(); c++) {
-					if (childrenByRowAndColumn.get(r).get(c) == null) {
-						childrenByRowAndColumn.get(r).put(c, getEmptyElementNode(doc, r, c));
-					}
-					//childrenElement.appendChild(getEmptyElementNode(doc, r, c)); 
-				}
-			}
-			
-			//we add the elements in the correct order
-			for (int r = 0; r <= table.getRows(); r++) {
-				for (int c = 0; c <= table.getColumns(); c++) {
-					childrenElement.appendChild(childrenByRowAndColumn.get(r).get(c));					
-				}
-			}
-			
 			elementNode.appendChild(childrenElement);
 		}
 
 		if (element instanceof ComplexTableItem){
 			ComplexTableItem item = (ComplexTableItem) element;
-			
-			attr = doc.createAttribute("col");
-			attr.setValue(item.getColumn() + "");
-			elementNode.setAttributeNode(attr);
-			
-			attr = doc.createAttribute("row");
-			attr.setValue(item.getRow() + "");
-			elementNode.setAttributeNode(attr);
-			
-			attr = doc.createAttribute("celltype");
-			attr.setValue(item.getCellType().name());
-			elementNode.setAttributeNode(attr);
 
 			attr = doc.createAttribute("ResultText");
 			label = getLabel(item, "RESULTTEXT", translationByKey);
@@ -1644,13 +1576,7 @@ public class TranslationsHelper {
 
 				String key = Tools.repairXML(element.getAttribute("key"));
 				String type = Tools.repairXML(element.getAttribute("type"));
-				
-				NodeList labels = element.getElementsByTagName(Constants.LABEL);
-				if (labels.getLength() == 0) {
-					continue; // these are dummy entries like empty cells in a complex table
-				}
-				
-				String label = getText(labels, Constants.LABEL);
+				String label = getText(element.getElementsByTagName(Constants.LABEL), Constants.LABEL);
 
 				result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 
@@ -1719,14 +1645,6 @@ public class TranslationsHelper {
 								.item(j);
 						key = Tools.repairXML(child.getAttribute("key"));
 						type = Tools.repairXML(child.getAttribute("type"));
-						
-						if (type.equalsIgnoreCase("ComplexTableItem")) {
-							String celltype = Tools.repairXML(child.getAttribute("celltype"));
-							if (celltype.equals("EmptyCell")) {
-								continue;
-							}
-						}
-						
 						label = getText(child.getElementsByTagName(Constants.LABEL), Constants.LABEL);
 
 						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));

@@ -37,7 +37,6 @@
 			this.delphi = ko.observable(${form.survey.isDelphi});
 			this.eVote = ko.observable(${form.survey.isEVote});
 			this.opc = ko.observable(${form.survey.isOPC});
-			this.selfAssessment = ko.observable(${form.survey.isSelfAssessment});
 			this.multiPaging = ko.observable(${form.survey.multiPaging});
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
 			this.isUseMaxNumberContributionLink = ko.observable(${form.survey.isUseMaxNumberContributionLink});

@@ -45,7 +45,6 @@
 		<security:intercept-url pattern="/*/management/preparepdfreport/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/statisticsJSON/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/resultsJSON"	access="permitAll" />
-		<security:intercept-url pattern="/*/management/selfassessment/results"	access="permitAll" />
 		<security:intercept-url pattern="/ecfResultJSON"	access="permitAll" />
 		<security:intercept-url pattern="/webservice/**" access="permitAll" />
 		<security:intercept-url pattern="/worker/**" access="${workerpermission}" />

@@ -160,10 +160,7 @@
 							<img rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delphi" />" src="${contextpath}/resources/images/icons/24/delphi.png" />
 						</c:when>
 						<c:when test="${form.survey.isECF}">
-							<span rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ECF" />" class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
-						</c:when>
-						<c:when test="${form.survey.isSelfAssessment}">
-							<span rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.SelfAssessment" />" class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
+							<span rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
 						</c:when>
 						<c:when test="${form.survey.isEVote}">
 							<span rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.eVote" /> - <spring:message code="${form.survey.eVoteTemplateTitle}"/>"  class="glyphicon glyphicon-ok" style="border: 2px solid #333; padding: 3px; font-size: 21px; color: #333"></span>
@@ -329,7 +326,7 @@
 							
 							<c:choose>
 								<c:when test="${USER.canCreateSurveys}">
-									<a class="actionRowAction" onclick="copySurvey('${form.survey.id}', $('#originaltitle').html(), '${form.survey.language.code}', '${form.survey.security}', '${form.survey.isQuiz}', '${form.survey.isDelphi}', '${form.survey.isEVote}', '${form.survey.eVoteTemplate}', '${form.survey.isSelfAssessment}')" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+									<a class="actionRowAction" onclick="copySurvey('${form.survey.id}', $('#originaltitle').html(), '${form.survey.language.code}', '${form.survey.security}', '${form.survey.isQuiz}', '${form.survey.isDelphi}', '${form.survey.isEVote}', '${form.survey.eVoteTemplate}')" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 								</c:when>
 								<c:otherwise>
 									<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy disabled"></span></a>

@@ -264,12 +264,6 @@ public class SurveySearchController extends BasicController {
 			} else {
 				filter.removeSurveyType("ecf");
 			}
-			if (request.getParameter("surveySelfAssessment") != null
-					&& request.getParameter("surveySelfAssessment").equalsIgnoreCase("true")) {
-				filter.addSurveyType("selfassessment");
-			} else {
-				filter.removeSurveyType("selfassessment");
-			}
 
 			filter.setIsEVote(request.getParameter("isEVote"));
 			filter.setPublishedFrom(ConversionTools.getDate(request.getParameter("publishedFrom")));

@@ -3,7 +3,6 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.mapping.PaginationMapper;
@@ -156,11 +155,6 @@ public class PublicationController extends BasicController {
 					}
 					if (answers > 100000)
 						result.addObject("skipstatistics", true);
-					
-					if (survey.getIsSelfAssessment()) {
-						List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
-						result.addObject("targetdatasets", datasets);
-					}
 
 					return result;
 				}
@@ -280,7 +274,10 @@ public class PublicationController extends BasicController {
 
 					AnswerSet answerSet = answerSets.get(0);
 
+					//Map<Integer, Question> questionMap = survey.getQuestionMap();
 					Map<String, Question> questionMapByUid = survey.getQuestionMapByUniqueId();
+
+					//Map<Integer, Element> matrixMap = survey.getMatrixMap();
 					Map<String, Element> matrixMapByUid = survey.getMatrixMapByUid();
 
 					for (Answer answer : answerSet.getAnswers()) {
@@ -303,33 +300,14 @@ public class PublicationController extends BasicController {
 								result.put(answer.getQuestionUniqueId(),
 										matrixMapByUid.get(answer.getPossibleAnswerUniqueId()).getTitle());
 							}
-						} else if (question instanceof ChoiceQuestion) {							
-							
-							if (survey.getIsSelfAssessment() && question instanceof SingleChoiceQuestion) {
-								SingleChoiceQuestion scq = (SingleChoiceQuestion)question;
-								
-								if (scq.getIsTargetDatasetQuestion()) {
-									
-									SATargetDataset dataset = selfassessmentService.getTargetDataset(Integer.parseInt(answer.getValue()));									
-									
-									if (result.containsKey(answer.getQuestionUniqueId())) {
-										result.put(answer.getQuestionUniqueId(),
-												result.get(answer.getQuestionUniqueId()) + "<br />" + dataset.getName());
-									} else {
-										result.put(answer.getQuestionUniqueId(), dataset.getName());
-									}
-									
-									continue;
-								}
-							}
-							
+						} else if (question instanceof ChoiceQuestion) {
 							String title = ((ChoiceQuestion) question)
-									.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
-											? ((ChoiceQuestion) question)
-													.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
-													.getTitle()
-											: "";
-								title = ConversionTools.removeHTML(title);
+								.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
+										? ((ChoiceQuestion) question)
+												.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
+												.getTitle()
+										: "";
+							title = ConversionTools.removeHTML(title);
 
 							if (result.containsKey(answer.getQuestionUniqueId())) {
 								result.put(answer.getQuestionUniqueId(),

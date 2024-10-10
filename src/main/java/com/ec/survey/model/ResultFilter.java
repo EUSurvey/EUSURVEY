@@ -514,11 +514,6 @@ public class ResultFilter implements java.io.Serializable {
 	}
 	
 	@Transient
-	public boolean containsTargetDataset(String questionUid, int targetDatasetID) {
-		return contains("", questionUid, questionUid + "-" + targetDatasetID);
-	}
-	
-	@Transient
 	public boolean visible(String questionId)
 	{
 		return visibleQuestions.contains(questionId);
