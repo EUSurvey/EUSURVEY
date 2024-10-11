@@ -6,10 +6,7 @@ src/main/webapp/WEB-INF/Content/EC/mailtemplateecofficial.html
 #### CONFIGURATION FILES ####
 /src/main/config/*
 !/src/main/config/oss
-!/src/main/config/ossdocker
-!/src/main/config/ossk8s
 !/src/main/config/oss/*
-
 
 #### TARGET AND GENERATED FILES ####
 /target/
@@ -56,8 +53,3 @@ src/main/webapp/WEB-INF/views/version.txt
 
 docker/server/dist/
 src/main/webapp/WEB-INF/views/versionfooter.txt
-docker/eulogin/eulogin-mockup-config/userDataBase.xml
-helm/Chart.lock
-helm/charts/mysql-10.2.4.tgz
-helm/charts/tomcat-11.2.19.tgz
-docker/eulogin/eulogin-mockup-config/userDataBase.xml

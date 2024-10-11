@@ -17,7 +17,7 @@ services:
     stdin_open: true
     tty: true
     networks:
-      - docker_eusurvey-network
+      - docker_eusurvey_network
 networks:
-  docker_eusurvey-network:
+  docker_eusurvey_network:
     external: true
