@@ -1,37 +1,40 @@
-version: '3.8'
+version: "3.7"
 services:
-  eusurvey-mysql:
-    container_name: eusurvey-mysql
-    image: 'bitnami/mysql:8.0.37-debian-12-r2'
-    environment:
-      MYSQL_ROOT_PASSWORD: password
+  db:
+    container_name: db
+    image: mysql:5.6
     ports:
-      - '3306:3306'
+      - "3306:3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=password
     volumes:
-      - eusurvey-mysql-data:/bitnami/mysql/data
-      - ./mysql/init-db/:/docker-entrypoint-initdb.d/
-      - ./mysql/my.cnf:/opt/bitnami/mysql/conf/my_custom.cnf  
+        - ./mysql:/docker-entrypoint-initdb.d/:ro
+    command: --lower_case_table_names=1 --transaction-isolation=READ-COMMITTED
     networks:
-      - eusurvey-network
-
-  eusurvey-tomcat:
-    container_name: eusurvey-tomcat
+      - eusurvey_network
+  server:
     build: server
-    image: eusurvey-tomcat:latest
-    ports:
-      - '8080:8080'
-    environment:
-      - JAVA_OPTS= "-Djava.awt.headless=true"
-      - ALLOW_EMPTY_PASSWORD=yes
+    container_name: eusurvey_server
+    image: tomcat-eusurvey-server
     volumes:
-      - eusurvey-temp:/eusurveytemp/
+      - type: bind
+        source: ~/eusurveytemp
+        target: /eusurveytemp/
+    ports:
+      - "8080:8080"
+      - "8886:8886"
+    depends_on:
+      - db
     networks:
-      - eusurvey-network   
-volumes:
-  eusurvey-mysql-data:
-  eusurvey-temp:
-    driver: local 
-
+      - eusurvey_network
+  maildev:
+    container_name: maildev
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - eusurvey_network
 networks:
-  eusurvey-network:
+  eusurvey_network:
     driver: bridge 
