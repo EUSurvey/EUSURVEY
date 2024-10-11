@@ -1,0 +1,365 @@
+
+global:
+  defaultStorageClass: "standard"
+
+commonTomcatConfig: &commonTomcatConfig
+  replicaCount: 2
+  deployment:
+    type: statefulset
+  podManagementPolicy: OrderedReady
+  service:
+    type: ClusterIP
+    ports: 
+      http: 8080
+  image:
+    registry: ghcr.io
+    repository: circabc/tomcat-eusurvey-server-k8s
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      memory: "1Gi"  
+      cpu: "500m"     
+    limits:
+      memory: "2Gi"    
+      cpu: "1000m"     
+  lifecycleHooks:
+    postStart:
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - |
+            if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then  
+              mv /usr/local/share/eusurvey.war /tmp/eusurvey.war 2>&1
+              mkdir -p /tmp/eusurvey 2>&1
+              cd /tmp/eusurvey && jar -xvf /tmp/eusurvey.war 2>&1
+              cp /etc/config/secrets/spring.properties /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+              cp /etc/config/secrets/ehcache.xml /tmp/eusurvey/WEB-INF/classes/ehcache.xml 2>&1
+
+              sed -i "s/^host.executing.task=.*/host.executing.task=tomcat-task/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+              sed -i "s/^host.executing.ldaptask=.*/host.executing.ldaptask=tomcat-ldap-task/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+              sed -i "s/^host.executing.todotask=.*/host.executing.todotask=tomcat-todotask/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+
+              case "$TASK_TYPE" in
+                task)
+                  sed -i "s/^host.executing.task=.*/host.executing.task=/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+                  ;;
+                ldaptask)
+                  sed -i "s/^host.executing.ldaptask=.*/host.executing.ldaptask=/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+                  ;;
+                todotask)
+                  sed -i "s/^host.executing.todotask=.*/host.executing.todotask=/" /tmp/eusurvey/WEB-INF/spring.properties 2>&1
+                  ;;
+                "")
+                  # No specific task, leave all values as defaults
+                  ;;
+                *)
+                  echo "No matching task type for $TASK_TYPE" 2>&1
+                  ;;
+              esac
+
+              rm /tmp/eusurvey.war 2>&1
+              mv /tmp/eusurvey /opt/bitnami/tomcat/webapps/eusurvey 2>&1
+              rm -rf /tmp/eusurvey 2>&1
+            fi
+
+  extraVolumeMounts:
+    - name: usr-local-share-volume  
+      mountPath: /usr/local/share
+    - name: tmp-volume
+      mountPath: /eusurveytemp/tmp
+    - name: eusurvey-files
+      mountPath: /eusurveytemp/files
+    - name: eusurvey-surveys
+      mountPath: /eusurveytemp/surveys
+    - name: eusurvey-users
+      mountPath: /eusurveytemp/users
+    - name: eusurvey-archive
+      mountPath: /eusurveytemp/archive
+    - name: spring-properties-volume
+      mountPath: /etc/config/secrets/spring.properties
+      subPath: spring.properties
+      readOnly: true
+    - name: cache-config-volume
+      mountPath: /etc/config/secrets/ehcache.xml
+      subPath: ehcache.xml
+      readOnly: true
+
+  extraVolumes:
+    - name: usr-local-share-volume  
+      emptyDir: {}
+    - name: tmp-volume
+      emptyDir: {}
+    - name: eusurvey-files
+      persistentVolumeClaim: 
+        claimName: '{{ .Release.Name }}-tomcat-files'
+    - name: eusurvey-surveys
+      persistentVolumeClaim:
+        claimName: '{{ .Release.Name }}-tomcat-surveys'
+    - name: eusurvey-users
+      persistentVolumeClaim:
+        claimName: '{{ .Release.Name }}-tomcat-users'
+    - name: eusurvey-archive
+      persistentVolumeClaim:
+        claimName: '{{ .Release.Name }}-tomcat-archive'
+    - name: spring-properties-volume
+      secret:
+        secretName: '{{ .Release.Name }}-tomcat-spring-properties-secret'  
+    - name: cache-config-volume
+      secret:
+        secretName: '{{ .Release.Name }}-tomcat-cache-config-secret'  
+
+  initContainers:
+    - name: copy-eusurvey-war
+      image: ghcr.io/circabc/tomcat-eusurvey-server-k8s:latest
+      imagePullPolicy: IfNotPresent 
+      command:
+        - /bin/sh
+        - -c
+        - |
+          if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
+            mv /opt/bitnami/tomcat/webapps/eusurvey.war /usr/local/share/eusurvey.war;
+          fi
+  
+      volumeMounts:
+        - name: usr-local-share-volume  
+          mountPath: /usr/local/share
+
+  extraEnvVars:
+    - name: JAVA_OPTS
+      value: "-Djava.awt.headless=true"  
+  hostAliases:
+  - ip: "192.168.49.1"
+    hostnames:
+    - "openldap"
+    - "eulogin"
+
+  readinessProbe:
+    enabled: false
+  customReadinessProbe:
+    httpGet:
+      path: /eusurvey
+      port: 8080
+    initialDelaySeconds: 120
+    periodSeconds: 5
+    failureThreshold: 3
+
+  livenessProbe:
+    enabled: false
+  customLivenessProbe:
+    httpGet:
+      path: /eusurvey
+      port: 8080
+    initialDelaySeconds: 180
+    periodSeconds: 10
+    failureThreshold: 3
+    
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx    
+    hostname: eusurvey
+    path: /
+    pathType: ImplementationSpecific  
+    ingressClassName: nginx
+    extraRules:
+    - host: eusurvey
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: eusurvey-tomcat  
+                port:
+                  number: 8080
+
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 250Mi
+
+
+commonWaitForFirstTomcat: &wait-for-first-tomcat
+  name: wait-for-first-tomcat
+  image: busybox:1.35
+  imagePullPolicy: IfNotPresent
+  command:
+    - /bin/sh
+    - -c
+    - |
+      echo "Waiting for the first tomcat instance to be ready...";
+      while ! wget -q --spider http://eusurvey-tomcat:8080; do
+        echo "Waiting for the first tomcat instance to be ready...";
+        sleep 5;
+      done;
+      echo "Tomcat is ready!"
+commonCopyEusurveyWar: &copy-eusurvey-war
+  name: copy-eusurvey-war
+  image: ghcr.io/circabc/tomcat-eusurvey-server-k8s:latest
+  imagePullPolicy: IfNotPresent 
+  command:
+    - /bin/sh
+    - -c
+    - |
+      if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
+        mv /opt/bitnami/tomcat/webapps/eusurvey.war /usr/local/share/eusurvey.war;
+      fi
+  volumeMounts:
+    - name: usr-local-share-volume  
+      mountPath: /usr/local/share
+
+tomcat:
+  <<: *commonTomcatConfig
+  replicaCount: 2
+  extraEnvVars:
+    - name: TASK_TYPE
+      value: ""
+  initContainers: 
+    - <<: *copy-eusurvey-war
+  
+tomcat-task:
+  <<: *commonTomcatConfig
+  replicaCount: 1
+  nameOverride: "tomcat-task"
+  extraEnvVars:
+    - name: TASK_TYPE
+      value: "task"
+  initContainers:
+    - <<: *wait-for-first-tomcat
+    - <<: *copy-eusurvey-war
+
+tomcat-ldap-task:
+  <<: *commonTomcatConfig
+  replicaCount: 1
+  nameOverride: "tomcat-ldap-task"
+  extraEnvVars:
+    - name: TASK_TYPE
+      value: "ldaptask"
+  initContainers: 
+    - <<: *wait-for-first-tomcat
+    - <<: *copy-eusurvey-war
+
+tomcat-todo-task:
+  <<: *commonTomcatConfig
+  replicaCount: 1
+  nameOverride: "tomcat-todo-task"
+  extraEnvVars:
+    - name: TASK_TYPE
+      value: "todotask"
+  initContainers: 
+    - <<: *wait-for-first-tomcat
+    - <<: *copy-eusurvey-war
+    
+mysql:
+  auth:
+    rootPassword: "password"
+  primary:
+    extraEnvVars:
+      - name: EUSURVEY_MYSQL_DATABASE
+        value: eusurveydb
+      - name: EUSURVEY_MYSQL_USER
+        value: eusurveyuser
+      - name: EUSURVEY_MYSQL_PASSWORD
+        value: eusurveyuser
+      - name: EUSURVEY_MYSQL_ROOT_PASSWORD
+        value: password
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 250Mi
+
+    configuration: |-
+      [mysqld]
+      default_authentication_plugin={{- .Values.auth.defaultAuthenticationPlugin | default "mysql_native_password" }}
+      skip-name-resolve
+      log_bin_trust_function_creators = 1
+      explicit_defaults_for_timestamp
+      basedir=/opt/bitnami/mysql
+      plugin_dir=/opt/bitnami/mysql/lib/plugin
+      port={{ .Values.primary.containerPorts.mysql }}
+      mysqlx={{ ternary 1 0 .Values.primary.enableMySQLX }}
+      mysqlx_port={{ .Values.primary.containerPorts.mysqlx }}
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      datadir=/bitnami/mysql/data
+      tmpdir=/opt/bitnami/mysql/tmp
+      max_allowed_packet=16M
+      bind-address=*
+      pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+      log-error=/opt/bitnami/mysql/logs/mysqld.log
+      character-set-server=UTF8
+      slow_query_log=0
+      long_query_time=10.0
+      sql_mode = 'NO_ENGINE_SUBSTITUTION'
+
+      [client]
+      port={{ .Values.primary.containerPorts.mysql }}
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      default-character-set=UTF8
+      plugin_dir=/opt/bitnami/mysql/lib/plugin
+
+      [manager]
+      port={{ .Values.primary.containerPorts.mysql }}
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+
+  initdbScripts:
+    setup.sql: |
+      CREATE DATABASE IF NOT EXISTS eusurveydb CHARACTER SET utf8 COLLATE utf8_general_ci;
+      CREATE DATABASE IF NOT EXISTS eusurveyreportdb CHARACTER SET utf8 COLLATE utf8_general_ci;
+      CREATE USER 'eusurveyuser'@'%' IDENTIFIED BY 'eusurveyuser'; 
+      GRANT ALL PRIVILEGES ON eusurveydb.* TO 'eusurveyuser'@'%';
+      GRANT EVENT ON *.* TO 'eusurveyuser'@'%';
+      CREATE USER 'eusurveyruser'@'%' IDENTIFIED BY 'eusurveyruser'; 
+      GRANT ALL PRIVILEGES ON eusurveyreportdb.* TO 'eusurveyruser'@'%';
+      SET GLOBAL event_scheduler = ON;
+      SET GLOBAL log_bin_trust_function_creators = 1;
+      SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;
+      USE eusurveydb;
+      SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+      CREATE TABLE IF NOT EXISTS mv_surveys_numberpublishedanswers (
+        SURVEYUID varchar(255) NOT NULL,
+        PUBLISHEDANSWERS bigint(21) NOT NULL DEFAULT 0,
+        LASTANSWER datetime DEFAULT NULL,
+        MW_TIMESTAMP datetime DEFAULT NULL,
+        KEY MV_SURVEYS_IND (SURVEYUID,PUBLISHEDANSWERS)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+      SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+ 
+
+
+redis: 
+  architecture: standalone
+  auth: 
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 250Mi
+
+persistence:
+  files:
+    enabled: true
+    existingClaim: false
+    accessModes: ["ReadWriteMany"]
+    size: "100Mi"
+  surveys:
+    enabled: true
+    existingClaim: false
+    accessModes: ["ReadWriteMany"]
+    size: "100Mi"
+  users:
+    enabled: true
+    existingClaim: false
+    accessModes: ["ReadWriteMany"]
+    size: "100Mi"
+  archive:
+    enabled: true
+    existingClaim: false
+    accessModes: ["ReadWriteMany"]
+    size: "100Mi"

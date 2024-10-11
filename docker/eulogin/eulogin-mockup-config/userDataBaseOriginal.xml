@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ ECAS Software
+  ~ Copyright (c) 2013 European Commission
+  ~ Licensed under the EUPL
+  ~ You may not use this work except in compliance with the Licence.
+  ~ You may obtain a copy of the Licence at:
+  ~ http://ec.europa.eu/idabc/eupl
+  ~
+  ~ This product includes the CAS software developed by Yale University,
+  ~ Copyright (c) 2000-2004 Yale University. All rights reserved.
+  ~ THE CAS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESS OR IMPLIED
+  ~ WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  ~ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE EXPRESSLY
+  ~ DISCLAIMED. IN NO EVENT SHALL YALE UNIVERSITY OR ITS EMPLOYEES BE
+  ~ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  ~ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED, THE COSTS OF
+  ~ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA OR
+  ~ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  ~ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  ~ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  ~ SOFTWARE, EVEN IF ADVISED IN ADVANCE OF THE POSSIBILITY OF SUCH
+  ~ DAMAGE.
+  -->
+
+<userDataBase xmlns="https://ecas.ec.europa.eu/cas/schemas/mockup/db">
+
+    <user>
+        <email>minimal@email.eu</email>
+        <firstName>Minimal_first_name</firstName>
+        <lastName>MINIMAL_LAST_NAME</lastName>
+        <manager>false</manager>
+        <objectStatus>a</objectStatus>
+        <organisation>eu.europa.ec</organisation>
+        <organisationUsername>minimal</organisationUsername>
+        <passwordLastChangedTime>2013-12-19T19:29:22.196+01:00</passwordLastChangedTime>
+        <strongPasswordHash>Abc123</strongPasswordHash>
+        <uid>minimal</uid>
+    </user>
+    <user>
+        <cn>Chuck NORRIS</cn>
+        <created>1993-04-21T10:00:00+02:00</created>
+        <cudGroups>TEXAS_RANGER</cudGroups>
+        <cudGroups>INTERNET</cudGroups>
+        <cudGroups>LIVENEWS</cudGroups>
+        <departmentNumber>DIGIT.A.3.001</departmentNumber>
+        <description>chuckie</description>
+        <email>texasranger@chuck.norris.com.eu</email>
+        <employeeType>f</employeeType>
+        <firstName>Chuck</firstName>
+        <internalTelephoneNumber>1</internalTelephoneNumber>
+        <lastName>NORRIS</lastName>
+        <manager>true</manager>
+        <mobilePhone>COMREF:+32123456789</mobilePhone>
+        <objectStatus>a</objectStatus>
+        <organisation>eu.europa.ec</organisation>
+        <organisationUsername>chucknorris</organisationUsername>
+        <passwordLastChangedTime>2013-12-19T19:29:22.196+01:00</passwordLastChangedTime>
+        <registrationLevelVersions>
+            <registrationLevelVersion level="LOW">8e9692d7-75ec-4bc1-8c92-402f706a8325</registrationLevelVersion>
+            <registrationLevelVersion level="MEDIUM">c88eaa81-87c2-40df-8595-7789c0afa5fa</registrationLevelVersion>
+            <registrationLevelVersion level="TOP">27e87a8c-c742-4df8-a5a3-b5dcee821f05</registrationLevelVersion>
+            <registrationLevelVersion level="HIGH">2dfe2ddd-a55e-4196-aa69-d52625c084ef</registrationLevelVersion>
+        </registrationLevelVersions>
+        <smsMessageId>456@2011-05-05T14:00:00.000+02:00</smsMessageId>
+        <smsMessageId>123@2011-05-04T14:00:00.000+02:00</smsMessageId>
+        <strongPasswordHash>Qwerty098</strongPasswordHash>
+        <tokenCramId>1234@eu</tokenCramId>
+        <tokenSerialNumber>90-1234567-8</tokenSerialNumber>
+        <uid>chucknorris</uid>
+    </user>
+    <user>
+        <cn>Jack BAUER</cn>
+        <created>2001-11-06T00:00:00-08:00</created>
+        <cudGroups>CTU</cudGroups>
+        <cudGroups>CTU_DIRECTOR</cudGroups>
+        <cudGroups>CTU_RETIRED</cudGroups>
+        <departmentNumber>DIGIT.A.3.001</departmentNumber>
+        <description>jack</description>
+        <email>Jack.Bauer@ctu.eu</email>
+        <employeeType>f</employeeType>
+        <firstName>Jack</firstName>
+        <internalTelephoneNumber>(310) 597-3781</internalTelephoneNumber>
+        <lastName>BAUER</lastName>
+        <manager>true</manager>
+        <mobilePhone>COMREF:+32123456789</mobilePhone>
+        <objectStatus>a</objectStatus>
+        <organisation>eu.europa.curia</organisation>
+        <organisationUsername>jackbauer</organisationUsername>
+        <passwordLastChangedTime>2013-12-19T19:29:22.196+01:00</passwordLastChangedTime>
+        <registrationLevelVersions>
+            <registrationLevelVersion level="LOW">f4de0343-a77a-4676-8942-fd72666a6afc</registrationLevelVersion>
+            <registrationLevelVersion level="MEDIUM">854aabe1-7b14-4610-8cb7-c401e956c218</registrationLevelVersion>
+            <registrationLevelVersion level="TOP">fa50479d-4539-43b4-99b1-9db38de01ca7</registrationLevelVersion>
+            <registrationLevelVersion level="HIGH">69fd9def-53b1-4df5-beae-855443679189</registrationLevelVersion>
+        </registrationLevelVersions>
+        <strongPasswordHash>!CTU4Ev3r$#@</strongPasswordHash>
+        <uid>jackbauer</uid>
+    </user>
+    <user>
+        <cn>James BOND</cn>
+        <created>1953-04-19T10:00:00+02:00</created>
+        <cudGroups>MI6</cudGroups>
+        <cudGroups>DOUBLE_KILL</cudGroups>
+        <cudGroups>LICENSE_TO_KILL</cudGroups>
+        <cudGroups>AIDA_SELFRG</cudGroups>
+        <departmentNumber>DIGIT.A.3.001</departmentNumber>
+        <description>james</description>
+        <email>007@mi6.eu</email>
+        <employeeType>n</employeeType>
+        <firstName>James</firstName>
+        <internalTelephoneNumber>123456</internalTelephoneNumber>
+        <lastName>BOND</lastName>
+        <manager>false</manager>
+        <mobilePhone>COMREF:+32123456789</mobilePhone>
+        <objectStatus>a</objectStatus>
+        <organisation>external</organisation>
+        <organisationUsername>jamesbond</organisationUsername>
+        <passwordLastChangedTime>2013-12-19T19:29:22.196+01:00</passwordLastChangedTime>
+        <registrationLevelVersions>
+            <registrationLevelVersion level="LOW">c1eba41d-4b4b-4ebd-961b-ff7d3e82d80d</registrationLevelVersion>
+            <registrationLevelVersion level="MEDIUM">e89ac87d-8a49-d89c-6767-be145c4ba59c</registrationLevelVersion>
+            <registrationLevelVersion level="TOP">7e0fbde2-21ce-48a7-b26e-4ef26fa080dc</registrationLevelVersion>
+            <registrationLevelVersion level="HIGH">6875b4e8-35e8-441c-aff0-d6876ff8490c</registrationLevelVersion>
+        </registrationLevelVersions>
+        <strongPasswordHash>shaken_not_stirred</strongPasswordHash>
+        <tokenCramId>5678@uk</tokenCramId>
+        <uid>jb007</uid>
+    </user>
+    <user>
+        <cn>Lisbeth SALANDER</cn>
+        <created>2000-01-01T00:00:00+00:00</created>
+        <cudGroups>MILTON_SECURITY</cudGroups>
+        <cudGroups>INTERNET</cudGroups>
+        <cudGroups>LIVENEWS</cudGroups>
+        <departmentNumber>DIGIT.A.3.001</departmentNumber>
+        <email>Lisbeth.SALANDER@ext.ec.europa.eu</email>
+        <employeeType>x</employeeType>
+        <firstName>Lisbeth</firstName>
+        <lastName>SALANDER</lastName>
+        <manager>false</manager>
+        <mobilePhone>COMREF:+32133713371</mobilePhone>
+        <objectStatus>a</objectStatus>
+        <organisation>eu.europa.ec</organisation>
+        <organisationUsername>lsalander</organisationUsername>
+        <passwordLastChangedTime>2013-12-19T19:29:22.196+01:00</passwordLastChangedTime>
+        <strongPasswordHash>dragon_tattoo</strongPasswordHash>
+        <uid>lsalander</uid>
+    </user>
+    <user>
+   		<cn>Jason BOURNE</cn>
+        <cudGroups>MEDUSA</cudGroups>
+        <cudGroups>TREADSTONE</cudGroups>
+   		<departmentNumber>DIGIT.X.1.001</departmentNumber>
+   		<email>Jason.BOURNE@ec.europa.eu</email>
+   		<employeeNumber>00000001</employeeNumber>
+   		<employeeType>f</employeeType>
+   		<firstName>Jason</firstName>
+        <internalGroups>OPS-ADMIN</internalGroups>
+        <internalGroups>USER-ADMIN</internalGroups>
+   		<internalTelephoneNumber>00002</internalTelephoneNumber>
+   		<lastName>BOURNE</lastName>
+        <manager>false</manager>
+   		<mobilePhone>COMREF:+32480123456</mobilePhone>
+   		<objectStatus>a</objectStatus>
+   		<organisation>eu.europa.ec</organisation>
+   		<organisationUsername>bournja</organisationUsername>
+   		<orgId>1234567890</orgId>
+        <passwordLastChangedTime>2013-12-19T19:29:22.196+01:00</passwordLastChangedTime>
+   		<passwordMustChange>N</passwordMustChange>
+   		<resetPasswordPermission>N</resetPasswordPermission>
+   		<strongPasswordHash>Admin123</strongPasswordHash>
+   		<tokenCramId>123@eu</tokenCramId>
+   		<tokenSerialNumber>12-3456789-0</tokenSerialNumber>
+   		<uid>bournja</uid>
+   	</user>
+    <user>
+        <cn>job1337</cn>
+        <description>job1337 is a job account</description>
+        <email>mary@ec.europa.eu</email>
+        <employeeType>e</employeeType>
+        <firstName>job</firstName>
+        <lastName>account</lastName>
+        <manager>false</manager>
+        <objectStatus>a</objectStatus>
+        <organisation>eu.europa.ec</organisation>
+        <organisationUsername>job account</organisationUsername>
+        <uid>job1337</uid>
+        <userManager>uid=bournja,ou=people,dc=commission,dc=europa,dc=eu</userManager>
+    </user>
+</userDataBase>

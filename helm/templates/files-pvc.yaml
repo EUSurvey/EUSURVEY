@@ -1,0 +1,21 @@
+
+{{- if and .Values.persistence.files.enabled (not .Values.persistence.files.existingClaim)  -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "common.names.fullname" . }}-tomcat-files
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    {{- range .Values.persistence.files.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.files.size | quote }}
+  {{- include "common.storage.class" (dict "persistence" .Values.persistence.files "global" .Values.global) | nindent 2 }}
+{{- end -}}
