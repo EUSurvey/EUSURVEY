@@ -51,6 +51,36 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domainWorker;
 	
 	@Transactional
+	public void step117() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.EnableChargeback);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.EnableChargeback);
+			s.setValue("false");
+			s.setFormat("true / false");
+			session.saveOrUpdate(s);
+		}
+	
+		status.setDbversion(117);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step116() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		final String createIndex = "CREATE INDEX IDX_SURVEYS_ORGANISATION ON SURVEYS (ORGANISATION);";
+		session.createSQLQuery(createIndex).executeUpdate();
+		
+		status.setDbversion(116);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
 	public void step115() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

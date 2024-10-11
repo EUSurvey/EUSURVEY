@@ -65,6 +65,7 @@ import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequ
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.naming.NamingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -854,6 +855,30 @@ public class ManagementController extends BasicController {
 
 		return updateSurvey(form, request, false, locale);
 	}
+	
+	private boolean checkSendOrganisationValidationEmail(Survey survey, Map<String, String[]> parameterMap, User user) throws NamingException, MessageException {
+		survey.setOrganisation(Tools.filterHTML(parameterMap.get("organisation")[0]));
+		survey.setValidator(Tools.filterHTML(parameterMap.get("validator")[0]));
+		
+		//check if validator belongs to correct domain
+		Set<String> externalOrganisations = new HashSet<String>(Arrays.asList("CITIZEN", "OTHER", "PRIVATEORGANISATION", "PUBLICADMINISTRATION"));
+		if (user.isExternal() || user.getType().equalsIgnoreCase(User.SYSTEM)) {
+			if (survey.getOrganisation().length() > 0 && !externalOrganisations.contains(survey.getOrganisation())) {
+				if (survey.getValidator() == null || survey.getValidator().length() == 0) {
+					throw new MessageException("no validator found");
+				}
+				
+				String organisation = ldapService.getOrganisationForEmail(survey.getValidator());
+				if (!survey.getOrganisation().equalsIgnoreCase(organisation)) {
+					throw new MessageException("invalid validator");
+				}
+				
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	@PostMapping(value = "createNewSurvey")
 	public ModelAndView createNewSurvey(HttpServletRequest request, HttpServletResponse response, Locale locale)
@@ -915,8 +940,16 @@ public class ManagementController extends BasicController {
 				}
 
 				if (result != null && result.getSurvey() != null) {
+					
+					boolean sendOrganisationValidationEmail = checkSendOrganisationValidationEmail(result.getSurvey(), parameters, u);	
+					
 					int id = surveyService.importSurvey(result, sessionService.getCurrentUser(request), true);
 					activityService.log(ActivityRegistry.ID_SURVEY_IMPORTED, null, Integer.toString(id), u.getId(), result.getSurvey().getUniqueId());
+					
+					if (sendOrganisationValidationEmail) {
+						surveyService.sendOrganisationValidationEmail(id, u);
+					}
+					
 					try {
 						Files.delete(file.toPath());
 					} catch (IOException e) {
@@ -1002,9 +1035,11 @@ public class ManagementController extends BasicController {
 							"A survey with this shortname already exists.", locale);
 					return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 				}
-
+				
 				Survey copy = original.copy(surveyService, sessionService.getCurrentUser(request), fileDir, false, -1,
 						-1, false, false, false, newShortName, UUID.randomUUID().toString());
+				
+				boolean sendOrganisationValidationEmail = checkSendOrganisationValidationEmail(copy, parameterMap, u);				
 
 				if (copy.getIsEVote()) {
 					//change all multiple choice eVote Lists to the right style
@@ -1088,6 +1123,11 @@ public class ManagementController extends BasicController {
 							copy.getUniqueId());
 					Map<String, Translations> translationToCreate = new HashMap<>();
 					ensurePropertiesDependingOnSurveyType(copy, false, translationToCreate);
+					
+					if (sendOrganisationValidationEmail) {
+						surveyService.sendOrganisationValidationEmail(copy.getUniqueId(), u);
+					}
+					
 					return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit");
 
 				} catch (Exception e) {
@@ -1288,6 +1328,7 @@ public class ManagementController extends BasicController {
 			throws Exception {
 		Survey uploadedSurvey = new Survey();
 		Survey survey = new Survey();
+		User u = sessionService.getCurrentUser(request);
 
 		boolean hasPendingChanges = false;
 		boolean shortnameChanged = false;
@@ -1299,10 +1340,13 @@ public class ManagementController extends BasicController {
 		List<String> keyTranslationsToAdd = new LinkedList<>();
 
 		File oldlogo = null;
+		boolean sendOrganisationValidationEmail = false;
 
 		if (creation) {
 			uploadedSurvey.setShortname(Tools.escapeHTML(parameterMap.get(Constants.SHORTNAME)[0]));
 			uploadedSurvey.setTitle(Tools.filterHTML(parameterMap.get("title")[0]));
+			
+			sendOrganisationValidationEmail = checkSendOrganisationValidationEmail(uploadedSurvey, parameterMap, u);
 
 			Language objLang = surveyService.getLanguage(parameterMap.get("surveylanguage")[0]);
 			if (objLang == null) {
@@ -1362,9 +1406,7 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = survey.getHasPendingChanges();
 
 			oldlogo = survey.getLogo();
-
-			User u = sessionService.getCurrentUser(request);
-
+			
 			if (!survey.getOwner().getId().equals(u.getId())
 					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
 				Access access = surveyService.getAccess(survey.getId(), u.getId());
@@ -1631,6 +1673,8 @@ public class ManagementController extends BasicController {
 
 		survey.setLanguage(uploadedSurvey.getLanguage());
 		survey.setTitle(Tools.filterHTML(uploadedSurvey.getTitle()));
+		survey.setOrganisation(uploadedSurvey.getOrganisation());
+		survey.setValidator(uploadedSurvey.getValidator());
 
 		boolean sendListFormMail = false;
 
@@ -1784,9 +1828,7 @@ public class ManagementController extends BasicController {
 		survey.setShowPDFOnUnavailabilityPage(uploadedSurvey.getShowPDFOnUnavailabilityPage());
 		survey.setShowDocsOnUnavailabilityPage(uploadedSurvey.getShowDocsOnUnavailabilityPage());
 		survey.setAllowQuestionnaireDownload(uploadedSurvey.getAllowQuestionnaireDownload());
-
-		User u = sessionService.getCurrentUser(request);
-
+		
 		if (creation) {
 			survey.setOwner(u);
 			survey.setDownloadContribution(!survey.getIsDelphi());
@@ -2309,6 +2351,10 @@ public class ManagementController extends BasicController {
 			activityService.log(ActivityRegistry.ID_SURVEY_CREATED, null, form.getSurvey().getId().toString(), u.getId(), survey.getUniqueId());
 
 			surveyService.setBrpAccess(survey);
+			
+			if (sendOrganisationValidationEmail) {
+				surveyService.sendOrganisationValidationEmail(survey.getUniqueId(), u);
+			}
 			
 			if (survey.getIsSelfAssessment()) {
 				return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/parameters");

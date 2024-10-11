@@ -68,6 +68,7 @@ public class Setting {
 	public static final String LastCheckedSurveyIDForZombieFiles = "LastCheckedSurveyIDForZombieFiles";
 	public static final String AutomaticDraftDeleteExceptions = "AutomaticDraftDeleteExceptions";
 	public static final String EULoginWhitelist = "EULoginWhitelist";
+	public static final String EnableChargeback = "EnableChargeback";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")

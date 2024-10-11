@@ -226,7 +226,7 @@ function checkContent()
 		$("#empty-content-message").show();
 	}
 
-	eVoteRuleEvaluator.recalculate()
+	SurveyRuleEvaluator.recalculate()
 }
 
 function checkDependenciesAfterMove(item){
@@ -1381,7 +1381,7 @@ function getCounter(level, n1, n2, n3, n4, n5)
 	return result;
 }
 
-const eVoteRuleEvaluator = {
+const SurveyRuleEvaluator = {
 
 	isElementAllowed(element){
 
@@ -1401,6 +1401,10 @@ const eVoteRuleEvaluator = {
 		if (isEVote) {
 			this.evaluateRule(eVoteTemplate)
 		}
+		
+		if (isSelfAssessment) {
+			this.evaluateSARule()
+		}
 	},
 
 	disallowElement(elType){
@@ -1410,6 +1414,12 @@ const eVoteRuleEvaluator = {
 	evaluateRule(template){
 		if ($(".survey-element.singlechoiceitem").length > 0) {
 			this.disallowElement("singlechoiceitem")
+		}
+	},
+	
+	evaluateSARule(){
+		if ($(".survey-element.targetdatasetquestion").length > 0) {
+			this.disallowElement("targetdatasetitem ")
 		}
 	}
 }

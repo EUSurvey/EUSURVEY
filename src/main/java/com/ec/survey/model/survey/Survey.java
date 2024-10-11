@@ -17,7 +17,6 @@ import java.util.TreeMap;
 import javax.persistence.*;
 import javax.persistence.Table;
 
-import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.ECFProfile;
 import com.ec.survey.model.Language;
 import com.ec.survey.model.Publication;
@@ -203,6 +202,10 @@ final public class Survey implements java.io.Serializable {
 	private Integer minListPercent = 5;
 	private Integer maxPrefVotes;
 	private Integer seatsToAllocate;
+	private String organisation;
+	private String validator;
+	private String validationCode;
+	private Boolean validated;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1942,6 +1945,8 @@ final public class Survey implements java.io.Serializable {
 		copy.criticalComplexity = criticalComplexity;
 		copy.codaLink = codaLink;
 		copy.codaWaiting = codaWaiting;
+		copy.setOrganisation(organisation);
+		copy.setValidator(validator);
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -2808,6 +2813,24 @@ final public class Survey implements java.io.Serializable {
 	public void setCodaWaiting(Boolean codaWaiting) {
 		this.codaWaiting = codaWaiting != null ? codaWaiting : false;
 	}
+	
+	@Column(name = "ORGANISATION")
+	public String getOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(String organisation) {
+		this.organisation = organisation;
+	}
+	
+	@Column(name = "VALIDATOR")
+	public String getValidator() {
+		return validator;
+	}
+
+	public void setValidator(String validator) {
+		this.validator = validator;
+	}
 
 	@Column(name = "QUORUM")
 	public Integer getQuorum() {
@@ -2825,6 +2848,24 @@ final public class Survey implements java.io.Serializable {
 
 	public void setMinListPercent(Integer minListPercent) {
 		this.minListPercent = minListPercent != null ? minListPercent : 5;
+	}
+
+	@Column(name = "VALIDATIONCODE")
+	public String getValidationCode() {
+		return validationCode;
+	}
+
+	public void setValidationCode(String validationCode) {
+		this.validationCode = validationCode;
+	}
+
+	@Column(name = "VALIDATED")
+	public Boolean getValidated() {
+		return validated;
+	}
+
+	public void setValidated(Boolean validated) {
+		this.validated = validated != null ? validated : false;;
 	}
 
 	public Integer getMaxPrefVotes() {
@@ -2860,4 +2901,18 @@ final public class Survey implements java.io.Serializable {
 	public void setSeatsToAllocate(Integer seatsToAllocate) {
 		this.seatsToAllocate = seatsToAllocate;
 	}
+
+	public boolean displayAllSAQuestions() {
+		for (Question q : this.getQuestions()) {
+			if (q instanceof SingleChoiceQuestion) {
+				SingleChoiceQuestion scq = (SingleChoiceQuestion)q;
+				if (scq.getIsTargetDatasetQuestion()) {
+					return scq.getDisplayAllQuestions();
+				}
+			}
+		}
+		
+		return true;
+	}
+
 }

@@ -2318,6 +2318,38 @@ public class RunnerController extends BasicController {
 
 		return "success";
 	}
+	
+	@RequestMapping(value = "/createsapdf/{code}/{dataset}", headers = "Accept=*/*", method = { RequestMethod.POST })
+	public @ResponseBody String createsapdf(@PathVariable String code, @PathVariable int dataset, HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+
+			if (!checkCaptcha(request)) {
+				return "errorcaptcha";
+			}
+			
+			AnswerSet answerSet = answerService.get(code);
+			if (answerSet != null) {
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				String email = parameters.get(Constants.EMAIL)[0];
+				SAExecutor export = (SAExecutor) context.getBean("saExecutor");
+				
+				String charts = request.getParameter("charts");
+				
+				if (charts != null) {
+					charts = charts.replace("[", "").replace("]", "").replace("\"", "").replace("data:image/png;base64,", "");				
+				}
+				
+				export.init(answerSet, dataset, email, sender, serverPrefix, charts);
+				taskExecutor.execute(export);
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return Constants.ERROR;
+		}
+
+		return "success";
+	}
 
 	@RequestMapping(value = "/sendmaillink", headers = "Accept=*/*", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public @ResponseBody String sendDraftLinkByMail(HttpServletRequest request, HttpServletResponse response) {
@@ -2495,7 +2527,7 @@ public class RunnerController extends BasicController {
 		}
 
 		if (survey.getIsSelfAssessment()) {
-			selfassessmentService.initializeElements(result, survey.getUniqueId());
+			selfassessmentService.initializeElements(result, survey);
 		}
 		
 		return result;

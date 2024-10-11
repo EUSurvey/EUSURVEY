@@ -13,6 +13,7 @@ import com.ec.survey.tools.PDFRendererPoolFactory;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -487,6 +489,48 @@ public class PDFService extends BasicService {
 			return target;
 		} catch (Exception ex) {
 			logger.error(String.format("PDF quiz result creation for contribution %s could not be started.", answerSet.getId()));
+			logger.error(ex.getLocalizedMessage(), ex);
+		} finally {
+			if (os != null)
+				os.close();
+			if (renderer != null)
+				try {
+					PDFRendererPoolFactory.getInstance(max, sessionService).checkIn(renderer);
+				} catch (Exception e) {
+					logger.error(e.getLocalizedMessage(), e);
+				}
+		}
+
+		return null;
+	}
+
+	public java.io.File createSAPDF(AnswerSet answerSet, int dataset, String charts) throws IOException {
+		logger.info("Starting PDF creation for results (self-assessment) for contribution " + answerSet.getId());
+		FileOutputStream os = null;
+		PDFRenderer renderer = null;
+		try {
+
+			java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
+			java.io.File target = new java.io.File(String.format("%s/sa%s.pdf", folder.getPath(), UUID.randomUUID().toString()));
+
+			String chartsUID = UUID.randomUUID().toString();
+			
+			if (charts != null && charts.length() > 0) {
+				java.io.File chartstarget = new java.io.File(String.format("%s/sa%s.dat", folder.getPath(), chartsUID ));
+				FileUtils.writeStringToFile(chartstarget, charts, Charset.forName("UTF-8"));
+			}
+						
+			renderer = getRenderer();
+			
+			if (renderer == null) {
+				throw new MessageException("Not possible to obtain PDFRenderer from pool");
+			}
+			os = new FileOutputStream(target);
+			renderer.createPDF(pdfhost + "preparesaresults/" + answerSet.getUniqueCode() + "/" + dataset + "?charts=" + chartsUID, os);
+
+			return target;
+		} catch (Exception ex) {
+			logger.error(String.format("PDF sa result creation for contribution %s could not be started.", answerSet.getId()));
 			logger.error(ex.getLocalizedMessage(), ex);
 		} finally {
 			if (os != null)

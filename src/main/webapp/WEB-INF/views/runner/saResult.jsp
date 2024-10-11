@@ -46,7 +46,18 @@
             tr, .quizanswer, .quizquestion, img, .quizsectionresults {
             	page-break-inside: avoid;
             }
-        </c:if>
+			
+			td, th {
+				border: 1px solid #555;
+				padding: 5px;
+			}
+			
+		</c:if>
+
+		.customtext {
+			margin-top: 30px;
+			margin-bottom: 30px;
+		}
 	</style>
 	
 	<script type="text/javascript"> 

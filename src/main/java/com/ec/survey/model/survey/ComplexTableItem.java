@@ -408,6 +408,10 @@ public class ComplexTableItem extends Question {
         if (!Tools.isEqual(minD, other.minD)) return true;
         if (!Tools.isEqual(unit, other.unit)) return true;
         if (!Tools.isEqual(formula, other.formula)) return true;
+        
+        if (getPossibleAnswers().size() != other.getPossibleAnswers().size()) {
+        	return true;
+        }
 
         for (int i = 0; i < getPossibleAnswers().size(); i++) {
             if (getPossibleAnswers().get(i).differsFrom(other.getPossibleAnswers().get(i))) {

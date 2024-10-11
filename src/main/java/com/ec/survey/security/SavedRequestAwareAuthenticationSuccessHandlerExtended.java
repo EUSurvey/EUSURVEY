@@ -29,6 +29,12 @@ public class SavedRequestAwareAuthenticationSuccessHandlerExtended extends Simpl
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
 		String survey = request.getParameter(Constants.SURVEY);
+		
+		boolean organisationSet = (Boolean) request.getSession().getAttribute("ORGANISATIONSET");
+		if (organisationSet) {
+			getRedirectStrategy().sendRedirect(request, response, "/settings/myAccount");
+			return;
+		}
 
 		if (survey != null) {
 			getRedirectStrategy().sendRedirect(request, response, "/runner/" + survey);

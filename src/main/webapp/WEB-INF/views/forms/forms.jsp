@@ -350,39 +350,7 @@
 							  }
 							  
 							  $(td).append("&nbsp;");
-							  
-							  <c:if test="${enablearchiving}">
-								if(list[i].state != 'Running' && (list[i].fullFormManagementRights))
-								{
-									var a = document.createElement("a");
-									$(a).addClass("actionRowAction");
-									$(a).attr("href", "#");
-									$(a).attr("onclick", "showArchiveDialog('"+list[i].shortname+"','"+list[i].id+"', true)");
-									$(a).attr("rel", "tooltip").attr("data-toggle","tooltip");
-									$(a).attr("title", "<spring:message code="label.Archive" />");
-									
-									$(a).append("<span class='glyphicon glyphicon-import'></span>");
-									$(td).append(a);
-								}
-								else
-								{
-									var a = document.createElement("a");
-									$(a).addClass("actionRowAction").addClass("disabled");
-									$(a).attr("rel", "tooltip").attr("data-toggle","tooltip");
-									
-									if (list[i].fullFormManagementRights)
-									{
-										$(a).attr("title", '<spring:message code="tooltip.ArchiveDisabled" />');
-									} else {
-										$(a).attr("title", '<spring:message code="tooltip.Archive" />');
-									}
-									
-									$(a).append("<span class='glyphicon glyphicon-import' style='color: #ccc'></span>");
-									$(td).append(a);
-								}								
-								 $(td).append("&nbsp;");
-								 </c:if>
-								
+												
 								if (list[i].state != 'Running')
 								{
 									var a = document.createElement("a");
@@ -885,21 +853,7 @@
 														<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt disabled"></</span></a>
 													</c:otherwise>
 												</c:choose>
-												
-												<c:if test="${enablearchiving}">
-													<c:choose>
-														<c:when test="${survey.state != 'Running' && (survey.owner.id.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-															<a id="btnArchiveSurvey" class="actionRowAction"  onclick="showArchiveDialog('${survey.shortname}','${survey.id}', true)" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import"></</span></a>
-														</c:when>
-														<c:when test="${!survey.fullFormManagementRights}">
-															<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></</span></a>
-														</c:when>
-														<c:otherwise>
-															<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></</span></a>
-														</c:otherwise>
-													</c:choose>				
-												</c:if>
-	
+											
 												<c:choose>
 													<c:when test="${survey.state != 'Running' && (survey.fullFormManagementRights)}">
 														<a id="deleteBtnEnabledFromListSurvey" onclick="showDeleteDialog('${survey.id}');"  class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></</span></a>

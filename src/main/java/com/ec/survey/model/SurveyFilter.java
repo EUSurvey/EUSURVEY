@@ -46,6 +46,7 @@ public class SurveyFilter implements Serializable  {
 	private Boolean frozen = null;
 	private String isEVote = null;
 	private Set<String> surveyTypes = null;
+	private Set<String> organisations = null;
 
 	public User getUser() {
 		return user;
@@ -335,5 +336,33 @@ public class SurveyFilter implements Serializable  {
 			return false;
 		}
 		return this.surveyTypes.size() == 6;
+	}
+
+	public Set<String> getOrganisations() {
+		return this.organisations;
+	}
+
+	public void setOrganisations(Set<String> organisations) {
+		this.organisations = organisations;
+	}
+
+	public Boolean containsOrganisation(String organisation) {
+		if (this.organisations == null) {
+			return false;
+		}
+		return this.organisations.contains(organisation);
+	}
+
+	public void addOrganisation(String organisation) {
+		if (this.organisations == null) {
+			this.organisations = new HashSet<>();
+		}
+		this.organisations.add(organisation);
+	}
+
+	public void removeOrganisation(String organisation) {
+		if (this.organisations != null) {
+			this.organisations.remove(organisation);
+		}
 	}
 }
