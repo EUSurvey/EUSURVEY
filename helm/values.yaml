@@ -110,22 +110,6 @@ commonTomcatConfig: &commonTomcatConfig
       secret:
         secretName: '{{ .Release.Name }}-tomcat-cache-config-secret'  
 
-  initContainers:
-    - name: copy-eusurvey-war
-      image: ghcr.io/circabc/tomcat-eusurvey-server-k8s:latest
-      imagePullPolicy: IfNotPresent 
-      command:
-        - /bin/sh
-        - -c
-        - |
-          if [ ! -d /opt/bitnami/tomcat/webapps/eusurvey ]; then
-            mv /opt/bitnami/tomcat/webapps/eusurvey.war /usr/local/share/eusurvey.war;
-          fi
-  
-      volumeMounts:
-        - name: usr-local-share-volume  
-          mountPath: /usr/local/share
-
   extraEnvVars:
     - name: JAVA_OPTS
       value: "-Djava.awt.headless=true"  
@@ -191,7 +175,7 @@ commonWaitForFirstTomcat: &wait-for-first-tomcat
     - -c
     - |
       echo "Waiting for the first tomcat instance to be ready...";
-      while ! wget -q --spider http://eusurvey-tomcat:8080; do
+      while ! wget -q --spider http://eusurvey-tomcat:8080/eusurvey; do
         echo "Waiting for the first tomcat instance to be ready...";
         sleep 5;
       done;
