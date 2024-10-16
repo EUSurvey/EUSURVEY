@@ -24,4 +24,7 @@
 	<c:if test="${USER.getGlobalPrivilegeValue('FormManagement') > 0 && enablereportingdatabase == 'true'}">
 		<div id="reporting-button" class="InactiveLinkButton"></span><a href="<c:url value="/administration/reporting"/>"><spring:message code="label.ReportingDatabase" /></a></div>  
 	</c:if>
+	<c:if test="${USER.getGlobalPrivilegeValue('FormManagement') > 0 && enablechargeback == 'true'}">
+		<div id="organisations-button" class="InactiveLinkButton"></span><a href="<c:url value="/administration/organisations"/>"><spring:message code="label.Organisations" /></a></div>  
+	</c:if>
 </div>

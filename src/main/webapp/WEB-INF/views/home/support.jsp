@@ -232,6 +232,7 @@
 						<option value="accessibility"><spring:message code="support.Accessibility" /></option>
 						<option value="dataprotection" id="dataprotectionoption"><spring:message code="support.DataProtection" /></option>
 						<option value="highaudience" id="highaudienceoption"><spring:message code="support.HighAudience" /></option>
+						<option value="organisation" id="organisationoption"><spring:message code="support.Organisation" /></option>
 						<option value="otherreason"><spring:message code="support.otherreason" /></option>						
 					</select><br /><br />
 					<script>
@@ -243,6 +244,8 @@
 							document.getElementById("highaudienceoption").setAttribute("selected", "selected")
 						} else if (window.location.search.toLowerCase().includes("dataprotection")) {
 							document.getElementById("dataprotectionoption").setAttribute("selected", "selected")
+						} else if (window.location.search.toLowerCase().includes("organisation")) {
+							document.getElementById("organisationoption").setAttribute("selected", "selected")
 						} else {
 							document.getElementById("generaloption").setAttribute("selected", "selected")
 						}
@@ -259,7 +262,7 @@
 					<label id="namelabel"><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
 					<input type="text" class="form-control required" style="width: 425px" name="name" id="yourname" aria-labelledby="namelabel" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
 					
-					<label id="emaillabel"><span class="mandatory">*</span><spring:message code="label.youremailorlogin" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
+					<label id="emaillabel"><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
 					<input type="text" class="form-control required" style="width: 425px" id="supportemail" name="email" aria-labelledby="emaillabel" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
 					
 					<label id="subjectlabel"><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />

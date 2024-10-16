@@ -65,6 +65,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	{
 		User user = null;
 		boolean surveyLoginMode = auth.getName() != null && auth.getName().startsWith("surveyloginmode");
+		boolean organisationSet = false;
 		
 		if (surveyLoginMode || (auth.getName() == null || auth.getName().length() == 0 || auth.getName().startsWith("oldLogin:")) && (((String)auth.getCredentials()).startsWith("ECAS_ST") || ((String)auth.getCredentials()).startsWith("ST")))
 		{
@@ -95,6 +96,12 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     			String username = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
     			String type = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:employeeType");	    				    			
 				String strength = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:strength");
+				String domain = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:domain");
+				String organisation = domain;
+				if (domain.equalsIgnoreCase("eu.europa.ec")) {
+					String departmentNumber = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:departmentNumber");
+					organisation = departmentNumber.substring(0, departmentNumber.indexOf('.'));
+				}
 				
 				String whiteList = settingsService.get(Setting.EULoginWhitelist);
 				if (!surveyLoginMode && whiteList.trim().length() > 0) {
@@ -143,6 +150,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
 					user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
 					user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
+					organisationSet = true;
+					user.setOrganisation(organisation);
 					
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q")) 
 					{
@@ -168,6 +177,12 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					String oldEmail = user.getEmail();
 					
 					try {
+						organisationSet = !Tools.isEqual(user.getOrganisation(),organisation);
+						user.setOrganisation(organisation);
+						if (organisationSet) {
+							administrationService.updateUser(user);
+						}
+						
 						user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
 						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
 						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
@@ -219,7 +234,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					}
 				}
 				
-				Collection<GrantedAuthority> authorities = getAuthorities(user, true, weakAuthentication, surveyLoginMode);
+				Collection<GrantedAuthority> authorities = getAuthorities(user, true, weakAuthentication, surveyLoginMode, organisationSet);
 				
 				checkUserNotBanned(user);
 				
@@ -301,7 +316,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 		return new UsernamePasswordAuthenticationToken(
 				auth.getName(), 
 				auth.getCredentials(), 
-				getAuthorities(user, false, false, surveyLoginMode));
+				getAuthorities(user, false, false, surveyLoginMode, organisationSet));
 	}
 	
 	private void checkUserNotBanned(User user)
@@ -323,12 +338,17 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	 * @param ecas
      * @return
      */
-	public Collection<GrantedAuthority> getAuthorities(User user, boolean ecas, boolean weakAuthentication, boolean surveyLogin) {
+	public Collection<GrantedAuthority> getAuthorities(User user, boolean ecas, boolean weakAuthentication, boolean surveyLogin, boolean organisationSet) {
 		List<GrantedAuthority> authList = new ArrayList<>();
 		
 		if (weakAuthentication)
 		{
 			authList.add(new SimpleGrantedAuthority("ROLE_WEAK_AUTHENTICATION"));
+		}
+		
+		if (organisationSet)
+		{
+			authList.add(new SimpleGrantedAuthority("ROLE_ORGANISATION_SET"));
 		}
 		
 		if (ecas) authList.add(new SimpleGrantedAuthority("ROLE_ECAS_USER"));

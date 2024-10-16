@@ -12,7 +12,9 @@ import com.ec.survey.model.Form;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.selfassessment.SACriterion;
 import com.ec.survey.model.selfassessment.SAReportConfiguration;
+import com.ec.survey.model.selfassessment.SAResult;
 import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
@@ -30,6 +32,8 @@ import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import com.ec.survey.tools.activity.ActivityRegistry;
+
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -127,7 +132,6 @@ public class ContributionController extends BasicController {
 		form.setSurvey(translated);
 		form.setLanguage(surveyService.getLanguage(lang));
 
-
 		form.getAnswerSets().add(answerSet);
 		result.addObject(form);
 		result.addObject("surveyprefix", answerSet.getSurvey().getId());
@@ -138,6 +142,68 @@ public class ContributionController extends BasicController {
 		return result;
 	}
 
+	@RequestMapping(value = "/preparesaresults/{code}/{dataset}", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public ModelAndView saresults(@PathVariable String code, @PathVariable int dataset, Locale locale, HttpServletRequest request)
+			throws Exception {
+		AnswerSet answerSet = getAnswerSet(code, request);
+
+		Set<String> invisibleElements = new HashSet<>();
+
+		// this is needed to initialize the invisibleElements
+		SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null, null, true,
+				null, fileService);
+
+		ModelAndView result = new ModelAndView("runner/saResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
+		Form form = new Form(resources, surveyService.getLanguage(answerSet.getLanguageCode().toUpperCase()),
+				translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+
+		String lang = answerSet.getLanguageCode();
+		Survey translated = SurveyHelper.createTranslatedSurvey(answerSet.getSurvey().getId(), lang, surveyService,
+				translationService, true);
+		form.setSurvey(translated);
+		form.setLanguage(surveyService.getLanguage(lang));
+
+		form.getAnswerSets().add(answerSet);
+		result.addObject(form);
+		result.addObject("surveyprefix", answerSet.getSurvey().getId());
+		form.setForPDF(true);
+		result.addObject("forpdf", "true");
+		result.addObject("invisibleElements", invisibleElements);
+		
+		result.addObject("issaresultpage", true);
+		
+		SAReportConfiguration config = selfassessmentService.getReportConfiguration(answerSet.getSurvey().getUniqueId());
+		result.addObject("SAReportConfiguration", config);
+		
+		List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(answerSet.getSurvey().getUniqueId());
+		result.addObject("SATargetDatasets", datasets);
+		
+		List<SACriterion> criteria = selfassessmentService.getCriteria(answerSet.getSurvey().getUniqueId());
+		result.addObject("SACriteria", criteria);
+		
+		SAResult saresult = selfassessmentService.getSAResult(dataset, answerSet.getUniqueCode());
+		result.addObject("SAResult", saresult);
+		
+		SATargetDataset comparisonDataset = null;
+		if (dataset > 0) {
+			comparisonDataset = selfassessmentService.getTargetDataset(dataset);
+		}
+		
+		result.addObject("ComparisonDataset", comparisonDataset);
+		
+		String chartsuid = request.getParameter("charts");
+		
+		if (chartsuid != null && chartsuid.length() > 0) {	
+			java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
+			java.io.File chartstarget = new java.io.File(String.format("%s/sa%s.dat", folder.getPath(), chartsuid ));
+			
+			String charts = FileUtils.readFileToString(chartstarget, Charset.forName("UTF-8"));			
+			result.addObject("charts", charts.split(",") );		
+		}
+		
+		return result;
+	}
+	
 	@RequestMapping(value = "/preparecontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparecontribution(@PathVariable String code, Locale locale, HttpServletRequest request)
 			throws Exception {

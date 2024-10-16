@@ -50,6 +50,7 @@ import com.ec.survey.exception.httpexception.UnauthorizedException;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.Draft;
+import com.ec.survey.model.Setting;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.ActivityService;
 import com.ec.survey.service.AdministrationService;
@@ -221,6 +222,11 @@ public class BasicController implements BeanFactoryAware {
 		return enablereportingdatabase != null && enablereportingdatabase.equalsIgnoreCase("true");
 	}
 
+	public boolean isChargeBackeEnabled() {
+		String enabled = settingsService.get(Setting.EnableChargeback);
+		return enabled != null && enabled.equalsIgnoreCase("true");
+	}
+	
 	public static boolean isAjax(HttpServletRequest request) {
 		return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 	}

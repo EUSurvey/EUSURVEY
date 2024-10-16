@@ -1396,16 +1396,26 @@ function update(input)
 			break;
 		case "sascore":
 			var score = parseInt($(input).val());
+			
+			if (score < 0) {
+				score = -1 * score;
+				$(input).val(score);
+			}
+			
 			var paid = $(input).attr("data-id");
 			var answerPos = element.possibleAnswers().findIndex(pa => paid == pa.id());
 			var answer = element.possibleAnswers()[answerPos];
-			var old = answer.ecfScore();
-			answer.ecfScore(score);
-			answer.scoring.points(score);
-			_actions.SaveEnabled(true);
+			var old = answer.scoring.points();
+			if (score != old) {
+				answer.ecfScore(score);
+				answer.scoring.points(score);
+				_undoProcessor.addUndoStep(["sascore", id, paid, old, score]);
+			}
 			break;
 		default:
 			throw label + " not implemented"; 
+			
+		_actions.SaveEnabled(true);
 	}	
 	
 	$(input).removeClass("activeproperty");

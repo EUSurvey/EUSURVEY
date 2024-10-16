@@ -106,16 +106,19 @@ public class ECService extends BasicService {
 		return dgs;
 	}
 
-	public String[] getDepartments() {
+	public String[] getDepartments(boolean dgs, boolean aex) {
 		if (linesDGS == null) {
 			parse();
 		}
 		
 		List<String> result = new ArrayList<>();
-		Collections.addAll(result, linesDGS.toArray());
-		Collections.addAll(result, linesAEX.toArray());
+		if (dgs) Collections.addAll(result, linesDGS.toArray());
+		if (aex) Collections.addAll(result, linesAEX.toArray());
 		
 		return result.toArray(new String[0]);
 	}
 	
+	public String[] getDepartments() {
+		return getDepartments(true, true);
+	}
 }

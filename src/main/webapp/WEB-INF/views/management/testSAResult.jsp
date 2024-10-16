@@ -30,6 +30,11 @@
 		.page {
 		 	background-color: #fff;
 		}
+
+		.customtext {
+			margin-top: 30px;
+			margin-bottom: 30px;
+		}
 	</style>
 	
 	<script type="text/javascript"> 

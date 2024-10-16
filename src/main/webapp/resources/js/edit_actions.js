@@ -93,7 +93,7 @@ var Actions = function() {
 		
 		this.copiedElements = [];
 		$("#content").find(".selectedquestion").each(function(){
-			if (!eVoteRuleEvaluator.isElementAllowed(this)){
+			if (!SurveyRuleEvaluator.isElementAllowed(this)){
 				return; //continue
 			}
 			var oldid = $(this).attr("id");
@@ -159,7 +159,7 @@ var Actions = function() {
     				}
     			}
 
-				if (!eVoteRuleEvaluator.isElementAllowed(this)){
+				if (!SurveyRuleEvaluator.isElementAllowed(this)){
 					return; //continue
 				}
     			

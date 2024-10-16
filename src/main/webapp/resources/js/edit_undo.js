@@ -820,6 +820,11 @@ var UndoProcessor = function() {
 			case "EvaluationCriteria":
 				element.evaluationCriterion(step[3]);
 				break;
+			case "sascore":
+				var answer = element.getChild(step[2]);
+				answer.ecfScore(step[3]);
+				answer.scoring.points(step[3]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -827,7 +832,7 @@ var UndoProcessor = function() {
 		_elementProperties.deselectAll();
 		
 		if (element != null) _elementProperties.showProperties($(element), null, false);
-		if (advancedopen) toggleAdvancedProperties($(".advancedtogglebutton").find(".glyphicon").first());
+		if (!advancedopen) toggleAdvancedProperties($(".advancedtogglebutton").find(".glyphicon").first());
 		
 		if (!skipRedo)
 		{
@@ -1412,7 +1417,14 @@ var UndoProcessor = function() {
 				element.displayAllQuestions(step[4]);
 				break;
 			case "EvaluationCriteria":
-				element.evaluationCriterion(step[4]);
+				var parent = this.elementFromStep(step);
+				parent.evaluationCriterion(step[4]);
+				break;
+			case "sascore":
+				var parent = this.elementFromStep(step);
+				var answer = parent.getChild(step[2]);
+				answer.ecfScore(step[4]);
+				answer.scoring.points(step[4]);
 				break;
 		}
 		
@@ -1420,7 +1432,7 @@ var UndoProcessor = function() {
 		var element = _elementProperties.selectedelement;
 		_elementProperties.deselectAll();
 		if (element != null) _elementProperties.showProperties($(element), null, false);
-		if (advancedopen) toggleAdvancedProperties($(".advancedtogglebutton").find(".glyphicon").first());
+		if (!advancedopen) toggleAdvancedProperties($(".advancedtogglebutton").find(".glyphicon").first());
 		
 		_actions.UndoEnabled(true);
 		this.undostack.push(step);

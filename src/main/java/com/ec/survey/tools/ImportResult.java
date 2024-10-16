@@ -41,6 +41,7 @@ public class ImportResult {
 	private List<SACriterion> criteria;
 	private List<SAScoreCard> scoreCards;
 	private SAReportConfiguration reportConfiguration;
+	private Map<String, String> oldToNewDatasetIDs = new HashMap<>();
 	
 	public Survey getSurvey() {
 		return survey;
@@ -185,6 +186,12 @@ public class ImportResult {
 	}
 	public void setReportConfiguration(SAReportConfiguration reportConfiguration) {
 		this.reportConfiguration = reportConfiguration;
+	}
+	public Map<String, String> getOldToNewDatasetIDs() {
+		return oldToNewDatasetIDs;
+	}
+	public void setOldToNewDatasetIDs(Map<String, String> oldToNewDatasetIDs) {
+		this.oldToNewDatasetIDs = oldToNewDatasetIDs;
 	}	
 
 }

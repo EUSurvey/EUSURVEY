@@ -1,5 +1,9 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.model.KeyValue;
+import com.ec.survey.model.Organisations;
+import com.ec.survey.service.ECService;
+import com.ec.survey.service.UtilsService;
 import com.ec.survey.tools.Tools;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,14 +11,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/utils")
 public class UtilsController extends BasicController {
+	
+	@Resource(name = "ecService")
+	private ECService ecService;
+
+	@Resource(name = "utilsService")
+	private UtilsService utilsService;
 	
 	@RequestMapping(value = "/euCountries", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody Map<String, String> getListOfCountries(HttpServletRequest request) {
@@ -293,9 +305,18 @@ public class UtilsController extends BasicController {
 		return countryList;
 	}
 	
+	
+	
+	@RequestMapping(value = "/Organisations", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody Organisations getListOfDomains(HttpServletRequest request, Locale syslocale) {
+		Locale locale = request.getParameter("lang") != null ? new Locale(request.getParameter("lang")) : syslocale;
+		
+		return utilsService.getOrganisations(locale);
+	}
+	
 	@RequestMapping(value = "/euDGs", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody Map<String, String> getListOfDGs(HttpServletRequest request) {
-		Locale locale = new Locale(request.getParameter("lang"));
+	public @ResponseBody Map<String, String> getListOfDGs(HttpServletRequest request, Locale syslocale) {
+		Locale locale = request.getParameter("lang") != null ? new Locale(request.getParameter("lang")) : syslocale;
 		
 		Map<String, String> dgList = new HashMap<>();
 
@@ -335,6 +356,7 @@ public class UtilsController extends BasicController {
 		dgList.put("GROW",resources.getMessage("label.dgnew.GROW",null,locale));
 		dgList.put("INTPA",resources.getMessage("label.dgnew.INTPA",null,locale));
 		dgList.put("SCIC",resources.getMessage("label.dgnew.SCIC",null,locale));
+		dgList.put("JRC",resources.getMessage("label.dgnew.JRC",null,locale));
 		dgList.put("JUST",resources.getMessage("label.dgnew.JUST",null,locale));
 		dgList.put("SJ",resources.getMessage("label.dgnew.SJ",null,locale));
 		dgList.put("LERC",resources.getMessage("label.dgnew.LERC",null,locale));

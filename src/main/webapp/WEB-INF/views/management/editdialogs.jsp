@@ -349,7 +349,7 @@
 				createNavigation(true);
 				updateDependenciesView();
 				_actions.AllElementsLoaded(true);
-				eVoteRuleEvaluator.recalculate()
+				SurveyRuleEvaluator.recalculate()
 				
 				$.ajax({type: "GET",
 					url: contextpath + "/administration/system/complexity",

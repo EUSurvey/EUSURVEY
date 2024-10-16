@@ -789,17 +789,9 @@ public class SurveyExportHelper {
         }
 		
 		Object result;
-		
-		if (zipEntry.getName().endsWith("eusx"))
-		{
-			XMLDecoder d = new XMLDecoder(new BufferedInputStream(new FileInputStream(destinationFile)));
-			result = d.readObject();
-			d.close();
-		} else {		
-			try (ObjectInputStream obj = new ObjectInputStream(new FileInputStream(destinationFile))) {
-				result = obj.readObject();
-			}	
-		}
+		try (ObjectInputStream obj = new ObjectInputStream(new FileInputStream(destinationFile))) {
+			result = obj.readObject();
+		}	
 		
 		return result;
 	}

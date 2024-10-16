@@ -29,6 +29,8 @@
 			<form:input type="hidden" path="survey.eVoteTemplate" />
 			<form:input type="hidden" path="survey.isECF" />
 			<form:input type="hidden" path="survey.isSelfAssessment" />
+			<form:input type="hidden" path="survey.organisation" />
+			<form:input type="hidden" path="survey.validator" />
 			
 			<div class="actions">
 				<div style="width: 950px; margin-left: auto; margin-right: auto;">
@@ -1224,11 +1226,11 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<span class="mandatory">*</span><spring:message code="label.ConfirmationPage" />
-								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<span class="mandatory" data-bind="visible: !selfAssessment()">*</span><spring:message code="label.ConfirmationPage" />
+								<a onclick="$(this).closest('td').find('.help').toggle()" data-bind="visible: !selfAssessment()"><span class='glyphicon glyphicon-info-sign'></span></a>
 								<div class="help hideme"><spring:message code="info.ConfirmationMarkUpPage" /></div>
 							</div>
-							<div style="float: right; text-align: right;">
+							<div style="float: right; text-align: right;" data-bind="visible: !selfAssessment()">
 								<form:radiobutton onclick="_properties.useConfLink(false)" class="check" path="survey.confirmationPageLink" value="false"/><spring:message code="label.Text" />&#160;
 								<form:radiobutton onclick="_properties.useConfLink(true)" id="conflink"  class="check" path="survey.confirmationPageLink" value="true"/><spring:message code="label.Link" />
 								<br />
@@ -1241,6 +1243,9 @@
 								<div data-bind="visible: useConfLink" id="confLink">
 									<form:input class="form-control" path="survey.confirmationLink" ></form:input>
 								</div>
+							</div>
+							<div style="float: right; text-align: right;" data-bind="visible: selfAssessment()">
+								<spring:message code="label.DisabledForSASurvey" />
 							</div>
 						</td>
 					</tr>

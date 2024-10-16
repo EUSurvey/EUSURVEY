@@ -326,26 +326,33 @@ public class HomeController extends BasicController {
 		String additionalinfo  = ConversionTools.removeHTML(request.getParameter("additionalinfo"), true);
 		String additionalsurveyinfotitle = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfotitle"), true);
 		String additionalsurveyinfoalias = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfoalias"), true);
+		String login = "";
 		
+		boolean external = !email.toLowerCase().endsWith("ec.europa.eu");
 		InputStream inputStreamXML = servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.xml");
-		InputStream inputStreamJSON = (!email.contains("@") || email.toLowerCase().endsWith("ec.europa.eu")) ? servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.json") : servletContext.getResourceAsStream("/WEB-INF/Content/createIncidentExternal.json");
+		InputStream inputStreamJSON = external ? servletContext.getResourceAsStream("/WEB-INF/Content/createIncidentExternal.json") : servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.json");
 		String createTemplate = IOUtils.toString(useJSON ? inputStreamJSON : inputStreamXML, "UTF-8");
-
-		createTemplate = createTemplate.replace("[MESSAGE]", message);
-		createTemplate = createTemplate.replace("[ADDITIONALINFOUSERNAME]", name);
-		createTemplate = createTemplate.replace("[ADDITIONALINFOEMAIL]", email);
-		createTemplate = createTemplate.replace("[CALLER]", email);
-		createTemplate = createTemplate.replace("[ADDITIONALINFO]", additionalinfo);
-		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYTITLE]", additionalsurveyinfotitle);
-		createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
-		createTemplate = createTemplate.replace("[SUBJECT]", subject);		
-		createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
-		createTemplate = createTemplate.replace("[BUSINESSSERVICE]", "Survey solutions");
-		createTemplate = createTemplate.replace("[SERVICEOFFERING]", "EU Survey");
-
-		CloseableHttpClient httpclient = HttpClients.createSystem();
+		
+		CloseableHttpClient httpclient = HttpClients.createSystem();	
 		
 		try {
+			
+			if (!external) {
+				//get login from ldap
+				login = ldapService.getLoginForEmail(email);
+				createTemplate = createTemplate.replace("[CALLER]", email);
+			}				
+	
+			createTemplate = createTemplate.replace("[MESSAGE]", message);
+			createTemplate = createTemplate.replace("[ADDITIONALINFOUSERNAME]", name);
+			createTemplate = createTemplate.replace("[ADDITIONALINFOEMAIL]", email);
+			createTemplate = createTemplate.replace("[ADDITIONALINFO]", additionalinfo);
+			createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYTITLE]", additionalsurveyinfotitle);
+			createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
+			createTemplate = createTemplate.replace("[SUBJECT]", subject);		
+			createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
+			createTemplate = createTemplate.replace("[BUSINESSSERVICE]", "Survey solutions");
+			createTemplate = createTemplate.replace("[SERVICEOFFERING]", "EU Survey");
 
 			sessionService.initializeProxy();
 			
@@ -992,6 +999,42 @@ public class HomeController extends BasicController {
 		}
 		
 		return "error/validation";
+	}
+	
+	@GetMapping(value = "home/validatesurvey")
+	public ModelAndView validatesurvey(HttpServletRequest request, Locale locale, HttpServletResponse response) throws MessageException {
+		String surveyId = request.getParameter("id");
+		String code = request.getParameter("code");
+		
+		if (surveyService.validate(Integer.parseInt(surveyId), code)) {
+			ModelAndView model = new ModelAndView("error/info");
+			String message = resources.getMessage("info.SurveyValidated", null, "The survey has been validated successfully.", locale);
+			
+			model.addObject(Constants.MESSAGE, message);
+			model.addObject("contextpath", contextpath);
+			
+			return model;
+		} else {
+			throw new MessageException(resources.getMessage("error.SurveyValidated", null, "The survey could not be validated.", locale));
+		}		
+	}
+	
+	@GetMapping(value = "home/rejectsurvey")
+	public ModelAndView rejectsurvey(HttpServletRequest request, Locale locale, HttpServletResponse response) throws MessageException, NumberFormatException, IOException {
+		String surveyId = request.getParameter("id");
+		String code = request.getParameter("code");
+		
+		if (surveyService.rejectsurvey(Integer.parseInt(surveyId), code)) {
+			ModelAndView model = new ModelAndView("error/info");
+			String message = resources.getMessage("info.SurveyRejected", null, "The survey has been rejected successfully.", locale);
+			
+			model.addObject(Constants.MESSAGE, message);
+			model.addObject("contextpath", contextpath);
+			
+			return model;
+		} else {
+			throw new MessageException(resources.getMessage("error.SurveyRejected", null, "The survey could not be rejected.", locale));
+		}		
 	}
 	 	
 	@PostMapping(value = "home/notifySuccess")

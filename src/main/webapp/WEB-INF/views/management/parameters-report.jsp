@@ -72,7 +72,7 @@
 			</div>
 			
 			<div style="padding-left: 10px; align-content: center; border-bottom: 1px solid #ddd; padding-bottom: 20px;">
-				<input type="checkbox" class="check" data-bind="checked: configuration().separateCompetencyTypes, enable: configuration().charts" /> <spring:message code="label.SeparateCompetencyTypes" />
+				<input type="checkbox" class="check" data-bind="checked: configuration().separateCompetencyTypes, enable: configuration().charts" /> <spring:message code="label.SeparatePerType" />
 				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.SeparateCompetencyTypes" />"><i class="glyphicon glyphicon-info-sign"></i></span>
 			</div>				
 			

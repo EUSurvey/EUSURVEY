@@ -3,14 +3,11 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
-import com.ec.survey.model.Archive;
-import com.ec.survey.model.ArchiveFilter;
-import com.ec.survey.model.KeyValue;
-import com.ec.survey.model.SqlPagination;
-import com.ec.survey.model.SurveyFilter;
+import com.ec.survey.model.*;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.service.UtilsService;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
@@ -41,6 +38,7 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,6 +50,9 @@ public class SurveySearchController extends BasicController {
 
 	@Autowired
 	protected PaginationMapper paginationMapper;
+
+	@Autowired
+	protected UtilsService utilsService;
 
 	@RequestMapping(value = "/administration/surveysearch", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView surveysearch(HttpServletRequest request, Model model, Locale locale) {
@@ -136,6 +137,12 @@ public class SurveySearchController extends BasicController {
 		List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
 		result.addObject("domains", domains);
 
+		Organisations organisations = utilsService.getOrganisations(locale);
+		result.addObject("organisationsDGS", organisations.getDgs());
+		result.addObject("organisationsEA", organisations.getExecutiveAgencies());
+		result.addObject("organisationsOtherEUIs", organisations.getOtherEUIs());
+		result.addObject("organisationsNonEUIs", organisations.getNonEUIs());
+
 		return result;
 	}
 
@@ -183,6 +190,16 @@ public class SurveySearchController extends BasicController {
 			deletedSurveysFilter.setShortname(request.getParameter("deletedshortname"));
 			deletedSurveysFilter.setTitle(request.getParameter("deletedtitle"));
 			deletedSurveysFilter.setOwner(request.getParameter("deletedowner"));
+
+			utilsService.getAllOrganisationCodes(locale).forEach((key) -> {
+				String req = request.getParameter("deleted" + key);
+				if (req != null && req.equalsIgnoreCase("true")) {
+					deletedSurveysFilter.addOrganisation("deleted" + key);
+				} else {
+					deletedSurveysFilter.removeOrganisation("deleted" + key);
+				}
+			});
+
 			deletedSurveysFilter.setGeneratedFrom(ConversionTools.getDate(request.getParameter("deletedcreatedFrom")));
 			deletedSurveysFilter.setGeneratedTo(ConversionTools.getDate(request.getParameter("deletedcreatedTo")));
 			deletedSurveysFilter.setDeletedFrom(ConversionTools.getDate(request.getParameter("deleteddeletedFrom")));
@@ -198,6 +215,16 @@ public class SurveySearchController extends BasicController {
 			reportedFilter.setUid(request.getParameter("reporteduid"));
 			reportedFilter.setTitle(request.getParameter("reportedtitle"));
 			reportedFilter.setOwner(request.getParameter("reportedowner"));
+
+			utilsService.getAllOrganisationCodes(locale).forEach((key) -> {
+				String req = request.getParameter("reported" + key);
+				if (req != null && req.equalsIgnoreCase("true")) {
+					reportedFilter.addOrganisation("reported" + key);
+				} else {
+					reportedFilter.removeOrganisation("reported" + key);
+				}
+			});
+
 			reportedFilter.setPublishedFrom(ConversionTools.getDate(request.getParameter("reportedpublishedFrom")));
 			reportedFilter.setPublishedTo(ConversionTools.getDate(request.getParameter("reportedpublishedTo")));
 			reportedFilter
@@ -213,6 +240,16 @@ public class SurveySearchController extends BasicController {
 			frozenFilter.setUid(request.getParameter("frozenuid"));
 			frozenFilter.setTitle(request.getParameter("frozentitle"));
 			frozenFilter.setOwner(request.getParameter("frozenowner"));
+
+			utilsService.getAllOrganisationCodes(locale).forEach((key) -> {
+				String req = request.getParameter("frozen" + key);
+				if (req != null && req.equalsIgnoreCase("true")) {
+					frozenFilter.addOrganisation("frozen" + key);
+				} else {
+					frozenFilter.removeOrganisation("frozen" + key);
+				}
+			});
+
 			frozenFilter.setPublishedFrom(ConversionTools.getDate(request.getParameter("frozenpublishedFrom")));
 			frozenFilter.setPublishedTo(ConversionTools.getDate(request.getParameter("frozenpublishedTo")));
 			frozenFilter
@@ -227,6 +264,15 @@ public class SurveySearchController extends BasicController {
 			filter.setUid(request.getParameter("uid"));
 			filter.setTitle(request.getParameter("title"));
 			filter.setOwner(request.getParameter("owner"));
+
+			utilsService.getAllOrganisationCodes(locale).forEach((key) -> {
+				String req = request.getParameter(key);
+				if (req != null && req.equalsIgnoreCase("true")) {
+					filter.addOrganisation(key);
+				} else {
+					filter.removeOrganisation(key);
+				}
+			});
 
 			if (request.getParameter("surveyStandard") != null
 					&& request.getParameter("surveyStandard").equalsIgnoreCase("true")) {
@@ -288,6 +334,12 @@ public class SurveySearchController extends BasicController {
 		result.addObject("deletedfilter", deletedSurveysFilter);
 		result.addObject("reportedfilter", reportedFilter);
 		result.addObject("frozenfilter", frozenFilter);
+
+		Organisations organisations = utilsService.getOrganisations(locale);
+		result.addObject("organisationsDGS", organisations.getDgs());
+		result.addObject("organisationsEA", organisations.getExecutiveAgencies());
+		result.addObject("organisationsOtherEUIs", organisations.getOtherEUIs());
+		result.addObject("organisationsNonEUIs", organisations.getNonEUIs());
 
 		List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
 		result.addObject("domains", domains);

@@ -320,7 +320,7 @@ var ElementProperties = function() {
 		_actions.ChildSelected(false);
 
 		let selection = $("#content").find(".selectedquestion");
-		let filteredSelection = selection.filter((i, el) => eVoteRuleEvaluator.isElementAllowed(el))
+		let filteredSelection = selection.filter((i, el) => SurveyRuleEvaluator.isElementAllowed(el))
 
 		if (selection.length == 0){
 			_actions.CopyEnabled(false);

@@ -3569,7 +3569,11 @@ public class SurveyHelper {
 			if (evaluationCriterion != null && evaluationCriterion.length() > 0) {
 				int critId = Integer.parseInt(evaluationCriterion);
 				Optional<SACriterion> c = criteria.stream().filter(cr -> cr.getId().equals(critId)).findFirst();
-				singlechoice.setEvaluationCriterion(c.get());
+				if (c.isPresent()) {
+					singlechoice.setEvaluationCriterion(c.get());
+				} else {
+					logger.error("unknown evaluation criterion " + critId + " rerferenced by question " + singlechoice.getId());
+				}
 			} else {
 				singlechoice.setEvaluationCriterion(null);
 			}			

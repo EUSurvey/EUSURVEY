@@ -14,6 +14,7 @@ import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.ec.survey.model.Setting;
 import com.ec.survey.service.SettingsService;
 import com.ec.survey.service.SurveyService;
 
@@ -142,6 +143,9 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             modelAndView.getModelMap().addAttribute("contextpath", contextpath);
             modelAndView.getModelMap().addAttribute("monitoringEmail", monitoringEmail);
             modelAndView.getModelMap().addAttribute("enablereportingdatabase", enablereportingdatabase);
+            
+            String enablechargeback = settingsService.get(Setting.EnableChargeback);
+    		modelAndView.getModelMap().addAttribute("enablechargeback", enablechargeback != null && enablechargeback.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute("enablecookieconsentkit", enablecookieconsentkit);
             
             modelAndView.getModelMap().addAttribute("googlesiteverification", googlesiteverification);

@@ -2469,11 +2469,23 @@ function initModals(item)
 		}
 		$("#create-survey-contact-label").val($("#new-survey-contact-label").val());
 		
+		$("#create-survey-organisation").val($("#new-survey-organisation").val());
+		
+		$("#create-survey-validator").val($("#new-survey-validator").val());
+		
 		if (!checkShortname($("#new-survey-shortname").val()))
 		{
 			$("#new-survey-shortname-exists").show();
 			return;
-		}		
+		}	
+		
+		if ($('#new-survey-validator').is(":visible")) {
+			if (!checkOrganisation($("#new-survey-validator").val(), $("#new-survey-organisation").val()))
+			{
+				$("#new-survey-validator-invalid").show();
+				return;
+			}		
+		}
 		
 		$("#add-survey-dialog").modal("hide");
 		$("#generic-wait-dialog").modal("show");
