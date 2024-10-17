@@ -1,49 +1,53 @@
+
+
 ### EUSurvey Helm Chart
 
-This Helm chart facilitates the deployment of the EUSurvey application on Kubernetes, running a Tomcat server and MySQL database. The Tomcat server uses an image specifically customized for the EUSurvey server (see [README in the Docker folder](../docker/README.md)). MySQL is used for the database.
+This Helm chart facilitates the deployment of the EUSurvey application on Kubernetes, running multiple Tomcat servers, a MySQL database, and a Redis service for HTTP sessions management. The chart uses PVCs for file persistence and K8s secrets for configuration.
 
 #### Sub-Charts:
-- **Tomcat (Server)**:
-  - Based on the [Bitnami Tomcat Helm chart](https://github.com/bitnami/charts/tree/master/bitnami/tomcat).
-  - As the Bitnami Tomcat Helm chart mounts the Tomcat's folder at startup (and thus overwrites the webapp folder of the EUSurvey image), I had to find a way to deploy the `EUSurvey.war` that is in the custom EUSurvey custom image; an Init Container and a Custom lifecycle hook are used to deploy the WAR file:
-    - **Init Container**: Used to prepare the environment before the main container starts. Specifically, it moves the EUSurvey WAR to a temporary `/usr/local/share` location mounted by a shared volume.
-    - **Lifecycle Hooks**: Use a post-start hook to move the WAR from the shared volume mounted at `/usr/local/share` into the `webapps` directory of Tomcat, ensuring the application starts serving immediately after deployment.
-- **MySQL (Database)**: Utilizes the [Bitnami MySQL Helm chart](https://github.com/bitnami/charts/tree/master/bitnami/mysql). Preconfigured to support the requirements of EUSurvey, including MySQL configuration and SQL initialization setup.
 
-#### Installation:
-To install this chart into your Kubernetes cluster, follow these steps:
+- **Tomcat Servers**:
+  - The EUSurvey application consists of several Tomcat instances : 
+     - There is one main instance (deployed as a StatefulSet) serving user requests, 
+     - and three additional instances: **task**, **taskldap**, and **tasktodo**, each with specific properties. These task servers are configured via separate Helm charts (using `tomcat-task`, `tomcat-ldap-task`, and `tomcat-todo-task`), and they start after the main EUSurvey instance has successfully started.
+   - Each instance requires unique properties, which are managed and injected during deployment (see the lifecycle hooks and Init Containers section below).
 
-1. Add the Helm repository for Bitnami if not already added:
-   ```bash
-   helm repo add bitnami https://charts.bitnami.com/bitnami
-   helm repo update
-   ```
+  - **WAR Deployment**:
+    - The WAR file deployment is handled by Init Containers and post-start lifecycle hooks. This ensures the WAR is properly extracted, and configuration files (such as `spring.properties` and `ehcache.xml`) are injected into the web application during startup.
+  
+- **MySQL (Database)**:
+  - Based on the [Bitnami MySQL Helm chart](https://github.com/bitnami/charts/tree/master/bitnami/mysql), with a custom database and user setup for EUSurvey.
 
-2. Install the chart with:
-   ```bash
-   helm dependency update
-   helm install eusurvey ./eusurvey
-   ```
+- **Redis (Session Management)**:
+  - Redis is used to manage session persistence across the Tomcat instances, ensuring users' sessions are maintained even in the event of pod restarts.
+
+#### Secrets:
+- **Spring Property Files**:
+  - Properties from `spring.properties` and `ehcache.xml` are injected at deployment time. These files are customized based on the deployment environment and handled via Init Containers, which copy the necessary files into the `WEB-INF` directory of the Tomcat server.
+  
+- **Config Injection**:
+  - The Init Containers handle the correct configuration is applied to task servers specific properties like `host.executing.task`, `host.executing.ldaptask`, and `host.executing.todotask`.
+
+#### Persistent Volume Claims (PVCs):
+- PVCs are used for persistence of files, archives, surveys, and user data. They are defined in the templates directory. PVCs refer to the default Storage Class to create PVs (which can be overriden in `values.yaml`).
+- Some volumes are shared between multiple pods (such as archives and surveys), while others are unique to individual pods (such as temporary files). 
+
+
+#### Usage:
+
+To install this chart into your Kubernetes cluster, run the following command, specifying the environment:
+
+```bash
+helm install eusurvey --set environment=ossK8s .
+```
+
+This will deploy the EUSurvey application along with its required components, including MySQL, Redis, and the various Tomcat instances.
 
 #### Accessing the Application:
-If you install the application locally on Minikube, the server can be accessed through an Ingress at `http://eusurvey/eusurvey`. Before accessing the URL, update your `/etc/hosts` file to point `eusurvey` to your Minikube IP.
+- If you install the application locally (e.g., on Minikube), the server can be accessed through an Ingress at `http://eusurvey/eusurvey`. Ensure your `/etc/hosts` file points `eusurvey` to your Minikube IP.
 
 Example entry for `/etc/hosts`:
 ```
 192.168.49.1 eusurvey
 ```
 
-
-#### Link to EULogin / OpenLDAP service
-The installed server can be used with optional EULogin CAS Authentication and OpenLDAP mockup services. See [README in the Docker folder](../docker/README.md).
-
-#### TODO
-This is an alpha version of the chart, and some optimizations need to be made:
-- Optimize the size of the initContainer with a lighter custom image.
-- HTTP Sessions: if we kill a container, we lose the session. An implementation with shared Http Session in a remote distributed location is needed (Redis, Database ...).
-- MySQL version 8.0.37 requires some configurations to remain compatible, but if we used the new standards from 8.4+, it would be more secure (caching_sha2_password + RSA instead of mysql_native_password without SSL).
-- EUSurvey seems to use system fonts for captcha, which are not present on the Kubernetes node. Therefore, I have added them to the Docker image.
-- Test file system persistence.
-- Test DB persistence.
-- Test Tomcat replication.
-- Test database replication with master/slave.
