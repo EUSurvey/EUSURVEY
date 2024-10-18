@@ -1137,6 +1137,7 @@ var closeOverlayDivsEnabled = false;
 		}
 
 		function escapeXml(unsafe) {
+			if (unsafe == null) return null;
 			return unsafe.replace(/[<>&'"]/g, function (c) {
 				switch (c) {
 					case '<': return '&lt;';

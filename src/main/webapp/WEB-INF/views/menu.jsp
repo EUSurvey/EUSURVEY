@@ -376,6 +376,22 @@
 
 		return result == "false";
 	}
+	
+	function checkOrganisation(email, organisation)
+	{
+		var s = "email=" + email + "&organisation=" + organisation;
+		
+		var result = $.ajax({
+			type:'GET',
+			  url: "${contextpath}/forms/emailmatchesorganiation",
+			  dataType: 'json',
+			  data: s,
+			  cache: false,
+			  async: false
+		}).responseText;
+
+		return result == "true";
+	}
 
 	// Handle scrollability of multiple open modals in bootstrap
 	$('body').on('hidden.bs.modal', function () {
@@ -384,6 +400,17 @@
 			$('body').addClass('modal-open');
 		}
 	});
+	
+	function checkValidator() {
+		let organisation = $('#new-survey-organisation').val();
+		if (organisation != "" && organisation != "CITIZEN" && organisation != "OTHER" && organisation != "PRIVATEORGANISATION" && organisation != "PUBLICADMINISTRATION") {
+			 $('#new-survey-validator-div').show();
+			 $('#new-survey-validator').addClass("required");
+		} else {
+			$('#new-survey-validator-div').hide();
+			$('#new-survey-validator').removeClass("required");
+		}
+	}
 </script>
 
 <div class="modal" id="add-survey-dialog" data-backdrop="static">
@@ -455,9 +482,9 @@
 				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.UniqueIdentifier" /></td>
 					<td>
-						<input id="new-survey-shortname" maxlength="255" class="required freetext max255 form-control" type="text" value="" style="width: 300px; margin-bottom: 10px; margin-left: 0;" placeholder="<spring:message code="message.SpecifyShortname" />" />
-						<span style="color: #777;"><spring:message code="message.MeaningfulShortname" /><spring:message code="message.MeaningfulShortname2" /></span>&nbsp;
-						<div id="new-survey-shortname-exists" class="hideme alert-danger"><spring:message code="message.ShortnameAlreadyExists" /></div>
+						<input id="new-survey-shortname" maxlength="255" class="required freetext max255 form-control" type="text" value="" style="width: 300px; margin-left: 0; display: inline;" placeholder="<spring:message code="message.SpecifyShortname" />" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="message.MeaningfulShortname" /><spring:message code="message.MeaningfulShortname2" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+						<div id="new-survey-shortname-exists" class="hideme alert-danger" style=" margin-top: 10px; "><spring:message code="message.ShortnameAlreadyExists" /></div>
 					</td>
 				</tr>
 				<tr>
@@ -466,6 +493,58 @@
 						<textarea class="tinymcealign2 required xhtml freetext max2000" id="new-survey-title"></textarea>
 					</td>
 				</tr>
+				
+				<c:if test="${enablechargeback == 'true'}">
+				
+					<tr>
+						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Organisation" /></td>
+						<td>					
+							<div>
+								<spring:message code="label.SurveyOnBehalf" /><span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.SurveyOnBehalf" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+								
+								<c:choose>
+									<c:when test="${USER.isExternal() || USER.type == 'SYSTEM'}">
+										<select class="form-control new-survey-organisation" id="new-survey-organisation" style="width: auto; min-width: 200px" onchange="checkValidator()">
+									</c:when>
+									<c:otherwise>
+										<input type="hidden" id="new-survey-organisation" class="new-survey-organisation" />
+										<select class="form-control new-survey-organisation" style="width: auto; min-width: 200px" disabled="disabled" onchange="checkValidator()">
+									</c:otherwise>
+								</c:choose>							
+								
+									  	<optgroup id="new-survey-organisation-dgs" label="<spring:message code="label.EuropeanCommission" />: <spring:message code="label.DGsAndServices" />">
+									    </optgroup>
+									
+									    <optgroup id="new-survey-organisation-aex" label="<spring:message code="label.EuropeanCommission" />: <spring:message code="label.ExecutiveAgencies" />">
+									    </optgroup>
+									    
+									    <optgroup id="new-survey-organisation-euis" label="<spring:message code="label.OtherEUIs" />">
+									    </optgroup>
+									    
+									    <optgroup id="new-survey-organisation-noneuis" label="<spring:message code="label.NonEUIentities" />">
+									    </optgroup>
+								</select>
+							</div>
+							
+							<div style="margin-top: 10px; font-size: 90%; padding-left: 10px;">
+								<span style="vertical-align: top">
+									<b><spring:message code="label.Owner" /></b>: ${USER.getFirstLastName()} (${USER.email})
+								</span>
+								<c:if test="${USER.isExternal() || USER.type == 'SYSTEM'}">
+									<div id="new-survey-validator-div" style="display: inline-block; margin-left: 40px"> 
+										<span>
+											<span class="mandatory">*</span><spring:message code="label.EmailValidator" /><span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.EmailValidator" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+											<input type="text" class="form-control required email" id="new-survey-validator" style="width: 300px; display: inline;" />
+											<div id="new-survey-validator-invalid" class="hideme validation-error-keep" style=" margin-top: 10px; "><spring:message code="message.ValidatorInvalid" /></div>
+										</span>
+									</div>
+								</c:if>
+							</div>						
+						</td>
+					</tr>
+				
+				</c:if>
+				
 				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Contact" /></td>
 					<td>
@@ -478,11 +557,14 @@
 							<div id="new-survey-contact-label-label" style="display:none; font-weight: bold; margin-top: 10px;"><spring:message code="label.Label" /></div>
 						</div>
 						<div style="float:left; margin-left: 10px">
-							<input class="required email form-control" maxlength="255" id="new-survey-contact" value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" type="text" />
+							<input class="required email form-control" style="min-width: 300px" maxlength="255" id="new-survey-contact" value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" type="text" />
 							<input type="text" class="form-control" style="display:none; margin-top: 10px;" id="new-survey-contact-label" />
 						</div>
+						<div style="float:left; margin-left:5px; margin-top: 3px;">
+							<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="message.Contact" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+						</div>
 						<div style="clear: both;"></div>
-						<div style="color: #777; margin-top: 10px;"><spring:message code="message.Contact" /></div>
+						
 					</td>
 				</tr>	
 				<tr class="hideimport">
@@ -522,7 +604,7 @@
 					<tr>
 						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Confirmation" /></td>
 						<td>
-							<div style="float: left; height: 50px; margin-right: 10px;">
+							<div style="float: left; margin-right: 10px;">
 								<input class="required check" type="checkbox" name="radio-new-survey-audience" value="1" />
 							</div>
 							<spring:message code="message.highaudiencenew" />
@@ -533,7 +615,7 @@
 					<tr>
 						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.DPA" /></td>
 						<td>
-							<div style="float: left; height: 50px; margin-right: 10px;">
+							<div style="float: left; margin-right: 10px;">
 								<input class="required check" type="checkbox" name="radio-new-survey-dpa" value="1" />
 							</div>
 							<spring:message code="message.dpanew" arguments="${contextpath}/home/dpa"/>
@@ -543,7 +625,7 @@
 				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.TOS" /></td>
 					<td>
-						<div style="float: left; height: 50px; margin-right: 10px;">
+						<div style="float: left; margin-right: 10px;">
 							<input class="required check" type="checkbox" name="radio-new-survey-tos" value="1" />
 						</div>
 						<spring:message code="message.tos" arguments="${contextpath}/home/tos"/>
@@ -580,6 +662,8 @@
 	<input type="hidden" name="evotetemplate" id="create-survey-template" value="" />
 	<input type="hidden" name="contact" id="create-survey-contact" value="" />
 	<input type="hidden" name="contactlabel" id="create-survey-contact-label" value="" />
+	<input type="hidden" name="organisation" id="create-survey-organisation" value="" />
+	<input type="hidden" name="validator" id="create-survey-validator" value="" />
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />
 </form:form>
 
@@ -702,4 +786,56 @@
 		    trigger : 'hover',
 		    container: 'body'
 		});
+		
+		var url = "/utils/Organisations";
+		var userOrganisation = '${USER.organisation}';
+			
+		$.ajax({type: "GET",
+			url: contextpath + url,
+			async: false,
+		    success :function(result)
+		    {		    	
+		    	$.each(result.dgs, function(key, data){
+		    		var option = document.createElement("option");
+		    		$(option).attr("value", key).append(data);
+		    		if (userOrganisation == key) {
+		    			$(option).attr("selected", "selected");
+		    		}
+		    		$('#new-survey-organisation-dgs').append(option);
+		    	});	
+		    	
+		    	$.each(result.executiveAgencies, function(key, data){
+		    		var option = document.createElement("option");
+		    		$(option).attr("value", key).append(data);
+		    		if (userOrganisation == key) {
+		    			$(option).attr("selected", "selected");
+		    		}
+		    		$('#new-survey-organisation-aex').append(option);
+		    	});	
+		    	
+		    	$.each(result.otherEUIs, function(key, data){
+		    		var option = document.createElement("option");
+		    		$(option).attr("value", key).append(data);
+		    		if (userOrganisation == key) {
+		    			$(option).attr("selected", "selected");
+		    		}
+		    		$('#new-survey-organisation-euis').append(option);
+		    	});	
+		    	
+		    	$.each(result.nonEUIs, function(key, data){
+		    		var option = document.createElement("option");
+		    		$(option).attr("value", key).append(data);
+		    		if (userOrganisation == key) {
+		    			$(option).attr("selected", "selected");
+		    		}
+		    		$('#new-survey-organisation-noneuis').append(option);
+		    	});	
+		    	
+		    	var organisation = "${USER.organisation}";
+		    	if (organisation.length == 0 || organisation == 'external') organisation = "OTHER";
+		    	$('.new-survey-organisation').val(organisation);
+		    	
+		    	checkValidator();
+		    }
+		 });
 	</script>

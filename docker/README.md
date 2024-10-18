@@ -22,7 +22,8 @@ Before running the Docker containers, you need to build the server archive:
 
 3. Copy the generated WAR file to the Docker folder:
    ```bash
-   cp target/eusurvey.war ../docker/server/dist/eusurvey.war
+   mkdir -p docker/server/dist
+   cp target/eusurvey.war docker/server/dist/eusurvey.war
    ```
 
 ### 2. Build and Run the Docker Images
@@ -32,8 +33,13 @@ Before running the Docker containers, you need to build the server archive:
    ```bash
    docker-compose build
    ```
+2. Create a shared folder for the EUSurvey files:
+   ```
+   mkdir ~/eusurveytemp
+   chmod 777 ~/eusurveytemp
+   ```
 
-2. Run the Docker containers:
+3. Run the Docker containers:
    ```bash
    docker-compose up -d
    ```

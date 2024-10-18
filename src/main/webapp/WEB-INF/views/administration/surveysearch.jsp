@@ -259,6 +259,10 @@
 				$(row).append(td);
 
 				td = document.createElement("td");
+				$(td).append(list[i].organisation);
+				$(row).append(td);
+
+				td = document.createElement("td");
 				if (list[i].isOPC) {
 					$(td).append("<spring:message code="label.OPC"/>");
 				} else if (list[i].isQuiz) {
@@ -504,6 +508,10 @@
 				td = document.createElement("td");				
 				$(td).append(list[i].owner.name);		
 				$(row).append(td);
+
+				td = document.createElement("td");
+				$(td).append(list[i].organisation);
+				$(row).append(td);
 				
 				td = document.createElement("td");				
 				$(td).append(list[i].numberOfAnswerSetsPublished);		
@@ -562,6 +570,10 @@
 								
 				td = document.createElement("td");				
 				$(td).append(list[i].owner.name);		
+				$(row).append(td);
+
+				td = document.createElement("td");
+				$(td).append(list[i].organisation);
 				$(row).append(td);
 				
 				td = document.createElement("td");				
@@ -622,6 +634,10 @@
 								
 				td = document.createElement("td");				
 				$(td).append(list[i].owner.name);		
+				$(row).append(td);
+
+				td = document.createElement("td");
+				$(td).append(list[i].organisation);
 				$(row).append(td);
 				
 				td = document.createElement("td");				
@@ -928,6 +944,7 @@
 									<spring:message code="label.Created" />
 								</th>
 								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.Organisation" /></th>
 								<th>
 									<div style="float: right">
 										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
@@ -942,6 +959,7 @@
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.Organisation" /></th>
 								<th><spring:message code="label.Type" /></th>
 								<th>
 									<div style="float: right">
@@ -969,6 +987,7 @@
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.Organisation" /></th>
 								<th>
 									<div style="float: right">
 										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('firstPublished',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('firstPublished',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
@@ -1000,6 +1019,7 @@
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.Organisation" /></th>
 								<th>
 									<div style="float: right">
 										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('firstPublished',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('firstPublished',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
@@ -1176,6 +1196,65 @@
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedowner" />
 								</th>
+								<th class="filtercell smallfiltercell">
+									<div class="btn-group">
+										<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+											<spring:message code="label.AllValues" />
+											<span style="margin-right: 10px" class="caret"></span>
+										</a>
+										<ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">
+											<li style="text-align: right;">
+												<a style="display: inline"  onclick="$('#resultsForm').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+											</li>
+										</ul>
+										<ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">
+											<b><spring:message code="label.EuropeanCommission" />: <spring:message code="label.DGsAndServices" /></b>
+											<c:forEach items="${organisationsDGS}" var="organisation">
+												<c:choose>
+													<c:when test='${deletedfilter.organisations != null && deletedfilter.containsOrganisation("deleted".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="deleted${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="deleted${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.EuropeanCommission" />: <spring:message code="label.ExecutiveAgencies" /></b>
+											<c:forEach items="${organisationsEA}" var="organisation">
+												<c:choose>
+													<c:when test='${deletedfilter.organisations != null && deletedfilter.containsOrganisation("deleted".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="deleted${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="deleted${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.OtherEUIs" /></b>
+											<c:forEach items="${organisationsOtherEUIs}" var="organisation">
+												<c:choose>
+													<c:when test='${deletedfilter.organisations != null && deletedfilter.containsOrganisation("deleted".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="deleted${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="deleted${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.NonEUIentities" /></b>
+											<c:forEach items="${organisationsNonEUIs}" var="organisation">
+												<c:choose>
+													<c:when test='${deletedfilter.organisations != null && deletedfilter.containsOrganisation("deleted".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="deleted${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="deleted${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+										</ul>
+									</div>
+								</th>
 								<th>&nbsp;</th>
 								<th class="filtercell celldeleted">
 									<div class="btn-toolbar" style="margin: 0px; text-align: center">
@@ -1229,6 +1308,65 @@
 								</th>
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="owner" />
+								</th>
+								<th class="filtercell smallfiltercell">
+									<div class="btn-group">
+										<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+											<spring:message code="label.AllValues" />
+											<span style="margin-right: 10px" class="caret"></span>
+										</a>
+										<ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">
+											<li style="text-align: right;">
+												<a style="display: inline"  onclick="$('#resultsForm').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+											</li>
+										</ul>
+										<ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">
+											<b><spring:message code="label.EuropeanCommission" />: <spring:message code="label.DGsAndServices" /></b>
+											<c:forEach items="${organisationsDGS}" var="organisation">
+												<c:choose>
+													<c:when test='${filter.organisations != null && filter.containsOrganisation(organisation.key)}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.EuropeanCommission" />: <spring:message code="label.ExecutiveAgencies" /></b>
+											<c:forEach items="${organisationsEA}" var="organisation">
+												<c:choose>
+													<c:when test='${filter.organisations != null && filter.containsOrganisation(organisation.key)}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.OtherEUIs" /></b>
+											<c:forEach items="${organisationsOtherEUIs}" var="organisation">
+												<c:choose>
+													<c:when test='${filter.organisations != null && filter.containsOrganisation(organisation.key)}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.NonEUIentities" /></b>
+											<c:forEach items="${organisationsNonEUIs}" var="organisation">
+												<c:choose>
+													<c:when test='${filter.organisations != null && filter.containsOrganisation(organisation.key)}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+										</ul>
+									</div>
 								</th>
 								<th class="filtercell smallfiltercell">
 									<div class="btn-group">
@@ -1394,6 +1532,65 @@
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedowner" />
 								</th>
+								<th class="filtercell smallfiltercell">
+									<div class="btn-group">
+										<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+											<spring:message code="label.AllValues" />
+											<span style="margin-right: 10px" class="caret"></span>
+										</a>
+										<ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">
+											<li style="text-align: right;">
+												<a style="display: inline"  onclick="$('#resultsForm').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+											</li>
+										</ul>
+										<ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">
+											<b><spring:message code="label.EuropeanCommission" />: <spring:message code="label.DGsAndServices" /></b>
+											<c:forEach items="${organisationsDGS}" var="organisation">
+												<c:choose>
+													<c:when test='${reportedfilter.organisations != null && reportedfilter.containsOrganisation("reported".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="reported${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="reported${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.EuropeanCommission" />: <spring:message code="label.ExecutiveAgencies" /></b>
+											<c:forEach items="${organisationsEA}" var="organisation">
+												<c:choose>
+													<c:when test='${reportedfilter.organisations != null && reportedfilter.containsOrganisation("reported".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="reported${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="reported${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.OtherEUIs" /></b>
+											<c:forEach items="${organisationsOtherEUIs}" var="organisation">
+												<c:choose>
+													<c:when test='${reportedfilter.organisations != null && reportedfilter.containsOrganisation("reported".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="reported${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="reported${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.NonEUIentities" /></b>
+											<c:forEach items="${organisationsNonEUIs}" var="organisation">
+												<c:choose>
+													<c:when test='${reportedfilter.organisations != null && reportedfilter.containsOrganisation("reported".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="reported${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="reported${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+										</ul>
+									</div>
+								</th>
 								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
 									<div class="btn-toolbar" style="margin: 0px; text-align: center">
 										<div class="datefilter" style="float: left">
@@ -1487,6 +1684,65 @@
 								</th>
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenowner" />
+								</th>
+								<th class="filtercell smallfiltercell">
+									<div class="btn-group">
+										<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+											<spring:message code="label.AllValues" />
+											<span style="margin-right: 10px" class="caret"></span>
+										</a>
+										<ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">
+											<li style="text-align: right;">
+												<a style="display: inline"  onclick="$('#resultsForm').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+											</li>
+										</ul>
+										<ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">
+											<b><spring:message code="label.EuropeanCommission" />: <spring:message code="label.DGsAndServices" /></b>
+											<c:forEach items="${organisationsDGS}" var="organisation">
+												<c:choose>
+													<c:when test='${frozenfilter.organisations != null && frozenfilter.containsOrganisation("frozen".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="frozen${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="frozen${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.EuropeanCommission" />: <spring:message code="label.ExecutiveAgencies" /></b>
+											<c:forEach items="${organisationsEA}" var="organisation">
+												<c:choose>
+													<c:when test='${frozenfilter.organisations != null && frozenfilter.containsOrganisation("frozen".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="frozen${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="frozen${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.OtherEUIs" /></b>
+											<c:forEach items="${organisationsOtherEUIs}" var="organisation">
+												<c:choose>
+													<c:when test='${frozenfilter.organisations != null && frozenfilter.containsOrganisation("frozen".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="frozen${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="frozen${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+											<b><spring:message code="label.NonEUIentities" /></b>
+											<c:forEach items="${organisationsNonEUIs}" var="organisation">
+												<c:choose>
+													<c:when test='${frozenfilter.organisations != null && frozenfilter.containsOrganisation("frozen".concat(organisation.key))}'>
+														<li><input checked="checked" onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="frozen${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:when>
+													<c:otherwise>
+														<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="frozen${organisation.key}" type="checkbox" class="check" style="width: auto !important;" value="true" />${organisation.value}</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+										</ul>
+									</div>
 								</th>
 								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
 									<div class="btn-toolbar" style="margin: 0px; text-align: center">

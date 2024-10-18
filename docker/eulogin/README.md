@@ -11,6 +11,19 @@ This configuration sets up the EU Login 9.10.6 Mock Server using Docker. This mo
 
 ## Configuration Steps
 
+### 0. Prepare Host Directories
+
+Before starting the Docker Compose, create the necessary directories on your host to ensure proper volume mapping:
+
+```bash
+mkdir -p /path/on/host/tmp
+mkdir -p /path/on/host/files
+mkdir -p /path/on/host/surveys
+mkdir -p /path/on/host/users
+mkdir -p /path/on/host/archive
+sudo chmod -R 777 /path/on/host
+```
+
 ### 1. Authenticate to GitHub Docker Repository
 
 Before pulling the Docker image, authenticate to the GitHub Docker repository using your personal access token that has "Package Write" access rights. Run the following command in your terminal:

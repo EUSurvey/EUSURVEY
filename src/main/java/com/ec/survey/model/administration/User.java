@@ -65,7 +65,8 @@ public class User implements java.io.Serializable {
 	private String deleteCode;
 	private Date deleteDate;
 	private ResultAccess resultAccess;
-
+	private String organisation;
+	
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
 
@@ -442,6 +443,15 @@ public class User implements java.io.Serializable {
 
 	public void setFrozen(Boolean isFrozen) {
 		this.isFrozen = isFrozen != null && isFrozen;
+	}
+	
+	@Column(name = "USER_ORGANISATION")
+	public String getOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(String organisation) {
+		this.organisation = organisation;
 	}
 
 	@Transient

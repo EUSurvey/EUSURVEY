@@ -30,8 +30,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -2018,7 +2016,7 @@ public class WebServiceController extends BasicController {
 			for (String l : survey.getBackgroundDocuments().keySet()) {
 				if (l.equalsIgnoreCase(label)) {
 					found = true;
-					uid = fileService.getFileUIDFromUrl(survey.getBackgroundDocuments().get(l));
+					uid = FileService.getFileUIDFromUrl(survey.getBackgroundDocuments().get(l));
 					break;
 				}
 			}
@@ -2467,5 +2465,58 @@ public class WebServiceController extends BasicController {
 		}
 
 		return "";
+	}
+	
+	@RequestMapping(value = "/deleteContribution/{code}", method = { RequestMethod.GET,
+			RequestMethod.HEAD }, produces = "text/html")
+	public @ResponseBody String deleteContribution(@PathVariable String code, HttpServletRequest request,
+			HttpServletResponse response) {
+		KeyValue credentials = getLoginAndPassword(request, response);
+		if (credentials != null) {
+			return deleteContribution(credentials.getKey(), credentials.getValue(), code, request, response);
+		}
+		return "";
+	}
+
+	private @ResponseBody String deleteContribution(@PathVariable String login, @PathVariable String pass,
+			@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			User user = getUser(request, response, true);
+			if (user == null)
+				return "";
+
+			AnswerSet answerSet = answerService.get(code);
+
+			if (answerSet == null) {
+				response.setStatus(412);
+				return "";
+			}
+
+			boolean isAllowed = false;
+			if (answerSet.getSurvey().getOwner().getId().equals(user.getId()) || user.getFormPrivilege() == 2) {
+				isAllowed = true;
+			} else {
+				Access access = surveyService.getAccess(answerSet.getSurvey().getId(), user.getId());
+				if (!(access == null || !access.hasAnyPrivileges()
+						|| access.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2)) {
+					isAllowed = true;
+				}
+			}
+
+			if (!isAllowed) {
+				response.setStatus(403);
+				return null;
+			}
+
+			answerService.deleteAnswer(answerSet);
+
+			webserviceService.increaseServiceRequest(user.getId());
+			response.setStatus(200);
+			return "1";
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			response.setStatus(500);
+			return "";
+		}
 	}
 }

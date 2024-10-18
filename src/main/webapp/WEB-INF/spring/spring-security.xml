@@ -8,7 +8,7 @@
    		http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<!-- This is where we configure Spring-Security -->
-	<security:http auto-config="false" use-expressions="true"
+	<security:http auto-config="false" request-matcher="mvc"
 		entry-point-ref="authenticationEntryPoint">
 		
 		<security:access-denied-handler error-page="/errors/403.html"/>
@@ -36,6 +36,7 @@
 		<security:intercept-url pattern="/preparecontribution/**"	access="permitAll" />
 		<security:intercept-url pattern="/preparedraft/**"	access="permitAll" />
 		<security:intercept-url pattern="/preparequizresults/**"	access="permitAll" />
+		<security:intercept-url pattern="/preparesaresults/**"	access="permitAll" />
 		<security:intercept-url pattern="/graphics/**"	access="permitAll" />
 		<security:intercept-url pattern="/printcontribution/**"	access="permitAll" />
 		<security:intercept-url pattern="/preparepublishedcontribution/**"	access="permitAll" />

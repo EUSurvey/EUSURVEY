@@ -416,7 +416,7 @@
 
 	<script>
 		//Recalc here so that the right elements show up -> remove .disallowed
-		eVoteRuleEvaluator.recalculate()
+		SurveyRuleEvaluator.recalculate()
 		
 		<c:if test="${form.survey.isSelfAssessment}">
 			var SACriteria = ${SACriteria};

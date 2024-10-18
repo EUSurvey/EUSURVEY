@@ -358,7 +358,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		
 		if (foreditor && viewModel.tableType() == 2)
 		{
-			$(matrix).find("tr").first().find("th").each(function(index){	
+			$(matrix).find("tr").first().find("td").each(function(index){	
 				var cell = this;
 				$(this).resizable({
 					handles: "e",
@@ -375,7 +375,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		var table = this;
 		if (foreditor && viewModel.tableType() == 2)
 		{
-			$(table).find("tr").first().find("th").each(function(index){
+			$(table).find("tr").first().find("td").each(function(index){
 				var cell = this;
 				$(this).resizable({
 					handles: "e",

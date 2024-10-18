@@ -164,7 +164,23 @@ public class SelfAssessmentService extends BasicService {
 		@SuppressWarnings("unchecked")
 		Query<SAReportConfiguration> query = session.createQuery(hql).setParameter("surveyUID", surveyUID);
 		List<SAReportConfiguration> list = query.list();
-		return list.isEmpty() ? new SAReportConfiguration() : list.get(0);
+
+		if (list.isEmpty()) {
+			return setReportConfigurationDefaultText(new SAReportConfiguration(), surveyService.getSurveyByUniqueId(surveyUID, false, true));
+		}
+		return list.get(0);
+	}
+
+	public SAReportConfiguration setReportConfigurationDefaultText(SAReportConfiguration report, Survey survey) {
+		Locale localeWithNewMainLanguage = new Locale(survey.getLanguage().getCode());
+
+		String introduction = resources.getMessage("message.introductionSelfAssessment", null, report.INTRODUCTIONSELFASSESSMENT, localeWithNewMainLanguage);
+		String customFeedback = resources.getMessage("message.customFeedbackSelfAssessment", null, report.CUSTOMFEEDBACKSELFASSESSMENT, localeWithNewMainLanguage);
+
+		report.setIntroduction(introduction);
+		report.setCustomFeedback(customFeedback);
+
+		return report;
 	}
 
 	@Transactional(readOnly = false)
@@ -276,22 +292,22 @@ public class SelfAssessmentService extends BasicService {
 		if (form.getAnswerSets() != null && form.getAnswerSets().size() > 0) {
 			answerSet = form.getAnswerSets().get(0);
 		}
-		initializeElements(form.getSurvey().getElements(), form.getSurvey().getUniqueId(), invisibleElements, answerSet);	
+		initializeElements(form.getSurvey().getElements(), form.getSurvey(), invisibleElements, answerSet);	
 	}
 
-	public void initializeElements(List<Element> elements, String surveyUid) {
-		initializeElements(elements, surveyUid, new HashSet<String>(), null);
+	public void initializeElements(List<Element> elements, Survey survey) {
+		initializeElements(elements, survey, new HashSet<String>(), null);
 	}
 	
-	private void initializeElements(List<Element> elements, String surveyUid, Set<String> invisibleElements, AnswerSet answerSet) {
-		boolean displayAllSAQuestions = true; 
+	private void initializeElements(List<Element> elements, Survey survey, Set<String> invisibleElements, AnswerSet answerSet) {
+		boolean displayAllSAQuestions = survey.displayAllSAQuestions(); 
+		
 		int selectedTargetDataset = 0;
 		for (Element element : elements) {
 			if (element instanceof SingleChoiceQuestion) {
 				SingleChoiceQuestion sc = (SingleChoiceQuestion)element;
 				if (sc.getIsTargetDatasetQuestion()) {
-					displayAllSAQuestions = sc.getDisplayAllQuestions();
-					List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(surveyUid);
+					List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
 					for (SATargetDataset dataset : datasets) {
 						sc.getTargetDatasets().add(dataset);
 					}
@@ -302,7 +318,7 @@ public class SelfAssessmentService extends BasicService {
 						}
 					}
 				} else if (!displayAllSAQuestions && sc.getIsSAQuestion() && sc.getEvaluationCriterion() != null) {
-					List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(surveyUid);
+					List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
 					for (SATargetDataset dataset : datasets) {
 						SAScoreCard card = selfassessmentService.getScoreCard(dataset.getId());
 						if (card != null) {
@@ -425,7 +441,18 @@ public class SelfAssessmentService extends BasicService {
 		SAScoreCard card = datasetid > 0 ? selfassessmentService.getScoreCard(datasetid) : null;
 		
 		List<SACriterion> criteria = selfassessmentService.getCriteria(answerSet.getSurvey().getUniqueId());
-		result.setCriteria(criteria);	
+		if (card != null) {
+			for (SAScore score : card.getScores()) {
+				for (SACriterion criterion : criteria) {
+					if (!score.getNotRelevant() && criterion.getId() == score.getCriterion()) {
+						result.getCriteria().add(criterion);
+						break;
+					}
+				}
+			}
+		} else {
+			result.setCriteria(criteria);
+		}
 				
 		Map<Integer, List<String>> SAQuestionUIDsByCriterion = new HashMap<Integer, List<String>>();
 		Map<String, Integer> ScoreByPossibleAnswerUID = new HashMap<String, Integer>();
@@ -450,7 +477,16 @@ public class SelfAssessmentService extends BasicService {
 		int allCounter = 0;
 		List<Double> values = new ArrayList<>();
 		List<Integer> counters = new ArrayList<>();
-		for (SACriterion criterion : criteria) {
+		
+		List<String> types = new ArrayList<>();		
+		
+		for (SACriterion criterion : result.getCriteria()) {
+			if (!types.contains(criterion.getType())) {
+				types.add(criterion.getType());
+				result.getValuesForTypes().add(new ArrayList<Double>());
+				result.getComparisonValuesForTypes().add(new ArrayList<Double>());
+			}			
+			
 			Double value = 0.0;
 			if (card != null) {
 				for (SAScore score : card.getScores()) {
@@ -462,6 +498,9 @@ public class SelfAssessmentService extends BasicService {
 			}
 			result.getComparisonValues().add(value);
 			
+			int typeIndex = types.indexOf(criterion.getType());
+			result.getComparisonValuesForTypes().get(typeIndex).add(value);			
+			
 			value = 0.0;
 			int counter = 0;
 			
@@ -470,8 +509,9 @@ public class SelfAssessmentService extends BasicService {
 					List<Answer> answers = answerSet.getAnswers(quid);
 					for (Answer answer : answers) {
 						if (ScoreByPossibleAnswerUID.containsKey(answer.getPossibleAnswerUniqueId())) {
-							value += ScoreByPossibleAnswerUID.get(answer.getPossibleAnswerUniqueId());
-							allValues += value;
+							int singleValue = ScoreByPossibleAnswerUID.get(answer.getPossibleAnswerUniqueId());
+							value += singleValue;
+							allValues += singleValue;
 							counter++;
 							allCounter++;
 						}
@@ -485,24 +525,24 @@ public class SelfAssessmentService extends BasicService {
 		
 		// Mrat is the mean of all answers of a respondent
 		double mrat = config.getAlgorithm().equalsIgnoreCase("MRAT") ? (allCounter != 0 ? allValues / (double)allCounter : 0.0) : 0;
+		double coefficient = config.getAlgorithm().equalsIgnoreCase("MRAT") ? config.getCoefficient() : 0;
 		
-		for (int i = 0; i < criteria.size(); i++) {
+		for (int i = 0; i < result.getCriteria().size(); i++) {
 			double value = values.get(i);
 			int counter = counters.get(i);
 		
 			double avg = counter != 0 ? value / (double)counter : 0.0;
 			
 			//Output data = AVERAGE (variables) – Mrat + 5			
-			result.getValues().add(Math.round(10.0 * avg - mrat + config.getCoefficient()) / 10.0);
+			result.getValues().add(Math.round(10.0 * (avg - mrat + coefficient)) / 10.0);
+			int typeIndex = types.indexOf(result.getCriteria().get(i).getType());
+			result.getValuesForTypes().get(typeIndex).add(value);	
 		}
 		
 		return result;
 	}
 
-	public void importData(ImportResult result, Survey survey) throws MessageException {
-		Map<Integer, Integer> oldToNewDatasetIDs = new HashMap<>();
-		Map<Integer, SACriterion> oldIdToNewCriteria = new HashMap<>();
-		
+	public void importData(ImportResult result, Survey survey, Map<String, Integer> evaluationCriteriaMappings, Map<Integer, SACriterion> oldIdToNewCriteria) throws MessageException {				
 		if (result.getCriteria() != null) {
 			for (SACriterion criterion : result.getCriteria()) {
 				SACriterion copy = new SACriterion();
@@ -519,7 +559,7 @@ public class SelfAssessmentService extends BasicService {
 				copy.setName(dataset.getName());
 				copy.setSurveyUID(survey.getUniqueId());
 				int newId = addTargetDataset(copy);
-				oldToNewDatasetIDs.put(dataset.getId(), newId);
+				result.getOldToNewDatasetIDs().put(dataset.getId().toString(), Integer.toString(newId));
 				
 				// Copy Score Cards
 				Optional<SAScoreCard> card = result.getScoreCards().stream().filter(c -> c.getDatasetID() == dataset.getId()).findFirst();
@@ -548,11 +588,15 @@ public class SelfAssessmentService extends BasicService {
 			updateReportConfiguration(copy, survey.getUniqueId());
 		}
 		
+		adaptEvaluationCriteria(survey, evaluationCriteriaMappings, oldIdToNewCriteria);
+	}
+	
+	public void adaptEvaluationCriteria(Survey survey, Map<String, Integer> evaluationCriteriaMappings, Map<Integer, SACriterion> oldIdToNewCriteria) {
 		for (Question question : survey.getQuestions()) {
 			if (question instanceof SingleChoiceQuestion) {
 				SingleChoiceQuestion scq = (SingleChoiceQuestion) question;
-				if (scq.getIsSAQuestion() && scq.getEvaluationCriterion() != null) {
-					scq.setEvaluationCriterion(oldIdToNewCriteria.get(scq.getEvaluationCriterion().getId()));
+				if (scq.getIsSAQuestion() && evaluationCriteriaMappings.containsKey(scq.getUniqueId())) {
+					scq.setEvaluationCriterion(oldIdToNewCriteria.get(evaluationCriteriaMappings.get(scq.getUniqueId())));
 					surveyService.update(scq);
 				}
 			}

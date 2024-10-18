@@ -224,6 +224,9 @@
 							</c:if>
 						
 							<c:choose>
+								<c:when test="${form.survey.validator != null && form.survey.validator.length() > 0 && form.survey.validated != true}">
+									<button class="btn btn-default disabled" data-toggle="tooltip" title="<esapi:encodeForHTMLAttribute><spring:message code="info.SurveyNotValidated" /></esapi:encodeForHTMLAttribute>"><spring:message code="label.Publish" /></button>
+								</c:when>							
 								<c:when test="${form.survey.isFrozen}">
 									<button class="btn btn-default disabled" data-toggle="tooltip" title="<esapi:encodeForHTMLAttribute><spring:message code="info.SurveyFrozen" /></esapi:encodeForHTMLAttribute>"><spring:message code="label.Publish" /></button>
 								</c:when>
@@ -336,20 +339,6 @@
 								</c:otherwise>
 							</c:choose>
 							<a class="actionRowAction" href="<c:url value="/${form.survey.shortname}/management/exportSurvey/false/${form.survey.shortname}"/>" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></span></a>
-									
-							<c:if test="${enablearchiving}">
-								<c:choose>
-									<c:when test="${form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-										<a id="btnArchiveSurvey" class="actionRowAction"  onclick="showArchiveDialog('${form.survey.shortname}','${form.survey.id}', false)" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import"></span></a>
-									</c:when>
-									<c:when test="${!form.survey.fullFormManagementRights}">
-										<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
-									</c:when>
-									<c:otherwise>
-										<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
-									</c:otherwise>
-								</c:choose>				
-							</c:if>
 														
 							<c:choose>
 								<c:when test="${form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">

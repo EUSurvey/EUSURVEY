@@ -13,6 +13,10 @@
 			$("#settings-menu-tab").addClass("active");
 			$("#myaccount-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
 			$('[data-toggle="tooltip"]').tooltip();
+			
+			<c:if test="${organisationSet != null}">
+				showInfo('<spring:message code="info.OrganisationSet" arguments="${contextpath}/home/support?organisation" />');
+			</c:if>
 		});	
 		
 		function toggleInline(td) {
@@ -94,6 +98,15 @@
 								<a onclick='validateInputAndSubmit($("#change-email-form"));' class="btn btn-primary"><spring:message code="label.Save" /></a>
 							</form:form>
 						</c:if>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 200px;"><label><b><spring:message code="label.Organisation" /></b></label></td>
+					<td style="width: 500px;">
+						<esapi:encodeForHTML>${organisation}</esapi:encodeForHTML>
+						<div style="float: right">
+							<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" href="${contextpath}/home/support?organisation=1"><span class="glyphicon glyphicon-pencil"></span></a>
+						</div>
 					</td>
 				</tr>
 				<tr>

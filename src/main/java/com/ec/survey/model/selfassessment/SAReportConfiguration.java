@@ -39,7 +39,10 @@ public class SAReportConfiguration implements java.io.Serializable {
 	private boolean targetScores = true;
 	private boolean gaps = true;
 	private boolean performanceTable = true;
-		
+
+	public static final String INTRODUCTIONSELFASSESSMENT = "<span style=\"color: #4caf50; font-size: 200%; font-weight: bold;\">✓</span> <strong style=\"color: black; margin-left: 6px;\"> Contribution successfully submitted</strong><br /><br />This page displays your results as well as the positive and negative gaps of your scores from the target scores for your current data profile.<br /><br />By selecting a different dataset from the drop-down list below, you can compare your results with the target scores of other profiles.";
+	public static final String CUSTOMFEEDBACKSELFASSESSMENT = "<p>Thank you for your contribution!</p>";
+
 	@Id
 	@Column(name = "SAREPORTCONFIG_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

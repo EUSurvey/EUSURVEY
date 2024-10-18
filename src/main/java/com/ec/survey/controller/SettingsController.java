@@ -50,6 +50,30 @@ public class SettingsController extends BasicController {
 		model.addAttribute("languages", surveyService.getLanguages());
 		return "settings/skin";
 	}
+	
+	private void addOrganisation(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+		User user = sessionService.getCurrentUser(request);
+		String organisation = "";
+		if (user != null && user.getOrganisation() != null && user.getOrganisation().length() > 0) {
+			// try to find a label for a domain
+			organisation = resources.getMessage("domain." + user.getOrganisation(), null, "", locale);
+			if (organisation.length() == 0) {
+				// try to find a label for a dg
+				 organisation = resources.getMessage("label.dgnew." + user.getOrganisation(), null, "", locale);
+			}
+			if (organisation.length() == 0) {
+				//fallback: display organisation code
+				organisation = user.getOrganisation();
+			}
+		}
+		model.addAttribute("organisation", organisation);
+		
+		Boolean organisationSet = (Boolean) request.getSession().getAttribute("ORGANISATIONSET");
+		if (organisationSet != null && organisationSet) {
+			model.addAttribute("organisationSet", true);
+			request.getSession().removeAttribute("ORGANISATIONSET");
+		}
+	}
 
 	@RequestMapping(value = "/myAccount", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public String myAccount(HttpServletRequest request, ModelMap model, Locale locale)
@@ -80,6 +104,8 @@ public class SettingsController extends BasicController {
 					break;
 			}
 		}
+		
+		addOrganisation(request, model, locale);
 
 		return "settings/myAccount";
 	}
@@ -110,6 +136,8 @@ public class SettingsController extends BasicController {
 				return "error/info";
 			}
 		}
+		
+		addOrganisation(request, model, locale);
 
 		model.addAttribute("languages", surveyService.getLanguages());
 		return "settings/myAccount";

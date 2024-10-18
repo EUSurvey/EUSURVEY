@@ -48,6 +48,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 		try {
 			boolean ecas = false;
 			boolean weakAuthentication = false;
+			boolean organisationSet = false;
 			for (GrantedAuthority auth: securityContext.getAuthentication().getAuthorities())
 			{
 				if (auth.getAuthority().equalsIgnoreCase("ROLE_ECAS_USER"))
@@ -58,7 +59,12 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 				if (auth.getAuthority().equalsIgnoreCase("ROLE_WEAK_AUTHENTICATION"))
 				{
 					weakAuthentication = true;
-				}				
+				}		
+				
+				if (auth.getAuthority().equalsIgnoreCase("ROLE_ORGANISATION_SET"))
+				{
+					organisationSet = true;
+				}
 				
 				if (auth.getAuthority().startsWith("ROLE_ECAS_SURVEY_"))
 				{
@@ -108,6 +114,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 			
 			request.getSession().setAttribute("USER", user);
 			request.getSession().setAttribute("WEAKAUTHENTICATION", weakAuthentication);
+			request.getSession().setAttribute("ORGANISATIONSET", organisationSet);
 		    localeResolver.setLocale(request, response, new Locale(user.getLanguage()));		        
 			
 		} catch (Exception e) {

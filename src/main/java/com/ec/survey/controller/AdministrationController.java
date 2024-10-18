@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
@@ -18,9 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,31 +77,6 @@ public class AdministrationController extends BasicController {
 		}
 		
 		return "free";
-	}
-	
-	@RequestMapping(value = "/encrypt/{input}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String encrypt(@PathVariable String input)
-	{
-		return encrypt(null, input);
-	}
-	
-	@RequestMapping(value = "/encrypt/{input}/{password}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String encrypt(@PathVariable String password, @PathVariable String input)
-	{
-		if (password == null || password.length() == 0)
-		{
-			password = Tools.newSalt();
-		}
-
-		if (Security.getProvider("BC") == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-		StandardPBEStringEncryptor mySecondEncryptor = new StandardPBEStringEncryptor();
-		mySecondEncryptor.setProviderName("BC");
-		mySecondEncryptor.setAlgorithm("PBEWITHSHA256AND256BITAES-CBC-BC");
-		mySecondEncryptor.setPassword(password);
-		
-		return password + "#" + mySecondEncryptor.encrypt(input);
 	}
 		
 	@PostMapping(value = "/saveUserConfiguration")
@@ -416,7 +390,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/updateOLAPTable/{shortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public  @ResponseBody String updateOLAPTable(@PathVariable String shortname, HttpServletRequest request) throws Exception {
+	public @ResponseBody String updateOLAPTable(@PathVariable String shortname, HttpServletRequest request) throws Exception {
 		try {
 			reportingService.updateOLAPTable(shortname, true, true);
 			return "executed";
@@ -435,5 +409,55 @@ public class AdministrationController extends BasicController {
 			logger.error(e.getMessage(), e);
 		}
 		return Constants.ERROR;
+	}
+	
+	@RequestMapping(value = "/organisations", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView organisations(HttpServletRequest request) throws ForbiddenURLException {
+		if (!isChargeBackeEnabled()) throw new ForbiddenURLException();
+		
+		return new ModelAndView("administration/organisations");
+	}
+	
+	@RequestMapping(value = "/organisation/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody OrganisationResult organisation(HttpServletRequest request, @PathVariable String code) throws ForbiddenURLException {
+		if (!isChargeBackeEnabled()) throw new ForbiddenURLException();
+		
+		return surveyService.getSurveysByOrganisation(code);
+	}
+	
+	
+	@RequestMapping(value = "/organisationreport/{code}/{format}/{year}/{month}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ResponseEntity<byte[]> organisationReport(HttpServletRequest request, HttpServletResponse response, @PathVariable String code, @PathVariable String format, @PathVariable int year, @PathVariable int month) throws ForbiddenURLException, IOException {
+		if (!isChargeBackeEnabled()) throw new ForbiddenURLException();
+		
+		List<List<String>> surveys = surveyService.getSurveysByOrganisation(code, year, month);
+		
+		StringBuilder csv = new StringBuilder();
+		
+		for (List<String> survey : surveys) {
+			boolean first = true;
+			for (String entry : survey) {
+				if (first) {
+					first = false;
+				} else {
+					csv.append(",");			
+				}
+				
+				if (entry != null && entry.contains(",")) {
+					csv.append("\"").append(entry.replace("\"", "'")).append("\"");
+				} else {				
+					csv.append(entry == null ? "" : entry);
+				}
+
+			}
+			csv.append("\n");
+		}
+		
+		response.setContentType("text/csv");
+		response.setHeader("Content-Disposition", "attachment;filename=export.csv");
+		response.getWriter().print(csv.toString());
+		response.getWriter().flush();
+
+		return null;
 	}
 }

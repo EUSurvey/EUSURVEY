@@ -1,6 +1,8 @@
 package com.ec.survey.model;
 
-public class UserFilter {
+import java.io.Serializable;
+
+public class UserFilter implements Serializable {
 	private String login;
 	private String email;
 	private String comment;

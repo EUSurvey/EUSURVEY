@@ -1,0 +1,28 @@
+apiVersion: v2
+name: eusurvey
+description: A Helm chart for Kubernetes to deploy eusurvey application with MariaDB
+type: application
+version: 0.1.0
+appVersion: "1.0"
+dependencies:
+  - name: tomcat
+    version: "11.2.21"
+    repository: "https://charts.bitnami.com/bitnami"
+  - name: tomcat
+    version: "11.2.21"
+    repository: "https://charts.bitnami.com/bitnami"
+    alias: tomcat-task
+  - name: tomcat
+    version: "11.2.21"
+    repository: "https://charts.bitnami.com/bitnami"
+    alias: tomcat-ldap-task
+  - name: tomcat
+    version: "11.2.21"
+    repository: "https://charts.bitnami.com/bitnami"
+    alias: tomcat-todo-task
+  - name: mysql
+    version: "10.2.4"
+    repository: "https://charts.bitnami.com/bitnami"
+  - name: redis
+    version: "17.9.5"
+    repository: "https://charts.bitnami.com/bitnami"

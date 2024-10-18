@@ -1,12 +1,17 @@
 package com.ec.survey.model;
 
-import com.ec.survey.model.administration.User;
-import com.ec.survey.model.survey.*;
-import com.ec.survey.model.survey.base.File;
-import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.Numbering;
-import com.ec.survey.tools.SurveyHelper;
-import com.ec.survey.tools.Tools;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -14,15 +19,38 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.Transient;
+import com.ec.survey.model.administration.User;
+import com.ec.survey.model.survey.ChoiceQuestion;
+import com.ec.survey.model.survey.ComplexTable;
+import com.ec.survey.model.survey.ComplexTableItem;
+import com.ec.survey.model.survey.Confirmation;
+import com.ec.survey.model.survey.DraftIDElement;
+import com.ec.survey.model.survey.Element;
+import com.ec.survey.model.survey.EmptyElement;
+import com.ec.survey.model.survey.FreeTextQuestion;
+import com.ec.survey.model.survey.GalleryQuestion;
+import com.ec.survey.model.survey.Image;
+import com.ec.survey.model.survey.Matrix;
+import com.ec.survey.model.survey.MatrixOrTable;
+import com.ec.survey.model.survey.MultipleChoiceQuestion;
+import com.ec.survey.model.survey.PossibleAnswer;
+import com.ec.survey.model.survey.Question;
+import com.ec.survey.model.survey.RankingItem;
+import com.ec.survey.model.survey.RankingQuestion;
+import com.ec.survey.model.survey.RatingQuestion;
+import com.ec.survey.model.survey.Ruler;
+import com.ec.survey.model.survey.Section;
+import com.ec.survey.model.survey.SingleChoiceQuestion;
+import com.ec.survey.model.survey.Survey;
+import com.ec.survey.model.survey.Text;
+import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.Numbering;
+import com.ec.survey.tools.SurveyHelper;
+import com.ec.survey.tools.Tools;
 
 @Configurable
-public class Form {
+public class Form implements java.io.Serializable {
 
 	private Survey survey;
 	private User user;
@@ -43,7 +71,7 @@ public class Form {
 	private int varPagesEltNb = 0;
 	private List<String> varPagesEltIds;
 	private List<String> varPagesEltWidths;
-	private MessageSource resources;
+	private transient MessageSource resources;
 
 	private String contextpath;
 	private Date startDate = new Date();

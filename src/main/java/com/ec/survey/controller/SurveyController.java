@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,6 +171,17 @@ public class SurveyController extends BasicController {
 		}
 		
 		return existingSurvey != null;
+	}
+	
+	@RequestMapping(value = "/emailmatchesorganiation", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody Boolean emailmatchesorganiation(HttpServletRequest request) throws NamingException {	
+		
+		String email = request.getParameter("email");	
+		String organisation = request.getParameter("organisation");	
+		
+		String organisationFromLDAP = ldapService.getOrganisationForEmail(email);
+		
+		return organisationFromLDAP.equalsIgnoreCase(organisation);
 	}
 		
 }

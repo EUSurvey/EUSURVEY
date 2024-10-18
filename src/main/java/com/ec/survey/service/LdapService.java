@@ -52,6 +52,7 @@ public class LdapService extends BasicService {
     private @Value("${LdapSecurityCredentials}") String securityCredentials;
     private @Value("${LdapSecurityAuthentication}") String securityAuthentication;
     private @Value("${ldap.search.user.format:@null}") String ldapSearchUserFormat;
+    private @Value("${ldap.search.mail.format:@null}") String ldapSearchMailFormat;
     private @Value("${ldap.search.format:@null}") String ldapSearchFormat;
    
     private @Value("${ldap.mapping.user.departmentNumber:@null}") String ldapMappingUserDepartmentNumber;
@@ -59,6 +60,7 @@ public class LdapService extends BasicService {
     private @Value("${ldap.mapping.user.uid:@null}") String ldapMappingUserUid;
     private @Value("${ldap.mapping.user.ecMoniker:@null}") String ldapMappingUserEcMoniker;
     private @Value("${ldap.mapping.user.o:@null}") String ldapMappingUserO;
+    private @Value("${ldap.mapping.user.dg:@null}") String ldapMappingUserDg;
     private @Value("${ldap.mapping.user.givenName:@null}") String ldapMappingUserGivenName;
     private @Value("${ldap.mapping.user.mail:@null}") String ldapMappingUserMail;
     private @Value("${ldap.mapping.user.telephoneNumber:@null}") String ldapMappingUserTelephoneNumber;
@@ -123,6 +125,45 @@ public class LdapService extends BasicService {
         }
 	    ctx.close();
         return moniker;
+	}
+	
+	public String getLoginForEmail(String email) throws NamingException {
+		String login = "";
+		DirContext ctx = initialize();
+        try {
+        	email = Tools.encodeForLDAP(email);
+        	String searchValue= String.format(ldapSearchMailFormat, email);
+            Attributes attrs = ctx.getAttributes(searchValue);
+            login = (String) attrs.get(ldapMappingUserUid).get();
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+        }
+	    ctx.close();
+        return login;
+	}
+	
+	public String getOrganisationForEmail(String email) throws NamingException {
+		String organisation = "";
+		DirContext ctx = initialize();
+        try {
+        	email = Tools.encodeForLDAP(email);
+        	String searchValue= String.format(ldapSearchMailFormat, email);
+            Attributes attrs = ctx.getAttributes(searchValue);
+            organisation = (String) attrs.get(ldapMappingUserO).get();
+            
+            if (organisation.equalsIgnoreCase("eu.europa.ec")) {
+            	String dg = (String) attrs.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
+            	return dg;
+            } else {
+            	String departmentNumber = (String) attrs.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDg).get();
+            	return departmentNumber.substring(0, departmentNumber.indexOf("."));
+            }
+            
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+        }
+	    ctx.close();
+        return organisation;
 	}
    
     public List<String> getUserLDAPGroups(String username) {
@@ -941,4 +982,5 @@ public class LdapService extends BasicService {
 		return !attr.startsWith("$");
 		// this is a constant value to search for it		
 	}
+
 }
