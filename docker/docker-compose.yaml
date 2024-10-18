@@ -38,3 +38,4 @@ volumes:
 networks:
   eusurvey-network:
     driver: bridge
+
