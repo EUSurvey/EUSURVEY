@@ -392,11 +392,6 @@
 					  data: data,
 					  options: {
 					    responsive: true,
-					        
-				        scales: {
-							yAxes: [{ticks: {beginAtZero: true, autoSkip: false}}],
-							xAxes: [{ticks: {beginAtZero: true, autoSkip: false}}]
-						},
 					    
 					    <c:if test="${!SAReportConfiguration.legend}">
 					      legend: {
@@ -405,11 +400,25 @@
 				        </c:if>
 				          
 				        <c:if test="${!SAReportConfiguration.scale}">
-				          scale: {
-				              ticks: {
-				                  display: false
-				              },
-				          },
+				        
+				          <c:if test='${SAReportConfiguration.selectedChart == "SPIDER"}'>				        
+					          scale: {
+					              ticks: {
+					                  display: false
+					              },
+					          },				          
+				          </c:if>
+				          
+					     <c:if test='${SAReportConfiguration.selectedChart != "SPIDER"}'>	
+				          	scales: {
+					            yAxes: [{
+					                ticks: {
+					                    display: false
+					                }
+					            }]
+					        },
+				          </c:if>
+				          
 				        </c:if>   
 				          
 				          title: {

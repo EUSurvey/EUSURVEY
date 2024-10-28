@@ -533,10 +533,11 @@ public class SelfAssessmentService extends BasicService {
 		
 			double avg = counter != 0 ? value / (double)counter : 0.0;
 			
-			//Output data = AVERAGE (variables) – Mrat + 5			
-			result.getValues().add(Math.round(10.0 * (avg - mrat + coefficient)) / 10.0);
+			//Output data = AVERAGE (variables) – Mrat + 5
+			double computedValue = Math.round(10.0 * (avg - mrat + coefficient)) / 10.0;
+			result.getValues().add(computedValue);
 			int typeIndex = types.indexOf(result.getCriteria().get(i).getType());
-			result.getValuesForTypes().get(typeIndex).add(value);	
+			result.getValuesForTypes().get(typeIndex).add(computedValue);	
 		}
 		
 		return result;
