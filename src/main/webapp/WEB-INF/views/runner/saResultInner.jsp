@@ -393,6 +393,28 @@
 					  options: {
 					    responsive: true,
 					    
+					    <c:if test='${SAReportConfiguration.selectedChart == "SPIDER"}'>	
+					    	//this is a fix for a bug in chartjs
+						    tooltips: {
+					          	callbacks: {
+					            	title: (items, data) => {
+					              	if (!items.length) {
+					                	return '';
+					                }
+					              						    				              	
+					                return data.datasets[items[0].datasetIndex].label;
+					              },
+					              label: function(context) {
+				                        let label = data.labels[context.index];
+				                        if (label) {
+				                            label += ': ';
+				                        }
+				                        return label + context.value;
+				                    },
+					            }
+					          },				          
+				         </c:if>
+					    
 					    <c:if test="${!SAReportConfiguration.legend}">
 					      legend: {
 				            display: false
@@ -406,7 +428,7 @@
 					              ticks: {
 					                  display: false
 					              },
-					          },				          
+					          },
 				          </c:if>
 				          
 					     <c:if test='${SAReportConfiguration.selectedChart != "SPIDER"}'>	
