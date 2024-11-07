@@ -440,6 +440,7 @@ public class EVoteService extends BasicService {
 		// we use his hashset to check whether each vote has at least one candidate or list vote
 		// if not, we treat it as preferential vote
 		Set<Integer> voteAnswerIds = new HashSet<>();
+		Set<Integer> foundAnswerIds = new HashSet<>();
 		
 		try {
 			session.flush();
@@ -466,8 +467,8 @@ public class EVoteService extends BasicService {
 				} else if (evoteResults.getLists().containsKey(quid)) {
 					eVoteListResult listResult = evoteResults.getLists().get(quid);
 					
-					if (voteAnswerIds.contains(answerSetId)) {
-						voteAnswerIds.remove(answerSetId);
+					if (!foundAnswerIds.contains(answerSetId)) {
+						foundAnswerIds.add(answerSetId);
 					}
 					
 					if (!config.useLuxembourgProcedure && value != null && value.equalsIgnoreCase("EVOTE-ALL")) {
@@ -483,6 +484,12 @@ public class EVoteService extends BasicService {
 							listResult.setLuxListVotes(listResult.getLuxListVotes() + 1);
 						}
 					}
+				}				
+			}
+			
+			for (int answerSetId : foundAnswerIds) {
+				if (voteAnswerIds.contains(answerSetId)) {
+					voteAnswerIds.remove(answerSetId);
 				}				
 			}
 		} finally {
