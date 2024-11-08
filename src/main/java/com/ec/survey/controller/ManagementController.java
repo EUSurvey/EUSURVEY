@@ -4001,7 +4001,9 @@ public class ManagementController extends BasicController {
 					luxListVotes += v;
 				}
 				
-				listResult.setLuxListVotes(luxListVotes);
+				if (form.getSurvey().geteVoteTemplate().equals("l")) {
+					listResult.setLuxListVotes(luxListVotes);
+				}
 			}
 			
 			SeatCounting result = eVoteService.getCounting(form.getSurvey().getUniqueId(), results, resources, locale, true);

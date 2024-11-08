@@ -484,12 +484,12 @@
 				</td>
 				<!-- ko foreach: counting().listSeatDistribution -->
 					<!-- ko if: listPercentWeighted >= $parent.counting().minListPercent -->
-						<td data-bind="text: luxListVotes"></td>
+						<td data-bind="text: $parent.counting().template != 'l' ? preferentialVotes : luxListVotes"></td>
 					<!-- /ko -->
 				<!-- /ko -->
 				<!-- ko foreach: counting().listSeatDistribution -->
 					<!-- ko ifnot: listPercentWeighted >= $parent.counting().minListPercent -->
-						<td data-bind="text: luxListVotes" style="color: #777;"></td>
+						<td data-bind="text: $parent.counting().template != 'l' ? preferentialVotes : luxListVotes" style="color: #777;"></td>
 					<!-- /ko -->
 				<!-- /ko -->
 			</tr>
