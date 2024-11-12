@@ -66,9 +66,9 @@ public class TestDataGenerator implements Runnable {
 	private int contacts;
 	private int users;
 	
-	private boolean archive = false;
+	//private boolean archive = false;
 	
-	public void init(User user, int answers, String fileDir, String sender, String email, String shortname, Integer questions, boolean archive, BeanFactory context, int files, int surveys, int contacts, int users)
+	public void init(User user, int answers, String fileDir, String sender, String email, String shortname, Integer questions, BeanFactory context, int files, int surveys, int contacts, int users)
 	{
 		this.user = user;
 		this.answers = answers;
@@ -77,7 +77,6 @@ public class TestDataGenerator implements Runnable {
 		this.sender = sender;
 		this.email = email;
 		this.shortname = shortname;
-		this.archive = archive;
 		this.context = context;
 		this.files = files;
 		this.surveys = surveys;
@@ -109,7 +108,7 @@ public class TestDataGenerator implements Runnable {
 						{
 							answers = (int) Math.floor(150000/i - 1);
 						}
-						ApplicationListenerBean.createSurvey(answers, user, surveyService.getLanguage("EN"), surveyService, answerService, fileDir, false, resources, Locale.ENGLISH, questions, archive, archiveService, context, taskExecutor, fileService);
+						ApplicationListenerBean.createSurvey(answers, user, surveyService.getLanguage("EN"), surveyService, answerService, fileDir, false, resources, Locale.ENGLISH, questions, archiveService, context, taskExecutor, fileService);
 					}
 				}
 				

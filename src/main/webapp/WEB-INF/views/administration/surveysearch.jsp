@@ -321,6 +321,10 @@
 					$(td).append(a);
 				}
 				
+				a = document.createElement("a");
+				$(a).addClass("iconbutton float-right").attr("href", "${contextpath}/" + list[i].shortname + "/management/exportSurvey/true/" + list[i].shortname + "?delete=true").attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Archive" />").attr("onclick","$('#generic-wait-dialog').modal('show');").html('<span class="glyphicon glyphicon-import"></span>');
+				$(td).append(a);
+				
 				$(row).append(td);
 								
 				$('#surveyTableDivTableBody').first().append(row);
@@ -420,14 +424,14 @@
 				$(td).append(list[i].formattedArchived);		
 				$(row).append(td);
 				
-				td = document.createElement("td");
-				var a = document.createElement("a");
-				$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadpdf" />").attr("target","_blank").attr("href","${contextpath}/archive/surveypdf/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" />');
-				$(td).append(a);
-				$(row).append(td);				
-				
-				if (list[i].replies > 0)
+				if (list[i].replies > 0 && list[i].finished && list[i].error == null)
 				{
+					td = document.createElement("td");
+					var a = document.createElement("a");
+					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadpdf" />").attr("target","_blank").attr("href","${contextpath}/archive/surveypdf/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" />');
+					$(td).append(a);
+					$(row).append(td);	
+					
 					td = document.createElement("td");
 					a = document.createElement("a");
 					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxls/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" />');
@@ -451,7 +455,7 @@
 					$(td).append(a);				
 					$(row).append(td);
 				} else {
-					$(row).append("<td>&nbsp;</td><td>&nbsp;</td>");
+					$(row).append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
 				}
 			
 				td = document.createElement("td");

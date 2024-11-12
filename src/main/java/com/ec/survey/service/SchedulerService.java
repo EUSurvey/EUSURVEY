@@ -21,6 +21,7 @@ import com.ec.survey.model.Setting;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
 import com.ec.survey.tools.AnswerSetAnonymWorker;
+import com.ec.survey.tools.ArchiveExecutor;
 import com.ec.survey.tools.DeleteDraftsUpdater;
 import com.ec.survey.tools.DeleteInvalidStatisticsWorker;
 import com.ec.survey.tools.DeleteSurveyUpdater;
@@ -64,6 +65,9 @@ public class SchedulerService extends BasicService {
 	
 	@Resource(name = "deleteSurveysWorker")
 	private DeleteSurveyUpdater deleteSurveysWorker;
+	
+	@Resource(name = "archiveExecutor")
+	private ArchiveExecutor archiveExecutor;
 	
 	@Resource(name = "deleteDraftsWorker")
 	private DeleteDraftsUpdater deleteDraftsWorker;
@@ -506,13 +510,32 @@ public class SchedulerService extends BasicService {
 		fileWorker.run();
 	 }
 	
-	@Scheduled(cron="0 0 4 * * *") //every night at 4 pm
+	@Scheduled(cron="0 */5 * * * *") //every 5 minutes
 	public void doNightlySchedule() {
 		if(!isHost2ExecuteStandardTask())
 			return;
+		
+		String start = settingsService.get(Setting.NightlyTaskStart);
+		
+		String hours = start.substring(0, start.indexOf(':'));
+		String minutes = start.substring(start.indexOf(':')+1);
+		Date currentDate = new Date();
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(currentDate);
+		c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hours));
+		c.set(Calendar.MINUTE, Integer.parseInt(minutes));
+		c.set(Calendar.SECOND, 0);		
+		Date startDate = c.getTime();
+		
+		long seconds = Math.abs(currentDate.getTime()-startDate.getTime())/1000;
+		if (seconds > 60) {
+			return;
+		}		
 	  
 		exportWorker.run();
 		validCodesRemover.run();
+		archiveExecutor.run();
 		deleteSurveysWorker.run();
 		deleteDraftsWorker.run();
 		deleteTemporaryFoldersWorker.run();

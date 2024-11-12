@@ -1,14 +1,13 @@
 package com.ec.survey.tools;
 
-import java.io.IOException;
-import java.nio.file.Files;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -22,6 +21,7 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.ResultFilter;
+import com.ec.survey.model.Setting;
 import com.ec.survey.model.Export.ExportFormat;
 import com.ec.survey.model.Export.ExportState;
 import com.ec.survey.model.Export.ExportType;
@@ -36,6 +36,7 @@ import com.ec.survey.service.FileService;
 import com.ec.survey.service.MailService;
 import com.ec.survey.service.PDFService;
 import com.ec.survey.service.SessionService;
+import com.ec.survey.service.SettingsService;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.TranslationService;
 
@@ -48,6 +49,9 @@ public class ArchiveExecutor implements Runnable {
 	
 	@Resource(name="surveyService")
 	private SurveyService surveyService;
+	
+	@Resource(name="settingsService")
+	private SettingsService settingsService;
 	
 	@Resource(name="exportService")
 	private ExportService exportService;
@@ -78,43 +82,30 @@ public class ArchiveExecutor implements Runnable {
 
 	private static final Logger logger = Logger.getLogger(ArchiveExecutor.class);
 	
-	private Archive archive;
-	private Survey survey;
-	private User user;
-	private Export export = new Export();
-	private Export exportstats = new Export();
-	private Export exportstatspdf = new Export();
-	private Survey published = null;
-	private Form form = null;	
-	private java.io.File target = null;	
-	
-	public void init(Archive archive, Survey survey, User user)
+	public void createArchive(Survey survey, User user, Archive archive) throws Exception
 	{
-		this.archive = archive;
-		this.survey = survey;
-		this.user = user;
-	}
-	
-	@Transactional
-	public boolean prepare()
-	{
-		if (survey == null)
+		Session session = sessionFactory.getCurrentSession();
+		logger.info("starting archiving of survey " + survey.getShortname());
+		
+		java.io.File folder = fileService.getArchiveFolder(survey.getUniqueId());		
+		java.io.File zip = surveyService.exportSurvey(survey.getShortname(), surveyService, true);				
+		java.io.File target = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + survey.getUniqueId());
+		
+		if (folder.exists())
 		{
-			logger.error("survey is null");
-			return false;
+			FileUtils.deleteDirectory(folder);
 		}
 		
-		if (survey.getLanguage() == null)
-		{
-			logger.error("survey.language is null");
-			return false;
-		}
+		FileUtils.copyFile(zip, target);
 		
-		published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, survey.getLanguage().getCode(), true, false);
+		Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, survey.getLanguage().getCode(), true, false);
 		
 		if (published != null) 
 		{
-			form = new Form();
+			logger.info("archiving PDF of survey " + survey.getShortname());			
+			pdfService.createSurveyPDF(published, published.getLanguage().getCode(), new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + ".pdf"));
+			
+			Form form = new Form();
 			form.setSurvey(published);
 			
 			ResultFilter resultFilter = new ResultFilter();
@@ -132,16 +123,11 @@ public class ArchiveExecutor implements Runnable {
 				}
 			}
 			
-			export.setDate(new Date());
-			export.setState(ExportState.Pending);		
-			export.setUserId(user.getId());
-			export.setName("archiveXLS");
-			export.setType(ExportType.Content);
-			export.setFormat(ExportFormat.xls);
-			export.setSurvey(published);
-			export.setResultFilter(resultFilter);
-			exportService.prepareExport(null, export);
-						
+			form.setStatistics(answerService.getStatisticsOrStartCreator(survey, resultFilter, true, false, false));
+			
+			logger.info("archiving statistics (Excel) of survey " + survey.getShortname());	
+			Export exportstats = new Export();
+			exportstats.setForArchiving(true);	
 			exportstats.setDate(new Date());
 			exportstats.setState(ExportState.Pending);		
 			exportstats.setUserId(user.getId());
@@ -150,8 +136,32 @@ public class ArchiveExecutor implements Runnable {
 			exportstats.setFormat(ExportFormat.xls);
 			exportstats.setSurvey(published);
 			exportstats.setResultFilter(resultFilter);
-			exportService.prepareExport(null, exportstats);
+			exportService.startExport(form, exportstats, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "statistics.xls", true);
+			if (exportstats.getState() == ExportState.Failed)
+			{
+				throw new MessageException("export failed, abort archiving");
+			}
 			
+			logger.info("archiving results (Excel) of survey " + survey.getShortname());	
+			Export export = new Export();
+			export.setDate(new Date());
+			export.setState(ExportState.Pending);		
+			export.setUserId(user.getId());
+			export.setName("archiveXLS");
+			export.setType(ExportType.Content);
+			export.setFormat(ExportFormat.xls);
+			export.setSurvey(published);
+			export.setResultFilter(resultFilter);
+			export.setForArchiving(true);			
+			exportService.startExport(form, export, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "results.xls", true);
+			if (export.getState() == ExportState.Failed)
+			{
+				throw new MessageException("export failed, abort archiving");
+			}
+			
+			logger.info("archiving statistics (PDF) of survey " + survey.getShortname());
+			Export exportstatspdf = new Export();			
+			exportstatspdf.setForArchiving(true);
 			exportstatspdf.setDate(new Date());
 			exportstatspdf.setState(ExportState.Pending);		
 			exportstatspdf.setUserId(user.getId());
@@ -160,63 +170,14 @@ public class ArchiveExecutor implements Runnable {
 			exportstatspdf.setFormat(ExportFormat.pdf);
 			exportstatspdf.setSurvey(published);
 			exportstatspdf.setResultFilter(resultFilter);
-			exportService.prepareExport(null, exportstatspdf);
-		
-		}
-		
-		surveyService.markAsArchived(survey.getUniqueId());
-		
-		return true;
-	}
-
-	public void createArchive() throws Exception
-	{
-		Session session = sessionFactory.getCurrentSession();
-		logger.info("starting archiving of survey " + survey.getShortname());
-		
-		java.io.File folder = fileService.getArchiveFolder(survey.getUniqueId());		
-		
-		java.io.File zip = surveyService.exportSurvey(survey.getShortname(), surveyService, true);
-				
-		target = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + survey.getUniqueId());
-		
-		if (target.exists())
-		{
-			throw new MessageException("Survey cannot be archived as archive file already exists: " + survey.getShortname());
-		}
-		
-		FileUtils.copyFile(zip, target);
-		
-		if (published != null) 
-		{
-			logger.info("archiving PDF of survey " + survey.getShortname());
-			
-			pdfService.createSurveyPDF(published, published.getLanguage().getCode(), new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + ".pdf"));
-			
-			logger.info("archiving results (Excel) of survey " + survey.getShortname());
-			
-			export.setForArchiving(true);			
-			exportService.startExport(form, export, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "results.xls", true);
-			if (export.getState() == ExportState.Failed)
-			{
-				throw new MessageException("export failed, abort archiving");
-			}
-			
-			logger.info("archiving statistics (Excel) of survey " + survey.getShortname());
-			
-			exportService.startExport(form, exportstats, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "statistics.xls", true);
-			if (exportstats.getState() == ExportState.Failed)
-			{
-				throw new MessageException("export failed, abort archiving");
-			}
-			
-			logger.info("archiving statistics (PDF) of survey " + survey.getShortname());
-		
+			exportstatspdf = exportService.update(exportstatspdf); // needed as the pdf creation loads the export from the db	
 			exportService.startExport(form, exportstatspdf, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "statistics.pdf", true);
 			if (exportstatspdf.getState() == ExportState.Failed)
 			{
 				throw new MessageException("export failed, abort archiving");
 			}
+			
+			
 		} else {
 			logger.info("archiving PDF of survey " + survey.getShortname());
 			
@@ -230,7 +191,7 @@ public class ArchiveExecutor implements Runnable {
 		//make sure the archive exists before finally deleting the survey
 		if (target.exists())
 		{
-			surveyService.deleteNoTransaction(survey.getId(), false, true);
+			surveyService.markDeleted(survey.getId(), survey.getOwner().getId(), survey.getShortname(), survey.getUniqueId(), !survey.getIsDraft() || survey.getIsPublished());
 		} else {
 			throw new MessageException("archive file not found, abort archiving");
 		}
@@ -243,28 +204,14 @@ public class ArchiveExecutor implements Runnable {
 		session.flush();
 	}
 	
-	public void handleException(Exception e)
+	public void handleException(Exception e, Archive archive, Survey survey)
 	{
 		logger.error(e.getLocalizedMessage(), e);			
 		archive.setError(e.getLocalizedMessage());
-		
-		//delete files
-		if (target != null)
-		{
-			try {
-				Files.deleteIfExists(target.toPath());
-			} catch (IOException e1) {
-				//ignore
-			}
-		}
-		
+				
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
-		
-		@SuppressWarnings("unchecked")
-		Query<Survey> query = session.createQuery("UPDATE Survey s SET s.archived = 0 WHERE s.uniqueId = :uid").setParameter("uid", survey.getUniqueId());
-		query.executeUpdate();	
-		
+				
 		archive = (Archive) session.merge(archive);
 		session.update(archive);
 		
@@ -275,13 +222,43 @@ public class ArchiveExecutor implements Runnable {
 	@Transactional
 	public void run()
 	{		
-		try {
-			createArchive();
+		Survey lastSurvey = null;
+		Archive lastArchive = null;
+		try {		
+			List<Survey> surveys = surveyService.getSurveysMarkedArchived(200);
+			String limitSeconds = settingsService.get(Setting.NightlyTaskLimit);
+			Date currentDate = new Date();
+			Calendar c = Calendar.getInstance();
+			c.setTime(currentDate);
+			c.add(Calendar.SECOND, Integer.parseInt(limitSeconds));
+			Date endDate = c.getTime();
+			
+			for (Survey survey : surveys) {
+				currentDate = new Date();
+				if (currentDate.after(endDate)) {
+					break;
+				}				
+				
+				lastSurvey = survey;
+				try {
+					lastArchive = archiveService.getArchive(survey.getShortname());
+					
+					if (lastArchive == null || lastArchive.getFinished() || lastArchive.getError() != null) {
+						continue;
+					}
+					
+					createArchive(survey, survey.getOwner(), lastArchive);
+				} catch (Exception e) {		
+					handleException(e, lastArchive, lastSurvey);					
+					logger.error("Error during archiving of Survey " + lastSurvey.getId() + " " + e.getLocalizedMessage());
+				}	
+			}			
+			
 		} catch (Exception e) {
-			handleException(e);
-		}
+			logger.error(e.getLocalizedMessage(), e);
+		}		
 	
-		logger.info("archiving of survey " + survey.getShortname() + " finished");
+		logger.info("archiving of surveys finished");
 	}
 	
 }

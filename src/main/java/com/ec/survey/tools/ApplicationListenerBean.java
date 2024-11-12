@@ -857,9 +857,15 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			schemaService.step117();
 			status = schemaService.getStatus();
 		}
+		
+		if (status.getDbversion() < 118){
+			logger.info("starting upgrade step 118");
+			schemaService.step118();
+			status = schemaService.getStatus();
+		}
 	}
 
-	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, boolean archivesurvey, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {
+	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {
 		Survey survey = SurveyCreator.createDummySurvey(user, objLang, init, questions);
 		survey.setListForm(true);
 		survey.getPublication().setShowContent(true);
@@ -873,36 +879,8 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 		
 		survey = surveyService.add(survey, -1);		
 		
-		if (archivesurvey)
-		{
-			Archive archive = new Archive();
-			archive.setArchived(new Date());
-			archive.setCreated(survey.getCreated());
-			archive.setSurveyTitle(survey.getTitle());
-			archive.setSurveyUID(survey.getUniqueId());
-			archive.setReplies(answerService.getNumberOfAnswerSetsPublished(survey.getShortname(), survey.getUniqueId()));
-			archive.setSurveyShortname(survey.getShortname());
-			archive.setOwner(survey.getOwner().getName());
-			archive.setUserId(user.getId());
-			StringBuilder langs = new StringBuilder();
-			if (survey.getTranslations() != null)
-			{
-				for (String s : survey.getTranslations())
-				{
-					langs.append(s);
-				}
-			}
-			archive.setLanguages(langs.toString());
-			archiveService.add(archive);
-			
-			ArchiveExecutor export = (ArchiveExecutor) context.getBean("archiveExecutor"); 
-			export.init(archive, survey, user);
-			export.prepare();
-			taskExecutor.execute(export);
-		} else {
-			surveyService.publish(survey, -1, -1, false, user.getId(), false, false);			
-			createDummyAnswers(survey.getShortname(), answerCount, user, fileDir, answerService, surveyService, false, resources, locale, fileService);
-		}
+		surveyService.publish(survey, -1, -1, false, user.getId(), false, false);			
+		createDummyAnswers(survey.getShortname(), answerCount, user, fileDir, answerService, surveyService, false, resources, locale, fileService);
 		
 		return survey;
 	}

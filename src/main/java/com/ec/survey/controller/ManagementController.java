@@ -410,54 +410,14 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		boolean acceptMissingFiles = request.getParameter("acceptMissingFiles") != null
-				&& request.getParameter("acceptMissingFiles").equalsIgnoreCase("true");
-		boolean fromforms = request.getParameter("fromforms") != null
-				&& request.getParameter("fromforms").equalsIgnoreCase("true");
-
 		if (answers != null && answers.equalsIgnoreCase("true") && delete.equalsIgnoreCase("true")) {
-			if (!acceptMissingFiles) {
-				// check for missing files
-				Map<String, String> missingFiles = fileService.getMissingFiles(survey.getUniqueId());
-				if (missingFiles.size() > 0) {
-					ModelAndView result = new ModelAndView("management/overview", "form", form);
-
-					if (fromforms) {
-						SurveyFilter filter = sessionService.getSurveyFilter(request, true);
-						Paging<Survey> paging = new Paging<>();
-						paging.setItemsPerPage(10);
-						int numberOfSurveys = 0;
-						paging.setNumberOfItems(numberOfSurveys);
-						paging.moveTo("1");
-
-						SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-						List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter,
-								sqlPagination, false, false);
-						paging.setItems(surveys);
-
-						result = new ModelAndView("forms/forms", "paging", paging);
-						result.addObject(Constants.FILTER, filter);
-
-						if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null
-								|| filter.getStartFrom() != null || filter.getStartTo() != null
-								|| filter.getEndFrom() != null || filter.getEndTo() != null) {
-							result.addObject("showDates", true);
-						}
-					}
-
-					result.addObject("missingFilesSurvey", survey.getShortname());
-					result.addObject("missingFiles", missingFiles);
-					return result;
-				}
-			}
-
 			if (!archiveSurvey(survey, u)) {
 				throw new MessageException("archiving failed!");
 			}
 
 			request.getSession().removeAttribute("sessioninfo");
 
-			return new ModelAndView("redirect:/dashboard?archived=" + shortname);
+			return new ModelAndView("redirect:/administration/surveysearch");
 		}
 
 		java.io.File zip = surveyService.exportSurvey(shortname, surveyService,

@@ -135,7 +135,9 @@ public abstract class ExportCreator implements Runnable {
 	
 	private void initAnswers() throws Exception
 	{
-		form.setStatistics(answerService.getStatisticsOrStartCreator(export.getSurvey(), export.getResultFilter(), true, export.isAllAnswers(), false));
+		if (export.isForArchiving() == null || !export.isForArchiving()) {
+			form.setStatistics(answerService.getStatisticsOrStartCreator(export.getSurvey(), export.getResultFilter(), true, export.isAllAnswers(), false));
+		}
 	}
 	
 	@Transactional
@@ -159,7 +161,7 @@ public abstract class ExportCreator implements Runnable {
 			
 			export.setValid(true);
 			export.setState(ExportState.Finished);
-			if (export.getSurvey() != null)
+			if (export.getSurvey() != null && export.getId() != null)
 			{
 				activityService.log(ActivityRegistry.ID_EXPORT_FINISHED, null, export.getId().toString(), export.getUserId(), export.getSurvey().getUniqueId());
 			}

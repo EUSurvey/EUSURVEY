@@ -715,39 +715,9 @@ public class BasicController implements BeanFactoryAware {
 		}
 		archive.setLanguages(langs.toString());
 		archiveService.add(archive);
-
-		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false")) {
-			logger.info("calling worker server for archiving survey " + survey.getId());
-
-			URL workerurl = new URL(workerserverurl + "worker/startArchive/" + archive.getId());
-
-			try {
-				URLConnection wc = workerurl.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(wc.getInputStream()));
-				String inputLine;
-				StringBuilder result = new StringBuilder();
-				while ((inputLine = in.readLine()) != null)
-					result.append(inputLine);
-				in.close();
-
-				if (!result.toString().equals("OK")) {
-					logger.error(
-							"calling worker server for archiving survey " + survey.getId() + " returned " + result);
-					return false;
-				}
-
-				surveyService.removeFromSessionCache(survey);
-				return true;
-			} catch (ConnectException e) {
-				logger.error(e.getLocalizedMessage(), e);
-			}
-		}
-
-		ArchiveExecutor export = (ArchiveExecutor) context.getBean("archiveExecutor");
-		export.init(archive, survey, u);
-		export.prepare();
-		taskExecutorLong.execute(export);
-
+		
+		surveyService.markAsArchived(survey.getUniqueId());
+		
 		return true;
 	}
 	
