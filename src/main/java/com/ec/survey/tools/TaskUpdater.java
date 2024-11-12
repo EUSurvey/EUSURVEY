@@ -1,6 +1,5 @@
 package com.ec.survey.tools;
 
-import java.nio.file.Files;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,10 +16,7 @@ import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.ArchiveService;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.WebserviceService;
-import com.ec.survey.model.Archive;
 import com.ec.survey.model.WebserviceTask;
-import com.ec.survey.model.administration.User;
-import com.ec.survey.model.survey.Survey;
 
 @Service("taskWorker")
 @Scope("singleton")
@@ -67,25 +63,7 @@ public class TaskUpdater implements Runnable, BeanFactoryAware {
 					webserviceService.setError(task.getId(), "The task has been restarted 10 times but did not finish");
 				}
 			}
-			
-			if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("true"))
-			{
-				List<Archive> archives = archiveService.getArchivesToRestart();
-				for (Archive archive : archives)
-				{
-					Survey survey = surveyService.getSurveyByUniqueId(archive.getSurveyUID(), false, true);
-					User u = administrationService.getUser(archive.getUserId());
-					ArchiveExecutor export = (ArchiveExecutor) context.getBean("archiveExecutor"); 
-					export.init(archive, survey, u);
-					if (export.prepare()) {					
-						//it's not allowed to override existing archive files so we have to delete them first
-						java.io.File target = new java.io.File(archiveFileDir + survey.getUniqueId());
-						Files.deleteIfExists(target.toPath());
-						taskExecutorLong.execute(export);
-					}
-				}
-			}
-			
+						
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

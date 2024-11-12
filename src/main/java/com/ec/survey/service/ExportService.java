@@ -540,16 +540,18 @@ public class ExportService extends BasicService {
 	}
 	
 	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)
-	public void update(Export export) {
+	public Export update(Export export) {
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			export = (Export) session.merge(export);
 			session.setReadOnly(export, false);
 			session.saveOrUpdate(export);
 			session.flush();
+			return export;
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
+		return null;
 	}
 
 	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)

@@ -140,49 +140,7 @@ public class WorkerController extends BasicController {
 		
 		return "OK";
 	}
-	
-	@RequestMapping(value = "/startArchive/{archiveid}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
-	public @ResponseBody String startArchive(@PathVariable String archiveid, HttpServletRequest request, HttpServletResponse response) {	
 		
-		try {
-			int id = Integer.parseInt(archiveid);
-			int tries = 0;
-			
-			Archive archive = archiveService.get(id);
-			while (archive == null && tries < 10)
-			{
-				tries++;
-				Thread.sleep(2000);
-				logger.error("try #" + (tries + 1) + " to load archive " + archiveid);
-				archive = archiveService.get(id);
-			}
-			
-			if (archive == null)
-			{
-				return "archive with that id not found";
-			}
-			
-			Survey survey = surveyService.getSurvey(archive.getSurveyUID(), true, false, false, false, null, false, false);
-			
-			if (survey == null)
-			{
-				return "survey with that uid not found";
-			}
-			
-			User u = administrationService.getUser(archive.getUserId());
-			ArchiveExecutor export = (ArchiveExecutor) context.getBean("archiveExecutor"); 
-			export.init(archive, survey, u);
-			export.prepare();
-			taskExecutorLong.execute(export);				
-		} catch (Exception e)
-		{
-			logger.error(e.getLocalizedMessage(), e);
-			return e.getLocalizedMessage();
-		}
-		
-		return "OK";
-	}
-	
 	@RequestMapping(value = "/startRestore/{archiveid}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
 	public @ResponseBody String startRestore(@PathVariable String archiveid, HttpServletRequest request, HttpServletResponse response) {	
 		

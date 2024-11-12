@@ -69,6 +69,8 @@ public class Setting {
 	public static final String AutomaticDraftDeleteExceptions = "AutomaticDraftDeleteExceptions";
 	public static final String EULoginWhitelist = "EULoginWhitelist";
 	public static final String EnableChargeback = "EnableChargeback";
+	public static final String NightlyTaskStart = "NightlyTaskStart";
+	public static final String NightlyTaskLimit = "NightlyTaskLimit";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")

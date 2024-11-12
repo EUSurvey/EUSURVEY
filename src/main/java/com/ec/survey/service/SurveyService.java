@@ -4210,7 +4210,7 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = false)
 	public void unmarkAsArchived(String uid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<Survey> query = session.createQuery("UPDATE Survey s SET s.archived = 0 WHERE s.uniqueId = :uid")
+		Query<Survey> query = session.createQuery("UPDATE Survey s SET s.archived = 0, isDeleted = 0 WHERE s.uniqueId = :uid")
 				.setParameter("uid", uid);
 		query.executeUpdate();
 	}
@@ -6211,5 +6211,15 @@ public class SurveyService extends BasicService {
 		}
 		
 		return false;
+	}
+
+	@Transactional
+	public List<Survey> getSurveysMarkedArchived(int limit) {
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "FROM Survey s WHERE s.isDraft = true AND s.archived = true and s.isDeleted = false";
+
+		Query<Survey> query = session.createQuery(sql, Survey.class);
+		List<Survey> surveys = query.setReadOnly(true).setMaxResults(limit).list();
+		return surveys;
 	}
 }

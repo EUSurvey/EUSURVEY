@@ -122,10 +122,16 @@ public class ArchiveService extends BasicService {
 			if (result != null && result.getSurvey() != null) {
 				Survey existing = null;
 				if (alias != null && alias.length() > 0) {
-					existing = surveyService.getSurvey(alias, true, false, false, false, null, true, false);
+					existing = surveyService.getSurvey(alias, true, false, false, false, null, true, false, false, false);
 				} else {
-					existing = surveyService.getSurvey(result.getSurvey().getShortname(), true, false, false, false,
-							null, true, false);
+					existing = surveyService.getSurvey(result.getSurvey().getShortname(), true, false, false, false, null, true, false, false, false);
+				}
+				
+				if (existing != null && existing.getIsDeleted()) {
+					// the survey still exists in the database
+					surveyService.unmarkAsArchived(existing.getUniqueId());
+					delete(archive);
+					return surveyService.getSurvey(existing.getId());
 				}
 
 				if (existing != null) {
@@ -249,15 +255,6 @@ public class ArchiveService extends BasicService {
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 
-	@Transactional(readOnly = true)
-	public List<Archive> getArchivesToRestart() {
-		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Archive a WHERE a.finished = false AND a.error IS NULL");
-		@SuppressWarnings("unchecked")
-		List<Archive> result = query.list();
-		return result;
-	}
-
 	@Transactional(readOnly = false)
 	public void markRestoring(Archive archive) {
 		archive.setRestoring(true);
@@ -268,6 +265,22 @@ public class ArchiveService extends BasicService {
 	public void unmarkRestoring(Archive archive) {
 		archive.setRestoring(false);
 		update(archive);
+	}
+	
+	@Transactional
+	public Archive getArchive(String shortname) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(
+				"FROM Archive a WHERE a.surveyShortname = :shortname")
+				.setString(Constants.SHORTNAME, shortname);
+
+		@SuppressWarnings("unchecked")
+		List<Archive> result = query.list();
+
+		if (!result.isEmpty())
+			return result.get(0);
+
+		return null;
 	}
 
 	@Transactional
