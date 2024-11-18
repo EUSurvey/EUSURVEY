@@ -2495,6 +2495,10 @@ public class RunnerController extends BasicController {
 				((Question)element).setIsDelphiQuestion(false);
 			}
 		}
+		
+		if (survey.getIsSelfAssessment()) {
+			selfassessmentService.initializeElements(result, survey);
+		}		
 				
 		for (Element element : result) {
 			if (foreditor && hasGlobalAdminRights) {
@@ -2526,9 +2530,6 @@ public class RunnerController extends BasicController {
 			}
 		}
 
-		if (survey.getIsSelfAssessment()) {
-			selfassessmentService.initializeElements(result, survey);
-		}
 		
 		return result;
 	}
