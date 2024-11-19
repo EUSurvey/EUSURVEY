@@ -1066,15 +1066,15 @@ function checkTargetDataset(input) {
 	
 	if (v.length == 0) {
 		// show all SA questions
-		$(".saquestion").show();
+		$(".saquestion").removeClass("sahidden");
 	} else {
 		const c = "sahidden" + v;
 		
 		$(".saquestion").each(function(){
 			 if ($(this).hasClass(c)) {
-				 $(this).hide();
+				 $(this).addClass("sahidden");
 			 } else {
-				 $(this).show();
+				 $(this).removeClass("sahidden");
 			 }
 		 });
 	}
