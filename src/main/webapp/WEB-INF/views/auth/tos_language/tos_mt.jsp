@@ -419,8 +419,8 @@ l-korpi kollha tal-UE jirrispettaw il-kunfidenzjalità meta jipproċessaw id-   
     L-Uffiċjal tal-Protezzjoni tad-<em>Data</em> tal-Kummissjoni (UPD)
 jippubblika r-reġistru tal-attivitajiet kollha ta’ pproċessar tad-    <em>data</em> personali mill-Kummissjoni, li jkunu ġew dokumentati u
     nnotifikati lilu. Tista’ taċċessa r-reġistru bil-link li ġej:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

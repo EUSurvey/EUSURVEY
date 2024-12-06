@@ -62,7 +62,7 @@
 
 		<p>
 			The <a
-				href="http://www.foresight-platform.eu/community/forlearn/how-to-do-foresight/methods/classical-delphi/">Delphi
+				href="https://www.foresight-platform.eu/community/forlearn/how-to-do-foresight/methods/classical-delphi/">Delphi
 				method</a> is a structured expert survey used to gather opinions on
 			different possible developments in the long-term future on a given
 			topic. It represents one of the methodologies used by the foresight

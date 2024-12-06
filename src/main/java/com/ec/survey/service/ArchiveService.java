@@ -267,11 +267,45 @@ public class ArchiveService extends BasicService {
 		update(archive);
 	}
 	
+	@Transactional(readOnly = false)
+	public boolean archiveSurvey(Survey survey, User u) throws IOException {
+		logger.info("start archiving of survey " + survey.getId()); 
+		Archive archive = new Archive();
+		archive.setArchived(new Date());
+		archive.setCreated(survey.getCreated());
+
+		String title = ConversionTools.removeHTML(survey.getTitle(), true).replace("\"", "'");
+		if (title.length() > 250)
+			title = title.substring(0, 250) + "...";
+
+		archive.setSurveyTitle(title);
+		archive.setSurveyUID(survey.getUniqueId());
+		archive.setReplies(answerService.getNumberOfAnswerSetsPublished(survey.getShortname(), survey.getUniqueId()));
+
+		archive.setSurveyHasUploadedFiles(survey.getHasUploadElement());
+
+		archive.setSurveyShortname(survey.getShortname());
+		archive.setOwner(survey.getOwner().getName());
+		archive.setUserId(u.getId());
+		StringBuilder langs = new StringBuilder();
+		if (survey.getTranslations() != null) {
+			for (String s : survey.getTranslations()) {
+				langs.append(s);
+			}
+		}
+		archive.setLanguages(langs.toString());
+		archiveService.add(archive);
+		
+		surveyService.markAsArchived(survey.getUniqueId());
+		
+		return true;
+	}
+	
 	@Transactional
-	public Archive getArchive(String shortname) {
+	public Archive getActiveArchive(String shortname) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery(
-				"FROM Archive a WHERE a.surveyShortname = :shortname")
+				"FROM Archive a WHERE a.surveyShortname = :shortname and a.finished = false AND a.error IS NULL")
 				.setString(Constants.SHORTNAME, shortname);
 
 		@SuppressWarnings("unchecked")

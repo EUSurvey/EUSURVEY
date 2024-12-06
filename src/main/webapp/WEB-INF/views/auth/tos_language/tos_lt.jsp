@@ -359,8 +359,8 @@ kreiptis į Europos duomenų apsaugos priežiūros pareigūną (<a href="mailto:
     Komisijos duomenų apsaugos pareigūnas skelbia visų Komisijos atliekamų
     asmens duomenų tvarkymo operacijų, kurios grindžiamos dokumentais ir apie
     kurias jam pranešta, registrą. Susipažinti su šiuo registru galima adresu
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

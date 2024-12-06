@@ -119,3 +119,17 @@
 	</div>
 	</div>	
 </div>
+
+<div id="sendReminderDialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="windowTitleLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="divDialogElements"><spring:message code="question.SendReminder" /></div>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-primary" onclick="sendReminder('${form.survey.id}');"><spring:message code="label.OK" /></a>
+				<a class="btn btn-default" onclick="$('#sendReminderDialog').modal('hide');"><spring:message code="label.Cancel" /></a>
+			</div>
+		</div>
+	</div>
+</div>

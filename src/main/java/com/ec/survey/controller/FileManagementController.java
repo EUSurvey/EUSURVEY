@@ -2,6 +2,7 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.FileFilter;
 import com.ec.survey.model.FileResult;
 import com.ec.survey.model.Paging;
@@ -322,10 +323,9 @@ public class FileManagementController extends BasicController {
 		
 		return result;
 	}
-		
 
 	@RequestMapping(value = "/get", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody Object get(HttpServletRequest request, HttpServletResponse response) throws InvalidURLException {
+	public @ResponseBody Object get(HttpServletRequest request, HttpServletResponse response) throws InvalidURLException, MessageException {
 		
 		if (enablefilemanagement == null || !enablefilemanagement.equalsIgnoreCase("true"))
 		{
@@ -333,6 +333,9 @@ public class FileManagementController extends BasicController {
 		}
 		
 		String path = request.getParameter("path");
+		if (!fileService.validateFilesPath(path)) {
+			throw new MessageException("Invalid path found");
+		}
 		java.io.File file = new java.io.File(path);
 		
 		if (file.exists())
@@ -363,7 +366,7 @@ public class FileManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/recreate", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody Object recreate(HttpServletRequest request, HttpServletResponse response, Locale locale) throws InvalidURLException {
+	public @ResponseBody Object recreate(HttpServletRequest request, HttpServletResponse response, Locale locale) throws InvalidURLException, MessageException {
 		
 		if (enablefilemanagement == null || !enablefilemanagement.equalsIgnoreCase("true"))
 		{
@@ -371,6 +374,9 @@ public class FileManagementController extends BasicController {
 		}
 		
 		String path = request.getParameter("path");
+		if (!fileService.validateFilesPath(path)) {
+			throw new MessageException("Invalid path found");
+		}
 		java.io.File file = new java.io.File(path);
 		
 		try {		
@@ -454,7 +460,7 @@ public class FileManagementController extends BasicController {
 	}
 	
 	@PostMapping(value = "/delete")
-	public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) throws InvalidURLException {
+	public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) throws InvalidURLException, MessageException {
 		
 		if (enablefilemanagement == null || !enablefilemanagement.equalsIgnoreCase("true"))
 		{
@@ -462,6 +468,9 @@ public class FileManagementController extends BasicController {
 		}
 		
 		String path = request.getParameter("path");
+		if (!fileService.validateFilesPath(path)) {
+			throw new MessageException("Invalid path found");
+		}
 		java.io.File file = new java.io.File(path);
 		
 		try {

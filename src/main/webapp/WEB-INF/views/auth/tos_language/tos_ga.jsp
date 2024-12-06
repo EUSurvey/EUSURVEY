@@ -403,8 +403,8 @@ Sonraí (i.e. gearán a dhéanamh leis) (<a href="mailto:edps@edps.europa.eu">ed
     Foilsíonn an tOifigeach Cosanta Sonraí clár na n-oibríochtaí próiseála go
     léir ar shonraí pearsanta atá déanta ag an gCoimisiún, oibríochtaí atá
     doiciméadaithe agus curtha in iúl dó. Tá an clár le fáil ag an nasc seo:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

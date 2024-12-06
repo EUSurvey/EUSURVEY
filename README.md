@@ -1,5 +1,5 @@
 # EUSurvey
-EUSurvey is the official online survey management tool of the European Commission. Its development was started in 2013 under the supervision of [DIGIT](http://ec.europa.eu/dgs/informatics/index_en.htm) and is published as open source software under the terms of the EUPL public license. EUSurvey is a servlet based application and can be installed on any servlet container.
+EUSurvey is the official online survey management tool of the European Commission. Its development was started in 2013 under the supervision of [DIGIT](https://ec.europa.eu/dgs/informatics/index_en.htm) and is published as open source software under the terms of the EUPL public license. EUSurvey is a servlet based application and can be installed on any servlet container.
 * Travis build on master branch [![Build Status](https://travis-ci.com/EUSurvey/EUSURVEY.svg?branch=master)](https://travis-ci.com/EUSurvey/EUsurvey)
 * [Latest Sonar Cloud analysis](https://sonarcloud.io/dashboard?id=EUSURVEY) ![Bugs](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=bugs) ![Code smells](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=code_smells) ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=coverage)
 

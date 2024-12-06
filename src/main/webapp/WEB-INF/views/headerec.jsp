@@ -12,17 +12,17 @@
 			<ul class="reset-list" id="services">
 				<c:choose>
 					<c:when test="${form != null && form.getResources() != null}">
-						<li><a href="http://ec.europa.eu/geninfo/query/search_en.html">${form.getMessage("label.Search")}</a></li>
-			            <li><a href="http://ec.europa.eu/cookies/index_en.htm">${form.getMessage("label.Cookies")}</a></li>
-			            <li><a href="http://ec.europa.eu/geninfo/legal_notices_en.htm">${form.getMessage("label.LegalNotice")}</a></li>
+						<li><a href="https://ec.europa.eu/geninfo/query/search_en.html">${form.getMessage("label.Search")}</a></li>
+			            <li><a href="https://ec.europa.eu/cookies/index_en.htm">${form.getMessage("label.Cookies")}</a></li>
+			            <li><a href="https://ec.europa.eu/geninfo/legal_notices_en.htm">${form.getMessage("label.LegalNotice")}</a></li>
 						<li><a href="<c:url value="/home/about"/>">${form.getMessage("label.Contact")}</a></li>
 						<li><a href="<c:url value="/home/documentation"/>">${form.getMessage("label.Support")}</a></li>
 						<li><a href="<c:url value="/home/download"/>">${form.getMessage("label.Download")}</a></li>
 					</c:when>
 					<c:otherwise>
-						<li><a href="http://ec.europa.eu/geninfo/query/search_en.html"><spring:message code="label.Search" /></a></li>
-			            <li><a href="http://ec.europa.eu/cookies/index_en.htm"><spring:message code="label.Cookies" /></a></li>
-			            <li><a href="http://ec.europa.eu/geninfo/legal_notices_en.htm"><spring:message code="label.LegalNotice" /></a></li>
+						<li><a href="https://ec.europa.eu/geninfo/query/search_en.html"><spring:message code="label.Search" /></a></li>
+			            <li><a href="https://ec.europa.eu/cookies/index_en.htm"><spring:message code="label.Cookies" /></a></li>
+			            <li><a href="https://ec.europa.eu/geninfo/legal_notices_en.htm"><spring:message code="label.LegalNotice" /></a></li>
 						<li><a href="<c:url value="/home/about"/>"><spring:message code="label.Contact" /></a></li>
 						<li><a href="<c:url value="/home/documentation"/>"><spring:message code="label.Support" /></a></li>
 						<li><a href="<c:url value="/home/download"/>"><spring:message code="label.Download" /></a></li>
@@ -68,7 +68,7 @@
 		<p class="off-screen">Navigation path</p>
 		<ul class="reset-list">
              <li class="first">
-                 <a href="http://ec.europa.eu/index_en.htm">European Commission</a>
+                 <a href="https://ec.europa.eu/index_en.htm">European Commission</a>
              </li>
              <li>EUSurvey</li>
 		</ul>

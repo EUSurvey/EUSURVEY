@@ -157,6 +157,11 @@ public class SurveyController extends BasicController {
 				return false;
 			}
 			
+			if (existingSurvey.getArchived())
+			{
+				return false;
+			}
+			
 			if (id != null)
 			{
 				int i = -1;

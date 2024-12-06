@@ -411,7 +411,7 @@ de Europese Toezichthouder voor gegevensbescherming (<a href="mailto:edps@edps.e
     <a
         href="https://ec.europa.eu/info/about-european-commission/service-standards-and-principles/transparency/data-processing-register_nl"
     >
-        http://ec.europa.eu/dpo-register
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

@@ -658,8 +658,8 @@ public class SurveyCreator {
 		
 		survey.setTitle("Fake survey with really long chunks of text, an image, basic fields, an error and multipage actions");
 		
-		survey.getUsefulLinks().put("0#Google", "http://www.google.de");
-		survey.getUsefulLinks().put("1#Wikipedia", "http://de.wikipedia.org");
+		survey.getUsefulLinks().put("0#Google", "https://www.google.de");
+		survey.getUsefulLinks().put("1#Wikipedia", "https://de.wikipedia.org");
 		
 		int counter = 1;
 

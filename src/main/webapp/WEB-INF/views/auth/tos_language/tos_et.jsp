@@ -360,8 +360,8 @@ Teil on õigus esitada kaebus Euroopa Andmekaitseinspektorile (<a href="mailto:e
     toimingutest, mis on seotud isikuandmete töötlemisega ning mis on
     dokumenteeritud ja millest on talle teatatud. Registriga saate tutvuda
     järgmisel aadressil:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

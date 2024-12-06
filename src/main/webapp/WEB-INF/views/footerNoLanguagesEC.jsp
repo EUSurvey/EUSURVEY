@@ -21,13 +21,13 @@
            <a class="first" href="<c:url value="/home/about"/>">${form.getMessage("label.About")}</a>
         </li>
         <li>
-             <a href="http://ec.europa.eu/geninfo/query/search_en.html">${form.getMessage("label.Search")}</a>
+             <a href="https://ec.europa.eu/geninfo/query/search_en.html">${form.getMessage("label.Search")}</a>
         </li>
         <li>
-             <a href="http://ec.europa.eu/cookies/index_en.htm">${form.getMessage("label.Cookies")}</a>
+             <a href="https://ec.europa.eu/cookies/index_en.htm">${form.getMessage("label.Cookies")}</a>
         </li>
          <li>
-             <a href="http://ec.europa.eu/geninfo/legal_notices_en.htm">${form.getMessage("label.LegalNotice")}</a>
+             <a href="https://ec.europa.eu/geninfo/legal_notices_en.htm">${form.getMessage("label.LegalNotice")}</a>
         </li>
 		<li>
            <a href="<c:url value="/home/documentation"/>">${form.getMessage("label.Contact")}</a>
@@ -35,6 +35,9 @@
 		<c:if test="${showprivacy}">
 			<li>
 			 <a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a>
+			</li>
+			<li>
+				<a href="<c:url value="/home/accessibilitystatement"/>"><spring:message code="label.AccessibilityStatement" /></a>
 			</li>
 			<li>
 				<a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a>

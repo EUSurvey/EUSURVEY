@@ -399,8 +399,19 @@
 					          	callbacks: {
 					            	title: (items, data) => {
 					              	if (!items.length) {
+					              		// no datasets -> do not set a title
 					                	return '';
 					                }
+					              	
+					              	var datasetIndexes = [];
+					              	for (var i = 0; i < items.length; i++) {
+					              		if (datasetIndexes.length > 0 && !datasetIndexes.includes(items[i].datasetIndex)) {
+					              			// multiple datasets -> do not set a title
+					              			return '';
+					              		}
+					              		
+					              		datasetIndexes.push(items[i].datasetIndex);
+					              	}
 					              						    				              	
 					                return data.datasets[items[0].datasetIndex].label;
 					              },

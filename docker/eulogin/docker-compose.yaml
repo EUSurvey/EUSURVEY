@@ -20,5 +20,4 @@ services:
       - docker_eusurvey-network
 networks:
   docker_eusurvey-network:
-
     external: true

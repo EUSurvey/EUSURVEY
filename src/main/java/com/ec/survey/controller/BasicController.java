@@ -52,6 +52,7 @@ import com.ec.survey.model.Archive;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.chargeback.SubmittedContribution;
 import com.ec.survey.service.ActivityService;
 import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.AnswerExplanationService;
@@ -488,6 +489,11 @@ public class BasicController implements BeanFactoryAware {
 						}
 					}
 				}
+				
+				if (!answerSet.getIsDraft() && !answerSet.getSurvey().getIsDraft() && !existingAnswerSet) {
+					answerService.chargeSubmission(answerSet);				
+				}
+				
 				saved = true;
 			} catch (org.hibernate.exception.LockAcquisitionException
 					| org.springframework.dao.CannotAcquireLockException ex) {
@@ -687,38 +693,6 @@ public class BasicController implements BeanFactoryAware {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		return false;
-	}
-
-	protected boolean archiveSurvey(Survey survey, User u) throws IOException {
-		Archive archive = new Archive();
-		archive.setArchived(new Date());
-		archive.setCreated(survey.getCreated());
-
-		String title = ConversionTools.removeHTML(survey.getTitle(), true).replace("\"", "'");
-		if (title.length() > 250)
-			title = title.substring(0, 250) + "...";
-
-		archive.setSurveyTitle(title);
-		archive.setSurveyUID(survey.getUniqueId());
-		archive.setReplies(answerService.getNumberOfAnswerSetsPublished(survey.getShortname(), survey.getUniqueId()));
-
-		archive.setSurveyHasUploadedFiles(survey.getHasUploadElement());
-
-		archive.setSurveyShortname(survey.getShortname());
-		archive.setOwner(survey.getOwner().getName());
-		archive.setUserId(u.getId());
-		StringBuilder langs = new StringBuilder();
-		if (survey.getTranslations() != null) {
-			for (String s : survey.getTranslations()) {
-				langs.append(s);
-			}
-		}
-		archive.setLanguages(langs.toString());
-		archiveService.add(archive);
-		
-		surveyService.markAsArchived(survey.getUniqueId());
-		
-		return true;
 	}
 	
 	protected boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Element question) {

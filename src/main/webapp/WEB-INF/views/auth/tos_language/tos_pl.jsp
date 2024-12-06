@@ -399,8 +399,8 @@ Europejskiego Inspektora Ochrony Danych (<a href="mailto:edps@edps.europa.eu">ed
     Inspektor ochrony danych Komisji publikuje rejestr wszystkich
     udokumentowanych i zgłoszonych mu operacji przetwarzania danych osobowych
     przez Komisję. Rejestr ten jest dostępny pod adresem:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

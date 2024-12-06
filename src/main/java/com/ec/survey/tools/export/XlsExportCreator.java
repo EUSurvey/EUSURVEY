@@ -1362,17 +1362,21 @@ public class XlsExportCreator extends ExportCreator {
 						Double percent = statistics.getRequestedRecordsPercent()
 								.get(galleryQuestion.getId().toString() + "-" + file.getUid());
 
-						if (percent > 0) {
-							drawChart(percent, helper, drawing);
+						if (percent != null) {
+						
+							if (percent > 0) {
+								drawChart(percent, helper, drawing);
+							}
+	
+							row.createCell(2).setCellValue(statistics.getRequestedRecords()
+									.get(galleryQuestion.getId().toString() + "-" + file.getUid()));
+	
+							Cell pcell = row.createCell(3);
+							pcell.setCellValue(statistics.getRequestedRecordsPercent()
+									.get(galleryQuestion.getId().toString() + "-" + file.getUid()) / 100);
+							pcell.setCellStyle(percentStyle);
+							
 						}
-
-						row.createCell(2).setCellValue(statistics.getRequestedRecords()
-								.get(galleryQuestion.getId().toString() + "-" + file.getUid()));
-
-						Cell pcell = row.createCell(3);
-						pcell.setCellValue(statistics.getRequestedRecordsPercent()
-								.get(galleryQuestion.getId().toString() + "-" + file.getUid()) / 100);
-						pcell.setCellStyle(percentStyle);
 					}
 
 					row = sheet.createRow(rowIndex++);
@@ -1381,15 +1385,19 @@ public class XlsExportCreator extends ExportCreator {
 					row.createCell(0).setCellValue("No Answer");
 
 					Double percent = statistics.getRequestedRecordsPercent().get(question.getId().toString());
+					
+					if (percent != null) {
 
-					if (percent > 0) {
-						drawChart(percent, helper, drawing);
+						if (percent > 0) {
+							drawChart(percent, helper, drawing);
+						}
+						row.createCell(2).setCellValue(statistics.getRequestedRecords().get(question.getId().toString()));
+	
+						Cell pcell = row.createCell(3);
+						pcell.setCellValue(statistics.getRequestedRecordsPercent().get(question.getId().toString()) / 100);
+						pcell.setCellStyle(percentStyle);
+					
 					}
-					row.createCell(2).setCellValue(statistics.getRequestedRecords().get(question.getId().toString()));
-
-					Cell pcell = row.createCell(3);
-					pcell.setCellValue(statistics.getRequestedRecordsPercent().get(question.getId().toString()) / 100);
-					pcell.setCellStyle(percentStyle);
 
 					rowIndex++;
 					row = sheet.createRow(rowIndex++);
@@ -1439,16 +1447,21 @@ public class XlsExportCreator extends ExportCreator {
 
 						Double percent = statistics.getRequestedRecordsPercent().get(matrixQuestion.getId().toString());
 
-						if (percent > 0) {
+						if (percent != null && percent > 0) {
 							drawChart(percent, helper, drawing);
 						}
-						row.createCell(2)
-								.setCellValue(statistics.getRequestedRecords().get(matrixQuestion.getId().toString()));
-
-						Cell pcell = row.createCell(3);
-						pcell.setCellValue(
-								statistics.getRequestedRecordsPercent().get(matrixQuestion.getId().toString()) / 100);
-						pcell.setCellStyle(percentStyle);
+						
+						if (statistics.getRequestedRecords().get(matrixQuestion.getId().toString()) != null) {
+						
+							row.createCell(2)
+									.setCellValue(statistics.getRequestedRecords().get(matrixQuestion.getId().toString()));
+	
+							Cell pcell = row.createCell(3);
+							pcell.setCellValue(
+									statistics.getRequestedRecordsPercent().get(matrixQuestion.getId().toString()) / 100);
+							pcell.setCellStyle(percentStyle);
+						
+						}
 
 						rowIndex++;
 						row = sheet.createRow(rowIndex++);
@@ -1515,17 +1528,21 @@ public class XlsExportCreator extends ExportCreator {
 
 									Double percent = statistics.getRequestedRecordsPercent()
 											.get(childQuestion.getAnswerWithPrefix(answer));
+									
+									if (percent != null) {
 
-									if (percent > 0) {
-										drawChart(percent, helper, drawing);
+										if (percent > 0) {
+											drawChart(percent, helper, drawing);
+										}
+	
+										row.createCell(2).setCellValue(statistics.getRequestedRecords()
+												.get(childQuestion.getAnswerWithPrefix(answer)));
+	
+										Cell pcell = row.createCell(3);
+										pcell.setCellValue(percent / 100);
+										pcell.setCellStyle(percentStyle);
+									
 									}
-
-									row.createCell(2).setCellValue(statistics.getRequestedRecords()
-											.get(childQuestion.getAnswerWithPrefix(answer)));
-
-									Cell pcell = row.createCell(3);
-									pcell.setCellValue(percent / 100);
-									pcell.setCellStyle(percentStyle);
 								}
 							}
 							row = sheet.createRow(rowIndex++);
@@ -1595,17 +1612,21 @@ public class XlsExportCreator extends ExportCreator {
 						row.createCell(0).setCellValue("No Answer");
 
 						Double percent = statistics.getRequestedRecordsPercent().get(childQuestion.getId().toString());
+						
+						if (percent != null) {
 
-						if (percent > 0) {
-							drawChart(percent, helper, drawing);
+							if (percent > 0) {
+								drawChart(percent, helper, drawing);
+							}
+							row.createCell(2)
+									.setCellValue(statistics.getRequestedRecords().get(childQuestion.getId().toString()));
+	
+							Cell pcell = row.createCell(3);
+							pcell.setCellValue(
+									statistics.getRequestedRecordsPercent().get(childQuestion.getId().toString()) / 100);
+							pcell.setCellStyle(percentStyle);
+						
 						}
-						row.createCell(2)
-								.setCellValue(statistics.getRequestedRecords().get(childQuestion.getId().toString()));
-
-						Cell pcell = row.createCell(3);
-						pcell.setCellValue(
-								statistics.getRequestedRecordsPercent().get(childQuestion.getId().toString()) / 100);
-						pcell.setCellStyle(percentStyle);
 
 						rowIndex++;
 						row = sheet.createRow(rowIndex++);
@@ -1628,7 +1649,8 @@ public class XlsExportCreator extends ExportCreator {
 					cell.setCellValue("Score");
 					row = sheet.createRow(rowIndex++);
 
-					int total = statistics.getRequestedRecordsRankingScore().get(ranking.getId().toString());
+					Integer total = statistics.getRequestedRecordsRankingScore().get(ranking.getId().toString());
+					if (total == null) total = 0;
 
 					for (Element childQuestion : ranking.getChildElements()) {
 						cellValue = ConversionTools.removeHTMLNoEscape(childQuestion.getTitle());
@@ -1639,21 +1661,24 @@ public class XlsExportCreator extends ExportCreator {
 						cell.setCellValue(cellValue);
 
 						for (int i = 0; i < size; i++) {
-							double percent = statistics.getRequestedRecordsRankingPercentScore()
+							Double percent = statistics.getRequestedRecordsRankingPercentScore()
 									.get(childQuestion.getId() + "-" + i);
+							if (percent == null) percent = 0.0;
 							cell = row.createCell(i + 2);
 							cell.setCellStyle(percentStyle);
 							cell.setCellValue(percent / 100);
 						}
-						double score = statistics.getRequestedRecordsRankingPercentScore()
+						Double score = statistics.getRequestedRecordsRankingPercentScore()
 								.get(childQuestion.getId().toString());
+						if (score == null) score = 0.0;
 						row.createCell(size + 2).setCellValue(score);
 
 						row = sheet.createRow(rowIndex++);
 
 						for (int i = 0; i < size; i++) {
-							int value = statistics.getRequestedRecordsRankingScore()
+							Integer value = statistics.getRequestedRecordsRankingScore()
 									.get(childQuestion.getId() + "-" + i);
+							if (value == null) value = 0;
 							row.createCell(i + 2).setCellValue(value);
 						}
 						row.createCell(size + 2).setCellValue(total);
@@ -1662,9 +1687,17 @@ public class XlsExportCreator extends ExportCreator {
 					row.createCell(0).setCellValue("No Answer");
 					cell = row.createCell(2);
 					cell.setCellStyle(percentStyle);
-					cell.setCellValue(statistics.getRequestedRecordsPercent().get(ranking.getId().toString()) / 100);
+					
+					Double percent = statistics.getRequestedRecordsPercent().get(ranking.getId().toString());
+					if (percent == null) percent = 0.0;
+					
+					cell.setCellValue(percent / 100);
 					row = sheet.createRow(rowIndex++);
-					row.createCell(2).setCellValue(statistics.getRequestedRecords().get(ranking.getId().toString()));
+					
+					Integer value = statistics.getRequestedRecords().get(ranking.getId().toString());
+					if (value == null) value = 0;
+					
+					row.createCell(2).setCellValue(value);
 					row = sheet.createRow(rowIndex++);
 				} else if (question instanceof NumberQuestion) {
 					NumberQuestion number = (NumberQuestion) question;
@@ -1688,17 +1721,19 @@ public class XlsExportCreator extends ExportCreator {
 
 							Double percent = statistics.getRequestedRecordsPercent()
 									.get(number.getAnswerWithPrefix(answer));
+							if (percent != null) {
 
-							if (percent > 0) {
-								drawChart(percent, helper, drawing);
+								if (percent > 0) {
+									drawChart(percent, helper, drawing);
+								}
+	
+								row.createCell(2).setCellValue(
+										statistics.getRequestedRecords().get(number.getAnswerWithPrefix(answer)));
+	
+								Cell pcell = row.createCell(3);
+								pcell.setCellValue(percent / 100);
+								pcell.setCellStyle(percentStyle);
 							}
-
-							row.createCell(2).setCellValue(
-									statistics.getRequestedRecords().get(number.getAnswerWithPrefix(answer)));
-
-							Cell pcell = row.createCell(3);
-							pcell.setCellValue(percent / 100);
-							pcell.setCellStyle(percentStyle);
 						}
 
 						row = sheet.createRow(rowIndex++);
@@ -1707,16 +1742,20 @@ public class XlsExportCreator extends ExportCreator {
 						row.createCell(0).setCellValue("No Answer");
 
 						Double percent = statistics.getRequestedRecordsPercent().get(number.getId().toString());
+						
+						if (percent != null) {
 
-						if (percent > 0) {
-							drawChart(percent, helper, drawing);
+							if (percent > 0) {
+								drawChart(percent, helper, drawing);
+							}
+							row.createCell(2).setCellValue(statistics.getRequestedRecords().get(number.getId().toString()));
+	
+							Cell pcell = row.createCell(3);
+							pcell.setCellValue(
+									statistics.getRequestedRecordsPercent().get(number.getId().toString()) / 100);
+							pcell.setCellStyle(percentStyle);
+						
 						}
-						row.createCell(2).setCellValue(statistics.getRequestedRecords().get(number.getId().toString()));
-
-						Cell pcell = row.createCell(3);
-						pcell.setCellValue(
-								statistics.getRequestedRecordsPercent().get(number.getId().toString()) / 100);
-						pcell.setCellStyle(percentStyle);
 
 						rowIndex++;
 						row = sheet.createRow(rowIndex++);
@@ -1743,17 +1782,19 @@ public class XlsExportCreator extends ExportCreator {
 
 							Double percent = statistics.getRequestedRecordsPercent()
 									.get(formula.getAnswerWithPrefix(answer));
-
-							if (percent > 0) {
-								drawChart(percent, helper, drawing);
+							
+							if (percent != null) {	
+								if (percent > 0) {
+									drawChart(percent, helper, drawing);
+								}
+	
+								row.createCell(2).setCellValue(
+										statistics.getRequestedRecords().get(formula.getAnswerWithPrefix(answer)));
+	
+								Cell pcell = row.createCell(3);
+								pcell.setCellValue(percent / 100);
+								pcell.setCellStyle(percentStyle);
 							}
-
-							row.createCell(2).setCellValue(
-									statistics.getRequestedRecords().get(formula.getAnswerWithPrefix(answer)));
-
-							Cell pcell = row.createCell(3);
-							pcell.setCellValue(percent / 100);
-							pcell.setCellStyle(percentStyle);
 						}
 
 						row = sheet.createRow(rowIndex++);
@@ -1762,17 +1803,21 @@ public class XlsExportCreator extends ExportCreator {
 						row.createCell(0).setCellValue("No Answer");
 
 						Double percent = statistics.getRequestedRecordsPercent().get(formula.getId().toString());
-
-						if (percent > 0) {
-							drawChart(percent, helper, drawing);
+						
+						if (percent != null) {
+	
+							if (percent > 0) {
+								drawChart(percent, helper, drawing);
+							}
+							row.createCell(2)
+									.setCellValue(statistics.getRequestedRecords().get(formula.getId().toString()));
+	
+							Cell pcell = row.createCell(3);
+							pcell.setCellValue(
+									statistics.getRequestedRecordsPercent().get(formula.getId().toString()) / 100);
+							pcell.setCellStyle(percentStyle);
+						
 						}
-						row.createCell(2)
-								.setCellValue(statistics.getRequestedRecords().get(formula.getId().toString()));
-
-						Cell pcell = row.createCell(3);
-						pcell.setCellValue(
-								statistics.getRequestedRecordsPercent().get(formula.getId().toString()) / 100);
-						pcell.setCellStyle(percentStyle);
 
 						rowIndex++;
 						row = sheet.createRow(rowIndex++);

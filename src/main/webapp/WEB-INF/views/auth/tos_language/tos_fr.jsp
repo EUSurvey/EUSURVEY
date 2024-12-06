@@ -437,8 +437,8 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
     registre de toutes les opérations de traitement de données à caractère
     personnel de la Commission qui sont documentées et qui lui sont notifiées.
     Ce registre se trouve à l’adresse suivante:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

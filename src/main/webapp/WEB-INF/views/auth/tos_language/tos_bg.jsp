@@ -409,7 +409,7 @@
     <a
         href="https://ec.europa.eu/info/about-european-commission/service-standards-and-principles/transparency/data-processing-register_bg"
     >
-        http://ec.europa.eu/dpo-register
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

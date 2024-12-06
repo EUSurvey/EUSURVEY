@@ -1211,7 +1211,7 @@
 				Automatic scripts can falsify the outcome of an online survey by
 				submitting a high number of contributions. To prevent this, you can
 				use EUSurvey to make participants solve a
-				<a href="http://en.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a> challenge
+				<a href="https://en.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a> challenge
 				before submitting a contribution.
 			</p>
 			<p>
@@ -1592,7 +1592,7 @@
 				from the SG for launching an open public
 				consultation on the
 				<a
-						href="http://ec.europa.eu/yourvoice/consultations/index_en.htm"
+						href="https://ec.europa.eu/yourvoice/consultations/index_en.htm"
 						target="_blank"
 						>
 					Your Voice in Europe

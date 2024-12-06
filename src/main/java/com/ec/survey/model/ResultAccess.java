@@ -7,7 +7,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -135,5 +137,9 @@ public class ResultAccess {
 
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
+	}
+
+	public static List<String> getOrderFields() {
+		return Arrays.asList("surveyUID", "date", "userName", "userEmail");
 	}
 }

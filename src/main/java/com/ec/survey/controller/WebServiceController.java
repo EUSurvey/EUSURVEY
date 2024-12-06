@@ -5,6 +5,7 @@ import com.ec.survey.model.*;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.chargeback.OrganisationCharge;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
@@ -1658,7 +1659,7 @@ public class WebServiceController extends BasicController {
 			if (survey == null)
 				return "";
 
-			if (!archiveSurvey(survey, user)) {
+			if (!archiveService.archiveSurvey(survey, user)) {
 				response.setStatus(500);
 				return "";
 			}
@@ -2519,4 +2520,67 @@ public class WebServiceController extends BasicController {
 			return "";
 		}
 	}
+	
+	@RequestMapping(value = "/getOrganisationsReport", method = { RequestMethod.GET,
+			RequestMethod.HEAD }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody String getOrganisationsReport(
+			@RequestParam(required = false, value = "code") String code,
+			@RequestParam(required = false, value = "year") String year,
+			@RequestParam(required = false, value = "month") String month,
+			@RequestParam(required = false, value = "monthEnd") String monthEnd,
+			@RequestParam(required = false, value = "minPublishedSurveys") String minPublishedSurveys, HttpServletRequest request,
+			HttpServletResponse response) {
+		KeyValue credentials = getLoginAndPassword(request, response);
+		if (credentials != null) {
+			if (code == null || code.length() == 0) code = "all";
+			if (month == null || month.length() == 0) month = "0";
+			if (monthEnd == null || monthEnd.length() == 0) monthEnd = "0";
+			if (minPublishedSurveys == null || minPublishedSurveys.length() == 0) minPublishedSurveys = "0";			
+			return getOrganisationsReportInner(code, year, month, monthEnd, minPublishedSurveys, request, response);
+		}
+		return "";
+	}	
+
+	private String getOrganisationsReportInner(String code, String year, String month, String monthEnd, String minPublishedSurveys,
+			 HttpServletRequest request, HttpServletResponse response) {
+
+		User user = getUser(request, response, true);
+		if (user == null)
+			return "";
+
+		if (year == null || !Tools.isInteger(year)) {
+			response.setStatus(404);
+			return "";
+		}
+		
+		if (month != null && !Tools.isInteger(month)) {
+			response.setStatus(412);
+			return "";
+		}
+		
+		if (monthEnd != null && !Tools.isInteger(monthEnd)) {
+			response.setStatus(412);
+			return "";
+		}
+		
+		if (minPublishedSurveys != null && !Tools.isInteger(minPublishedSurveys)) {
+			response.setStatus(412);
+			return "";
+		}	
+
+		webserviceService.increaseServiceRequest(user.getId());
+		response.setStatus(200);
+
+		try {
+			String json = surveyService.organisationReportJSON(code, Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(monthEnd), Integer.parseInt(minPublishedSurveys));
+			response.setContentType("text/json");
+			return json;
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			response.setStatus(500);
+			return "";
+		}
+	}
+	
 }

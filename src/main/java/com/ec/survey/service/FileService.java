@@ -1296,6 +1296,25 @@ public class FileService extends BasicService {
 		c.init(files, filter, user.getEmail());
 		getPool().execute(c);
 	}
+	
+	
+	public boolean validateFilesPath(String path) {
+		// black list for forbidden characters
+		if (path.contains("..")) return false;
+		if (path.contains("*")) return false;
+		
+		// workaround for Windows systems
+		java.io.File surveysDirFile = new java.io.File(surveysDir);
+		java.io.File usersDirFile = new java.io.File(usersDir);
+		java.io.File archiveDirFile = new java.io.File(archiveDir);		
+		
+		// white list for allowed root folders
+		if (path.startsWith(surveysDirFile.getAbsolutePath())) return true;		
+		if (path.startsWith(usersDirFile.getAbsolutePath())) return true;
+		if (path.startsWith(archiveDirFile.getAbsolutePath())) return true;
+		
+		return false;
+	}
 
 	public int deleteAll(FileFilter filter, String[] files) throws Exception {
 		int counter = 0;
@@ -1309,7 +1328,12 @@ public class FileService extends BasicService {
 				}
 			}
 		} else {
-			for (String path : files) {				
+			for (String path : files) {
+				
+				if (!validateFilesPath(path)) {
+					throw new MessageException("Invalid path found");
+				}
+				
 				if (Files.deleteIfExists(Paths.get(path)))
 				{
 					counter++;

@@ -497,7 +497,7 @@ public class AddressBookController extends BasicController {
 						try (CsvListReader reader = new CsvListReader(new InputStreamReader(inputStream), preference)) {
 
 							if (hasHeaderRow) {
-								fileheaders = reader.getHeader(true);
+								fileheaders = removeFormulas(reader.getHeader(true));
 								if (fileheaders[fileheaders.length - 1].trim().length() == 0) {
 									String[] temp = fileheaders.clone();
 									fileheaders = new String[temp.length - 1];
@@ -505,14 +505,16 @@ public class AddressBookController extends BasicController {
 								}
 							}
 							List<String> row;
-							while ((row = reader.read()) != null) {
-								rows.add(row.toArray(new String[row.size()]));
+							while ((row = reader.read()) != null) {								
+								String[] a = removeFormulas(row.toArray(new String[row.size()]));
+								
+								rows.add(a);
 								if (fileheaders == null) {
 									fileheaders = row.toArray(new String[row.size()]);
 								}
 							}
 						}
-		                inputStream.close();	                
+		                inputStream.close();              
 	                } catch (Exception e)
 	                {
 	                	logger.error(e.getLocalizedMessage(), e);	                	
@@ -809,6 +811,15 @@ public class AddressBookController extends BasicController {
       	return result;
      }
 	
+	private String[] removeFormulas(String[] array) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].startsWith("=")) {
+				array[i] = "";
+			}
+		}
+		return array;
+	}
+
 	private java.io.File validateImport1Parameters(String fileName, User user) throws ValidationException {
 		Validator validator = ESAPI.validator();
 		String extension = FilenameUtils.getExtension(fileName);

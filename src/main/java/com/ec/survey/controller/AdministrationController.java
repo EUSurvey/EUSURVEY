@@ -3,6 +3,7 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.chargeback.OrganisationCharge;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
 import com.ec.survey.tools.Constants;
@@ -14,11 +15,15 @@ import com.ec.survey.tools.RecreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.UpdateAllOLAPTablesExecutor;
 import com.ec.survey.tools.WeakAuthenticationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,9 +44,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/administration")
@@ -426,12 +434,33 @@ public class AdministrationController extends BasicController {
 	}
 	
 	
-	@RequestMapping(value = "/organisationreport/{code}/{format}/{year}/{month}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ResponseEntity<byte[]> organisationReport(HttpServletRequest request, HttpServletResponse response, @PathVariable String code, @PathVariable String format, @PathVariable int year, @PathVariable int month) throws ForbiddenURLException, IOException {
+	@RequestMapping(value = "/organisationreport/{code}/{format}/{year}/{month}/{monthEnd}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ResponseEntity<byte[]> organisationReport(HttpServletRequest request, HttpServletResponse response, @PathVariable String code, @PathVariable String format, @PathVariable int year, @PathVariable int month, @PathVariable int monthEnd) throws ForbiddenURLException, IOException {
 		if (!isChargeBackeEnabled()) throw new ForbiddenURLException();
 		
-		List<List<String>> surveys = surveyService.getSurveysByOrganisation(code, year, month);
-		
+		if (format.equalsIgnoreCase("csv")) {
+			List<List<String>> surveys = surveyService.getSurveysByOrganisation(code, year, month);
+			response.setContentType("text/csv");
+			response.setHeader("Content-Disposition", "attachment;filename=report.csv");
+			response.getWriter().print(organisationReportCSV(surveys));
+			response.getWriter().flush();
+		} else if (format.equalsIgnoreCase("json")) {
+			int min = 0;
+			String minPublished = request.getParameter("min");
+			if (minPublished != null && minPublished .length() > 0) {
+				min = Integer.parseInt(minPublished);
+			}			
+			
+			response.setContentType("text/json");
+			response.setHeader("Content-Disposition", "attachment;filename=report.json");
+			response.getWriter().print(surveyService.organisationReportJSON(code, year, month, monthEnd, min));
+			response.getWriter().flush();
+		}
+
+		return null;
+	}
+	
+	private String organisationReportCSV(List<List<String>> surveys) {
 		StringBuilder csv = new StringBuilder();
 		
 		for (List<String> survey : surveys) {
@@ -453,11 +482,6 @@ public class AdministrationController extends BasicController {
 			csv.append("\n");
 		}
 		
-		response.setContentType("text/csv");
-		response.setHeader("Content-Disposition", "attachment;filename=export.csv");
-		response.getWriter().print(csv.toString());
-		response.getWriter().flush();
-
-		return null;
+		return csv.toString();
 	}
 }
