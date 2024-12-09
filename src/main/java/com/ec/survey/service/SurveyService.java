@@ -6361,16 +6361,6 @@ public class SurveyService extends BasicService {
 		List<Survey> surveys = query.setReadOnly(true).setMaxResults(limit).list();
 		return surveys;
 	}
-
-	@Transactional
-	public List<Survey> getSurveysMarkedArchived(int limit) {
-		Session session = sessionFactory.getCurrentSession();
-		String sql = "FROM Survey s WHERE s.isDraft = true AND s.archived = true and s.isDeleted = false";
-
-		Query<Survey> query = session.createQuery(sql, Survey.class);
-		List<Survey> surveys = query.setReadOnly(true).setMaxResults(limit).list();
-		return surveys;
-	}
 	
 	@Transactional
 	public List<Survey> getSurveysToBeMarkedArchived() {
