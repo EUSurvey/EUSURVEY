@@ -321,7 +321,7 @@ public class SelfAssessmentController extends BasicController {
 				for (SAScore saScore : result.getScores()) {
 					Optional<SACriterion> criterion = criteria.stream().filter(c -> c.getId().equals(saScore.getCriterion())).findFirst();
 					if (criterion.isPresent()) {
-						saScore.setCriterionName(criterion.get().getName());
+						saScore.setCriterionName(criterion.get().getAcronym() + " - " + criterion.get().getName());
 					} else {
 						//criterion has been deleted in the meantime: remove
 						scoresToDelete.add(saScore);

@@ -1537,7 +1537,7 @@
 				ligne en soumettant un grand nombre de contributions. Pour éviter cela,
 				EUSurvey dispose d’une fonction demandant aux participants de saisir les
 				caractères d’une
-				<a href="http://fr.wikipedia.org/wiki/CAPTCHA" target="_blank">
+				<a href="https://fr.wikipedia.org/wiki/CAPTCHA" target="_blank">
 					image de vérification (CAPTCHA)
 				</a>
 				avant de soumettre leur contribution.

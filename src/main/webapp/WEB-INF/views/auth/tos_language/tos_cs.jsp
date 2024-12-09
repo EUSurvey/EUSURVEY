@@ -389,8 +389,8 @@ právo podat stížnost u evropského inspektora ochrany údajů (<a href="mailt
     Pověřenec Evropské komise pro ochranu osobních údajů zveřejňuje rejstřík
     všech operací zpracování osobních údajů prováděných Komisí, jež byly
     zdokumentovány a byly mu oznámeny. Rejstřík je k dispozici na této adrese:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

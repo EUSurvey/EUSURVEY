@@ -29,8 +29,10 @@
 			<form:input type="hidden" path="survey.eVoteTemplate" />
 			<form:input type="hidden" path="survey.isECF" />
 			<form:input type="hidden" path="survey.isSelfAssessment" />
-			<form:input type="hidden" path="survey.organisation" />
-			<form:input type="hidden" path="survey.validator" />
+			<c:if test="${!(enablechargeback == 'true')}">
+				<form:input type="hidden" path="survey.organisation" />
+				<form:input type="hidden" path="survey.validator" />
+			</c:if>
 			
 			<div class="actions">
 				<div style="width: 950px; margin-left: auto; margin-right: auto;">
@@ -88,6 +90,83 @@
 							</div>
 						</td>
 					</tr>
+					<c:if test="${enablechargeback == 'true'}">
+						<tr>
+							<td>
+								<div style="float: left">
+									<span class="mandatory">*</span><spring:message code="label.Organisation" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								</div>
+								
+								<c:choose>
+									<c:when test="${form.survey.getIsPublished()}">
+										<div style="float: right; text-align: right">
+											<div style="margin-bottom: 5px;">${form.survey.organisation}</div>	
+											<form:input type="hidden" path="survey.organisation" />									
+											<spring:message code="label.Owner" />: ${form.survey.owner.getFirstLastName()} (${form.survey.owner.email})
+										
+											<c:if test="${(form.survey.owner.isExternal() || form.survey.owner.type == 'SYSTEM') && form.survey.validator != null && form.survey.validator.length() > 0}">
+												<div style="margin-top: 5px;">
+													<spring:message code="label.EmailValidator" />
+													<span>${form.survey.validator}</span>														
+												</div>
+											</c:if>
+										</div>
+									</c:when>
+									<c:otherwise>
+
+										<div style="float: right">
+											<span style="margin-left: 10px">
+												<c:choose>
+													<c:when test="${form.survey.owner.isExternal() || form.survey.owner.type == 'SYSTEM'}">
+														<form:select path="survey.organisation" class="form-control survey-organisation" id="survey-organisation" style="width: auto; min-width: 200px; display: inline;" onchange="checkValidator()">
+															<optgroup id="survey-organisation-dgs" label="<spring:message code="label.EuropeanCommission" />: <spring:message code="label.DGsAndServices" />">
+															</optgroup>
+		
+															<optgroup id="survey-organisation-aex" label="<spring:message code="label.EuropeanCommission" />: <spring:message code="label.ExecutiveAgencies" />">
+															</optgroup>
+		
+															<optgroup id="survey-organisation-euis" label="<spring:message code="label.OtherEUIs" />">
+															</optgroup>
+		
+															<optgroup id="survey-organisation-noneuis" label="<spring:message code="label.NonEUIentities" />">
+															</optgroup>
+														</form:select>
+													</c:when>
+													<c:otherwise>
+														<form:select path="survey.organisation" class="form-control survey-organisation" style="width: auto; min-width: 200px; display: inline" disabled="disabled">
+															<form:option selected="selected" value="${form.survey.owner.organisation}"></form:option>
+														</form:select>
+													</c:otherwise>
+												</c:choose>
+											</span>
+										</div>
+		
+										<span style="float: right; margin-top: 10px;">
+											<spring:message code="label.Owner" />: ${form.survey.owner.getFirstLastName()} (${form.survey.owner.email})
+										</span>
+		
+										<div style="float: right; margin-top: 10px;">
+											<c:if test="${form.survey.owner.isExternal() || form.survey.owner.type == 'SYSTEM'}">
+												<div id="survey-validator-div" style="margin-left: 40px">
+													<span>
+														<span class="mandatory">*</span><spring:message code="label.EmailValidator" />
+														<form:input path="survey.validator" type="text" class="form-control required email" id="survey-validator" style="margin-left: 10px; width: 300px; display: inline;" />
+														<a onclick="openReminderDialog();" class="iconbutton" style="margin-left: 10px; vertical-align: middle" data-toggle="tooltip" title="<spring:message code="label.SendReminder" />"><span class='glyphicon glyphicon-envelope'></span></a>
+														<div id="survey-validator-invalid" class="hideme validation-error-keep" style=" margin-top: 10px; "><spring:message code="message.ValidatorInvalid" /></div>
+													</span>
+												</div>
+											</c:if>
+										</div>
+		
+										<div class="help" style="float: left; display: none;">
+											<span><spring:message code="message.Organisation" /></span>
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</td>
+						</tr>
+					</c:if>
 					<tr>
 						<td>
 							<div style="float: left">
@@ -1811,8 +1890,105 @@
 		
 		$(".datepicker").datepicker('option', 'dateFormat', "dd/mm/yy");
 		
-		$("#survey\\.contact").val($("#survey\\.contact").val().replace("form:", ""));		
-	});	
+		$("#survey\\.contact").val($("#survey\\.contact").val().replace("form:", ""));
+
+		//enablechargeback-feature: set all organisations for select dropdown
+		if ('${enablechargeback == 'true'}') {
+			var url = "/utils/Organisations";
+			var organisation = '${form.survey.organisation}';
+
+			$.ajax({type: "GET",
+				url: contextpath + url,
+				async: false,
+				success :function(result)
+				{
+					$.each(result.dgs, function(key, data){
+						var option = document.createElement("option");
+						$(option).attr("value", key).append(data);
+						if (organisation == key) {
+							$(option).attr("selected", "selected");
+						}
+						$('#survey-organisation-dgs').append(option);
+					});
+
+					$.each(result.executiveAgencies, function(key, data){
+						var option = document.createElement("option");
+						$(option).attr("value", key).append(data);
+						if (organisation == key) {
+							$(option).attr("selected", "selected");
+						}
+						$('#survey-organisation-aex').append(option);
+					});
+
+					$.each(result.otherEUIs, function(key, data){
+						var option = document.createElement("option");
+						$(option).attr("value", key).append(data);
+						if (organisation == key) {
+							$(option).attr("selected", "selected");
+						}
+						$('#survey-organisation-euis').append(option);
+					});
+
+					$.each(result.nonEUIs, function(key, data){
+						var option = document.createElement("option");
+						$(option).attr("value", key).append(data);
+						if (organisation == key) {
+							$(option).attr("selected", "selected");
+						}
+						$('#survey-organisation-noneuis').append(option);
+					});
+
+					if (organisation.length == 0 || organisation == 'external') organisation = "OTHER";
+					$('.survey-organisation').val(organisation);
+
+					checkValidator();
+				}
+			});
+		}
+	});
+
+	function checkValidator() {
+		let organisation = $('#survey-organisation').val();
+		if (organisation != "" && organisation != "CITIZEN" && organisation != "OTHER" && organisation != "PRIVATEORGANISATION" && organisation != "PUBLICADMINISTRATION") {
+			$('#survey-validator-div').show();
+			$('#survey-validator').addClass("required");
+			$('[data-toggle="tooltip"]').tooltip();
+		} else {
+			$('#survey-validator-div').hide();
+			$('#survey-validator').removeClass("required");
+		}
+	}
+
+	function openReminderDialog() {
+		if (!checkOrganisation($("#survey-validator").val(), $("#survey-organisation").val()))
+		{
+			$("#survey-validator-invalid").show();
+			return;
+		}
+
+		$("#survey-validator-invalid").hide();
+		$('#sendReminderDialog').modal('show');
+	}
+
+	var message_SuccessMailValidationReminder = "<spring:message code='message.mail.successMailValidationReminder' />";
+	var message_FailedMailValidationReminder = "<spring:message code='message.mail.failMailLinkDraft' />";
+	function sendReminder(surveyId) {
+		$.ajax({
+			type:'GET',
+			url: "${contextpath}/${sessioninfo.shortname}/management/sendOrganisationValidationReminder",
+			data: {surveyId : surveyId},
+			cache: false,
+			success: function( data ) {
+				if (data == "success") {
+					$('#sendReminderDialog').modal('hide');
+					showSuccess(message_SuccessMailValidationReminder);
+				} else {
+					showError(message_FailedMailValidationReminder);
+				}
+			}
+		});
+	}
+
 	</script>
 	
 </body>

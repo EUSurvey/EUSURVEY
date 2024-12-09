@@ -1718,6 +1718,10 @@ function recheckLocalBackup(){
 }
 
 function clearLocalBackup(){
+	if (!checkLocalStorageEnabled()) {
+		return;
+	}
+	
 	const key = getSurveyIdentifier();
 	if (key != null) {
 		window.localStorage.removeItem(key);
@@ -1814,6 +1818,8 @@ function checkLocalStorageEnabled(checkDelphi, checkEVote) {
 				window.localStorage.setItem("EUSurvey.LocalStorageTest", "abcdefg");
 				testValue = window.localStorage.getItem("EUSurvey.LocalStorageTest");
 				window.localStorage.removeItem("EUSurvey.LocalStorageTest");
+			} catch (e) {
+				// local storage not available
 			} finally {
 				_localStorageEnabled = testValue === "abcdefg";
 			}

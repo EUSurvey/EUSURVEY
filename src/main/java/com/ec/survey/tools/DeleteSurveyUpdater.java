@@ -34,6 +34,8 @@ public class DeleteSurveyUpdater implements Runnable {
 	public void run() {
 		int lastId = 0;
 		
+		logger.info("deleting of surveys started");
+		
 		String limitSeconds = settingsService.get(Setting.NightlyTaskLimit);
 		Date currentDate = new Date();
 		Calendar c = Calendar.getInstance();
@@ -47,20 +49,22 @@ public class DeleteSurveyUpdater implements Runnable {
 			for (Integer id : surveys) {
 				lastId = id;
 				try {
+					logger.info("deleting survey " + id);
 					surveyService.delete(id, true, true);
 					currentDate = new Date();
 					if (currentDate.after(endDate)) {
 						break;
 					}
 				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage(), e);
-					systemService.sendAdminErrorMessage("Error during deletion of Survey " + lastId + " " + e.getLocalizedMessage());
+					logger.error("Error during deletion of Survey " + lastId + " " + e.getLocalizedMessage(), e);
 				}	
 			}			
 			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
+		
+		logger.info("deleting of surveys finished");
 	}
 	
 }

@@ -5,5 +5,6 @@ public enum LdapSearchTypeEnum {
 	DEPARTMENT,
 	USER,
 	USERNAME,
-	LOGIN
+	LOGIN,
+	MAIL
 }

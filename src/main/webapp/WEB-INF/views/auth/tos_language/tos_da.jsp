@@ -391,8 +391,8 @@ Den Europæiske Tilsynsførende for Databeskyttelse (<a href="mailto:edps@edps.e
     aktiviteter vedrørende Kommissionens behandling af personoplysninger, som
     er blevet dokumenteret og anmeldt til ham/hende. Du kan få adgang til denne
     fortegnelse via følgende link:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

@@ -2460,6 +2460,10 @@ function initModals(item)
 		} else {
 			$("#create-survey-evote").val("false");
 		}
+
+		if (!$('#new-survey-validator').hasClass("required")) {
+			$('#new-survey-validator').val("");
+		}
 		
 		if ($("#new-survey-contact-type").val() == "form")
 		{

@@ -48,6 +48,7 @@
 							<c:when test="${form != null && useUILanguage == null}">
 								<c:if test="${showprivacy}">
 									<a href="<c:url value="/home/privacystatement"/>">${form.getMessage("label.PrivacyStatement.bis")}</a><br />
+									<a href="<c:url value="/home/accessibilitystatement"/>">${form.getMessage("label.AccessibilityStatement")}</a><br />
 									<a href="<c:url value="/home/tos"/>">${form.getMessage("label.TermsOfService")}</a><br />
 								</c:if>
 								
@@ -56,6 +57,7 @@
 							<c:otherwise>
 								<c:if test="${showprivacy}">
 									<a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a><br />
+									<a href="<c:url value="/home/accessibilitystatement"/>"><spring:message code="label.AccessibilityStatement" /></a><br />
 									<a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a><br />
 								</c:if>
 								

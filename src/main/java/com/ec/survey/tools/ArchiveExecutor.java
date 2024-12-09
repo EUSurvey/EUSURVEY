@@ -29,6 +29,7 @@ import com.ec.survey.model.Form;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ArchiveService;
 import com.ec.survey.service.ExportService;
@@ -76,7 +77,7 @@ public class ArchiveExecutor implements Runnable {
 	
 	@Resource(name="translationService")
 	private TranslationService translationService;
-	
+		
 	@Autowired
 	protected MessageSource resources;	
 
@@ -215,6 +216,10 @@ public class ArchiveExecutor implements Runnable {
 		archive = (Archive) session.merge(archive);
 		session.update(archive);
 		
+		survey = (Survey) session.merge(survey);
+		survey.setArchived(false);
+		session.update(survey);
+		
 		t.commit();
 		session.close();
 	}
@@ -241,7 +246,7 @@ public class ArchiveExecutor implements Runnable {
 				
 				lastSurvey = survey;
 				try {
-					lastArchive = archiveService.getArchive(survey.getShortname());
+					lastArchive = archiveService.getActiveArchive(survey.getShortname());
 					
 					if (lastArchive == null || lastArchive.getFinished() || lastArchive.getError() != null) {
 						continue;
@@ -257,6 +262,26 @@ public class ArchiveExecutor implements Runnable {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}		
+		
+		logger.info("start flagging old surveys as archived");
+		
+		try {
+			List<Survey> surveys = surveyService.getSurveysToBeMarkedArchived();
+			logger.info("found " + surveys.size() + "surveys to be archived");
+			
+			for (Survey survey : surveys) {
+				lastSurvey = survey;
+				
+				try {
+					archiveService.archiveSurvey(survey, survey.getOwner());
+				} catch (Exception e) {		
+					logger.error("Error during archiving of Survey " + lastSurvey.getId() + " " + e.getLocalizedMessage());					
+				}				
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}	
 	
 		logger.info("archiving of surveys finished");
 	}

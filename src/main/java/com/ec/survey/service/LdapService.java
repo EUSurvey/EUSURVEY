@@ -129,15 +129,26 @@ public class LdapService extends BasicService {
 	
 	public String getLoginForEmail(String email) throws NamingException {
 		String login = "";
-		DirContext ctx = initialize();
-        try {
-        	email = Tools.encodeForLDAP(email);
-        	String searchValue= String.format(ldapSearchMailFormat, email);
-            Attributes attrs = ctx.getAttributes(searchValue);
-            login = (String) attrs.get(ldapMappingUserUid).get();
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
+		DirContext ctx = initialize();		
+		
+		SearchControls sc = getSearchControls(LdapSearchTypeEnum.MAIL);
+		NamingEnumeration<SearchResult> ne = null; 
+		Attributes userAttributes;
+		String searchString = "(mail=" + Tools.encodeForLDAP(email) + ")";
+		
+		try{
+			ne = ctx.search(ldapSearchFormat, searchString, sc);
+			
+			while(ne.hasMore()){
+				SearchResult nextSearchResult = ne.next();  
+				userAttributes = nextSearchResult.getAttributes();
+				login = (String) userAttributes.get(ldapMappingUserUid).get();
+			}
+		
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}	
+	 
 	    ctx.close();
         return login;
 	}
@@ -960,6 +971,9 @@ public class LdapService extends BasicService {
 			if (isAttributeEligible(ldapMappingUserModifyTimstamp))
 				lstAttr.add(ldapMappingUserModifyTimstamp);
 			break;
+		case MAIL:
+			if (isAttributeEligible(ldapMappingUserUid))
+				lstAttr.add(ldapMappingUserUid);
 		default:
 			break;
 		}		

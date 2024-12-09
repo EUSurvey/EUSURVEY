@@ -11,7 +11,7 @@
 <div id="pathheader">
 	<div class="lang-en" id="header">
 		<div style="float: left">
-			<a href="http://www.eca.europa.eu"
+			<a href="https://www.eca.europa.eu"
 				title="Home - European court of auditors"> <img id="logoImg"
 				style="height: 85px;margin-left: 15px;max-width: 85px;max-height: 85px;margin-top: 3px;"
 				alt="European court of auditors logo" id="banner-flag"

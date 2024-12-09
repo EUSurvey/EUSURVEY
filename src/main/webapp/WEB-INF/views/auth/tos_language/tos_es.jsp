@@ -412,8 +412,8 @@ responsable del tratamiento de datos (<a href="mailto:edps@edps.europa.eu">edps@
     todas las operaciones de tratamiento de datos personales realizadas por la
     Comisión que se han documentado y le han sido notificadas. Puede acceder al
     registro a través del enlace:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

@@ -457,12 +457,18 @@
 				} else {
 					$(row).append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
 				}
-			
-				td = document.createElement("td");
-				var a = document.createElement("a");
-				$(a).addClass("btn btn-primary").attr("onclick","confirmRestore(" + list[i].id + ", '" +  list[i].surveyShortname + "')").html("<spring:message code="label.Restore" />");
-				$(td).append(a);
-				$(row).append(td);	
+				
+				if (list[i].finished && list[i].error == null)
+				{			
+					td = document.createElement("td");
+					var a = document.createElement("a");
+					$(a).addClass("btn btn-primary").attr("onclick","confirmRestore(" + list[i].id + ", '" +  list[i].surveyShortname + "')").html("<spring:message code="label.Restore" />");
+					$(td).append(a);
+					$(row).append(td);	
+				} else {
+					$(row).append("<td>&nbsp;</td>");
+				}
+				
 				
 				$('#surveyTableDivTableBody').first().append(row);
 			  }

@@ -95,8 +95,27 @@
 		}
 		
 		function downloadOrganisationReport() {
+			$('#monthError').hide();
 			if ($('#organisation').val().length == 0) return;
-			window.location = "${contextpath}/administration/organisationreport/" + $('#organisation').val() + "/" + $('#format').val() + "/" + $('#year').val() + "/" + $('#month').val();
+			
+			var start = parseInt($('#month').val());
+			var end = parseInt($('#monthEnd').val());
+			
+			if (end > 0 && end < start) {
+				$('#monthError').show();
+			}
+			
+			window.location = "${contextpath}/administration/organisationreport/" + $('#organisation').val() + "/" + $('#format').val() + "/" + $('#year').val() + "/" + start + "/" + end + "?min=" + $('#minpublished').val();
+		}
+		
+		function checkFormat() {
+			if ($('#format').val() == "JSON") {
+				$('#divMinPublishedSurveys').show();
+				$('#divMonthEnd').show();
+			} else {
+				$('#divMinPublishedSurveys').hide();
+				$('#divMonthEnd').hide();
+			}
 		}
 	</script>		
 </head>
@@ -149,12 +168,20 @@
 			<div style="background-color: #ddd; padding: 10px; border-radius: 5px;">
 				<b><spring:message code="label.Report" /></b><br /><br />
 				
+				<div class="form-group" style="float: left; margin-right: 10px;">
+					<label for="format"><spring:message code="label.Format" /></label>
+					<select class="form-control" id="format" style="width: auto" onchange="checkFormat()">
+						<option selected="selected">CSV</option>
+						<option>JSON</option>
+					</select>
+				</div>
+				
 				<div class="form-group" style="float: left; margin-right: 10px;">					
 					<label for="year"><spring:message code="label.Year" /></label>
 					<select class="form-control" id="year" style="width: auto"></select>
 				</div>
 				
-				<div class="form-group" style="float: left; margin-right: 40px;">
+				<div class="form-group" style="float: left; margin-right: 5px;">
 					<label for="month"><spring:message code="label.Month" /></label>
 					<select class="form-control" id="month" style="width: auto">
 						<option value="0"></option>
@@ -173,19 +200,37 @@
 					</select>
 				</div>
 				
-				<div class="form-group" style="float: left; margin-right: 20px;">
-					<label for="format"><spring:message code="label.Format" /></label>
-					<select class="form-control" id="format" style="width: auto">
-						<!-- <option>JSON</option> -->
-						<option selected="selected">CSV</option>
+				<div class="form-group" id="divMonthEnd" style="float: left; margin-right: 10px; padding-top: 25px; display: none;">
+					<span>-</span>
+					<select class="form-control" id="monthEnd" style="width: auto; display: inline-block;">
+						<option value="0"></option>
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+						<option>6</option>
+						<option>7</option>
+						<option>8</option>
+						<option>9</option>
+						<option>10</option>
+						<option>11</option>
+						<option>12</option>
 					</select>
 				</div>
 				
-				<div style="float: left; padding-top: 25px;">
-					<button id="downloadOrganisationReport" onclick="downloadOrganisationReport()" class="btn btn-primary" disabled="disabled"><spring:message code="label.GenerateReport" /></button>
+				<div class="form-group" id="divMinPublishedSurveys" style="float: left; margin-right: 10px; display: none;">
+					<label for="month"><spring:message code="label.MinPublishedSurveys" /></label>
+					<input type="number" id="minpublished" class="form-control" />
 				</div>
 				
 				<div style="clear: both"></div>
+				
+				<div id="monthError" class="validation-error" style="display: none"><spring:message code="error.EndMonthSmaller" /></div>
+				
+				<div style="padding-top: 0px; text-align: right;">
+					<button id="downloadOrganisationReport" onclick="downloadOrganisationReport()" class="btn btn-primary" disabled="disabled"><spring:message code="label.GenerateReport" /></button>
+				</div>
 			</div>
 		</div>
 	</div>	

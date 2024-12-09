@@ -51,7 +51,7 @@
 	<div id="path" style="margin-bottom: 200px;">
 		<div id="pathinner">
 			<ol>
-				<li><a href="http://ec.europa.eu/index_en.htm">European Commission</a></li>
+				<li><a href="https://ec.europa.eu/index_en.htm">European Commission</a></li>
 	        </ol> <br />
 	        
 	        <div class="pathtitle">

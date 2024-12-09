@@ -367,8 +367,8 @@ iesniegt sūdzību, rakstot uz adresi <a href="mailto:edps@edps.europa.eu">edps@
     Komisijas veikto persondatu apstrādes darbību sarakstu, kuras ir
     dokumentētas un par kurām viņam ir paziņots. Sarakstam var piekļūt šajā
     saitē:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

@@ -3,11 +3,15 @@ package com.ec.survey.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import com.ec.survey.model.survey.base.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import com.ec.survey.tools.SurveyHelper;
+import com.ec.survey.tools.Tools;
+
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -25,6 +29,10 @@ import com.ec.survey.model.survey.ComplexTable;
 import com.ec.survey.model.survey.ComplexTableItem;
 import com.ec.survey.model.survey.Confirmation;
 import com.ec.survey.model.survey.DraftIDElement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.persistence.Transient;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.EmptyElement;
 import com.ec.survey.model.survey.FreeTextQuestion;

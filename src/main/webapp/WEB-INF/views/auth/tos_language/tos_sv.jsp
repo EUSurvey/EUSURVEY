@@ -382,8 +382,8 @@ Europeiska datatillsynsmannen (<a href="mailto:edps@edps.europa.eu">edps@edps.eu
 <p>
     Kommissionens dataskyddsombud för ett register över all verksamhet där man
     behandlar personuppgifter. Gå till registret:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
 </p>
 <p>

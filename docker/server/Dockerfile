@@ -20,4 +20,3 @@ RUN rm -rf /opt/bitnami/tomcat/webapps/*
 COPY ./dist/eusurvey.war /opt/bitnami/tomcat/webapps/eusurvey.war
 
 USER 1001
-

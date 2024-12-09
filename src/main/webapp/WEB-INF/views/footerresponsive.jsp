@@ -24,6 +24,7 @@
 		<a href="<c:url value="/home/documentation"/>"><spring:message code="label.Support" /></a> 
 		<c:if test="${showprivacy}">
 			| <a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a>
+			| <a href="<c:url value="/home/accessibilitystatement"/>"><spring:message code="label.AccessibilityStatement" /></a>
 			| <a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a>
 		</c:if>	
 	</div>

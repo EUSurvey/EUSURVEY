@@ -391,8 +391,8 @@ l'apposito    <a href="https://ec.europa.eu/eusurvey/home/support">modulo di con
     registro di tutti i trattamenti di dati personali effettuati dalla
     Commissione che sono stati documentati e gli sono stati notificati. Il
     registro è accessibile al seguente link:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

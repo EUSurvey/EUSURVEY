@@ -325,6 +325,14 @@
 					return false;
 				}
 
+				if ($('#survey-validator').is(":visible")) {
+					if (!checkOrganisation($("#survey-validator").val(), $("#survey-organisation").val()))
+					{
+						$("#survey-validator-invalid").show();
+						return;
+					}
+				}
+
 				if(_properties.isUseMaxNumberContribution()){
 					if (_properties.isUseMaxNumberContributionLink()){
 						if(isPropEmpty("[name='survey.maxNumberContributionLink']")){
@@ -470,6 +478,10 @@
 						labels[labels.length] = label;
 					}
 				});
+
+				if (!$('#survey-validator').hasClass("required")) {
+					$('#survey-validator').val("");
+				}
 
 				if (invalid) return false;
 				if ($("#survey-contact-type").val() == "url") {

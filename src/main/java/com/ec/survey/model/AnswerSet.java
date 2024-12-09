@@ -191,7 +191,7 @@ public class AnswerSet implements java.io.Serializable {
 	public List<Answer> getAnswers(String questionUniqueId) {
 		List<Answer> result = new ArrayList<>();
 		for (Answer answer : answers) {
-			if (answer.getQuestionUniqueId().equals(questionUniqueId)) {
+			if (answer != null && answer.getQuestionUniqueId() != null && answer.getQuestionUniqueId().equals(questionUniqueId)) {
 				result.add(answer);
 			}
 		}

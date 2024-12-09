@@ -405,8 +405,8 @@ Autoridade Europeia para a Proteção de Dados (<a href="mailto:edps@edps.europa
     as operações de tratamento de dados pessoais efetuadas pela Comissão que
     tenham sido documentadas e lhe tenham sido notificadas. Pode aceder a esse
     registo através da seguinte hiperligação:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

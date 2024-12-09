@@ -183,7 +183,7 @@ public class Statistics {
 	{
 		String id = question.getUniqueId() + "-" + dataset.getId().toString();
 		Object result = requestedRecordsPercent.get(id);
-		return (double) (result != null ? result : 0);
+		return (double) (result != null ? result : 0.0);
 	}
 	
 	@Transient
@@ -199,7 +199,7 @@ public class Statistics {
 	{
 		String id = question.getId().toString() + answer.getId().toString();
 		Object result = requestedRecordsPercent.get(id);
-		return (double) (result != null ? result : 0);
+		return (double) (result != null ? result : 0.0);
 	}
 	
 	@Transient
@@ -207,7 +207,7 @@ public class Statistics {
 	{
 		String id = question.getId().toString() + answer.getId().toString();
 		Object result = totalsPercent.get(id);
-		return (double) (result != null ? result : 0);
+		return (double) (result != null ? result : 0.0);
 	}
 	
 	@Transient
@@ -223,7 +223,7 @@ public class Statistics {
 	{
 		String id = question.getId().toString() + answer.toString();
 		Object result = requestedRecordsPercent.get(id);
-		return (double) (result != null ? result : 0);
+		return (double) (result != null ? result : 0.0);
 	}
 	
 	@Transient
@@ -247,7 +247,7 @@ public class Statistics {
 	{
 		String id = question.getId().toString() + "-" + fileUid;
 		Object result = requestedRecordsPercent.get(id);
-		return (double) (result != null ? result : 0);
+		return (double) (result != null ? result : 0.0);
 	}
 	
 	@Transient
@@ -255,7 +255,7 @@ public class Statistics {
 	{
 		String id = question.getId().toString() + "-" + index;
 		Object result = totalsPercent.get(id);
-		return (double) (result != null ? result : 0);
+		return (double) (result != null ? result : 0.0);
 	}
 	
 	@Column(name="FILTER")

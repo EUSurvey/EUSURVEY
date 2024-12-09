@@ -383,8 +383,8 @@ European Data Protection Supervisor (<a href="mailto:edps@edps.europa.eu">edps@e
     processing operations on personal data by the Commission, which have been
     documented and notified to him. You may access the register via the
     following link:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

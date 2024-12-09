@@ -380,8 +380,8 @@ Rekisteröidyllä on oikeus kääntyä Euroopan tietosuojavaltuutetun puoleen (<
     Komission tietosuojavastaava pitää julkista rekisteriä komission kaikista
     henkilötietojen käsittelytoimista, jotka on dokumentoitu ja joista on
     ilmoitettu tietosuojavastaavalle. Rekisteriin voi tutustua osoitteessa
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>

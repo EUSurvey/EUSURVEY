@@ -611,6 +611,16 @@ public class HomeController extends BasicController {
 		return privacystatementinternal(request, locale, model, "dpa");
 	}
 	
+	@RequestMapping(value = "/home/accessibilitystatement", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String accessibilitystatement(HttpServletRequest request, Locale locale, Model model) {
+		return privacystatementinternal(request, locale, model, "as");
+	}
+	
+	@RequestMapping(value = "/home/accessibilitystatement/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String accessibilitystatementrunner(HttpServletRequest request, Locale locale, Model model) {
+		return privacystatementinternal(request, locale, model, "as");
+	}
+	
 	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model, String internal) {
 		if (request.getParameter("language") != null)
 		{
@@ -646,11 +656,13 @@ public class HomeController extends BasicController {
 				return "auth/tos";
 			case "dpa":
 				return "home/dpa";
+			case "as":
+				return "home/accessibilitystatement";
 			default:
 				return "error/info";
 		}
 	}
-	
+		
 	@RequestMapping(value = "/home/welcome", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView welcome(HttpServletRequest request) {	
 		return basicwelcome(request);

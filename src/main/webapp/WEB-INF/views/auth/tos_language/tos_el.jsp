@@ -440,8 +440,8 @@
     προσωπικού χαρακτήρα οι οποίες έχουν τεκμηριωθεί και του έχουν
     κοινοποιηθεί. Πρόσβαση στο εν λόγω μητρώο παρέχεται μέσω του ακόλουθου
     συνδέσμου:
-    <a href="http://ec.europa.eu/dpo-register">
-        http://ec.europa.eu/dpo-register
+    <a href="https://ec.europa.eu/dpo-register">
+        https://ec.europa.eu/dpo-register
     </a>
     .
 </p>
