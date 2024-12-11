@@ -17,10 +17,11 @@ import java.io.StringReader;
 public class XHTMLValidator {
 	
 	private static final Logger logger = Logger.getLogger(XHTMLValidator.class);
+	private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		
 	public static DocumentBuilder getBuilder()
 	{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		//DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(true);			
 		
 		DocumentBuilder builder = null;
