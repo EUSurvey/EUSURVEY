@@ -29,18 +29,12 @@ public class SavedRequestAwareAuthenticationSuccessHandlerExtended extends Simpl
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
 		String survey = request.getParameter(Constants.SURVEY);
-		
-		boolean organisationSet = (Boolean) request.getSession().getAttribute("ORGANISATIONSET");
-		if (organisationSet) {
-			getRedirectStrategy().sendRedirect(request, response, "/settings/myAccount");
-			return;
-		}
 
 		if (survey != null) {
 			getRedirectStrategy().sendRedirect(request, response, "/runner/" + survey);
 			return;
 		}
-
+		
 		User user = (User) request.getSession().getAttribute("USER");
 
 		if (!user.isAgreedToPS()) {
@@ -58,6 +52,12 @@ public class SavedRequestAwareAuthenticationSuccessHandlerExtended extends Simpl
 			return;
 		}
 
+		boolean organisationSet = (Boolean) request.getSession().getAttribute("ORGANISATIONSET");
+		if (organisationSet) {
+			getRedirectStrategy().sendRedirect(request, response, "/settings/myAccount");
+			return;
+		}
+		
 		if (savedRequest == null) {
 			super.onAuthenticationSuccess(request, response, authentication);
 
