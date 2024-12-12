@@ -340,7 +340,7 @@ public class HomeController extends BasicController {
 			if (!external) {
 				//get login from ldap
 				login = ldapService.getLoginForEmail(email);
-				createTemplate = createTemplate.replace("[CALLER]", email);
+				createTemplate = createTemplate.replace("[CALLER]", login);
 			}				
 	
 			createTemplate = createTemplate.replace("[MESSAGE]", message);
