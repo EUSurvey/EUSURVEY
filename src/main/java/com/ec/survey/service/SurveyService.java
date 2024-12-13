@@ -6380,7 +6380,16 @@ public class SurveyService extends BasicService {
 		Date updated = c.getTime();
 
 		Query<Survey> query = session.createQuery(sql, Survey.class).setParameter("created", created).setParameter("updated", updated);
-		List<Survey> surveys = query.setReadOnly(true).list();
+		List<Survey> allSurveys = query.setReadOnly(true).list();
+		List<Survey> surveys = new ArrayList<>();
+		
+		for (Survey survey: allSurveys) {
+			Date newestAnswerDate = answerService.getNewestAnswerDate(survey.getId());
+			if (newestAnswerDate == null || newestAnswerDate.before(updated)) {
+				surveys.add(survey);
+			}
+		}
+		
 		return surveys;
 	}
 

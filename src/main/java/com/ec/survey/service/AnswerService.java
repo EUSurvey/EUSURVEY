@@ -2318,6 +2318,9 @@ public class AnswerService extends BasicService {
 	public Date getNewestAnswerDate(int surveyId) {
 		Session session = sessionFactory.getCurrentSession();
 		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(surveyId);
+		
+		if (allVersions.isEmpty()) return null;
+		
 		Query query = session.createQuery("SELECT max(a.updateDate) FROM AnswerSet a WHERE a.surveyId IN ("
 				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND a.isDraft = 0");
 		return (Date) query.uniqueResult();
