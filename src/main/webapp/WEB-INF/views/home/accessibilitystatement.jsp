@@ -55,103 +55,124 @@
 		
 		<p>This statement applies to content published via the EUSurvey application: <a href="https://ec.europa.eu/eusurvey">https://ec.europa.eu/eusurvey</a></p>
 		
-		<p>This web application is managed by Digital services (DG DIGIT). It is designed to be used by as many people as possible, including people with disabilities.</p>
+		<p>The EUSurvey application is managed by Digital services (DG DIGIT) and is designed to be accessible to as many people as possible, including those with disabilities.</p>
 		
-		<p>Also included are all the other instances managed by DG DIGIT (e.g. Consultation, Acceptance etc.).</p>
-		
-		<p>It concerns web content of the surveys publicly accessible by the survey participants, the back office of the application is not concerned.</p>
-		
+		<p>This accessibility statement concerns:
+			<ul>
+				<li>Surveys and their web content, accessible to survey participants</li>
+				<li>All EUSurvey instances managed by DG DIGIT (e.g. Consultation, Acceptance)</li>				
+			</ul>
+		</p>
+
+		<p>Please note that this statement does not cover the back-office or administrative features of the application.</p>
+
+		<span class="asheader">Accessibility features</span>		
 		<p>You should be able to:
 			<ul>
-				<li>Fill in a survey just using a keyboard.</li>
-				<li>Navigate through and fill in a survey using a screen reader (e.g. NVDA or Windows Narrator).</li>
-				<li>Fill in our web accessibility compliant EU CAPTCHA.</li>				
+				<li>Zoom up to 200% without problems.</li>
+				<li>Fill out a survey using only a keyboard.</li>
+				<li>Navigate through and complete surveys using a screen reader (e.g. NVDA or Windows Narrator).</li>
+				<li>Fill out our web accessibility-compliant EU CAPTCHA.</li>				
 			</ul>
 		</p>
 		
-		<p><span class="asheader">Keyboard shortcuts:</span>
+		<p><span class="asheader">Keyboard Navigation:</span>
+			The EUSurvey application supports keyboard navigation with the following shortcuts:
 			<table class="table table-bordered">
-				<tr>
-					<td>Move forward the yellow focus.</td>
-					<td>TAB</td>
-				</tr>
-				<tr>
-					<td>Move backward the yellow focus.<br />Please note that only actionable elements are focusable as per accessibility guidelines.
-					</td>
-					<td>MAJ + TAB</td>
-				</tr>
-				<tr>
-					<td>To close a dialog when the focus is on the cross top-right icon.</td>
-					<td>ENTER</td>
-				</tr>
-				<tr>
-					<td>To activate and access a link such as the 'Contact Form' hyperlink.</td>
-					<td>ENTER</td>
-				</tr>
-				<tr>
-					<td>To push a button such as 'Save as a draft' button.</td>
-					<td>ENTER</td>
-				</tr>
-				<tr>
-					<td>To select/unselect a combo box (in Single Choice Question) or a checkbox (in Multiple Choice Question).</td>
-					<td>SPACE BAR</td>
-				</tr>
-				<tr>
-					<td>To navigate inside a dropdown list such as the 'Help' menu.</td>
-					<td>ARROWS UP / DOWN</td>
-				</tr>				
-			</table>		
+				<thead>
+					<tr>
+						<th>Action</th>
+						<th>Keyboard Shortcut</th>
+						<th>Example</th>					
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Move forward the focus</td>
+						<td>TAB</td>
+						<td>Navigate to the next actionable element.</td>
+					</tr>
+					<tr>
+						<td>Move backward the focus</td>
+						<td>MAJ + TAB</td>
+						<td>Return to the previous actionable element.</td>
+					</tr>
+					<tr>
+						<td>Activate or close a link, button, or dialog </td>
+						<td>ENTER</td>
+						<td>Open the 'Contact Form' link or close a dialog</td>
+					</tr>
+					<tr>
+						<td>Select/unselect combo boxes, checkboxes, or radio buttons</td>
+						<td>SPACE BAR</td>
+						<td>Check or uncheck an option.</td>
+					</tr>
+					<tr>
+						<td>Navigate dropdown menus</td>
+						<td>ARROWS UP / DOWN</td>
+						<td>Scroll through options in dropdown menus.</td>
+					</tr>		
+				</tbody>		
+			</table>
+			<b>Note:</b> Only actionable elements (e.g., buttons, links) are focusable in line with the accessibility guidelines.		
 		</p>
 		
 		<p>
-			<span class="asheader">Compliance status</span>
-			This website is compliant with the <a href="https://www.w3.org/WAI/standards-guidelines/wcag/">Web Content Accessibility Guidelines (WCAG) 2.1 Level AA</a>.
-		</p>
-				
-		<p>The website was last evaluated on 1st November 2024.</p>
-		
-		<p>
-			<span class="asheader">Preparation of this statement</span>
-			This statement was reviewed on 5th November 2024.
+			<span class="asheader">Compliance and Testing</span>
+			The EUSurvey application complies with <a target="_blank" href="https://www.w3.org/WAI/standards-guidelines/wcag/">Web Content Accessibility Guidelines (WCAG) 2.1 Level AA</a>.
 		</p>
 		
-		<p>It is based on a self-assessment done by DG DIGIT along with the use of an accessibility scanner: WAVE (https://wave.webaim.org/).</p>
-		
 		<p>
-			<span class="asheader">Feedback</span>
-			We welcome your feedback on the accessibility of the EUSurvey service. Please let us know if you encounter accessibility barriers:
+			To ensure compliance:
 			<ul>
-				<li><a href="https://ec.europa.eu/eusurvey/home/support">Feedback form</a> choose 'I have an accessibility enquiry'
+				<li>A self-assessment was conducted by DG DIGIT using both automated tools (e.g., WAVE: <a target="_blank" href=" https://wave.webaim.org">https://wave.webaim.org</a>) and manual testing.</li>
+				<li>Feedback from users, including people with disabilities, was incorporated to improve accessibility.</li>
+				<li><b>Last evaluation date:</b> 1st February 2024.</li>
+				<li><b>Last review of this statement:</b> 13th December 2024.</li>
 			</ul>
-			We try to respond to feedback within 15 business days from the date of receipt of the enquiry by the responsible Commission department.
 		</p>
+		
+		<p>
+			<span class="asheader">Feedback Mechanism</span>
+			We welcome your feedback on the accessibility of the EUSurvey service. If you encounter accessibility barriers, please use our <a href="https://ec.europa.eu/eusurvey/home/support">Feedback form</a> and select the option '<i>I have an accessibility enquiry</i>'.		
+		</p>
+		
+		<p>We aim to respond to all enquiries within 15 business days.</p>
 		
 		<p>
 			<span class="asheader">Compatibility with browsers and assistive technology</span>
-			The EUSurvey service is designed to be compatible with the following most used assistive technologies:
+			The EUSurvey service is designed to work with:
 			<ul>
-				<li>The latest version of Google Chrome, Mozilla Firefox and Microsoft Edge browsers. Using other browsers might cause compatibility or accessibility issues.</li>
-				<li>In combination with the latest versions of NVDA and Windows Narrator.</li>
-			</ul>			
-		</p>
-		
-		<p>
-			<span class="asheader">Technical specifications</span>
-			The accessibility of the EUSurvey service relies on the following technologies to work with the particular combination of web browser and any assistive technologies or plugins installed on your computer:
-			<ul>
-				<li>HTML</li>
-				<li>CSS</li>
-				<li>JavaScript</li>
+				<li>The latest version of Google Chrome, Mozilla FireFox and Microsoft Edge browsers.</li>
+				<li>Assistive technologies such as NVDA (NonVisual Desktop Access) and Windows Narrator.</li>
 			</ul>
 		</p>
 		
+		<p>The service also supports mobile web browsers and screen readers, including VoiceOver (iOS) and TalkBack (Android). However, some advanced survey layouts may not display as intended on smaller screens.</p>
+			
 		<p>
 			<span class="asheader">Non-accessible content</span>
-			Despite our best efforts to ensure accessibility of the EUSurvey service, we are aware of some limitations, which we are working to fix. Below is a description of known limitations and potential solutions. Please contact us if you encounter an issue not listed below.			
+			Despite our commitment to accessibility, some limitations may exist: 
+			<ul>
+				<li><b>Browser-specific quirks:</b> Older browser versions may not fully support all accessibility features.</li>
+				<li><b>Mobile navigation challenges:</b> Complex survey layouts may be difficult to navigate using mobile screen readers.</li>
+				<li><b>CAPTCHA usability:</b> While the CAPTCHA is designed to be accessible, users may experience occasional compatibility issues with certain assistive technologies.</li>
+			</ul>
 		</p>
 		
-		<p>The EUSurvey service has no known accessibility limitations at the date of publication of this accessibility statement.</p>
-				
+		<p>If you encounter any issues not listed above, please contact us so we can address them.</p>
+		
+		<p>
+			<span class="asheader">Technical specifications</span>
+			The accessibility of the EUSurvey service relies on the following web technologies:
+			<ul>
+				<li><b>HTML:</b> For structuring content.</li>
+				<li><b>CSS:</b> For layout and design.</li>
+				<li><b>JavaScript:</b> For interactive elements.</li>
+			</ul>
+		</p>
+		
+		<p>These technologies are designed to ensure compatibility with assistive tools and modern design browsers.</p>
 	</div>
 </div>
 
