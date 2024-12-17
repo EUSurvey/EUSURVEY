@@ -184,9 +184,13 @@ public class SurveyController extends BasicController {
 		String email = request.getParameter("email");	
 		String organisation = request.getParameter("organisation");	
 		
-		String organisationFromLDAP = ldapService.getOrganisationForEmail(email);
+		List<String> organisationsFromLDAP = ldapService.getOrganisationForEmail(email);
 		
-		return organisationFromLDAP.equalsIgnoreCase(organisation);
+		for (String org : organisationsFromLDAP) {
+			if (org.equalsIgnoreCase(organisation)) return true;
+		}
+		
+		return false;
 	}
 		
 }
