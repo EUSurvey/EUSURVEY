@@ -170,15 +170,17 @@ public class LdapService extends BasicService {
 				SearchResult nextSearchResult = ne.next();  
 				userAttributes = nextSearchResult.getAttributes();
 				
-				String organisation = (String) userAttributes.get(ldapMappingUserO).get();
-	            
-	            if (organisation.equalsIgnoreCase("eu.europa.ec")) {
-	            	String dg = (String) userAttributes.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
-	            	organisations.add(dg);
-	            } else {
-	            	String departmentNumber = (String) userAttributes.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDg).get();
-	            	organisations.add(departmentNumber.substring(0, departmentNumber.indexOf(".")));
-	            }
+				if (userAttributes.get(ldapMappingUserO) != null) {				
+					String organisation = (String) userAttributes.get(ldapMappingUserO).get();
+		            
+		            if (organisation.equalsIgnoreCase("eu.europa.ec")) {
+		            	String dg = (String) userAttributes.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
+		            	organisations.add(dg);
+		            } else {
+		            	String departmentNumber = (String) userAttributes.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDg).get();
+		            	organisations.add(departmentNumber.substring(0, departmentNumber.indexOf(".")));
+		            }
+				}
 			}
 		
 		} catch (Exception e) {
@@ -1010,6 +1012,10 @@ public class LdapService extends BasicService {
 		case MAIL:
 			if (isAttributeEligible(ldapMappingUserUid))
 				lstAttr.add(ldapMappingUserUid);
+			if (isAttributeEligible(ldapMappingUserO))
+				lstAttr.add(ldapMappingUserO);
+			if (isAttributeEligible(ldapMappingUserDg))
+				lstAttr.add(ldapMappingUserDg);
 		default:
 			break;
 		}		
