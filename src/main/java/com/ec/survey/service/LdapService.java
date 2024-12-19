@@ -173,12 +173,16 @@ public class LdapService extends BasicService {
 				if (userAttributes.get(ldapMappingUserO) != null) {				
 					String organisation = (String) userAttributes.get(ldapMappingUserO).get();
 		            
-		            if (organisation.equalsIgnoreCase("eu.europa.ec")) {
-		            	String dg = (String) userAttributes.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
-		            	organisations.add(dg);
+		            if (organisation.equalsIgnoreCase("eu.europa.ec") && (userAttributes.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg) != null)) {
+	                	String dg = (String) userAttributes.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
+		            	organisations.add(dg);		            
+		            } else if (userAttributes.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber) != null) {
+		            	String departmentNumber = (String) userAttributes.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber).get();
+		            	if (departmentNumber != null && departmentNumber.contains(".")) {
+		            		organisations.add(departmentNumber.substring(0, departmentNumber.indexOf(".")));
+		            	}
 		            } else {
-		            	String departmentNumber = (String) userAttributes.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDg).get();
-		            	organisations.add(departmentNumber.substring(0, departmentNumber.indexOf(".")));
+		            	organisations.add(organisation);
 		            }
 				}
 			}
@@ -1014,8 +1018,10 @@ public class LdapService extends BasicService {
 				lstAttr.add(ldapMappingUserUid);
 			if (isAttributeEligible(ldapMappingUserO))
 				lstAttr.add(ldapMappingUserO);
-			if (isAttributeEligible(ldapMappingUserDg))
-				lstAttr.add(ldapMappingUserDg);
+			if (isAttributeEligible(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg))
+				lstAttr.add(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg);
+			if (isAttributeEligible(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber))
+				lstAttr.add(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber);
 		default:
 			break;
 		}		
