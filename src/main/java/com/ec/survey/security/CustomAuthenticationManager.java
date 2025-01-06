@@ -100,7 +100,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				String organisation = domain;
 				if (domain.equalsIgnoreCase("eu.europa.ec")) {
 					String departmentNumber = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:departmentNumber");
-					organisation = departmentNumber.substring(0, departmentNumber.indexOf('.'));
+					if (departmentNumber.contains(".")) {
+						organisation = departmentNumber.substring(0, departmentNumber.indexOf('.'));
+					} else {
+						organisation = departmentNumber;
+					}
 				}
 				
 				String whiteList = settingsService.get(Setting.EULoginWhitelist);
