@@ -71,9 +71,9 @@ public class FileService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		return (File) session.get(File.class, id);
 	}
-
+	
 	@Transactional(readOnly = true)
-	public File get(String uid) throws FileNotFoundException {
+	public File get(String uid, boolean throwExceptionIfNotFound) throws FileNotFoundException {
 
 		if (uid.contains(Constants.PATH_DELIMITER)) {
 			// the new file system structure has the survey uid as subfolder
@@ -85,10 +85,18 @@ public class FileService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<File> list = query.list();
 		if (list.isEmpty()) {
+			if (!throwExceptionIfNotFound) return null;
+			
 			throw new FileNotFoundException("No file found for uid " + uid);
 		}
 
 		return list.get(0);
+	}
+
+	@Transactional(readOnly = true)
+	public File get(String uid) throws FileNotFoundException {
+
+		return get(uid, true);
 	}
 
 	@Transactional(readOnly = true)

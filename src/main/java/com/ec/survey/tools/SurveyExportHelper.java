@@ -142,7 +142,7 @@ public class SurveyExportHelper {
 				if (image.getUrl() != null && !image.getUrl().contains(sessionService.getContextPath() + "/resources/"))
 				{
 					String fileUID = image.getUrl().substring( image.getUrl().lastIndexOf(Constants.PATH_DELIMITER)+1);
-					File f = fileService.get(fileUID);
+					File f = fileService.get(fileUID, false);
 					if (f != null)
 					{
 						os.putArchiveEntry(new ZipArchiveEntry(fileUID + ".file"));
@@ -217,7 +217,7 @@ public class SurveyExportHelper {
 	    	try {
 				String uid = url.substring(url.lastIndexOf(Constants.PATH_DELIMITER) + 1);
 
-				File fi = fileService.get(uid);
+				File fi = fileService.get(uid, false);
 				if (fi != null) {
 					os.putArchiveEntry(new ZipArchiveEntry(uid + ".file"));
 					IOUtils.copy(new FileInputStream(getFileForObject(fi, session, fileService)), os);

@@ -41,7 +41,7 @@ public class ECFCompetency implements Serializable, Comparable<ECFCompetency>{
 
 	protected static final Logger logger = Logger.getLogger(ECFCompetency.class);
 
-	private ECFCompetency() {
+	public ECFCompetency() {
 
 	}
 

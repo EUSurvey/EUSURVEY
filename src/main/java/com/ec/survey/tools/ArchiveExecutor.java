@@ -29,7 +29,6 @@ import com.ec.survey.model.Form;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ArchiveService;
 import com.ec.survey.service.ExportService;
@@ -256,6 +255,7 @@ public class ArchiveExecutor implements Runnable {
 				} catch (Exception e) {		
 					handleException(e, lastArchive, lastSurvey);					
 					logger.error("Error during archiving of Survey " + lastSurvey.getId() + " " + e.getLocalizedMessage());
+					break;
 				}	
 			}			
 			

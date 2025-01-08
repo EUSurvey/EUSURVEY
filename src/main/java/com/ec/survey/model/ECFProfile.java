@@ -38,7 +38,7 @@ public class ECFProfile implements Serializable, Comparable<ECFProfile> {
 
 	protected static final Logger logger = Logger.getLogger(ECFProfile.class);
 
-	private ECFProfile() {
+	public ECFProfile() {
 
 	}
 

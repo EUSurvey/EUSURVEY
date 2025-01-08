@@ -3,9 +3,9 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.chargeback.OrganisationCharge;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
+import com.ec.survey.tools.ArchiveExecutor;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.CreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.FileUpdater;
@@ -15,15 +15,10 @@ import com.ec.survey.tools.RecreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.UpdateAllOLAPTablesExecutor;
 import com.ec.survey.tools.WeakAuthenticationException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.hibernate.Session;
-import org.hibernate.query.NativeQuery;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -44,12 +39,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/administration")
@@ -194,6 +186,14 @@ public class AdministrationController extends BasicController {
 	public ModelAndView startfileworker(HttpServletRequest request) {
 		fileWorker.run();
 		return new ModelAndView("error/info", Constants.MESSAGE, "file worker started");
+	}
+	
+	@RequestMapping(value = "/startarchiving", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView startarchiving(HttpServletRequest request) {
+		ArchiveExecutor executor = (ArchiveExecutor) context.getBean("archiveExecutor");
+		taskExecutor.execute(executor);		
+		
+		return new ModelAndView("error/info", Constants.MESSAGE, "archive executor started");
 	}
 	
 	@RequestMapping(value = "/deletetempfiles", method = {RequestMethod.GET, RequestMethod.HEAD})
