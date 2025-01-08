@@ -33,7 +33,7 @@ public class ECFCluster implements Serializable {
 	private ECFType ecfType;
 	private List<ECFCompetency> competencies = new ArrayList<>();
 
-	private ECFCluster() {
+	public ECFCluster() {
 
 	}
 

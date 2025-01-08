@@ -5611,6 +5611,9 @@ public class SurveyHelper {
 					List<String> answerTitles = rankingQuestion.getAnswerWithStrippedTitleNoEscape(answerValue);
 					return String.join("; ", answerTitles);
 				} else if (question instanceof ChoiceQuestion) {
+					if (answerValue.equalsIgnoreCase("EVOTE-ALL")) {
+						return "EVOTE-ALL";
+					}
 					int possibleAnswerId = Integer.parseInt(answerValue);
 					ChoiceQuestion choicequestion = (ChoiceQuestion) question;
 					if (choicequestion.getPossibleAnswer(possibleAnswerId) != null) {

@@ -31,7 +31,7 @@ public class ECFExpectedScore implements Serializable {
 
 	protected static final Logger logger = Logger.getLogger(ECFExpectedScore.class);
 
-	private ECFExpectedScore() {
+	public ECFExpectedScore() {
 
 	}
 
