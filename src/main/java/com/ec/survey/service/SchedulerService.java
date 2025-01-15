@@ -22,6 +22,7 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
 import com.ec.survey.tools.AnswerSetAnonymWorker;
 import com.ec.survey.tools.ArchiveExecutor;
+import com.ec.survey.tools.ArchiveFlagExecutor;
 import com.ec.survey.tools.DeleteDraftsUpdater;
 import com.ec.survey.tools.DeleteInvalidStatisticsWorker;
 import com.ec.survey.tools.DeleteSurveyUpdater;
@@ -68,6 +69,9 @@ public class SchedulerService extends BasicService {
 	
 	@Resource(name = "archiveExecutor")
 	private ArchiveExecutor archiveExecutor;
+	
+	@Resource(name = "archiveFlagExecutor")
+	private ArchiveFlagExecutor archiveFlagExecutor;
 	
 	@Resource(name = "deleteDraftsWorker")
 	private DeleteDraftsUpdater deleteDraftsWorker;
@@ -535,6 +539,7 @@ public class SchedulerService extends BasicService {
 	  
 		exportWorker.run();
 		validCodesRemover.run();
+		archiveFlagExecutor.run();
 		archiveExecutor.run();
 		deleteSurveysWorker.run();
 		deleteDraftsWorker.run();
