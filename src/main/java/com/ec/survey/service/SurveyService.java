@@ -2299,6 +2299,7 @@ public class SurveyService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		Survey s = this.getSurvey(id, false, false, false, false);
+		String uid = s.getUniqueId();
 
 		List<Integer> surveyIDs = surveyService.getAllSurveyVersions(s.getShortname(), s.getUniqueId());
 		fileService.deleteFilesForSurveys(s.getUniqueId());
@@ -2314,10 +2315,8 @@ public class SurveyService extends BasicService {
 		// delete draft
 		Map<String, Integer> referencedFiles = s.getReferencedFileUIDs(contextpath);
 		deleteSurveyData(id, true, true, s.getUniqueId(), deleteLogs);
-		session.flush();
 		session.delete(s);
-		session.flush();
-
+	
 		for (Entry<String, Integer> entry : referencedFiles.entrySet()) {
 			if (entry.getValue() == null) {
 				// delete files belonging to images and background documents
@@ -2326,21 +2325,16 @@ public class SurveyService extends BasicService {
 		}
 
 		// delete published versions
-		Survey published = getSurveyByUniqueId(s.getUniqueId(), false, false);
-		if (published != null) {
-			surveyIDs = this.getAllSurveyVersions(published.getId());
-			for (Integer sid : surveyIDs) {
-				s = this.getSurvey(sid, false, false, false, false);
-				referencedFiles = s.getReferencedFileUIDs(contextpath);
-				deleteSurveyData(s.getId(), true, true, s.getUniqueId(), deleteLogs);
-				session.flush();
-				session.delete(s);
-				session.flush();
-				for (Entry<String, Integer> entry : referencedFiles.entrySet()) {
-					if (entry.getValue() == null) {
-						// delete files belonging to images and background documents
-						fileService.deleteIfNotReferenced(entry.getKey(), s.getUniqueId());
-					}
+		surveyIDs = this.getAllPublishedSurveyVersions(uid);
+		for (Integer sid : surveyIDs) {
+			s = this.getSurvey(sid, false, false, false, false);
+			referencedFiles = s.getReferencedFileUIDs(contextpath);
+			deleteSurveyData(s.getId(), true, true, s.getUniqueId(), deleteLogs);
+			session.delete(s);
+			for (Entry<String, Integer> entry : referencedFiles.entrySet()) {
+				if (entry.getValue() == null) {
+					// delete files belonging to images and background documents
+					fileService.deleteIfNotReferenced(entry.getKey(), s.getUniqueId());
 				}
 			}
 		}
