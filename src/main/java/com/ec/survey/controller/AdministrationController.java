@@ -6,6 +6,7 @@ import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
 import com.ec.survey.tools.ArchiveExecutor;
+import com.ec.survey.tools.ArchiveFlagExecutor;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.CreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.FileUpdater;
@@ -194,6 +195,14 @@ public class AdministrationController extends BasicController {
 		taskExecutor.execute(executor);		
 		
 		return new ModelAndView("error/info", Constants.MESSAGE, "archive executor started");
+	}
+	
+	@RequestMapping(value = "/startflagging", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView startflagging(HttpServletRequest request) {
+		ArchiveFlagExecutor executor = (ArchiveFlagExecutor) context.getBean("archiveFlagExecutor");
+		taskExecutor.execute(executor);		
+		
+		return new ModelAndView("error/info", Constants.MESSAGE, "archive flag executor started");
 	}
 	
 	@RequestMapping(value = "/deletetempfiles", method = {RequestMethod.GET, RequestMethod.HEAD})
