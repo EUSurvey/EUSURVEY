@@ -6386,6 +6386,7 @@ public class SurveyService extends BasicService {
 		for (Survey survey: allSurveys) {
 			Date newestAnswerDate = answerService.getNewestAnswerDate(survey.getId());
 			if (newestAnswerDate == null || newestAnswerDate.before(updated)) {
+				initializeSurvey(survey);
 				surveys.add(survey);
 			}
 		}
