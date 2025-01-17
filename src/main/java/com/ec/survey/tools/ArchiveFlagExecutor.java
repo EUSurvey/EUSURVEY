@@ -31,7 +31,7 @@ public class ArchiveFlagExecutor implements Runnable {
 	@Autowired
 	protected MessageSource resources;	
 
-	private static final Logger logger = Logger.getLogger(ArchiveExecutor.class);
+	private static final Logger logger = Logger.getLogger(ArchiveFlagExecutor.class);
 		
 	public void run()
 	{		
@@ -57,7 +57,7 @@ public class ArchiveFlagExecutor implements Runnable {
 				try {
 					archiveService.archiveSurvey(survey, survey.getOwner());
 				} catch (Exception e) {		
-					logger.error("Error during flagging of Survey " + survey.getId() + " " + e.getLocalizedMessage());					
+					logger.error("Error during flagging of Survey " + survey.getId() + " " + e.getLocalizedMessage(), e);					
 				}				
 			}
 			
