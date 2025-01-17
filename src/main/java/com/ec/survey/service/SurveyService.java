@@ -6347,12 +6347,12 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public List<Survey> getSurveysMarkedArchived(int limit) {
+	public List<Survey> getSurveysMarkedArchived(int limit, int skip) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "FROM Survey s WHERE s.isDraft = true AND s.archived = true and s.isDeleted = false";
+		String sql = "FROM Survey s WHERE s.isDraft = true AND s.archived = true and s.isDeleted = false ORDER BY s.id";
 
 		Query<Survey> query = session.createQuery(sql, Survey.class);
-		List<Survey> surveys = query.setReadOnly(true).setMaxResults(limit).list();
+		List<Survey> surveys = query.setReadOnly(true).setFirstResult(skip).setMaxResults(limit).list();
 		return surveys;
 	}
 	
