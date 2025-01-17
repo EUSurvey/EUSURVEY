@@ -479,7 +479,7 @@ public class ContributionController extends BasicController {
 							&& request.getParameter("language.code").length() == 2) {
 						survey = surveyService.getSurvey(origsurvey.getId(), oldAnswerSet.getLanguageCode());
 					}
-					Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
+					Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), false),
 							survey.getLanguage(), resources, contextpath);
 					f.getAnswerSets().add(oldAnswerSet);
 					f.setValidation(validation);
@@ -503,7 +503,7 @@ public class ContributionController extends BasicController {
 							&& request.getParameter("language.code").length() == 2) {
 						survey = surveyService.getSurvey(origsurvey.getId(), oldAnswerSet.getLanguageCode());
 					}
-					Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
+					Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), false),
 							survey.getLanguage(), resources, contextpath);
 					f.getAnswerSets().add(oldAnswerSet);
 					ModelAndView model = new ModelAndView("runner/runner", "form", f);

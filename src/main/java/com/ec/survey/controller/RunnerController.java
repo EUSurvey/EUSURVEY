@@ -796,7 +796,7 @@ public class RunnerController extends BasicController {
 
 		if (survey != null) {
 
-			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
+			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), false),
 					survey.getLanguage(), resources, contextpath);
 
 			String lang = request.getParameter("lang");
