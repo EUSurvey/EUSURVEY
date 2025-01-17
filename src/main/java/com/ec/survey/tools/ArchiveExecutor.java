@@ -41,7 +41,7 @@ public class ArchiveExecutor implements Runnable {
 	
 	public void handleException(Exception e, Archive archive, Survey survey)
 	{
-		logger.error(e.getLocalizedMessage(), e);			
+		logger.error("Error during archiving of Survey " + survey.getId() + ": " + e.getLocalizedMessage(), e);		
 		archive.setError(e.getLocalizedMessage());
 				
 		Session session = sessionFactory.openSession();
@@ -70,35 +70,47 @@ public class ArchiveExecutor implements Runnable {
 		c.add(Calendar.SECOND, Integer.parseInt(limitSeconds));
 		Date endDate = c.getTime();
 		
-		try {		
-			List<Survey> surveys = surveyService.getSurveysMarkedArchived(200);			
+		try {
+			int skip = 0; // used to page through the surveys
 			
-			for (Survey survey : surveys) {
+			while (true) {
+				// end loop when time is over
 				currentDate = new Date();
 				if (currentDate.after(endDate)) {
 					break;
-				}				
+				}
+			
+				List<Survey> surveys = surveyService.getSurveysMarkedArchived(200, skip);		
 				
-				lastSurvey = survey;
-				try {
+				// end loop when all surveys have been archived
+				if (surveys.isEmpty()) break;
+				
+				for (Survey survey : surveys) {
+					currentDate = new Date();
+					if (currentDate.after(endDate)) {
+						break;
+					}				
+					
+					lastSurvey = survey;					
 					lastArchive = archiveService.getActiveArchive(survey.getShortname());
 					
 					if (lastArchive == null || lastArchive.getFinished() || lastArchive.getError() != null) {
 						continue;
 					}
 					
-					archiveService.createArchive(survey, survey.getOwner(), lastArchive);
-				} catch (Exception e) {		
-					handleException(e, lastArchive, lastSurvey);					
-					logger.error("Error during archiving of Survey " + lastSurvey.getId() + " " + e.getLocalizedMessage());
-					break;
-				}	
-			}			
-			
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-		}			
-		
+					archiveService.createArchive(survey, survey.getOwner(), lastArchive);					
+				}
+				
+				skip += 200;			
+			}
+		} catch (Exception e) {	
+			if (lastSurvey != null && lastArchive != null) {
+				handleException(e, lastArchive, lastSurvey);	
+			} else {
+				logger.error( e.getLocalizedMessage(), e);
+			}
+		}	
+				
 		logger.info("archiving of surveys finished");
 	}
 	
