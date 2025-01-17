@@ -320,11 +320,11 @@ public class SurveyExportHelper {
 			    }
 		    }
 
-		    List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), true);
+		    List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), false);
 			addObjectAsFileToOutputStream(translations, "translations.eus", os, session, fileService);
 		    
 		    if (activeSurvey != null) {
-		    	translations = translationService.getTranslationsForSurvey(activeSurvey.getId(), true);
+		    	translations = translationService.getTranslationsForSurvey(activeSurvey.getId(), false);
 				addObjectAsFileToOutputStream(translations, "translations-active.eus", os, session, fileService);
 			    
 			    if (answers) {
@@ -333,7 +333,7 @@ public class SurveyExportHelper {
 			    	for (Integer id : allsurveys) {
 						if (!id.equals(survey.getId()) && !id.equals(activeSurvey.getId()))
 						{
-							translations = translationService.getTranslationsForSurvey(id, true);
+							translations = translationService.getTranslationsForSurvey(id, false);
 							addObjectAsFileToOutputStream(translations, "translations-active-" + id + ".eus", os,
 									session, fileService);
 						}
