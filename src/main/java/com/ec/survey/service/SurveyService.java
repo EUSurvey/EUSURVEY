@@ -2197,6 +2197,17 @@ public class SurveyService extends BasicService {
 		}
 	}
 
+	// special case: old surveys can share logo file references (those lead to db constraint exceptions during deletion)
+	private void clearLogoIfReferencedByOtherSurveys(Survey s) {
+		if (s.getLogo() != null) {
+			List<String> surveyUIDs = getSurveyUIDsWithLogo(s.getLogo().getId());
+			if (surveyUIDs.size() > 1) {
+				// more than one survey uses this logo file
+				s.setLogo(null);
+			}
+		}		
+	}
+
 	private void deleteSurveyData(int id, boolean deleteAnswers, boolean deleteAccesses, String uid,
 			boolean deleteLogs) throws IOException {
 		Session session = sessionFactory.getCurrentSession();
@@ -2314,7 +2325,9 @@ public class SurveyService extends BasicService {
 
 		// delete draft
 		Map<String, Integer> referencedFiles = s.getReferencedFileUIDs(contextpath);
-		deleteSurveyData(id, true, true, s.getUniqueId(), deleteLogs);
+		deleteSurveyData(id, true, true, s.getUniqueId(), deleteLogs);		
+		clearLogoIfReferencedByOtherSurveys(s);
+		
 		session.delete(s);
 	
 		for (Entry<String, Integer> entry : referencedFiles.entrySet()) {
@@ -2330,6 +2343,7 @@ public class SurveyService extends BasicService {
 			s = this.getSurvey(sid, false, false, false, false);
 			referencedFiles = s.getReferencedFileUIDs(contextpath);
 			deleteSurveyData(s.getId(), true, true, s.getUniqueId(), deleteLogs);
+			clearLogoIfReferencedByOtherSurveys(s);
 			session.delete(s);
 			for (Entry<String, Integer> entry : referencedFiles.entrySet()) {
 				if (entry.getValue() == null) {
@@ -2350,6 +2364,14 @@ public class SurveyService extends BasicService {
 		}
 
 		reportingService.addToDo(ToDo.DELETEDSURVEY, s.getUniqueId(), null);
+	}
+
+	@Transactional(readOnly = true)
+	private List<String> getSurveyUIDsWithLogo(Integer id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<String> query = session.createQuery("SELECT DISTINCT s.uniqueId FROM Survey s where s.logo.id = :id", String.class);
+		query.setParameter("id", id);
+		return query.list();
 	}
 
 	private void deleteFileMappings(List<Integer> surveyIDs) {
