@@ -4659,11 +4659,7 @@ public class ManagementController extends BasicController {
 			return null;
 		}
 
-		Survey s = surveyService.getSurvey(Integer.parseInt(id), false, true);
-
-		Survey survey = surveyService.getSurveyInOriginalLanguage(s.getId(), s.getShortname(), s.getUniqueId());
-
-		surveyService.initializeSurvey(survey);
+		Survey s = surveyService.getSurvey(Integer.parseInt(id));
 
 		ResultFilter filter = export.getResultFilter().copy();
 
@@ -4671,7 +4667,7 @@ public class ManagementController extends BasicController {
 			filter.setLanguages(null);
 		}
 
-		ModelAndView results = results(survey, new HashMap<>(), null, survey.getIsDraft(), export.isAllAnswers(),
+		ModelAndView results = results(s, new HashMap<>(), null, s.getIsDraft(), export.isAllAnswers(),
 				filter, true);
 
 		Publication publication = new Publication();
