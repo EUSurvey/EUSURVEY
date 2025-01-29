@@ -36,11 +36,6 @@ function showPublicationExportFailureMessage()
 	showError(message_PublicationExportFailed);
 }
 
-function hideExports()
-{
-	$("#export-available-box").hide(400);
-}
-
 function downloadAnswerPDF(uid)
 {
 	$("#download-answer-pdf-dialog-result").hide();
