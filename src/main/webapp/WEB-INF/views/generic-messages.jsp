@@ -3,15 +3,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
-<div id="export-available-box" class="alert message-success-right hideme">
-	<div style="float: right; margin-left: 10px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-	<div style="float: left; margin: 5px; margin-top: 5px; margin-right: 10px""><img src="${contextpath}/resources/images/check.png" alt="system message icon"></div>
-	<div class="generic-box-text">
-		<spring:message code="label.Export" />&nbsp;<span id="export-available-box-name" style="font-weight: bold;"></span>&nbsp;<spring:message code="label.availableForDownload" /><br />
-		<spring:message code="label.GoTo" />&nbsp;<a class="visiblelink" href="<c:url value="/exports/list"/>"><spring:message code="label.ExportPage" /></a>
-	</div>
-</div>
-
 <div id="messages-box-div" style="display: none">
 	<div id="messages-box">
 		<!-- ko foreach: systemMessages -->

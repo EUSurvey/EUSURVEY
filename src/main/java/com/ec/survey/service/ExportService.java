@@ -286,7 +286,7 @@ public class ExportService extends BasicService {
 			String sql = "SELECT e FROM Export e LEFT JOIN e.survey survey WHERE e.userId = :userId";
 			if (onlynotnotified)
 			{
-				sql += " AND e.state = 2 AND e.notified = false";
+				sql += " AND e.state = 2 AND e.notified = false AND e.survey.archived = false";
 			}
 			
 			query = session.createQuery(sql + " ORDER BY e." + sortKey + " " + (ascending? "ASC" : "DESC"));

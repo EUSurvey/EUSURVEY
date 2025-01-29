@@ -60,15 +60,6 @@
 
 <%@ include file="import-survey-dialog.jsp" %>	
 
-<div id="export-available-box" class="alert message-success-right hideme">
-	<div style="float: right; margin-left: 10px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-	<div style="float: left; margin: 5px; margin-top: 5px; margin-right: 10px"><img src="${contextpath}/resources/images/check.png" alt="system message icon"></div>
-	<div class="generic-box-text">
-		<spring:message code="label.Export" />&nbsp;<span id="export-available-box-name" style="font-weight: bold;"></span>&nbsp;<spring:message code="label.availableForDownload" /><br />
-		<spring:message code="label.GoTo" />&nbsp;<a class="visiblelink" href="<c:url value="/exports/list"/>"><spring:message code="label.ExportPage" /></a>
-	</div>
-</div>
-
 <%@ include file="generic-messages.jsp" %>
 
 <div class="modal" id="download-answer-pdf-dialog" role="dialog">
@@ -130,7 +121,7 @@
 	
 	// global boolean variable in java script 
 	// if true check fornoew exports  
-	window.checkExport = $.parseJSON("${CHECK_EXPORT != null ? CHECK_EXPORT : true}");
+	window.checkExport = $.parseJSON("${CHECK_EXPORT != null ? CHECK_EXPORT : false}");
 	window.setTimeout("checkNewExports()", 4000);
 	
 	window.setTimeout("checkNewMailTasks()", 10000);
@@ -230,12 +221,10 @@
 			  cache: false,
 			  success: function(data)
 			  {
-				  if (data.newname != "0")
+				  if (data.newname != "0") 
 				  {
-					  $("#export-available-box-name").text(data.newname);
-					  $("#export-available-box").show();
-					  window.setTimeout("hideExports()", 5000);
-					  $(".user-info").hide();
+					  var s = '<spring:message code="label.Export" />&nbsp;<b>' + data.newname + '</b> <spring:message code="label.availableForDownload" />. <spring:message code="label.GoTo" />&nbsp;<a class="visiblelink" href="<c:url value="/exports/list"/>"><spring:message code="label.ExportPage" /></a>';
+					  showSuccess(s);
 				  }
 				  // if need to check again for new exports 
 				  window.checkExport = data.checkExport;
