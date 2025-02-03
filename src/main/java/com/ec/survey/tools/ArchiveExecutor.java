@@ -91,7 +91,14 @@ public class ArchiveExecutor implements Runnable {
 						break;
 					}				
 					
-					lastSurvey = survey;					
+					lastSurvey = survey;
+					
+					// skip survey if there is already a failed archiving attempt
+					if (archiveService.hasArchivingFailed(survey.getShortname())) {
+						logger.info("skipping archiving of " + survey.getShortname() + " as there was a previous failed archiving attemp");
+						continue;
+					}
+					
 					lastArchive = archiveService.getActiveArchive(survey.getShortname());
 					
 					if (lastArchive == null || lastArchive.getFinished() || lastArchive.getError() != null) {

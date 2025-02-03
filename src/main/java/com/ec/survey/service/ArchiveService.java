@@ -312,6 +312,19 @@ public class ArchiveService extends BasicService {
 	}
 	
 	@Transactional
+	public boolean hasArchivingFailed(String shortname) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery(
+				"SELECT id FROM Archive a WHERE a.surveyShortname = :shortname and a.error IS NOT NULL")
+				.setString(Constants.SHORTNAME, shortname);
+
+		@SuppressWarnings("unchecked")
+		List<Archive> result = query.setMaxResults(1).list();
+
+		return !result.isEmpty();
+	}
+	
+	@Transactional
 	public Archive getActiveArchive(String shortname) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery(
