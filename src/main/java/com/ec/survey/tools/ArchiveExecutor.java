@@ -105,17 +105,22 @@ public class ArchiveExecutor implements Runnable {
 						continue;
 					}
 					
-					archiveService.createArchive(survey, survey.getOwner(), lastArchive);					
+					try {
+						// this method uses its own transaction, so a RuntimError should not break the session anymore
+						archiveService.createArchive(survey, survey.getOwner(), lastArchive);
+					} catch (Exception e) {	
+						if (lastSurvey != null && lastArchive != null) {
+							handleException(e, lastArchive, lastSurvey);	
+						} else {
+							logger.error( e.getLocalizedMessage(), e);
+						}
+					}	
 				}
 				
 				skip += 200;			
 			}
 		} catch (Exception e) {	
-			if (lastSurvey != null && lastArchive != null) {
-				handleException(e, lastArchive, lastSurvey);	
-			} else {
-				logger.error( e.getLocalizedMessage(), e);
-			}
+			logger.error( e.getLocalizedMessage(), e);
 		}	
 				
 		logger.info("archiving of surveys finished");
