@@ -22,6 +22,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -375,7 +376,7 @@ public class ArchiveService extends BasicService {
 		return result;
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void createArchive(Survey survey, User user, Archive archive) throws Exception
 	{
 		Session session = sessionFactory.getCurrentSession();
@@ -384,7 +385,7 @@ public class ArchiveService extends BasicService {
 		java.io.File folder = fileService.getArchiveFolder(survey.getUniqueId());		
 		java.io.File zip = surveyService.exportSurvey(survey.getShortname(), surveyService, true);				
 		java.io.File target = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + survey.getUniqueId());
-		
+				
 		if (folder.exists())
 		{
 			FileUtils.deleteDirectory(folder);
