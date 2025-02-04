@@ -44,13 +44,13 @@ public class SessionWebApplicationInitializer implements WebApplicationInitializ
             sessionFilter.addMappingForUrlPatterns(null, false, "/*");
             sessionFilter.setInitParameter("order", "1");
         } else {
-            servletContext.log("Redis host not configured. Using Tomcat HTTP Sessions and JavaMelody.");
-            FilterRegistration.Dynamic monitoringFilter = servletContext.addFilter(
-                "monitoring", new net.bull.javamelody.MonitoringFilter()
-            );
-            monitoringFilter.setInitParameter("log", "true");
-            monitoringFilter.setAsyncSupported(true);
-            monitoringFilter.addMappingForUrlPatterns(null, false, "/*");
+//            servletContext.log("Redis host not configured. Using Tomcat HTTP Sessions and JavaMelody.");
+//            FilterRegistration.Dynamic monitoringFilter = servletContext.addFilter(
+//                "monitoring", new net.bull.javamelody.MonitoringFilter()
+//            );
+//            monitoringFilter.setInitParameter("log", "true");
+//            monitoringFilter.setAsyncSupported(true);
+//            monitoringFilter.addMappingForUrlPatterns(null, false, "/*");
         }
     }
 }
