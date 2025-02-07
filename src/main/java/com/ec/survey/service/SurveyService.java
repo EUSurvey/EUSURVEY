@@ -2301,7 +2301,7 @@ public class SurveyService extends BasicService {
 		}
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void delete(int id, boolean deleteLogs, boolean deleteFileMappings) throws Exception {
 		deleteNoTransaction(id, deleteLogs, deleteFileMappings);
 	}
@@ -2322,7 +2322,7 @@ public class SurveyService extends BasicService {
 		if (deleteFileMappings) {
 			deleteFileMappings(surveyIDs);
 		}
-
+		
 		// delete draft
 		Map<String, Integer> referencedFiles = s.getReferencedFileUIDs(contextpath);
 		deleteSurveyData(id, true, true, s.getUniqueId(), deleteLogs);		
