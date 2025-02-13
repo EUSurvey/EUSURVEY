@@ -71,6 +71,7 @@ public class Setting {
 	public static final String EnableChargeback = "EnableChargeback";
 	public static final String NightlyTaskStart = "NightlyTaskStart";
 	public static final String NightlyTaskLimit = "NightlyTaskLimit";
+	public static final String NightlyTaskLimitArchiving = "NightlyTaskLimitArchiving";
 	public static final String ArchiveOlderThan = "ArchiveOlderThan";
 	public static final String ArchiveNotChangedInLast = "ArchiveNotChangedInLast";
 	
