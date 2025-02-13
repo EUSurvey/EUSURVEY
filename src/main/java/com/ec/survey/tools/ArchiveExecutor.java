@@ -63,7 +63,12 @@ public class ArchiveExecutor implements Runnable {
 		Survey lastSurvey = null;
 		Archive lastArchive = null;
 		
-		String limitSeconds = settingsService.get(Setting.NightlyTaskLimit);
+		String limitSeconds = settingsService.get(Setting.NightlyTaskLimitArchiving);
+		
+		if (limitSeconds.equals("0")) {
+			return;
+		}
+		
 		Date currentDate = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(currentDate);

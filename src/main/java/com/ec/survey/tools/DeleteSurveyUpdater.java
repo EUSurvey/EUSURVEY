@@ -47,6 +47,11 @@ public class DeleteSurveyUpdater implements Runnable {
 		logger.info("deleting of surveys started");
 		
 		String limitSeconds = settingsService.get(Setting.NightlyTaskLimit);
+		
+		if (limitSeconds.equals("0")) {
+			return;
+		}
+		
 		Date currentDate = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(currentDate);

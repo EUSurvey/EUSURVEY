@@ -49,7 +49,7 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domainWorker;
-	
+		
 	@Transactional
 	public void step119() {
 		Session session = sessionFactory.getCurrentSession();
@@ -96,7 +96,7 @@ public class SchemaService extends BasicService {
 			Setting s = new Setting();
 			s.setKey(Setting.NightlyTaskLimit);
 			s.setValue("60");
-			s.setFormat("minutes");
+			s.setFormat("seconds");
 			session.saveOrUpdate(s);
 		}
 	
