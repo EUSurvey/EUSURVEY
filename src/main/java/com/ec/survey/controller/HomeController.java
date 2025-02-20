@@ -1,16 +1,13 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.service.mapping.PaginationMapper;
-import com.ec.survey.tools.AnswerExecutor;
-import com.ec.survey.tools.Constants;
-import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.QuizExecutor;
-import com.ec.survey.tools.Ucs2Utf8;
+import com.ec.survey.tools.*;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -679,7 +676,7 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/home/editcontribution")
-	public String editcontribution (HttpServletRequest request, Locale locale, Model model) {	
+	public String editcontribution (HttpServletRequest request, Locale locale, Model model) throws ForbiddenURLException {
 		model.addAttribute("lang", locale.getLanguage());
 		model.addAttribute("runnermode", true);
 		
@@ -687,6 +684,8 @@ public class HomeController extends BasicController {
 		if (code == null)
 		{
 			code = "";
+		} else if (!Tools.isUUID(code)) {
+			throw new ForbiddenURLException();
 		}
 		model.addAttribute("uniqueid", code);
 		

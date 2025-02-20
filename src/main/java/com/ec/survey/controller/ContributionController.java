@@ -23,13 +23,7 @@ import com.ec.survey.model.ECFProfile;
 import com.ec.survey.model.survey.ecf.ECFIndividualResult;
 import com.ec.survey.service.SelfAssessmentService;
 import com.ec.survey.service.ValidCodesService;
-import com.ec.survey.tools.Constants;
-import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.NotAgreedToPsException;
-import com.ec.survey.tools.NotAgreedToTosException;
-import com.ec.survey.tools.QuizHelper;
-import com.ec.survey.tools.SurveyHelper;
-import com.ec.survey.tools.WeakAuthenticationException;
+import com.ec.survey.tools.*;
 
 import com.ec.survey.tools.activity.ActivityRegistry;
 
@@ -282,6 +276,10 @@ public class ContributionController extends BasicController {
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
 			InvalidURLException, InterruptedException, IOException {
 
+		if (!Tools.isUUID(code)) {
+			throw new ForbiddenURLException();
+		}
+
 		AnswerSet answerSet;
 		String draftid = "";
 		if (isdraft) {
@@ -393,7 +391,6 @@ public class ContributionController extends BasicController {
 				model.addObject("isdelphipage", true);
 				model.addObject("iseditcontribution", true);
 			}
-			
 			
 			if (f.getSurvey().getIsSelfAssessment() && isPDF) {
 				selfassessmentService.initializeForm(f, invisibleElements);
