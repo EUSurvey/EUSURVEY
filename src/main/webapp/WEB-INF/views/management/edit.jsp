@@ -40,6 +40,10 @@
 			${form.survey.skin.getCss()}
 		</style>
 	</c:if>
+
+	<script type="text/javascript">
+	    const OPERATION_EXECUTED = '<spring:message code="info.OperationExecuted" />';
+	</script>
 </head>
 <body id="surveyeditor">
 	
@@ -190,10 +194,10 @@
 								<li title='<spring:message code="form.SingleChoice.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable quiz"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
 								<li title='<spring:message code="form.MultipleChoice.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable quiz"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
 								<li title="<spring:message code="form.NumberSlider.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
+								<li title="<spring:message code="form.Matrix.Tooltip" />&nbsp;<spring:message code="form.Matrix.TooltipQuiz" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_matrix" class="toolboxitem matrixitem draggable quiz"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>
 								<li title="<spring:message code="form.Date.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_date" class="toolboxitem dateitem draggable quiz"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
 								<li title="<spring:message code="form.Time.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 								<li title="<spring:message code="form.RankingQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
-								<li title="<spring:message code="form.Matrix.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_matrix" class="toolboxitem matrixitem draggable"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>
 								<li title="<spring:message code="form.Table.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_tableelement" class="toolboxitem mytableitem draggable"><span class="glyphicon glyphicon-list"></span> <spring:message code="form.Table" /></li>
 							</c:when>
 							<c:when test="${form.survey.isEVote}">
@@ -371,6 +375,11 @@
 					<!--  ko if: Type() == 'saanswers' -->
 						<!-- ko template: { name: 'saanswers-template' } --><!-- /ko -->
 					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'matrixanswerquiz' -->
+						<!-- ko template: { name: 'matrixanswerquiz-template' } --><!-- /ko -->
+					<!-- /ko -->
+					
 				<!-- /ko -->
 			</table>
 		</div>

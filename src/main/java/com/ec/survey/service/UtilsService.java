@@ -41,7 +41,7 @@ public class UtilsService extends BasicService {
         result.getOtherEUIs().put("ACER",resources.getMessage("domain.eu.europa.acer", null, locale));
         result.getOtherEUIs().put("ARTEMIS",resources.getMessage("domain.eu.europa.artemis", null, locale));
         result.getOtherEUIs().put("CLEANSKY",resources.getMessage("domain.eu.europa.cleansky", null, locale));
-        result.getOtherEUIs().put("COR",resources.getMessage("domain.eu.europa.cor", null, locale));
+        result.getOtherEUIs().put("CDR",resources.getMessage("domain.eu.europa.cor", null, locale));
         result.getOtherEUIs().put("CPVO",resources.getMessage("domain.eu.europa.cpvo", null, locale));
         result.getOtherEUIs().put("CONSILIUM",resources.getMessage("domain.eu.europa.consilium", null, locale));
         result.getOtherEUIs().put("CS",resources.getMessage("domain.eu.europa.cs", null, locale));

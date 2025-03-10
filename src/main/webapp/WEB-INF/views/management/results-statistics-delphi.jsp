@@ -31,23 +31,25 @@
 						<td></td>
 					</tr>
 					
-					<c:forEach items="${form.getSurvey().getElements()}" var="element" varStatus="loop">
-						<c:choose>
-							<c:when test="${element.getType() == 'Section'}">
-								<tr>
-									<td style="font-weight: bold">${element.getStrippedTitleNoEscape()}</td>
-									<td class="statDelphi" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-									<td></td>
-								</tr>
-							</c:when>
-							<c:when test="${element.isDelphiElement()}">
-								<tr>
-									<td style="padding-left: 20px;">${element.getStrippedTitleNoEscape()}</td>
-									<td class="statDelphi" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-									<td class="statDelphiMedian" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
-								</tr>
-							</c:when>
-						</c:choose>			
+					<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="element" varStatus="loop">
+						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
+							<c:choose>
+								<c:when test="${element.getType() == 'Section'}">
+									<tr>
+										<td style="font-weight: bold">${element.getStrippedTitleNoEscape()}</td>
+										<td class="statDelphi" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+										<td></td>
+									</tr>
+								</c:when>
+								<c:when test="${element.isDelphiElement()}">
+									<tr>
+										<td style="padding-left: 20px;">${element.getStrippedTitleNoEscape()}</td>
+										<td class="statDelphi" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+										<td class="statDelphiMedian" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+									</tr>
+								</c:when>
+							</c:choose>		
+						</c:if>
 					</c:forEach>
 				</tbody>
 			</table>

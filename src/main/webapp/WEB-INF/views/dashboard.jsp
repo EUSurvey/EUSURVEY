@@ -76,7 +76,7 @@
 						</div>	
 				
 					<c:if test="${USER.formPrivilege > 0 && USER.canCreateSurveys}">
-						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived' && sharedOnly() == false">
+						<div style="text-align: center" data-bind="visible: ((lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && (surveys() == null || surveys().length == 0) && (archives() == null || archives().length == 0)) && sharedOnly() == false">
 							<a class="btn btn-primary" onclick="showCreateSurveyDialog();"><spring:message code="label.CreateFirstSurvey" /></a>
 						</div>
 					</c:if>
@@ -85,7 +85,7 @@
 							<spring:message code="info.NoSharedSurveys" />
 						</div>
 							
-						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || (surveys() != null && surveys().length != 0)">
+						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || (surveys() != null && surveys().length != 0) || (archives() != null && archives().length != 0)">
 														
 							<div class="row" style="margin-bottom: 10px;">				
 								<div class="col-md-6" >
@@ -623,20 +623,30 @@
 															<!-- ko if: finished && error == null && replies > 0 -->
 															
 															<!-- ko if: surveyHasUploadedFiles -->
-																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadzip" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlszip/' + id}"><img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="zip"></a>
+																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.DownloadzipXls" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlszip/' + id}"><img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xls-zip"></a>
+																<!-- ko if: hasXlsxResults -->
+																	<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.DownloadzipXlsx" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlsxzip/' + id}"><img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xlsx-zip"></a>
+																<!-- /ko -->
 															<!-- /ko -->
 															
 															<!-- ko if: !surveyHasUploadedFiles -->
 																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxls/' + id}"><img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls"></a>
+																<!-- ko if: hasXlsxResults -->
+																	<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlsx/' + id}"><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" alt="xlsx"></a>
+																<!-- /ko -->
 															<!-- /ko -->
 															
 															<!-- /ko -->	
 														</td>
 														<td>
 															<!-- ko if: finished && error == null && replies > 0 -->
-															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statspdf/' + id}"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" style="margin: 0px;"></a>
-															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statsxls/' + id}"><img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" style="margin: 0px;"></a>
-															<!-- /ko -->	
+																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statspdf/' + id}"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" style="margin: 0px;"></a>
+																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statsxls/' + id}"><img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" style="margin: 0px;"></a>
+
+																<!-- ko if: hasXlsxResults -->
+																	<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statsxlsx/' + id}"><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" alt="xlsx" style="margin: 0px;"></a>
+																<!-- /ko -->
+															<!-- /ko -->
 														</td>
 														<td>
 															<!-- ko if: finished && error == null -->

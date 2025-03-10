@@ -190,6 +190,17 @@ table {
 	background-color: transparent;
 }
 
+.unstyledbuttonBlack {
+	border: 0;
+	padding: 0;
+	background-color: transparent;
+}
+
+.unstyledbuttonBlack:disabled {
+	color: #ccc;
+	cursor: not-allowed;
+}
+
 .unstyledbuttonlanguage { 
 	border: 0;
 	background-color: transparent; 
@@ -889,7 +900,8 @@ select {
 	border-color: #fff !important;
 }
 
-.nav > li > a:hover {
+.nav > li > a:hover,
+.nav > li > a:focus {
 	background-color: #999 !important; 
 	border-color: #777 !important;
 }
@@ -1658,7 +1670,7 @@ div.medianpa {
 	color: #f00;
 }
 
-.validation-error {
+.validation-error, .validation-error-server {
 	color: #f00;
 	font-size: 13px;
 	z-index: 1 !important;
@@ -1712,6 +1724,19 @@ div.medianpa {
 {
 	margin-left: 3px;
 	margin-bottom: 8px;	
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+	display: none;
+}
+
+.ui-datepicker-month, select.ui-datepicker-month, .ui-datepicker-year, select.ui-datepicker-year {
+	color: #000 !important;
+	background-color: #e7f3fd !important;
+}
+
+.ui-datepicker-title {
+	color: #000 !important;
 }
 
 .gallery-table td {
@@ -1844,15 +1869,18 @@ div.medianpa {
 	min-width: 200px;
 }
 
-.single-choice:not(.complex) {
+.single-choice {
 	border: 1px solid #ddd; 
-	display: inline-block;
 	background-color: #fff;
+	cursor: pointer;
+}
+
+.single-choice:not(.complex) {	
+	display: inline-block;	
 	max-height: 85px;
 	width: auto;
 	min-width: 100px;
-	overflow-x: auto;
-	cursor: pointer;
+	overflow-x: auto;	
 }
 
 .complex.single-choice {

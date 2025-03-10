@@ -92,14 +92,14 @@
 			                xhr.crossDomain = true;
 			            },
 			            success: function (data, textStatus, request) {
-			            	EuCaptchaCookies = getCaptchaUrl.getResponseHeader("original-cookie");
+			            	//EuCaptchaCookies = getCaptchaUrl.getResponseHeader("original-cookie");
 			                const jsonData = data;
 			                $("#captchaImg").attr("src", "data:image/png;base64," + jsonData.captchaImg);
 			                $("#captchaImg").attr("captchaId", jsonData.captchaId);
 			                $("#audioCaptcha").attr("src", "data:audio/wav;base64," + jsonData.audioCaptcha);
 			                $('#captcha_id').val(jsonData.captchaId);
 			                $('#captcha_useaudio').val(false);
-			                $('#captcha_original_cookies').val(EuCaptchaCookies);
+			                //$('#captcha_original_cookies').val(EuCaptchaCookies);
 			            }
 			        });
 				</c:when>
@@ -123,7 +123,7 @@
 			            beforeSend: function (xhr) {
 			                xhr.setRequestHeader("Accept", "application/json");
 			                xhr.setRequestHeader("Content-Type", "application/json");
-			                xhr.setRequestHeader("original-cookie", EuCaptchaCookies);
+			                //xhr.setRequestHeader("original-cookie", EuCaptchaCookies);
 			                xhr.withCredentials = true;
 			            },
 			            success: function (data) {
@@ -202,7 +202,7 @@
 			let language = "Change Language ...";
 			let useAudio = false;
 			let EuCaptchaToken;
-			let EuCaptchaCookies;
+			//let EuCaptchaCookies;
 	
 			let serverprefix = "<c:out value="${captchaServerPrefix}"/>";
 	

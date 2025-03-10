@@ -169,6 +169,11 @@
 
 		var surveyElement = $(element).closest(".survey-element");
 		$(surveyElement).find("a[data-type='delphisavebutton']").removeClass("disabled");
+
+		if (responseJSON.files.length == 0) {
+			$(surveyElement).removeClass("answered");
+			updateProgress();
+		}
 		
 		for (var i = 0; i < responseJSON.files.length; i++) {
 			var f = responseJSON.files[i];

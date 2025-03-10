@@ -38,6 +38,7 @@ import org.hibernate.annotations.FetchMode;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * This class represents a survey. It contains a list of elements that represent
@@ -58,7 +59,6 @@ final public class Survey implements java.io.Serializable {
 	public static final String CONFIRMATIONLINK = "CONFIRMATIONLINK";
 	public static final String INTRODUCTION = "INTRODUCTION";
 	public static final String LOGOTEXT = "LOGOTEXT";
-	public static final String IPMINTRODUCTION = "IPMINTRODUCTION";
 	public static final String HELP = "HELP";
 	public static final String QUIZWELCOMEMESSAGE = "QUIZWELCOMEMESSAGE";
 	public static final String QUIZRESULTSMESSAGE = "QUIZRESULTSMESSAGE";
@@ -71,6 +71,11 @@ final public class Survey implements java.io.Serializable {
 	public static final String MOTIVATIONPOPUPTEXT = "Motivation Text";
 	public static final Integer MOTIVATIONPOPUPPROGRESS  = 50;
 	public static final Integer MOTIVATIONPOPUPTIME = 20;
+
+	public enum ReportEmailFrequency
+	{
+		Never, Daily, Weekly, Monthly
+	}
 
 	private Integer id;
 	private String uniqueId;
@@ -177,6 +182,9 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isUseMaxNumberContributionLink = false;
 	private String maxNumberContributionLink = "";
 	private Boolean sendConfirmationEmail = false;
+	private Boolean sendReportEmail = false;
+	private ReportEmailFrequency reportEmailFrequency = ReportEmailFrequency.Never;
+	private String reportEmails = "";		// String with mails separated by semicolons to avoid needing to store mails in separate table
 	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
 	private Boolean isDelphiShowStartPage = true;
 	private Boolean isDelphiShowAnswers = false;
@@ -206,6 +214,7 @@ final public class Survey implements java.io.Serializable {
 	private String validator;
 	private String validationCode;
 	private Boolean validated;
+	private String webhook = "";
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1747,19 +1756,20 @@ final public class Survey implements java.io.Serializable {
 
 	@Transient
 	public String geteVoteTemplateTitle() {
-		switch(eVoteTemplate){
-			case "b":
-				return "label.Brussels";
-			case "i":
-				return "label.IspraSeville";
-			case "l":
-				return "label.Luxembourg";
-			case "o":
-				return "label.OutsideCommunity";
+		if (eVoteTemplate != null) {
+			switch (eVoteTemplate) {
+				case "b":
+					return "label.Brussels";
+				case "i":
+					return "label.IspraSeville";
+				case "l":
+					return "label.Luxembourg";
+				case "o":
+					return "label.OutsideCommunity";
+			}
 		}
 		return "label.Standard";
 	}
-	
 	
 	@Transient
 	public String serialize(boolean elementOrderOnly) {
@@ -1854,6 +1864,9 @@ final public class Survey implements java.io.Serializable {
 		copy.audience = audience;
 		copy.automaticPublishing = automaticPublishing;
 		copy.sendConfirmationEmail = sendConfirmationEmail;
+		copy.sendReportEmail = sendReportEmail;
+		copy.reportEmailFrequency = reportEmailFrequency;
+		copy.reportEmails = reportEmails;
 		copy.setStart(start);
 		copy.setEnd(end);
 		copy.introduction = Tools.filterHTML(introduction);
@@ -1947,6 +1960,7 @@ final public class Survey implements java.io.Serializable {
 		copy.codaWaiting = codaWaiting;
 		copy.setOrganisation(organisation);
 		copy.setValidator(validator);
+		copy.setWebhook(webhook);
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -2691,6 +2705,33 @@ final public class Survey implements java.io.Serializable {
 		this.sendConfirmationEmail = sendConfirmationEmail  != null ? sendConfirmationEmail : false;
 	}
 
+	@Column(name = "SENDREPORT")
+	public Boolean getSendReportEmail() {
+		return sendReportEmail  != null ? sendReportEmail : false;
+	}
+
+	public void setSendReportEmail(Boolean sendReportEmail) {
+		this.sendReportEmail = sendReportEmail  != null ? sendReportEmail : false;
+	}
+
+	@Column(name = "SENDREPORTFREQUENCY")
+	public ReportEmailFrequency getReportEmailFrequency() {
+		return reportEmailFrequency  != null ? reportEmailFrequency : ReportEmailFrequency.Never;
+	}
+
+	public void setReportEmailFrequency(ReportEmailFrequency reportEmailFrequency) {
+		this.reportEmailFrequency = reportEmailFrequency;
+	}
+
+	@Column(name = "SENDREPORTEMAILS")
+	public String getReportEmails() {
+		return reportEmails != null ? reportEmails : "";
+	}
+
+	public void setReportEmails(String reportEmails) {
+		this.reportEmails = reportEmails;
+	}
+
 	public void reorderElementsByPosition() {
 		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
 	}
@@ -2866,6 +2907,15 @@ final public class Survey implements java.io.Serializable {
 
 	public void setValidated(Boolean validated) {
 		this.validated = validated != null ? validated : false;;
+	}
+	
+	@Column(name = "WEBHOOK")
+	public String getWebhook() {
+		return webhook;
+	}
+
+	public void setWebhook(String webhook) {
+		this.webhook = webhook;
 	}
 
 	public Integer getMaxPrefVotes() {

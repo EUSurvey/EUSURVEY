@@ -20,7 +20,7 @@ input[type=radio]:focus + .choice-button-label {
 	outline-offset: -3px;
 }
 
-.btn-primary:focus, .pagebutton.active a:focus, .boxlink:focus {
+.btn-primary:focus, .pagebutton.active a:focus, #publicationtab a:focus, .boxlink:focus {
 	color: #fff !important;
 }
 

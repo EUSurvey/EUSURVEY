@@ -335,6 +335,11 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 
 			webserviceTask.setDone(true);
 			webserviceService.save(webserviceTask);
+			
+			if (webserviceTask.getHook() != null && webserviceTask.getHook().length() > 0) {
+				String hook = webserviceTask.getHook().replace("TASKID", webserviceTask.getId().toString());
+				webserviceService.callHook(hook);
+			}
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

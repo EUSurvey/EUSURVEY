@@ -61,10 +61,10 @@
 				<tbody data-bind="foreach: scoreCard().scores()">
 					<tr>
 						<td>
-							<span class="content" data-bind="text: criterionName" style="word-break: break-all;" </span>
+							<span class="content" data-bind="text: criterionName" style="word-break: break-all;"></span>
 						</td>
 						<td>
-							<input class="form-control number" style="maxlength=4" type="number" oninput="this.value = Math.min(Math.abs(Math.round(this.value)), 1000);" min="0" max="1000" step="1" data-bind="value: score, disable: notRelevant" />
+							<input class="form-control number" type="number" step="any" oninput="(this.value > 1000.00) ? (this.value = 1000) : ''" min="0" max="1000" data-bind="value: score, disable: notRelevant" />
 						</td>
 						<td style="vertical-align: middle">
 							<input type="checkbox" data-bind="checked: notRelevant" />
@@ -89,7 +89,7 @@
 
 <script type="text/javascript"> 
 	var scoresSaved = '<spring:message code="info.ScoresSaved" />';
-	
+
 	function saScoreCardViewModel() {
 		this.datasetID = ko.observable(0);
 		this.scores = ko.observableArray([]);

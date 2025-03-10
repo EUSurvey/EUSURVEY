@@ -17,9 +17,11 @@ import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.UpdateAllOLAPTablesExecutor;
 import com.ec.survey.tools.WeakAuthenticationException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -234,13 +236,17 @@ public class AdministrationController extends BasicController {
 	            	
 	            	List<String> codes = surveyService.getLanguageCodes();
 	            	List<Language> newLanguages = new ArrayList<>();
-	            	
-	            	HSSFWorkbook wb = new  HSSFWorkbook(inputStream);	            	
-	            	HSSFSheet sheet = wb.getSheetAt(0);
+					Workbook wb;
+					if (file.getName().endsWith("xlsx")) {
+						wb = new XSSFWorkbook(inputStream);
+					} else {
+						wb = new HSSFWorkbook(inputStream);
+					}
+	            	Sheet sheet = wb.getSheetAt(0);
 	            	int rows = sheet.getPhysicalNumberOfRows();
 	            	
 	            	for (int r = 0; r < rows; r++) {
-						HSSFRow row = sheet.getRow(r);
+						Row row = sheet.getRow(r);
 						if (row == null) {
 							continue;
 						}

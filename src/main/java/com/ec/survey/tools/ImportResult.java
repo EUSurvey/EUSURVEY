@@ -19,7 +19,6 @@ public class ImportResult {
 	
 	private Survey survey;
 	private Survey activeSurvey;
-	private boolean isFromIPM;
 	private boolean invalidCodeFound;
 	private List<Translations> translations;
 	private List<Translations> activeTranslations;
@@ -90,12 +89,6 @@ public class ImportResult {
 	}
 	public void setFiles(Map<Integer, List<File>> files) {
 		this.files = files;
-	}
-	public boolean isFromIPM() {
-		return isFromIPM;
-	}
-	public void setFromIPM(boolean isFromIPM) {
-		this.isFromIPM = isFromIPM;
 	}
 	public Map<String, Integer> getOriginalIdsToNewIds() {
 		return originalIdsToNewIds;

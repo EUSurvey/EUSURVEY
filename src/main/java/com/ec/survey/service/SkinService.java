@@ -19,7 +19,13 @@ public class SkinService extends BasicService {
 		Query<Skin> query = session.createQuery("FROM Skin s WHERE s.isPublic = true OR s.owner.id = :userId", Skin.class).setParameter("userId", userId);
 		return orderSkins(query.list());
 	}
-	
+
+	@Transactional(readOnly = true)
+	public List<Skin> getOwned(int userId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<Skin> query = session.createQuery("FROM Skin s WHERE s.owner.id = :userId", Skin.class).setParameter("userId", userId);
+		return orderSkins(query.list());
+	}
 
 	@Transactional(readOnly = true)
 	public List<Skin> getAllButEC(int userId) {

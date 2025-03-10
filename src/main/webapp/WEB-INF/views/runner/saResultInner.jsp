@@ -9,7 +9,7 @@
 			<div id="saresults" class="fullpageform" style="max-width: 1000px; margin-left: auto; margin-right: auto;">
 		</c:when>
 		<c:when test="${responsive != null}">
-			<div id="saresults" style="padding-top: 40px;">
+			<div id="saresults" style="padding: 5px; padding-top: 40px; max-width: 100%; overflow-x: hidden; overflow-wrap: anywhere;">
 		</c:when>
 		<c:otherwise>
 			<div id="saresults">
@@ -150,7 +150,7 @@
 		
 		<c:if test="${SAReportConfiguration.performanceTable}">
 			<!-- ko if: selectedDataset() > 0 -->
-			<div style="margin-top: 40px; width: 600px; margin-left: auto; margin-right: auto;">
+			<div style="margin-top: 40px; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
 				<h2>${form.getMessage("label.SAYourOwnValuesPriorities")}</h2>
 				<table class="table table-bordered table-striped" style="page-break-inside: avoid; margin-top: 10px; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
 					<thead>
@@ -285,7 +285,17 @@
 			</div>
 		</div>
 		
-		<script type="text/javascript">	
+		<script type="text/javascript">
+
+			function truncateText(text, length) {
+				if (text.length <= length) {
+					return text;
+				}
+
+				return text.substring(0, length) + '\u2026'
+			}
+
+			let MAX_NAME_LENGTH = 10;
 		
 			const separateCharts = ${SAReportConfiguration.separateCompetencyTypes};
 			const limitTableLines = ${SAReportConfiguration.limitTableLines};
@@ -318,7 +328,7 @@
 							root.values.removeAll();
 							root.comparisonValues.removeAll();
 							if (result.comparisonDataset != null) {
-								root.comparisonDatasetName(result.comparisonDataset.name);
+								root.comparisonDatasetName(truncateText(result.comparisonDataset.name,MAX_NAME_LENGTH));
 							}
 							root.criteria(result.criteria);
 							for (let i = 0; i < result.values.length; i++) {
@@ -352,7 +362,7 @@
 						if (result.comparisonDataset != null) {
 							datasets.push(
 								{
-							      label: result.comparisonDataset.name,
+							      label: truncateText(result.comparisonDataset.name,MAX_NAME_LENGTH),
 							      data: result.comparisonValues,
 							      borderColor: 'rgba(255, 0, 0, 1)',
 							      backgroundColor: 'rgba(255, 0, 0, 0.25)',
@@ -372,7 +382,7 @@
 						if (result.comparisonDataset != null) {
 							datasets.push(
 								{
-							      label: result.comparisonDataset.name,
+							      label: truncateText(result.comparisonDataset.name,MAX_NAME_LENGTH),
 							      data: result.comparisonValuesForTypes[type],
 							      borderColor: 'rgba(255, 0, 0, 1)',
 							      backgroundColor: 'rgba(255, 0, 0, 0.25)',
@@ -563,7 +573,7 @@
 						if (result.length < index + 1) {
 							result.push([]);							
 						}
-						result[index].push(root.criteria()[i].name);						
+						result[index].push(truncateText(root.criteria()[i].name, MAX_NAME_LENGTH));
 					}		
 					
 					console.log(result)

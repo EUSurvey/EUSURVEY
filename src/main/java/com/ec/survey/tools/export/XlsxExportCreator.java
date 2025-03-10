@@ -1,14 +1,15 @@
 package com.ec.survey.tools.export;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 import com.ec.survey.model.evote.DHondtEntry;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
@@ -23,10 +24,20 @@ import static java.lang.String.format;
 
 @Service("xlsxExportCreator")
 @Scope("prototype")
-public class XlsxExportCreator {
+public class XlsxExportCreator extends CommonExcelExportCreator {
+
+	@Override
+	Workbook createWorkbook() {
+		return new SXSSFWorkbook();
+	}
+
+	@Override
+	String getFileExtension() {
+		return ".xlsx";
+	}
 
 	public static byte[] createSeatTestSheet(SeatCounting result) throws IOException {
-		Workbook workbook = new XSSFWorkbook();
+		Workbook workbook = new SXSSFWorkbook();
 		Sheet sheet = workbook.createSheet("Testdata");
 		
 		int rowCounter = 0;
@@ -104,127 +115,81 @@ public class XlsxExportCreator {
 		Font boldFont = workbook.createFont();
 		boldFont.setBold(true);
 
-		percentStyle = workbook.createCellStyle();
+		percentStyle = createCellStyle(workbook);
 		percentStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
-		percentStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		percentStyle.setBorderTop(CellStyle.BORDER_THIN);
-		percentStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		percentStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		percentStyle.setBorderRight(CellStyle.BORDER_THIN);
-		
-		boldPercentStyle = workbook.createCellStyle();
+
+		boldPercentStyle = createCellStyle(workbook);
 		boldPercentStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
-		boldPercentStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		boldPercentStyle.setBorderTop(CellStyle.BORDER_THIN);
-		boldPercentStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		boldPercentStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		boldPercentStyle.setBorderRight(CellStyle.BORDER_THIN);
 		boldPercentStyle.setFont(boldFont);
 
-		greyStyle = workbook.createCellStyle();
+		greyStyle = createCellStyle(workbook);
 		Font greyFont = workbook.createFont();
 		greyFont.setColor(IndexedColors.GREY_50_PERCENT.index);
 		greyStyle.setFont(greyFont);
-		greyStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		greyStyle.setBorderTop(CellStyle.BORDER_THIN);
-		greyStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		greyStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		greyStyle.setBorderRight(CellStyle.BORDER_THIN);
 
-		boldgreyStyle = workbook.createCellStyle();
+		boldgreyStyle = createCellStyle(workbook);
 		Font boldgreyFont = workbook.createFont();
 		boldgreyFont.setColor(IndexedColors.GREY_50_PERCENT.index);
 		boldgreyFont.setBold(true);
 		boldgreyStyle.setFont(boldgreyFont);
-		boldgreyStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		boldgreyStyle.setBorderTop(CellStyle.BORDER_THIN);
-		boldgreyStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		boldgreyStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		boldgreyStyle.setBorderRight(CellStyle.BORDER_THIN);
 
-		redStyle = workbook.createCellStyle();
+		redStyle = createCellStyle(workbook);
 		Font redFont = workbook.createFont();
 		redFont.setColor(Font.COLOR_RED);
 		redStyle.setFont(redFont);
-		redStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		redStyle.setBorderTop(CellStyle.BORDER_THIN);
-		redStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		redStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		redStyle.setBorderRight(CellStyle.BORDER_THIN);
-		
-		redPercentStyle = workbook.createCellStyle();
+
+		redPercentStyle = createCellStyle(workbook);
 		redPercentStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
 		redPercentStyle.setFont(redFont);
-		redPercentStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		redPercentStyle.setBorderTop(CellStyle.BORDER_THIN);
-		redPercentStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		redPercentStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		redPercentStyle.setBorderRight(CellStyle.BORDER_THIN);
 
-		yellowBackgroundStyle = (XSSFCellStyle) workbook.createCellStyle();
-		String hexColorYellow = "FFC000";
-		XSSFColor colorYellow = new XSSFColor(Hex.decodeHex(hexColorYellow.toCharArray()));
+		yellowBackgroundStyle = (XSSFCellStyle) createCellStyle(workbook);
+		XSSFColor colorYellow = new XSSFColor(new Color(0xFFC000));
 		yellowBackgroundStyle.setFillForegroundColor(colorYellow);
 		yellowBackgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		yellowBackgroundStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		yellowBackgroundStyle.setBorderTop(CellStyle.BORDER_THIN);
-		yellowBackgroundStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		yellowBackgroundStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		yellowBackgroundStyle.setBorderRight(CellStyle.BORDER_THIN);
 
-		greenBackgroundStyle = (XSSFCellStyle) workbook.createCellStyle();
-		String hexColorGreen = "00E266";
-		XSSFColor colorGreen = new XSSFColor(Hex.decodeHex(hexColorGreen.toCharArray()));
+		greenBackgroundStyle = (XSSFCellStyle) createCellStyle(workbook);
+		XSSFColor colorGreen = new XSSFColor(new Color(0x00E266));
 		greenBackgroundStyle.setFillForegroundColor(colorGreen);
 		greenBackgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		greenBackgroundStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		greenBackgroundStyle.setBorderTop(CellStyle.BORDER_THIN);
-		greenBackgroundStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		greenBackgroundStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		greenBackgroundStyle.setBorderRight(CellStyle.BORDER_THIN);
 
-		purpleBackgroundStyle = (XSSFCellStyle) workbook.createCellStyle();
-		String hexColorPurple = "E064E3";
-		XSSFColor colorPurple = new XSSFColor(Hex.decodeHex(hexColorPurple.toCharArray()));
+		purpleBackgroundStyle = (XSSFCellStyle) createCellStyle(workbook);
+		XSSFColor colorPurple = new XSSFColor(new Color(0xE064E3));
 		purpleBackgroundStyle.setFillForegroundColor(colorPurple);
 		purpleBackgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		purpleBackgroundStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		purpleBackgroundStyle.setBorderTop(CellStyle.BORDER_THIN);
-		purpleBackgroundStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		purpleBackgroundStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		purpleBackgroundStyle.setBorderRight(CellStyle.BORDER_THIN);
 
-		redBackgroundStyle = (XSSFCellStyle) workbook.createCellStyle();
-		String hexColorRed = "FFABAB";
-		XSSFColor colorRed = new XSSFColor(Hex.decodeHex(hexColorRed.toCharArray()));
+		redBackgroundStyle = (XSSFCellStyle) createCellStyle(workbook);
+		XSSFColor colorRed = new XSSFColor(new Color(0xFFABAB));
 		redBackgroundStyle.setFillForegroundColor(colorRed);
 		redBackgroundStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		redBackgroundStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		redBackgroundStyle.setBorderTop(CellStyle.BORDER_THIN);
-		redBackgroundStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		redBackgroundStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		redBackgroundStyle.setBorderRight(CellStyle.BORDER_THIN);
-		
-		borderStyle = workbook.createCellStyle();
-		borderStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		borderStyle.setBorderTop(CellStyle.BORDER_THIN);
-		borderStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		borderStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		borderStyle.setBorderRight(CellStyle.BORDER_THIN);
-		
-		boldStyle = workbook.createCellStyle();
+
+		borderStyle = createCellStyle(workbook);
+
+		boldStyle = createCellStyle(workbook);
 		boldStyle.setFont(boldFont);
-		boldStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		boldStyle.setBorderTop(CellStyle.BORDER_THIN);
-		boldStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		boldStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		boldStyle.setBorderRight(CellStyle.BORDER_THIN);
+	}
+
+	private static CellStyle createCellStyle(Workbook wb){
+		var style = wb.createCellStyle();
+
+		style.setAlignment(HorizontalAlignment.LEFT);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		return style;
+	}
+
+	private static Sheet createAutoSizingSheet(SXSSFWorkbook workbook, String name) {
+		var sheet = workbook.createSheet(name);
+		sheet.trackAllColumnsForAutoSizing();
+		return sheet;
 	}
 	
 	public static byte[] createSeatContribution(SeatCounting result, MessageSource resource) throws Exception {
 				
-		Workbook workbook = new XSSFWorkbook();
-		Sheet sheet = workbook.createSheet(getMessage(resource, "label.seats.Counting"));
+		var workbook = new SXSSFWorkbook();
+		var sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.Counting"));
+
 		boolean luxTemplate = result.getTemplate().equals("l");
 		boolean outsideTemplate = result.getTemplate().equals("o");
 		
@@ -234,39 +199,39 @@ public class XlsxExportCreator {
 		
 		addCountingTable(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 		if (luxTemplate) {
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.DHondtSeatDistribution"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.DHondtSeatDistribution"));
 			rowCounter = addDHondtSeatDistribution(resource, result, sheet, 0, outsideTemplate);
 			addDistributionPreferentialSeats(resource, result, sheet, luxTemplate, rowCounter);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.DHondtTable"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.DHondtTable"));
 			addDHondtTable(resource, result, sheet, 0);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.ElectedCandidates"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.ElectedCandidates"));
 			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.NbVotesPerCandidate"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.NbVotesPerCandidate"));
 			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 		} else if (outsideTemplate) {
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.AllocationFirstExport"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.AllocationFirstExport"));
 			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.DistributionListSeats"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.DistributionListSeats"));
 			rowCounter = addDHondtSeatDistribution(resource, result, sheet, 0, outsideTemplate);
 			addDistributionListSeats(resource, result, sheet, rowCounter, outsideTemplate);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.DHondtTable"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.DHondtTable"));
 			addDHondtTable(resource, result, sheet, 0);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.NbVotesPerCandidate"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.NbVotesPerCandidate"));
 			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 		} else {
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.WeightingOfVotes"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.WeightingOfVotes"));
 			addWeightingOfVotes(resource, result, sheet, 0);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.AllocationOfSeats"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.AllocationOfSeats"));
 			addAllocationOfSeats(resource, result, sheet, 0);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.DistributionListSeats"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.DistributionListSeats"));
 			addDistributionListSeats(resource, result, sheet, 0, outsideTemplate);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.DistributionPreferentialSeatsExport"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.DistributionPreferentialSeatsExport"));
 			addDistributionPreferentialSeats(resource, result, sheet, luxTemplate, rowCounter);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.ElectedCandidatesListVotesExport"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.ElectedCandidatesListVotesExport"));
 			addElectedCandidatesFromListVotes(resource, result, sheet, rowCounter);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.ElectedCandidatesPreferentialVotesExport"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.ElectedCandidatesPreferentialVotesExport"));
 			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
-			sheet = workbook.createSheet(getMessage(resource, "label.seats.NbVotesPerCandidate"));
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.NbVotesPerCandidate"));
 			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 		}
 		
@@ -635,10 +600,10 @@ public class XlsxExportCreator {
 				addNumberCell(row, counter, candidate.getVotes(), false);
 				if (candidate.isListNotAccepted()) {
 					row.getCell(counter).setCellStyle(greyStyle);
+				} else if (candidate.isAmbiguous()) {
+					row.getCell(counter).setCellStyle(purpleBackgroundStyle);
 				} else if (candidate.getSeats() > 0) {
-					if (candidate.isAmbiguous()) {
-						row.getCell(counter).setCellStyle(purpleBackgroundStyle);
-					} else if (candidate.isPreferentialSeat()) {
+					if (candidate.isPreferentialSeat()) {
 						row.getCell(counter).setCellStyle(yellowBackgroundStyle);
 					} else {
 						row.getCell(counter).setCellStyle(greenBackgroundStyle);
@@ -656,13 +621,13 @@ public class XlsxExportCreator {
 		for (SeatDistribution list : result.getListSeatDistribution())
 		{
 			if (list.getListPercentWeighted() >= result.getMinListPercent()) {
-				addNumberCell(row, counter++, list.getLuxListVotes(), true);				
+				addNumberCell(row, counter++, luxTemplate ? list.getLuxListVotes() : list.getPreferentialVotes(), true);				
 			}
 		}
 		for (SeatDistribution list : result.getListSeatDistribution())
 		{
 			if (list.getListPercentWeighted() < result.getMinListPercent()) {
-				addNumberCell(row, counter, list.getLuxListVotes(), true);
+				addNumberCell(row, counter, luxTemplate ? list.getLuxListVotes() : list.getPreferentialVotes(), true);
 				row.getCell(counter).setCellStyle(boldgreyStyle);
 				counter++;
 			}

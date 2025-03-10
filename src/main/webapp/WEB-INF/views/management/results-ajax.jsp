@@ -167,10 +167,13 @@
 		}
 
 		function loadDelphiStatisticsAsync() {
+			var s = "allanswers=${allanswers eq true}";
+
 			$.ajax({
 				type:'GET',
 				  url: "${contextpath}/${form.survey.shortname}/management/statisticsDelphiJSON",
 				  dataType: 'json',
+				  data: s,
 				  cache: false,
 				  success: function( statistics ) {
 					  $(".statDelphi").each(function(){
@@ -190,6 +193,7 @@
 				type:'GET',
 				  url: "${contextpath}/${form.survey.shortname}/management/statisticsDelphiMedianJSON",
 				  dataType: 'json',
+				  data: s,
 				  cache: false,
 				  success: function( statistics ) {
 					  $(".statDelphiMedian").each(function(){

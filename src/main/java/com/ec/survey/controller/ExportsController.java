@@ -45,6 +45,7 @@ public class ExportsController extends BasicController {
 	@PostMapping(value = "/start/{type}/{format}")
 	public @ResponseBody String startExport(@RequestParam("exportName") String exportName,
 			@RequestParam("allAnswers") String allAnswers, @RequestParam("showShortnames") String showShortnames,
+			@RequestParam(value = "splitMCQ", required = false, defaultValue = "false") Boolean splitMCQ,
 			@PathVariable("type") String type, @PathVariable("format") String format,
 			@RequestParam("group") String group, HttpServletRequest request, HttpServletResponse response,
 			Locale locale) {
@@ -217,6 +218,7 @@ public class ExportsController extends BasicController {
 					survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
 							false);
 					export.setSurvey(survey);
+					export.setSplitMCQ(splitMCQ);
 					export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
 
 					ResultFilter origFilter = answerService.initialize(sessionService.getLastResultFilter(request));
@@ -418,6 +420,7 @@ public class ExportsController extends BasicController {
 				case ods:
 					response.setContentType("application/vnd.oasis.opendocument.spreadsheet");
 					break;
+				case docx:
 				case doc:
 					response.setContentType("application/msword");
 					break;

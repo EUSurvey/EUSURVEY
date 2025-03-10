@@ -8,6 +8,8 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
+
 import java.util.Objects;
 
 /**
@@ -74,6 +76,17 @@ public class Table extends MatrixOrTable {
 		}
 		
 		return false;
+	}
+	
+	@Transient
+	@Override
+	public String getCss()
+	{
+		String css = super.getCss();
+		
+		css += " freetext max5000";
+	
+		return css;
 	}
 	
 }

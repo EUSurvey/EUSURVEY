@@ -766,6 +766,42 @@ function saveForm(close)
 		
 		if (problemFound) return;
 	}
+
+	let matrixQuestionsWithError = [];
+	let lastMatrixWithError;
+	let surveyElements = Array.from($(".matrixitem"));
+
+	for (let i = 0; i < surveyElements.length; i++) {
+		if ($(surveyElements[i]).hasClass("survey-element") && $(surveyElements[i]).find(".interdependent").length > 0) {
+			if ($(surveyElements[i]).find(".matrix-answer").length < $(surveyElements[i]).find(".matrix-question").length) {
+				matrixQuestionsWithError.push(strip_tags($(surveyElements[i]).find("textarea[name^='text']").first().text()));
+				lastMatrixWithError = surveyElements[i];
+			}
+		}
+	}
+
+	if (matrixQuestionsWithError.length > 0) {
+		let listOfMatrixQuestions = "<ul>";
+		for (let i = 0; i < matrixQuestionsWithError.length; i++) {
+			if (i == 4) {
+				listOfMatrixQuestions = `${listOfMatrixQuestions} <li> ${severalMore.replace("{0}", (matrixQuestionsWithError.length - 4).toString())} </li>`;
+				break;
+			}
+			listOfMatrixQuestions = `${listOfMatrixQuestions} <li> ${matrixQuestionsWithError[i]} </li>`;
+		}
+		listOfMatrixQuestions = `${listOfMatrixQuestions} </ul>`;
+
+		if (lastMatrixWithError != null) {
+			//show properties of and focus on element with interdependency error
+			_elementProperties.showProperties($(lastMatrixWithError), null, false);
+			$(".selectedquestion").removeClass("selectedquestion");
+			$(lastMatrixWithError).addClass("selectedquestion");
+			$(".navigationitem[data-id=" + $(lastMatrixWithError).attr("data-id") + "]").addClass("selectedquestion");
+		}
+
+		showError(errorInterdependencyMatrix.replace("{0}", listOfMatrixQuestions));
+		return;
+	}
 	
 	internalSave(close);
 }

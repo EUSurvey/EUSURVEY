@@ -120,6 +120,12 @@ function DashboardViewModel()
 		this.loadMeta();
 		this.loadContributions(-2);
 		this.loadSurveyStates(-2);
+		//load archived surveys
+		let oldSurveyMode = this.surveysMode();
+		this.switchSurveyMode('archived');
+		this.loadSurveys(-2);
+		//load surveys
+		this.switchSurveyMode(oldSurveyMode);
 		this.loadSurveys(-2);
 		this.loadEndDates();
 	}
@@ -301,8 +307,7 @@ function DashboardViewModel()
 		}
 		
 		var model = this;
-		model.surveys(null);
-		model.archives(null);
+
 		var params = "page=" +  model.surveysPage() + "&type=" + $("#surveystatesselector").val();
 		
 		if (model.sort().length > 0)
@@ -312,6 +317,7 @@ function DashboardViewModel()
 		
 		if (model.surveysMode() == 'archived')
 		{
+			model.archives(null);
 			var title = $("#archivetitle").val().trim();
 			if (title.length > 0)
 			{
@@ -360,8 +366,8 @@ function DashboardViewModel()
 					  }
 				  }
 				});
-		} else {			
-			
+		} else {
+			model.surveys(null);
 			var title = $("#title").val().trim();
 			if (title.length > 0)
 			{

@@ -118,7 +118,7 @@ function addElement(element, foreditor, forskin)
 		$(container).find(".validation-error-server").first().focus();
 	}
 	
-	if (!foreditor && doAnswersExist())
+	if (!foreditor && (backupLoaded || doAnswersExist()))
 	{       
  		checkTriggersAfterLoad(container);
  	 		                
@@ -520,6 +520,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	if (isdelphi && !foreditor && !forskin && !viewModel.isDelphiQuestion()) {
 		if ($(container).hasClass("dependent") && $(container).hasClass("freetextitem")) {
 			var triggers = $(container).attr("data-triggers").split(";");
+			var fieldset = $(container).closest("fieldset");
 			
 			if (triggers.length == 2)
 			{
@@ -540,6 +541,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 					//move this question inside the delphi element that triggers it
 					var delphi = $(triggeringElement).closest(".delphi");
 					delphi.find(".delphichildren").append(container);
+					$(fieldset).remove();
 				}
 			}
 		}		

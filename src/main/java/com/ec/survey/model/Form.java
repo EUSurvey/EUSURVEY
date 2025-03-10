@@ -858,10 +858,10 @@ public class Form implements java.io.Serializable {
 					replacedMsg.append(input, lastIndex, m.start()).append(replaceNullByHyphen(getAnswerSets().get(0).getResponderEmail()));
 					break;
 				case "CreationDate":
-					replacedMsg.append(input, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getDate(), ConversionTools.DateFormat));
+					replacedMsg.append(input, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getDate(), ConversionTools.DateFormatReplacedMarkup));
 					break;
 				case "LastUpdate":
-					replacedMsg.append(input, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getUpdateDate(), ConversionTools.DateFormat));
+					replacedMsg.append(input, lastIndex, m.start()).append(Tools.formatDate(getAnswerSets().get(0).getUpdateDate(), ConversionTools.DateFormatReplacedMarkup));
 					break;
 				case "Language":
 					replacedMsg.append(input, lastIndex, m.start()).append(getAnswerSets().get(0).getLanguageCode());

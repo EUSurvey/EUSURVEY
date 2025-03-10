@@ -494,6 +494,10 @@ public class BasicController implements BeanFactoryAware {
 					answerService.chargeSubmission(answerSet);				
 				}
 				
+				if (answerSet.getSurvey().getWebhook() != null && answerSet.getSurvey().getWebhook().length() > 0) {
+					answerService.callHook(answerSet.getSurvey().getWebhook());
+				}
+				
 				saved = true;
 			} catch (org.hibernate.exception.LockAcquisitionException
 					| org.springframework.dao.CannotAcquireLockException ex) {

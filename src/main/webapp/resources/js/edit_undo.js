@@ -29,6 +29,14 @@ var UndoProcessor = function() {
 		let id = step[1]
 		_elementProperties.selectedelement = $("#content").find("li[id='" + id + "']").first();
 		let el = _elements[id];
+		
+		var i = id.indexOf('#');
+		if (i > -1) {
+			var parentid = id.substring(0, i);
+			id = id.substring(i+1);
+			var parent =_elements[parentid];
+			el = parent.getChild(id);
+		}
 
 		if (el == null && _elementProperties.selectedelement.length === 0){
 
@@ -714,11 +722,21 @@ var UndoProcessor = function() {
 					}
 				}
 				break;
-			case "points":
-				element.points(step[3]);
+			case "points":		
+				if (typeof element['type'] == 'function' && element.type() == 'matrixitem' && step[2] != null) { //step[2] null means points for whole question
+					var pos = step[2];
+					var scoring = element.scoringItems()[pos];
+					oldvalue = scoring.points();	
+					scoring.points(step[3]);
+				} else {			
+					element.points(step[3]);
+				}
 				break;
 			case "scoring":
 				element.scoring(step[3]);
+				break;
+			case "noNegativeScore":
+				element.noNegativeScore(step[3]);
 				break;
 			case "type":
 				var scoring = element.getScoringItem(step[5]);
@@ -855,19 +873,19 @@ var UndoProcessor = function() {
 		var id = step[1];
 		var position = step[2];
 
-		var element = this.elementFromStep(step)
+		let element = this.elementFromStep(step)
 		
 		switch (step[0]) {
 			case "CELLWIDTH":
 				$(step[1]).width(step[3]);
 				break;
 			case "ADD":
-				let element = this.popDeletedElementById(id);
+				element = this.popDeletedElementById(id);
 				if(!element) break;
 
-				if ($("#content").find("li").length > position)
+				if ($("#content").find("li.survey-element").length > position)
 				{
-					$($("#content").find("li")[position]).before(element);
+					$($("#content").find("li.survey-element")[position]).before(element);
 				} else {
 					$("#content").append(element);
 				}
@@ -1321,10 +1339,20 @@ var UndoProcessor = function() {
 				}
 				break;
 			case "points":
-				element.points(step[4]);
+				if (typeof element['type'] == 'function' && element.type() == 'matrixitem') {
+					var pos = step[2];
+					var scoring = element.scoringItems()[pos];
+					oldvalue = scoring.points();	
+					scoring.points(step[4]);
+				} else {			
+					element.points(step[4]);
+				}
 				break;
 			case "scoring":
 				element.scoring(step[4]);
+				break;
+			case "noNegativeScore":
+				element.noNegativeScore(step[4]);
 				break;
 			case "type":
 				var scoring = element.getScoringItem(step[5]);
@@ -1429,7 +1457,7 @@ var UndoProcessor = function() {
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
-		var element = _elementProperties.selectedelement;
+		element = _elementProperties.selectedelement;
 		_elementProperties.deselectAll();
 		if (element != null) _elementProperties.showProperties($(element), null, false);
 		if (!advancedopen) toggleAdvancedProperties($(".advancedtogglebutton").find(".glyphicon").first());

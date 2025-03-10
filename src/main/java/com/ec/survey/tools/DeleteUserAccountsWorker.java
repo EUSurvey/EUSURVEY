@@ -3,14 +3,12 @@ package com.ec.survey.tools;
 import com.ec.survey.model.Access;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.Export;
+import com.ec.survey.model.Skin;
 import com.ec.survey.model.attendees.Share;
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.ArchiveService;
-import com.ec.survey.service.AttendeeService;
-import com.ec.survey.service.ExportService;
-import com.ec.survey.service.SurveyService;
+import com.ec.survey.service.*;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +36,10 @@ public class DeleteUserAccountsWorker implements Runnable {
 	
 	@Resource(name="archiveService")
 	private ArchiveService archiveService;
-		
+
+    @Resource(name="skinService")
+    private SkinService skinService;
+
 	@Override
 	public void run() {
 		try {
@@ -102,6 +103,13 @@ public class DeleteUserAccountsWorker implements Runnable {
 				for (Archive archive : archives)
 				{
 					archiveService.delete(archive);
+				}
+
+				//Deletion of all the user's skins
+				List<Skin> skins = skinService.getOwned(userid);
+				for (Skin skin : skins)
+				{
+					skinService.delete(skin);
 				}
 				
 				//Deletion of user from USERS table

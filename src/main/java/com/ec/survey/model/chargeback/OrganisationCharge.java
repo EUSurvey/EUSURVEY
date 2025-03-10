@@ -7,26 +7,26 @@ public class OrganisationCharge {
 	public String name;
 	public Map<String, MonthlyCharge> monthly = new TreeMap<>();
 	
-	public int getTotal_v1() {
+	public int getTotal_nb_surveys_published() {
 		int result = 0;
 		for (MonthlyCharge monthlyCharge : monthly.values()) {
-			result += monthlyCharge.v1;
+			result += monthlyCharge.nb_surveys_published;
 		}
 		return result;
 	}
 	
-	public int getTotal_v1_2() {
+	public int getTotal_multi_annual_surveys() {
 		int result = 0;
 		for (MonthlyCharge monthlyCharge : monthly.values()) {
-			result += monthlyCharge.v1_2;
+			result += monthlyCharge.multi_annual_surveys;
 		}
 		return result;
 	}
 	
-	public int getTotal_v2() {
+	public int getTotal_nb_contributions_received() {
 		int result = 0;
 		for (MonthlyCharge monthlyCharge : monthly.values()) {
-			result += monthlyCharge.v2;
+			result += monthlyCharge.nb_contributions_received;
 		}
 		return result;
 	}

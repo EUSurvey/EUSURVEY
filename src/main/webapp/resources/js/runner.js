@@ -223,6 +223,7 @@ function propagateChange(element)
 			$(div).find("input[type=checkbox]").each(function(){
 				if ($(this).attr("id") != id) {
 					$(this).removeAttr("checked").prop("disabled", true).addClass("disabled").attr('previousValue', false);
+					checkDependenciesAsync(this);
 				}
 			});
 		} else {
@@ -1611,8 +1612,9 @@ function submitToChangeLanguageOrView(lang, mode)
 		showSessionError();
 	} else if (networkproblems) {
 		$("#networkproblemsdialog").modal('show');
-	} else {			
+	} else {		
 		$("#busydialog").modal('show');
+		$("#runnerForm").find("input[data-is-answered='false'].sliderbox").val('');
 		$("#runnerForm").submit();
 	}
 }
@@ -1706,6 +1708,7 @@ function shouldSaveLocalBackup(){
 
 function checkLocalBackup() {
 	if (shouldSaveLocalBackup()) {
+		$("#runnerForm").find("input[data-is-answered='false'].sliderbox").val('');
 		saveLocalBackup();
 	} else {
 		clearLocalBackup();
@@ -1781,6 +1784,7 @@ function restoreBackup(){
 		merger[name] = value;
 
 		if (name.startsWith("answer")){
+			backupLoaded = true;
 			const id = name.slice(6);
 			if (id.includes("|")){
 				const [newid, row, column] = id.split("|");

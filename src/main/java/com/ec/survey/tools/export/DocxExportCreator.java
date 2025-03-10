@@ -10,7 +10,6 @@ import java.util.Set;
 import com.ec.survey.model.survey.*;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -28,9 +27,9 @@ import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 
-@Service("docExportCreator")
+@Service("docxExportCreator")
 @Scope("prototype")
-public class DocExportCreator extends ExportCreator {
+public class DocxExportCreator extends ExportCreator {
 
 	CustomXWPFDocument document;
 

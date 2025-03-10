@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
@@ -49,8 +49,8 @@ import java.util.stream.Collectors;
 public class EVoteService extends BasicService {
 		
 	public ArrayList<Voter> importVoterFile(String surveyUid, InputStream file) throws IOException {
-		 XSSFWorkbook workbook = new XSSFWorkbook(file);
-		 XSSFSheet sheet = workbook.getSheetAt(0);
+		 Workbook workbook = new XSSFWorkbook(file);
+		 Sheet sheet = workbook.getSheetAt(0);
 		 
 		 ArrayList<Voter> voters = new ArrayList<>();
 		 
@@ -84,8 +84,8 @@ public class EVoteService extends BasicService {
 	}
 	
 	public eVoteResults importSeatTestSheet(Survey survey, InputStream file) throws IOException {
-		XSSFWorkbook workbook = new XSSFWorkbook(file);
-		XSSFSheet sheet = workbook.getSheetAt(0);
+		Workbook workbook = new XSSFWorkbook(file);
+		Sheet sheet = workbook.getSheetAt(0);
 		 
 		eVoteResults results = getEmptyListResult(survey);
 		 
@@ -301,7 +301,7 @@ public class EVoteService extends BasicService {
 
 	public byte[] exportVoterFile(Collection<Voter> voters) throws IOException {
 		
-		Workbook workbook = new XSSFWorkbook();
+		Workbook workbook = new SXSSFWorkbook();
 		Sheet sheet = workbook.createSheet("Voters");
 		Row header = sheet.createRow(0);
 		
@@ -776,7 +776,7 @@ public class EVoteService extends BasicService {
 		config.useLuxembourgProcedure = survey.geteVoteTemplate().equals("l");
 		result.setQuorum(survey.getQuorum());
 		result.setTemplate(survey.geteVoteTemplate());
-		result.setMaxSeats(survey.getSeatsToAllocate());
+		result.setMaxSeats(survey.geteVoteTemplate().equals("o") ? 14 : survey.getSeatsToAllocate());
 		result.setMinListPercent(survey.getMinListPercent());
 		result.setVoterCount((int)voterCount);
 		

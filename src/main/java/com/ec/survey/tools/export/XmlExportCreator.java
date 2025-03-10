@@ -1175,7 +1175,7 @@ public class XmlExportCreator extends ExportCreator {
 						int likes = Integer.MAX_VALUE;
 						if (answerSet == null) {
 							String v = row.get(answerrowcounter++);
-							if (v != "") {
+							if (v != "" && Tools.isInteger(v)) {
 								likes = Integer.valueOf(v);
 							}
 						} else {

@@ -7,6 +7,7 @@ import javax.persistence.*;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -33,6 +34,7 @@ public class Archive implements java.io.Serializable {
 	private Boolean restoring;
 	private int replies;
 	private Boolean surveyHasUploadedFiles;
+	private Boolean hasXlsxResults;
 		
 	@Id
 	@Column(name = "ARCHIVE_ID")
@@ -160,5 +162,13 @@ public class Archive implements java.io.Serializable {
 	}
 	public void setSurveyHasUploadedFiles(Boolean surveyHasUploadedFiles) {
 		this.surveyHasUploadedFiles = surveyHasUploadedFiles;
+	}
+
+	@Column(name = "XLSX_RESULTS")
+	public Boolean getHasXlsxResults() {
+		return hasXlsxResults;
+	}
+	public void setHasXlsxResults(Boolean hasXlsxResults) {
+		this.hasXlsxResults = hasXlsxResults;
 	}
 }

@@ -39,6 +39,7 @@ public abstract class Question extends Element {
 	private ECFCompetency ecfCompetency;
 	private DelphiChartType delphiChartType;
 	private boolean showExplanationBox;
+	private boolean noNegativeScore;
 
 	public Question() {
 	}
@@ -212,6 +213,15 @@ public abstract class Question extends Element {
 	public void setEcfCompetency(ECFCompetency ecfCompetency) {
 		this.ecfCompetency = ecfCompetency;
 	}
+	
+	@Column(name = "NONEGATIVE")
+	public Boolean getNoNegativeScore() {
+		return noNegativeScore;
+	}
+
+	public void setNoNegativeScore(Boolean noNegativeScore) {
+		this.noNegativeScore = noNegativeScore != null && noNegativeScore;
+	}
 
 	protected void baseCopy(Question copy)
 	{
@@ -235,12 +245,12 @@ public abstract class Question extends Element {
 		copy.setUseAndLogic(getUseAndLogic());
 		copy.setShowExplanationBox(getShowExplanationBox());
 		copy.setDelphiChartType(getDelphiChartType());
+		copy.setNoNegativeScore(getNoNegativeScore());
 		
 		if (ecfCompetency != null) {
 			copy.setEcfCompetency(this.getEcfCompetency());
 		}
 		if (scoringItems != null) {
-
 			copy.setScoringItems(new ArrayList<>());
 			for (ScoringItem item : scoringItems) {
 				copy.getScoringItems().add(item.copy());
@@ -325,6 +335,7 @@ public abstract class Question extends Element {
 			if (!(Objects.equals(getIsDelphiQuestion(), question.getIsDelphiQuestion()))) return true;
 			if (!(Objects.equals(getShowExplanationBox(), question.getShowExplanationBox()))) return true;
 			if (!(Objects.equals(getDelphiChartType(), question.getDelphiChartType()))) return true;
+			if (!(Objects.equals(getNoNegativeScore(), question.getNoNegativeScore()))) return true;
 		} else {
 			return true;
 		}

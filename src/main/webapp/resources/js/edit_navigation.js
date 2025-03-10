@@ -237,6 +237,22 @@ var NavigationModel = function () {
     {
     	var model = this;    	
     	model.items.splice(position, 0, model.createNavigationItem(element));
+
+		//traverse parents up to find if there is a section item above which is hidden
+		// if this is the case: also need to hide this element
+		for (var i = position; i >= 0; i--) {
+			var item = model.items()[i];
+			if (item.type !=  "section") {
+				continue;
+			}
+
+			//item is a section: control whether its collapsed (glyphicon-chevron-right) or expanded (glyphicon-chevron-down)
+			if ($(".navigationitem[data-id='" + item.id + "']").find("span").hasClass("glyphicon-chevron-right")) {
+				$(".navigationitem[data-id='" + element.attr('data-id') + "']").hide(400);
+			} else {
+				break;
+			}
+		}
     }
     
     this.moveItemInNavigation = function(oldposition, newposition)

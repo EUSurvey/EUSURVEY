@@ -453,6 +453,8 @@ public class ComplexTableItem extends Question {
                     css += " max" + maxD;
                 }
 
+                css += " prec" + decimalPlaces;
+
                 break;
             case SingleChoice:
                 css += " single-choice";

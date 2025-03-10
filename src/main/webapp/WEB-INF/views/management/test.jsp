@@ -133,6 +133,11 @@
 			var surveyElement = $(element).closest(".survey-element");
 			enableDelphiSaveButtons(surveyElement);
 
+			if (responseJSON.files.length == 0) {
+				$(surveyElement).removeClass("answered");
+				updateProgress();
+			}
+
 			for (var i = 0; i < responseJSON.files.length; i++) {
 				var f = responseJSON.files[i];
 				var div = document.createElement("div");

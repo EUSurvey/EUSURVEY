@@ -253,7 +253,11 @@ var Actions = function() {
 		    		}
 		    		$($(copy).find("tr")[index]).attr("data-triggers", original_data_triggers);
     			}
-    		});    		
+    		});
+
+			if ($(copiedmodel).find(".interdependent")) {
+				$(newitem).find(".matrixtable").addClass("interdependent");
+			}
     		
 			_elements[copiedmodel.id()] = copiedmodel;
 			copiedItems.push(copy);

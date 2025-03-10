@@ -911,7 +911,7 @@
 	 	var values = null;
 	 	function getValueByQuestion(uniqueId, readValueOnce, cellEl)
 	 	{
-	 		if (typeof values[uniqueId] != 'undefined' && values[uniqueId] != null) {
+	 		if (typeof values[uniqueId] != 'undefined' && values[uniqueId] != null && values[uniqueId] != "") {
 	 			if (cellEl != null && $(cellEl).is(".complex")){
 					$(cellEl).closest(".innercell").addClass("answered");
 				} else {
@@ -1009,16 +1009,22 @@
 	 		}
 	 		return "";
 	 	}
-	 	
+
+		var pavaluesread3 = {};
 	 	function getPAByQuestion3(parentuniqueId, cellEl)
 	 	{
-	 		if (getPAByQuestion(parentuniqueId).length > 0)
+			let paValue = (typeof pavalues[parentuniqueId] != "undefined") ? pavalues[parentuniqueId] : "";
+	 		if (paValue.length > 0 && pavaluesread3[parentuniqueId] == undefined)
 	 		{
-	 			var result = getIdForUniqueId(getPAByQuestion(parentuniqueId));
-	 			if (typeof result != 'undefined')
+	 			var result = getIdForUniqueId(paValue);
+				pavaluesread3[parentuniqueId] = true;
+
+	 			if (typeof result != 'undefined' && result != "")
  				{
  					if (cellEl != null && $(cellEl).is("select.complex")){
 						$(cellEl).closest(".innercell").addClass("answered");
+					} else {
+						$('.survey-element[data-uid="' + parentuniqueId + '"]').addClass("answered");
 					}
 	 				return result;
  				}
@@ -1038,7 +1044,7 @@
 	 	var tablevalues = null;
 	 	function getTableAnswer(uniqueId, row, col, readOnce)
 	 	{
-	 		if (typeof tablevalues[uniqueId + "#" + row + "#" + col] != 'undefined' && tablevalues[uniqueId + "#" + row + "#" + col] != null)
+	 		if (tablevalues[uniqueId + "#" + row + "#" + col] != undefined && tablevalues[uniqueId + "#" + row + "#" + col] != "")
 	 		{
 	 			$('.survey-element[data-uid="' + uniqueId + '"]').addClass("answered");
 	 			if (readOnce) {
@@ -1090,6 +1096,8 @@
 				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 			});
 		}
+		
+		var backupLoaded = false;
 
 	 	initializeAnswerData();
 	 	initializeTriggers();

@@ -10,12 +10,16 @@ import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
@@ -32,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,6 +57,7 @@ public class HomeController extends BasicController {
 	private @Value("${support.recipientinternal}") String supportEmailInternal;
 
 	private @Value("${support.smIncidentHost}") String incidentHost;
+	private @Value("${support.smAttachmentHost:#{null}}") String attachmentHost;
 	private @Value("${support.smBasicAuth:#{null}}") String smtpAuth;
 
 	@Autowired
@@ -379,12 +385,32 @@ public class HomeController extends BasicController {
 					{
 						logger.error(statusCode + " " + strResponse);
 						throw new MessageException("Calling ServiceNow UAT failed.");
-					}						
+					}
+					
+					String[] uploadedfiles = request.getParameterValues("uploadedfile");
+					String[] uploadedfilenames = request.getParameterValues("uploadedfilename");
+					
+					java.io.File attachment1 = null;
+					java.io.File attachment2 = null;
+					if (uploadedfiles != null && uploadedfiles.length > 0)
+					{
+						JSONObject jsonResponse = new JSONObject(strResponse).getJSONObject("result");
+						String sys_id = jsonResponse.getString("sys_id");
+						
+						attachment1 = fileService.getTemporaryFile(uploadedfiles[0]);
+						addAttachment(sys_id, uploadedfilenames[0], attachment1, httpclient);
+						if (uploadedfiles.length > 1)
+						{
+							attachment2 = fileService.getTemporaryFile(uploadedfiles[1]);
+							addAttachment(sys_id, uploadedfilenames[1], attachment2, httpclient);
+						}
+					}
+					
 				} else if (!strResponse.toLowerCase().contains("message=\"success\"")) {
 					logger.error(statusCode + " " +strResponse);
 					throw new MessageException("Calling SMT web service failed.");
 				}
-				logger.info(statusCode + " " +strResponse);				
+				logger.info(statusCode + " " + strResponse);				
 			
 			} finally{
 			   response.close();
@@ -401,6 +427,36 @@ public class HomeController extends BasicController {
 		model.put("messagesent", true);
 		model.put("additionalinfo", getBrowserInformation(request, locale));
 		return "home/documentation";
+	}
+	
+	private void addAttachment(String sys_id, String filename, java.io.File attachment, CloseableHttpClient httpclient) throws ClientProtocolException, IOException, MessageException {
+			
+		HttpPost httppostFile = new HttpPost(attachmentHost + sys_id + "&file_name=" + URLEncoder.encode(filename, "UTF-8"));
+		httppostFile.setHeader("Content-Type", "application/octetd-stream");
+	
+		if (smtpAuth != null) {
+			httppostFile.addHeader("Authorization", "Basic " + smtpAuth);
+		}
+		
+		FileEntity entityAttachment = new FileEntity(attachment, ContentType.APPLICATION_OCTET_STREAM);
+		httppostFile.setEntity(entityAttachment);
+		
+		CloseableHttpResponse responseFile = httpclient.execute(httppostFile);
+		
+		try {
+			
+			HttpEntity entityFile = responseFile.getEntity();
+			String strResponseFile = entityFile == null ? "" : EntityUtils.toString(entityFile, "UTF-8");
+			int statusCodeFile = responseFile.getStatusLine().getStatusCode();
+			
+			if (statusCodeFile != 200 && statusCodeFile != 201)
+			{
+				logger.error(statusCodeFile + " " + strResponseFile);
+				throw new MessageException("Calling ServiceNow UAT failed.");
+			}
+		} finally{
+		   responseFile.close();
+		}
 	}
 	
 	@RequestMapping(value = "/home/support/deletefile", method = {RequestMethod.GET, RequestMethod.HEAD})

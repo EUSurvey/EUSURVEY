@@ -26,7 +26,7 @@ public class SAScore implements java.io.Serializable {
 	private int id;
 	private int criterion;
 	private String criterionName;
-	private int score;
+	private double score;
 	private boolean notRelevant; 
 	private SAScoreCard scoreCard;
 	
@@ -51,11 +51,11 @@ public class SAScore implements java.io.Serializable {
 	}
 
 	@Column(name = "SASCORE_SCORE")
-	public int getScore() {
+	public double getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
+	public void setScore(double score) {
 		this.score = score;
 	}
 

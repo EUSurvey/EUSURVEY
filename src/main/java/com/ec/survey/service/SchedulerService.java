@@ -549,6 +549,37 @@ public class SchedulerService extends BasicService {
 		deleteUserAccountsWorker.run();
 		answerSetAnonymWorker.run();
 	 }
+
+	@Scheduled(cron="0 0 1 * * *") //every night at 1 a.m.
+	public void sendStatisticalEmails() throws Exception {
+		if (!isHost2ExecuteStandardTask())
+			return;
+
+		logger.info("Start sendStatisticalEmails");
+
+		Calendar cal = Calendar.getInstance();
+
+		try {
+
+			// daily emails
+			surveyService.sendStatisticalEmails(Survey.ReportEmailFrequency.Daily);
+
+			// weekly emails: only if today is Monday
+			if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+				surveyService.sendStatisticalEmails(Survey.ReportEmailFrequency.Weekly);
+			}
+
+			// weekly emails: only if today is first day of the month
+			if (cal.get(Calendar.DAY_OF_MONTH) == 1) {
+				surveyService.sendStatisticalEmails(Survey.ReportEmailFrequency.Monthly);
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		logger.info("Finished sendStatisticalEmails");
+	}
 	
 	private boolean isHost2ExecuteLDAPTask() {
 		return isHost2ExecuteTask(true, false);

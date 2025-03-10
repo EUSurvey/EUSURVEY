@@ -49,7 +49,65 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domainWorker;
+
+	@Transactional
+	public void step123() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		ensureActivity(ActivityRegistry.ID_DRAFT_CONTRIBUTION_SUBMIT, session);
+
+		status.setDbversion(123);
+		session.saveOrUpdate(status);
+	}
+	@Transactional
+	public void step122() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
 		
+		String existing = settingsService.get(Setting.NightlyTaskLimitArchiving);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.NightlyTaskLimitArchiving);
+			s.setValue("3600");
+			s.setFormat("seconds");
+			session.saveOrUpdate(s);
+		}
+	
+		status.setDbversion(122);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step121() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		final String alterTypeColumn = "ALTER TABLE SASCORES MODIFY COLUMN SASCORE_SCORE DOUBLE NULL";
+		session.createSQLQuery(alterTypeColumn).executeUpdate();
+
+		status.setDbversion(121);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step120() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.DeleteSurveysAge);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.DeleteSurveysAge);
+			s.setValue("90");
+			s.setFormat("days");			
+			session.saveOrUpdate(s);
+		}
+		
+		status.setDbversion(120);
+		session.saveOrUpdate(status);
+	}
+	
 	@Transactional
 	public void step119() {
 		Session session = sessionFactory.getCurrentSession();
@@ -58,12 +116,15 @@ public class SchemaService extends BasicService {
 		String existing = settingsService.get(Setting.ArchiveOlderThan);
 		if (existing == null) {
 			Setting s = new Setting();
+			s.setKey(Setting.DeleteSurveysAge);
+			s.setValue("90");
+			s.setFormat("days");
 			s.setKey(Setting.ArchiveOlderThan);
 			s.setValue("36");
 			s.setFormat("months");
 			session.saveOrUpdate(s);
 		}
-		
+
 		existing = settingsService.get(Setting.ArchiveNotChangedInLast);
 		if (existing == null) {
 			Setting s = new Setting();
@@ -95,7 +156,7 @@ public class SchemaService extends BasicService {
 		if (existing == null) {
 			Setting s = new Setting();
 			s.setKey(Setting.NightlyTaskLimit);
-			s.setValue("60");
+			s.setValue("3600");
 			s.setFormat("seconds");
 			session.saveOrUpdate(s);
 		}

@@ -12,6 +12,7 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 
+import com.ec.survey.tools.export.XlsxExportCreator;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -172,6 +173,9 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 				if (type.equalsIgnoreCase("xls"))
 				{
 					filename = survey.getShortname() + "_Published_Results.xls";
+				} else if (type.equalsIgnoreCase("xlsx"))
+				{
+					filename = survey.getShortname() + "_Published_Results.xlsx";
 				} else if (type.equalsIgnoreCase("ods"))
 				{
 					filename = survey.getShortname() + "_Published_Results.ods";
@@ -197,28 +201,31 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 					f.setDeletionDate(cal.getTime());
 					f.setComment(survey.getUniqueId());
 			    	f.setUid(uid);
-					
+					f.setName(filename);
+
 			    	Form form = new Form(resources);
 			    	    		    	
 			    	form.setSurvey(survey);
 			    	form.setPublicationMode(true);
 			    	
-					if (type.equalsIgnoreCase("xls"))
-					{
+					if (type.equalsIgnoreCase("xls")) {
 						XlsExportCreator xlsExportCreator = (XlsExportCreator) context.getBean("xlsExportCreator");
-						xlsExportCreator.init(0,form,null, fileService.getSurveyExportFile(survey.getUniqueId(), uid).getPath(), resources, locale, "", "");			
+						xlsExportCreator.init(0, form, null, fileService.getSurveyExportFile(survey.getUniqueId(), uid).getPath(), resources, locale, "", "");
 						xlsExportCreator.exportContent(dbsurvey.getPublication(), false, filter);
-						f.setName(filename);
+					} else if (type.equalsIgnoreCase("xlsx"))
+					{
+						XlsxExportCreator xlsExportCreator = (XlsxExportCreator) context.getBean("xlsxExportCreator");
+						xlsExportCreator.init(0,form,null, fileService.getSurveyExportFile(survey.getUniqueId(), uid).getPath(), resources, locale, "", "");
+						xlsExportCreator.exportContent(dbsurvey.getPublication(), false, filter);
 					} else if (type.equalsIgnoreCase("ods"))
 					{
 						OdfExportCreator odfExportCreator = (OdfExportCreator) context.getBean("odfExportCreator");
-						odfExportCreator.init(0,form,null,fileService.getSurveyExportFile(survey.getUniqueId(), uid).getPath(), resources, locale, "", "");	
+						odfExportCreator.init(0,form,null,fileService.getSurveyExportFile(survey.getUniqueId(), uid).getPath(), resources, locale, "", "");
 						odfExportCreator.ExportContent(dbsurvey.getPublication(), false, filter);
-						f.setName(filename);
 					}
-					
+
 					fileService.addNewTransaction(f);
-					
+
 					java.io.File target = fileService.getSurveyExportFile(survey.getUniqueId(), uid);
 					java.io.File zipped = new java.io.File(target.getPath() + ".zip");
 					if (zipped.exists())

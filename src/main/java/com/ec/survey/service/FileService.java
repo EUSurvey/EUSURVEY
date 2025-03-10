@@ -41,7 +41,7 @@ public class FileService extends BasicService {
 
 	public static final String[] filetypes = { "results", "statistics", "charts", "tokens", "contacts", "activities",
 			"uploaded file", "download", "image", "logo", "background document", Constants.SURVEY, "contribution" };
-	public static final String[] fileextensions = { "PDF", "XLS", "ODS", "DOC", "ODT", "XML", "CSV", "JPG", "PNG",
+	public static final String[] fileextensions = { "PDF", "XLS", "XLSX", "ODS", "DOC", "DOCX", "ODT", "XML", "CSV", "JPG", "PNG",
 			"ZIP", "OTHER" };
 
 	public void logOldFileSystemUse(String path) {
@@ -880,11 +880,20 @@ public class FileService extends BasicService {
 			if (name.endsWith("results.xls")) {
 				fileResult.setFileExtension("XLS");
 				fileResult.setFileType("results");
+			} else if (name.endsWith("results.xlsx")) {
+				fileResult.setFileExtension("XLSX");
+				fileResult.setFileType("results");
 			} else if (name.endsWith("results.xls.zip")) {
+				fileResult.setFileExtension("ZIP");
+				fileResult.setFileType("results");
+			} else if (name.endsWith("results.xlsx.zip")) {
 				fileResult.setFileExtension("ZIP");
 				fileResult.setFileType("results");
 			} else if (name.endsWith("statistics.xls")) {
 				fileResult.setFileExtension("XLS");
+				fileResult.setFileType("statistics");
+			} else if (name.endsWith("statistics.xlsx")) {
+				fileResult.setFileExtension("XLSX");
 				fileResult.setFileType("statistics");
 			} else if (name.endsWith("statistics.pdf")) {
 				fileResult.setFileExtension("PDF");
@@ -1757,45 +1766,26 @@ public class FileService extends BasicService {
 		List<Archive> archives = archiveService.getAllArchives(new ArchiveFilter(), 1, Integer.MAX_VALUE, true);
 
 		for (Archive archive : archives) {
-			java.io.File original = new java.io.File(archiveFileDir + archive.getSurveyUID());
 			java.io.File folder = fileService.getArchiveFolder(archive.getSurveyUID());
-			if (original.exists()) {
-				java.io.File copy = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID());
-				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
 
-			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + ".pdf");
-			if (original.exists()) {
-				java.io.File copy = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + ".pdf");
-				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
+			checkOriginalFileMigration("", archive, folder);
+			checkOriginalFileMigration(".pdf", archive, folder);
+			checkOriginalFileMigration("statistics.pdf", archive, folder);
+			checkOriginalFileMigration("statistics.xls", archive, folder);
+			checkOriginalFileMigration("statistics.xlsx", archive, folder);
+			checkOriginalFileMigration("results.xls", archive, folder);
+			checkOriginalFileMigration("results.xlsx", archive, folder);
+			checkOriginalFileMigration("results.xls.zip", archive, folder);
+			checkOriginalFileMigration("results.xlsx.zip", archive, folder);
+		}
+	}
 
-			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + "statistics.pdf");
-			if (original.exists()) {
-				java.io.File copy = new java.io.File(
-						folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + "statistics.pdf");
-				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
-
-			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + "statistics.xls");
-			if (original.exists()) {
-				java.io.File copy = new java.io.File(
-						folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + "statistics.xls");
-				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
-
-			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + "results.xls");
-			if (original.exists()) {
-				java.io.File copy = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + "results.xls");
-				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
-
-			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + "results.xls.zip");
-			if (original.exists()) {
-				java.io.File copy = new java.io.File(
-						folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + "results.xls.zip");
-				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
+	private void checkOriginalFileMigration(String name, Archive archive, java.io.File folder) throws IOException {
+		var original = new java.io.File(archiveFileDir + archive.getSurveyUID() + name);
+		if (original.exists()) {
+			java.io.File copy = new java.io.File(
+					folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + name);
+			Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 	}
 

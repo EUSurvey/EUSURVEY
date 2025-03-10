@@ -57,7 +57,12 @@ public class SessionService extends BasicService {
 	
 	public User getCurrentUser(HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
-		return getCurrentUser(request, true, true);
+		return getCurrentUser(request, true);
+	}
+
+	public User getCurrentUser(HttpServletRequest request, boolean strictChecks)
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+		return getCurrentUser(request, strictChecks, strictChecks);
 	}
 
 	public User getCurrentUser(HttpServletRequest request, boolean checkTOS, boolean checkWeakAuthentication)
@@ -219,6 +224,11 @@ public class SessionService extends BasicService {
 				return true;
 			
 			if (user.getLocalPrivileges().get(LocalPrivilege.AccessResults) == 2)
+				return true;
+
+			boolean isDraft = request != null && request.getParameter("results-source") != null
+					&& request.getParameter("results-source").equalsIgnoreCase("draft");
+			if (isDraft && user.getLocalPrivileges().get(LocalPrivilege.AccessDraft) == 2)
 				return true;
 			
 			if (user.getResultAccess() != null && !user.getResultAccess().isReadonly()) {

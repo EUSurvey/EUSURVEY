@@ -21,8 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.odftoolkit.simple.SpreadsheetDocument;
 import org.odftoolkit.simple.table.Row;
@@ -584,8 +583,8 @@ public class AddressBookController extends BasicController {
                 {
                 	inputStream = new FileInputStream(file);
                  	try {	 
-                 		XSSFWorkbook  wb = new  XSSFWorkbook (inputStream);	            	
-            	    	XSSFSheet sheet = wb.getSheetAt(0);
+                 		Workbook wb = new XSSFWorkbook(inputStream);
+            	    	Sheet sheet = wb.getSheetAt(0);
             	    	int numrows = sheet.getPhysicalNumberOfRows();
             	    	
             	    	if (numrows == 0)
@@ -595,7 +594,7 @@ public class AddressBookController extends BasicController {
             	    	
 	            	    	int start = 0;
 	            	    	int numcells =  sheet.getRow(0).getLastCellNum();
-	            	    	XSSFRow row;
+	            	    	org.apache.poi.ss.usermodel.Row row;
 	            	    	
 	            	    	if (hasHeaderRow)
 	            	    	{

@@ -19,6 +19,7 @@ import com.ec.survey.tools.export.XmlExportCreator;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -633,7 +634,7 @@ public class WebServiceController extends BasicController {
 
 				if (file.getName().endsWith("pdf")) {
 					response.setContentType("application/xml");
-				} else if (file.getName().endsWith("xls")) {
+				} else if (file.getName().endsWith("xls") || file.getName().endsWith("xlsx")) {
 					response.setContentType("application/msexcel");
 				} else if (file.getName().endsWith("zip")) {
 					response.setContentType("application/zip");
@@ -974,6 +975,8 @@ public class WebServiceController extends BasicController {
 			
 			boolean xmlonly = request.getParameter("xmlonly") != null
 					&& request.getParameter("xmlonly").equalsIgnoreCase("true");
+			
+			String webhook = request.getParameter("hook");
 
 			WebserviceTask task = new WebserviceTask(WebserviceTaskType.CreateResults);
 			task.setSurveyId(publishedsurvey.getId());
@@ -981,6 +984,15 @@ public class WebServiceController extends BasicController {
 			task.setExportType(type);
 			task.setFileTypes(filetypes);
 			task.setContributionType(contributionType);
+			if (webhook != null && webhook.length() > 0) {
+				UrlValidator validator = new UrlValidator();
+			    if (!validator.isValid(webhook)) {
+			    	response.setStatus(412);
+					return "";
+			    }
+				
+				task.setHook(webhook);
+			}
 
 			if (!start.equalsIgnoreCase("0")) {
 				try {

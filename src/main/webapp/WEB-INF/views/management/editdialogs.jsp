@@ -178,11 +178,11 @@
 			  	<div style="float: right">
 			  		<img src="${contextpath}/resources/images/logo_Eusurvey.png" alt="EUSurvey logo" style="width:150px;" />
 			  	</div>
-			  	<div style="font-size: 20px; margin-bottom: 20px;">New Quiz Functionality</div>
-			  	<b>This is the new Quiz mode.</b><br /><br /></li></ul><br />For further information, read our short documentation:
-			  	<a id="docEditorGuideEN" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide.pdf">Quiz Documentation</a>
-			  	<a id="docEditorGuideFR" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide_FR.pdf" style="display: none;">Quiz Documentation</a>
-				<a id="docEditorGuideDE" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide_DE.pdf" style="display: none;">Quiz Documentation</a>
+			  	<div style="font-size: 20px; margin-bottom: 20px;"><spring:message code="label.QuizFunctionality" /></div>
+			  	<spring:message code="text.QuizFunctionality" />&nbsp;			  	
+			  	<a id="docEditorGuideEN" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide.pdf"><spring:message code="label.QuizDocumentation" /></a>
+			  	<a id="docEditorGuideFR" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide_FR.pdf" style="display: none;"><spring:message code="label.QuizDocumentation" /></a>
+				<a id="docEditorGuideDE" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide_DE.pdf" style="display: none;"><spring:message code="label.QuizDocumentation" /></a>
 			  </div>
 			  <div class="modal-footer">
 				<a class="btn btn-primary" onclick="disableNewQuizDialog()"><spring:message code="label.GotIt" /></a>		

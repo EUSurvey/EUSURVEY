@@ -42,6 +42,9 @@
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
 			this.isUseMaxNumberContributionLink = ko.observable(${form.survey.isUseMaxNumberContributionLink});
 			this.sendConfirmationEmail = ko.observable(${form.survey.sendConfirmationEmail});
+			this.sendReportEmail = ko.observable(${form.survey.sendReportEmail});
+			this.reportEmailFrequency = ko.observable("${form.survey.reportEmailFrequency}");
+			this.reportEmails = ko.observable("${form.survey.reportEmails}");
 			this.changeContribution = ko.observable(${form.survey.changeContribution});
 			this.downloadContribution = ko.observable(${form.survey.downloadContribution});
 			this.saveAsDraft = ko.observable(${form.survey.saveAsDraft});
@@ -291,6 +294,57 @@
 				let s = this.self;
 				return !s.quiz() && !s.delphi() && !s.opc() && !s.eVote();
 			}
+
+			this.addReportMails = function()
+			{
+				$("#report-duplicate-mails").hide();
+				$("#report-invalid-mails").hide();
+				$("#report-too-many-mails").hide();
+				$("#report-no-mails").hide();
+
+				let mail = $("#reportRecipientList")[0].value;
+				let previousMails = this.reportEmails();
+
+				//check input if mails are valid
+				let invalid_mail = false;
+				mail.split(";").forEach((mail_address) => {
+					if (mail_address.trim() && !validateEmail(mail_address.trim())) {
+						invalid_mail = true;
+					}
+				});
+				if (invalid_mail) {
+					$("#report-invalid-mails").show();
+					return;
+				}
+
+				if ((this.reportEmails() != "" ? this.reportEmails().split(";").length : 0) + mail.split(";").map((element) => element.trim()).filter((element) => element).length <= 10) {
+					this.reportEmails(this.reportEmails().concat(";" + mail));
+
+					//filter out empty strings
+					let nonEmptyReportEmails = this.reportEmails().split(";").map((element) => element.trim()).filter((element) => element);
+
+					//look for duplicates
+					let nonDuplicateReportEmails = [...new Set(nonEmptyReportEmails)].join(";");
+					if (nonEmptyReportEmails.join(";") != nonDuplicateReportEmails) {
+						$("#report-duplicate-mails").show();
+						this.reportEmails(previousMails);
+						return;
+					}
+
+					this.reportEmails(nonDuplicateReportEmails);
+					$("#reportRecipientList")[0].value = "";
+				} else {
+					$("#report-too-many-mails").show();
+				}
+			}
+
+			this.deleteReportMail = function (mail) {
+				if (this.reportEmails().includes(mail)) {
+					//filter out empty strings
+					let nonEmptyReportEmails = this.reportEmails().replace(mail, "").split(";").map((element) => element.trim()).filter((element) => element).join(";");
+					this.reportEmails(nonEmptyReportEmails)
+				}
+			}
 		}
 		
 		var _properties = new PropertiesViewModel();
@@ -298,6 +352,7 @@
 		function checkProperties(regformconfirmed, publishingconfirmed) {
 			try {
 				$("#propertiespage").find(".validation-error").remove();
+				$("#survey-validator-invalid").hide();
 				var invalid = false;
 
 				if (!checkShortname($('#edit-survey-shortname').val(), '${form.survey.id}'))
@@ -326,10 +381,15 @@
 				}
 
 				if ($('#survey-validator').is(":visible")) {
+					if ($("#survey-validator").val().length == 0) {
+						$("#survey-validator").parent().append("<div class='validation-error'>" + requiredText + "</div>");
+						return false;
+					}
+					
 					if (!checkOrganisation($("#survey-validator").val(), $("#survey-organisation").val()))
 					{
 						$("#survey-validator-invalid").show();
-						return;
+						return false;
 					}
 				}
 
@@ -558,6 +618,18 @@
 					}
 				}
 
+				if($("[name='survey\\.webhook']").val().length > 0 && isURLNotValid("[name='survey\\.webhook']")) {
+					$("#edit-survey-webhook").after("<div class='validation-error'>" +invalidURL + "</div>");
+					return false;
+				}
+
+				if (_properties.sendReportEmail() && _properties.reportEmails().length == 0){
+				    $("#report-no-mails").show();
+				    return false;
+                } else {
+                    $("#report-no-mails").hide();
+                }
+				
 			} catch (e)	{
 
 			}

@@ -477,9 +477,14 @@ public class ReportingService extends BasicService {
 		
 		return columns > 1000;
 	}
-	
+
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
 	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
+		return getAnswerSetsInternal(survey, filter, sqlPagination, addlinks, forexport, showuploadedfiles, doNotReplaceAnswerIDs, useXmlDateFormat, showShortnames, false);
+	}
+	
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames, boolean includeMissing) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 
 		Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
@@ -665,6 +670,9 @@ public class ReportingService extends BasicService {
 								for (String answerid : answerids) {
 									if (v.length() > 0) v += "; ";
 									Element answer = matrix.getChildByUniqueId(answerid);
+									if (answer == null && includeMissing) {
+										answer = matrix.getMissingChildByUniqueId(answerid);
+									}
 									if (answer != null) {
 										if (doNotReplaceAnswerIDs) {
 											v += answerid;
@@ -1462,12 +1470,14 @@ public class ReportingService extends BasicService {
 					v = "'";
 					for (Answer answer : answers)
 					{
-						if (answer.getPossibleAnswerUniqueId().equalsIgnoreCase("TARGETDATASET")) {
-							v += answer.getValue();
-						} else {
-							v += answer.getPossibleAnswerUniqueId();
+						if (answer.getPossibleAnswerUniqueId() != null) {
+							if (answer.getPossibleAnswerUniqueId().equalsIgnoreCase("TARGETDATASET")) {
+								v += answer.getValue();
+							} else {
+								v += answer.getPossibleAnswerUniqueId();
+							}
+							if (question instanceof MultipleChoiceQuestion) v += ";";
 						}
-						if (question instanceof MultipleChoiceQuestion) v += ";";
 					}
 					v += "'";
 				}
@@ -1873,11 +1883,31 @@ public class ReportingService extends BasicService {
 	}	
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getAnswerSetsByQuestionUIDInternal(Survey survey, String quid, Map<Integer, Set<String>> answersByAnswerSetID) {
+	public int getAnswerSetsByQuestionUIDInternal(Survey survey, String quid, Map<Integer, Set<String>> answersByAnswerSetID, String where, Map<String, Object> values) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		String sql = "SELECT QANSWERSETID, Q" + quid.replace("-", "") + " FROM " + getOLAPTableName(survey) + " ORDER BY QCREATED DESC";
+		String sql = "SELECT QANSWERSETID, Q" + quid.replace("-", "") + " FROM " + getOLAPTableName(survey);
+
+		if (where != null) {
+			sql += where;
+		}
+
+		sql += " ORDER BY QCREATED DESC";
 
 		NativeQuery query = sessionReporting.createSQLQuery(sql);
+
+		if (where != null && values != null && !values.isEmpty()) {
+			for (String attrib : values.keySet()) {
+				Object value = values.get(attrib);
+				if (value instanceof String) {
+					query.setString(attrib, (String) values.get(attrib));
+				} else if (value instanceof Integer) {
+					query.setInteger(attrib, (Integer) values.get(attrib));
+				} else if (value instanceof Date) {
+					query.setTimestamp(attrib, (Date) values.get(attrib));
+				}
+			}
+		}
+
 		int length = 0;
 		for (Object row : query.list()) {
 			if (!(row instanceof Object[])) {

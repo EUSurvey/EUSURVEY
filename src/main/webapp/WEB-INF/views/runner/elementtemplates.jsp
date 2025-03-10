@@ -1376,6 +1376,8 @@
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<input type="hidden" data-bind="value: editorColumnsLocked(), attr: {'name': 'editorColumnsLocked' + id()}" />
 			<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
+<!--			<input type="hidden" data-bind="value: scoring, attr: {'name': 'scoring' + id()}" />-->
+<!--			<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />-->
 		<!-- /ko -->		
 	
 		<!-- ko if: optional() == false -->
@@ -1413,10 +1415,23 @@
 					<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 					<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 					<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+					<input type="hidden" data-bind="value: noNegativeScore, attr: {'name': 'noNegativeScore' + id()}" />
 					<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 					
 					<!-- ko foreach: $parent.answers() -->
 						<input type="hidden" data-bind="attr: {'name': 'dependencies' + $parents[1].id(), 'value': $parents[1].dependentElementsStrings()[$index() + ($parent.originalIndex() * ($parents[1].columns()-1))], 'data-qaid': $parent.id() + '|' + id()}" />
+					<!-- /ko -->
+					
+					<input type="hidden" data-bind="value: scoring, attr: {'name': 'scoring' + id()}" />
+					<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
+					
+					<!--  ko foreach: scoringItems() -->
+						<input type="hidden" data-bind="value: id, attr: {'name': 'scoringitem' + $parent.id()}" />
+						<!-- <input type="hidden" data-bind="value: type, attr: {'name': 'type' + id()}" /> -->
+						<input type="hidden" data-bind="value: correct, attr: {'name': 'correct' + id()}" />	
+						<input type="hidden" data-bind="value: value, attr: {'name': 'value' + id()}" />
+						<input type="hidden" data-bind="value: feedback, attr: {'name': 'feedback' + id()}" />
+						<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
 					<!-- /ko -->
 					
 				</div>
@@ -1435,7 +1450,7 @@
 								<span class="matrixheadertitle" data-bind="html: firstCellText"></span>
 							</td>
 							<!-- ko foreach: answers -->
-							<td class="matrix-header" scope="col" data-bind="attr: {'id' : id(), 'data-id': id(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
+							<td class="matrix-header matrix-answer" scope="col" data-bind="attr: {'id' : id(), 'data-id': id(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
 								<!-- ko if: $parent.foreditor -->
 								<input type="hidden" data-bind="value: 'text', attr: {'name': 'type' + id()}" />
 								<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	

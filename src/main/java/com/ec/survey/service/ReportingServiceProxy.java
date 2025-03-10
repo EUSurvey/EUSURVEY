@@ -35,8 +35,12 @@ public class ReportingServiceProxy {
 	}
 	
 	public List<List<String>>  getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
+		return getAnswerSets(survey, filter, sqlPagination, addlinks, forexport, showuploadedfiles, doNotReplaceAnswerIDs, useXmlDateFormat, showShortnames, false);
+	}
+
+	public List<List<String>>  getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames, boolean includeMissing) throws Exception {
 		if (!isReportingDatabaseEnabled()) return null;
-		return reportingService.getAnswerSetsInternal(survey, filter, sqlPagination, addlinks, forexport, showuploadedfiles, doNotReplaceAnswerIDs, useXmlDateFormat, showShortnames);
+		return reportingService.getAnswerSetsInternal(survey, filter, sqlPagination, addlinks, forexport, showuploadedfiles, doNotReplaceAnswerIDs, useXmlDateFormat, showShortnames, includeMissing);
 	}
 	
 	public List<Integer> getAnswerSetIDs(Survey survey, ResultFilter filter, SqlPagination sqlPagination) throws Exception {
@@ -100,10 +104,10 @@ public class ReportingServiceProxy {
 		return reportingService.getCountInternal(survey, quid, auid, noPrefixSearch, noPostfixSearch, noUUIDs, where, values);
 	}
 	
-	public int getAnswerSetsByQuestionUID(Survey survey, String quid, Map<Integer, Set<String>> answersByAnswerSetID)
+	public int getAnswerSetsByQuestionUID(Survey survey, String quid, Map<Integer, Set<String>> answersByAnswerSetID, String where, Map<String, Object> values)
 	{
 		if (!isReportingDatabaseEnabled()) return -1;
-		return reportingService.getAnswerSetsByQuestionUIDInternal(survey, quid, answersByAnswerSetID);
+		return reportingService.getAnswerSetsByQuestionUIDInternal(survey, quid, answersByAnswerSetID, where, values);
 	}
 	
 	public List<String> getAnswersByQuestionUID(Survey survey, String quid, String where, Map<String, Object> values) {

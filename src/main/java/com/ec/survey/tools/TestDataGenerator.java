@@ -104,7 +104,7 @@ public class TestDataGenerator implements Runnable {
 				} else {
 					for (int i = 0; i < surveys; i++)
 					{
-						if (surveys > 1 && i > 0)
+						if (answers != -1 && surveys > 1 && i > 0)
 						{
 							answers = (int) Math.floor(150000/i - 1);
 						}

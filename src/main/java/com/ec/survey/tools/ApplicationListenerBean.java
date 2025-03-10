@@ -868,7 +868,31 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			logger.info("starting upgrade step 119");
 			schemaService.step119();
 			status = schemaService.getStatus();
-		}		
+		}
+		
+		if (status.getDbversion() < 120){
+			logger.info("starting upgrade step 120");
+			schemaService.step120();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 121){
+			logger.info("starting upgrade step 121");
+			schemaService.step121();
+			status = schemaService.getStatus();
+		}
+		
+		if (status.getDbversion() < 122){
+			logger.info("starting upgrade step 122");
+			schemaService.step122();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 123){
+			logger.info("starting upgrade step 123");
+			schemaService.step123();
+			status = schemaService.getStatus();
+		}
 	}
 
 	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {
@@ -893,6 +917,8 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 	
 	public static void createDummyAnswers(String shortname, int answerCount, User user, String fileDir, AnswerService answerService, SurveyService surveyService, boolean validate, MessageSource resources, Locale locale, FileService fileService) throws Exception
 	{
+		if (answerCount <= 0) return;
+		
 		Survey psurvey = surveyService.getSurvey(shortname, false, false, false, true, null, true, false);
 		
 		Calendar cal = Calendar.getInstance();

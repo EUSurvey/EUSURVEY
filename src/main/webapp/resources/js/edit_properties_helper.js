@@ -77,7 +77,7 @@ function showHideQuizProperties(span)
 		$(span).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
 	} else {
 		lastQuizPropertiesVisible = true;
-		if ($(tr).next().find(".quizquestioncheck").first().is(":checked"))
+		if ($(tr).next().find(".quizquestioncheck").length == 0 || $(tr).next().find(".quizquestioncheck").first().is(":checked"))
 		{
 			$(tr).nextAll().not(".hideme").show(400);
 		} else {
@@ -815,10 +815,16 @@ function getECFPropertiesContent() {
 	}
 }
 
-function getQuizPropertiesContent()
+function getQuizPropertiesContent(matrix)
 {
 	var selectedelement = $("#content").find(".selectedquestion").first();
 	var element = _elements[$(selectedelement).attr("data-id")];
+	
+	if (element == null) {
+		var parentID = $("#content").find(".selectedquestion").closest(".survey-element").first().attr("id");
+		var parent = _elements[parentID];
+		element = parent.getChild($(selectedelement).attr("data-id"));
+	}
 	
 	var row = new PropertyRow();
 	row.Element(element);
@@ -839,6 +845,10 @@ function getQuizPropertiesContent()
 	row.LabelTitle(getPropertyLabel("Points")); 
 	row.NumValue(element.points());
 	row.Value(element.scoring() != null ? element.scoring().toString() : "0");
+	
+	if (matrix != null) {
+		row.isSingleChoice = matrix.isSingleChoice();;
+	}
 		
 	_elementProperties.propertyRows.push(row);
 	
@@ -876,14 +886,23 @@ function getQuizPropertiesContent()
 			var pa = element.possibleAnswers()[i];
 			row.ContentItems.push(pa);
 		}
-	} else {
+	} else if (typeof element['type'] == 'function' && element.type() == 'matrixitem') {
 		if (element.scoringItems() != null)
+		for (var i = 0; i < matrix.answers().length; i++)
+		{
+			var scoring = element.scoringItems()[i];
+			var wrapper = new newScoringWrapper(scoring);
+			wrapper.title(matrix.answers()[i].title());
+			row.ContentItems.push(wrapper);
+		}
+	} else {
+        if (element.scoringItems() != null)
 		for (var i = 0; i < element.scoringItems().length; i++)
 		{
-			var scoring = element.scoringItems()[i];	
+			var scoring = element.scoringItems()[i];
 			row.ContentItems.push(new newScoringWrapper(scoring));
 		}
-	}	
+	}
 	
 	_elementProperties.propertyRows.push(row);
 	
@@ -904,6 +923,26 @@ function getQuizPropertiesContent()
 	{
 		row.addExpectedAnswer(false);
 	}
+}
+
+function getQuizPropertiesContentMatrixAnswer(matrix, answer, index)
+{
+	var row = new PropertyRow();
+	row.Type("matrixanswerquiz");
+	
+	// we simply use the points for that answer from the first question as default value
+	answer["initialpoints"] = matrix.questions()[0].scoringItems()[index-1].points;
+	row.ContentItems.push(answer);
+	
+	_elementProperties.propertyRows.push(row);
+	
+	$(".scoringpointsanswer").each(function(){
+		$(this).spinner({ decimals:0, start:"", allowNull: true });
+
+        $(this).parent().find('.ui-spinner-button').click(function() {
+            $('#colpointsapply').show();
+        });
+	});
 }
 
 function initQuizElements(element)
@@ -1243,6 +1282,8 @@ function createDatePickerForEditor(instance, othervalue)
 	
 	$(instance).addClass("datepicker").attr("placeholder", "DD/MM/YYYY").datepicker({
 		dateFormat: 'dd/mm/yy',
+		changeMonth: true,
+		changeYear: true,
 		showButtonPanel: true,
 		
 		 onSelect: function(dateText, inst) {
@@ -1671,6 +1712,19 @@ function deleteImageFile(url, button)
 
 function deleteDownloadFile(uid, button, eid, noundo)
 {
+
+	$(button).closest("tr").remove();
+
+	var id = $(_elementProperties.selectedelement).attr("data-id");
+	var element = _elements[id];
+	element.files.remove( function (item) { return item.uid() == uid; } )
+
+	if (!noundo)
+		_actions.SaveEnabled(true);
+
+	//No Network request for deletion is required. Everything is handled on save
+
+	/*
 	var request = $.ajax({
 	  url: contextpath + "/noform/management/deleteDownloadFile",
 	  data: {uid : uid, eid: eid, suid : surveyUniqueId},
@@ -1694,6 +1748,7 @@ function deleteDownloadFile(uid, button, eid, noundo)
 		  }				
 	  }
 	});
+	*/
 }
 
 function createImageUploader(instance)
@@ -2139,7 +2194,7 @@ function addColumn(noundo)
 		newelement = newComplexTableItemViewModel(newElement);
 		element.childElements.push(newelement);
 	} else {	
-		var newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, text, text, false, "", element.answers().length);
+		var newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, text, text, false, "", element.answers().length, 0, 0);
 		element.answers.push(newelement);
 		
 		if (element.type == "Matrix")
@@ -2156,6 +2211,13 @@ function addColumn(noundo)
 			{
 				checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
 			}
+
+			//in quiz surveys add ScoringItem to all MatrixQuestions
+			if (isQuiz) {
+                for (var i = 0; i < element.questions().length; i++) {
+                    element.questions()[i].scoringItems.push(newScoringViewModel());
+                }
+            }
 		}
 	}
 	
@@ -2272,8 +2334,20 @@ function addRow(noundo)
 		newelement = newComplexTableItemViewModel(newElement);
 		element.childElements.push(newelement);
 	} else {
-		newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, text, text, false, "", element.questions().length);
+		newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, text, text, false, "", element.questions().length, 0, 0);
+
+		if (isQuiz && $(_elementProperties.selectedelement).hasClass("matrixitem")) {
+            newelement.scoring(1);
+        }
+
 		element.questions.push(newelement);
+
+        //in quiz surveys add ScoringItems to MatrixQuestion
+        if (isQuiz) {
+            for (var i = 0; i < element.answers().length; i++) {
+                newelement.scoringItems.push(newScoringViewModel());
+            }
+        }
 	}
 	
 	if (!noundo)
@@ -2832,6 +2906,7 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='InitialSliderPosition']").show();
 		$("tr[data-label='DisplayGraduationScale']").show();
 		$("tr[data-label='MaxDistanceToMedian']").show();
+		$("tr[data-label='ReadOnly']").hide();
 	} else {
 		$("tr[data-label='Mandatory']").show();
 		$("tr[data-label='Unit']").show();
@@ -2840,6 +2915,7 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='InitialSliderPosition']").hide();
 		$("tr[data-label='DisplayGraduationScale']").hide();
 		$("tr[data-label='MaxDistanceToMedian']").hide();
+		$("tr[data-label='ReadOnly']").show();
 	}
 }
 

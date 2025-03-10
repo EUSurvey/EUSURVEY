@@ -35,7 +35,7 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 	private int numColumns = 1;
 	private int minChoices;
 	private int maxChoices;
-	private boolean noNegativeScore;
+	
 	//Defaults to Listbox because of the old CHECKBOXES column that was Listbox with false
 	private MultipleChoiceStyle multipleChoiceStyle = MultipleChoiceStyle.LIST;
 
@@ -102,15 +102,6 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 
 	public void setMaxChoices(int maxChoices) {
 		this.maxChoices = maxChoices;
-	}
-
-	@Column(name = "NONEGATIVE")
-	public Boolean getNoNegativeScore() {
-		return noNegativeScore;
-	}
-
-	public void setNoNegativeScore(Boolean noNegativeScore) {
-		this.noNegativeScore = noNegativeScore != null && noNegativeScore;
 	}
 
 	public MultipleChoiceQuestion copy(String fileDir) throws ValidationException {

@@ -14,7 +14,7 @@ a.ratingitem {
 	height: 24px;
 }
 
- h1, h2, h3, h4, p, a, span, .surveytitle, .answertext, .runner-content, .sectiontitle, .questiontitle, .sectionlabel, .matrixlabel, .errorMess, .sectiondesc, .introduction, .ipmframe, .compulsory, .optional, .ipmactionbuttonsmall, .answer, .ipmbackground2, .ipmactivesectiontab, .ipminactivesectiontab, .fileuploadtext, .smalleritalic, .disclaimertitle, .disclaimertext
+ h1, h2, h3, h4, p, a, span, .surveytitle, .answertext, .runner-content, .sectiontitle, .questiontitle, .sectionlabel, .matrixlabel, .errorMess, .sectiondesc, .introduction, .compulsory, .optional, .answer, .fileuploadtext, .smalleritalic, .disclaimertitle, .disclaimertext
  {
    font-family: inherit;
  }
@@ -458,36 +458,8 @@ input.email {
 	width: 392px !important;
 }
 
-.multiple-choice {
-	border: 1px solid #ddd; 
-	display: inline-block;
-	background-color: #fff;
-	padding: 5px !important;
-	max-height: 85px;
-	width: auto;
-	overflow-x: auto;
-	cursor: pointer;
-	margin: 0px;
-}
-
-.multiple-choice:not(.complex) {
-	min-width: 200px;
-}
-
 .listbox a {
 	text-decoration: none;
-}
-
-.single-choice:not(.complex) {
-	border: 1px solid #ddd; 
-	display: inline-block;
-	background-color: #fff;
-	max-height: 85px;
-	width: auto;
-	min-width: 200px;
-	overflow-x: auto;
-	cursor: pointer;
-	margin: 0px;
 }
 
 .possible-answer {

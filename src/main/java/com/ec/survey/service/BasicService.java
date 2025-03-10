@@ -1,6 +1,10 @@
 package com.ec.survey.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.ec.survey.tools.ConversionTools;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -216,5 +221,23 @@ public class BasicService implements BeanFactoryAware {
 	
 	public boolean isEVoteEnabled() {
 		return (!StringUtils.isEmpty(enableevote) && enableevote.equalsIgnoreCase("true"));
+	}
+	
+	public void callHook(String hook) throws IOException {
+		sessionService.initializeProxy();
+		CloseableHttpClient httpclient = HttpClients.createSystem();	
+		
+		try {
+			logger.info("Calling webhook " + hook);
+			HttpGet httpget = new HttpGet(hook);
+			CloseableHttpResponse response = httpclient.execute(httpget);			
+			int statusCode = response.getStatusLine().getStatusCode();
+			logger.info("Server responded with http code " + statusCode);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		} finally {
+			httpclient.close();
+		}
+
 	}
 }

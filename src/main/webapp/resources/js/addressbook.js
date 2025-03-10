@@ -319,7 +319,7 @@ function addAttendee()
 			if ($(this).val().length > 0 && $(this).val() == $(select).val())
 			{
 				//alert($(this).val() + " used more than once");
-				$("#add-attendee-error-multiple-text").text($(this).val());
+				$("#add-attendee-error-multiple-text").text($(this).text());
 				$("#add-attendee-error-multiple").show();
 				error = true;
 			}
@@ -334,7 +334,7 @@ function addAttendee()
 			if ($(this).val().length > 0 && selectedOptions.indexOf("#" + $(this).val() + "#") != -1)
 			{
 				//alert($(this).text() + " used more than once");
-				$("#add-attendee-error-multiple-text").text($(this).val());
+				$("#add-attendee-error-multiple-text").text($(this).text());
 				$("#add-attendee-error-multiple").show();
 				error = true;
 			} else {
@@ -448,6 +448,7 @@ function editAttendee()
 	$("#edit-attendee-error-no-attribute").hide();
 	$("#edit-attendee-error-name").hide();
 	$("#edit-attendee-error-email").hide();
+	$("#edit-attendee-error-email2").hide();
 	$("#edit-attendee-dialog").find("select").each(function(){
 
 		var select = $(this);
@@ -457,7 +458,7 @@ function editAttendee()
 			if ($(this).val().length > 0 && $(this).val() == $(select).val())
 			{
 				//alert($(this).val() + " used more than once");
-				$("#edit-attendee-error-multiple-text").text($(this).val());
+				$("#edit-attendee-error-multiple-text").text($(this).text());
 				$("#edit-attendee-error-multiple").show();
 				error = true;
 			}
@@ -504,6 +505,10 @@ function editAttendee()
 	if ($("#edit-attendee-dialog").find("#email").val() == '')
 	{
 		$("#edit-attendee-error-email").show();
+		error = true;
+	} else if (!validateEmail($("#edit-attendee-dialog").find("#email").val()))
+	{
+		$("#edit-attendee-error-email2").show();
 		error = true;
 	}
 

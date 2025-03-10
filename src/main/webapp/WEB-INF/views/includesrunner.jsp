@@ -203,7 +203,9 @@
 			var validationTooManyCandidates = "${form.getMessage("validation.TooManyCandidates")}";
 			var validationTooManyListVotes = "${form.getMessage("validation.TooManyListVotes")}";
 			var likeOwnCommentOrExplanation = "${form.getMessage("message.likeOwnCommentOrExplanation")}";
-		</c:when>
+			var severalMore = "${form.getMessage("error.severalMore")}";
+			var errorInterdependencyMatrix = "${form.getMessage("error.InvalidInterdependencyMatrix")}";
+	</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
 			var requiredText = "<spring:message code='validation.required' />";
@@ -297,6 +299,8 @@
 			var validationTooManyCandidates = "<spring:message code='validation.TooManyCandidates'/>";
 			var validationTooManyListVotes = "<spring:message code='validation.TooManyListVotes'/>";
 			var likeOwnCommentOrExplanation = "<spring:message code='message.likeOwnCommentOrExplanation' />";
+			var severalMore = "<spring:message code='error.severalMore' />";
+			var errorInterdependencyMatrix = "<spring:message code='error.InvalidInterdependencyMatrix' />";
 		</c:otherwise>
 	</c:choose>
 	

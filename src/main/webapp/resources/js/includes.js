@@ -19,6 +19,19 @@ function getHeightForTinyMCE(textarea)
 	return "100";
 }
 
+function escapeXml(unsafe) {
+	if (unsafe == null) return null;
+	return unsafe.replace(/[<>&'"]/g, function (c) {
+		switch (c) {
+			case '<': return '&lt;';
+			case '>': return '&gt;';
+			case '&': return '&amp;';
+			case '\'': return '&apos;';
+			case '"': return '&quot;';
+		}
+	});
+}
+
 function closeFullScreen(button, apply)
 {
 	var id = $(button).closest("td").find("textarea").last().attr("id");
@@ -305,6 +318,9 @@ function initModals(item)
 			dateFormat: 'dd/mm/yy',
 			minDate: minD,
 			maxDate: maxD,
+			changeMonth: true,
+			changeYear: true,
+			hideIfNoPrevNext: true,
 			showButtonPanel: showpanel,
 			
 			 onSelect: function(dateText, inst) {
@@ -1933,10 +1949,14 @@ function initModals(item)
 				 		
 				 		var parsedPrecision = parseInt(precision,10);
 				 		var regEx;
-				 		if (parsedPrecision > 0)
+				 		if (parsedPrecision >= 0)
 				 		{
 				 			regEx = "^[-+]?[0-9]+((\\.[0-9]{1," + parsedPrecision + "})?)+$";
 				 		
+							if (parsedPrecision == 0) {
+								regEx = "^[-+]?[0-9]+$";
+							}
+
 					 		var tester=new RegExp(regEx);
 					 		
 					 		if (!(tester.test($(this).val().trim())))

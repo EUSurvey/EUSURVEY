@@ -76,7 +76,7 @@
 		<div id="choseRunnerLanguageDialogInner">		
 		
 			<div style="text-align: right; margin-right: 20px;">
-				<a href="" class="closedialog" onclick="hideModalDialog($('#choseRunnerLanguageDialog'))">${form.getMessage("label.Close")}</a>
+				<a href="javascript:;" class="closedialog" onclick="hideModalDialog($('#choseRunnerLanguageDialog'))">${form.getMessage("label.Close")}</a>
 			</div>
 			
 			<div class="dialogtitle">

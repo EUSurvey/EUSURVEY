@@ -6,6 +6,8 @@ import com.ec.survey.model.Export.ExportFormat;
 import com.ec.survey.model.Export.ExportState;
 import com.ec.survey.model.Export.ExportType;
 import com.ec.survey.model.Form;
+import com.ec.survey.model.ParticipationGroup;
+import com.ec.survey.model.ParticipationGroupType;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.WebserviceTask;
 import com.ec.survey.model.administration.User;
@@ -33,7 +35,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -117,10 +118,11 @@ public class ExportService extends BasicService {
 			if (exportFilePath == null) exportFilePath = getExportFilePath(export, uid);
 			ExportCreator exportCreator = null;
 			switch (export.getFormat()) {
-			case doc: 
-				exportCreator = (DocExportCreator) context.getBean("docExportCreator"); break;
+			case docx:
+				exportCreator = (DocxExportCreator) context.getBean("docxExportCreator"); break;
 			case xls: exportCreator = (XlsExportCreator) context.getBean("xlsExportCreator"); break;
-			case odt: 
+			case xlsx: exportCreator = (XlsxExportCreator) context.getBean("xlsxExportCreator"); break;
+			case odt:
 			case ods: exportCreator = (OdfExportCreator) context.getBean("odfExportCreator"); break;
 			case csv: exportCreator = (CsvExportCreator) context.getBean("csvExportCreator"); break;
 			case xml: exportCreator = (XmlExportCreator) context.getBean("xmlExportCreator"); break;
@@ -229,31 +231,40 @@ public class ExportService extends BasicService {
 
 		ExportFormat format = export.getFormat();
 		
+		String type = export.getType().toString();
+		
+		if (export.getType() == ExportType.Tokens) {
+			ParticipationGroup group = participationService.get(export.getParticipationGroup());
+			if (group.getType() == ParticipationGroupType.Static || group.getType() == ParticipationGroupType.ECMembers) {
+				type = "Contact_list";
+			}			
+		}		
+		
 		if (export.getType() != ExportType.AddressBook)
 		{
 			if (export.getZipped() != null && export.getZipped())
 			{
-				return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", export.getType(), export.getSurvey().getShortname(), export.getName(),"zip"));
+				return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", type, export.getSurvey().getShortname(), export.getName(),"zip"));
 			} 
 			
 			if (format.equals(ExportFormat.pdf) && export.getType().equals(ExportType.Content))
 			{
-				return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", export.getType(), export.getSurvey().getShortname(), export.getName(),"zip"));
+				return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", type, export.getSurvey().getShortname(), export.getName(),"zip"));
 			}
 			
-			return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", export.getType(), export.getSurvey().getShortname(), export.getName(),format));
+			return FileUtils.cleanFilename(String.format("%s_Export_%s_%s.%s", type, export.getSurvey().getShortname(), export.getName(),format));
 		} else {
 			if (export.getZipped() != null && export.getZipped())
 			{
-				return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", export.getType(), export.getName(),"zip"));
+				return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", type, export.getName(),"zip"));
 			} 
 			
 			if (format.equals(ExportFormat.pdf) && export.getType().equals(ExportType.Content))
 			{
-				return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", export.getType(), export.getName(),"zip"));
+				return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", type, export.getName(),"zip"));
 			}
 			
-			return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", export.getType(), export.getName(),format));
+			return FileUtils.cleanFilename(String.format("%s_Export_%s.%s", type, export.getName(),format));
 		}
 	}
 
@@ -463,8 +474,15 @@ public class ExportService extends BasicService {
 				Files.delete(additionalFile.toPath());
 				additionalFile = new File(getExportPathWithSuffix(filePath, "xls", counter++));
 			}
+		} else if (export.isTypeContent() && export.getFormat() == ExportFormat.xlsx) {
+			int counter = 1;
+			File additionalFile = new File(getExportPathWithSuffix(filePath, "xlsx", counter++));
+			while (additionalFile.exists()) {
+				Files.delete(additionalFile.toPath());
+				additionalFile = new File(getExportPathWithSuffix(filePath, "xlsx", counter++));
+			}
 		}
-		
+
 		file = new File(filePath + ".zip");
 		Files.deleteIfExists(file.toPath());
 	}

@@ -17,9 +17,16 @@
 			$(".filtercell").each(function(){
 				checkFilterCell(this, true);
 			});
-			
-			$("#tblActivities").stickyTableHeaders({fixedOffset: 165});
-			$('[data-toggle="tooltip"]').tooltip(); 
+
+
+			$("#tblActivities").stickyTableHeaders({fixedOffset: 160});
+			$("#tblActivities").on('enabledStickiness.stickyTableHeaders', function(event){
+				$("#tblActivitiesHeader").addClass("table-border-top");
+			}).on('disabledStickiness.stickyTableHeaders', function(event){
+				$("#tblActivitiesHeader").removeClass("table-border-top");
+			});
+
+			$('[data-toggle="tooltip"]').tooltip();
 		});
 			
 		var exportType;
@@ -67,7 +74,17 @@
 			width: auto;
 			margin: 0px;
 			max-width: 100%;
-		}	
+		}
+
+		.table-border-top::after {
+			content: "";
+			position: absolute;
+			left: -5px;
+			top: -100px;
+			height: 1px;
+			width: 140%;
+			border-top: 100px solid white;
+		}
 		
 		.ui-datepicker {
 			width: auto;
@@ -126,13 +143,14 @@
 							<b><spring:message code="label.Export" /></b>
 							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadcsv" />" id="startExportContentLinkcsv"   onclick="showExportDialog('Activity', 'csv')"><img src="${contextpath}/resources/images/file_extension_csv_small.png" /></a>
 							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportContentLinkxls"   onclick="showExportDialog('Activity', 'xls')"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
+							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" id="startExportContentLinkxlsx"   onclick="showExportDialog('Activity', 'xlsx')"><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></a>
 							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportContentLinkods"  onclick="showExportDialog('Activity', 'ods')"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
 						</div>
 					</div>
 				</div>
 		
 				<table id="tblActivities" class="table table-bordered table-striped table-styled" style="margin-top: 40px; max-width: none; table-layout:fixed;">
-					<thead>
+					<thead id="tblActivitiesHeader">
 						<tr style="text-align: center; border-top: 1px solid #ddd;">
 							<c:if test='${filter.visible("date") == true}'>
 								<c:choose>

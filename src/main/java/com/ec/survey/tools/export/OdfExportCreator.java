@@ -1244,7 +1244,6 @@ public class OdfExportCreator extends ExportCreator {
 										statistics.getRequestedRecordsPercent().get(key));
 								cell.setDisplayText(df.format(
 										statistics.getRequestedRecordsPercent().get(key)) + "%");
-								addDummyCells();
 							}
 						}
 					}	
@@ -1282,7 +1281,6 @@ public class OdfExportCreator extends ExportCreator {
 								statistics.getRequestedRecordsPercent().get(possibleAnswer.getId().toString()));
 						cell.setDisplayText(df.format(
 								statistics.getRequestedRecordsPercent().get(possibleAnswer.getId().toString())) + "%");
-						addDummyCells();
 					}
 
 					rowIndex++;
@@ -1351,7 +1349,6 @@ public class OdfExportCreator extends ExportCreator {
 						cell.setDisplayText(df.format(statistics.getRequestedRecordsPercent()
 								.get(galleryQuestion.getId().toString() + "-" + file.getUid())) + "%");
 
-						addDummyCells();
 					}
 
 					rowIndex++;
@@ -1429,7 +1426,6 @@ public class OdfExportCreator extends ExportCreator {
 									statistics.getRequestedRecordsPercentForMatrix(matrixQuestion, matrixAnswer))
 									+ "%");
 
-							addDummyCells();
 						}
 
 						rowIndex++;
@@ -1518,7 +1514,6 @@ public class OdfExportCreator extends ExportCreator {
 									cell.setDisplayText(df.format(statistics.getRequestedRecordsPercent()
 											.get(possibleAnswer.getId().toString())) + "%");
 
-									addDummyCells();
 								}
 							} else {
 								for (String answer : childQuestion.getPossibleNumberAnswers()) {
@@ -1551,7 +1546,6 @@ public class OdfExportCreator extends ExportCreator {
 									cell.setPercentageValue(percent);
 									cell.setDisplayText(df.format(percent) + "%");
 
-									addDummyCells();
 								}
 							}
 							rowIndex++;
@@ -1629,7 +1623,6 @@ public class OdfExportCreator extends ExportCreator {
 									df.format(statistics.getRequestedRecordsPercentForRatingQuestion(childQuestion, i))
 											+ "%");
 
-							addDummyCells();
 						}
 
 						rowIndex++;
@@ -1780,7 +1773,6 @@ public class OdfExportCreator extends ExportCreator {
 							cell.setPercentageValue(percent);
 							cell.setDisplayText(df.format(percent) + "%");
 
-							addDummyCells();
 						}
 						rowIndex++;
 						cell = sheet.getCellByPosition(0, rowIndex);
@@ -1851,7 +1843,6 @@ public class OdfExportCreator extends ExportCreator {
 							cell.setPercentageValue(percent);
 							cell.setDisplayText(df.format(percent) + "%");
 
-							addDummyCells();
 						}
 						rowIndex++;
 						cell = sheet.getCellByPosition(0, rowIndex);
@@ -1885,13 +1876,6 @@ public class OdfExportCreator extends ExportCreator {
 			}
 		}
 		spreadsheet.save(outputStream);
-	}
-
-	private void addDummyCells() {
-		for (int i = 0; i < 10; i++) {
-			cell = sheet.getCellByPosition(4 + i, rowIndex);
-			cell.setStringValue("");
-		}
 	}
 
 	private void drawImage(double percent) throws MalformedURLException, URISyntaxException {

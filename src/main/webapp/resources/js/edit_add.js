@@ -379,6 +379,15 @@ function getNewElement(item)
 	{
 		element.scoring = 1;
 		element.points = 1;
+		
+		if (item.hasClass("matrixitem")) {
+			element.childElements[4].scoring = 1;
+			element.childElements[4].points = 1;
+			element.childElements[5].scoring = 1;
+			element.childElements[5].points = 1;
+			element.childElements[6].scoring = 1;
+			element.childElements[6].points = 1;
+		}
 	} else {
 		element.scoring = 0;
 	}
@@ -576,6 +585,7 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		
 		element.isDelphiQuestion = false;
 		element.showExplanationBox = true;
+		element.noNegativeScore = false;
 	}
 	
 	if (type == "PossibleAnswer")

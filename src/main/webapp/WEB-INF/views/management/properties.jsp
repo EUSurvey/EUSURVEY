@@ -100,7 +100,7 @@
 								
 								<c:choose>
 									<c:when test="${form.survey.getIsPublished()}">
-										<div style="float: right; text-align: right">
+										<div style="float: right; text-align: right; margin-bottom: 10px;">
 											<div style="margin-bottom: 5px;">${form.survey.organisation}</div>	
 											<form:input type="hidden" path="survey.organisation" />									
 											<spring:message code="label.Owner" />: ${form.survey.owner.getFirstLastName()} (${form.survey.owner.email})
@@ -142,11 +142,11 @@
 											</span>
 										</div>
 		
-										<span style="float: right; margin-top: 10px;">
+										<span style="float: right; margin-top: 10px; margin-bottom: 10px;">
 											<spring:message code="label.Owner" />: ${form.survey.owner.getFirstLastName()} (${form.survey.owner.email})
 										</span>
 		
-										<div style="float: right; margin-top: 10px;">
+										<div style="float: right; margin-top: 10px; margin-bottom: 10px;">
 											<c:if test="${form.survey.owner.isExternal() || form.survey.owner.type == 'SYSTEM'}">
 												<div id="survey-validator-div" style="margin-left: 40px">
 													<span>
@@ -157,13 +157,14 @@
 													</span>
 												</div>
 											</c:if>
-										</div>
-		
-										<div class="help" style="float: left; display: none;">
-											<span><spring:message code="message.Organisation" /></span>
-										</div>
+										</div>		
+										
 									</c:otherwise>
 								</c:choose>
+								
+								<div class="help" style="float: left; display: none;">
+									<span><spring:message code="message.Organisation" /></span>
+								</div>
 							</td>
 						</tr>
 					</c:if>
@@ -395,7 +396,80 @@
 								</div>
 							</div>
 						</td>
-					</tr>	
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
+								<spring:message code="label.AutomaticReportEmail" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.sendReportEmail" data-bind="checked: sendReportEmail" class="onoffswitch-checkbox" id="myonoffswitchSendReportEmail" />
+									<label class="onoffswitch-label" for="myonoffswitchSendReportEmail">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div>
+							</div>
+							<div style="clear: both"></div>
+							<div class="help hideme"><spring:message code="info.AutomaticReportEmail" /></div>
+						</td>
+					</tr>
+					<tr class="subelement" data-bind="visible: sendReportEmail">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.FrequencyReportEmails" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+							</div>
+							<div style="float: right">
+								<form:radiobutton class="check" path="survey.reportEmailFrequency" value="Never" /><spring:message code="label.Never" />&#160;
+								<form:radiobutton class="check" path="survey.reportEmailFrequency" value="Daily" /><spring:message code="label.Daily" />&#160;
+								<form:radiobutton class="check" path="survey.reportEmailFrequency" value="Weekly" /><spring:message code="label.Weekly" />&#160;
+								<form:radiobutton class="check" path="survey.reportEmailFrequency" value="Monthly" /><spring:message code="label.Monthly" />
+							</div>
+							<div style="clear: both"></div>
+							<div class="help hideme"><spring:message code="info.FrequencyReportEmails" /></div>
+						</td>
+					</tr>
+					<tr class="subelement" data-bind="visible: sendReportEmail">
+						<td>
+							<div>
+								<spring:message code="label.RecipientList" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.RecipientList" /></div>
+							</div>
+							<div style="padding-top: 10px;">
+								<input type="text" id="reportRecipientList" maxlength="255" class="form-control freetext max255" style="display: inline" />
+								<button type="button" class="btn btn-default1" style="display: inline" onclick="_properties.addReportMails()"><spring:message code="label.Add" /></button>
+							</div>
+							<div>
+								<span id="report-duplicate-mails" class="validation-error-server hideme">
+									<spring:message code="validation.ReportDuplicateMailAddress" />
+								</span>
+								<span id="report-invalid-mails" class="validation-error-server hideme">
+									<spring:message code="validation.ReportInvalidMailAddress" />
+								</span>
+								<span id="report-too-many-mails" class="validation-error-server hideme">
+									<spring:message code="validation.ReportTooManyMailAddress" />
+								</span>
+								<span id="report-no-mails" class="validation-error-server hideme">
+                                    <spring:message code="validation.ReportNoMailAddress" />
+                                </span>
+							</div>
+							<div style="float: left; padding-left: 5px; padding-top: 5px;">
+								<!-- ko if: reportEmails() != '' -->
+									<!--  ko foreach: reportEmails().split(';') -->
+										<div>
+											<span data-bind="text: $data"></span>
+											<a style="font-size: inherit !important" class="iconbutton" data-bind="attr: {onclick: '_properties.deleteReportMail(`' + $data + '`)'}" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>
+										</div>
+									<!-- /ko -->
+								<!-- /ko -->
+							</div>
+							<form:input type="hidden" path="survey.reportEmails" data-bind="value: reportEmails()" />
+						</td>
+					</tr>
 					<tr>
 						<td>
 							<div style="float: left; max-width: 500px;">
@@ -561,7 +635,19 @@
 							    </div>
 							</div>
 						</td>
-					</tr>				
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
+								<spring:message code="label.Webhook" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.Webhook" /></div>
+							</div>
+							<div style="float: right">
+								<form:input id="edit-survey-webhook" type="text" maxlength="255" class="form-control freetext max255" path="survey.webhook" />
+							</div>
+						</td>
+					</tr>						
 				</table>
 			</div>		
 			
@@ -1765,7 +1851,7 @@
 							</td>
 						</tr>
 
-						<c:if test="${form.survey.geteVoteTemplate() != 'p'}">
+						<c:if test="${form.survey.geteVoteTemplate() != 'p' && form.survey.geteVoteTemplate() != 'o'}">
 							<tr class="subelement" data-bind="visible: eVote">
 								<td>
 									<div style="float: left; max-width: 500px;">

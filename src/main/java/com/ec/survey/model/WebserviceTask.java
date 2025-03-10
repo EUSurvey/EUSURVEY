@@ -27,6 +27,7 @@ public class WebserviceTask {
 	private Integer exportType;
 	private String contributionType;
 	private String fileTypes;
+	private String hook;
 	
 	private Date created;
 	private Date started;
@@ -224,6 +225,14 @@ public class WebserviceTask {
 	}
 	public void setXmlOnly(boolean xmlOnly) {
 		this.xmlOnly = xmlOnly;
+	}
+
+	@Column(name = "WST_HOOK")
+	public String getHook() {
+		return hook;
+	}
+	public void setHook(String hook) {
+		this.hook = hook;
 	}
 }
 

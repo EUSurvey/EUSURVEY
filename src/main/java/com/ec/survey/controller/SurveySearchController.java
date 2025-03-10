@@ -38,7 +38,6 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -657,44 +656,33 @@ public class SurveySearchController extends BasicController {
 	public ModelAndView resultsxls(@PathVariable String id, HttpServletRequest request, HttpServletResponse response)
 			throws InvalidURLException, ForbiddenURLException, NotAgreedToTosException, WeakAuthenticationException,
 			NotAgreedToPsException {
-		Archive archive = archiveService.get(Integer.parseInt(id));
+		respondArchiveResults("xls", "application/msexcel", id, request, response);
+		return null;
+	}
 
-		if (archive == null || !archive.getFinished() || archive.getError() != null) {
-			throw new InvalidURLException();
-		}
-
-		User u = sessionService.getCurrentUser(request);
-		if (!u.getId().equals(archive.getUserId()) && u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-			throw new ForbiddenURLException();
-		}
-
-		java.io.File file = fileService.getArchiveFile(archive.getSurveyUID(), archive.getSurveyUID() + "results.xls");
-		if (!file.exists())
-			file = new java.io.File(archiveFileDir + archive.getSurveyUID() + "results.xls");
-
-		if (file.exists()) {
-			response.setContentLength((int) file.length());
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-			response.setContentType("application/msexcel");
-
-			try {
-				FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
-				return null;
-			} catch (FileNotFoundException e) {
-				logger.error(e.getLocalizedMessage(), e);
-			} catch (ClientAbortException e) {
-				// ignore
-			} catch (IOException e) {
-				logger.error(e.getLocalizedMessage(), e);
-			}
-		}
-
-		throw new InvalidURLException();
+	@RequestMapping(value = "/archive/resultsxlsx/{id}")
+	public ModelAndView resultsxlsx(@PathVariable String id, HttpServletRequest request, HttpServletResponse response)
+			throws InvalidURLException, ForbiddenURLException, NotAgreedToTosException, WeakAuthenticationException,
+			NotAgreedToPsException {
+		respondArchiveResults("xlsx", "application/msexcel", id, request, response);
+		return null;
 	}
 
 	@RequestMapping(value = "/archive/resultsxlszip/{id}")
 	public ModelAndView resultsxlszip(@PathVariable String id, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
+		respondArchiveResults("xls.zip", "application/zip", id, request, response);
+		return null;
+	}
+
+	@RequestMapping(value = "/archive/resultsxlsxzip/{id}")
+	public ModelAndView resultsxlsxzip(@PathVariable String id, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		respondArchiveResults("xlsx.zip", "application/zip", id, request, response);
+		return null;
+	}
+
+	private void respondArchiveResults(String fileExt, String mime, String id, HttpServletRequest request, HttpServletResponse response) throws InvalidURLException, ForbiddenURLException, NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException {
 		Archive archive = archiveService.get(Integer.parseInt(id));
 
 		if (archive == null || !archive.getFinished() || archive.getError() != null) {
@@ -706,21 +694,18 @@ public class SurveySearchController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		java.io.File file = fileService.getArchiveFile(archive.getSurveyUID(),
-				archive.getSurveyUID() + "results.xls.zip");
+		java.io.File file = fileService.getArchiveFile(archive.getSurveyUID(), archive.getSurveyUID() + "results." + fileExt);
 		if (!file.exists())
-			file = new java.io.File(archiveFileDir + archive.getSurveyUID() + "results.xls.zip");
+			file = new java.io.File(archiveFileDir + archive.getSurveyUID() + "results." + fileExt);
 
 		if (file.exists()) {
 			response.setContentLength((int) file.length());
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-			response.setContentType("application/zip");
+			response.setContentType(mime);
 
 			try {
 				FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
-				return null;
-			} catch (FileNotFoundException e) {
-				logger.error(e.getLocalizedMessage(), e);
+				return;
 			} catch (ClientAbortException e) {
 				// ignore
 			} catch (IOException e) {
@@ -735,46 +720,28 @@ public class SurveySearchController extends BasicController {
 	public ModelAndView stats(@PathVariable String id, HttpServletRequest request, HttpServletResponse response)
 			throws InvalidURLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException,
 			ForbiddenURLException {
-		Archive archive = archiveService.get(Integer.parseInt(id));
-
-		if (archive == null || !archive.getFinished() || archive.getError() != null) {
-			throw new InvalidURLException();
-		}
-
-		User u = sessionService.getCurrentUser(request);
-		if (!u.getId().equals(archive.getUserId()) && u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-			throw new ForbiddenURLException();
-		}
-
-		java.io.File file = fileService.getArchiveFile(archive.getSurveyUID(),
-				archive.getSurveyUID() + "statistics.pdf");
-		if (!file.exists())
-			file = new java.io.File(archiveFileDir + archive.getSurveyUID() + "statistics.pdf");
-
-		if (file.exists()) {
-			response.setContentLength((int) file.length());
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-			response.setContentType("application/pdf");
-
-			try {
-				FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
-				return null;
-			} catch (FileNotFoundException e) {
-				logger.error(e.getLocalizedMessage(), e);
-			} catch (ClientAbortException e) {
-				// ignore
-			} catch (IOException e) {
-				logger.error(e.getLocalizedMessage(), e);
-			}
-		}
-
-		throw new InvalidURLException();
+		respondArchiveStats("pdf", "application/pdf", id, request, response);
+		return null;
 	}
 
 	@RequestMapping(value = "/archive/statsxls/{id}")
 	public ModelAndView statsdoc(@PathVariable String id, HttpServletRequest request, HttpServletResponse response)
 			throws InvalidURLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException,
 			ForbiddenURLException {
+		respondArchiveStats("xls", "application/msexcel", id, request, response);
+		return null;
+	}
+
+	@RequestMapping(value = "/archive/statsxlsx/{id}")
+	public ModelAndView statsxlsx(@PathVariable String id, HttpServletRequest request, HttpServletResponse response)
+			throws InvalidURLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException,
+			ForbiddenURLException {
+		respondArchiveStats("xlsx", "application/msexcel", id, request, response);
+		return null;
+	}
+
+	private void respondArchiveStats(String fileExt, String mime, String id, HttpServletRequest request, HttpServletResponse response) throws InvalidURLException, ForbiddenURLException, NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException {
+
 		Archive archive = archiveService.get(Integer.parseInt(id));
 
 		if (archive == null || !archive.getFinished() || archive.getError() != null) {
@@ -787,20 +754,18 @@ public class SurveySearchController extends BasicController {
 		}
 
 		java.io.File file = fileService.getArchiveFile(archive.getSurveyUID(),
-				archive.getSurveyUID() + "statistics.xls");
+				archive.getSurveyUID() + "statistics." + fileExt);
 		if (!file.exists())
-			file = new java.io.File(archiveFileDir + archive.getSurveyUID() + "statistics.xls");
+			file = new java.io.File(archiveFileDir + archive.getSurveyUID() + "statistics." + fileExt);
 
 		if (file.exists()) {
 			response.setContentLength((int) file.length());
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-			response.setContentType("application/msexcel");
+			response.setContentType(mime);
 
 			try {
 				FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
-				return null;
-			} catch (FileNotFoundException e) {
-				logger.error(e.getLocalizedMessage(), e);
+				return;
 			} catch (ClientAbortException e) {
 				// ignore
 			} catch (IOException e) {

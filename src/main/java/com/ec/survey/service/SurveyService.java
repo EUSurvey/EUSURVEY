@@ -45,6 +45,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.sql.Array;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -2274,9 +2275,6 @@ public class SurveyService extends BasicService {
 
 		query = session.createSQLQuery("DELETE FROM TRANSLATIONS WHERE SURVEY_ID = :id");
 		query.setParameter("id", id).executeUpdate();
-		
-		query = session.createSQLQuery("DELETE pae.* FROM POSSIBLEANSWER_ELEMENT pae LEFT JOIN ELEMENTS e3 ON e3.ID = pae.dependentElements_ID LEFT JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e3.ID LEFT JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE s.SURVEY_UID = :uid");
-		query.setParameter("uid", uid).executeUpdate();
 
 		if (deleteAccesses) {
 			List<Access> accesses = getAccesses(id);
@@ -2352,6 +2350,8 @@ public class SurveyService extends BasicService {
 				}
 			}
 		}
+
+		session.flush();
 
 		if (s.getIsSelfAssessment())
 			selfassessmentService.deleteData(s.getUniqueId());
@@ -2457,67 +2457,6 @@ public class SurveyService extends BasicService {
 				oldToNewUniqueIds.put(elem.getUniqueId(), newUniqueId);
 			}
 			elem.setUniqueId(newUniqueId);
-		}
-
-		Map<Integer, Element> elementsBySourceId = copy.getElementsBySourceId();
-
-		if (result.isFromIPM()) {
-			// recreate dependencies
-			for (int elem : result.getOriginalDependencies().keySet()) {
-				PossibleAnswer answer = (PossibleAnswer) elementsBySourceId.get(elem);
-
-				for (String originalId : result.getOriginalDependencies().get(elem)) {
-					Element dependent = elementsBySourceId.get(result.getOriginalIdsToNewIds().get(originalId));
-					answer.getDependentElements().getDependentElements().add(dependent);
-
-					if (result.getAdditionalElements().containsKey(dependent.getSourceId())) {
-						List<Integer> ids = result.getAdditionalElements().get(dependent.getSourceId());
-						for (Integer id : ids) {
-							Element upload = elementsBySourceId.get(id);
-							answer.getDependentElements().getDependentElements().add(upload);
-						}
-					}
-				}
-			}
-
-			for (String elems : result.getOriginalMatrixDependencies().keySet()) {
-				String[] data = elems.split("#");
-				int answerpos = Integer.parseInt(data[1]);
-				String questionoriginal = data[0];
-				int question = elementsBySourceId.get(result.getOriginalIdsToNewIds().get(questionoriginal)).getId();
-				String matrix = data[2];
-
-				Matrix m = (Matrix) elementsBySourceId.get(result.getOriginalIdsToNewIds().get(matrix));
-
-				for (String originalId : result.getOriginalMatrixDependencies().get(elems)) {
-					Element dependent = elementsBySourceId.get(result.getOriginalIdsToNewIds().get(originalId));
-
-					DependencyItem dep = new DependencyItem();
-
-					int k = 0;
-					for (Element q : m.getQuestions()) {
-						if (q.getId() == question) {
-							k += answerpos;
-							break;
-						}
-
-						k += m.getAnswers().size();
-					}
-
-					dep.setPosition(k);
-					dep.getDependentElements().add(dependent);
-
-					if (result.getAdditionalElements().containsKey(dependent.getSourceId())) {
-						List<Integer> ids = result.getAdditionalElements().get(dependent.getSourceId());
-						for (Integer id : ids) {
-							Element upload = elementsBySourceId.get(id);
-							dep.getDependentElements().add(upload);
-						}
-					}
-
-					m.getDependentElements().add(dep);
-				}
-			}
 		}
 
 		if (result.getActiveSurvey() != null) {
@@ -3002,46 +2941,8 @@ public class SurveyService extends BasicService {
 					Translation tr = new Translation();
 					tr.setSurveyId(survey.getId());
 
-					if (result == null || !result.isFromIPM()) {
-						tr.setKey(translateKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds, convertedFileUIDs));
-					} else {
-						if (trOriginal.getKey().equalsIgnoreCase(Survey.IPMINTRODUCTION)) {
-							for (com.ec.survey.model.survey.Element element : survey.getElements()) {
-								if (element instanceof Section && element.getPosition() == 0
-										&& element.getShortname().equalsIgnoreCase("Introduction")) {
-									Translation tr2 = new Translation();
-									tr2.setSurveyId(survey.getId());
-									tr2.setKey(element.getId().toString());
-									tr2.setLabel(element.getTitle());
-									tr2.setLanguage(trOriginal.getLanguage());
-									tr2.setTranslations(t);
-									tr2.setLocked(trOriginal.getLocked() || element.getLocked());
-									t.getTranslations().add(tr2);
-								} else if (element instanceof Text && element.getShortname() != null
-										&& element.getShortname().equalsIgnoreCase("introduction")
-										&& element.getPosition() < 2) {
-									tr.setKey(element.getUniqueId());
-									break;
-								}
-							}
-						} else {
-
-							tr.setKey(translateIPMKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds,
-									result));
-
-							if (trOriginal.getKey().endsWith("desc") && trOriginal.getKey().length() > 4) {
-
-								for (com.ec.survey.model.survey.Element element : survey.getElements()) {
-									if (element instanceof Text && element.getShortname() != null
-											&& element.getShortname().equals(trOriginal.getKey())) {
-										tr.setKey(element.getUniqueId());
-										break;
-									}
-								}
-							}
-						}
-					}
-
+					tr.setKey(translateKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds, convertedFileUIDs));
+				
 					if (newTitle && trOriginal.getKey().equalsIgnoreCase("TITLE")) {
 						if (trOriginal.getLanguage().equalsIgnoreCase(survey.getLanguage().getCode())) {
 							tr.setLabel(survey.getTitle());
@@ -3056,23 +2957,6 @@ public class SurveyService extends BasicService {
 					tr.setTranslations(t);
 					t.getTranslations().add(tr);
 				}
-			}
-
-			if (result != null && result.isFromIPM()) {
-
-				for (List<Integer> ids : result.getAdditionalElements().values())
-					for (Integer id : ids) {
-						Element upload = elementsBySourceId.get(id);
-
-						if (upload instanceof Upload) {
-							Translation tr = new Translation();
-							tr.setSurveyId(survey.getId());
-							tr.setKey(elementsBySourceId.get(id).getId().toString());
-							tr.setLabel("");
-							tr.setLanguage(tOriginal.getLanguage().getCode());
-							t.getTranslations().add(tr);
-						}
-					}
 			}
 
 			translationService.deleteTranslations(survey.getId(), t.getLanguage().getCode());
@@ -3240,48 +3124,6 @@ public class SurveyService extends BasicService {
 		return key;
 	}
 
-	private String translateIPMKey(String key, Map<Integer, Element> elementsBySourceId,
-			Map<String, String> oldToNewUniqueIds, ImportResult result) {
-		if (key.equalsIgnoreCase(Survey.TITLE))
-			return key;
-		if (key.equalsIgnoreCase(Survey.INTRODUCTION))
-			return key;
-		if (key.equalsIgnoreCase(Survey.ESCAPEPAGE))
-			return key;
-		if (key.equalsIgnoreCase(Survey.CONFIRMATIONPAGE))
-			return key;
-
-		String key2 = key;
-
-		try {
-			if (key.endsWith("help")) {
-				String id = key.substring(0, key.indexOf("help"));
-				if (result.getOriginalIdsToNewIds().containsKey(id)) {
-					key2 = result.getOriginalIdsToNewIds().get(id).toString() + "help";
-				}
-			} else if (key.endsWith(NumberQuestion.UNIT)) {
-				String id = key.substring(0, key.indexOf(NumberQuestion.UNIT));
-				if (result.getOriginalIdsToNewIds().containsKey(id)) {
-					key2 = result.getOriginalIdsToNewIds().get(id).toString() + NumberQuestion.UNIT;
-				}
-			} else if (key.endsWith(Section.TABTITLE)) {
-				String id = key.substring(0, key.indexOf(Section.TABTITLE));
-				if (result.getOriginalIdsToNewIds().containsKey(id)) {
-					key2 = result.getOriginalIdsToNewIds().get(id).toString() + Section.TABTITLE;
-				}
-			} else {
-				if (result.getOriginalIdsToNewIds().containsKey(key)) {
-					key2 = result.getOriginalIdsToNewIds().get(key).toString();
-				}
-			}
-		} catch (Exception e) {
-			logger.info("unknown key " + key + "found in translation");
-		}
-
-		return translateKey(key2, elementsBySourceId, oldToNewUniqueIds, new HashMap<>());
-	}
-
-
 	@Transactional(readOnly = true)
 	public List<Access> getAccesses(Integer id) {
 		Session session = sessionFactory.getCurrentSession();
@@ -3423,8 +3265,7 @@ public class SurveyService extends BasicService {
 		}
 		
 		return accesses;
-	}
-	
+	}	
 
 	@Transactional(readOnly = true)
 	public ResultAccess getResultAccess(String surveyUID, int userId) {
@@ -3642,7 +3483,8 @@ public class SurveyService extends BasicService {
 					Survey::getDedicatedResultPrivileges,
 					Survey::getAllowQuestionnaireDownload,
 					Survey::getRegistrationForm,
-					Survey::getOrganisation
+					Survey::getOrganisation,
+					Survey::getWebhook
 			);
 
 			if (doesLanguageDiffer(draftSurvey.getUniqueId())){
@@ -5035,14 +4877,17 @@ public class SurveyService extends BasicService {
 	@Transactional
 	public List<Integer> getSurveysMarkedDeleted() {
 		Session session = sessionFactory.getCurrentSession();
+		
+		String ageDays = settingsService.get(Setting.DeleteSurveysAge);
+		int days = Integer.parseInt(ageDays);
 
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MONTH, -3);
+		cal.add(Calendar.DATE, -1 * days);
 
-		Date threemonthsago = cal.getTime();
+		Date deletedBefore = cal.getTime();
 		Query<Integer> query = session.createQuery(
-				"SELECT s.id FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true AND s.deleted < :threemonthsago", Integer.class);
-		query.setParameter("threemonthsago", threemonthsago);
+				"SELECT s.id FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true AND s.deleted < :deletedBefore", Integer.class);
+		query.setParameter("deletedBefore", deletedBefore);
 
 		return query.list();
 	}
@@ -6045,7 +5890,7 @@ public class SurveyService extends BasicService {
 			MonthlyCharge mo = c.monthly.get(monthPublished);
 			
 			if (v1) {			
-				mo.v1++;
+				mo.nb_surveys_published++;
 			}
 			
 			if (v1_2) {
@@ -6053,12 +5898,12 @@ public class SurveyService extends BasicService {
 				Survey survey = getSurveyByUniqueId(surveyUID, false, true);
 				if (survey != null && !survey.getIsDeleted() && !survey.getArchived())
 				{
-					mo.v1_2++;
+					mo.multi_annual_surveys++;
 				}
 			}
 			
 			if (v2) {			
-				mo.v2++;
+				mo.nb_contributions_received++;
 			}
 		}
 	}
@@ -6110,7 +5955,7 @@ public class SurveyService extends BasicService {
 		Collection<OrganisationCharge> filteredResult = new ArrayList<OrganisationCharge>();
 		
 		for (OrganisationCharge organisationCharge : organisations.values()) {
-			if (organisationCharge.getTotal_v1() >= minPublishedSurveys) {
+			if (organisationCharge.getTotal_nb_surveys_published() >= minPublishedSurveys) {
 				filteredResult.add(organisationCharge);
 			}
 		}
@@ -6146,12 +5991,12 @@ public class SurveyService extends BasicService {
 		if (!skipCode) query.setParameter("code", code);
 		result.setAllContributions(ConversionTools.getValue(query.uniqueResult()));
 		
-		sql = "SELECT COUNT(*) FROM ANSWERS_SET WHERE ISDRAFT = 0 AND SURVEY_ID IN (SELECT MIN(SURVEY_ID) FROM SURVEYS WHERE ISDRAFT = 0" + codePart + " GROUP BY SURVEY_UID HAVING YEAR(MIN(SURVEY_CREATED)) = YEAR(CURRENT_DATE()))";
+		sql = "SELECT COUNT(*) FROM ANSWERS_SET a LEFT JOIN SURVEYS s ON a.SURVEY_ID = s.SURVEY_ID WHERE a.ISDRAFT = 0 AND YEAR(a.ANSWER_SET_DATE) = YEAR(CURRENT_DATE()) AND s.ISDRAFT = 0" + codePart;
 		query = session.createSQLQuery(sql);
 		if (!skipCode) query.setParameter("code", code);
 		result.setContributionsThisYear(ConversionTools.getValue(query.uniqueResult()));
 		
-		sql = "SELECT COUNT(*) FROM ANSWERS_SET WHERE ISDRAFT = 0 AND SURVEY_ID IN (SELECT MIN(SURVEY_ID) FROM SURVEYS WHERE ISDRAFT = 0" + codePart + " GROUP BY SURVEY_UID HAVING YEAR(MIN(SURVEY_CREATED)) = YEAR(CURRENT_DATE()) - 1)";
+		sql = "SELECT COUNT(*) FROM ANSWERS_SET a LEFT JOIN SURVEYS s ON a.SURVEY_ID = s.SURVEY_ID WHERE a.ISDRAFT = 0 AND YEAR(a.ANSWER_SET_DATE) = YEAR(CURRENT_DATE()) - 1 AND s.ISDRAFT = 0" + codePart;
 		query = session.createSQLQuery(sql);
 		if (!skipCode) query.setParameter("code", code);
 		result.setContributionsLastYear(ConversionTools.getValue(query.uniqueResult()));		
@@ -6400,7 +6245,7 @@ public class SurveyService extends BasicService {
 		List<Survey> surveys = new ArrayList<>();
 		
 		for (Survey survey: allSurveys) {
-			Date newestAnswerDate = answerService.getNewestAnswerDate(survey.getId());
+			Date newestAnswerDate = answerService.getNewestAnswerDate(survey.getId(), true);
 			if (newestAnswerDate == null || newestAnswerDate.before(updated)) {
 				initializeSurvey(survey);
 				surveys.add(survey);
@@ -6410,4 +6255,65 @@ public class SurveyService extends BasicService {
 		return surveys;
 	}
 
+	@Transactional
+	public void sendStatisticalEmails(Survey.ReportEmailFrequency reportEmailFrequency) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "SELECT s.uniqueId, s.shortname, s.title, s.reportEmails FROM Survey s WHERE s.isDraft = true AND s.isActive = true AND s.isFrozen = false AND s.archived = false AND s.isDeleted = false AND s.sendReportEmail = true AND reportEmailFrequency = :frequency";
+		Query query = session.createQuery(hql).setParameter("frequency", reportEmailFrequency);
+		List<Object[]> rows = query.list();
+
+		for (var row : rows) {
+			String uid = (String) row[0];
+			String alias = (String) row[1];
+			String title = (String) row[2];
+			String recipients = (String) row[3];
+			String[] emails = recipients.split(";");
+			int total = answerService.getNumberOfAnswerSetsPublished(uid);
+			int inPeriod = answerService.getNumberOfAnswerSetsPublishedInPeriod(uid, reportEmailFrequency);
+
+			for (String email : emails) {
+				if (email.trim().isEmpty()) {
+					continue;
+				}
+
+				try {
+					InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+					String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", getEmailBody(alias, total, reportEmailFrequency, inPeriod)).replace("[HOST]", host);
+
+					String subject = "Contributions received for " + ConversionTools.removeHTML(title);
+					if (subject.length() > 60) {
+						subject = subject.substring(0, 57) + "...";
+					}
+					mailService.SendHtmlMail(email, sender, sender, subject, text, null);
+				} catch (Exception e) {
+					logger.error(e.getLocalizedMessage(), e);
+				}
+			}
+		}
+	}
+
+	private String getEmailBody(String alias, int total, Survey.ReportEmailFrequency reportEmailFrequency, int period) throws Exception {
+		var s = new StringBuilder();
+		s.append("Dear user, <br /><br />You are receiving this message for the survey below:<br />");
+
+		String link = host + "runner/" + alias;
+		s.append(link);
+		s.append("<br /><br />Total number of contributions received: ");
+		s.append(total).append("<br /><br />");
+		switch (reportEmailFrequency) {
+			case Never:
+				throw new Exception("invalid email frequency");
+			case Daily:
+				s.append("Contributions received yesterday: ");
+				break;
+			case Weekly:
+				s.append("Contributions received last week: ");
+				break;
+			case Monthly:
+				s.append("Contributions received last month: ");
+				break;
+		}
+		s.append(period);
+		return s.toString();
+	}
 }

@@ -436,12 +436,24 @@
 					a = document.createElement("a");
 					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxls/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" />');
 					$(td).append(a);
-					
+
+					if (list[i].hasXlsxResults) {
+						a = document.createElement("a");
+						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxlsx" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlsx/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xlsx_small.png" alt="xlsx" />');
+						$(td).append(a);
+					}
+
 					if (list[i].surveyHasUploadedFiles)
 					{
 						a = document.createElement("a");
-						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadzip" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlszip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="zip" />');
+						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.DownloadzipXls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlszip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xls-zip" />');
 						$(td).append(a);
+
+						if (list[i].hasXlsxResults) {
+							a = document.createElement("a");
+							$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.DownloadzipXlsx" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlsxzip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xlsx-zip" />');
+							$(td).append(a);
+						}
 					}
 					
 					$(row).append(td);
@@ -450,9 +462,17 @@
 					a = document.createElement("a");
 					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadpdf" />").attr("target","_blank").attr("href","${contextpath}/archive/statspdf/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" />');
 					$(td).append(a);
+
 					a = document.createElement("a");
 					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("target","_blank").attr("href","${contextpath}/archive/statsxls/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" />');
-					$(td).append(a);				
+					$(td).append(a);
+
+					if (list[i].hasXlsxResults) {
+						a = document.createElement("a");
+						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxlsx" />").attr("target","_blank").attr("href","${contextpath}/archive/statsxlsx/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xlsx_small.png" alt="xlsx" />');
+						$(td).append(a);
+					}
+
 					$(row).append(td);
 				} else {
 					$(row).append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");

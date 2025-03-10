@@ -26,6 +26,7 @@
 		var exportTooltips = {
 				'csv':'<spring:message code="tooltip.Downloadcsv" />',
 				'doc':'<spring:message code="tooltip.Downloaddoc" />',
+				'docx':'<spring:message code="tooltip.Downloaddocx" />',
 				'ods':'<spring:message code="tooltip.Downloadods" />',
 				'odt':'<spring:message code="tooltip.Downloadodt" />',
 				'xls':'<spring:message code="tooltip.Downloadxls" />',
@@ -264,7 +265,7 @@
 					$(td).append('<img data-toggle="tooltip" title="<spring:message code="label.Statistics" />" src="${contextpath}/resources/images/icons/24/percentage.png" name="stat" />');
 
 				if (list[i].typeStatisticsQuiz)
-					$(td).append('<span data-toggle="tooltip" title="<spring:message code="label.Statistics" />" class="glyphicon glyphicon-education" style="font-size: 25px"></span>');
+					$(td).append('<span data-toggle="tooltip" title="<spring:message code="label.QuizResults" />" class="glyphicon glyphicon-education" style="font-size: 25px"></span>');
 				
 				if (list[i].typeCharts)
 					$(td).append('<img data-toggle="tooltip" title="<spring:message code="label.Charts" />" src="${contextpath}/resources/images/icons/24/business-chart.png" name="chart" />');

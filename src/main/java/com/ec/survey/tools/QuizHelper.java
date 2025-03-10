@@ -35,7 +35,7 @@ public class QuizHelper {
 		int currentSectionScore = 0;
 		int currentSectionMaxScore = 0;
 		
-		for (Element element : survey.getElements()) {
+		for (Element element : survey.getQuestionsAndSections()) {
 			if (invisibleElements != null && invisibleElements.contains(element.getUniqueId())) {
 				continue;
 			}
@@ -51,6 +51,157 @@ public class QuizHelper {
 			} else if (element instanceof Question)
 			{
 				Question question = (Question)element;
+				
+				if (question instanceof Matrix)
+				{
+					Matrix matrix = (Matrix)question;
+									
+					List<Element> matrixAnswers = matrix.getAnswers();
+					for (int i = 0; i < matrixAnswers.size(); i++) {
+						result.getPositionForAnswerUID().put(matrixAnswers.get(i).getUniqueId(), i);
+						result.getAnswerUIDForPosition().put(i, matrixAnswers.get(i).getUniqueId());
+					}
+					
+					for (Element matrixQuestionElement : matrix.getQuestions()) {
+						if (invisibleElements != null && invisibleElements.contains(matrixQuestionElement.getUniqueId())) {
+							continue;
+						}
+
+						Question matrixQuestion = (Question)matrixQuestionElement;
+						List<Answer> answers = answerSet.getAnswers(matrixQuestion.getUniqueId());
+						
+						if (matrixQuestion.getScoring() == 1) {	
+							result.getQuestionMaximumScores().put(matrixQuestion.getUniqueId(), matrixQuestion.getQuizPoints());
+							maximumScore += matrixQuestion.getQuizPoints();
+							currentSectionMaxScore += matrixQuestion.getQuizPoints();
+							
+							//TODO: is that correct?
+							if (answers.isEmpty() && !matrix.getIsSingleChoice())
+							{
+								result.getPartiallyAnswersMultipleChoiceQuestions().add(matrixQuestion.getUniqueId());
+							}
+							
+							if (answers.isEmpty()) {
+								continue;
+							}
+							
+							if (matrix.getIsSingleChoice()) {
+								// get points if answer is correct						
+								Answer answer = answers.get(0);
+								if (result.getPositionForAnswerUID() != null && result.getPositionForAnswerUID().containsKey(answer.getPossibleAnswerUniqueId())) {
+									int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
+									ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
+									if (scoringItem != null && scoringItem.isCorrect()) {
+										score += matrixQuestion.getQuizPoints();
+										currentSectionScore += matrixQuestion.getQuizPoints();
+										result.getQuestionScores().put(matrixQuestion.getUniqueId(), matrixQuestion.getQuizPoints());
+									}
+								}
+							} else {
+								// get points if exactly all correct answers are selected						
+								Set<String> correctUIDs = new HashSet<>();
+								for (int i = 0; i < matrixQuestion.getScoringItems().size(); i++) {
+									if (matrixQuestion.getScoringItems().get(i).isCorrect())
+									{
+										String uid = result.getAnswerUIDForPosition().get(i);
+										correctUIDs.add(uid);
+									}
+								}						
+								if (correctUIDs.size() == answers.size())
+								{
+									boolean allfound = true;
+									for (Answer answer : answers)
+									{
+										if (!correctUIDs.contains(answer.getPossibleAnswerUniqueId()))
+										{
+											allfound = false;
+											break;
+										}
+									}							
+									if (allfound)
+									{
+										score += matrixQuestion.getQuizPoints();
+										currentSectionScore += matrixQuestion.getQuizPoints();
+										result.getQuestionScores().put(matrixQuestion.getUniqueId(), matrixQuestion.getQuizPoints());
+									} else {
+										result.getPartiallyAnswersMultipleChoiceQuestions().add(matrixQuestion.getUniqueId());
+									}
+								} else {
+									result.getPartiallyAnswersMultipleChoiceQuestions().add(matrixQuestion.getUniqueId());
+								}
+							}
+						} else {
+							if (matrix.getIsSingleChoice())
+							{
+								int max = 0;
+								for (ScoringItem scoringItem: matrixQuestion.getScoringItems()) {
+									if (scoringItem.getPoints() > max)
+									{
+										max = scoringItem.getPoints();
+									}
+								}
+								maximumScore += max;
+								currentSectionMaxScore += max;
+								result.getQuestionMaximumScores().put(matrixQuestion.getUniqueId(), max);
+								
+								if (!answers.isEmpty())
+								{
+									Answer answer = answers.get(0);
+									int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
+									ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
+								
+									if (scoringItem != null)
+									{
+										score += scoringItem.getPoints();
+										currentSectionScore += scoringItem.getPoints();
+										result.getQuestionScores().put(matrixQuestion.getUniqueId(), scoringItem.getPoints());
+									}
+								}
+							} else {
+								for (ScoringItem scoringItem : matrixQuestion.getScoringItems()) {
+									if (scoringItem.getPoints() > 0)
+									{
+										maximumScore += scoringItem.getPoints();
+										currentSectionMaxScore += scoringItem.getPoints();
+										if (!result.getQuestionMaximumScores().containsKey(matrixQuestion.getUniqueId()))
+										{
+											result.getQuestionMaximumScores().put(matrixQuestion.getUniqueId(), scoringItem.getPoints());
+										} else {
+											result.getQuestionMaximumScores().put(matrixQuestion.getUniqueId(), result.getQuestionMaximumScores().get(matrixQuestion.getUniqueId()) + scoringItem.getPoints());
+										}
+									}
+								}
+					
+								int qscore = 0;
+										
+								for (Answer answer : answers)
+								{
+									int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
+									ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
+									if (scoringItem != null)
+									{
+										qscore += scoringItem.getPoints();
+									}
+								}
+								
+								if (matrixQuestion.getNoNegativeScore() != null && matrixQuestion.getNoNegativeScore() && qscore < 0)
+								{
+									qscore = 0;
+								}
+								
+								score += qscore;
+								currentSectionScore += qscore;
+								result.getQuestionScores().put(matrixQuestion.getUniqueId(), qscore);	
+								
+								if (!result.getQuestionScores().containsKey(matrixQuestion.getUniqueId()) || (result.getQuestionMaximumScores().containsKey(matrixQuestion.getUniqueId()) && (result.getQuestionMaximumScores().get(matrixQuestion.getUniqueId()) > result.getQuestionScores().get(matrixQuestion.getUniqueId()))))
+								{
+									result.getPartiallyAnswersMultipleChoiceQuestions().add(matrixQuestion.getUniqueId());
+								}
+							}
+						}
+					}
+				}
+				
 				if (question.getScoring() == 0) continue;
 				
 				List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
@@ -64,8 +215,7 @@ public class QuizHelper {
 					if (answers.isEmpty() && question instanceof MultipleChoiceQuestion)
 					{
 						result.getPartiallyAnswersMultipleChoiceQuestions().add(question.getUniqueId());
-					}
-					
+					}					
 					
 					if (question instanceof SingleChoiceQuestion)
 					{
@@ -81,7 +231,7 @@ public class QuizHelper {
 							score += question.getQuizPoints();
 							currentSectionScore += question.getQuizPoints();
 							result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
-						}						
+						}										
 					} else if (question instanceof MultipleChoiceQuestion)
 					{
 						if (answers.isEmpty()) {

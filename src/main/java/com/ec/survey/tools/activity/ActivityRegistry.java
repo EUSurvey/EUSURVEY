@@ -192,6 +192,7 @@ public class ActivityRegistry {
             ID_TEST_SUBMIT = 404, // Test contribution has been submitted
             ID_TEST_DELETE = 405, // Test contribution has been deleted
             ID_TEST_EDIT = 406, // Test contribution has been modified
+            ID_DRAFT_CONTRIBUTION_SUBMIT = 407, // Draft Contribution has been submitted
 
             ID_GUEST_LIST_CREATED = 501, // Guestlist created
             ID_GUEST_LIST_REMOVED = 502, // Guestlist removed
@@ -347,7 +348,7 @@ public class ActivityRegistry {
 
         //Contributions and Test Contributions 400
         register(PROP_NA, EVT_DELETED, ID_CONTRIBUTION_DELETE, ID_TEST_DELETE);
-        register(PROP_NA, EVT_SUBMITTED, ID_CONTRIBUTION_SUBMIT, ID_TEST_SUBMIT);
+        register(PROP_NA, EVT_SUBMITTED, ID_CONTRIBUTION_SUBMIT, ID_TEST_SUBMIT, ID_DRAFT_CONTRIBUTION_SUBMIT);
         register(PROP_NA, EVT_MODIFIED, ID_CONTRIBUTION_EDIT, ID_TEST_EDIT);
 
         //Guest Lists 500

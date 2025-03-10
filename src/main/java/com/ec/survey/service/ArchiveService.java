@@ -73,13 +73,22 @@ public class ArchiveService extends BasicService {
 		file = fileService.getArchiveFile(uid, uid + "statistics.xls");
 		Files.deleteIfExists(file.toPath());
 
+		file = fileService.getArchiveFile(uid, uid + "statistics.xlsx");
+		Files.deleteIfExists(file.toPath());
+
 		file = fileService.getArchiveFile(uid, uid + "results.xls");
+		Files.deleteIfExists(file.toPath());
+
+		file = fileService.getArchiveFile(uid, uid + "results.xlsx");
 		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFile(uid, uid + "results.zip");
 		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFile(uid, uid + "results.xls.zip");
+		Files.deleteIfExists(file.toPath());
+
+		file = fileService.getArchiveFile(uid, uid + "results.xlsx.zip");
 		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFolder(uid);
@@ -105,6 +114,9 @@ public class ArchiveService extends BasicService {
 		Files.deleteIfExists(file.toPath());
 
 		file = new java.io.File(archiveFileDir + uid + "results.xls.zip");
+		Files.deleteIfExists(file.toPath());
+
+		file = new java.io.File(archiveFileDir + uid + "results.xlsx.zip");
 		Files.deleteIfExists(file.toPath());
 	}
 
@@ -284,6 +296,7 @@ public class ArchiveService extends BasicService {
 		Archive archive = new Archive();
 		archive.setArchived(new Date());
 		archive.setCreated(survey.getCreated());
+		archive.setHasXlsxResults(true);
 
 		String title = ConversionTools.removeHTML(survey.getTitle(), true).replace("\"", "'");
 		if (title.length() > 250)
@@ -420,58 +433,46 @@ public class ArchiveService extends BasicService {
 			
 			form.setStatistics(answerService.getStatisticsOrStartCreator(survey, resultFilter, true, false, false));
 			
-			logger.info("archiving statistics (Excel) of survey " + survey.getShortname());	
-			Export exportstats = new Export();
-			exportstats.setForArchiving(true);	
-			exportstats.setDate(new Date());
-			exportstats.setState(ExportState.Pending);		
-			exportstats.setUserId(user.getId());
-			exportstats.setName("archiveStats");
-			exportstats.setType(ExportType.Statistics);
-			exportstats.setFormat(ExportFormat.xls);
-			exportstats.setSurvey(published);
-			exportstats.setResultFilter(resultFilter);
-			exportService.startExport(form, exportstats, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "statistics.xls", true);
-			if (exportstats.getState() == ExportState.Failed)
-			{
-				throw new MessageException("export failed, abort archiving");
+			for (var ef : new ExportFormat[]{ ExportFormat.xls, ExportFormat.xlsx, ExportFormat.pdf }) {
+				logger.info("archiving statistics (" + ef + ") of survey " + survey.getShortname());
+				Export exportstats = new Export();
+				exportstats.setForArchiving(true);
+				exportstats.setDate(new Date());
+				exportstats.setState(ExportState.Pending);
+				exportstats.setUserId(user.getId());
+				exportstats.setName("archiveStats" + ef);
+				exportstats.setType(ExportType.Statistics);
+				exportstats.setFormat(ef);
+				exportstats.setSurvey(published);
+				exportstats.setResultFilter(resultFilter);
+
+				if (ef == ExportFormat.pdf)
+					exportstats = exportService.update(exportstats); // needed as the pdf creation loads the export from the db
+
+				exportService.startExport(form, exportstats, true, resources, new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "statistics." + ef, true);
+				if (exportstats.getState() == ExportState.Failed) {
+					throw new MessageException("export failed, abort archiving");
+				}
 			}
-			
-			logger.info("archiving results (Excel) of survey " + survey.getShortname());	
-			Export export = new Export();
-			export.setDate(new Date());
-			export.setState(ExportState.Pending);		
-			export.setUserId(user.getId());
-			export.setName("archiveXLS");
-			export.setType(ExportType.Content);
-			export.setFormat(ExportFormat.xls);
-			export.setSurvey(published);
-			export.setResultFilter(resultFilter);
-			export.setForArchiving(true);			
-			exportService.startExport(form, export, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "results.xls", true);
-			if (export.getState() == ExportState.Failed)
-			{
-				throw new MessageException("export failed, abort archiving");
+
+			for (var ef : new ExportFormat[]{ ExportFormat.xls, ExportFormat.xlsx }) {
+				logger.info("archiving results (" + ef + ") of survey " + survey.getShortname());
+				Export export = new Export();
+				export.setDate(new Date());
+				export.setState(ExportState.Pending);
+				export.setUserId(user.getId());
+				export.setName("archiveResults" + ef);
+				export.setType(ExportType.Content);
+				export.setFormat(ef);
+				export.setSurvey(published);
+				export.setResultFilter(resultFilter);
+				export.setForArchiving(true);
+				exportService.startExport(form, export, true, resources, new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "results." + ef, true);
+				if (export.getState() == ExportState.Failed) {
+					throw new MessageException("export failed, abort archiving");
+				}
 			}
-			
-			logger.info("archiving statistics (PDF) of survey " + survey.getShortname());
-			Export exportstatspdf = new Export();			
-			exportstatspdf.setForArchiving(true);
-			exportstatspdf.setDate(new Date());
-			exportstatspdf.setState(ExportState.Pending);		
-			exportstatspdf.setUserId(user.getId());
-			exportstatspdf.setName("archiveStats");
-			exportstatspdf.setType(ExportType.Statistics);
-			exportstatspdf.setFormat(ExportFormat.pdf);
-			exportstatspdf.setSurvey(published);
-			exportstatspdf.setResultFilter(resultFilter);
-			exportstatspdf = exportService.update(exportstatspdf); // needed as the pdf creation loads the export from the db	
-			exportService.startExport(form, exportstatspdf, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "statistics.pdf", true);
-			if (exportstatspdf.getState() == ExportState.Failed)
-			{
-				throw new MessageException("export failed, abort archiving");
-			}
-			
+
 			
 		} else {
 			logger.info("archiving PDF of survey " + survey.getShortname());

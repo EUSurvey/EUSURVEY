@@ -20,6 +20,8 @@ public class QuizResult implements java.io.Serializable {
 	private Map<String, ScoringItem> questionScoringItems = new HashMap<>();
 	private Set<String> partiallyAnswersMultipleChoiceQuestions = new HashSet<>();
 	private Map<String, String> sectionScores = new HashMap<>();
+	private Map<String, Integer> positionForAnswerUID = new HashMap<>();
+	private Map<Integer, String> answerUIDForPosition = new HashMap<>();
 	
 	public Integer getScore() {
 		return score;
@@ -111,5 +113,19 @@ public class QuizResult implements java.io.Serializable {
 		}
 
 		return 0;
+	}
+	
+	public Map<String, Integer> getPositionForAnswerUID() {
+		return positionForAnswerUID;
+	}
+	public void setPositionForAnswerUID(Map<String, Integer> positionForAnswerUID) {
+		this.positionForAnswerUID = positionForAnswerUID;
+	}
+	
+	public Map<Integer, String> getAnswerUIDForPosition() {
+		return answerUIDForPosition;
+	}
+	public void setAnswerUIDForPosition(Map<Integer, String> answerUIDForPosition) {
+		this.answerUIDForPosition = answerUIDForPosition;
 	}
 }

@@ -242,7 +242,7 @@
 								 	$(td).append(list[i].owner);
 								</c:when>
 								<c:otherwise>
-								 	$(td).append(getAttributeValue(list[i].attributes, '${attributeName.id}', '${attributeName.name}'));
+								 	$(td).append(getAttributeValue(list[i].attributes, '${attributeName.id}', '${HtmlUtils.htmlEscape(attributeName.name)}'));
 								</c:otherwise>
 							</c:choose>
 							
@@ -375,6 +375,7 @@
 							<span style="padding: 0px 10px;"><spring:message code="label.Export" />:</span>
 							<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportcsv" />" onclick="showExportDialog('AddressBook', 'csv')" ><img src="${contextpath}/resources/images/file_extension_csv_small.png" /></a>
 							<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('AddressBook', 'xls')" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
+							<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('AddressBook', 'xlsx')" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></a>
 							<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('AddressBook', 'ods')" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
 						</div>				
 					</div>				
@@ -597,7 +598,7 @@
 				<div class="well" style="margin-top: 10px; margin-bottom: 0px;">
 					<b><spring:message code="label.Attributes" /></b>
 					<div id="add-attendee-error-multiple" class="hideme" style="color: #f00; margin: 10px;">
-						<spring:message code="label.Attribute" /> <span id="add-attendee-error-multiple-text"></span> <spring:message code="label.usedMoreThanOnce" />
+						<spring:message code="label.Attribute" />&#32; <span id="add-attendee-error-multiple-text"></span> <spring:message code="label.usedMoreThanOnce" />
 					</div>			
 					<div id="add-attendee-error-no-attribute" class="hideme" style="color: #f00; margin: 10px;">
 						<spring:message code="label.NoAttributeNameFor" /> <span id="add-attendee-error-no-attribute-text"></span>
@@ -631,7 +632,7 @@
 					<table style="margin-left: 20px;">
 						<c:if test="${USER.getGlobalPrivilegeValue('ContactManagement') == 2}">
 							<tr>
-								<td style="min-width: 100px;"><spring:message code="label.Owner" /></td>
+								<td style="min-width: 100px; vertical-align: top;"><spring:message code="label.Owner" /></td>
 								<td>
 									<div class="input-group">
 								      	<div class="input-group-addon"><img src="${contextpath}/resources/images/People.png" style="margin-top:-3px; margin-right: 2px;" /></div>
@@ -642,28 +643,43 @@
 							</tr>
 						</c:if>
 						<tr>
-							<td style="min-width: 100px;"><spring:message code="label.Name" /></td>
+							<td style="min-width: 100px; vertical-align: top;"><spring:message code="label.Name" /></td>
 							<td>
 								<div class="input-group">
 							      	<div class="input-group-addon"><span class="glyphicon glyphicon-user"></span></div>
 							      	<input id="name" class="form-control" name="name" type="text" maxlength="255" style="width: 200px;" value="<esapi:encodeForHTMLAttribute>${attendee.name}</esapi:encodeForHTMLAttribute>" />
 							    </div>
+								<div id="edit-attendee-error-name" class="hideme" style="color: #f00; margin: 10px;">
+									<spring:message code="message.ProvideName" />
+								</div>
 							</td>
 							<td>&#160;</td>
 						</tr>
 						<tr>
-							<td style="min-width: 100px;"><spring:message code="label.Email" /></td>
+							<td style="min-width: 100px; vertical-align: top;"><spring:message code="label.Email" /></td>
 							<td>
 								<div class="input-group">
 							      	<div class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></div>
 							      	<input id="email" class="form-control" name="email" type="text" maxlength="255" style="width: 200px;" value="<esapi:encodeForHTMLAttribute>${attendee.email}</esapi:encodeForHTMLAttribute>" />
 							    </div>
+								<div id="edit-attendee-error-email" class="hideme" style="color: #f00; margin: 10px;">
+									<spring:message code="message.ProvideEmail" />
+								</div>
+								<div id="edit-attendee-error-email2" class="hideme" style="color: #f00; margin: 10px;">
+									<spring:message code="error.InvalidEmail" />
+								</div>
 							</td>
 							<td>&#160;</td>
 						</tr>
 					</table>
 					<div class="well" style="margin-top: 10px; margin-bottom: 0px;">
 						<b><spring:message code="label.Attributes" /></b>
+						<div id="edit-attendee-error-multiple" class="hideme" style="color: #f00; margin: 10px;">
+							<spring:message code="label.Attribute" />&#32; <span id="edit-attendee-error-multiple-text"></span> <spring:message code="label.usedMoreThanOnce" />
+						</div>
+						<div id="edit-attendee-error-no-attribute" class="hideme" style="color: #f00; margin: 10px;">
+							<spring:message code="label.NoAttributeNameFor" /> <span id="edit-attendee-error-no-attribute-text"></span>
+						</div>
 						<div style="height: 170px; overflow: auto; margin-bottom: 2px;">
 							<table id="edit-attributes" style="margin-left: 20px;">
 								<c:forEach items="${attendee.attributes}" var="attribute">
@@ -680,18 +696,6 @@
 				</div>
 				<div class="modal-footer">
 					<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-					<span id="edit-attendee-error-multiple" class="hideme" style="color: #f00; margin-right: 20px;">
-						<spring:message code="label.Attribute" /> <span id="edit-attendee-error-multiple-text"></span> <spring:message code="label.usedMoreThanOnce" />
-					</span>			
-					<span id="edit-attendee-error-no-attribute" class="hideme" style="color: #f00; margin-right: 20px;">
-						<spring:message code="label.NoAttributeNameFor" /> <span id="edit-attendee-error-no-attribute-text"></span>
-					</span>			
-					<span id="edit-attendee-error-name" class="hideme" style="color: #f00; margin-right: 20px;">
-						<spring:message code="message.ProvideName" />
-					</span>			
-					<span id="edit-attendee-error-email" class="hideme" style="color: #f00; margin-right: 20px;">
-						<spring:message code="message.ProvideEmail" />
-					</span>
 					<a onclick="editAttendee();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 					<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 				</div>

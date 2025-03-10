@@ -841,9 +841,9 @@ public class TranslationController extends BasicController {
 
 				if (filename.toLowerCase().endsWith("xml")) {
 					translations = TranslationsHelper.importXML(inputStream, surveyService);
-				} else if (filename.toLowerCase().endsWith("xls")) {
+				} else if (filename.toLowerCase().endsWith("xls") || filename.toLowerCase().endsWith("xlsx")) {
 					translations = TranslationsHelper.importXLS(inputStream, invalidKeys, surveyService,
-							servletContext);
+							servletContext, filename.toLowerCase().endsWith("xlsx"));
 				} else if (filename.toLowerCase().endsWith("ods")) {
 					translations = TranslationsHelper.importODS(inputStream, invalidKeys, surveyService,
 							servletContext);
@@ -1064,43 +1064,24 @@ public class TranslationController extends BasicController {
 			translations = translationService.getTranslations(Integer.parseInt(id));
 		}
 
-		if (translations != null)
+		if (translations != null) {
+			java.io.File outputFile = null;
 			if (format.equalsIgnoreCase("xml")) {
-				java.io.File xml = TranslationsHelper.getXML(form.getSurvey(), translations, xsllink, fileService);
-				try {
-					response.setContentLength((int) xml.length());
-					response.setHeader("Content-Disposition", "attachment; filename=\""
-							+ form.getSurvey().getShortname() + "-" + translations.getLanguage().getCode() + ".xml\"");
-					try {
-						FileCopyUtils.copy(new FileInputStream(xml), response.getOutputStream());
-					} catch (IOException e) {
-						logger.error(e.getLocalizedMessage(), e);
-					}
-				} catch (Exception e1) {
-					logger.error(e1.getLocalizedMessage(), e1);
-				}
-			} else if (format.equalsIgnoreCase("xls")) {
-				java.io.File xml = TranslationsHelper.getXLS(form.getSurvey(), translations, fileService);
-				try {
-					response.setContentLength((int) xml.length());
-					response.setHeader("Content-Disposition", "attachment; filename=\""
-							+ form.getSurvey().getShortname() + "-" + translations.getLanguage().getCode() + ".xls\"");
-					try {
-						FileCopyUtils.copy(new FileInputStream(xml), response.getOutputStream());
-					} catch (IOException e) {
-						logger.error(e.getLocalizedMessage(), e);
-					}
-				} catch (Exception e1) {
-					logger.error(e1.getLocalizedMessage(), e1);
-				}
+				outputFile = TranslationsHelper.getXML(form.getSurvey(), translations, xsllink, fileService);
+			} else if (format.equalsIgnoreCase("xls") || format.equalsIgnoreCase("xlsx")) {
+				boolean useXLSX = format.equalsIgnoreCase("xlsx");
+				outputFile = TranslationsHelper.getXLS(form.getSurvey(), translations, fileService, useXLSX);
 			} else if (format.equalsIgnoreCase("ods")) {
-				java.io.File xml = TranslationsHelper.getODS(form.getSurvey(), translations, fileService);
+				outputFile = TranslationsHelper.getODS(form.getSurvey(), translations, fileService);
+			}
+
+			if (outputFile != null) {
 				try {
-					response.setContentLength((int) xml.length());
+					response.setContentLength((int) outputFile.length());
 					response.setHeader("Content-Disposition", "attachment; filename=\""
-							+ form.getSurvey().getShortname() + "-" + translations.getLanguage().getCode() + ".ods\"");
+							+ form.getSurvey().getShortname() + "-" + translations.getLanguage().getCode() + "." + format.toLowerCase() + '"');
 					try {
-						FileCopyUtils.copy(new FileInputStream(xml), response.getOutputStream());
+						FileCopyUtils.copy(new FileInputStream(outputFile), response.getOutputStream());
 					} catch (IOException e) {
 						logger.error(e.getLocalizedMessage(), e);
 					}
@@ -1108,7 +1089,7 @@ public class TranslationController extends BasicController {
 					logger.error(e1.getLocalizedMessage(), e1);
 				}
 			}
-
+		}
 		return null;
 	}
 

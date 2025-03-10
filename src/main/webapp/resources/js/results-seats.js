@@ -139,8 +139,8 @@ var SeatResults = function() {
 			return;
 		}
 
-		let heightAttribute = this.counting().candidatesFromPreferentialVotes.length * 20 + "px !important";
-		container.setAttribute("style","height:" + heightAttribute);
+		let heightAttribute = this.counting().candidatesFromPreferentialVotes.length * 35 + 60;
+		container.setAttribute("style","height:" + heightAttribute + "px !important");
 
 		let ctx = $("#eVoteSinglePresidentChart");
 

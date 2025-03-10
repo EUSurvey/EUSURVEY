@@ -353,4 +353,12 @@ public class Matrix extends MatrixOrTable {
 		}
 		return null;
 	}
+
+	public Element getMissingChildByUniqueId(String uid) {
+		for (Element child : getMissingAnswers())
+		{
+			if (child.getUniqueId().equals(uid)) return child;
+		}
+		return null;
+	}
 }

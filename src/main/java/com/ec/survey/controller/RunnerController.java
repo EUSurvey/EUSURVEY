@@ -648,7 +648,9 @@ public class RunnerController extends BasicController {
 				return model;
 			}
 
-			if (survey.getIsQuiz()) {
+			if (survey.getIsQuiz() &&
+							!(survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
+							&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0)) {
 				ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
 				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
@@ -713,9 +715,7 @@ public class RunnerController extends BasicController {
 				result.addObject("opcredirection", form.getFinalConfirmationLink(opcredirect, lang, answerSet));
 			}
 
-			if(!survey.getConfirmationPageLink()){
-				form.getAnswerSets().add(answerSet);
-			}
+			form.getAnswerSets().add(answerSet);
 
 			result.addObject("form", form);
 			result.addObject("text", survey.getConfirmationPage());
@@ -1987,7 +1987,9 @@ public class RunnerController extends BasicController {
 				if (user.getType().equalsIgnoreCase(User.ECAS)) {
 					// if the user already submitted, show error page
 					int contributionsCount = answerService.userContributionsToSurvey(origsurvey, user);
-					if (contributionsCount > 0) {
+					//Skip the check if we are only editing (submitting) a delphi answerset
+					boolean delphiEdit = origsurvey.getIsDelphi() && answerSet.getId() != null && answerSet.getId() > 0;
+					if (!delphiEdit && contributionsCount > 0) {
 						if (origsurvey.getAllowedContributionsPerUser() == 1
 								|| origsurvey.getAllowedContributionsPerUser() <= contributionsCount) {
 							request.getSession().removeAttribute("ECASSURVEY");
@@ -2145,7 +2147,9 @@ public class RunnerController extends BasicController {
 				survey = surveyService.getSurvey(origsurvey.getId(), lang);
 			}
 
-			if (survey.getIsQuiz()) {
+			if (survey.getIsQuiz() &&
+					!(survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
+					&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0)) {
 				ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
 				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);

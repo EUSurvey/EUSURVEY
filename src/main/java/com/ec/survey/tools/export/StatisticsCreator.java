@@ -122,7 +122,7 @@ public class StatisticsCreator implements Runnable {
 						addStatistics4Matrix(survey, answerElement, questionElement, statistics,
 								numberOfAnswersMapMatrix);
 					}
-
+					
 					int answered = numberOfAnswersMap.get(questionElement.getId());
 
 					statistics.getRequestedRecords().put(questionElement.getId().toString(),
@@ -132,6 +132,11 @@ public class StatisticsCreator implements Runnable {
 									/ (double) survey.getNumberOfAnswerSets() * 100;
 					statistics.getRequestedRecordsPercent().put(questionElement.getId().toString(), percent);
 					statistics.getTotalsPercent().put(questionElement.getId().toString(), percent);
+					
+					Question matrixQuestion = (Question)questionElement;
+					if (survey.getIsQuiz() && matrixQuestion.getScoring() > 0) {
+						quizquestions.add(matrixQuestion);
+					}
 				}
 			} else if (element instanceof RatingQuestion) {
 				RatingQuestion rating = (RatingQuestion) element;
@@ -389,7 +394,7 @@ public class StatisticsCreator implements Runnable {
 				}
 				String choiceUID = choice.getUniqueId();
 				Map<Integer, Set<String>> answersByAnswerSetID = new HashMap<>();
-				reportingService.getAnswerSetsByQuestionUID(survey, choiceUID, answersByAnswerSetID);
+				reportingService.getAnswerSetsByQuestionUID(survey, choiceUID, answersByAnswerSetID, where, values);
 				for (Map.Entry<Integer, Set<String>> entry : answersByAnswerSetID.entrySet()) {
 					Integer answerSetID = entry.getKey();
 					Set<String> answerUIDs = entry.getValue();

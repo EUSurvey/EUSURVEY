@@ -51,7 +51,7 @@ public class ArchiveFlagExecutor implements Runnable {
 		
 		try {
 			List<Survey> surveys = surveyService.getSurveysToBeMarkedArchived();
-			logger.info("found " + surveys.size() + "surveys to be archived");
+			logger.info("found " + surveys.size() + " surveys to be archived");
 			
 			for (Survey survey : surveys) {
 				currentDate = new Date();

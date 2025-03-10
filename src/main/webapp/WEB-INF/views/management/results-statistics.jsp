@@ -82,7 +82,7 @@
 										<c:if test="${question.getType() == 'SingleChoiceQuestion' && question.getIsTargetDatasetQuestion() }">
 											<c:forEach items="${targetdatasets}" var="dataset" varStatus="status">
 												<tr data-position="${status.count}" data-value="${statistics.getRequestedRecordsPercentForTargetDataset(question, dataset)}">
-													<td>${dataset.getName()}</td>
+													<td><c:out value="${dataset.getName()}"/></td>
 									
 													<td>
 														<div class="progress" style="width: 200px; margin-bottom: 2px;">
@@ -584,19 +584,19 @@
 											
 											<c:forEach items="${question.getAllChildElements()}" var="child" varStatus="status">
 												<th>
-													<div style="float: right">
-														<a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></a>
-														<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></a>
-													</div>
+													<span style="float: right">
+														<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></button>
+														<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></button>
+													</span>
 													${status.index+1}
 												</th>
 											</c:forEach>
 											
 											<th style="min-width: 100px">
-												<div style="float: right">
-													<a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></a>
-													<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></a>
-												</div>
+												<span style="float: right">
+													<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sortRankingStatistics(this, true)"><span class="glyphicon glyphicon-arrow-down"></span></button>
+													<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sortRankingStatistics(this, false)"><span class="glyphicon glyphicon-arrow-up"></span></button>
+												</span>
 												${form.getMessage("label.Score")}											
 											</th>									
 																	

@@ -94,6 +94,24 @@ public class TestDataController extends BasicController {
 			return "redirect:/errors/500.html";
 		}
 	}
+	
+	@RequestMapping(value = "/survey4", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public String survey4(@RequestParam(Constants.EMAIL) String email, Locale locale, ModelMap model,
+			HttpServletRequest request) {
+		try {
+			User user = sessionService.getCurrentUser(request);
+			
+			testDataGenerator.init(user, -1, fileDir, sender, email, null, null, context, 0, 500, 0, 0);
+			getPool().execute(testDataGenerator);
+
+			model.put(Constants.MESSAGE, "The generation of 500 test surveys has started. You will receive an email to "
+					+ email + " when the operation is completed. This can take a while. Seriously.");
+			return "error/info";
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return "redirect:/errors/500.html";
+		}
+	}
 
 	@RequestMapping(value = "/stress", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public String stress(@RequestParam(Constants.EMAIL) String email, Locale locale, ModelMap model,

@@ -56,6 +56,17 @@ public class PublicationController extends BasicController {
 			boolean active = true;
 			boolean filtered = false;
 
+			String orderByScore = request.getParameter("sort");
+			if (orderByScore != null) {
+				if (orderByScore.equalsIgnoreCase("scoreDesc")) {
+					userFilter.setSortKey("score");
+					userFilter.setSortOrder("desc");
+				} else if (orderByScore.equalsIgnoreCase("scoreAsc")) {
+					userFilter.setSortKey("score");
+					userFilter.setSortOrder("asc");
+				}
+			}
+
 			if (survey != null) {
 				if (survey.getPublication().getPassword() != null
 						&& survey.getPublication().getPassword().length() > 0) {
@@ -107,13 +118,14 @@ public class PublicationController extends BasicController {
 
 				if (publication.isShowContent() || publication.isShowStatistics() || publication.isShowCharts()) {
 					Paging<AnswerSet> paging = new Paging<>();
-					paging.setItemsPerPage(itemsPerPage);
+					paging.setItemsPerPage(-1);
 
-					paging.setNumberOfItems(-1);
 					String newPage = request.getParameter("newPage");
 					paging.moveTo(newPage == null ? "first" : newPage);
 
-					List<AnswerSet> answerSets = new ArrayList<>();
+					SqlPagination sqlPagination = new SqlPagination(1, itemsPerPage);
+					List<AnswerSet> answerSets = answerService.getAnswers(survey, null, sqlPagination, false, true, active && false);
+					paging.setNumberOfItems(answerSets.size());
 
 					if (lang != null) {
 						survey = SurveyHelper.createTranslatedSurvey(survey.getId(), lang, surveyService,
@@ -122,10 +134,9 @@ public class PublicationController extends BasicController {
 
 					Form form = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), false),
 							survey.getLanguage(), resources, contextpath);
-					form.setAnswerSets(answerSets);
+					form.setAnswerSets(new ArrayList<>());
+					paging.setItems(new ArrayList<>());
 					form.setPublicationMode(true);
-
-					paging.setItems(answerSets);
 
 					ModelAndView result = new ModelAndView("publication/publication", "form", form);
 					result.addObject("publication", publication);
@@ -493,43 +504,23 @@ public class PublicationController extends BasicController {
 
 	@GetMapping(value = "/exportresultsxls/{id}", headers = "Accept=*/*")
 	public @ResponseBody String exportresultsxls(@PathVariable String id, HttpServletRequest request,
+												 HttpServletResponse response, Locale locale) {
+		return exportExcelResults("xls", id, request, locale);
+	}
+
+	@GetMapping(value = "/exportresultsxlsx/{id}", headers = "Accept=*/*")
+	public @ResponseBody String exportresultsxlsx(@PathVariable String id, HttpServletRequest request,
 			HttpServletResponse response, Locale locale) {
-		try {
-			Survey survey = surveyService.getSurvey(Integer.parseInt(id), false, true);
-			if (survey != null && survey.getPublication().isShowContent()) {
-				if (survey.getPublication().getPassword() != null
-						&& survey.getPublication().getPassword().length() > 0) {
-					String publicationpassword = (String) request.getSession().getAttribute("publicationpassword");
-					if (publicationpassword == null
-							|| !publicationpassword.equals(survey.getPublication().getPassword())) {
-						throw new ForbiddenURLException();
-					}
-				}
-
-				if (!checkCaptcha(request)) {
-					return "errorcaptcha";
-				}
-
-				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-				String email = parameters.get(Constants.EMAIL)[0];
-				ResultFilter filter = survey.getPublication().getFilter().copy();
-				putParameterFilters(parameters, filter.getFilterValues());
-
-				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
-				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "xls",
-						resources, locale, null);
-				taskExecutor.execute(resultsExecutor);
-			}
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			return Constants.ERROR;
-		}
-		return "success";
+		return exportExcelResults("xlsx", id, request, locale);
 	}
 
 	@GetMapping(value = "/exportresultsods/{id}", headers = "Accept=*/*")
 	public @ResponseBody String exportresultsods(@PathVariable String id, HttpServletRequest request,
 			HttpServletResponse response, Locale locale) {
+		return exportExcelResults("ods", id, request, locale);
+	}
+
+	private String exportExcelResults(String type, String id, HttpServletRequest request, Locale locale) {
 		try {
 			Survey survey = surveyService.getSurvey(Integer.parseInt(id), false, true);
 			if (survey != null && survey.getPublication().isShowContent()) {
@@ -552,7 +543,7 @@ public class PublicationController extends BasicController {
 				putParameterFilters(parameters, filter.getFilterValues());
 
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
-				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "ods",
+				resultsExecutor.init(survey, filter, email, sender, host, fileDir, type,
 						resources, locale, null);
 				taskExecutor.execute(resultsExecutor);
 			}

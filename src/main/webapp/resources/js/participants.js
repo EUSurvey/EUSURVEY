@@ -18,29 +18,57 @@ var Guestlist = function() {
 		return !this.inCreation() && !this.active();
 	}, this);
 	
+	this.activateEnabled.subscribe(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+	
 	this.deactivateEnabled = ko.computed(function() {
 		return !this.inCreation() && this.active();
 	}, this);
+
+	this.deactivateEnabled.subscribe(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 	
 	this.deleteEnabled = ko.computed(function() {
 		return !this.inCreation() && !this.active();
 	}, this);
+
+	this.deleteEnabled.subscribe(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 	
 	this.sendEnabled = ko.computed(function() {
 		return !this.inCreation() && this.type() != "Token" && this.children() > 0 && this.active();
 	}, this);
+
+	this.sendEnabled.subscribe(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 	
 	this.editEnabled = ko.computed(function() {
 		return !this.inCreation();
 	}, this);
+
+	this.editEnabled.subscribe(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 	
 	this.exportEnabled = ko.computed(function() {
 		return this.type() == "Token" || this.type() == "Static";
 	}, this);
+
+	this.exportEnabled.subscribe(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 	
 	this.detailsEnabled = ko.computed(function() {
 		return !this.inCreation();
 	}, this);
+
+	this.detailsEnabled.subscribe(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 	
 	this.exportxls = function() {
 		showExportDialog('Tokens', 'xls', self.id());
@@ -49,7 +77,11 @@ var Guestlist = function() {
 	this.exportods = function() {
 		showExportDialog('Tokens', 'ods', self.id());
 	}
-	
+
+	this.exportxlsx = function() {
+		showExportDialog('Tokens', 'xlsx', self.id());
+	}
+
 	this.activate = function() {
 		var model = this;
 		var request = $.ajax({
@@ -66,6 +98,7 @@ var Guestlist = function() {
 				  }
 			  }
 			});
+		$('[data-toggle="tooltip"]').tooltip();
 	}
 	
 	this.deactivate = function() {

@@ -664,12 +664,15 @@
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').hide();		
 				$('#exportnt-format-files').hide();
+
+				$('#exportnt-format-content').trigger("change");
 			} else if (type == "Statistics")
 			{
 				$('#exportnt-format-ecf1').hide();
 				$('#exportnt-format-ecf2').hide();
 				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').hide();
+				$('#export-split-mcq-row').hide()
 				$('#exportnt-format-statistics').show();
 				$('#exportnt-format-statistics-quiz').hide();
 				$('#exportnt-format-files').hide();
@@ -679,11 +682,13 @@
 				$('#exportnt-format-ecf2').hide();
 				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').hide();
+				$('#export-split-mcq-row').hide()
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').show();
 				$('#exportnt-format-files').hide();
 			} else if (type == "ECFGlobalResults") {
 				$('#exportnt-format-content').hide();
+				$('#export-split-mcq-row').hide()
 				$('#exportnt-format-ecf1').show();
 				$('#exportnt-format-ecf2').hide();
 				$('#exportnt-format-ecf3').hide();
@@ -695,6 +700,7 @@
 				$('#exportnt-format-ecf2').show();
 				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').hide();
+				$('#export-split-mcq-row').hide()
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').hide();
 				$('#exportnt-format-files').hide();
@@ -703,6 +709,7 @@
 				$('#exportnt-format-ecf2').hide();
 				$('#exportnt-format-ecf3').show();
 				$('#exportnt-format-content').hide();
+				$('#export-split-mcq-row').hide()
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').hide();
 				$('#exportnt-format-files').hide();
@@ -711,6 +718,7 @@
 				$('#exportnt-format-ecf2').hide();
 				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').hide();
+				$('#export-split-mcq-row').hide()
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').hide();
 				$('#exportnt-format-files').show();
@@ -774,13 +782,14 @@
 		{
 			var showshortnames = $("#show-assigned-values").is(":checked");
 			var allanswers = $("#allAnswers").val();
+			var splitMCQ = $("#export-split-mcq").is(":checked")
 			// check again for new exports
 			window.checkExport = true;
 			
 			$.ajax({
 	           type: "POST",
 	           url: "${contextpath}/exports/start/" + exportType + "/" + format,
-	           data: {exportName: name, showShortnames: showshortnames, allAnswers: allanswers, group: ""},
+	           data: {exportName: name, showShortnames: showshortnames, allAnswers: allanswers, splitMCQ: splitMCQ, group: ""},
 	           beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 	           success: function(data)
 	           {
@@ -944,14 +953,18 @@
 			$('#delete-contribution-dialog').modal('show');			
 		}
 		
-		function deleteContribution() {
+		function deleteContribution(active) {
 		
 			$('#delete-contribution-dialog').modal('hide');
 			$('#show-wait-image').modal('show');
+
+			var appendToURL = "";
+			if (active == false)
+				appendToURL = "?results-source=draft"
 			// DELETE <url/eusurvey/contribution/UID>
 			$.ajax({
 				type:'DELETE',
-				  url: '<c:url value="/contribution/"/>' + deletionCode,
+				  url: '<c:url value="/contribution/"/>' + deletionCode + appendToURL,
 				  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 				  cache: false,
 				  success: function( data ) {						  
@@ -978,16 +991,20 @@
 		
 		function resetSelections(div)
 		{
+			checkAssignedValues();
+
 			$(div).find("input[type=checkbox]").each(function(){
 				if ($(this)[0].hasAttribute("data-checked"))
 				{
 					$(this).prop("checked", "checked");
 				} else {
-					if (!$(this)[0].hasClass("always-checked")) {
+					if (!$($(this)[0]).hasClass("always-checked")) {
 						$(this).removeAttr("checked");
 					}
 				}
 			});
+
+			initCheckAll();
 		}
 
 		function requestCodaDashboard(){
@@ -1415,12 +1432,12 @@
 						<td><spring:message code="label.CreationDate" /></td>
 					</tr>
 					<tr>
-						<td style="vertical-align: top;"><input name="selectedupdated" <c:if test='${filter.visible("updated")}'>checked="checked"</c:if> type="checkbox" class="check" id="updated" /></td>
+						<td style="vertical-align: top;"><input name="selectedupdated" <c:if test='${filter.visible("updated")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="updated" /></td>
 						<td style="vertical-align: top;"><input name="exportselectedupdated" <c:if test='${filter.exported("updated")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedupdated" /></td>
 						<td><spring:message code="label.LastUpdate" /></td>
 					</tr>
 					<tr>
-						<td style="vertical-align: top;"><input name="selectedlanguages" <c:if test='${filter.visible("languages")}'>checked="checked"</c:if> type="checkbox" class="check" id="languages" /></td>
+						<td style="vertical-align: top;"><input name="selectedlanguages" <c:if test='${filter.visible("languages")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="languages" /></td>
 						<td style="vertical-align: top;"><input name="exportselectedlanguages" <c:if test='${filter.exported("languages")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedlanguages" /></td>
 						<td><spring:message code="label.Languages" /></td>
 					</tr>
@@ -1453,7 +1470,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="deleteSingleContributionConfirm" onclick="deleteContribution()"  class="btn btn-primary"><spring:message code="label.Yes" /></a>
+			<a id="deleteSingleContributionConfirm" onclick="deleteContribution(${active})"  class="btn btn-primary"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>					
 		</div>
 		</div>
@@ -1545,8 +1562,11 @@
 					</td>
 					<td>
 						<div style="margin-left: 20px">
-							<select class="form-control" style="width:150px;" id="exportnt-format-content">
+							<select class="form-control" style="width:150px;" id="exportnt-format-content"
+								onchange="if (this.value.startsWith('xls')) $('#export-split-mcq-row').show(); else $('#export-split-mcq-row').hide();">
+
 								<option value="xls">XLS</option>
+								<option value="xlsx">XLSX</option>
 								<option value="ods">ODS</option>
 								<option value="xml">XML</option>
 								<c:if test="${!allanswers}">
@@ -1559,8 +1579,9 @@
 									<option value="pdfReport">PDF (+graphs)</option>
 								</c:if>
 								<option value="xls">XLS</option>
+								<option value="xlsx">XLSX</option>
 								<option value="ods">ODS</option>
-								<option value="doc">DOC</option>
+								<option value="docx">DOCX</option>
 								<option value="odt">ODT</option>
 							</select>
 							<select class="form-control" id="exportnt-format-statistics-quiz">
@@ -1568,17 +1589,30 @@
 							</select>
 							<select class="form-control" id="exportnt-format-ecf1">
 								<option value="xls">XLS</option>
+								<option value="xlsx">XLSX</option>
 							</select>
 							<select class="form-control" id="exportnt-format-ecf2">
 								<option value="xls">XLS</option>
+								<option value="xlsx">XLSX</option>
 							</select>
 							<select class="form-control" id="exportnt-format-ecf3">
 								<option value="xls">XLS</option>
+								<option value="xlsx">XLSX</option>
 							</select>
 							<select class="form-control" id="exportnt-format-files">
 								<option value="zip">ZIP</option>
 							</select>
 						</div>			
+					</td>
+				</tr>
+				<tr id="export-split-mcq-row">
+					<td></td>
+					<td colspan="2" style="padding-top: 5px;">
+						<input class="check" type="checkbox" id="export-split-mcq" />
+						<label for="export-split-mcq">
+							<spring:message code="label.ExportSplitMCQ" />
+							<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="left" title="<spring:message code="message.ExportSplitMCQInfo" />"><i class="glyphicon glyphicon-question-sign" style="color: #286090; top: -5px;"></i></span>
+						</label>
 					</td>
 				</tr>
 			</table>	

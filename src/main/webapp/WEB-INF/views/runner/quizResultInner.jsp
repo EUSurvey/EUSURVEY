@@ -115,6 +115,102 @@
 					 						</tr>
 				 						</c:if>
 				 					</c:when>
+				 					<c:when test="${element.getType() == 'Matrix'}">
+				 						<c:forEach var="matrixQuestion" items="${element.questions}">
+				 						    <c:choose>
+				 						    	<c:when test="${invisibleElements != null && invisibleElements.contains(matrixQuestion.uniqueId)}">
+
+                                            	</c:when>
+                                                <c:when test="${matrixQuestion.scoring > 0}">
+                                                    <tr>
+                                                        <td colspan="4" style="padding-top: 20px">
+                                                            <c:choose>
+                                                                <c:when test="${forpdf != null || (element.getStrippedTitleNoEscape().length() + matrixQuestion.getStrippedTitleNoEscape().length()) < 200}">
+                                                                    <div class="quizquestion">${element.getStrippedTitleNoEscape()}: ${matrixQuestion.getStrippedTitleNoEscape()}</div>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <div class="quizquestion">
+                                                                        <div class="fullcontent hideme">${element.getStrippedTitle()}: ${matrixQuestion.getStrippedTitle()}<a class='lessbutton' onclick='switchQuestionTitle(this);'><spring:message code="label.less" /></a>
+                                                                        </div>
+                                                                        <div class='shortcontent'>${(element.getStrippedTitle() + ': ' + matrixQuestion.getStrippedTitle()).substring(0,190)}<a class="morebutton" onclick="switchQuestionTitle(this);"><spring:message code="label.more" /></a>
+                                                                        </div>
+                                                                    </div>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                    </tr>
+
+                                                    <c:set var="answers" value="${form.answerSets[0].getAnswers(matrixQuestion.uniqueId)}" />
+
+                                                    <tr class="scorerow">
+                                                        <td><spring:message code="label.YourAnswer" /></td>
+                                                        <td>
+                                                            <c:forEach items="${answers}" var="answer">
+                                                                <div class="quizanswer">
+                                                                    <c:set var="pos" value="${quiz.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId())}" />
+                                                                    <c:set var="scoringItem" value="${matrixQuestion.getScoringItems().get(pos)}" />
+
+                                                                    <c:choose>
+                                                                        <c:when test="${!form.survey.showQuizIcons}">
+
+                                                                        </c:when>
+                                                                        <c:when test="${forpdf != null && scoringItem.correct}">
+                                                                            <img style="width: 20px;vertical-align: text-top;" src="${contextpath}/resources/images/correct.png" />
+                                                                        </c:when>
+                                                                        <c:when test="${scoringItem.correct}">
+                                                                            <span class="glyphicon glyphicon-ok" style="color: #0f0"></span>
+                                                                        </c:when>
+                                                                        <c:when test="${forpdf != null}">
+                                                                            <img style="width: 20px;vertical-align: text-top;" src="${contextpath}/resources/images/incorrect.png" />
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span class="glyphicon glyphicon-remove" style="color: #f00"></span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+
+                                                                    ${form.getAnswerTitle(answer)}
+                                                                    <div class="quizfeedback">${scoringItem.feedback}</div>
+                                                                </div>
+                                                            </c:forEach>
+
+                                                            <c:if test="${quiz.getPartiallyAnswersMultipleChoiceQuestions().contains(matrixQuestion.getUniqueId())}">
+                                                                <div class="quizanswer">
+                                                                    <c:choose>
+                                                                        <c:when test="${!form.survey.showQuizIcons}">
+
+                                                                        </c:when>
+                                                                        <c:when test="${forpdf != null}">
+                                                                            <img style="width: 20px;vertical-align: text-top;" src="${contextpath}/resources/images/incorrect.png" />
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span class="glyphicon glyphicon-remove" style="color: #f00"></span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+
+                                                                    <spring:message code="info.NotAllCorrectAnswers" />
+                                                                </div>
+                                                            </c:if>
+                                                        </td>
+                                                        <td class="score">${quiz.getQuestionScore(matrixQuestion.uniqueId)}&#x20;<spring:message code="label.outOf" />&#x20;${quiz.getQuestionMaximumScore(matrixQuestion.uniqueId)}&#x20;<spring:message code="label.points" /></td>
+                                                        <td>
+                                                            <div class="progress hidden-xs hidden-md" style="width: 200px; margin-bottom: 2px;">
+                                                              <div class="chartRequestedRecordsPercent progress-bar" style="width: ${quiz.getQuestionScore(matrixQuestion.uniqueId) / quiz.getQuestionMaximumScore(matrixQuestion.uniqueId) * 100}%;"></div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <c:if test="${forpdf == null}">
+                                                        <tr class="visible-xs visible-md">
+                                                            <td colspan="3">
+                                                                <div class="progress" style="width: 200px; margin-bottom: 2px;">
+                                                                  <div class="chartRequestedRecordsPercent progress-bar" style="width: ${quiz.getQuestionScore(matrixQuestion.uniqueId) / quiz.getQuestionMaximumScore(matrixQuestion.uniqueId) * 100}%;"></div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </c:if>
+                                                </c:when>
+                                            </c:choose>
+				 						</c:forEach>
+				 					</c:when>				 					
 				 					<c:when test="${element.getType() == 'SingleChoiceQuestion' || element.getType() == 'MultipleChoiceQuestion' || element.getType() == 'FreeTextQuestion' || element.getType() == 'NumberQuestion' || element.getType() == 'DateQuestion'}">
 						 				<c:if test="${element.scoring > 0}">
 						 					<tr>
@@ -234,18 +330,18 @@
 									 											<span class="glyphicon glyphicon-remove" style="color: #f00"></span>
 									 										</c:otherwise>
 									 									</c:choose>
-																		${form.getAnswerTitle(answer)}
+																		${fn:escapeXml(form.getAnswerTitle(answer))}
 																		<div class="quizfeedback">${scoring.feedback}</div>
 																	</c:if>
 																	<c:if test="${scoring == null && forpdf == null}">
 																		<c:if test="${form.survey.showQuizIcons}">
 																		<span class="glyphicon glyphicon-remove" style="color: #f00"></span>
 																		</c:if>
-									 									${form.getAnswerTitle(answer)}
+																		${fn:escapeXml(form.getAnswerTitle(answer))}
 																	</c:if>
 																	<c:if test="${scoring == null && forpdf != null}">
 																		<img style="width: 20px;vertical-align: text-top;" src="${contextpath}/resources/images/incorrect.png" />
-									 									${form.getAnswerTitle(answer)}
+																		${fn:escapeXml(form.getAnswerTitle(answer))}
 																	</c:if>
 							 									</div>
 							 								</c:forEach>

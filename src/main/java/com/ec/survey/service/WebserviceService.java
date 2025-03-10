@@ -372,5 +372,5 @@ public class WebserviceService extends BasicService {
 		Query query = session.createSQLQuery(sql).setParameter("id", group.getId());
 		return ConversionTools.getValue(query.uniqueResult());
 	}
-	
+
 }

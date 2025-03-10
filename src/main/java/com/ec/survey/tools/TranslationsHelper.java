@@ -6,18 +6,16 @@ import com.ec.survey.model.Language;
 import com.ec.survey.model.Translation;
 import com.ec.survey.model.Translations;
 import com.ec.survey.model.survey.*;
+import com.ec.survey.model.survey.Table;
 import com.ec.survey.service.BasicService;
 import com.ec.survey.service.FileService;
 import com.ec.survey.service.SurveyService;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.odftoolkit.simple.SpreadsheetDocument;
 import org.springframework.context.MessageSource;
 import org.w3c.dom.Attr;
@@ -1253,7 +1251,7 @@ public class TranslationsHelper {
 		return null;
 	}
 
-	public static java.io.File getXLS(Survey survey, Translations translations, FileService fileService) {
+	public static java.io.File getXLS(Survey survey, Translations translations, FileService fileService, boolean useXLSX) {
 
 		try {
 
@@ -1270,14 +1268,22 @@ public class TranslationsHelper {
 				descriptions.put(keyValue.getKey(), keyValue.getValue());
 			}
 
-			Workbook wb = new HSSFWorkbook();
+			Workbook wb;
+			String fileExt;
+			if (useXLSX) {
+				wb = new SXSSFWorkbook();
+				fileExt = ".xlsx";
+			} else {
+				wb = new HSSFWorkbook();
+				fileExt = ".xls";
+			}
 			String safeName = WorkbookUtil.createSafeSheetName("Translation");
 			Sheet sheet = wb.createSheet(safeName);
 			XlsTranslationCreator creator = new XlsTranslationCreator(sheet, translationsByKey, descriptions);
 
 			createSheet(creator, survey, translations, descriptions, translationsByKey);
 
-			java.io.File temp = fileService.createTempFile("translation" + UUID.randomUUID().toString(), ".xls");
+			java.io.File temp = fileService.createTempFile("translation" + UUID.randomUUID().toString(), fileExt);
 
 			FileOutputStream out = new FileOutputStream(temp);
 
@@ -1864,15 +1870,20 @@ public class TranslationsHelper {
 		return result;
 	}
 
-	public static Translations importXLS(InputStream inputStream, List<String> invalidKeys, SurveyService surveyService,
-			ServletContext servletContext) {
+	public static Translations importXLS(InputStream inputStream, List<String> invalidKeys, SurveyService surveyService, ServletContext servletContext, boolean useXlsx) {
 
 		try {
 
 			Translations result = new Translations();
 
-			HSSFWorkbook wb = new HSSFWorkbook(inputStream);
-			HSSFSheet sheet = wb.getSheetAt(0);
+
+			Workbook wb;
+			if (useXlsx) {
+				wb = new XSSFWorkbook(inputStream);
+			} else {
+				wb = new HSSFWorkbook(inputStream);
+			}
+			Sheet sheet = wb.getSheetAt(0);
 			int rows = sheet.getPhysicalNumberOfRows();
 
 			int surveyId = 0;
@@ -1903,7 +1914,7 @@ public class TranslationsHelper {
 			String label;
 
 			for (int r = 1; r < rows; r++) {
-				HSSFRow row = sheet.getRow(r);
+				Row row = sheet.getRow(r);
 				if (row == null) {
 					continue;
 				}
@@ -2022,12 +2033,14 @@ public class TranslationsHelper {
 		return getText(result, key, invalidKeys, servletContext);
 	}
 
-	private static String getText(HSSFSheet sheet, int row, int cell, String key, List<String> invalidKeys,
+	private static String getText(Sheet sheet, int row, int cell, String key, List<String> invalidKeys,
 			ServletContext servletContext) {
 		try {
 			String result;
+			var sRow = sheet.getRow(0);
+			var sCell = sRow.getCell(0);
 
-			if (sheet.getRow(row).getCell(cell).getCellType() == 0) {
+			if (sCell.getCellTypeEnum() == CellType.NUMERIC) {
 				result = "" + ((int) sheet.getRow(row).getCell(cell).getNumericCellValue());
 			} else {
 				result = Tools.filterHTML(sheet.getRow(row).getCell(cell).getStringCellValue().trim());

@@ -111,7 +111,7 @@ public class ArchiveExecutor implements Runnable {
 					}
 					
 					try {
-						// this method uses its own transaction, so a RuntimError should not break the session anymore
+						// this method uses its own transaction, so a RuntimeError should not break the session anymore
 						archiveService.createArchive(survey, survey.getOwner(), lastArchive);
 					} catch (Exception e) {	
 						if (lastSurvey != null && lastArchive != null) {

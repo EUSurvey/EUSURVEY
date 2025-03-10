@@ -1210,6 +1210,54 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public int getNumberOfAnswerSetsPublishedInPeriod(String uid, Survey.ReportEmailFrequency reportEmailFrequency) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH));
+
+		Date start = null;
+		Date end = null;
+
+		switch (reportEmailFrequency) {
+			case Never:
+				return 0;
+			case Daily:
+				// time frame is yesterday
+				cal.add(Calendar.DATE, -1);
+				start = cal.getTime();
+
+				cal.add(Calendar.DATE, 1);
+				end = cal.getTime();
+				break;
+			case Weekly:
+				// supposed to be called at Mondays
+				// time frame is last week
+				end = cal.getTime(); // current day at 0:00:00
+
+				cal.add(Calendar.DATE, -7); // one week ago
+				start = cal.getTime();
+				break;
+			case Monthly:
+				// supposed to be called at the first day of the month
+				// time frame is last month
+				end = cal.getTime(); // current day at 0:00:00
+
+				cal.add(Calendar.MONTH, -1); // one month ago
+				start = cal.getTime();
+				break;
+		}
+
+		NativeQuery query = session.createSQLQuery(
+				"SELECT count(an.ANSWER_SET_ID) FROM ANSWERS_SET an inner join SURVEYS s on an.SURVEY_ID = s.SURVEY_ID where an.ISDRAFT = 0 AND s.SURVEY_UID = :uid AND s.ISDRAFT = 0 AND an.ANSWER_SET_DATE > :start AND an.ANSWER_SET_DATE < :end");
+		query.setString("uid", uid);
+		query.setDate("start", start);
+		query.setDate("end", end);
+
+		return ConversionTools.getValue(query.uniqueResult());
+	}
+
+	@Transactional(readOnly = true)
 	public int userContributionsToSurvey(Survey survey, User user) {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -1657,6 +1705,8 @@ public class AnswerService extends BasicService {
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
+
+				activityService.log(ActivityRegistry.ID_DRAFT_CONTRIBUTION_SUBMIT, null, draft.getUniqueId(), -1, draft.getAnswerSet().getSurvey().getUniqueId());
 
 				saved = true;
 			} catch (org.hibernate.exception.LockAcquisitionException ex) {
@@ -2316,13 +2366,22 @@ public class AnswerService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public Date getNewestAnswerDate(int surveyId) {
+		return getNewestAnswerDate(surveyId, false);
+	}
+	@Transactional(readOnly = true)
+	public Date getNewestAnswerDate(int surveyId, boolean includeDrafts) {
 		Session session = sessionFactory.getCurrentSession();
 		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(surveyId);
 		
 		if (allVersions.isEmpty()) return null;
-		
-		Query query = session.createQuery("SELECT max(a.updateDate) FROM AnswerSet a WHERE a.surveyId IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND a.isDraft = 0");
+
+		String sql = "SELECT max(a.updateDate) FROM AnswerSet a WHERE a.surveyId IN ("
+				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
+		if (!includeDrafts) {
+			sql += "  AND a.isDraft = 0";
+		}
+
+		Query query = session.createQuery(sql);
 		return (Date) query.uniqueResult();
 	}
 
@@ -2365,7 +2424,7 @@ public class AnswerService extends BasicService {
 		} else if (mode.equalsIgnoreCase("test")) {
 			url = serverPrefix + survey.getShortname() + "/management/test?draftid=" + draftid;
 		} else if (mode.equalsIgnoreCase("runner")) {
-			if (survey.getEcasSecurity() && !pwAuthenticated) {
+			if (survey.getSecurity().startsWith("secured") && survey.getEcasSecurity() && !pwAuthenticated) {
 				url = serverPrefix + "runner/" + survey.getUniqueId();
 			} else {
 				url = serverPrefix + "runner/" + survey.getUniqueId() + "?draftid=" + draftid;
@@ -2614,7 +2673,7 @@ public class AnswerService extends BasicService {
 		String lastL1section = "";
 		questionsBySection.put(lastSection, new ArrayList<String>());
 		
-		for (Element element : survey.getElements()) {
+		for (Element element : survey.getQuestionsAndSections()) {
 			if (element instanceof Section) {
 				lastSection = element.getUniqueId();
 				
@@ -2657,7 +2716,7 @@ public class AnswerService extends BasicService {
 	private Map<String, String> createCompletionRatesResult(Survey survey, ResultFilter filter, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, int totalNumberOfContributions, int completedContributions) {
 		Map<String, String> result = new HashMap<>();
 		int nonCountingElement = 0;
-		for (Element element : survey.getElements()) {
+		for (Element element : survey.getQuestionsAndSections()) {
 			if (element instanceof Section) {
 				String section = element.getUniqueId();
 				nonCountingElement++;
@@ -2672,7 +2731,8 @@ public class AnswerService extends BasicService {
 						counter++;
 					}
 				}
-				for (Element sectionElement : survey.getElements()) {
+
+				for (Element sectionElement : survey.getQuestionsAndSections()) {
 					if (sectionElement.isDelphiElement() && filter.getVisibleQuestions().contains(sectionElement.getId().toString()) && questionsBySection.get(section).contains(sectionElement.getUniqueId())) {
 						filterQuestions++;
 					}
@@ -2695,7 +2755,7 @@ public class AnswerService extends BasicService {
 			}
 		}		
 
-		if (filter.getVisibleQuestions().size() == (survey.getElements().size() - nonCountingElement)) {
+		if (filter.getVisibleQuestions().size() == (survey.getQuestionsAndSections().size() - nonCountingElement)) {
 			result.put("0", getPercentage(completedContributions / (double)totalNumberOfContributions));
 		} else {
 			result.put("0", "");
@@ -2790,7 +2850,7 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public Map<String, String> getCompletionRates(Survey survey, ResultFilter filter) throws Exception {
+	public Map<String, String> getCompletionRates(Survey survey, ResultFilter filter, boolean allanswers) throws Exception {
 		int totalNumberOfContributions = 0;
 		int completedContributions = 0;
 		Map<String, List<String>> questionsBySection = new HashMap<>();		
@@ -2798,9 +2858,13 @@ public class AnswerService extends BasicService {
 		Map<String, List<String>> sectionsByQuestion = new HashMap<>();
 		Map<String, String> parentByQuestion = new HashMap<>();		
 		Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection = new HashMap<>();
+
+		if (allanswers) {
+			surveyService.checkAndRecreateMissingElements(survey, filter);
+		}
 		initializeHelperMaps(survey, questionsBySection, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
-				
-		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, true, false, false, false);
+
+		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, true, false, false, false, allanswers);
 		if (answerRows != null) {
 			totalNumberOfContributions = answerRows.size();
 			Map<Integer, String> questionUidsByIndex = new HashMap<>();
@@ -2824,7 +2888,6 @@ public class AnswerService extends BasicService {
 					}
 				}
 			}
-			
 			completedContributions = parseAnswerRowsForCompletionRates(answerRows, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection, questionUidsByIndex);
 		} else {
 			List<AnswerSet> answers = getAllAnswers(survey.getId(), filter);

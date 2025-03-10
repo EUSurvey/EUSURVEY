@@ -235,7 +235,7 @@
 			
 			<div id="sections">
 				<div style="text-align: center; margin-bottom: 20px;">
-					<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}"><spring:message code="label.Start" /></a>
+					<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}">${form.getMessage("label.Start")}</a>
 				</div>
 		
 				<!-- ko if: !loaded() -->
@@ -275,7 +275,7 @@
 	
 								<div class="no-graph-image">
 									<span class="glyphicon glyphicon-signal"></span><br />
-									<span><spring:message code="info.NoData" /></span>
+									<span>${form.getMessage("info.NoData")}</span>
 								</div>
 								
 								<div data-bind="attr: {id: 'wordcloud' + uid}" class="question__word-cloud-container"></div>
@@ -296,7 +296,7 @@
 									<!-- /ko -->							
 								
 									<!-- ko if: answer.length > 0 -->
-									<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
+									<div class="greenanswer">${form.getMessage("info.YouAnswered")}: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
 									
 									<!-- ko if: $parents[1].unansweredMandatoryQuestions() == false -->								
 									<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.EditAnswer" /></a>
@@ -304,10 +304,10 @@
 								
 									<!-- /ko -->
 									<!-- ko if: answer.length == 0 -->
-									<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
+									<div class="redanswer">${form.getMessage("info.NotAnswered")}</div>
 				
 									<!-- ko if: $parents[1].unansweredMandatoryQuestions() == false -->
-									<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.Answer" /></a>
+									<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}">${form.getMessage("label.Answer")}</a>
 									<!-- /ko -->
 							
 									<!-- /ko -->
@@ -330,7 +330,7 @@
 			</div>
 			
 			<div style="text-align: center">
-				<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}"><spring:message code="label.Start" /></a>
+				<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}">${form.getMessage("label.Start")}</a>
 			</div>
 		
 		</div>

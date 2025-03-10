@@ -23,13 +23,15 @@ import java.util.Map.Entry;
 public class ConversionTools {
 	
 	public static final String DateFormat = "dd/MM/yyyy";
+	public static final String AltDateFormat = "yyyy-MM-dd";
 	public static final String SmallDateFormat = "dd/MM/yy";
+	public static final String AltSmallDateFormat = "yy-MM-dd";
 	public static final String DateTimeFormat = "dd/MM/yyyy HH:mm:ss";
 	public static final String DateTimeFormatSmall = "dd/MM/yyyy HH:mm";
+	public static final String DateFormatReplacedMarkup = "yyyy-MM-dd";
 	public static final String DateTimeFormatWebservice = "yyyy-MM-dd_HH-mm-ss";
 	public static final String DateTimeFormatSQL = "yyyy-MM-dd HH:mm:ss";
 	public static final String DateTimeFormatJS = "yyyy, MM, dd, HH, mm, ss";
-	public static final String IPMDateFormat = "yyyy-MM-dd";
 	public static final String TimeFormat = "HH:mm:ss";
 		
 	public static int getValue(Object num)
@@ -69,11 +71,14 @@ public class ConversionTools {
 				result = Tools.parseDateString(input, DateTimeFormatSQL);
 			} else if (input.length() == 8)
 			{
-				result = Tools.parseDateString(input, SmallDateFormat);
+				if (input.charAt(2) == '-') {
+					result = Tools.parseDateString(input, AltSmallDateFormat);
+				} else {
+					result = Tools.parseDateString(input, SmallDateFormat);
+				}
 			} else if (input.length() == 10) {
-				if (input.contains("-"))
-				{
-					result = Tools.parseDateString(input, IPMDateFormat);
+				if (input.charAt(4) == '-') {
+					result = Tools.parseDateString(input, AltDateFormat);
 				} else {
 					result = Tools.parseDateString(input, DateFormat);
 				}

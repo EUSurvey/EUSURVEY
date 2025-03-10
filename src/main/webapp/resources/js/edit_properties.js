@@ -680,13 +680,13 @@ var ElementProperties = function() {
 
 				var id = $(e).attr("data-id");
 				var text = $("textarea[name^='text" + id + "']").first().text();
-
+				
 				if ($(e).hasClass("firstCell"))
 				{
 					text =  $("textarea[name^='firstCellText" + id + "']").first().text();
 					getTextPropertiesRow("Text", text, true);
 				} else {
-
+					
 					var shortname = $("input[name^='shortname" + id + "']").first().val();
 
 					getTextPropertiesRow("Text", text, true);
@@ -699,7 +699,32 @@ var ElementProperties = function() {
 
 					getAdvancedPropertiesRow();
 					getTextPropertiesRow("Identifier", shortname, false);
+					
+					
+					if ($(e).closest("thead").length == 0)
+					{
+						// matrix question
+						if (isQuiz)
+						{
+							getQuizPropertiesRow(parent);
+							getQuizPropertiesContent(parent);
+						}
 
+						$(e).closest("tr").find("td").addClass("highlightedquestion");
+					} else {
+						// matrix answer
+						if (isQuiz)
+						{
+							var index = $(e).index();
+							var table = $(e).closest("table");
+							$(table).find("tbody").find("tr").each(function(){
+								$($(this).find("td")[index-1]).addClass("highlightedquestion");
+							});
+						
+							getQuizPropertiesRow();
+							getQuizPropertiesContentMatrixAnswer(parent, element, index);
+						}
+					}
 				}
 
 				_actions.ChildSelected(true);

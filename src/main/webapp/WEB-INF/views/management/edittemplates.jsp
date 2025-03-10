@@ -202,7 +202,8 @@
 							<a style='margin-left: 2px'><span data-toggle='tooltip' title='<spring:message code="info.ForEachAnswer" />' class='glyphicon glyphicon glyphicon-question-sign'></span></a>				
 						</td>
 					</tr>
-					<!--  ko if: Element().type == 'MultipleChoiceQuestion' -->
+
+					<!--  ko if: Element().type == 'MultipleChoiceQuestion' || (typeof Element()['type'] == 'function' && Element().type() == 'matrixitem' && !isSingleChoice) -->
 						<tr>
 							<td class="innertd" colspan="3" style="padding-left: 10px;">					
 							<input data-label="noNegativeScore" onclick="update(this)" class="check noNegativeScore" type="checkbox" data-bind="checked: Element().noNegativeScore(), enable: Element().scoring() == 2" />
@@ -1008,17 +1009,17 @@
 	<tr class="firstpropertyrow quiz" data-bind="attr: {style: Element().scoring() == 0 ? 'display:none' : ''}">
 		<td class="propertylabel" style="border-bottom: 0px;"><spring:message code="label.Answers" /></td>
 		<td style="text-align: right; border-bottom: 0px;">
-			<!-- ko if: Element().type != 'MultipleChoiceQuestion' && Element().type != 'SingleChoiceQuestion' -->
+			<!-- ko if: Element().type != 'MultipleChoiceQuestion' && Element().type != 'SingleChoiceQuestion' && !(typeof Element()['type'] == 'function' && Element().type() == 'matrixitem') -->
 				<a data-bind="click: function(data, event) { addExpectedAnswer(true) }" class="btn btn-default btn-sm" title="<spring:message code="label.AddExpectedAnswer" />" data-toggle="tooltip"><span class="glyphicon glyphicon-plus"></span></a>
 			<!-- /ko -->
 		</td>
 	</tr>
 	<!--  ko foreach: ContentItems() -->
-	<!-- ko if: $parent.Element().type == 'MultipleChoiceQuestion' || $parent.Element().type == 'SingleChoiceQuestion' -->
+	<!-- ko if: $parent.Element().type == 'MultipleChoiceQuestion' || $parent.Element().type == 'SingleChoiceQuestion' || (typeof $parent.Element()['type'] == 'function' && $parent.Element().type() == 'matrixitem') -->
 		<tr class="quiz" data-bind="attr: {style: $parent.Element().scoring() == 0 ? 'display:none' : ''}">
 			<td class="propertylabel" style="border-bottom: 0px; vertical-align: middle !important; padding-bottom: 10px !important;"></td>
 			<td class="propertycontent" style="border-bottom: 0px; padding-bottom:10px !important">			
-				<span data-bind="html: title"></span>
+				<span data-bind="html: strip_tags(title())"></span>
 			</td>
 		</tr>	
 		<tr class="quiz quizrule" data-bind="attr: {'data-id': id(), style: $parent.Element().scoring() == 0 ? 'display:none' : ''}">
@@ -1029,7 +1030,8 @@
 			</td>
 		</tr>		
 	<!-- /ko -->
-	<!-- ko if: $parent.Element().type != 'MultipleChoiceQuestion' && $parent.Element().type != 'SingleChoiceQuestion' -->
+	
+	<!-- ko if: !(typeof $parent.Element()['type'] == 'function' && $parent.Element().type() == 'matrixitem') && $parent.Element().type != 'MultipleChoiceQuestion' && $parent.Element().type != 'SingleChoiceQuestion' -->
 		<tr class="quiz quizrule" data-bind="attr: {'data-id': id(), style: $parent.Element().scoring() == 0 ? 'display:none' : ''}">
 			<td class="propertylabel" style="border-bottom: 0px; padding-top: 10px !important;">
 				<spring:message code="label.MarkAs" /><a style='margin-left: 2px'><span data-toggle='tooltip' title='<spring:message code="info.MarkAs" />' class='glyphicon glyphicon glyphicon-question-sign'></span></a>
@@ -1064,7 +1066,7 @@
 	<tr class="quiz" data-bind="attr: {'data-id': id(), style: $parent.Element().scoring() == 0 ? 'display:none' : ''}">
 		<td  class="propertylabel" style="border-bottom: 0px; vertical-align: middle !important;"><spring:message code="label.Points" /></td>
 		<td class="propertycontent" style="border-bottom: 0px;">			
-			<input data-label="points" data-bind="value: scoring.points()" class="scoringpointsanswer spinner" type="text" style="width: 100%" onclick="update(this)" />
+			<input data-label="points" data-bind="value: scoring.points(), attr: {'data-pos' : $index()}" class="scoringpointsanswer spinner" type="text" style="width: 100%" onclick="update(this)" />
 		</td>
 	</tr>
 	<tr class="firstpropertyrow quiz" data-bind="attr: {'data-id': id(), style: $parent.Element().scoring() == 0 ? 'display:none' : ''}">
@@ -1093,7 +1095,7 @@
 		<td colspan="2" style="border-bottom: 1px dashed #ccc; text-align: right"></td>
 	</tr>
 	<!-- /ko -->
-	<!-- ko if: Element().type != 'MultipleChoiceQuestion' && Element().type != 'SingleChoiceQuestion' && ContentItems().length > 0 -->
+	<!-- ko if: !(typeof Element()['type'] == 'function' && Element().type() == 'matrixitem') && Element().type != 'MultipleChoiceQuestion' && Element().type != 'SingleChoiceQuestion' && ContentItems().length > 0 -->
 	<tr data-bind="attr: {style: Element().scoring() == 0 ? 'display:none' : ''}">
 		<td colspan="2" style="text-align: right">	
 			<a data-bind="click: function(data, event) { addExpectedAnswer(true) }" class="btn btn-default btn-sm" title="<spring:message code="label.AddExpectedAnswer" />" data-toggle="tooltip"><span class="glyphicon glyphicon-plus"></span></a>
@@ -1230,8 +1232,30 @@
 	<tr>
 		<td colspan="2" style="border-bottom: 1px dashed #ccc; text-align: right"></td>
 	</tr>
-	<!-- /ko -->	
+	<!-- /ko -->
+</script>
 
+<script type="text/html" id="matrixanswerquiz-template">	
+	<!--  ko foreach: ContentItems() -->
+	<tr class="firstpropertyrow quiz">
+        <td class="propertylabel" colspan="2" style="border-bottom: 0px;">
+            <spring:message code="label.PointsPerColumn" />
+            <a style='margin-left: 2px'><span data-toggle='tooltip' title='<spring:message code="info.PointsPerColumn" />' class='glyphicon glyphicon glyphicon-question-sign'></span></a>
+        </td>
+    </tr>
+
+	<tr>
+		<td colspan="2" class="propertycontent" style="border-bottom: 0px; padding-left: 40px !important; vertical-align: middle !important;"><span data-bind="html: getShortnedText(title())"></span></td>
+	</tr>
+	<tr>
+	    <td class="propertycontent" style="border-bottom: 0px; padding-left: 40px !important;">
+			<input id="colpoints" data-label="colpoints" onkeyup="$('#colpointsapply').show()" onchange="$('#colpointsapply').show()" data-bind="value: initialpoints, attr: {'data-pos' : $index()}" class="scoringpointsanswer spinner" type="text" style="width: 100%" />
+		</td>
+		<td style="border-bottom: 0px; padding-left: 40px !important;">
+            <button id="colpointsapply" style="display: none" class="btn btn-primary" onclick="update($('#colpoints'))"><spring:message code="label.Apply" /></button>
+        </td>
+	</tr>
+	<!-- /ko -->
 </script>
 
 <div class="modal" id="FormulaDialog" data-backdrop="static">

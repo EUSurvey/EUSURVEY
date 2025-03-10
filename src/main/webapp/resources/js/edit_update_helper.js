@@ -208,9 +208,14 @@ function getElement() {
 	var id = selectedElement.attr("data-id");
 	var element = _elements[id];
 	
-	if (element == null && selectedElement.hasClass("cell")){
-		let parentId = selectedElement.closest("li.complextableitem").attr("data-id")
-		element = _elements[parentId].getChildbyId(id)
+	if (element == null && selectedElement.hasClass("cell")) {
+		let parentId = selectedElement.closest("li.complextableitem").attr("data-id");
+		element = _elements[parentId].getChildbyId(id);
+	}
+	
+	if (element == null && selectedElement.hasClass("matrix-header")) {
+		let parentId = selectedElement.closest(".survey-element").attr("data-id");
+		element = _elements[parentId].getChild(id);
 	}
 	
 	return element;

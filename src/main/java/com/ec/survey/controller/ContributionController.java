@@ -344,9 +344,12 @@ public class ContributionController extends BasicController {
 			} else if (u == null) {
 				// ok
 			} else {
+				boolean isDraft = request != null && request.getParameter("results-source") != null
+						&& request.getParameter("results-source").equalsIgnoreCase("draft");
 				if (!u.getId().equals(answerSet.getSurvey().getOwner().getId())
 						&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
 						&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
+						&& !(isDraft && u.getLocalPrivileges().get(LocalPrivilege.AccessDraft) == 2)
 						&& (u.getResultAccess() == null || u.getResultAccess().isReadonly())) {
 					throw new ForbiddenURLException();
 				}
@@ -440,9 +443,9 @@ public class ContributionController extends BasicController {
 	public ModelAndView processSubmit(@PathVariable String code, HttpServletRequest request, Locale locale) {
 
 		try {
-			User u = sessionService.getCurrentUser(request);
 			Survey origsurvey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false,
 					true);
+			User u = sessionService.getCurrentUser(request, !origsurvey.getIsDelphi());
 			String answerSetId = request.getParameter("IdAnswerSet");
 			AnswerSet oldAnswerSet = answerService.get(Integer.parseInt(answerSetId));
 
@@ -530,7 +533,9 @@ public class ContributionController extends BasicController {
 					return new ModelAndView("close", "surveyprefix", origsurvey.getId());
 				}
 
-				if (origsurvey.getIsQuiz()) {
+				if (origsurvey.getIsQuiz()  &&
+								!(origsurvey.getConfirmationPageLink() != null && origsurvey.getConfirmationPageLink()
+								&& origsurvey.getConfirmationLink() != null && origsurvey.getConfirmationLink().length() > 0)) {
 					String lang = locale.getLanguage();
 					if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 						lang = request.getParameter("language.code");

@@ -31,7 +31,7 @@ public class Export implements java.io.Serializable {
 	
 	public enum ExportFormat
 	{
-		xls, xlsx, odt, ods, pdf, doc, csv, xml, zip, eus
+		xls, xlsx, odt, ods, pdf, doc, csv, xml, zip, eus, docx
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -61,6 +61,7 @@ public class Export implements java.io.Serializable {
 
 	private String displayUsername;
 	private String charts;
+	private Boolean splitMCQ = false;
 	
 	@Id
 	@Column(name = "EXPORT_ID")
@@ -292,7 +293,14 @@ public class Export implements java.io.Serializable {
 	public void setCharts(String charts) {
 		this.charts = charts;
 	}
-	
+	@Column(name = "EXPORT_SPLIT_MCQ")
+	public Boolean getSplitMCQ() {
+		return splitMCQ;
+	}
+	public void setSplitMCQ(Boolean splitMCQ) {
+		this.splitMCQ = splitMCQ != null && splitMCQ;
+	}
+
 	@JsonIgnore
 	@Transient
 	public Map<String, String> getChartsByQuestionUID() {

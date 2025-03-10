@@ -980,11 +980,20 @@ function update(input)
 			}
 			
 			element.isInterdependent(checked);
+			$(_elementProperties.selectedelement).find(".matrixtable").addClass("interdependent");
 			_undoProcessor.addUndoStep(["Interdependency", id, $(_elementProperties.selectedelement).index(), !checked, checked]);
 			
 			break;
 		case "QuizQuestion":
 			var checked = $(input).is(":checked");
+			
+			if (typeof element['type'] == 'function' && element.type() == 'matrixitem') {
+				var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+				var parent = _elements[parentid];
+				element = parent.getChild($(_elementProperties.selectedelement).attr("data-id"));	
+				id = parentid + '#' + id;
+			}
+			
 			var oldvalue = element.scoring() + 0;
 			if (!checked)
 			{
@@ -1003,6 +1012,13 @@ function update(input)
 			var text = $(input).val();
 			var newvalue = parseInt(text);
 			
+			if (typeof element['type'] == 'function' && element.type() == 'matrixitem') {
+				var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+				var parent = _elements[parentid];
+				id = parentid + '#' + id;
+				var pos = $(_elementProperties.selectedelement).index();
+			}
+			
 			if ($(input).hasClass("scoringpoints"))
 			{
 				if (!checkPositive(input))
@@ -1010,20 +1026,26 @@ function update(input)
 					return;
 				}
 				
-				var oldvalue = element.points();			
-				element.points(newvalue);
-				_undoProcessor.addUndoStep(["points", id, $(_elementProperties.selectedelement).index(), oldvalue, newvalue]);
+				var oldvalue = element.points();
+				if (oldvalue != newvalue) {			
+					element.points(newvalue);
+					_undoProcessor.addUndoStep(["points", id, null, oldvalue, newvalue]);
+				}
 			} else if ($(input).hasClass("noNegativeScore"))
 			{
 				var checked = $(input).is(":checked");
-				var id = $(input).closest("tr").attr("data-id");
+				//var id = $(input).closest("tr").attr("data-id");
 				var oldvalue = element.noNegativeScore();	
-				element.noNegativeScore(checked);
-				_undoProcessor.addUndoStep(["noNegativeScore", id, $(_elementProperties.selectedelement).index(), oldvalue, checked]);	
+				if (oldvalue != newvalue) {
+					element.noNegativeScore(checked);
+					_undoProcessor.addUndoStep(["noNegativeScore", id, pos, oldvalue, checked]);	
+				}
 			} else {
 				var oldvalue = element.scoring();
-				element.scoring(newvalue);
-				_undoProcessor.addUndoStep(["scoring", id, $(_elementProperties.selectedelement).index(), oldvalue, newvalue]);
+				if (oldvalue != newvalue) {		
+					element.scoring(newvalue);
+					_undoProcessor.addUndoStep(["scoring", id, pos, oldvalue, newvalue]);
+				}
 			}
 			checkQuizOtherValues();
 			
@@ -1031,7 +1053,13 @@ function update(input)
 		case "correct":
 			var checked = $(input).attr("data-value") == "true";
 			var childid = $(input).closest("tr").attr("data-id");			
-			var oldvalue; 			
+			var oldvalue; 	
+			
+			if (typeof element['type'] == 'function' && element.type() == 'matrixitem') {
+				var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+				var parent = _elements[parentid];
+				id = parentid + '#' + id;
+			}	
 			
 			if (element.type == "SingleChoiceQuestion" || element.type == "MultipleChoiceQuestion")
 			{
@@ -1055,12 +1083,20 @@ function update(input)
 			var newvalue = parseInt($(input).val());
 			var id = $(input).closest("tr").attr("data-id");
 			var oldvalue;
+			var pos = $(_elementProperties.selectedelement).index();
 			
 			if (element.type == "SingleChoiceQuestion" || element.type == "MultipleChoiceQuestion")
 			{
 				var answer = element.getChild(id);
 				oldvalue = answer.scoring.points();	
 				answer.scoring.points(newvalue);
+			} else if (typeof element['type'] == 'function' && element.type() == 'matrixitem') {
+				var parentid = selectedElement.closest(".survey-element").attr("data-id");
+				id = parentid + '#' + element.id();
+				pos = parseInt($(input).attr("data-pos"));
+				var scoring = element.scoringItems()[pos];
+				oldvalue = scoring.points();	
+				scoring.points(newvalue);
 			} else  {
 				var scoring = element.getScoringItem(id);
 				oldvalue = scoring.points();	
@@ -1068,7 +1104,10 @@ function update(input)
 			}
 			checkQuizOtherValues();
 			
-			_undoProcessor.addUndoStep(["points", id, $(_elementProperties.selectedelement).index(), oldvalue, newvalue]);
+			// sometimes the method is called twice
+			if (oldvalue != newvalue) {			
+				_undoProcessor.addUndoStep(["points", id, pos, oldvalue, newvalue]);
+			}
 			break;
 		case "ruleValueType":
 			var scoringId = $(input).closest("tr").attr("data-id");
@@ -1412,25 +1451,45 @@ function update(input)
 				_undoProcessor.addUndoStep(["sascore", id, paid, old, score]);
 			}
 			break;
+		case "colpoints":
+			var points = parseInt($(input).val());
+			if (isNaN(points)) points = 0;
+			var answerIndex = $(_elementProperties.selectedelement).index() - 1;
+			var matrixid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+			var matrix = _elements[matrixid];
+			for (var i = 0; i < matrix.questions().length; i++) {
+				matrix.questions()[i].scoringItems()[answerIndex].points(points);
+				matrix.questions()[i].scoring(2);
+			}
+			$("#colpointsapply").hide();
+			showSuccess(OPERATION_EXECUTED);
+			break;
 		default:
 			throw label + " not implemented"; 
-			
-		_actions.SaveEnabled(true);
 	}	
+	
+	_actions.SaveEnabled(true);
 	
 	$(input).removeClass("activeproperty");
 }
 
 function updateFeedback(span, reset)
 {
+	var id = $(span).closest("tr").attr("data-id");
 	var eid = $(_elementProperties.selectedelement).attr("data-id");
+	var logid = eid;
 	var element = _elements[eid];
+	
+	if ($(_elementProperties.selectedelement).hasClass("matrix-header")) {
+		var parent = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		element = _elements[parent].getChild(eid);
+		logid = parent + '#' + eid;
+	}
 	
 	_elementProperties.selectedid = $(span).closest("tr").find("textarea").first().attr("id");
 	var text = "";
 	if (!reset) text = tinyMCE.get(_elementProperties.selectedid).getContent();
 	
-	var id = $(span).closest("tr").attr("data-id");
 	var oldtext;
 	if (element.type == "SingleChoiceQuestion" || element.type == "MultipleChoiceQuestion")
 	{
@@ -1443,7 +1502,7 @@ function updateFeedback(span, reset)
 		scoring.feedback(text);
 	}
 		
-	_undoProcessor.addUndoStep(["Feedback", eid, id, oldtext, text]);
+	_undoProcessor.addUndoStep(["Feedback", logid, id, oldtext, text]);
 	
 	if (!reset)	$(span).closest("tr").hide();
 }
@@ -1850,7 +1909,7 @@ function updateColumns(element, columns)
 		}
 		
 		if (newelement == null) {
-			newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, columns[i], columns[i], false, "", element.answers().length);			
+			newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, columns[i], columns[i], false, "", element.answers().length, 0, 0);			
 		}		
 		
 		element.answers.push(newelement);
@@ -1884,7 +1943,7 @@ function updateRows(element, rows)
 		}
 		
 		if (newelement == null) {
-			newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, rows[i], rows[i], false, "", element.questions().length);
+			newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, rows[i], rows[i], false, "", element.questions().length, 0, 0);
 		}
 		
 		

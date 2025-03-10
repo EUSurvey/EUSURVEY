@@ -34,8 +34,8 @@ public class EuCaptchaApiController extends BasicController {
 		conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 		conn.setRequestProperty("xJwtString", captchatoken);	    
 		
-		List<String> cookies = conn.getHeaderFields().get("set-cookie");			
-		response.addHeader("original-cookie", cookies == null ? "" : String.join("#", cookies));
+//		List<String> cookies = conn.getHeaderFields().get("set-cookie");			
+//		response.addHeader("original-cookie", cookies == null ? "" : String.join("#", cookies));
 
 		return readData(conn);
 	}
@@ -56,10 +56,10 @@ public class EuCaptchaApiController extends BasicController {
 		
 		conn.setRequestProperty("xJwtString", captchatoken);
 		
-		String[] cookies = request.getHeader("original-cookie").split("#");			
-		for (String cookie : cookies) {
-			conn.addRequestProperty("Cookie", cookie);
-		}
+//		String[] cookies = request.getHeader("original-cookie").split("#");			
+//		for (String cookie : cookies) {
+//			conn.addRequestProperty("Cookie", cookie);
+//		}
 		
 		return readData(conn);
 	}

@@ -13,9 +13,9 @@
 	</c:choose>		
 
 		<div style="position: relative; margin-left: auto; margin-right: auto; text-align: center; width:350px; margin-bottom: 10px; margin-top: 10px;">
-			<a data-toggle="tooltip" title="<spring:message code="label.GoToPreviousPage"/>" onclick="individualsMoveTo('previous', $(this).parent().parent());" class="widget-move-previous iconbutton disabled"><span class="glyphicon glyphicon-chevron-left"></span></a>				
+			<button data-toggle="tooltip" type="button" title="<spring:message code="label.GoToPreviousPage"/>" onclick="individualsMoveTo('previous', this);" class="widget-move-previous unstyledbuttonBlack" disabled><span class="glyphicon glyphicon-chevron-left"></span></button>
 			<span class="widget-first firstResultIndividual" style="margin-left: 10px; margin-right: 10px;">1</span>	
-			<a data-toggle="tooltip" title="<spring:message code="label.GoToNextPage"/>" onclick="individualsMoveTo('next', $(this).parent().parent());" class="widget-move-next iconbutton"><span class="glyphicon glyphicon-chevron-right"></span></a>
+			<button data-toggle="tooltip" type="button" title="<spring:message code="label.GoToNextPage"/>" onclick="individualsMoveTo('next', this);" class="widget-move-next unstyledbuttonBlack" ><span class="glyphicon glyphicon-chevron-right"></span></button>
 			<img class="add-wait-animation-individual hideme" style="position: absolute; right: 0px; top: 0px;" src="${contextpath}/resources/images/ajax-loader.gif" />
 		</div>
 		
@@ -118,9 +118,9 @@
 		</table>
 		
 		<div style="position: relative; margin-left: auto; margin-right: auto; text-align: center; width:350px; margin-bottom: 10px; margin-top: 10px;">
-			<a data-toggle="tooltip" title="<spring:message code="label.GoToPreviousPage"/>" onclick="individualsMoveTo('previous', $(this).parent().parent());" class="widget-move-previous iconbutton disabled"><span class="glyphicon glyphicon-chevron-left"></span></a>				
-			<span class="widget-first firstResultIndividual" style="margin-left: 10px; margin-right: 10px;">1</span>	
-			<a data-toggle="tooltip" title="<spring:message code="label.GoToNextPage"/>" onclick="individualsMoveTo('next', $(this).parent().parent());" class="widget-move-next iconbutton"><span class="glyphicon glyphicon-chevron-right"></span></a>
+			<button data-toggle="tooltip" type="button" title="<spring:message code="label.GoToPreviousPage"/>" onclick="individualsMoveTo('previous', this);" class="widget-move-previous unstyledbuttonBlack" disabled><span class="glyphicon glyphicon-chevron-left"></span></button>
+			<span class="widget-first firstResultIndividual" style="margin-left: 10px; margin-right: 10px;">1</span>
+			<button data-toggle="tooltip" type="button" title="<spring:message code="label.GoToNextPage"/>" onclick="individualsMoveTo('next', this);" class="widget-move-next unstyledbuttonBlack" ><span class="glyphicon glyphicon-chevron-right"></span></button>
 			<img class="add-wait-animation-individual hideme" style="position: absolute; right: 0px; top: 0px;" src="${contextpath}/resources/images/ajax-loader.gif" />
 		</div>
 	</div>	

@@ -74,10 +74,10 @@ function newFilesViewModel(files)
 	return viewModel;
 }
 
-function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, title, originalTitle, isDependentMatrixQuestion, css, index, useAndLogic)
+function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, title, originalTitle, isDependentMatrixQuestion, css, index, useAndLogic, scoring, points, noNegativeScore)
 {
 	var viewModel = newBasicViewModel();
-	viewModel.type = 'matrixitem';
+	viewModel.type = ko.observable('matrixitem');
 	viewModel.id =  ko.observable(id);
 	viewModel.uniqueId = ko.observable(uniqueId);
 	viewModel.optional = ko.observable(optional);
@@ -89,6 +89,9 @@ function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, tit
 	viewModel.css = ko.observable(css);
 	viewModel.originalIndex = ko.observable(index);
 	viewModel.useAndLogic = ko.observable(useAndLogic);
+	viewModel.points = ko.observable(points);
+	viewModel.scoring = ko.observable(scoring);
+	viewModel.noNegativeScore = ko.observable(noNegativeScore);
 	return viewModel;
 }
 
@@ -97,7 +100,7 @@ function newMatrixItemsViewModel(items)
 	var viewModel = ko.observableArray();
 	for (var i = 0; i < items.length; i++)
 	{
-		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i, items[i].useAndLogic));
+		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i, items[i].useAndLogic, items[i].scoring, items[i].quizPoints, items[i].noNegativeScore));
 	}
 	return viewModel;
 }
@@ -199,17 +202,32 @@ function newScoringViewModel(element)
 		if (element.hasOwnProperty("isViewModel") && element.isViewModel)
 		{
 			viewModel.id = ko.observable(element.id());
-			viewModel.type = ko.observable(element.type());
-			viewModel.value = ko.observable(element.value());
-			viewModel.value2 = ko.observable(element.value2());
-			viewModel.feedback = ko.observable(element.feedback());
-			viewModel.min = ko.observable(element.min());
-			viewModel.max = ko.observable(element.max());
-			viewModel.minDate = ko.observable(element.minDate());
-			viewModel.maxDate = ko.observable(element.maxDate());
+			viewModel.type = ko.observable(element.type());		
+			
+			if (element.type() != "matrixitem") {		
+				viewModel.value = ko.observable(element.value());
+				viewModel.value2 = ko.observable(element.value2());
+				viewModel.feedback = ko.observable(element.feedback());	
+				viewModel.min = ko.observable(element.min());
+				viewModel.max = ko.observable(element.max());
+				viewModel.minDate = ko.observable(element.minDate());
+				viewModel.maxDate = ko.observable(element.maxDate());
+				viewModel.position = ko.observable(element.position());	
+				viewModel.correct = ko.observable(element.correct());		
+			} else { // TODO
+				viewModel.value = ko.observable(0);
+				viewModel.value2 = ko.observable(0);
+				viewModel.feedback = ko.observable("");	
+				viewModel.min = ko.observable(0);
+				viewModel.max = ko.observable(0);
+				viewModel.minDate = ko.observable();
+				viewModel.maxDate = ko.observable();
+				viewModel.position = ko.observable(0);	
+				viewModel.correct = ko.observable(false);		
+			}
+			
 			viewModel.points = ko.observable(element.points());
-			viewModel.position = ko.observable(element.position());
-			viewModel.correct = ko.observable(element.correct());
+
 		} else {
 			viewModel.id = ko.observable(element.id);
 			viewModel.type = ko.observable(element.type);
@@ -225,7 +243,7 @@ function newScoringViewModel(element)
 			viewModel.correct = ko.observable(element.correct);
 		}
 	} else {
-		viewModel.id = ko.observable("");
+		viewModel.id = ko.observable(getNewId());
 		viewModel.type = ko.observable(0);
 		viewModel.value = ko.observable("");
 		viewModel.value2 = ko.observable("");
@@ -331,6 +349,7 @@ function newBasicViewModel(element)
 	viewModel.useAndLogic = ko.observable(false);
 	viewModel.median = ko.observable(0);
 	viewModel.changedForMedian = ko.observable(false);
+	viewModel.noNegativeScore = ko.observable(false);
 	
 	viewModel.getScoringItem = function(id)
 	{
@@ -356,7 +375,7 @@ function newBasicViewModel(element)
 			viewModel.uniqueId = ko.observable(element.uniqueId());
 			viewModel.shortname = ko.observable(element.shortname());
 			viewModel.scoring = ko.observable(element.scoring());
-			//viewModel.points = ko.observable(element.quizPoints());
+			viewModel.points = ko.observable(element.quizPoints());
 			viewModel.locked = ko.observable(element.locked());
 			viewModel.css = ko.observable(element.css());
 			viewModel.optional = ko.observable(element.optional());
@@ -366,6 +385,7 @@ function newBasicViewModel(element)
 			viewModel.delphiChartType = ko.observable(element.delphiChartType());
 			viewModel.editorRowsLocked = ko.observable(element.editorRowsLocked());
 			viewModel.editorColumnsLocked = ko.observable(element.editorColumnsLocked());
+			viewModel.noNegativeScore = ko.observable(element.noNegativeScore());
 	
 			if (element.scoringItems != null) {
 				for (var i = 0; i < element.scoringItems.length; i++) {
@@ -391,6 +411,7 @@ function newBasicViewModel(element)
 			viewModel.delphiChartType = ko.observable(element.delphiChartType);
 			viewModel.editorRowsLocked = ko.observable(element.editorRowsLocked);
 			viewModel.editorColumnsLocked = ko.observable(element.editorColumnsLocked);
+			viewModel.noNegativeScore = ko.observable(element.noNegativeScore);
 
 			if (element.scoringItems != null) {
 				for (var i = 0; i < element.scoringItems.length; i++) {
@@ -774,7 +795,6 @@ function newMultipleChoiceViewModel(element)
 	viewModel.minChoices = ko.observable(element.minChoices);
 	viewModel.maxChoices = ko.observable(element.maxChoices);
 	viewModel.choiceType = ko.observable(element.choiceType);
-	viewModel.noNegativeScore = ko.observable(element.noNegativeScore);
 
 	viewModel.useCheckboxes = ko.pureComputed(function() {
 		return viewModel.choiceType() === "checkbox"
@@ -1623,6 +1643,17 @@ function newMatrixViewModel(element)
 	viewModel.dependentElementsStrings = ko.observableArray();
 	viewModel.firstCellText = ko.observable(element.firstCellText);
 	
+	// initialize scores
+	for (var q = 0; q < viewModel.questions().length; q++) {
+		for (var a = 0; a < viewModel.answers().length; a++) {
+			if (element.questions[q].scoringItems != null) {
+				viewModel.questions()[q].scoringItems.push(newScoringViewModel(element.questions[q].scoringItems[a]));
+			} else {
+				viewModel.questions()[q].scoringItems.push(newScoringViewModel());
+			}
+		}
+	}
+					
 	for (var i = 0; i < element.dependentElementsStrings.length; i++)
 	{
 		viewModel.dependentElementsStrings.push(ko.observable(element.dependentElementsStrings[i]));

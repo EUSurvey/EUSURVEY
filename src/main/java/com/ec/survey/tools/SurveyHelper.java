@@ -604,6 +604,13 @@ public class SurveyHelper {
 								"This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$%...).",
 								locale));
 					}
+					
+					answer = answer.replaceAll("[^\\u0000-\\uFFFF]", "\uFFFD");
+
+					if (answer.indexOf('\uFFFD') > -1) {				
+						result.put(element, resources.getMessage("validation.invalidCharacter", null,
+								"Invalid (non UTF-8) characters detected. Please check your input.", locale));						
+					}
 				}
 
 				if (element instanceof RegExQuestion) {
@@ -619,8 +626,16 @@ public class SurveyHelper {
 							result.put(element, resources.getMessage("validation.notUnique", null,
 									"This input already exists. Please try another entry.", locale));
 					}
-				}
+					
+					answer = answer.replaceAll("[^\\u0000-\\uFFFF]", "\uFFFD");
 
+					if (answer.indexOf('\uFFFD') > -1) {				
+						result.put(element, resources.getMessage("validation.invalidCharacter", null,
+								"Invalid (non UTF-8) characters detected. Please check your input.", locale));						
+					}
+				}
+				
+			
 				if (element instanceof NumberQuestion || element instanceof FormulaQuestion) {
 					checkNumber(element, answerSet, answers, result, resources, locale, answerService);
 				}
@@ -747,7 +762,15 @@ public class SurveyHelper {
 										&& answer.length() > complexTableItem.getMaxCharacters()) {
 									result.put(element, resources.getMessage("validation.textTooLong", null,
 											"This text is too long", locale));
-								}					
+								}		
+								
+								answer = answer.replaceAll("[^\\u0000-\\uFFFF]", "\uFFFD");
+
+								if (answer.indexOf('\uFFFD') > -1) {				
+									result.put(element, resources.getMessage("validation.invalidCharacter", null,
+											"Invalid (non UTF-8) characters detected. Please check your input.", locale));						
+								}
+								
 								break;
 							case MultipleChoice:
 								if (complexTableItem.getMinChoices() > answers.size() && !answers.isEmpty()) {
@@ -1332,6 +1355,13 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		text.setReadonly(isReadonly);
+		
+		Boolean noNegativeScore = getBoolean(parameterMap, "noNegativeScore", id);
+		if (log220 && !noNegativeScore.equals(text.getNoNegativeScore())) {
+			oldValues += " noNegativeScore: " + text.getNoNegativeScore();
+			newValues += " noNegativeScore: " + noNegativeScore;
+		}
+		text.setNoNegativeScore(noNegativeScore);
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
@@ -3990,7 +4020,7 @@ public class SurveyHelper {
 
 	private static Matrix getMatrix(Map<String, String[]> parameterMap, Element currentElement,
 			String id, Map<Integer, Element> elementsById, String[] dependenciesForAnswers,
-			HashMap<Matrix, HashMap<Integer, String>> matrixDependencies, ServletContext servletContext, boolean log220)
+			HashMap<Matrix, HashMap<Integer, String>> matrixDependencies, ServletContext servletContext, boolean log220, boolean isQuiz)
 			throws InvalidXHTMLException {
 		String oldValues = "";
 		String newValues = "";
@@ -4156,7 +4186,7 @@ public class SurveyHelper {
 			newValues += " delphiChartType: " + delphiChartType;
 		}
 		matrix.setDelphiChartType(delphiChartType);
-
+		
 		// now get the elements inside the matrix
 		String matrixIdsAsString = parameterMap.get("matrixelements" + id)[0];
 		String[] matrixIds = matrixIdsAsString.split(";");
@@ -4234,6 +4264,55 @@ public class SurveyHelper {
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
 			matrix.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+		}
+		
+		//quiz properties
+		if (isQuiz) {
+			for (Element matrixQuestion : matrix.getQuestions()) {
+				if (matrixQuestion instanceof Question) {
+					Question question = (Question) matrixQuestion;
+					
+					String qid = matrixQuestion.getId() != null ? matrixQuestion.getId().toString() : matrixQuestion.getOldId();
+					
+					Integer scoring = getInteger(parameterMap, "scoring", qid);
+					if (log220 && !scoring.equals(question.getScoring())) {
+						oldValues += " scoring: " + question.getScoring();
+						newValues += " scoring: " + scoring;
+					}
+					question.setScoring(scoring);
+
+					Integer points = getInteger(parameterMap, "points", qid, 1);
+					if (log220 && !points.equals(question.getQuizPoints())) {
+						oldValues += " points: " + question.getQuizPoints();
+						newValues += " points: " + points;
+					}
+					question.setQuizPoints(points);					
+					
+					String[] scoringitems = parameterMap.get("scoringitem" + qid);
+					if (scoringitems == null) {
+						scoringitems = new String[0];
+					}
+	
+					List<ScoringItem> deletedScoringItems = new ArrayList<>();
+					List<String> scoringitemslist = Arrays.asList(scoringitems);
+	
+					if (question.getScoringItems() != null)
+						for (ScoringItem item : question.getScoringItems()) {
+							if (!scoringitemslist.contains(item.getId().toString())) {
+								deletedScoringItems.add(item);
+							}
+						}
+	
+					for (ScoringItem itemToDelete : deletedScoringItems) {
+						question.getScoringItems().remove(itemToDelete);
+					}
+	
+					for (int i = 0; i < scoringitems.length; i++) {
+						ScoringItem item = getScoringItem(parameterMap, question, scoringitems[i], servletContext);
+						item.setPosition(i);
+					}
+				}
+			}
 		}
 
 		return matrix;
@@ -4445,7 +4524,7 @@ public class SurveyHelper {
 		} else if (type.equalsIgnoreCase("matrix")) {
 			String[] dependenciesForAnswers = parameterMap.get("dependencies" + id);
 			element = getMatrix(parameterMap, currentElement, id, elementsById, dependenciesForAnswers,
-					matrixDependencies, servletContext, log220 && currentElement != null);
+					matrixDependencies, servletContext, log220 && currentElement != null, survey.getIsQuiz());
 		} else if (type.equalsIgnoreCase("table")) {
 			element = getTable(parameterMap, currentElement, id, elementsById, servletContext,
 					log220 && currentElement != null);

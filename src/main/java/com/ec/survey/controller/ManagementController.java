@@ -443,15 +443,9 @@ public class ManagementController extends BasicController {
 			IOUtils.copy(is, fos);
 			fos.close();
 
-			if (filename.toLowerCase().endsWith("zip")) {
-				result = SurveyExportHelper.importIPMSurvey(file, surveyService, sessionService.getCurrentUser(request),
-						fileService, servletContext, u.getEmail());
-				request.getSession().setAttribute("IMPORTORIGIN", "IPM");
-			} else {
-				result = SurveyExportHelper.importSurvey(file, fileService, u.getEmail());
-				request.getSession().setAttribute("IMPORTORIGIN", "EUSURVEY");
-			}
-
+			result = SurveyExportHelper.importSurvey(file, fileService, u.getEmail());
+			request.getSession().setAttribute("IMPORTORIGIN", "EUSURVEY");
+			
 			String contact = u.getEmail();
 			String login = u.getLogin();
 			String lang = result.getSurvey().getLanguage().getCode();
@@ -850,14 +844,8 @@ public class ManagementController extends BasicController {
 				java.io.File file = fileService.getUsersFile(u.getId(), "import" + uuid);
 
 				ImportResult result;
-				if (request.getSession().getAttribute("IMPORTORIGIN") != null
-						&& request.getSession().getAttribute("IMPORTORIGIN").toString().equalsIgnoreCase("IPM")) {
-					result = SurveyExportHelper.importIPMSurvey(file, surveyService,
-							sessionService.getCurrentUser(request), fileService, servletContext, u.getEmail());
-				} else {
-					result = SurveyExportHelper.importSurvey(file, fileService, u.getEmail());
-				}
-
+				result = SurveyExportHelper.importSurvey(file, fileService, u.getEmail());
+				
 				result.getSurvey().setShortname(Tools.escapeHTML(parameters.get(Constants.SHORTNAME)[0]));
 				result.getSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
 				Language objLang = surveyService.getLanguage(Tools.escapeHTML(parameters.get("surveylanguage")[0]));
@@ -1348,7 +1336,7 @@ public class ManagementController extends BasicController {
 				String message = resources.getMessage("message.ShortnameAlreadyExists", null,
 						"A survey with this shortname already exists.", locale);
 				return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
-			}
+			}				
 
 		} else {
 			uploadedSurvey = form.getSurvey();
@@ -1625,6 +1613,7 @@ public class ManagementController extends BasicController {
 		survey.setTitle(Tools.filterHTML(uploadedSurvey.getTitle()));
 		survey.setOrganisation(uploadedSurvey.getOrganisation());
 		survey.setValidator(uploadedSurvey.getValidator());
+		survey.setWebhook(uploadedSurvey.getWebhook());
 
 		boolean sendListFormMail = false;
 
@@ -1852,6 +1841,10 @@ public class ManagementController extends BasicController {
 			}
 			
 			survey.setSendConfirmationEmail(uploadedSurvey.getSendConfirmationEmail());
+
+			survey.setSendReportEmail(uploadedSurvey.getSendReportEmail());
+			survey.setReportEmailFrequency(uploadedSurvey.getReportEmailFrequency());
+			survey.setReportEmails(uploadedSurvey.getReportEmails());
 
 			survey.setAutomaticPublishing(uploadedSurvey.getAutomaticPublishing());
 			
@@ -3101,7 +3094,9 @@ public class ManagementController extends BasicController {
 
 		survey = surveyService.getSurvey(survey.getId(), lang);
 
-		if (survey.getIsQuiz()) {
+		if (survey.getIsQuiz() &&
+				!(survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
+				&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0)) {
 			ModelAndView result = new ModelAndView("management/testQuizResult", Constants.UNIQUECODE,
 					answerSet.getUniqueCode());
 			Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
@@ -3977,7 +3972,7 @@ public class ManagementController extends BasicController {
 	public @ResponseBody List<String> resultsJSON(@PathVariable String shortname, HttpServletRequest request) {
 
 		try {
-			User user = sessionService.getCurrentUser(request);
+			User user = sessionService.getCurrentUser(request, false);
 
 			String rows = request.getParameter("rows");
 			String page = request.getParameter("page");
@@ -4008,12 +4003,17 @@ public class ManagementController extends BasicController {
 				form = new Form(resources);
 				form.setSurvey(survey);
 
-				if (survey.getPublication() != null) {
-					showuploadedfiles = survey.getPublication().getShowUploadedDocuments();
+				var publication = survey.getPublication();
+
+				//Restrict resultJSON access. The post request might lie about publicationmode
+				if (publication == null || !publication.isShowContent()) {
+					return null;
 				}
 
+				showuploadedfiles = publication.getShowUploadedDocuments();
+
 				if (filter == null) {
-					if (survey.getPublication() != null && survey.getPublication().isActive()) {
+					if (publication.isActive()) {
 						filter = survey.getPublication().getFilter();
 						filter.setSurveyId(survey.getId());
 					} else {
@@ -4032,7 +4032,7 @@ public class ManagementController extends BasicController {
 			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 			Survey survey = surveyService.getSurvey(filter.getSurveyId(), draft.getLanguage().getCode());
 
-			if (user != null) {
+			if (user != null && !publicationmode) {
 				sessionService.upgradePrivileges(draft, user, request);
 			}
 			
@@ -4054,7 +4054,7 @@ public class ManagementController extends BasicController {
 			filter = answerService.initialize(filter);			
 			
 			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
-					false, showuploadedfiles, false, false, true);
+					false, showuploadedfiles, false, false, true, allanswers);
 			 
 			if (answersets != null) {
 				Date updateDate = reportingService.getLastUpdate(survey);
@@ -4489,6 +4489,8 @@ public class ManagementController extends BasicController {
 	public @ResponseBody Map<String, String> statisticsDelphiJSON(@PathVariable String shortname, HttpServletRequest request) {
 		
 		try {
+			String allanswers = request.getParameter("allanswers");
+
 			ResultFilter filter = sessionService.getLastResultFilter(request);
 			if (filter == null || filter.getSurveyId() == 0) {
 				return Collections.emptyMap();
@@ -4502,7 +4504,7 @@ public class ManagementController extends BasicController {
 
 			Survey survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
 			if (survey != null) {
-				return answerService.getCompletionRates(survey, filter);
+				return answerService.getCompletionRates(survey, filter, allanswers.equalsIgnoreCase("true"));
 			}
 			
 		} catch (Exception e) {
@@ -4526,9 +4528,13 @@ public class ManagementController extends BasicController {
 			   return Collections.emptyMap();
 			}
 
+			String allanswers = request.getParameter("allanswers");
+			if (allanswers.equalsIgnoreCase("true")) {
+				surveyService.checkAndRecreateMissingElements(survey, filter);
+			}
 			Map<String, String> result = new HashMap<>();
 			
-			for (Element element : survey.getElements()) {
+			for (Element element : survey.getQuestionsAndSections()) {
 				if (element instanceof SingleChoiceQuestion) {
 					SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)element;
 					
