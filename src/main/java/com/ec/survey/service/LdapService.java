@@ -166,7 +166,7 @@ public class LdapService extends BasicService {
             	String dg = (String) attrs.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
             	return dg;
             } else {
-            	String departmentNumber = (String) attrs.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDg).get();
+            	String departmentNumber = (String) attrs.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber).get();
             	return departmentNumber.substring(0, departmentNumber.indexOf("."));
             }
             
