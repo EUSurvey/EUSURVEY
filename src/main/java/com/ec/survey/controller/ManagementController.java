@@ -805,13 +805,16 @@ public class ManagementController extends BasicController {
 				if (survey.getValidator() == null || survey.getValidator().length() == 0) {
 					throw new MessageException("no validator found");
 				}
-				
-				String organisation = ldapService.getOrganisationForEmail(survey.getValidator());
-				if (!survey.getOrganisation().equalsIgnoreCase(organisation)) {
-					throw new MessageException("invalid validator");
+
+				List<String> organisations = ldapService.getOrganisationForEmail(survey.getValidator());
+
+				for (String org : organisations) {
+					if (survey.getOrganisation().equalsIgnoreCase(org)) {
+						return true;
+					}
 				}
-				
-				return true;
+
+				throw new MessageException("invalid validator");
 			}
 		}
 

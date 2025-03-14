@@ -177,16 +177,20 @@ public class SurveyController extends BasicController {
 		
 		return existingSurvey != null;
 	}
-	
+
 	@RequestMapping(value = "/emailmatchesorganiation", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody Boolean emailmatchesorganiation(HttpServletRequest request) throws NamingException {	
-		
-		String email = request.getParameter("email");	
-		String organisation = request.getParameter("organisation");	
-		
-		String organisationFromLDAP = ldapService.getOrganisationForEmail(email);
-		
-		return organisationFromLDAP.equalsIgnoreCase(organisation);
+	public @ResponseBody Boolean emailmatchesorganiation(HttpServletRequest request) throws NamingException {
+
+		String email = request.getParameter("email");
+		String organisation = request.getParameter("organisation");
+
+		List<String> organisationsFromLDAP = ldapService.getOrganisationForEmail(email);
+
+		for (String org : organisationsFromLDAP) {
+			if (org.equalsIgnoreCase(organisation)) return true;
+		}
+
+		return false;
 	}
 		
 }

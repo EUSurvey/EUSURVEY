@@ -152,29 +152,47 @@ public class LdapService extends BasicService {
 	    ctx.close();
         return login;
 	}
-	
-	public String getOrganisationForEmail(String email) throws NamingException {
-		String organisation = "";
+
+	public List<String> getOrganisationForEmail(String email) throws NamingException {
 		DirContext ctx = initialize();
-        try {
-        	email = Tools.encodeForLDAP(email);
-        	String searchValue= String.format(ldapSearchMailFormat, email);
-            Attributes attrs = ctx.getAttributes(searchValue);
-            organisation = (String) attrs.get(ldapMappingUserO).get();
-            
-            if (organisation.equalsIgnoreCase("eu.europa.ec")) {
-            	String dg = (String) attrs.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
-            	return dg;
-            } else {
-            	String departmentNumber = (String) attrs.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber).get();
-            	return departmentNumber.substring(0, departmentNumber.indexOf("."));
-            }
-            
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-	    ctx.close();
-        return organisation;
+
+		SearchControls sc = getSearchControls(LdapSearchTypeEnum.MAIL);
+		NamingEnumeration<SearchResult> ne = null;
+		Attributes userAttributes;
+		String searchString = "(mail=" + Tools.encodeForLDAP(email) + ")";
+
+		List<String> organisations = new ArrayList<>();
+
+		try{
+			ne = ctx.search(ldapSearchFormat, searchString, sc);
+
+			while(ne.hasMore()){
+				SearchResult nextSearchResult = ne.next();
+				userAttributes = nextSearchResult.getAttributes();
+
+				if (userAttributes.get(ldapMappingUserO) != null) {
+					String organisation = (String) userAttributes.get(ldapMappingUserO).get();
+
+					if (organisation.equalsIgnoreCase("eu.europa.ec") && (userAttributes.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg) != null)) {
+						String dg = (String) userAttributes.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
+						organisations.add(dg);
+					} else if (userAttributes.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber) != null) {
+						String departmentNumber = (String) userAttributes.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber).get();
+						if (departmentNumber != null && departmentNumber.contains(".")) {
+							organisations.add(departmentNumber.substring(0, departmentNumber.indexOf(".")));
+						}
+					} else {
+						organisations.add(organisation);
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		ctx.close();
+		return organisations;
 	}
    
     public List<String> getUserLDAPGroups(String username) {
