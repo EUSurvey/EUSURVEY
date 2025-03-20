@@ -147,14 +147,15 @@ public class QuizHelper {
 								if (!answers.isEmpty())
 								{
 									Answer answer = answers.get(0);
-									int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
-									ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
-								
-									if (scoringItem != null)
-									{
-										score += scoringItem.getPoints();
-										currentSectionScore += scoringItem.getPoints();
-										result.getQuestionScores().put(matrixQuestion.getUniqueId(), scoringItem.getPoints());
+									if (!matrixQuestion.getScoringItems().isEmpty()) {
+										int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
+										ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
+
+										if (scoringItem != null) {
+											score += scoringItem.getPoints();
+											currentSectionScore += scoringItem.getPoints();
+											result.getQuestionScores().put(matrixQuestion.getUniqueId(), scoringItem.getPoints());
+										}
 									}
 								}
 							} else {
