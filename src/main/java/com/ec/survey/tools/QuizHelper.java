@@ -177,11 +177,12 @@ public class QuizHelper {
 										
 								for (Answer answer : answers)
 								{
-									int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
-									ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
-									if (scoringItem != null)
-									{
-										qscore += scoringItem.getPoints();
+									if (!matrixQuestion.getScoringItems().isEmpty()) {
+										int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
+										ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
+										if (scoringItem != null) {
+											qscore += scoringItem.getPoints();
+										}
 									}
 								}
 								
