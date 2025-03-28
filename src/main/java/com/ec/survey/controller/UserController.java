@@ -241,22 +241,22 @@ public class UserController extends BasicController {
 				user.setComment(comment);
 				user.setEmail(email);
 				user.setLanguage(language);
-							
-				user.getRoles().clear();
-				
-				if (roles != null && roles.length() > 0)
-				{
-					String[] ids = roles.split(";");
-					Map<Integer, Role> rolesById = administrationService.getAllRolesAsMap();
-					for (String rid : ids) {
-						if (rolesById.containsKey(Integer.parseInt(rid)))
-						{
-							user.getRoles().add(rolesById.get(Integer.parseInt(rid)));
-						}
-					}				
+			}
+
+			user.getRoles().clear();
+
+			if (roles != null && roles.length() > 0)
+			{
+				String[] ids = roles.split(";");
+				Map<Integer, Role> rolesById = administrationService.getAllRolesAsMap();
+				for (String rid : ids) {
+					if (rolesById.containsKey(Integer.parseInt(rid)))
+					{
+						user.getRoles().add(rolesById.get(Integer.parseInt(rid)));
+					}
 				}
 			}
-			
+
 			user.setOtherEmail(otherEmail);
 			
 			administrationService.updateUser(user);

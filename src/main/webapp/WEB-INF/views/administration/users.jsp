@@ -194,9 +194,9 @@
 			$('#add-user-lastname').removeAttr('readonly').removeAttr('disabled');
 			$('#add-user-language').removeAttr('readonly').removeAttr('disabled');
 			$('.role').each(function(){
-				$(this).removeAttr('disabled');					
-			});			
-			
+				$(this).removeAttr('disabled');
+			});
+
 			$('#add-user-login').val("");
 			$('#add-user-password').val("");
 			$('#add-user-password').addClass("required");
@@ -245,7 +245,7 @@
 				$('#add-user-lastname').removeAttr('readonly').removeAttr('disabled');
 				$('#add-user-language').removeAttr('readonly').removeAttr('disabled');
 				$('.role').each(function(){
-					$(this).removeAttr('disabled');					
+					$(this).removeAttr('disabled');
 				});
 			} else {
 				$('#add-user-password').attr('readonly', true).attr('disabled', true);
@@ -256,7 +256,7 @@
 				$('#add-user-lastname').attr('readonly', true).attr('disabled', true);
 				$('#add-user-language').attr('readonly', true).attr('disabled', true);
 				$('.role').each(function(){
-					$(this).attr('disabled', true);					
+					$(this).attr('disabled', true);
 				});
 			}
 			
@@ -681,7 +681,7 @@
 									</td>
 									<td class="hideme"><esapi:encodeForHTML>${user.comment}</esapi:encodeForHTML></td>
 									<td style="min-width: 110px;">
-										<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.otherEmail}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}", ${user.type == 'SYSTEM'}, ${user.frozen}</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
+										<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.otherEmail}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}", true, ${user.frozen}</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
 										<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton" onclick='showDeleteDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}"</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-remove"></span></a>
 																			
 										<c:choose>

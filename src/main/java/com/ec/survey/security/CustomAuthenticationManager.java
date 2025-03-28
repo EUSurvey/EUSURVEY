@@ -196,12 +196,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 									
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q")) 
 					{
-						if (ecRole != null && (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), ecRole.getId())))
-						{
-							user.getRoles().clear();
-							user.getRoles().add(ecRole);
-							administrationService.updateUser(user);
-						}
+						// internal EC users
 					} else {
 						if (intRole != null)
 						{
@@ -210,13 +205,6 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 		    					if (!surveyLoginMode){
 			    					throw new Bad2faCredentialsException();
 			    				}
-							}
-							
-							if (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), intRole.getId()))
-							{
-								user.getRoles().clear();
-								user.getRoles().add(intRole);
-								administrationService.updateUser(user);
 							}
 						}
 					}
