@@ -97,7 +97,17 @@
 	</script>		
 </head>
 <body>
-	<div class="page-wrap">
+    <c:choose>
+        <c:when test="${redirecttoeulogin != null}">
+            <div style="text-align: center; margin-top: 20px;">forwarding to EULogin...</div>
+            <div class="page-wrap" style="display: none">
+        </c:when>
+        <c:otherwise>
+            <div class="page-wrap">
+        </c:otherwise>
+    </c:choose>
+
+
 		<%@ include file="../header.jsp" %>	
 		
 		<div class="page" style="padding-top: 40px">
@@ -118,7 +128,7 @@
 						</c:if>					
 						
 						<div id="ecasPanelContent" class="well" style="max-width: 420px; padding:30px; padding-bottom: 5px; margin-bottom:0px; float: left;">
-							<form:form action="${ecasurl}" style="margin-bottom: 25px">
+							<form:form id="2faeuloginauthenticationform" action="${ecasurl}" style="margin-bottom: 25px">
 								<div style="height: 150px;">
 									<input type="hidden" name="service" value="<esapi:encodeForHTMLAttribute>${serviceurl}</esapi:encodeForHTMLAttribute>"/>
 									<input type="hidden" name="acceptStrength" value="PASSWORD_SMS" />
@@ -236,8 +246,10 @@
 		
 		<div style="clear: both"></div>
 	</div>
-	
+
+	<c:if test="${redirecttoeulogin == null}">
 	<%@ include file="../footer.jsp" %>
+	</c:if>
 	<%@ include file="../generic-messages.jsp" %>
 	
 	<div class="modal" id="forgot-password-dialog" data-backdrop="static">
@@ -276,6 +288,12 @@
  			switchPanels();
 			showInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
 		</script>
+ 	</c:if>
+
+ 	<c:if test="${redirecttoeulogin != null}">
+ 	    <script type="text/javascript">
+            $('#2faeuloginauthenticationform').submit();
+ 	    </script>
  	</c:if>
 
 </body>

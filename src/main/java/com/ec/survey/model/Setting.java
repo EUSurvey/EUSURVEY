@@ -75,6 +75,8 @@ public class Setting {
 	public static final String DeleteSurveysAge = "DeleteSurveysAge";
 	public static final String ArchiveOlderThan = "ArchiveOlderThan";
 	public static final String ArchiveNotChangedInLast = "ArchiveNotChangedInLast";
+
+	public static final String DisableLoginPage = "DisableLoginPage";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")

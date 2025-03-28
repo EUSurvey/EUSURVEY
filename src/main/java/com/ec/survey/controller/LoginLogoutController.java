@@ -1,6 +1,7 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.model.OneTimePasswordResetCode;
+import com.ec.survey.model.Setting;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.security.CustomAuthenticationManager;
@@ -73,6 +74,12 @@ public class LoginLogoutController extends BasicController {
 	
 	@RequestMapping(value = "/auth/login", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String getLoginPage(@RequestParam(value=Constants.ERROR, required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+
+		if (settingsService.get(Setting.DisableLoginPage).equalsIgnoreCase("true")) {
+			// automatically forward the user to EULogin
+			model.put("redirecttoeulogin", true);
+		}
+
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		
