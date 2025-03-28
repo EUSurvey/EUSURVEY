@@ -57,6 +57,11 @@ public class WebServiceController extends BasicController {
 	private static String StandardDateString = "yyyy-MM-dd_HH-mm-ss";
 
 	private KeyValue getLoginAndPassword(HttpServletRequest request, HttpServletResponse response) {
+		if (settingsService.get(Setting.DisableWebserviceAPI).equalsIgnoreCase("true")) {
+			response.setStatus(403);
+			return null;
+		}
+
 		String line = request.getHeader("Authorization");
 		if (line != null && line.startsWith("Basic")) {
 			String encoded = line.substring("Basic ".length());

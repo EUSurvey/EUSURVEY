@@ -54,6 +54,22 @@ public class SchemaService extends BasicService {
 	public void step125() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
+		String existing = settingsService.get(Setting.DisableWebserviceAPI);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.DisableWebserviceAPI);
+			s.setValue("false");
+			s.setFormat("true / false");
+			session.saveOrUpdate(s);
+		}
+		status.setDbversion(126);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step124() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
 		String existing = settingsService.get(Setting.DisableLoginPage);
 		if (existing == null) {
 			Setting s = new Setting();
