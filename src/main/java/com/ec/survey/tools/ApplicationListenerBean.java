@@ -894,15 +894,15 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			status = schemaService.getStatus();
 		}
 
-		if (status.getDbversion() < 125){
-			logger.info("starting upgrade step 125");
-			schemaService.step125();
+		if (status.getDbversion() < 124){
+			logger.info("starting upgrade step 124");
+			schemaService.step124();
 			status = schemaService.getStatus();
 		}
 
-		if (status.getDbversion() < 126){
-			logger.info("starting upgrade step 126");
-			schemaService.step126();
+		if (status.getDbversion() < 125){
+			logger.info("starting upgrade step 125");
+			schemaService.step125();
 			status = schemaService.getStatus();
 		}
 	}

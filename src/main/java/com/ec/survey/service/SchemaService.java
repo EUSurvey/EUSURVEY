@@ -62,7 +62,7 @@ public class SchemaService extends BasicService {
 			s.setFormat("true / false");
 			session.saveOrUpdate(s);
 		}
-		status.setDbversion(126);
+		status.setDbversion(125);
 		session.saveOrUpdate(status);
 	}
 
@@ -78,7 +78,7 @@ public class SchemaService extends BasicService {
 			s.setFormat("true / false");
 			session.saveOrUpdate(s);
 		}
-		status.setDbversion(125);
+		status.setDbversion(124);
 		session.saveOrUpdate(status);
 	}
 
