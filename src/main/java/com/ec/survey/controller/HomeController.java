@@ -432,7 +432,7 @@ public class HomeController extends BasicController {
 	private void addAttachment(String sys_id, String filename, java.io.File attachment, CloseableHttpClient httpclient) throws ClientProtocolException, IOException, MessageException {
 			
 		HttpPost httppostFile = new HttpPost(attachmentHost + sys_id + "&file_name=" + URLEncoder.encode(filename, "UTF-8"));
-		httppostFile.setHeader("Content-Type", "application/octetd-stream");
+		httppostFile.setHeader("Content-Type", "application/octet-stream");
 	
 		if (smtpAuth != null) {
 			httppostFile.addHeader("Authorization", "Basic " + smtpAuth);
