@@ -604,6 +604,11 @@ public class ParticipantsController extends BasicController {
 		result.addObject("participationGroup", participationGroup);
 		result.addObject("usertexts", participationService.getTemplates(user.getId()));
 
+		var canSendLinks = !user.isExternal();
+		if (!canSendLinks) {
+			result.addObject("noInviteLinks", true);
+		}
+
 		if (user.getECPrivilege() > 0) {
 			result.addObject("allowSenderAddress", true);
 		}
@@ -705,8 +710,21 @@ public class ParticipantsController extends BasicController {
 			senderSubject = "Invitation";
 		}
 
-		String text1 = Tools.filterHTML(request.getParameter("text1"));
-		String text2 = Tools.filterHTML(request.getParameter("text2"));
+		var canSendLinks = !user.isExternal();
+
+		String text1 = Tools.filterHTML(request.getParameter("text1"), canSendLinks);
+		String text2 = Tools.filterHTML(request.getParameter("text2"), canSendLinks);
+
+		if (!canSendLinks) {
+			var linksA = "([^\\s<>]+://)[^\\s<>]+"; //Matches links like https://localhost or http://google.com
+			var linksB = "([^.<>\\s]+\\.)+\\w\\w+"; //Matches links like search.google.de
+			text1 = text1.replaceAll(linksA, "");
+			text1 = text1.replaceAll(linksB, "");
+
+			text2 = text2.replaceAll(linksA, "");
+			text2 = text2.replaceAll(linksB, "");
+		}
+
 
 		if (senderAddress == null || senderAddress.trim().length() == 0)
 			senderAddress = user.getEmail();

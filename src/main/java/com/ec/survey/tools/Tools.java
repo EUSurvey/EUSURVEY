@@ -229,7 +229,11 @@ public class Tools {
 		return ESAPI.encoder().decodeForHTML(input);
 	}
 
-	public static String filterHTML(String input) {	
+
+	public static String filterHTML(String input) {
+		return Tools.filterHTML(input, true);
+	}
+	public static String filterHTML(String input, boolean allowLinks) {
 		//the following removes direct formatting
 		//return Jsoup.clean(input, Whitelist.relaxed());
 		
@@ -243,8 +247,15 @@ public class Tools {
                  .charset(StandardCharsets.UTF_8)
                  .escapeMode(EscapeMode.xhtml)
                  .prettyPrint(false);
+
+		var whitelist = Whitelist.relaxed().addAttributes(":all", "style").addAttributes(":all", "class");
+		if (allowLinks) {
+			whitelist.addEnforcedAttribute("a", "target", "_blank");
+		} else {
+			whitelist.removeTags("a");
+		}
 		
-		return Jsoup.clean(input, "", Whitelist.relaxed().addEnforcedAttribute("a", "target", "_blank").addAttributes(":all", "style").addAttributes(":all", "class"), outputSettings);
+		return Jsoup.clean(input, "", whitelist, outputSettings);
 	}
 
 	public static String toUTF83Bytes(String input) {
