@@ -449,7 +449,7 @@
 						<div id="messagehelp" class="help hideme">
 							<spring:message code="help.Message" />
 						</div><br />
-						<textarea class="tinymce freetext max5000 full" name="text1" id="text1" onchange="$('#savetextbutton').removeAttr('disabled')">
+						<textarea class="tinymce freetext max5000 full ${noInviteLinks != null ? "nolinks" : ""}" name="text1" id="text1" onchange="$('#savetextbutton').removeAttr('disabled')">
 							<c:choose>
 								<c:when test="${participationGroup.template1 != null}">
 									${participationGroup.template1}
@@ -475,7 +475,7 @@
 										
 						<br /><br />
 						<label><spring:message code="label.Signature" /></label><br />
-						<textarea class="tinymce freetext max5000 full" name="text2" id="text2" onchange="$('#savetextbutton').removeAttr('disabled')">
+						<textarea class="tinymce freetext max5000 full ${noInviteLinks != null ? "nolinks" : ""}" name="text2" id="text2" onchange="$('#savetextbutton').removeAttr('disabled')">
 							<c:choose>
 								<c:when test="${participationGroup.template2 != null}">
 									${participationGroup.template2}

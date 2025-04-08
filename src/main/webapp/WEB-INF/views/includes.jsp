@@ -459,7 +459,11 @@
 		});
 		
 		$('textarea.tinymce').each(function(){
-			$(this).tinymce(myConfigSetting2);
+            let config = myConfigSetting2
+            if ($(this).is(".nolinks")) {
+                config = { ...config, plugins: config.plugins.replace("link", "") }
+            }
+			$(this).tinymce(config);
 		});
 
         $('textarea.tinymcefullscreen').each(function(){
