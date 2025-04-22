@@ -54,11 +54,17 @@
 	
 	<script type="text/javascript">
 		$(function() {	
-			
-			<c:if test="${publication.showContent}">
-				loadMore();
-				individualsMoveTo("first", null);
-			</c:if>
+
+			<c:choose>
+                <c:when test="${publication.showContent}">
+                    loadMore();
+                    individualsMoveTo("first", null);
+                </c:when>
+                <c:when test="${publication.showStatistics}">
+                    $(".contentonly").hide();
+                	$('.statisticsExportIcons').show();
+                </c:when>
+			</c:choose>
 			
 			$(".hidden").removeClass("hidden");		
 			
@@ -371,15 +377,15 @@
 					
 				$('.tableFloatingHeader').empty();
 			});
-			
+
 			<c:if test="${selectedtab > 1}">
 				hideResults();
-				<c:if test="${selectedtab == 3}">
-					$('.statisticsExportIcons').show();
-				</c:if>
-				<c:if test="${form.survey.isQuiz && selectedTab == 4}">
-					$('.statisticsQuizExportIcons').show();
-				</c:if>
+			</c:if>
+			<c:if test="${selectedtab == 3}">
+				$('.statisticsExportIcons').show();
+			</c:if>
+			<c:if test="${form.survey.isQuiz && selectedTab == 4}">
+				$('.statisticsQuizExportIcons').show();
 			</c:if>
 		});
 		
@@ -434,63 +440,63 @@
 			
 				<input type="hidden" id="selectedtab" name="selectedtab" value="${selectedtab}" />
 				<div class="tab-content" style="overflow: visible;">
+				    <div class="statisticsExportIcons" style="text-align: center; position: fixed; top: 65px; padding: 20px; width: 100%; left:0px; background-color: #fff; z-index:999; display: none">
+                        <b><spring:message code="label.Export" /></b>
+
+                        <span class="deactivatedstatexports">
+                            <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>
+                            <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+                            <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" id="startExportStatisticsLinkxlsx" ><img src="${contextpath}/resources/images/file_extension_xlsx_small_grey.png" /></a>
+                            <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+                            <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdocx" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_docx_small_grey.png" /></a>
+                            <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+                        </span>
+                        <span class="activatedstatexports">
+                            <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statspdf', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></button>
+                            <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('statsxls', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></button>
+                            <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('statsxlsx', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></button>
+                            <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('statsods', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></button>
+                            <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportdocx" />" onclick="showExportDialog('statsdocx', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_docx_small.png" /></button>
+                            <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" onclick="showExportDialog('statsodt', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_odt_small.png" /></button>
+                        </span>
+                    </div>
+
+                    <div class="statisticsQuizExportIcons" style="text-align: center; position: fixed; top: 65px; padding: 20px; width: 100%; left:0px; background-color: #fff; z-index:999; display: none">
+                        <b><spring:message code="label.Export" /></b>
+                        <c:choose>
+                            <c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
+                                <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></button>
+                            </c:when>
+                            <c:otherwise>
+                                <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statsquizpdf', this)" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></button>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                    <div class="contentonly" style="text-align: center; position: fixed; top: 65px; padding: 20px; width: 100%; height: 66px; left:0px; background-color: #fff; z-index: 999">
+                        <div style="width: 850px; margin-left: auto; margin-right: auto">
+                            <span style="text-align: center; margin-left: 200px">
+                                <input type="submit" class="btn btn-default" value="<spring:message code="label.Search" />" />
+                                <a class="btn btn-default" href="${contextpath}/publication/${form.survey.shortname}"><spring:message code="label.Reset" /></a>
+                            </span>
+                            <span style="text-align: right; height: 36px; float: right; width: 200px; ">
+                                <b><spring:message code="label.Export" /></b>
+                                <span class="deactivatedexports">
+                                    <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+                                    <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_xlsx_small_grey.png" /></a>
+                                    <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+                                </span>
+                                <span class="activatedexports">
+                                    <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls', this);" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></button>
+                                    <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('resultsxlsx', this);" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></button>
+                                    <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('resultsods', this);" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></button>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+
 					<c:if test="${publication.showContent}">
 						<div class="tab-pane-x <c:if test="${selectedtab == 1}">active</c:if>" id="content" style="min-width: 800px">
-							<div class="statisticsExportIcons" style="text-align: center; position: fixed; top: 65px; padding: 20px; width: 100%; left:0px; background-color: #fff; z-index:999; display: none">
-								<b><spring:message code="label.Export" /></b>
-
-								<span class="deactivatedstatexports">
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" id="startExportStatisticsLinkxlsx" ><img src="${contextpath}/resources/images/file_extension_xlsx_small_grey.png" /></a>
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdocx" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_docx_small_grey.png" /></a>
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
-								</span>
-								<span class="activatedstatexports">
-									<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statspdf', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></button>
-									<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('statsxls', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></button>
-									<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('statsxlsx', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></button>
-									<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('statsods', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></button>
-									<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportdocx" />" onclick="showExportDialog('statsdocx', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_docx_small.png" /></button>
-									<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" onclick="showExportDialog('statsodt', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_odt_small.png" /></button>
-								</span>
-							</div>
-
-							<div class="statisticsQuizExportIcons" style="text-align: center; position: fixed; top: 65px; padding: 20px; width: 100%; left:0px; background-color: #fff; z-index:999; display: none">
-								<b><spring:message code="label.Export" /></b>
-								<c:choose>
-									<c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
-										<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></button>
-									</c:when>
-									<c:otherwise>
-										<button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statsquizpdf', this)" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></button>
-									</c:otherwise>
-								</c:choose>
-							</div>
-
-							<div class="contentonly" style="text-align: center; position: fixed; top: 65px; padding: 20px; width: 100%; height: 66px; left:0px; background-color: #fff; z-index: 999">
-								<div style="width: 850px; margin-left: auto; margin-right: auto">
-									<span style="text-align: center; margin-left: 200px">
-										<input type="submit" class="btn btn-default" value="<spring:message code="label.Search" />" />
-										<a class="btn btn-default" href="${contextpath}/publication/${form.survey.shortname}"><spring:message code="label.Reset" /></a>
-									</span>
-									<span style="text-align: right; height: 36px; float: right; width: 200px; ">
-										<b><spring:message code="label.Export" /></b>
-										<span class="deactivatedexports">
-											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_xlsx_small_grey.png" /></a>
-											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-										</span>
-										<span class="activatedexports">
-											<button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls', this);" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></button>
-											<button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('resultsxlsx', this);" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></button>
-											<button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('resultsods', this);" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></button>
-										</span>
-									</span>
-								</div>
-							</div>
-														
 					  		<%@ include file="../management/results-content.jsp" %>	
 					  	</div>
 					  	<div class="tab-pane <c:if test="${selectedtab == 2}">active</c:if>" id="individual">
