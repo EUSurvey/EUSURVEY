@@ -163,6 +163,7 @@ public class BasicController implements BeanFactoryAware {
 	public @Value("${captcha.serverprefix}") String captchaserverprefix;
 	public @Value("${captcha.serverprefixtarget}") String captchaserverprefixtarget;
 	public @Value("${captcha.token:#{null}}") String captchatoken;
+	public @Value("${captcha.x-bypass-secret:#{null}}") String captchabypasssecret;
 	public @Value("${ui.enableresponsive}") String enableresponsive;
 	private @Value("${ecaslogout}") String ecaslogout;
 	public @Value("${showecas}") String showecas;
@@ -661,6 +662,10 @@ public class BasicController implements BeanFactoryAware {
 					conn.setRequestMethod("POST");
 					conn.setRequestProperty("xJwtString", captchatoken);
 					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+					if (captchabypasssecret != null) {
+						conn.setRequestProperty("x-bypass-secret", captchabypasssecret);
+					}
 					
 					String[] cookies = originalcookies.split("#");			
 					for (String cookie : cookies) {
