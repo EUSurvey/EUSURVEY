@@ -451,7 +451,7 @@
                             <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdocx" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_docx_small_grey.png" /></a>
                             <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
                         </span>
-                        <span class="activatedstatexports">
+                        <span class="activatedstatexports" style="display: none">
                             <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statspdf', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></button>
                             <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('statsxls', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></button>
                             <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('statsxlsx', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></button>
@@ -486,7 +486,7 @@
                                     <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_xlsx_small_grey.png" /></a>
                                     <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
                                 </span>
-                                <span class="activatedexports">
+                                <span class="activatedexports" style="display: none">
                                     <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls', this);" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></button>
                                     <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('resultsxlsx', this);" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></button>
                                     <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('resultsods', this);" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></button>
