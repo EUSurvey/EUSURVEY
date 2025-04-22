@@ -51,7 +51,17 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public @Value("${ui.enabledelphi}") String enabledelphi;
 	
 	public static final String APPLICATION_EVOTE = "enableevote";
+	public static final String APPLICATION_EVOTE_LUX = "enableevotelux";
+	public static final String APPLICATION_EVOTE_BRU = "enableevotebru";
+	public static final String APPLICATION_EVOTE_ISPRA = "enableevoteispra";
+	public static final String APPLICATION_EVOTE_OUTSIDE = "enableevoteoutside";
+	public static final String APPLICATION_EVOTE_STANDARD = "enableevotestandard";
 	public @Value("${ui.enableevote:null}") String enableevote;
+	public @Value("${ui.enableevote-lux:null}") String enableevotelux;
+	public @Value("${ui.enableevote-bru:null}") String enableevotebru;
+	public @Value("${ui.enableevote-ispra:null}") String enableevoteispra;
+	public @Value("${ui.enableevote-outside:null}") String enableevoteoutside;
+	public @Value("${ui.enableevote-standard:null}") String enableevotestandard;
 	
 	public static final String APPLICATION_FILEMANAGEMENT = "enablefilemanagement";
 	public @Value("${ui.enablefilemanagement}") String enablefilemanagement;
@@ -106,10 +116,26 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 		request.setAttribute(APPLICATION_ECF, enableecf != null && enableecf.equalsIgnoreCase("true"));
 		request.setAttribute(APPLICATION_SELFASSESSMENT, enableselfassessment != null && enableselfassessment.equalsIgnoreCase("true"));
 		request.setAttribute(APPLICATION_DELPHI, enabledelphi != null && enabledelphi.equalsIgnoreCase("true"));
-		request.setAttribute(APPLICATION_EVOTE, enableevote != null && enableevote.equalsIgnoreCase("true"));
+		request.setAttribute(APPLICATION_EVOTE, isEVoteAvailable());
+		request.setAttribute(APPLICATION_EVOTE_LUX, enableevotelux != null && enableevotelux.equalsIgnoreCase("true"));
+		request.setAttribute(APPLICATION_EVOTE_BRU, enableevotebru != null && enableevotebru.equalsIgnoreCase("true"));
+		request.setAttribute(APPLICATION_EVOTE_ISPRA, enableevoteispra != null && enableevoteispra.equalsIgnoreCase("true"));
+		request.setAttribute(APPLICATION_EVOTE_OUTSIDE, enableevoteoutside != null && enableevoteoutside.equalsIgnoreCase("true"));
+		request.setAttribute(APPLICATION_EVOTE_STANDARD, enableevotestandard != null && enableevotestandard.equalsIgnoreCase("true"));
 		request.setAttribute("languages", surveyService.getLanguages());
 
 		return true;
+	}
+
+	private boolean isEVoteAvailable() {
+		boolean lux = enableevotelux != null && enableevotelux.equalsIgnoreCase("true");
+		boolean bru = enableevotebru != null && enableevotebru.equalsIgnoreCase("true");
+		boolean ispra = enableevoteispra != null && enableevoteispra.equalsIgnoreCase("true");
+		boolean outside = enableevoteoutside != null && enableevoteoutside.equalsIgnoreCase("true");
+		boolean standard = enableevotestandard != null && enableevotestandard.equalsIgnoreCase("true");
+
+		if (!lux & !bru && !ispra && !outside && !standard) return false;
+		return enableevote != null && enableevote.equalsIgnoreCase("true");
 	}
 	
 	@Override
@@ -129,7 +155,12 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             
             modelAndView.getModelMap().addAttribute(APPLICATION_ARCHIVING, enablearchiving != null && enablearchiving.equalsIgnoreCase("true"));
 			modelAndView.getModelMap().addAttribute(APPLICATION_DELPHI, enabledelphi != null && enabledelphi.equalsIgnoreCase("true"));
-			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE, enableevote != null && enableevote.equalsIgnoreCase("true"));
+			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE, isEVoteAvailable());
+			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE_LUX, enableevotelux != null && enableevotelux.equalsIgnoreCase("true"));
+			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE_BRU, enableevotebru != null && enableevotebru.equalsIgnoreCase("true"));
+			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE_ISPRA, enableevoteispra != null && enableevoteispra.equalsIgnoreCase("true"));
+			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE_OUTSIDE, enableevoteoutside != null && enableevoteoutside.equalsIgnoreCase("true"));
+			modelAndView.getModelMap().addAttribute(APPLICATION_EVOTE_STANDARD, enableevotestandard != null && enableevotestandard.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_ECF, enableecf != null && enableecf.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_SELFASSESSMENT, enableselfassessment != null && enableselfassessment.equalsIgnoreCase("true"));

@@ -461,11 +461,21 @@
 				<tr id="evote-template" style="display: none">
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Template" /></td>
 					<td>
-						<input type="radio" name="new-survey-template" checked="checked" value="b" />&#160;<spring:message code="label.Brussels" />
-						<input type="radio" name="new-survey-template" value="i" style="margin-left: 20px;" />&#160;<spring:message code="label.IspraSeville" />
-						<input type="radio" name="new-survey-template" value="l" style="margin-left: 20px;" />&#160;<spring:message code="label.Luxembourg" />
-						<input type="radio" name="new-survey-template" value="o" style="margin-left: 20px;" />&#160;<spring:message code="label.OutsideCommunity" />
-						<input type="radio" name="new-survey-template" value="p" style="margin-left: 20px;" />&#160;<spring:message code="label.Standard" />
+					    <c:if test="${enableevotebru}">
+						    <input type="radio" name="new-survey-template" value="b" />&#160;<spring:message code="label.Brussels" />
+						</c:if>
+						<c:if test="${enableevoteispra}">
+						    <input type="radio" name="new-survey-template" value="i" style="margin-left: 20px;" />&#160;<spring:message code="label.IspraSeville" />
+						</c:if>
+						<c:if test="${enableevotelux}">
+						    <input type="radio" name="new-survey-template" value="l" style="margin-left: 20px;" />&#160;<spring:message code="label.Luxembourg" />
+						</c:if>
+						<c:if test="${enableevoteoutside}">
+						    <input type="radio" name="new-survey-template" value="o" style="margin-left: 20px;" />&#160;<spring:message code="label.OutsideCommunity" />
+						</c:if>
+						<c:if test="${enableevotestandard}">
+						    <input type="radio" name="new-survey-template" value="p" style="margin-left: 20px;" />&#160;<spring:message code="label.Standard" />
+						</c:if>
 					</td>
 				</tr>				
 				<tr>
@@ -778,7 +788,9 @@
 		
 		var url = "/utils/Organisations";
 		var userOrganisation = '${USER.organisation}';
-			
+
+		$('input[name="new-survey-template"]').first().attr("checked", "checked");
+
 		$.ajax({type: "GET",
 			url: contextpath + url,
 			async: false,
