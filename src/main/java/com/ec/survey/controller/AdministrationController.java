@@ -207,6 +207,22 @@ public class AdministrationController extends BasicController {
 		return new ModelAndView("error/info", Constants.MESSAGE, "archive flag executor started");
 	}
 	
+	@RequestMapping(value = "/startarchiving", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView startarchiving(HttpServletRequest request) {
+		ArchiveExecutor executor = (ArchiveExecutor) context.getBean("archiveExecutor");
+		taskExecutor.execute(executor);		
+		
+		return new ModelAndView("error/info", Constants.MESSAGE, "archive executor started");
+	}
+	
+	@RequestMapping(value = "/startflagging", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView startflagging(HttpServletRequest request) {
+		ArchiveFlagExecutor executor = (ArchiveFlagExecutor) context.getBean("archiveFlagExecutor");
+		taskExecutor.execute(executor);		
+		
+		return new ModelAndView("error/info", Constants.MESSAGE, "archive flag executor started");
+	}
+	
 	@RequestMapping(value = "/deletetempfiles", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView deletetempfiles(HttpServletRequest request) {
 		int deletedfiles = fileService.deleteOldTempFiles(new Date());

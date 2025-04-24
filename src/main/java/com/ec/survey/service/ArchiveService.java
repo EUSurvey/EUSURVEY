@@ -496,5 +496,17 @@ public class ArchiveService extends BasicService {
 		
 		archive = (Archive) session.merge(archive);
 		archiveService.update(archive);
+		//make sure the archive exists before finally deleting the survey
+		if (target.exists())
+		{
+			surveyService.markDeleted(survey.getId(), survey.getOwner().getId(), survey.getShortname(), survey.getUniqueId(), !survey.getIsDraft() || survey.getIsPublished());
+		} else {
+			throw new MessageException("archive file not found, abort archiving");
+		}
+		
+		archive.setFinished(true);
+		
+		archive = (Archive) session.merge(archive);
+		archiveService.update(archive);
 	}
 }
