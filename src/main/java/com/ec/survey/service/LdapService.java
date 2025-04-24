@@ -154,7 +154,7 @@ public class LdapService extends BasicService {
 	}
 
 	public List<String> getOrganisationForEmail(String email) throws NamingException {
-		DirContext ctx = initialize();		
+		DirContext ctx = initialize();
 
 		SearchControls sc = getSearchControls(LdapSearchTypeEnum.MAIL);
 		NamingEnumeration<SearchResult> ne = null;
@@ -194,30 +194,6 @@ public class LdapService extends BasicService {
 		ctx.close();
 		return organisations;
 	}
-	
-//	public String getOrganisationForEmail(String email) throws NamingException {
-//		String organisation = "";
-//		DirContext ctx = initialize();
-//        try {
-//        	email = Tools.encodeForLDAP(email);
-//        	String searchValue= String.format(ldapSearchMailFormat, email);
-//            Attributes attrs = ctx.getAttributes(searchValue);
-//            organisation = (String) attrs.get(ldapMappingUserO).get();
-//            
-//            if (organisation.equalsIgnoreCase("eu.europa.ec")) {
-//            	String dg = (String) attrs.get(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg).get();
-//            	return dg;
-//            } else {
-//            	String departmentNumber = (String) attrs.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDg).get();
-//            	return departmentNumber.substring(0, departmentNumber.indexOf("."));
-//            }
-//            
-//        } catch (Exception e) {
-//            logger.error(e.getLocalizedMessage(), e);
-//        }
-//	    ctx.close();
-//        return organisation;
-//	}
    
     public List<String> getUserLDAPGroups(String username) {
 
