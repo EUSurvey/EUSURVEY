@@ -905,6 +905,9 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			schemaService.step125();
 			status = schemaService.getStatus();
 		}
+
+		// the new settings are only created if they do not exist yet
+		schemaService.CreateLimitsForExternals();
 	}
 
 	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {

@@ -879,7 +879,7 @@ var Participants = function() {
 					   self.Page(1);
 					   self.loadGuestlists();
 				} else {
-					showExport(data);
+					showError(data);
 				}
 				self.ShowWait(false);
 			}, error: function() {
