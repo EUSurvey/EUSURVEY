@@ -71,6 +71,15 @@ public class ParticipationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public int getContactGuestlistCount(String surveyUid) {
+		Session session = sessionFactory.getCurrentSession();
+		var query = session.createQuery("SELECT count(*) FROM ParticipationGroup g WHERE g.surveyUid = :uid AND g.type = 1", Long.class).setParameter("uid", surveyUid);
+		var count = query.getSingleResult();
+
+		return count.intValue();
+	}
+
+	@Transactional(readOnly = true)
 	public ParticipationGroup get( Integer id , boolean refreshFirst) {
 		Session session = sessionFactory.getCurrentSession();		
 		ParticipationGroup participationGroup = (ParticipationGroup) session.get(ParticipationGroup.class, id);		

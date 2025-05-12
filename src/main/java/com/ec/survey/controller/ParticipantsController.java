@@ -343,6 +343,29 @@ public class ParticipantsController extends BasicController {
 				ArrayList<LinkedHashMap> attendees = (ArrayList) json.get("attendees");
 				attendeeIDs = new ArrayList<>();
 
+				if (user.isExternal()) {
+
+					if (form.getSurvey().getValidator() != null && form.getSurvey().getValidated() && form.getSurvey().getOrganisation() != null) {
+						logger.info("limits of external users skipped as the survey was created on behalf of an institution");
+					} else {
+
+						String limit = settingsService.get(Setting.ContactGuestlistLimitForExternals);
+						if (limit != null && Tools.isInteger(limit)) {
+							if (id == 0 && participationService.getContactGuestlistCount(form.getSurvey().getUniqueId()) >= Integer.parseInt(limit)) {
+								return "External users can only create a maximum of " + limit + " contact guest lists.";
+							}
+						}
+
+						limit = settingsService.get(Setting.ContactGuestlistSizeLimitForExternals);
+						if (limit != null && Tools.isInteger(limit)) {
+							if (attendees.size() > Integer.parseInt(limit)) {
+								return "External users can only create contact guest list with a maximum of " + limit + " contacts.";
+							}
+						}
+
+					}
+				}
+
 				for (int i = 0; i < attendees.size(); i++) {
 					LinkedHashMap attendee = attendees.get(i);
 					attendeeIDs.add((int) attendee.get("id"));

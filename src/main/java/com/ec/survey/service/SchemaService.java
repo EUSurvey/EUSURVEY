@@ -51,6 +51,30 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domainWorker;
 
 	@Transactional
+	public void CreateLimitsForExternals() {
+		Session session = sessionFactory.getCurrentSession();
+
+		String existing = settingsService.get(Setting.ContactGuestlistSizeLimitForExternals);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.ContactGuestlistSizeLimitForExternals);
+			s.setValue("500");
+			s.setFormat("Integer");
+			session.saveOrUpdate(s);
+		}
+
+		existing = settingsService.get(Setting.ContactGuestlistLimitForExternals);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.ContactGuestlistLimitForExternals);
+			s.setValue("1");
+			s.setFormat("Integer");
+			session.saveOrUpdate(s);
+		}
+
+	}
+
+	@Transactional
 	public void step125() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
