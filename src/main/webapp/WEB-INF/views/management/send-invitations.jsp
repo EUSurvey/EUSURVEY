@@ -488,6 +488,11 @@
 								</c:otherwise>
 							</c:choose>					
 						</textarea>
+
+						<c:if test="${noInviteLinks != null}">
+                            <br />
+                            <p style="max-width: 510px"><i><spring:message code="message.NoLinksInInvite"/></i></p>
+                        </c:if>
 					
 					</div>
 					
