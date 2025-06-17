@@ -158,9 +158,14 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 				filter.setGeneratedTo(webserviceTask.getEnd());
 			}
 
-			if (webserviceTask.getToken() != null && webserviceTask.getToken().length() > 0) {
+			if (webserviceTask.getToken() != null && !webserviceTask.getToken().isEmpty()) {
 				// this is a single answerSet export
 				filter.setInvitation(webserviceTask.getToken());
+			}
+
+			if (webserviceTask.getUniqueId() != null && !webserviceTask.getUniqueId().isEmpty()) {
+				// this is a single answerSet export
+				filter.setCaseId(webserviceTask.getUniqueId());
 			}
 
 			export.setShowShortnames(webserviceTask.isShowIDs());

@@ -221,13 +221,23 @@ public class AttendeeService extends BasicService {
 		}
 
 		if (ownerId > 0) {
-			if (onlywritableshares) {
-				sql.append(
-						" WHERE (a.OWNER_ID = :ownerId OR a.ATTENDEE_ID IN (select sa.attendees_ATTENDEE_ID from SHARES_ATTENDEE sa where sa.SHARES_SHARE_ID in (select s.SHARE_ID from SHARES s where s.RECIPIENT = :ownerId AND s.READONLY = 0)))");
-			} else {
-				sql.append(
-						" WHERE (a.OWNER_ID = :ownerId OR a.ATTENDEE_ID IN (select sa.attendees_ATTENDEE_ID from SHARES_ATTENDEE sa where sa.SHARES_SHARE_ID in (select s.SHARE_ID from SHARES s where s.RECIPIENT = :ownerId)))");
+			List<Share> shares = getPassiveShares(ownerId);
+			List<Integer> attendeeIds = new ArrayList<>();
+			for (Share share : shares) {
+				if (!onlywritableshares || !share.getReadonly()) {
+					for (Attendee a : share.getAttendees()) {
+						attendeeIds.add(a.getId());
+					}
+				}
 			}
+
+			if (!attendeeIds.isEmpty()) {
+				sql.append(" WHERE (a.OWNER_ID = :ownerId OR a.ATTENDEE_ID IN (:aids))");
+				oQueryParameters.put("aids", attendeeIds.toArray(new Integer[0]));
+			} else {
+				sql.append(" WHERE (a.OWNER_ID = :ownerId)");
+			}
+
 			oQueryParameters.put("ownerId", ownerId);
 		} else {
 			sql.append(" WHERE a.ATTENDEE_ID > 0");

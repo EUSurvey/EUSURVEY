@@ -2,6 +2,8 @@ package com.ec.survey.tools;
 
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.delphi.DelphiCommentLike;
+import com.ec.survey.model.delphi.DelphiExplanationLike;
 import com.ec.survey.model.selfassessment.SACriterion;
 import com.ec.survey.model.selfassessment.SAReportConfiguration;
 import com.ec.survey.model.selfassessment.SAScoreCard;
@@ -501,12 +503,19 @@ public class SurveyExportHelper {
 			final Survey activeSurvey) throws Exception {
 
 		List<AnswerExplanation> explanations = answerExplanationService.getExplanationsOfSurvey(survey.getUniqueId(), survey.getIsDraft());
+		var likes = answerExplanationService.getAllLikesForExplanations(explanations);
+
 		addObjectAsFileToOutputStream(explanations, "explanations.eus", os, session, fileService);
+		addObjectAsFileToOutputStream(likes, "explanation-likes.eus", os, session, fileService);
 		addDelphiAnswerExplanationFilesToOutputStream(os, answerService, fileService, surveyService, survey,
 				explanations);
+
 		if (activeSurvey != null) {
 			explanations = answerExplanationService.getExplanationsOfSurvey(activeSurvey.getUniqueId(), activeSurvey.getIsDraft());
+			likes = answerExplanationService.getAllLikesForExplanations(explanations);
+
 			addObjectAsFileToOutputStream(explanations, "explanations-active.eus", os, session, fileService);
+			addObjectAsFileToOutputStream(likes, "explanation-likes-active.eus", os, session, fileService);
 			addDelphiAnswerExplanationFilesToOutputStream(os, answerService, fileService, surveyService, survey,
 					explanations);
 		}
@@ -517,10 +526,14 @@ public class SurveyExportHelper {
 			final Survey survey, final Survey activeSurvey) throws Exception {
 
 		List<AnswerComment> comments = answerExplanationService.getCommentsOfSurvey(survey.getUniqueId(), survey.getIsDraft());
+		var likes = answerExplanationService.getAllLikesForComments(comments);
 		addObjectAsFileToOutputStream(comments, "comments.eus", os, session, fileService);
+		addObjectAsFileToOutputStream(likes, "comment-likes.eus", os, session, fileService);
 		if (activeSurvey != null) {
 			comments = answerExplanationService.getCommentsOfSurvey(activeSurvey.getUniqueId(), activeSurvey.getIsDraft());
-			addObjectAsFileToOutputStream(comments, "comments-active.eus", os, session, fileService);			
+			likes = answerExplanationService.getAllLikesForComments(comments);
+			addObjectAsFileToOutputStream(comments, "comments-active.eus", os, session, fileService);
+			addObjectAsFileToOutputStream(likes, "comment-likes-active.eus", os, session, fileService);
 		}
 	}
 
@@ -706,7 +719,19 @@ public class SurveyExportHelper {
 				} else if (name.equalsIgnoreCase("comments-active.eus"))
 				{
 					result.setActiveComments((List<AnswerComment>)getObject(zipFile, zipEntry, fileService));		
-				} else if (name.equalsIgnoreCase("targetdatasets.eus")) {	
+				} else if (name.equalsIgnoreCase("explanation-likes.eus"))
+				{
+					result.setExplanationLikes((List<DelphiExplanationLike>) getObject(zipFile, zipEntry, fileService));
+				} else if (name.equalsIgnoreCase("explanation-likes-active.eus"))
+				{
+					result.setActiveExplanationLikes((List<DelphiExplanationLike>) getObject(zipFile, zipEntry, fileService));
+				} else if (name.equalsIgnoreCase("comment-likes.eus"))
+				{
+					result.setCommentLikes((List<DelphiCommentLike>) getObject(zipFile, zipEntry, fileService));
+				} else if (name.equalsIgnoreCase("comment-likes-active.eus"))
+				{
+					result.setActiveCommentLikes((List<DelphiCommentLike>) getObject(zipFile, zipEntry, fileService));
+				} else if (name.equalsIgnoreCase("targetdatasets.eus")) {
 					result.setTargetDatasets((List<SATargetDataset>)getObject(zipFile, zipEntry, fileService));
 				} else if (name.equalsIgnoreCase("criteria.eus")) {	
 					result.setCriteria((List<SACriterion>)getObject(zipFile, zipEntry, fileService));

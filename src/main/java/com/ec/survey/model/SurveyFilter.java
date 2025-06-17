@@ -47,6 +47,7 @@ public class SurveyFilter implements Serializable  {
 	private String isEVote = null;
 	private Set<String> surveyTypes = null;
 	private Set<String> organisations = null;
+	private List<String> tags = null;
 
 	public User getUser() {
 		return user;
@@ -364,5 +365,13 @@ public class SurveyFilter implements Serializable  {
 		if (this.organisations != null) {
 			this.organisations.remove(organisation);
 		}
+	}
+
+	public List<String> getTags() {
+		return this.tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 }

@@ -863,6 +863,7 @@ var Actions = function() {
     	_undoProcessor.clear();
     	_elementProperties.deselectAll();
     	_actions.SaveEnabled(true);
+		createNavigation(false)
     	
     	checkContent();
     }

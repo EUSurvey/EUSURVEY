@@ -29,78 +29,35 @@ public class PDFRenderer {
 		this.sessionService = sessionService;
 		
 		try {
+
+			String[] fonts = new String[] {
+					"/Fonts/DejaVuSans.ttf",
+					"/Fonts/DejaVuSans-Bold.ttf",
+					"/Fonts/DejaVuSans-Oblique.ttf",
+					"/Fonts/DejaVuSans-BoldOblique.ttf",
+					"/Fonts/FreeSans.ttf",
+					"/Fonts/FreeSansBold.ttf",
+					"/Fonts/FreeSansBoldOblique.ttf",
+					"/Fonts/FreeSansOblique.ttf",
+					"/Fonts/FreeMono.ttf",
+					"/Fonts/FreeMonoBold.ttf",
+					"/Fonts/FreeMonoBoldOblique.ttf",
+					"/Fonts/FreeMonoOblique.ttf",
+					"/Fonts/FreeSerif.ttf",
+					"/Fonts/FreeSerifBold.ttf",
+					"/Fonts/FreeSerifBoldItalic.ttf",
+					"/Fonts/FreeSerifItalic.ttf",
+			};
         	           
-			renderer.getFontResolver().addFont("/Fonts/DejaVuSans.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-            
-			renderer.getFontResolver().addFont("/Fonts/DejaVuSans-Bold.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-            
-			renderer.getFontResolver().addFont("/Fonts/DejaVuSans-Oblique.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-            
-			renderer.getFontResolver().addFont("/Fonts/DejaVuSans-BoldOblique.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-                      
-			renderer.getFontResolver().addFont("/Fonts/FreeSans.ttf",
-                BaseFont.IDENTITY_H,
-                BaseFont.EMBEDDED
-            );
-			renderer.getFontResolver().addFont ("/Fonts/FreeSansBold.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-			renderer.getFontResolver().addFont ("/Fonts/FreeSansBoldOblique.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-			renderer.getFontResolver().addFont ("/Fonts/FreeSansOblique.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-            
-			renderer.getFontResolver().addFont("/Fonts/FreeMono.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-			renderer.getFontResolver().addFont ("/Fonts/FreeMonoBold.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-			renderer.getFontResolver().addFont ("/Fonts/FreeMonoBoldOblique.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-			renderer.getFontResolver().addFont ("/Fonts/FreeMonoOblique.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-            
-			renderer.getFontResolver().addFont("/Fonts/FreeSerif.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-			renderer.getFontResolver().addFont ("/Fonts/FreeSerifBold.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-			renderer.getFontResolver().addFont ("/Fonts/FreeSerifBoldItalic.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-			renderer.getFontResolver().addFont ("/Fonts/FreeSerifItalic.ttf",
-                    BaseFont.IDENTITY_H,
-                    BaseFont.EMBEDDED
-                );
-            
+
+			for (var fontPath: fonts) {
+				renderer.getFontResolver().addFont(
+						fontPath,
+						BaseFont.IDENTITY_H,
+						BaseFont.EMBEDDED
+				);
+			}
+
             } catch (Exception e)
             {
             	logger.error(e.getLocalizedMessage(), e); 

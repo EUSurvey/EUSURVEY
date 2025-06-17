@@ -73,7 +73,7 @@ public class LoginLogoutController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/auth/login", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String getLoginPage(@RequestParam(value=Constants.ERROR, required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+	public String getLoginPage(@RequestParam(value=Constants.ERROR, required=false) boolean error, @RequestParam(value="securityerror", required=false) boolean securityerror, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 
 		if (settingsService.get(Setting.DisableLoginPage).equalsIgnoreCase("true")) {
 			// automatically forward the user to EULogin
@@ -82,15 +82,25 @@ public class LoginLogoutController extends BasicController {
 
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
-		
-		//if user is already logged in, redirect to the welcome page instead
-		User user = sessionService.getCurrentUser(request);
-		
-		if (user != null) return "redirect:/dashboard";
+
+		if (securityerror) {
+			request.getSession().invalidate();
+		} else {
+
+			//if user is already logged in, redirect to the welcome page instead
+			try {
+				User user = sessionService.getCurrentUser(request);
+
+				if (user != null) return "redirect:/dashboard";
+			} catch (WeakAuthenticationException e) {
+				request.getSession().invalidate();
+				//and allow new login
+			}
+		}
 
 		if (error) {
 			// Assign an error message
-			model.put(Constants.ERROR, resources.getMessage("error.CredentialsInvalid", null, "You have entered an invalid login or password!", locale));		
+			model.put(Constants.ERROR, resources.getMessage("error.CredentialsInvalid", null, "You have entered an invalid login or password!", locale));
 		}
 		
 		model.put("ecasurl", ecashost);

@@ -33,7 +33,7 @@ public abstract class Question extends Element {
 	private String attributeName;
 	private boolean isUnique;
 	private int scoring;
-	private int quizPoints = 1;
+	private int quizPoints = 0;
 	private List<ScoringItem> scoringItems;
 	private boolean delphiQuestion;
 	private ECFCompetency ecfCompetency;
@@ -117,7 +117,7 @@ public abstract class Question extends Element {
 		return quizPoints;
 	}
 	public void setQuizPoints(Integer quizPoints) {
-		this.quizPoints = quizPoints != null ? quizPoints : 1;
+		this.quizPoints = quizPoints != null ? quizPoints : 0;
 	}
 
 	@Column(name = "DELPHI")

@@ -142,7 +142,6 @@
 							<a style="margin-right: 10px" class="btn btn-default" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><spring:message code="label.Configure" /></a>
 							<b><spring:message code="label.Export" /></b>
 							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadcsv" />" id="startExportContentLinkcsv"   onclick="showExportDialog('Activity', 'csv')"><img src="${contextpath}/resources/images/file_extension_csv_small.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportContentLinkxls"   onclick="showExportDialog('Activity', 'xls')"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
 							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" id="startExportContentLinkxlsx"   onclick="showExportDialog('Activity', 'xlsx')"><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></a>
 							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportContentLinkods"  onclick="showExportDialog('Activity', 'ods')"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
 						</div>
@@ -366,8 +365,8 @@
 								</td>
 							</c:if>
 							<c:if test='${filter.visible("description") == true}'><td><spring:message code="logging.${activity.logID}" /></td></c:if>
-							<c:if test='${filter.visible("oldvalue") == true}'><td>${activity.oldValue}</td></c:if>
-							<c:if test='${filter.visible("newvalue") == true}'><td>${activity.newValue}</td></c:if>					
+							<c:if test='${filter.visible("oldvalue") == true}'><td><c:out value="${activity.oldValue}"/></td></c:if>
+							<c:if test='${filter.visible("newvalue") == true}'><td><c:out value="${activity.newValue}"/></td></c:if>
 						</tr>
 					</c:forEach>
 					

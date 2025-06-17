@@ -62,12 +62,12 @@ public class Confirmation extends Question {
 	public boolean isUsetext() {
 		return usetext;
 	}
-	public void setUsetext(Boolean usetext) {
-		this.usetext = usetext == null || usetext;
+	public void setUsetext(boolean usetext) {
+		this.usetext = usetext;
 	}
 	
 	@Column(name = "ISUSEUPLOAD")
-	public boolean isUseupload() {
+	public Boolean isUseupload() {
 		return useupload != null ? useupload : !usetext;
 	}
 	public void setUseupload(Boolean useupload) {

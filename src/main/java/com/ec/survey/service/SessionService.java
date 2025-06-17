@@ -211,6 +211,34 @@ public class SessionService extends BasicService {
 		}
 		return true;
 	}
+
+	public boolean userIsResultOrDraftReadAuthorized(Survey survey, HttpServletRequest request) throws
+			NotAgreedToTosException,
+			WeakAuthenticationException,
+			NotAgreedToPsException,
+			InternalServerErrorException,
+			ForbiddenException {
+		User user = this.getCurrentUser(request);
+		try {
+			this.sessionService.upgradePrivileges(survey, user, request);
+		} catch (Exception e1) {
+			throw new InternalServerErrorException(e1);
+		}
+		if (!survey.getOwner().getId().equals(user.getId())) {
+			if (!(user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) >= 2)) {
+				if (!(user.getLocalPrivileges().get(LocalPrivilege.FormManagement) >= 1)) {
+					if (!(user.getLocalPrivileges().get(LocalPrivilege.AccessResults) >= 1)) {
+						if (!(user.getLocalPrivileges().get(LocalPrivilege.AccessDraft) >= 1)) {
+							if (!(survey.getDedicatedResultPrivileges() && surveyService.getResultAccess(survey.getUniqueId(), user.getId()) != null)) {
+								throw new ForbiddenException();
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 	
 	public boolean userCanEditResults(Survey survey, User user, HttpServletRequest request) {
 		if (survey.getOwner().getId().equals(user.getId()))
@@ -234,6 +262,23 @@ public class SessionService extends BasicService {
 			if (user.getResultAccess() != null && !user.getResultAccess().isReadonly()) {
 				return true;
 			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return false;
+	}
+
+	public boolean userIsFormReaderOrAdmin(Survey survey, User user, HttpServletRequest request) {
+		if (survey.getOwner().getId().equals(user.getId()))
+			return true;
+		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)
+			return true;
+
+		try {
+			upgradePrivileges(survey, user, request);
+			if (user.getLocalPrivileges().get(LocalPrivilege.FormManagement) >= 1)
+				return true;
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
@@ -490,6 +535,10 @@ public class SessionService extends BasicService {
 				filter.addSurveyType("selfassessment");
 			} else {
 				filter.removeSurveyType("selfassessment");
+			}
+
+			if (request.getParameter("tags") != null && request.getParameter("tags") != "") {
+				filter.setTags(List.of(request.getParameter("tags").split(";")));
 			}
 
 			if (request.getParameter("sortkey") == null) {

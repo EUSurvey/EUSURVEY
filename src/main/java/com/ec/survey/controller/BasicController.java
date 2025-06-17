@@ -31,6 +31,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -307,6 +309,8 @@ public class BasicController implements BeanFactoryAware {
 	public ModelAndView handleNotAgreedToTosException(Exception e, HttpServletRequest request) {
 		ModelAndView model = new ModelAndView("redirect:/auth/tos");
 		model.addObject("contextpath", contextpath);
+		var sessionCache = new HttpSessionRequestCache();
+		sessionCache.saveRequest(request, null);
 		return model;
 	}
 
@@ -314,6 +318,8 @@ public class BasicController implements BeanFactoryAware {
 	public ModelAndView handleNotAgreedToPsException(Exception e, HttpServletRequest request) {
 		ModelAndView model = new ModelAndView("redirect:/auth/ps");
 		model.addObject("contextpath", contextpath);
+		var sessionCache = new HttpSessionRequestCache();
+		sessionCache.saveRequest(request, null);
 		return model;
 	}
 
@@ -570,6 +576,13 @@ public class BasicController implements BeanFactoryAware {
 	}
 
 	public ModelAndView basicwelcome(HttpServletRequest request) {
+
+		Boolean weakAuthentication = request.getSession().getAttribute("WEAKAUTHENTICATION") == null ? false : (Boolean) request.getSession().getAttribute("WEAKAUTHENTICATION");
+		if (weakAuthentication) {
+			//probably coming from the form runner: log the user out
+			request.getSession().invalidate();
+		}
+
 		ModelAndView model = new ModelAndView("home/welcome");
 		model.addObject("page", "welcome");
 		model.addObject("ecasurl", ecashost);

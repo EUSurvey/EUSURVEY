@@ -79,13 +79,13 @@
 			<c:if test="${form.survey.automaticPublishing && form.survey.start != null && form.survey.end != null}">
 				<table style="margin-bottom: 10px">
 					<tr>
-						<td style="font-weight: bold; padding-right: 10px;"><spring:message code="label.StartsOn" /></td>
+						<td style="font-weight: bold; padding-right: 10px;">${form.getMessage("label.StartsOn")}</td>
 						<td>
 							${form.survey.startString}
 						</td>					
 					</tr>
 					<tr>
-						<td style="font-weight: bold; padding-right: 10px;"><spring:message code="label.EndsOn" /></td>
+						<td style="font-weight: bold; padding-right: 10px;">${form.getMessage("label.EndsOn")}</td>
 						<td>
 							${form.survey.endString}
 						</td>
@@ -93,7 +93,7 @@
 				</table>
 			</c:if>
 			
-			<a class="btn btn-primary" href="?startQuiz=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
+			<a class="btn btn-primary" href="?startQuiz=true&surveylanguage=${form.language.code}">${form.getMessage("label.Start")}</a>
 		</div>
 		
 		<div style="clear: both"></div>

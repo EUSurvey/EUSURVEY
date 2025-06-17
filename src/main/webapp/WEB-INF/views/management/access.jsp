@@ -65,8 +65,11 @@
 		var labelreadonly = '<spring:message code="label.ReadingAccess" />';
 		var labelreadwrite = '<spring:message code="label.ReadWriteAccess" />';
 		var errorOperationFailed = '<spring:message code="error.OperationFailed" />';
+		var noMailsFound = '<spring:message code="label.NoMailsFound" />';
 		var atLeastOneMail = '<spring:message code="label.AtLeastOneMail" />';
 		var noEmptySearch = '<spring:message code="label.NoEmptySearch" />';
+		var invalidEmails = '<spring:message code="label.InvalidEmails" />';
+		var notFoundEmails = '<spring:message code="label.NotFoundEmails" />';
 		var page = ${resultspage};
 		var rows = 20;
 		

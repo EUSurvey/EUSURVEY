@@ -345,12 +345,12 @@ function addAttendee()
 	});
 
 	//check values without keys
-	$("#add-attendee-form").find("input[name^='value']").each(function(){
+	$("#add-attendee-dialog").find("input[name^='value']").each(function(){
 		if ($(this).val() != "")
 		{
-			if ($(this).parent().parent().find("td:first").find("select").find(":selected").size() == 0)
+			if ($(this).parent().parent().find("td:first").find("select").find(":selected").val() == "")
 			{
-				$("#add-attendee-error-no-attribute-text").text($(this).text());
+				$("#add-attendee-error-no-attribute-text").text($(this).val());
 				$("#add-attendee-error-no-attribute").show();
 				error = true;
 			}
@@ -457,7 +457,6 @@ function editAttendee()
 		$("#edit-attendee-dialog").find(".existingkey").each(function(){
 			if ($(this).val().length > 0 && $(this).val() == $(select).val())
 			{
-				//alert($(this).val() + " used more than once");
 				$("#edit-attendee-error-multiple-text").text($(this).text());
 				$("#edit-attendee-error-multiple").show();
 				error = true;
@@ -484,12 +483,12 @@ function editAttendee()
 	});
 
 	//check values without keys
-	$("#edit-attendee-form").find("input").find("name^='value'").each(function(){
+	$("#edit-attendee-dialog").find("input[name^='value']").each(function(){
 		if ($(this).val() != "")
 		{
-			if ($(this).parent().parent().find("td:first").find("select").find(":selected").size() == 0)
+			if ($(this).parent().parent().find("td:first").find("select").find(":selected").val() == "")
 			{
-				$("#edit-attendee-error-no-attribute-text").text($(this).text());
+				$("#edit-attendee-error-no-attribute-text").text($(this).val());
 				$("#edit-attendee-error-no-attribute").show();
 				error = true;
 			}

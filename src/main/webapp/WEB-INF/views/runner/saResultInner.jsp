@@ -17,7 +17,7 @@
 	</c:choose>
 	
 		<div style="max-width: 600px; margin-left: auto; margin-right: auto;">
-			<h1><spring:message code="label.SelfAssessmentResults" /></h1>		
+			<h1>${form.getMessage("label.SelfAssessmentResults")}</h1>
 			
 			<div class="customtext">
 				${SAReportConfiguration.introduction}
@@ -25,7 +25,7 @@
 			
 			<c:choose>
 				<c:when test="${forpdf == null && SAReportConfiguration.targetDatasetSelection}">				
-					<b><spring:message code="label.SelectComparisonDataset" /></b><br />
+					<b>${form.getMessage("label.SelectComparisonDataset")}</b><br />
 					<select class="form-control" id="datasetselector" style="display: inline; width: auto;" onchange="saResultModel.loadSAData();">
 						<option value="0">${form.getMessage("label.NoComparison")}</option>
 						<c:forEach items="${SATargetDatasets}" var="dataset">																							
@@ -199,12 +199,12 @@
 		</div>
 		
 		<div id="contribution-id-save-hint" style="color: #777; margin-top: 20px; margin-bottom: 20px; max-width: 616px; margin-left: auto; margin-right: auto;">
-			<spring:message code="label.ContributionSavingHint" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
+			${form.getMessage("label.ContributionSavingHint")} <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
 			<button type="button" class="unstyledbutton" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText('${uniqueCode}');" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
 				<i class="glyphicon glyphicon-copy copy-icon"></i>
 			</button>
 			<br />
-			<spring:message code="label.ContributionSavingExplanation" />
+			${form.getMessage("label.ContributionSavingExplanation")}
 		</div>
 				
 		<c:if test="${forpdf == null && form.survey.downloadContribution}">
@@ -517,13 +517,13 @@
 				}
 				
 				this.criteriaAboveBelowAverage = function(above) {
-					var result = [];
+					const result = [];
 					
 					for (let i = 0; i < root.criteria().length; i++) {
-						var v1 = root.values()[i];
-						var v2 = root.comparisonValues()[i];
+						const v1 = root.values()[i];
+						const v2 = root.comparisonValues()[i];
 						if (above && v1 > v2) {
-							var entry = {
+							const entry = {
 								name: root.criteria()[i].name,
 								value: (v2-v1)
 							}
@@ -531,7 +531,7 @@
 							result.push(entry);
 						}
 						if (!above && v1 < v2) {
-							var entry = {
+							const entry = {
 								name: root.criteria()[i].name,
 								value: (v1-v2)
 							}
@@ -540,7 +540,20 @@
 						}
 					}
 
-					result.sort((a, b) => a.value - b.value);
+					const valueThenNameComparer = (a, b) => {
+						const diff = a.value - b.value
+
+						//If they are (almost) equal, sort them by name
+						if (Math.abs(diff) < 0.0001) {
+							if (a.name < b.name) return -1
+							if (a.name > b.name) return 1
+							return 0
+						}
+
+						return Math.sign(diff)
+					}
+
+					result.sort(valueThenNameComparer);
 					
 					if (limitTableLines == 0) {
 						return result;

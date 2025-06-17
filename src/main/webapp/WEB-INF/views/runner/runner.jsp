@@ -284,7 +284,7 @@
   </c:if>
 	
 </head>
-<body id="body" class="${forpdf == null && !form.wcagCompliance && responsive == null ? 'grey-background' : ''}" style="text-align: center;">
+<body id="body" class="${forpdf == null && !form.wcagCompliance && responsive == null ? 'grey-background' : ''}" style="text-align: center;" body-responsive="${responsive != null}">
 	<div class="page-wrap">
 		<c:if test="${forpdf == null && form.wcagCompliance}">
 			<div class="skipdiv">
@@ -295,6 +295,7 @@
 		<c:set var="mode" value="runner" />
 		
 		<c:if test="${forpdf == null}">
+			<c:set var="topPageStyle" value='${responsive == null ? "width: 1302px; margin-left: auto; margin-right: auto;" : "width: 100%; max-width: 100%"}'/>
 			<c:choose>
 				<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("Official EC Skin")}'>
 					<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto; border: 1px solid #000">
@@ -305,16 +306,16 @@
 					<%@ include file="../headerecnew.jsp" %>	 
 				</c:when>
 				<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
-					<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
-					<%@ include file="../headerecnew.jsp" %>	 
+					<div id="top-page" style="${topPageStyle}">
+					<%@ include file="../headerecnew.jsp" %>
 				</c:when>
 				<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("ECA Skin")}'>
 					<%@ include file="../headerECAnew.jsp" %>
-					<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
+					<div id="top-page" style="${topPageStyle}">
 				</c:when>
 				<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("ECA 2023")}'>
 					<%@ include file="../headerECA2023.jsp" %>
-					<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
+					<div id="top-page" style="${topPageStyle}">
 				</c:when>
 				<c:when test="${responsive != null}">
 					<%@ include file="../headerresponsive.jsp" %>	 

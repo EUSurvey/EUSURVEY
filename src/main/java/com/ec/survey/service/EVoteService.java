@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.model.*;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,9 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
-import com.ec.survey.model.ParticipationGroup;
-import com.ec.survey.model.ParticipationGroupType;
-import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.administration.Voter;
 import com.ec.survey.model.evote.DHondtEntry;
@@ -391,7 +389,52 @@ public class EVoteService extends BasicService {
 			throw new MessageException("invalid survey");
 		}		
 	}
-	
+
+	public boolean validateAnswerSet(AnswerSet answerSet) throws MessageException {
+		if (answerSet.getSurvey().getIsEVote() && answerSet.getSurvey().geteVoteTemplate().equals("l")) {
+			SeatCounting result = new SeatCounting();
+			EVoteConfiguration config = new EVoteConfiguration();
+
+			config.survey = answerSet.getSurvey();
+			config.useLuxembourgProcedure = true;
+			result.setQuorum(answerSet.getSurvey().getQuorum());
+			result.setTemplate(answerSet.getSurvey().geteVoteTemplate());
+			result.setMaxSeats(answerSet.getSurvey().getSeatsToAllocate());
+			result.setMinListPercent(answerSet.getSurvey().getMinListPercent());
+			parseEVoteSurvey(config, result);
+			eVoteResults evoteResults = getEmptyListResult(config.survey);
+
+			boolean blankOrSpoilt = false;
+			int candidateCounter = 0;
+
+			for (Answer answer : answerSet.getAnswers()) {
+				if (answer.getQuestionUniqueId().equalsIgnoreCase(config.firstSingle.getUniqueId())) {
+					if (answer.getPossibleAnswerUniqueId().equalsIgnoreCase(config.blank.getUniqueId()) || answer.getPossibleAnswerUniqueId().equalsIgnoreCase(config.spoilt.getUniqueId())) {
+						blankOrSpoilt = true;
+					}
+				} else if (evoteResults.getLists().containsKey(answer.getQuestionUniqueId())) {
+					eVoteListResult listResult = evoteResults.getLists().get(answer.getQuestionUniqueId());
+
+				 	if (listResult.getCandidateVotes().containsKey(answer.getPossibleAnswerUniqueId())) {
+						candidateCounter++;
+					}
+				}
+			}
+
+			// ensure that at most X candidates are selected
+			if (candidateCounter > answerSet.getSurvey().getMaxCandidatesCount()) {
+				return false;
+			}
+
+			// ensure that blank and spoilt votes contain no candidate selections
+			if (blankOrSpoilt && candidateCounter > 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private class EVoteConfiguration {
 		public Survey survey;
 		public SingleChoiceQuestion firstSingle;

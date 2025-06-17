@@ -821,6 +821,18 @@ select {
 	margin-left: 200px;
 }
 
+.tinymceSimilar {
+	border: 1px solid #c5c5c5;
+	border-radius: 5px;
+	width: 510px;
+	display: block;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+}
+
 .title, .fulltitle {
 	font-size: 30px; 
 	font-weight: bold;
@@ -2014,7 +2026,14 @@ div.medianpa {
 	width: 150px;
 	/*height: 100px;*/
 	overflow: hidden;
-	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+#contentstable .nowrap-ellipsis-title div {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
 }
 
 #scrollarea {
@@ -2049,10 +2068,6 @@ div.medianpa {
 	padding: 5px;
 	border: 1px solid #ddd;
 	max-width:350px;
-}
-
-.datefilter .overlaymenu {
-	margin-top: 40px;	
 }
 
 .galleryinfo {
@@ -2270,7 +2285,7 @@ a.elearningWelcomeLink:hover
     word-break: break-all;
     word-wrap: break-word;
     page-break-inside: avoid;
-    white-space: pre-wrap;
+    white-space: normal;
 }
 
 #menutab1 li a:not(.menudropdownaction), #menutab2 li:not(.menudropdown) a:not(.menudropdownaction), #menutab3  li a:not(.menudropdownaction)
@@ -2709,12 +2724,11 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	background-color: #eee;
 }
 
-.complextable.table-bordered td,
-.complextable.table-bordered th {
+.complextable.table-bordered .cell {
 	border: 1px solid #bbb !important;
 }
 
-.complextable td, .complextable th {
+.complextable .cell {
 	border: none !important;
 	padding: 2px;
 	min-width: 25px;
@@ -2855,5 +2869,9 @@ input[type=radio]:checked + .choice-button-label:hover{
 }
 
 .sahidden {
+	display: none;
+}
+
+.saDependentHidden {
 	display: none;
 }

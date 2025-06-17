@@ -36,8 +36,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/webservice")
@@ -1068,14 +1070,13 @@ public class WebServiceController extends BasicController {
 			@PathVariable String showids, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
-			return createResultFromToken(credentials.getKey(), credentials.getValue(), formid, token, showids, request,
+			return createResultFromTokenOrContributionId(true, formid, token, showids, request,
 					response, locale);
 		}
 		return "";
 	}
 
-	private @ResponseBody String createResultFromToken(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String token, @PathVariable String showids,
+	private @ResponseBody String createResultFromTokenOrContributionId(boolean isToken, @PathVariable String formid, @PathVariable String tokenOrUniqueId, @PathVariable String showids,
 			HttpServletRequest request, HttpServletResponse response, Locale locale) {
 
 		try {
@@ -1113,7 +1114,7 @@ public class WebServiceController extends BasicController {
 				return "";
 			}
 
-			AnswerSet answerSet = answerService.getByInvitationCode(token);
+			AnswerSet answerSet = isToken ? answerService.getByInvitationCode(tokenOrUniqueId) : answerService.get(tokenOrUniqueId);
 			if (answerSet == null) {
 				response.setStatus(412);
 				return "";
@@ -1122,7 +1123,11 @@ public class WebServiceController extends BasicController {
 			WebserviceTask task = new WebserviceTask(WebserviceTaskType.CreateResult);
 			task.setSurveyId(publishedsurvey.getId());
 			task.setSurveyUid(publishedsurvey.getUniqueId());
-			task.setToken(token);
+			if (isToken) {
+				task.setToken(tokenOrUniqueId);
+			} else {
+				task.setUniqueId(tokenOrUniqueId);
+			}
 
 			task.setShowIDs(showids.equalsIgnoreCase("true"));
 
@@ -1144,6 +1149,17 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
+	@RequestMapping(value = "/prepareResultFromContributionId/{formid}/{contributionid}/{showids}", method = { RequestMethod.GET,
+			RequestMethod.HEAD }, produces = "text/html")
+	public @ResponseBody String prepareResultFromContributionId(@PathVariable String formid, @PathVariable String contributionid,
+													   @PathVariable String showids, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+		KeyValue credentials = getLoginAndPassword(request, response);
+		if (credentials != null) {
+			return createResultFromTokenOrContributionId(false, formid, contributionid, showids, request,	response, locale);
+		}
+		return "";
+	}
+
 	@RequestMapping(value = "/prefill/{shortname}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prefill(@PathVariable String shortname, HttpServletRequest request,
@@ -1161,36 +1177,18 @@ public class WebServiceController extends BasicController {
 			return "";
 
 		String token = null;
-		Map<String, String> values = new HashMap<>();
-
-		HashMap<String, String[]> parameters = new HashMap<>();
-		@SuppressWarnings("rawtypes")
-		Enumeration en = request.getParameterNames();
-		String re = "\\p{C}";
-		while (en.hasMoreElements()) {
-			String param = (String) en.nextElement();
-			String[] values1 = request.getParameterValues(param);
-
-			for (int i = 0; i < values1.length; i++) {
-				// convert and replace invalid characters
-				String val = Ucs2Utf8.unconvert(values1[i], request.getCharacterEncoding()).replaceAll(re, "");
-				values1[i] = val;
-			}
-
-			parameters.put(param, values1);
-		}
-
+		var parameters = request.getParameterMap();
+		var values = new HashMap<String, String>();
 		for (Entry<String, String[]> entry : parameters.entrySet()) {
-			if (entry.getKey().equalsIgnoreCase("token")) {
+			if (entry.getKey().equalsIgnoreCase("token")){
 				token = entry.getValue()[0];
-			} else {
-				if (!values.containsKey(entry.getKey())) {
-					values.put(entry.getKey(), entry.getValue()[0]);
-				} else {
-					response.setStatus(412);
-					return "";
-				}
+				continue;
 			}
+			if (values.containsKey(entry.getKey())){
+				response.setStatus(412);
+				return "";
+			}
+			values.put(entry.getKey(), entry.getValue()[0]);
 		}
 
 		if (token == null) {
@@ -1318,27 +1316,32 @@ public class WebServiceController extends BasicController {
 							}
 						}
 					}
-				} else if (questionalias.contains("#")) {
+				} else if (questionalias.contains(" ")) {
+					//"+" in the query param gets parsed to space " "
 					// this is a table
-					String[] data = questionalias.split("#");
+					String[] data = questionalias.split(" ");
 
-					int row = Integer.parseInt(data[1]);
-					int col = Integer.parseInt(data[2]);
+					var row = elementsByAlias.get(data[1]);
+					var col = elementsByAlias.get(data[2]);
 
-					Table table = (Table) elementsByAlias.get(data[0]);
+					var table = (Table) elementsByAlias.get(data[0]);
 
-					Answer answer = new Answer();
+					var rowNum = table.getQuestions().indexOf(row) + 1;
+					var colNum = table.getAnswers().indexOf(col) + 1;
+					if (rowNum <= 0 || colNum <= 0) {
+						response.setStatus(412);
+						return "";
+					}
+
+					var answer = new Answer();
 					answer.setAnswerSet(answerSet);
 					answer.setQuestionUniqueId(table.getUniqueId());
 
-					Element tablequestion = table.getQuestions().get(row - 1);
-					Element tableanswer = table.getAnswers().get(col - 1);
-
-					answer.setPossibleAnswerUniqueId(tablequestion.getUniqueId() + "#" + tableanswer.getUniqueId());
+					answer.setPossibleAnswerUniqueId(row.getUniqueId() + "#" + col.getUniqueId());
 
 					answer.setValue(entry.getValue());
-					answer.setRow(row);
-					answer.setColumn(col);
+					answer.setRow(rowNum);
+					answer.setColumn(colNum);
 					answerSet.addAnswer(answer);
 				}
 			}

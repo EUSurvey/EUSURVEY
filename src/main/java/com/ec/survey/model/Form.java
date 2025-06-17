@@ -212,8 +212,20 @@ public class Form implements java.io.Serializable {
 		return ConversionTools.removeInvalidHtmlEntities(getAnswerTitle(answer));
 	}
 
+	public String getStrippedAnswerTitle(Answer answer) {
+		return  getStrippedAnswerTitle(answer, false);
+	}
+
+	public String getStrippedAnswerTitle(Answer answer, boolean addAssignedValue) {
+		return  ConversionTools.removeHTML(SurveyHelper.getAnswerTitle(survey, answer, publicationMode, addAssignedValue), true).replace("\"", "'");
+	}
+
 	public String getAnswerTitle(Answer answer) {
-		return SurveyHelper.getAnswerTitle(survey, answer, publicationMode);
+		return getAnswerTitle(answer, false);
+	}
+
+	public String getAnswerTitle(Answer answer, boolean addAssignedValue) {
+		return SurveyHelper.getAnswerTitle(survey, answer, publicationMode, addAssignedValue);
 	}
 
 	public String getAnswerShortname(Answer answer) {
@@ -247,6 +259,23 @@ public class Form implements java.io.Serializable {
 					String res = pa != null ? pa.getShortname() : null;
 					if (res != null)
 						return "(" + res + ")";
+				}
+
+				return "";
+			} else if (question instanceof ComplexTableItem) {
+				ComplexTableItem cti = (ComplexTableItem) question;
+				if (cti.isChoice()) {
+					int possibleAnswerId = Integer.parseInt(answerValue);
+					if (answer.getPossibleAnswerUniqueId() != null) {
+						for (Element child : cti.getAllPossibleAnswers()) {
+							if (child.getId().equals(possibleAnswerId)) {
+								return "(" + child.getShortname() + ")";
+							}
+							if (child.getUniqueId().equals(answer.getPossibleAnswerUniqueId())) {
+								return "(" + child.getShortname() + ")";
+							}
+						}
+					}
 				}
 
 				return "";

@@ -226,6 +226,8 @@ public class HomeController extends BasicController {
 				return resources.getMessage("support.HighAudience", null, reason, locale);
 			case "protection":
 				return resources.getMessage("support.Protection", null, reason, locale);
+			case "organisation":
+				return resources.getMessage("support.Organisation", null, reason, locale);
 			default:
 				return resources.getMessage("support.otherreason", null, reason, locale);
 		}			

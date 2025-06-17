@@ -15,15 +15,20 @@ import java.util.stream.Collectors;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import com.ec.survey.model.ECFProfile;
-import com.ec.survey.model.Language;
-import com.ec.survey.model.Publication;
-import com.ec.survey.model.Skin;
+import com.ec.survey.model.*;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyService;
@@ -31,14 +36,13 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * This class represents a survey. It contains a list of elements that represent
@@ -215,6 +219,7 @@ final public class Survey implements java.io.Serializable {
 	private String validationCode;
 	private Boolean validated;
 	private String webhook = "";
+	private List<Tag> tags = new ArrayList<>();
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -785,6 +790,10 @@ final public class Survey implements java.io.Serializable {
 			}
 			
 			if (element instanceof ChoiceQuestion) {
+				if ((element instanceof SingleChoiceQuestion) && (((SingleChoiceQuestion) element).getIsTargetDatasetQuestion())) {
+					continue;
+				}
+
 				List<Element> children = new ArrayList<>();
 				for (Element child : ((ChoiceQuestion) element).getPossibleAnswers()) {
 					children.add(child);
@@ -1754,6 +1763,19 @@ final public class Survey implements java.io.Serializable {
 		this.eVoteTemplate = eVoteTemplate;
 	}
 
+	@ManyToMany(targetEntity = Tag.class)
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			joinColumns = @JoinColumn(name = "SURVEY_SURVEY_ID"),
+			inverseJoinColumns = @JoinColumn(name = "tags_TAG_ID"))
+	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+
 	@Transient
 	public String geteVoteTemplateTitle() {
 		if (eVoteTemplate != null) {
@@ -1770,7 +1792,7 @@ final public class Survey implements java.io.Serializable {
 		}
 		return "label.Standard";
 	}
-	
+
 	@Transient
 	public String serialize(boolean elementOrderOnly) {
 		StringBuilder result = new StringBuilder();
@@ -1798,7 +1820,7 @@ final public class Survey implements java.io.Serializable {
 			result.append(" confirmationPageLink: ").append(confirmationPageLink).append(";");
 			result.append(" motivationText: ").append(this.getMotivationText()).append(";");
 			if (motivationPopupTitle != null){
-				result.append(" motivationPopupTitle: ").append(motivationPopupTitle).append(";");
+				result.append(" motivationPopupTitle: ").append(HtmlUtils.htmlEscape(motivationPopupTitle)).append(";");
 			}
 			result.append(" motivationTriggerProgress: ").append(motivationTriggerProgress).append(";");
 			result.append(" motivationTriggerTime: ").append(motivationTriggerTime).append(";");
@@ -2037,6 +2059,12 @@ final public class Survey implements java.io.Serializable {
 				if (elementsBySourceId.containsKey(element.getId())) {
 					element.setSourceId(elementsBySourceId.get(element.getId()).getId());
 				}
+			}
+		}
+
+		if (tags != null) {
+			for (Tag tag : tags) {
+				copy.getTags().add(tag);
 			}
 		}
 
@@ -2770,6 +2798,23 @@ final public class Survey implements java.io.Serializable {
 
 	public void setDedicatedResultPrivileges(Boolean dedicatedResultPrivileges) {
 		this.dedicatedResultPrivileges = dedicatedResultPrivileges != null ? dedicatedResultPrivileges : false;
+	}
+
+	@Transient
+	public String tagsAsArray() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		boolean first = true;
+		for (Tag e : tags) {
+			if (first) {
+				first = false;
+			} else {
+				builder.append(",");
+			}
+			builder.append("'").append(e.getName()).append("'");
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 	
 	@Transient

@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "ATTENDEE")
+@Table(name = "ATTENDEE", indexes = {@Index(name="OWNER_HIDDEN",columnList = "OWNER_ID, ATTENDEE_HIDDEN")})
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Attendee {

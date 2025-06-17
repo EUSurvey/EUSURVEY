@@ -22,6 +22,7 @@ public class WebserviceTask {
 	private String result;
 	private String error;
 	private String token;
+	private String uniqueId;
 	private boolean showIDs;
 	private boolean addMeta;
 	private Integer exportType;
@@ -145,6 +146,14 @@ public class WebserviceTask {
 	}
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	@Column(name = "WST_UNIQUEID")
+	public String getUniqueId() {
+		return uniqueId;
+	}
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
 	}
 
 	@Column(name = "WST_SHOWIDS")

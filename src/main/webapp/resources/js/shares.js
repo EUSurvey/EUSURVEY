@@ -178,7 +178,7 @@
 							th = document.createElement("th");
 							$(th).addClass("filtercell").addClass("attributefilter");
 							var input = document.createElement("input");
-							$(input).attr("name",list[i].id == 1 && ownerSelected ? "owner" : list[i].id).addClass("filter").attr("type","text").attr("placeholder", "filter").attr("style","margin: 0px;").attr("onkeyup", "checkFilterCell($(this).closest('.filtercell'), false)");
+							$(input).attr("name",list[i].name == "Owner" ? "owner" : list[i].id).addClass("filter").attr("type","text").attr("placeholder", "filter").attr("style","margin: 0px;").attr("onkeyup", "checkFilterCell($(this).closest('.filtercell'), false)");
 							$(th).append(input);
 							$("#participantsstaticheader").find("thead").find("tr").first().next().append(th);
 							

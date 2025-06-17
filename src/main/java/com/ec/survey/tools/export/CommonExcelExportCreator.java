@@ -1109,10 +1109,10 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 										.append(form.getAnswerTitle(answer));
 							} else {
 								cellValue.append((cellValue.length() > 0) ? ";" : "")
-										.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+										.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer, question instanceof RankingQuestion)));
 							}
 
-							if (export != null && export.getShowShortnames()) {
+							if (export != null && export.getShowShortnames() && !(question instanceof RankingQuestion)) {
 								cellValue.append(" ").append(form.getAnswerShortname(answer));
 							}
 						}
@@ -1986,8 +1986,6 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 
 		if (scale < 0.0001) return;
 
-		int divisor = (int) (1.0 / scale);
-
 		InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
 
 		int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData), Workbook.PICTURE_TYPE_PNG);
@@ -2002,14 +2000,14 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 
 		if (wb instanceof HSSFWorkbook) {
 			anchor.setDx1(15);
-			anchor.setDx2(1020 / divisor - 15);
+			anchor.setDx2((int) (1020 * scale - 15));
 
 			anchor.setDy1(50);
 			anchor.setDy2(220);
 		} else {
 			int pixelScalar = Units.EMU_PER_PIXEL;
 			anchor.setDx1(pixelScalar * 3);
-			anchor.setDx2(pixelScalar * (195 - 6) / divisor);
+			anchor.setDx2((int) (pixelScalar * (195 - 6) * scale));
 			anchor.setDy1(pixelScalar * 3);
 			anchor.setDy2(pixelScalar * 18);
 		}

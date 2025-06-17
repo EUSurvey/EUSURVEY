@@ -78,6 +78,7 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -687,7 +688,7 @@ public class ManagementController extends BasicController {
 		}
 
 		String editelem = request.getParameter("editelem");
-		if (editelem != null && !editelem.equalsIgnoreCase("autopub") && !editelem.equalsIgnoreCase("showContent")
+		if (editelem != null && !editelem.equalsIgnoreCase("owner") && !editelem.equalsIgnoreCase("autopub") && !editelem.equalsIgnoreCase("showContent")
 				&& !editelem.equalsIgnoreCase("edit-prop-tabs-7")) {
 			// this is for security reasons to prevent xss attacks
 			editelem = null;
@@ -719,6 +720,10 @@ public class ManagementController extends BasicController {
 		if (newdefault != null) {
 			skins.remove(newdefault);
 			skins.add(0, newdefault);
+		}
+
+		if (form.getSurvey().getSkin() != null && skins.stream().noneMatch(s -> Objects.equals(s.getId(), form.getSurvey().getSkin().getId()))) {
+			skins.add(form.getSurvey().getSkin());
 		}
 
 		result.addObject("skins", skins);
@@ -764,6 +769,22 @@ public class ManagementController extends BasicController {
 			result.addObject("haspublishedanswers", "true");
 		}
 
+		List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
+		result.addObject("domains", domains);
+
+		var changeOwnerRequest = surveyService.getChangeOwnerRequestForSurvey(survey.getUniqueId());
+		if (changeOwnerRequest != null) {
+			var email = changeOwnerRequest.getEmail();
+			if (email == null) {
+				email = administrationService.getUserForLogin(changeOwnerRequest.getLogin()).getEmail();
+			}
+			result.addObject("newOwnerEmail", email);
+			DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, locale);
+
+			var dateString = df.format(changeOwnerRequest.getCreated());
+			result.addObject("newOwnerRequestDate", dateString);
+		}
+
 		return result;
 	}
 
@@ -777,6 +798,54 @@ public class ManagementController extends BasicController {
 		}
 
 		return updateSurvey(form, request, false, locale);
+	}
+
+	@PostMapping(value = "/changeOwner")
+	public @ResponseBody String changeOwner(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+		User u = sessionService.getCurrentUser(request);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, false, false, false);
+		if (!survey.getOwner().getId().equals(u.getId()))
+		{
+			throw new ForbiddenURLException();
+		}
+
+		ChangeOwnerRequest changeRequest = new ChangeOwnerRequest();
+		changeRequest.setCreated(new Date());
+		changeRequest.setSurveyUid(survey.getUniqueId());
+		changeRequest.setCode(UUID.randomUUID().toString());
+
+		String changeOwnerType = request.getParameter("change-owner-type");
+		if (changeOwnerType != null) {
+
+			changeRequest.setAddAsFormManager(request.getParameter("add-as-form-manager") != null
+					&& request.getParameter("add-as-form-manager").equalsIgnoreCase("true"));
+
+			if (changeOwnerType.equals("loginAndEcas")) {
+				String login = request.getParameter("change-owner-login");
+				if (login == null || login.isEmpty()) {
+					return "unknownuser";
+				}
+
+				changeRequest.setLogin(login);
+
+
+			} else if (changeOwnerType.equals("email")) {
+				String email = request.getParameter("change-owner-mail");
+				if (email == null || email.isEmpty()) {
+					return "unknownuser";
+				}
+
+				changeRequest.setEmail(email);
+			}
+
+			if (surveyService.sendChangeOwnerRequest(changeRequest)){
+				return "success";
+			} else {
+				return "unknownuser";
+			}
+		}
+
+		return "success";
 	}
 
 	@RequestMapping(value = "/sendOrganisationValidationReminder", method = { RequestMethod.GET, RequestMethod.HEAD })
@@ -1042,12 +1111,10 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("evote").equalsIgnoreCase("true"));
 					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi() && !copy.getIsEVote());
 
-					surveyService.update(copy, false, true, true, u.getId());
+					surveyService.update(copy, false, false, true, u.getId());
 
-					List<Translations> translations = translationService.getTranslationsForSurvey(original.getId(),
-							false, false);
-					surveyService.copyTranslations(translations, copy, oldToNewUniqueIds, null, newTitle, convertedUIDs);
-					
+					surveyService.copiedSurveyApplyTranslations(copy, original, oldToNewUniqueIds, convertedUIDs, newTitle, u.getId());
+
 					if (copy.getIsSelfAssessment() && original.getIsSelfAssessment()) {
 						selfassessmentService.copyData(original.getUniqueId(), copy);					
 					}
@@ -1387,6 +1454,33 @@ public class ManagementController extends BasicController {
 				String[] oldnew = { survey.getShortname(), uploadedSurvey.getShortname() };
 				activitiesToLog.put(ActivityRegistry.ID_ALIAS, oldnew);
 				shortnameChanged = true;
+			}
+
+			String tagsstring = parameterMap.get("tags")[0];
+			List<String> tags = Arrays.asList(tagsstring.split(","));
+			for (String tagname : tags) {
+				if (tagname.length() <= 0) {
+					continue;
+				}
+
+				if (invalid(tagname)) {
+					String message = resources.getMessage("validation.tagsText", null,
+							"Tags may only contain alphanumeric characters (A-Z, a-z, 0-9), underscores and hyphens.",
+							locale);
+					return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
+				}
+
+				Tag tag = surveyService.getTag(tagname);
+				if (tag == null) {
+					tag = surveyService.createTag(tagname);
+				}
+				if (!survey.getTags().contains(tag)) {
+					survey.getTags().add(tag);
+				}
+			}
+			List<Tag> toDelete = survey.getTags().stream().filter(t -> !tags.contains(t.getName())).collect(Collectors.toList());
+			for (Tag tag : toDelete) {
+				survey.getTags().remove(tag);
 			}
 		}
 
@@ -2578,7 +2672,7 @@ public class ManagementController extends BasicController {
 				}
 				builder.append("{");
 				builder.append("'id': '").append(saCriterion.getId()).append("',");
-				builder.append("'name': '").append(saCriterion.getName()).append("'");
+				builder.append("'name': '").append(ConversionTools.escape(saCriterion.getName())).append("'");
 				builder.append("}");
 			}
 			builder.append("]");
@@ -2597,7 +2691,7 @@ public class ManagementController extends BasicController {
 				}
 				builder.append("{");
 				builder.append("'id': '").append(dataset.getId()).append("',");
-				builder.append("'name': '").append(dataset.getName()).append("'");
+				builder.append("'name': '").append(ConversionTools.escape(dataset.getName())).append("'");
 				builder.append("}");
 			}
 			builder.append("]");
@@ -3102,7 +3196,7 @@ public class ManagementController extends BasicController {
 				&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0)) {
 			ModelAndView result = new ModelAndView("management/testQuizResult", Constants.UNIQUECODE,
 					answerSet.getUniqueCode());
-			Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+			Form form = new Form(resources, surveyService.getLanguage(lang),
 					translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
 			sessionService.setFormStartDate(request, form, uniqueCode);
 			form.setSurvey(survey);
@@ -3113,6 +3207,7 @@ public class ManagementController extends BasicController {
 			result.addObject("surveyprefix", survey.getId());
 			result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 			result.addObject("isquizresultpage", true);
+			result.addObject("runnermode", true);
 			return result;
 		}
 		
@@ -4053,7 +4148,8 @@ public class ManagementController extends BasicController {
 
 			boolean addlinks = isOwner || user == null || user.getFormPrivilege() > 1
 					|| user.getLocalPrivilegeValue("AccessResults") > 1
-					|| (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0);
+					|| (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0)
+					|| user.getResultAccessWrite();
 			filter = answerService.initialize(filter);			
 			
 			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
@@ -4107,7 +4203,7 @@ public class ManagementController extends BasicController {
 								for (Answer answer : answerSet.getAnswers(
 										matrixQuestion.getUniqueId())) {
 									if (surveyExists) {
-										answer.setTitle(form.getAnswerTitle(answer));
+										answer.setTitle(ConversionTools.escape(form.getAnswerTitle(answer)));
 									}
 									if (s.length() > 0) {
 										s.append("; ");
@@ -4131,12 +4227,18 @@ public class ManagementController extends BasicController {
 							for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
 								StringBuilder s = new StringBuilder();
 								for (Answer answer : answerSet.getAnswers(childQuestion.getUniqueId())) {
+									if (!allanswers && childQuestion.isChoice() && !childQuestion.containsPossibleAnswer(answer.getPossibleAnswerUniqueId())) {
+										continue;
+									}
+
 									if (s.length() > 0) {
 										s.append("; ");
 									}
 									
 									if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
-										s.append(form.getAnswerTitle(answer));
+										s.append(form.getStrippedAnswerTitle(answer));
+										s.append("<span class='assignedValue hideme'>").append(form.getAnswerShortname(answer))
+												.append("</span>");
 									} else {
 										s.append(ConversionTools.escape(form.getAnswerTitle(answer)));
 									}
@@ -4175,7 +4277,8 @@ public class ManagementController extends BasicController {
 										if (isOwner || user == null || user.getFormPrivilege() > 1
 												|| user.getLocalPrivilegeValue("AccessResults") > 1
 												|| (survey.getIsDraft()
-														&& user.getLocalPrivilegeValue("AccessDraft") > 0)) {
+														&& user.getLocalPrivilegeValue("AccessDraft") > 0)
+												|| user.getResultAccessWrite()) {
 											s.append("<a target='blank' href='").append(contextpath).append("/files/")
 													.append(survey.getUniqueId()).append(Constants.PATH_DELIMITER)
 													.append(file.getUid()).append("'>").append(file.getName())
@@ -4215,14 +4318,17 @@ public class ManagementController extends BasicController {
 									} else if ("EVOTE-ALL".equals(answer.getValue())){
 										s.append(form.getMessage("label.EntireList"));
 									} else {
-										s.append(form.getAnswerTitle(answer));
+										s.append(form.getStrippedAnswerTitle(answer, question instanceof RankingQuestion));
+									}
+
+									if (question instanceof ChoiceQuestion) {
+										s.append("<span class='assignedValue hideme'>").append(form.getAnswerShortname(answer))
+												.append("</span>");
 									}
 								} else {
 									s.append(ConversionTools.escape(form.getAnswerTitle(answer)));
 								}
 
-								s.append("<span class='assignedValue hideme'>").append(form.getAnswerShortname(answer))
-										.append("</span>");
 							}
 							result.add(s.toString());
 						}
@@ -4651,7 +4757,7 @@ public class ManagementController extends BasicController {
 	public ModelAndView preparestatistics(@PathVariable String id, @PathVariable String exportId, Locale locale,
 			HttpServletRequest request) throws Exception {
 
-		Export export = exportService.getExport(Integer.parseInt(exportId), false);
+		Export export = exportService.getExport(Integer.parseInt(exportId), true);
 
 		if (export == null) {
 			logger.error("export is null");
@@ -4675,6 +4781,8 @@ public class ManagementController extends BasicController {
 		if (filter.getLanguages() != null && filter.getLanguages().isEmpty()) {
 			filter.setLanguages(null);
 		}
+
+		filter.setSurveyId(s.getId());
 
 		ModelAndView results = results(s, new HashMap<>(), null, s.getIsDraft(), export.isAllAnswers(),
 				filter, true);
@@ -4700,7 +4808,7 @@ public class ManagementController extends BasicController {
 	public ModelAndView preparepdfreport(@PathVariable String id, @PathVariable String exportId, Locale locale,
 			HttpServletRequest request) throws Exception {
 
-		Export export = exportService.getExport(Integer.parseInt(exportId), false);
+		Export export = exportService.getExport(Integer.parseInt(exportId), true);
 
 		if (export == null) {
 			logger.error("export is null");
@@ -4724,6 +4832,8 @@ public class ManagementController extends BasicController {
 		surveyService.initializeSurvey(survey);
 
 		ResultFilter filter = export.getResultFilter().copy();
+
+		filter.setSurveyId(s.getId());
 
 		if (filter.getLanguages() != null && filter.getLanguages().isEmpty()) {
 			filter.setLanguages(null);
@@ -4757,7 +4867,7 @@ public class ManagementController extends BasicController {
 	public ModelAndView preparestatisticsquiz(@PathVariable String id, @PathVariable String exportId, Locale locale,
 			HttpServletRequest request) throws Exception {
 
-		Export export = exportService.getExport(Integer.parseInt(exportId), false);
+		Export export = exportService.getExport(Integer.parseInt(exportId), true);
 		if (export == null || export.getState() != ExportState.Pending
 				|| !export.getSurvey().getId().equals(Integer.parseInt(id)))
 			return null;
@@ -4767,13 +4877,13 @@ public class ManagementController extends BasicController {
 		surveyService.initializeSurvey(survey);
 
 		ResultFilter filter = export.getResultFilter().copy();
-		Set<String> newids = new HashSet<>();
-		newids.addAll(filter.getExportedQuestions());
-		filter.setVisibleQuestions(newids);
+		filter.setVisibleQuestions(filter.getExportedQuestions());
 
 		if (filter.getLanguages() != null && filter.getLanguages().isEmpty()) {
 			filter.setLanguages(null);
 		}
+
+		filter.setSurveyId(survey.getId());
 
 		ModelAndView results = results(survey, new HashMap<>(), null, survey.getIsDraft(), export.isAllAnswers(),
 				filter, true);
@@ -4781,9 +4891,7 @@ public class ManagementController extends BasicController {
 		Publication publication = new Publication();
 		publication.setFilter(export.getResultFilter());
 
-		Set<String> newids2 = new HashSet<>();
-		newids.addAll(publication.getFilter().getExportedQuestions());
-		publication.getFilter().setVisibleQuestions(newids2);
+		publication.getFilter().setVisibleQuestions(publication.getFilter().getExportedQuestions());
 
 		publication.setAllQuestions(publication.getFilter().getVisibleQuestions().isEmpty());
 		results.addObject("publication", publication);

@@ -325,8 +325,8 @@ function updateProgress() {
 
 	// progressbar
 	if ($('#progressBar').length != 0) {
-		var totalForProgress = $('.forprogress').not(".untriggered").length;
-		var answered = $('.forprogress.answered').not(".untriggered").length;
+		var totalForProgress = $('.forprogress').not(".untriggered,.sahidden,.saDependentHidden").length;
+		var answered = $('.forprogress.answered').not(".untriggered,.sahidden,.saDependentHidden").length;
 		percent = answered == 0 ? 0 : Math.round(answered / totalForProgress * 100);
 
 		$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);
@@ -1068,17 +1068,46 @@ function checkTargetDataset(input) {
 	if (v.length == 0) {
 		// show all SA questions
 		$(".saquestion").removeClass("sahidden");
+
+		$(".survey-element.saDependentHidden").each(function() {
+			$(this).removeClass("saDependentHidden");
+		})
 	} else {
 		const c = "sahidden" + v;
 		
 		$(".saquestion").each(function(){
+			 let saquestion_paId = [ ...$(this).find("input.check")].filter(e => e.id != "").map(e => e.id);
+
 			 if ($(this).hasClass(c)) {
 				 $(this).addClass("sahidden");
+
+				 //also hide questions which are dependent on a SAQuestion answeroption
+				 if (saquestion_paId.length > 0) {
+					 $(".survey-element.dependent").each(function () {
+						 for (let id of saquestion_paId) {
+							 if ($(this).attr("data-triggers").split(";").filter(elem => elem === id).length > 0) {
+								 $(this).addClass("saDependentHidden")
+							 }
+						 }
+					 })
+				 }
 			 } else {
 				 $(this).removeClass("sahidden");
+
+				 if (saquestion_paId.length > 0) {
+					 $(".survey-element.saDependentHidden").each(function() {
+						 for (let id of saquestion_paId) {
+							 if ($(this).attr("data-triggers").split(";").filter(elem => elem === id).length > 0) {
+								 $(this).removeClass("saDependentHidden");
+							 }
+						 }
+					 })
+				 }
 			 }
 		 });
 	}
+
+	propagateChange(input)
 }
 
 function checkDependenciesAsync(input, override) {

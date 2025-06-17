@@ -733,9 +733,14 @@ public class AddressBookController extends BasicController {
          		
          		List<AttributeName> attributeNames = user.getSelectedAttributes();
          		
-         		paging.setItems(attendeeService.getAttendees(user.getId(), filter, paging.getCurrentPage(), paging.getItemsPerPage()));		
-         		         		
-         		List<AttributeName> allAttributes = attendeeService.getAllAttributes(user.getId());
+         		paging.setItems(attendeeService.getAttendees(user.getId(), filter, paging.getCurrentPage(), paging.getItemsPerPage()));
+
+				int ownerId = -1;
+				if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2)
+				{
+				 ownerId = user.getId();
+				}
+         		List<AttributeName> allAttributes = attendeeService.getAllAttributes(ownerId);
          		allAttributes.add(0, new AttributeName(-1, "Name"));
          		allAttributes.add(0, new AttributeName(-1, "Email"));
          	         		         				
@@ -1026,10 +1031,10 @@ public class AddressBookController extends BasicController {
 				{
 					if (entry.getValue().equalsIgnoreCase("name"))
 					{
-						attendee.setName(row[entry.getKey()]);
+						attendee.setName(row[entry.getKey()].trim());
 					} else if (entry.getValue().equalsIgnoreCase(Constants.EMAIL))
 					{
-						attendee.setEmail(row[entry.getKey()]);
+						attendee.setEmail(row[entry.getKey()].trim());
 					} else if (entry.getValue().equalsIgnoreCase("owner"))
 					{
 						//ignore
@@ -1055,15 +1060,22 @@ public class AddressBookController extends BasicController {
 					}
 				}
 					
-				if (attendee.getName().trim().length() == 0)
+				if (attendee.getName().isEmpty())
 				{
 					messages.add(resources.getMessage("error.ContactWithoutName", null, "There is a contact without a name. It will be ignored.", locale));
 					invalidAttendees.put(row, "name");
-				} else if (attendee.getEmail().trim().length() == 0 || !MailService.isValidEmailAddress(attendee.getEmail().trim()))
+				} else if (attendee.getEmail().isEmpty() || !MailService.isValidEmailAddress(attendee.getEmail().trim()))
 				{
 					messages.add(resources.getMessage("error.ContactWithoutEmail", null, "There is a contact without valid email address. It will be ignored.", locale));
 					invalidAttendees.put(row, Constants.EMAIL);
-				} else {					
+				} else if (attendee.getName().length() > 255) {
+					messages.add(resources.getMessage("error.ContactNameTooLong", null, "There is a contact with a name that is too long. The limit is 255 characters. It will be ignored.", locale));
+					invalidAttendees.put(row, "name");
+				} else if (attendee.getEmail().length() > 255) {
+					messages.add(resources.getMessage("error.ContactEmailTooLong", null, "There is a contact with an e-mail address that is too long. The limit is 255 characters. It will be ignored.", locale));
+					invalidAttendees.put(row, Constants.EMAIL);
+				}
+				else {
 					attendees.add(attendee);
 				}							
 			}

@@ -278,7 +278,7 @@ public class ExportsController extends BasicController {
 			HttpServletResponse response) {
 
 		if (uid == null || !StringUtils.isNumeric(uid)) {
-			return "{\"newname\": \"0\",\"checkExport\":false}";
+			return "{\"newnames\": [],\"checkExport\":false}";
 		}
 
 		int userID = Integer.parseInt(uid);
@@ -286,15 +286,20 @@ public class ExportsController extends BasicController {
 		String checkExport = hasPendingExports.toString().toLowerCase();
 		try {
 			if (hasPendingExports) {
+				String newnames = "{\"newnames\": [";
 				List<Export> exports = exportService.getExports(userID, "name", true, false, true);
-				if (!exports.isEmpty()) {
-					Export export = exports.get(0);
+				for (Export export : exports) {
+					if (!newnames.equals("{\"newnames\": [")) {
+						newnames += ", ";
+					}
 					sessionService.setCheckExport(request, checkExport);
 					exportService.setNotified(export.getId());
 					hasPendingExports = exportService.hasPendingExports(userID);
 					checkExport = hasPendingExports.toString().toLowerCase();
-					return "{\"newname\": \"" + export.getName() + "\",\"checkExport\":" + checkExport + "}";
+					newnames += "{\"newname\": \"" + export.getName() + "\"}";
 				}
+				newnames += "],\"checkExport\":" + checkExport + "}";
+				return newnames;
 			} else {
 				sessionService.setCheckExport(request, checkExport);
 			}
@@ -303,7 +308,7 @@ public class ExportsController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-		return "{\"newname\": \"0\",\"checkExport\":" + checkExport + "}";
+		return "{\"newnames\": [],\"checkExport\":" + checkExport + "}";
 	}
 
 	@RequestMapping(value = "/list")
@@ -370,10 +375,10 @@ public class ExportsController extends BasicController {
 
 		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement).equals(2)) {
 			exports = exportService.getExports(-1, sortKey, sortOrder.equalsIgnoreCase("asc"), page, itemsPerPage, true,
-					true, false, true);
+					true, false, true, false);
 		} else {
 			exports = exportService.getExports(user.getId(), sortKey, sortOrder.equalsIgnoreCase("asc"), page,
-					itemsPerPage, true, true, false, true);
+					itemsPerPage, true, true, false, true, false);
 		}
 		return exports;
 	}

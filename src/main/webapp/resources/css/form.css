@@ -28,11 +28,17 @@
 
 .formsSurveyItem {
 	margin-left: 10px;
+	margin-top: 10px;
 }
 
 .formsSurveyItem td {
 	padding-left: 10px;
 	padding-bottom: 5px;
+}
+
+.formsSurveyItem .tags {
+    text-align: right;
+    padding-right: 20px;
 }
 
 .typeicon {
@@ -83,7 +89,6 @@
 	 border-right:10px solid #f0ad4e; 
 }
 
-	
 .arrow-left {
   float: left;
   width: 0; 
@@ -95,3 +100,17 @@
   margin-top: -4px;
 }
 
+.ui-menu-item {
+  font-size: 13px !important;
+}
+
+.ui-state-hover,
+.ui-state-active,
+.ui-state-focus {
+  text-decoration: none !important;
+  color: #fff !important;
+  background-image: none !important;
+  background-color: #767676 !important;
+  border-color: #555 !important;
+  font-weight: normal !important;
+}

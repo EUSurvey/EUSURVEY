@@ -12,12 +12,18 @@ import com.ec.survey.tools.ConversionTools;
 @Table(name = "STATUS")
 public class Status {
 
+	public enum FSCheckStates
+	{
+		Unset, FirstThresholdEmailSent, SecondThresholdEmailSent
+	}
+
 	private Integer id;
 	private int dbversion;
 	private Date updateDate;
 	private Date lastLDAPSynchronizationDate;
 	private Date lastLDAPSynchronization2Date;
 	private Date lastAnswerSetAnonymDate;
+	private FSCheckStates fsCheckState = FSCheckStates.Unset;
 	
 	@Id
 	@Column(name = "STATUS_ID")
@@ -79,4 +85,12 @@ public class Status {
 		this.lastAnswerSetAnonymDate = lastAnswerSetAnonymDate;
 	}
 
+	@Column(name = "FSCHECKSTATE")
+	public FSCheckStates getFsCheckState() {
+		return fsCheckState;
+	}
+
+	public void setFsCheckState(FSCheckStates fsCheckState) {
+		this.fsCheckState = fsCheckState == null ? FSCheckStates.Unset : fsCheckState;
+	}
 }

@@ -411,7 +411,7 @@ public class UtilsController extends BasicController {
 		agenciesList.put("IOPA", resources.getMessage("label.agency.IOPA", null, locale));
 		agenciesList.put("MSA", resources.getMessage("label.agency.MSA", null, locale));
 		agenciesList.put("MA", resources.getMessage("label.agency.MA", null, locale));
-		agenciesList.put("MCDDA", resources.getMessage("label.agency.MCDDA", null, locale));
+		agenciesList.put("EUDA", resources.getMessage("label.agency.EUDA", null, locale));
 		agenciesList.put("PPO", resources.getMessage("label.agency.PPO", null, locale));
 		agenciesList.put("SMA", resources.getMessage("label.agency.SMA", null, locale));
 		agenciesList.put("TF", resources.getMessage("label.agency.TF", null, locale));

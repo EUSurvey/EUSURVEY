@@ -69,9 +69,9 @@ public class ContributionController extends BasicController {
 		User user;
 		answerSetOrNull = answerService.get(code);
 		
-		if (answerSetOrNull != null && answerSetOrNull.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+		if (answerSetOrNull != null && answerSetOrNull.getSurvey().getEcasSecurity() && request.getRequestURI().contains("editcontribution"))
 		{
-			user = sessionService.getCurrentUser(request, false, false);
+			user = sessionService.getCurrentUser(request, false);
 		} else {
 			user = sessionService.getCurrentUser(request);
 		}
@@ -304,9 +304,9 @@ public class ContributionController extends BasicController {
 			// participants can only access it if the survey is still active
 			User u;
 			
-			if (answerSet.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+			if (answerSet.getSurvey().getEcasSecurity() && request.getRequestURI().contains("editcontribution"))
 			{
-				u = sessionService.getCurrentUser(request, false, false);
+				u = sessionService.getCurrentUser(request, false);
 			} else {
 				u = sessionService.getCurrentUser(request);
 			}
@@ -445,7 +445,7 @@ public class ContributionController extends BasicController {
 		try {
 			Survey origsurvey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false,
 					true);
-			User u = sessionService.getCurrentUser(request, !origsurvey.getIsDelphi());
+			User u = sessionService.getCurrentUser(request, !origsurvey.getEcasSecurity());
 			String answerSetId = request.getParameter("IdAnswerSet");
 			AnswerSet oldAnswerSet = answerService.get(Integer.parseInt(answerSetId));
 
@@ -543,7 +543,7 @@ public class ContributionController extends BasicController {
 
 					AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, u);
 					ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
-					Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+					Form form = new Form(resources, surveyService.getLanguage(lang),
 							translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
 					sessionService.setFormStartDate(request, form, uniqueCode);
 					form.setSurvey(origsurvey);
@@ -552,7 +552,9 @@ public class ContributionController extends BasicController {
 					result.addObject("surveyprefix", origsurvey.getId());
 					result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 					result.addObject("isquizresultpage", true);
+					result.addObject("runnermode", true);
 					result.addObject("invisibleElements", invisibleElements);
+
 					return result;
 				}
 				
@@ -727,9 +729,9 @@ public class ContributionController extends BasicController {
 					
 					User currentUser = null;					
 					try {
-						currentUser = this.sessionService.getCurrentUser(request);
+						currentUser = this.sessionService.getCurrentUser(request, false, false);
 					} catch (NotAgreedToTosException | WeakAuthenticationException | NotAgreedToPsException e1) {
-						throw new ForbiddenException();
+						//ignore
 					}
 
 					boolean authorized = currentUser != null && sessionService.userIsAnswerer(answerSet, currentUser); //userIsAnswerer is also true if user is owner of the survey
@@ -739,8 +741,8 @@ public class ContributionController extends BasicController {
 							Survey draftSurvey = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false,
 									true);
 
-							//check if user is form manager
-							if (currentUser != null && sessionService.userIsResultReadAuthorized(draftSurvey, request)) {
+							//check if user is form manager or is allowed to access results or form preview (including test anwers)
+							if (currentUser != null && sessionService.userIsResultOrDraftReadAuthorized(draftSurvey, request)) {
 								authorized = true;
 							}
 							

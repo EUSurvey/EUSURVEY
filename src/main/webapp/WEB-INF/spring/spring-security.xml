@@ -11,7 +11,7 @@
 	<security:http auto-config="false" request-matcher="mvc"
 		entry-point-ref="authenticationEntryPoint">
 		
-		<security:access-denied-handler error-page="/errors/403.html"/>
+		<security:access-denied-handler error-page="/auth/login?securityerror=true"/>
 		
 		<!-- <security:form-login login-page="/auth/login"
 					username-parameter="j_username" 
@@ -83,6 +83,8 @@
 		<security:intercept-url pattern="/administration/system/**" access="hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_SYSTEM_MANAGER')" />
 		<security:intercept-url pattern="/administration/publicsurveys/**" access="hasRole('ROLE_FORM_ADMIN')" />
 		<security:intercept-url pattern="/administration/**" access="hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_SYSTEM_MANAGER')" />
+		<security:intercept-url pattern="/ownership/accept/*" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/ownership/reject/*" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/*/management/*" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/*/management/**" access="hasRole('ROLE_USER')" />

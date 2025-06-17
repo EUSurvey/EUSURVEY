@@ -219,6 +219,16 @@ public class ComplexTableItem extends Question {
     }
 
     @Transient
+    public boolean containsPossibleAnswer(String uid) {
+        for (PossibleAnswer pa : possibleAnswers) {
+            if (pa.getUniqueId().equals(uid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Transient
     public Collection<PossibleAnswer> getOrderedPossibleAnswers() {
         if (forEditor) return possibleAnswers;
 
@@ -529,7 +539,7 @@ public class ComplexTableItem extends Question {
 
     @Transient
     public PossibleAnswer getPossibleAnswerByUniqueId(String uid) {
-        for (PossibleAnswer possibleAnswer : getPossibleAnswers()) {
+        for (PossibleAnswer possibleAnswer : getAllPossibleAnswers()) {
             if (possibleAnswer.getUniqueId() != null && possibleAnswer.getUniqueId().length() > 0 && possibleAnswer.getUniqueId().equals(uid)) {
                 return possibleAnswer;
             }

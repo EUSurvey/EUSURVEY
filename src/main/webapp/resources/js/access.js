@@ -415,18 +415,16 @@
 		function setEmailCheckFeedback(foundCount, invalidMails, notFoundMails) {
 			resetEmailFeedback();
 
-			$("#foundEmailUsers").text(foundCount + " user(s) (email) found.");
+			$("#foundEmailUsers").text(noMailsFound.replace("{0}", foundCount));
 
 			if(invalidMails.length > 0) {
-				let invalidMessage =  invalidMails.length + " invalid email address(es): ";
 				$("#invalidEmailsIcon").show();
-				$("#invalidEmailsText").html(invalidMessage.concat(' ', invalidMails.join(', ')));
+				$("#invalidEmailsText").html(invalidEmails.replace("{0}", invalidMails.length).concat(' ', invalidMails.join(', ')));
 			}
 
 			if(notFoundMails.length > 0) {
-				let notFoundMessage = notFoundMails.length + " email address(es) not found: ";
 				$("#notFoundEmailsIcon").show();
-				$("#notFoundEmailsText").html(notFoundMessage.concat(' ', notFoundMails.join(', ')));
+				$("#notFoundEmailsText").html(notFoundEmails.replace("{0}", notFoundMails.length).concat(' ', notFoundMails.join(', ')));
 			}
 		}
 

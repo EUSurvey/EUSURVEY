@@ -11,7 +11,6 @@ function changeChildren(input, event) {
 	if (event != null && event.cancelable != false) return;
 	
 	const headerCell = getElement();
-	const label = $(input).attr("data-label");
 	const parentId = $(_elementProperties.selectedelement).closest("li.complextableitem").attr("data-id");
 	const table = _elements[parentId];
 	const children = [];
@@ -33,46 +32,96 @@ function changeChildren(input, event) {
 		
 		children.push(child);
 	});
+
+	updateChildren(input, headerCell, children, parentId)
 	
+
+	_actions.SaveEnabled(true);
+}
+
+function updateChildren(input, headerCell, children, tableId) {
+
+	const label = $(input).attr("data-label");
+
+	let additionalUndoData = undefined
+
+	const undoNewValues = {
+		header: undefined,
+		children: {}
+	}
+
+	const undoOldValues = {
+		header: undefined,
+		children: {}
+	}
+
+	function getChildIdentifier(child) {
+		let id = child.row()
+		if (headerCell.column() == 0) {
+			id = child.column()
+		}
+		return id
+	}
+
+	function setOldUndo(child, value) {
+		undoOldValues.children[getChildIdentifier(child)] = value
+	}
+
+	function setNewUndo(child, value) {
+		undoNewValues.children[getChildIdentifier(child)] = value
+	}
+
+
 	switch (label) {
 		case "CellType":
 			const type = parseInt($(input).val());
 			for (let child of children) {
+				setOldUndo(child, child.cellType())
+				setNewUndo(child, type)
 				child.cellType(type);
-				
-				if (type === 1) { // set optional for static text cells
+
+				if (type === 1 || type === 3) { // set optional for static text cells and formula cells
 					child.optional(true);
 				}
 			}
+			undoOldValues.header = headerCell.cellTypeChildren()
 			headerCell.cellTypeChildren(type);
-			
+			undoNewValues.header = type
+
 			// update navigation (changes if empty cell is involved)
 			selectedElement = $(_elementProperties.selectedelement).closest(".survey-element");
 			updateNavigation(selectedElement, selectedElement.attr("data-id"));
-			
+
 			break;
 		case "CellText":
 			_elementProperties.selectedid = $(input).closest("tr").find("textarea").first().attr("id");
 			var text = tinyMCE.get(_elementProperties.selectedid).getContent({format: 'xhtml'});
 			var doc = new DOMParser().parseFromString(text, 'text/html');
-			text = new XMLSerializer().serializeToString(doc);		
+			text = new XMLSerializer().serializeToString(doc);
 			/<body>([^]*)<\/body>/im.exec(text);
 			text = RegExp.$1;
 			for (let child of children) {
+				setOldUndo(child, child.title())
+				setNewUndo(child, text)
 				child.originalTitle(text);
 				child.title(text);
 			}
+			undoOldValues.header = headerCell.titleChildren()
+			undoNewValues.header = text
 			headerCell.titleChildren(text);
+			headerCell.titleChildrenMatch(true);
 			$('.highlightedquestion').each(function() {
 				updateNavigation(this, $(this).attr("data-id"));
 			});
-			
+
 			$(input).closest("tr").hide();
 			break;
 		case "Mandatory":
 			const checked = $(input).is(":checked");
 			for (let child of children) {
+				setOldUndo(child, child.optional())
 				child.optional(!checked);
+				setNewUndo(child, child.optional())
 			}
 			break;
 		case "Rows":
@@ -81,14 +130,16 @@ function changeChildren(input, event) {
 				return;
 			const rows = parseInt(text);
 			for (let child of children) {
+				setOldUndo(child, child.numRows())
 				child.numRows(rows);
+				setNewUndo(child, child.numRows())
 			}
-			
+
 			$('.highlightedquestion').each(function() {
 				//the following line is needed to reset the height of the textarea
 				$(this).find("textarea.freetext").css("height","");
 			});
-			
+
 			break;
 		case "MinMax":
 			let isMin = $(input).attr("data-type") === "min";
@@ -117,8 +168,11 @@ function changeChildren(input, event) {
 			}
 
 			for (let child of children) {
+				setOldUndo(child, child[useKey]())
 				child[useKey](value);
+				setNewUndo(child, child[useKey]())
 			}
+			additionalUndoData = useKey
 
 			break;
 		case "Formula":
@@ -127,10 +181,14 @@ function changeChildren(input, event) {
 			}
 
 			var text = $(input).val()
+			undoOldValues.header = headerCell.formulaChildren()
 			headerCell.formulaChildren(text);
+			undoNewValues.header = text
 
 			for (let child of children) {
+				setOldUndo(child, child.formula())
 				child.formula(text);
+				setNewUndo(child, text)
 			}
 			break;
 		case "DecimalPlaces":
@@ -140,9 +198,14 @@ function changeChildren(input, event) {
 
 			var oldtext = headerCell.decimalPlaces();
 			if (oldtext != text){
-				headerCell.decimalsChildren(parseInt(text));
+				const decimals = parseInt(text)
+				undoOldValues.header = headerCell.decimalsChildren()
+				headerCell.decimalsChildren(decimals);
+				undoNewValues.header = decimals
 				for (let child of children) {
-					child.decimalPlaces(parseInt(text));
+					setOldUndo(child, child.decimalPlaces())
+					child.decimalPlaces(decimals);
+					setNewUndo(child, decimals)
 				}
 			}
 
@@ -155,16 +218,20 @@ function changeChildren(input, event) {
 			}
 			var oldtext = headerCell.unitChildren();
 			if (oldtext != text){
+				undoOldValues.header = headerCell.unitChildren()
 				headerCell.unitChildren(text);
+				undoNewValues.header = text
 				for (let child of children) {
+					setOldUndo(child, child.unit())
+					setNewUndo(child, text)
 					child.unit(text);
 				}
 			}
 
 			break;
 	}
-	
-	_actions.SaveEnabled(true);
+
+	_undoProcessor.addUndoStep([label + "ComplexChildren", headerCell.id(), undoOldValues, undoNewValues, tableId, additionalUndoData])
 }
 
 function update(input)
@@ -483,6 +550,8 @@ function update(input)
 					element.isSingleChoice(true);
 				} else {
 					element.isSingleChoice(false);
+					element.isInterdependent(false);
+					$(_elementProperties.selectedelement).find(".matrixtable").removeClass("interdependent");
 				}
 				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 				checkInputStates();
@@ -1344,6 +1413,7 @@ function update(input)
 					element.optional(true);
 				} else if (type == 3) { //set "readonly" for formula cells
 					element.readonly(true);
+					element.optional(true);
 				} else if (type == 4) { //set "useRadioButtons" for single choice cells
 					element.useRadioButtons(false);
 					if (element.possibleAnswers() == null || element.possibleAnswers().length == 0) {
@@ -1394,7 +1464,11 @@ function update(input)
 			element.columnSpan(span);
 			
 			_undoProcessor.addUndoStep(["ColumnSpan", id, $(_elementProperties.selectedelement).index(), oldspan, span]);
-			
+
+			$(_elementProperties.selectedelement.parents()[3]).find(".complextable th, .complextable td").click(function(e) {
+				_elementProperties.showProperties(this, e, false);
+			});
+
 			//delete cells that are now invisible
 			if (span > oldspan) {
 				const parentId = $(_elementProperties.selectedelement).closest("li.complextableitem").attr("data-id");

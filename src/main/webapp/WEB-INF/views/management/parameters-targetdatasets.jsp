@@ -1,18 +1,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<div id="satargetdatasets" data-bind="childrenComplete: myPostProcessingLogic" style="padding: 20px;">	
+<div id="satargetdatasets" data-bind="childrenComplete: myPostProcessingLogic" style="padding: 20px;">
 
-	<div style="display: flex; flex-direction: row; gap: 60px;">
-		<div style="display: flex; flex-direction: row; gap: 20px; background-color: #ddd; border-radius: 5px; padding: 15px;">
-			<div>
-				<label style="margin-bottom: 0;"><spring:message code="label.CreateNewDataset" /></label>			
-				<input class="form-control" type="text" id="satargetdatasetname" maxlength="120" data-bind="event: { keydown: checkKeyCreateTargetDataset }" />			
-			</div>
-			<div style="margin-top: 22px; margin-left: 10px;">
-				<button data-bind="click: createTargetDataset" class="btn btn-success"><spring:message code="label.Create" /></button>
+	<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+		<div style="display: flex; flex-direction: row; gap: 60px;">
+			<div style="display: flex; flex-direction: row; gap: 20px; background-color: #ddd; border-radius: 5px; padding: 15px;">
+				<div>
+					<label style="margin-bottom: 0;"><spring:message code="label.CreateNewDataset" /></label>
+					<input class="form-control" type="text" id="satargetdatasetname" maxlength="120" data-bind="event: { keydown: checkKeyCreateTargetDataset }" />
+				</div>
+				<div style="margin-top: 22px; margin-left: 10px;">
+					<button data-bind="click: createTargetDataset" class="btn btn-success"><spring:message code="label.Create" /></button>
+				</div>
 			</div>
 		</div>
-	</div>
+	</c:if>
 	
 	<div>
 		<!--  ko if: targetDatasets().length == 0 -->
@@ -29,7 +31,7 @@
 			</thead>
 			<tbody data-bind="foreach: targetDatasets()">
 				<tr data-bind="attr: {'data-id': id}">
-					<td data-bind="click: (data, event) => { $parent.enableTargetDatasetEditMode($data); }">
+					<td <c:if test="${(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">data-bind="click: (data, event) => { $parent.enableTargetDatasetEditMode($data); }"</c:if>>
 						<span class="content" data-bind="text: name"></span>
 						<input class="form-control inline editmode" style="display: none" type="text" maxlength="120" data-bind="textInput: name, event: { keydown: $parent.checkKeyTargetDataset }" />
 						<div class="validation-error-already-exists validation-error hideme"><spring:message code="message.TargetDatasetAlreadyExists" /></div>
@@ -37,14 +39,22 @@
 					</td>
 					<td>
 						<a data-bind="click: () => openScoreCardsTab($data)" data-toggle="tooltip" title="<spring:message code='label.OpenScoreCard'/>" style="padding-right: 5px"><spring:message code='label.ScoreCard'/></a>
-						<!-- ko if: $parent.targetDatasetInEditMode() != null && $parent.targetDatasetInEditMode().parent().parent().attr("data-id") == id() -->
-							<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Discard" />" data-bind="click: () => { $parent.discardChanges($data); }"><span class="glyphicon glyphicon-ban-circle"></span></a>
-							<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.SaveAndClose" />" data-bind="click: () => { $parent.checkValidation($parent.targetDatasetInEditMode()); }"><span class="glyphicon glyphicon-ok"></span></a>
-						<!-- /ko -->
-						<!-- ko if: $parent.targetDatasetInEditMode() == null || ($parent.targetDatasetInEditMode() != null && $parent.targetDatasetInEditMode().parent().parent().attr("data-id") != id()) -->
-							<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: () => { $parent.enableTargetDatasetEditMode($data); }"><span class="glyphicon glyphicon-pencil"></span></a>
-							<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />" data-bind="click: () => { $parent.deleteTargetDataset(id()); }"><span class="glyphicon glyphicon-remove"></span></a>
-						<!-- /ko -->
+						<c:choose>
+							<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+								<!-- ko if: $parent.targetDatasetInEditMode() != null && $parent.targetDatasetInEditMode().parent().parent().attr("data-id") == id() -->
+									<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Discard" />" data-bind="click: () => { $parent.discardChanges($data); }"><span class="glyphicon glyphicon-ban-circle"></span></a>
+									<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.SaveAndClose" />" data-bind="click: () => { $parent.checkValidation($parent.targetDatasetInEditMode()); }"><span class="glyphicon glyphicon-ok"></span></a>
+								<!-- /ko -->
+								<!-- ko if: $parent.targetDatasetInEditMode() == null || ($parent.targetDatasetInEditMode() != null && $parent.targetDatasetInEditMode().parent().parent().attr("data-id") != id()) -->
+									<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: () => { $parent.enableTargetDatasetEditMode($data); }"><span class="glyphicon glyphicon-pencil"></span></a>
+									<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />" data-bind="click: () => { $parent.deleteTargetDataset(id()); }"><span class="glyphicon glyphicon-remove"></span></a>
+								<!-- /ko -->
+							</c:when>
+							<c:otherwise>
+								<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />" ><span class="glyphicon glyphicon-pencil"></span></a>
+								<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />" ><span class="glyphicon glyphicon-remove"></span></a>
+							</c:otherwise>
+						</c:choose>
 					</td>
 				</tr>
 				

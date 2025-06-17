@@ -1187,7 +1187,9 @@ public class XmlExportCreator extends ExportCreator {
 						}
 						
 						writer.writeStartElement(EXPLANATION_LIKE);
-						writer.writeCharacters(Integer.toString(likes));
+						if (likes != Integer.MAX_VALUE) {
+							writer.writeCharacters(Integer.toString(likes));
+						}
 						writer.writeEndElement(); // EXPLANATION_LIKES
 						writer.writeEndElement(); // EXPLANATION
 					}

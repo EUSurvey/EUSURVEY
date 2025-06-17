@@ -652,7 +652,7 @@ public class RunnerController extends BasicController {
 							!(survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
 							&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0)) {
 				ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
-				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+				Form form = new Form(resources, surveyService.getLanguage(lang),
 						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
 				sessionService.setFormStartDate(request, form, uniqueCode);
 				form.setSurvey(survey);
@@ -661,6 +661,7 @@ public class RunnerController extends BasicController {
 				result.addObject("surveyprefix", survey.getId());
 				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
+				result.addObject("runnermode", true);
 				result.addObject("invisibleElements", invisibleElements);
 				return result;
 			}
@@ -2059,6 +2060,32 @@ public class RunnerController extends BasicController {
 				return model;
 			}
 
+			if (origsurvey.getIsEVote() && !eVoteService.validateAnswerSet(answerSet)) {
+				Survey survey = origsurvey;
+				if (request.getParameter("language.code") != null
+						&& request.getParameter("language.code").length() == 2) {
+					survey = surveyService.getSurvey(origsurvey.getId(), lang);
+				}
+				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
+						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
+				f.getAnswerSets().add(answerSet);
+				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
+				f.setValidation(validation);
+
+				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
+
+				ModelAndView model = new ModelAndView("runner/runner", "form", f);
+				surveyService.initializeSkin(f.getSurvey());
+				model.addObject("submit", true);
+				model.addObject("runnermode", true);
+				model.addObject(Constants.UNIQUECODE, uniqueCode);
+				model.addObject(Constants.MESSAGE, resources.getMessage("error.invalidVote", null,
+						"Your selection is invalid.", locale));
+
+				return model;
+			}
+
 			try {
 				saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1, request);
 			} catch (InvalidEmailException ie) {
@@ -2151,7 +2178,7 @@ public class RunnerController extends BasicController {
 					!(survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
 					&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0)) {
 				ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
-				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+				Form form = new Form(resources, surveyService.getLanguage(lang),
 						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
 				sessionService.setFormStartDate(request, form, uniqueCode);
 				form.setSurvey(survey);
@@ -2160,6 +2187,7 @@ public class RunnerController extends BasicController {
 				result.addObject("surveyprefix", survey.getId());
 				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
+				result.addObject("runnermode", true);
 				result.addObject("invisibleElements", invisibleElements);
 				return result;
 			}
@@ -2167,7 +2195,7 @@ public class RunnerController extends BasicController {
 			if (survey.getIsSelfAssessment()) {
 				ModelAndView result = new ModelAndView("runner/saResult", Constants.UNIQUECODE,
 						answerSet.getUniqueCode());
-				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
+				Form form = new Form(resources, survey.getLanguage(),
 						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
 				form.setSurvey(survey);
 				form.getAnswerSets().add(answerSet);
@@ -2175,6 +2203,7 @@ public class RunnerController extends BasicController {
 				result.addObject(form);
 				result.addObject("surveyprefix", survey.getId());
 				result.addObject("issaresultpage", true);
+				result.addObject("runnermode", true);
 				
 				SAReportConfiguration config = selfassessmentService.getReportConfiguration(answerSet.getSurvey().getUniqueId());
 				result.addObject("SAReportConfiguration", config);
@@ -2225,7 +2254,7 @@ public class RunnerController extends BasicController {
 			if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()
 					&& survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
 				result.addObject("redirect", form.getFinalConfirmationLink(lang, answerSet));
-			} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null) {
+			} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null && user != null) {
 				result.addObject("asklogout", true);
 			}
 

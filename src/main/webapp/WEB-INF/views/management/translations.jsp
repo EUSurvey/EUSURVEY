@@ -382,7 +382,6 @@
 								</td>
 								<td style="width: 130px;">
 									<a target="_blank" href="<c:url value="/${sessioninfo.shortname}/management/downloadtranslation?id=${translation.id}&format=xml"/>" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DownloadXML" />"><img src="${contextpath}/resources/images/file_extension_xml_small.png" /></a>
-									<a target="_blank" href="<c:url value="/${sessioninfo.shortname}/management/downloadtranslation?id=${translation.id}&format=xls"/>" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DownloadXLS" />"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
 									<a target="_blank" href="<c:url value="/${sessioninfo.shortname}/management/downloadtranslation?id=${translation.id}&format=xlsx"/>" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />"><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></a>
 									<a target="_blank" href="<c:url value="/${sessioninfo.shortname}/management/downloadtranslation?id=${translation.id}&format=ods"/>" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DownloadODS" />"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
 								</td>

@@ -221,17 +221,24 @@
 			  cache: false,
 			  success: function(data)
 			  {
-				  if (data.newname != "0") 
-				  {
-					  var s = '<spring:message code="label.Export" />&nbsp;<b>' + data.newname + '</b> <spring:message code="label.availableForDownload" />. <spring:message code="label.GoTo" />&nbsp;<a class="visiblelink" href="<c:url value="/exports/list"/>"><spring:message code="label.ExportPage" /></a>';
-					  showSuccess(s);
-				  }
-				  // if need to check again for new exports 
+				  showExportMessages(data);
+
+				  // if need to check again for new exports
 				  window.checkExport = data.checkExport;
 			  }
 			});
-			
-			window.setTimeout("checkNewExports()", 60000);
+		}
+		window.setTimeout("checkNewExports()", 60000);
+	}
+
+	const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+	async function showExportMessages(data) {
+		for (var i = 0; i < data.newnames.length; i++) {
+			var s = '<spring:message code="label.Export" />&nbsp;<b>' + data.newnames[i].newname + '</b> <spring:message code="label.availableForDownload" />. <spring:message code="label.GoTo" />&nbsp;<a class="visiblelink" href="<c:url value="/exports/list"/>"><spring:message code="label.ExportPage" /></a>';
+			console.log("Success message")
+			showSuccess(s);
+
+			await sleep(2000);
 		}
 	}
 	
@@ -602,8 +609,8 @@
 				<c:if test="${oss != true}">
 					<tr>
 						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Confirmation" /></td>
-						<td>
-							<div style="float: left; margin-right: 10px;">
+						<td style="padding-left: 35px">
+							<div style="float: left; margin-left: -25px;">
 								<input class="required check" type="checkbox" name="radio-new-survey-audience" value="1" />
 							</div>
 							<spring:message code="message.highaudiencenew" />
@@ -613,8 +620,8 @@
 				<c:if test="${!USER.isECUser()}">
 					<tr>
 						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.DPA" /></td>
-						<td>
-							<div style="float: left; margin-right: 10px;">
+						<td style="padding-left: 35px">
+							<div style="float: left; margin-left: -25px;">
 								<input class="required check" type="checkbox" name="radio-new-survey-dpa" value="1" />
 							</div>
 							<spring:message code="message.dpanew" arguments="${contextpath}/home/dpa"/>
@@ -623,8 +630,8 @@
 				</c:if>
 				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.TOS" /></td>
-					<td>
-						<div style="float: left; margin-right: 10px;">
+					<td style="padding-left: 35px">
+						<div style="float: left; margin-left: -25px;">
 							<input class="required check" type="checkbox" name="radio-new-survey-tos" value="1" />
 						</div>
 						<spring:message code="message.tos" arguments="${contextpath}/home/tos"/>

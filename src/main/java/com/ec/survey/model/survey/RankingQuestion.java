@@ -157,14 +157,14 @@ public class RankingQuestion extends Question {
 	}
 
 	@Transient
-	public List<String> getAnswerWithStrippedTitleNoEscape(String answerValue) {
+	public List<String> getAnswerWithStrippedTitleNoEscape(String answerValue, boolean addAssignedValue) {
 		Map<String, RankingItem> children = getChildElementsByUniqueId();
 		List<String> rankingAnswerList = new ArrayList<>();
 		for (String uniqueId : answerValue.split(";")) {
 			RankingItem child = children.get(uniqueId);
 
 			if (null != child) {
-				rankingAnswerList.add(htmlUnescape(child.getStrippedTitleNoEscape()));
+				rankingAnswerList.add(htmlUnescape(child.getStrippedTitleNoEscape()) + (addAssignedValue ? "<span class='assignedValue hideme'>(" + child.getShortname() + ")</span>" : ""));
 			}
 		}
 		return rankingAnswerList;

@@ -348,6 +348,8 @@ function newBasicViewModel(element)
 	viewModel.maxDistanceExceeded = ko.observable(false);
 	viewModel.useAndLogic = ko.observable(false);
 	viewModel.median = ko.observable(0);
+	viewModel.points = ko.observable(0);
+	viewModel.quizPoints = ko.observable(0);
 	viewModel.changedForMedian = ko.observable(false);
 	viewModel.noNegativeScore = ko.observable(false);
 	
@@ -376,6 +378,7 @@ function newBasicViewModel(element)
 			viewModel.shortname = ko.observable(element.shortname());
 			viewModel.scoring = ko.observable(element.scoring());
 			viewModel.points = ko.observable(element.quizPoints());
+			viewModel.quizPoints = ko.observable(element.quizPoints());
 			viewModel.locked = ko.observable(element.locked());
 			viewModel.css = ko.observable(element.css());
 			viewModel.optional = ko.observable(element.optional());
@@ -402,6 +405,7 @@ function newBasicViewModel(element)
 			viewModel.shortname = ko.observable(element.shortname);
 			viewModel.scoring = ko.observable(element.scoring);
 			viewModel.points = ko.observable(element.quizPoints);
+			viewModel.quizPoints = ko.observable(element.quizPoints);
 			viewModel.locked = ko.observable(element.locked);
 			viewModel.css = ko.observable(element.css);
 			viewModel.optional = ko.observable(element.optional);
@@ -1686,7 +1690,7 @@ function newMatrixViewModel(element)
 		{
 			var questions = this.questions().slice();
 			questions.sort(function(a, b) { 
-			    return a.originalTitle().localeCompare(b.originalTitle());
+			    return a.originalTitle().stripHtml().localeCompare(b.originalTitle().stripHtml());
 			})
 			return questions;			
 		} else if (this.order() != null && this.order() == 2)
@@ -1998,6 +2002,10 @@ function newComplexTableItemViewModel(element)
 			viewModel.readonly = ko.observable(element.readonly);
 		}
 
+		if (viewModel.cellType() == 3 || viewModel.cellType() == 1) {
+			viewModel.optional(true)
+		}
+
 		viewModel.variables = [];				
 		viewModel.result = ko.observable("");
 
@@ -2083,6 +2091,7 @@ function newComplexTableItemViewModel(element)
 		//properties for rows / columns
 		viewModel.cellTypeChildren = ko.observable("");
 		viewModel.titleChildren = ko.observable("");
+		viewModel.titleChildrenMatch = ko.observable(false);
 		viewModel.optionalChildren = ko.observable(true);
 		viewModel.optionalIndeterminate = ko.observable(false); //Visual Checkbox indicator for different values
 		viewModel.numRowsChildren = ko.observable("");
@@ -2116,12 +2125,18 @@ function newComplexTableItemViewModel(element)
 		}
 	}
 	
-	viewModel.cellStyle = function() {
+	viewModel.cellStyle = function(newValue) {
 		if (viewModel.cellType() == 4) {
+			if (newValue != undefined) {
+				viewModel.useRadioButtons(newValue === 'RadioButton')
+			}
 			return viewModel.useRadioButtons() ? 'RadioButton' : 'SelectBox';
 		}
 		
 		if (viewModel.cellType() == 5) {
+			if (newValue != undefined) {
+				viewModel.useCheckboxes(newValue === 'CheckBox')
+			}
 			return viewModel.useCheckboxes() ? 'CheckBox' : 'ListBox';
 		}
 	}

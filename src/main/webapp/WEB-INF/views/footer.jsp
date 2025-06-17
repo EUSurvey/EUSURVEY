@@ -116,14 +116,14 @@
 			</div>
 			<div class="row" id="footer-content-languages-form" style="display: none">
 				<div style="max-width: 970px; margin-left: auto; margin-right: auto">		
-					<c:if test="${form != null && form.getLanguages().size() != 0 && useUILanguage == null}">
+					<c:if test="${form != null && form.getLanguages().size() != 0}">
 						<c:choose>
 							<c:when test="${isthankspage != null || isdraftinfopage != null}">
 								<a><esapi:encodeForHTML>${form.language.name}</esapi:encodeForHTML></a>
 							</c:when>
 							<c:otherwise>				
 								<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}"> 	
-									<a href="?surveylanguage=${lang.value.code}"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
+									<a href="?language=${lang.value.code}&surveylanguage=${lang.value.code}"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
 								</c:forEach>	
 							</c:otherwise>
 						</c:choose>						

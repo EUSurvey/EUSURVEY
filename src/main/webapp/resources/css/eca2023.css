@@ -103,6 +103,11 @@ body {
 	width: 1302px;
 }
 
+[body-responsive=true] #header {
+	width: 100%;
+	white-space: nowrap;
+}
+
 #header .languages {
 	margin-top: 28px;
 	margin-left: 400px;
@@ -494,10 +499,12 @@ body {
     margin: 0;
 }
 
-.logo_text {
+#logo_text {
+	/*
 	font-family: Candara, Segoe, Arial, sans-serif;
-	overflow: hidden;
 	line-height:1;
+	 */
+	overflow: hidden;
 }
 
 .logo_title {
@@ -509,6 +516,11 @@ body {
 	margin: 20px 0 0 40px;
 	margin: var(--header1LogoTitleMargin);
     font-size: 1.6em;
+	white-space: break-spaces;
+}
+
+[body-responsive=true] .logo_title {
+	margin-top: 0;
 }
 
 .logo_slogan {

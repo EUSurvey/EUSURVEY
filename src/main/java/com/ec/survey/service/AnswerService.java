@@ -1520,11 +1520,11 @@ public class AnswerService extends BasicService {
 	@Transactional
 	public Statistics getStatisticsForFilterHash(int surveyId, String hash, boolean useEagerLoading) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("from Statistics s where s.surveyId=:surveyId and filterHash=:filterHash order by id DESC");
-		query.setInteger("surveyId", surveyId);
-		query.setString("filterHash", hash);
+		Query<Statistics> query = session.createQuery("from Statistics s where s.surveyId=:surveyId and filterHash=:filterHash order by id DESC");
+		query.setParameter("surveyId", surveyId);
+		query.setParameter("filterHash", hash);
 		query.setMaxResults(1);
-		Statistics result = (Statistics) query.uniqueResult();
+		var result = query.uniqueResult();
 
 		if (result != null) {
 			if (result.getInvalid() != null && result.getInvalid()) {
@@ -1588,13 +1588,18 @@ public class AnswerService extends BasicService {
 	public Statistics getStatisticsOrStartCreator(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
 			boolean asynchronous) throws Exception {
 		filter = answerService.initialize(filter);
+
+		if (allanswers && !survey.isMissingElementsChecked()) {
+			surveyService.checkAndRecreateMissingElements(survey, filter);
+		}
+
 		Statistics statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers), useEagerLoading);
 
 		if (statistics == null) {
 			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
 			creator.init(survey, filter, allanswers);
 
-			if (asynchronous && !allanswers) {
+			if (asynchronous) {
 				try {
 
 					for (Runnable r : running) {
@@ -1645,9 +1650,6 @@ public class AnswerService extends BasicService {
 							logger.error(e.getLocalizedMessage(), e);
 						}
 
-						if (allanswers && !survey.isMissingElementsChecked()) {
-							surveyService.checkAndRecreateMissingElements(survey, filter);
-						}
 
 						statistics = this.getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers),
 								useEagerLoading);

@@ -32,11 +32,8 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
 
 @Service("pdfService")
 @Configurable
@@ -434,7 +431,7 @@ public class PDFService extends BasicService {
 		return null;
 	}
 	
-	public java.io.File createStatisticsQuizPDF(Survey survey, String exportId) throws IOException {
+	public java.io.File createStatisticsQuizPDF(Survey survey, String exportId, Locale locale) throws IOException {
 		String shortname = survey.getShortname();
 		logger.info("Starting PDF creation for quiz results (statistics) of survey " + shortname);
 		FileOutputStream os = null;
@@ -449,7 +446,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatisticsquiz/" + survey.getId() + Constants.PATH_DELIMITER + exportId, os);
+			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatisticsquiz/" + survey.getId() + Constants.PATH_DELIMITER + exportId + "?language=" + locale.toLanguageTag(), os);
 
 			return target;
 		} catch (Exception ex) {

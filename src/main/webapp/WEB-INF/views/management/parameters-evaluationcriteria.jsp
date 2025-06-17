@@ -1,18 +1,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <div id="sacriteria" data-bind="childrenComplete: myPostProcessingLogic" style="padding: 20px;">	
-	
-	<div style="display: flex; flex-direction: row; gap: 60px;">
-		<div style="display: flex; flex-direction: row; gap: 20px; background-color: #ddd; border-radius: 5px; padding: 15px;">
-			<div>
-				<label style="margin-bottom: 0;"><spring:message code="label.CreateNewCriterion" /></label>			
-				<input class="form-control" type="text" id="sacriterionname" maxlength="120" data-bind="event: { keydown: checkKeyCreateCriterion }" />			
-			</div>
-			<div style="margin-top: 22px; margin-left: 10px;">
-				<button data-bind="click: createCriterion" class="btn btn-success"><spring:message code="label.Create" /></button>
+
+	<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+		<div style="display: flex; flex-direction: row; gap: 60px;">
+			<div style="display: flex; flex-direction: row; gap: 20px; background-color: #ddd; border-radius: 5px; padding: 15px;">
+				<div>
+					<label style="margin-bottom: 0;"><spring:message code="label.CreateNewCriterion" /></label>
+					<input class="form-control" type="text" id="sacriterionname" maxlength="120" data-bind="event: { keydown: checkKeyCreateCriterion }" />
+				</div>
+				<div style="margin-top: 22px; margin-left: 10px;">
+					<button data-bind="click: createCriterion" class="btn btn-success"><spring:message code="label.Create" /></button>
+				</div>
 			</div>
 		</div>
-	</div>
+	</c:if>
 	
 	<div>
 		<!--  ko if: criteria().length == 0 -->
@@ -31,31 +33,39 @@
 			</thead>
 			<tbody data-bind="foreach: criteria()">
 				<tr data-bind="attr: {'data-id': id}">
-					<td data-bind="click: (data, event) => {$parent.enableCriteriaEditMode($data, event.target); }">
-						<span class="content" data-bind="text: name" style="word-break: break-all;" data-bind="click: $parent.toggleCriteriaEditMode($data.id())"></span>
+					<td <c:if test="${(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">data-bind="click: (data, event) => {$parent.enableCriteriaEditMode($data, event.target); }"</c:if> >
+						<span class="content" data-bind="text: name" style="word-break: break-all;" <c:if test="${(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">data-bind="click: $parent.toggleCriteriaEditMode($data.id())"</c:if> ></span>
 						<textarea class="form-control inline editmode" style="display: none; word-break: break-all; resize: none;" maxlength="120" type="text" data-bind="textInput: name, event: { keydown: $parent.checkKeyCriteria }" ></textarea>
 						<div class="validation-error-already-exists validation-error hideme"><spring:message code="message.CriterionAlreadyExists" /></div>
 						<div class="validation-error-empty-name validation-error hideme"><spring:message code="message.CriterionNameEmpty" /></div>
 					</td>
-					<td data-bind="click: (data, event) => {$parent.enableCriteriaEditMode($data, event.target); }">
+					<td <c:if test="${(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">data-bind="click: (data, event) => {$parent.enableCriteriaEditMode($data, event.target); }"</c:if> >
 						<span class="content" data-bind="text: acronym" style="word-break: break-all;" ></span>
 						<textarea class="form-control inline editmode" style="display: none; width: 70px; word-break: break-all; resize: none;" maxlength="120" type="text" data-bind="textInput: acronym, event: { keydown: $parent.checkKeyCriteria }" ></textarea>
 						<div class="validation-error-empty-acronym validation-error hideme"><spring:message code="message.CriterionAcronymEmpty" /></div>
 					</td>
-					<td data-bind="click: (data, event) => {$parent.enableCriteriaEditMode($data, event.target); }">
+					<td <c:if test="${(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">data-bind="click: (data, event) => {$parent.enableCriteriaEditMode($data, event.target); }"</c:if> >
 						<span class="content" data-bind="text: type" style="word-break: break-all;" ></span>
 						<textarea class="form-control inline editmode criteriontype" style="display: none; width: 200px; word-break: break-all; resize: none;" maxlength="120" type="text" data-bind="textInput: type, event: { keydown: $parent.checkKeyCriteria }" ></textarea>
 						<div class="validation-error-empty-type validation-error hideme"><spring:message code="message.CriterionTypeEmpty" /></div>
 					</td>
 					<td>
-						<!-- ko if: $parent.criterionInEditMode() != null && $parent.criterionInEditMode().attr("data-id") == id() -->
-							<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Discard" />" data-bind="click: () => { $parent.discardChanges($data); }"><span class="glyphicon glyphicon-ban-circle"></span></a>
-							<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.SaveAndClose" />" data-bind="click: () => { $parent.checkValidation($parent.criterionInEditMode()); }"><span class="glyphicon glyphicon-ok"></span></a>
-						<!-- /ko -->
-						<!-- ko if: $parent.criterionInEditMode() == null || ($parent.criterionInEditMode() != null && $parent.criterionInEditMode().attr("data-id") != id()) -->
-							<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: () => { $parent.enableCriteriaEditMode($data); }"><span class="glyphicon glyphicon-pencil"></span></a>
-							<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />" data-bind="click: () => { $parent.deleteCriterion(id()); }"><span class="glyphicon glyphicon-remove"></span></a>
-						<!-- /ko -->
+						<c:choose>
+							<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+								<!-- ko if: $parent.criterionInEditMode() != null && $parent.criterionInEditMode().attr("data-id") == id() -->
+									<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Discard" />" data-bind="click: () => { $parent.discardChanges($data); }"><span class="glyphicon glyphicon-ban-circle"></span></a>
+									<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.SaveAndClose" />" data-bind="click: () => { $parent.checkValidation($parent.criterionInEditMode()); }"><span class="glyphicon glyphicon-ok"></span></a>
+								<!-- /ko -->
+								<!-- ko if: $parent.criterionInEditMode() == null || ($parent.criterionInEditMode() != null && $parent.criterionInEditMode().attr("data-id") != id()) -->
+									<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: () => { $parent.enableCriteriaEditMode($data); }"><span class="glyphicon glyphicon-pencil"></span></a>
+									<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />" data-bind="click: () => { $parent.deleteCriterion(id()); }"><span class="glyphicon glyphicon-remove"></span></a>
+								<!-- /ko -->
+							</c:when>
+							<c:otherwise>
+								<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+								<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+							</c:otherwise>
+						</c:choose>
 					</td>
 				</tr>
 				

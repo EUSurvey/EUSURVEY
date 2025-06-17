@@ -25,9 +25,9 @@
 				<tr>
 					<c:if test="${publication == null}">
 						<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-							<th class="checkDelete">&nbsp;</th>
+							<th class="topaligned checkDelete question-title"><span data-toggle="tooltip" class="glyphicon glyphicon-info-sign" style="color:white;" title="<spring:message code="info.LongQuestionNameShortened" />"></span></th>
 						</c:if>
-						<th class="topaligned" style="width: 150px"><div style="width: 133px"><spring:message code="label.Actions" /></div></th>
+						<th class="topaligned question-title" style="width: 150px"><div style="width: 133px"><spring:message code="label.Actions" /></div></th>
 					</c:if>
 					<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
 						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
@@ -37,38 +37,38 @@
 									<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
 									<c:when test="${question.getType() == 'Matrix'}">
 										<c:forEach items="${question.getQuestions()}" var="matrixquestion">
-											<th class="topaligned cell${matrixquestion.id}"><div class="headertitle">${question.getStrippedTitle()}&nbsp;:&nbsp;${matrixquestion.getStrippedTitle()}&nbsp;<span class="assignedValue hideme">(${matrixquestion.shortname})</span></div></th>
+											<th class="topaligned cell${matrixquestion.id} question-title"><div class="headertitle" title="${question.getStrippedTitle()}&nbsp;:&nbsp;${matrixquestion.getStrippedTitle()}">${question.getStrippedTitle()}&nbsp;:&nbsp;${matrixquestion.getStrippedTitle()}&nbsp;<span class="assignedValue hideme">(${matrixquestion.shortname})</span></div></th>
 											<c:set var="count" value="${count + 1}" scope="page"/>
 										</c:forEach>
 									</c:when>
 									<c:when test="${question.getType() == 'Table'}">
 										<c:forEach items="${question.getQuestions()}" var="tablequestion">
 											<c:forEach items="${question.getAnswers()}" var="tableanswer">
-												<th class="topaligned cell${tablequestion.id}-${tableanswer.id}"><div class="headertitle">${question.getStrippedTitle()}&nbsp;${tablequestion.getStrippedTitle()} <span class="assignedValue hideme">(${tablequestion.shortname})</span> : ${tableanswer.getStrippedTitle()}<span class="assignedValue hideme">(${tableanswer.shortname})</span> </div></th>
+												<th class="topaligned cell${tablequestion.id}-${tableanswer.id} question-title"><div class="headertitle" title="${question.getStrippedTitle()}&nbsp;${tablequestion.getStrippedTitle()}">${question.getStrippedTitle()}&nbsp;${tablequestion.getStrippedTitle()} <span class="assignedValue hideme">(${tablequestion.shortname})</span> : ${tableanswer.getStrippedTitle()}<span class="assignedValue hideme">(${tableanswer.shortname})</span> </div></th>
 												<c:set var="count" value="${count + 1}" scope="page"/>
 											</c:forEach>
 										</c:forEach>
 									</c:when>
 									<c:when test="${question.getType() == 'RatingQuestion'}">
 										<c:forEach items="${question.getQuestions()}" var="childquestion">
-											<th class="topaligned cell${childquestion.id}"><div class="headertitle">${question.getStrippedTitle()}&nbsp;:&nbsp;${childquestion.getStrippedTitle()}&nbsp;<span class="assignedValue hideme">(${childquestion.shortname})</span></div></th>
+											<th class="topaligned cell${childquestion.id}" question-title><div class="headertitle" title="${question.getStrippedTitle()}&nbsp;:&nbsp;${childquestion.getStrippedTitle()}">${question.getStrippedTitle()}&nbsp;:&nbsp;${childquestion.getStrippedTitle()}&nbsp;<span class="assignedValue hideme">(${childquestion.shortname})</span></div></th>
 											<c:set var="count" value="${count + 1}" scope="page"/>
 										</c:forEach>
 									</c:when>
 									<c:when test="${question.getType() == 'Upload'}">
 										<c:if test="${publication == null || publication.getShowUploadedDocuments()}">
-											<th class="topaligned cell${question.id}"><div class="headertitle">${question.getStrippedTitle()}  <span class="assignedValue hideme">(${question.shortname})</span></div></th>
+											<th class="topaligned cell${question.id} question-title"><div class="headertitle" title="${question.getStrippedTitle()}">${question.getStrippedTitle()}  <span class="assignedValue hideme">(${question.shortname})</span></div></th>
 											<c:set var="count" value="${count + 1}" scope="page"/>
 										</c:if>
 									</c:when>
 									<c:when test="${question.getType() == 'ComplexTable'}">
 										<c:forEach items="${question.getQuestionChildElements()}" var="child">
-											<th class="topaligned cell${child.id}"><div class="headertitle">${child.getResultTitle(question)}<span class="assignedValue hideme">(${child.shortname})</span></div></th>
+											<th class="topaligned cell${child.id} question-title"><div class="headertitle" title="${child.getResultTitle(question)}">${child.getResultTitle(question)}<span class="assignedValue hideme">(${child.shortname})</span></div></th>
 											<c:set var="count" value="${count + 1}" scope="page"/>
 										</c:forEach>
 									</c:when>
 									<c:otherwise>
-										<th class="topaligned cell${question.id}"><div class="headertitle">${question.getStrippedTitle()}  <span class="assignedValue hideme">(${question.shortname})</span></div></th>
+										<th class="topaligned cell${question.id} question-title"><div class="headertitle" title="${question.getStrippedTitle()}">${question.getStrippedTitle()} <span class="assignedValue hideme">(${question.shortname})</span></div></th>
 										<c:set var="count" value="${count + 1}" scope="page"/>
 									</c:otherwise>
 								</c:choose>
@@ -127,8 +127,7 @@
 									<c:when test="${question.getType() == 'Matrix'}">
 										<c:forEach items="${question.questions}" var="matrixQuestion">
 											<th class="filtercell cell${matrixQuestion.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-												<div>
-													<button type="button" class="btn btn-default" onclick="showOverlayMenu(this)" >
+													<button type="button" class="btn btn-default dropdownFilter" onclick="showOverlayMenu(this)" >
 													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
 													    <span class="caret"></span>
 													  </button>
@@ -153,14 +152,13 @@
 															<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
 															</button>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<div class="resultoverlaymenu overlaymenu hideme">
 																<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
                                                  					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
 																</c:if>
 														   </div>
 													   </div>
-												</div>
 											</th>
 										</c:forEach>
 									</c:when>
@@ -173,7 +171,7 @@
 														<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
 														</button>
-														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
@@ -187,8 +185,7 @@
 									<c:when test="${question.getType() == 'RatingQuestion'}">
 										<c:forEach items="${question.questions}" var="childQuestion">
 											<th class="filtercell cell${childQuestion.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-												<div>
-													<button type="button" class="btn btn-default" onclick="showOverlayMenu(this)" >
+													<button type="button" class="btn btn-default dropdownFilter" onclick="showOverlayMenu(this)" >
 													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
 													    <span class="caret"></span>
 													  </button>
@@ -213,14 +210,13 @@
 														<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
 														</button>
-														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
 															</c:if>
 													   </div>
 												   </div>
-												</div>
 											</th>
 										</c:forEach>
 									</c:when>
@@ -232,8 +228,7 @@
 											<th class="filtercell cell${child.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
 												<c:choose>
 													<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'MultipleChoice'}">
-														<div>
-														  <button type="button" class="btn btn-default" onclick="showOverlayMenu(this)" >
+														  <button type="button" class="btn btn-default dropdownFilter" onclick="showOverlayMenu(this)" >
 														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
 														    <span class="caret"></span>
 														  </button>
@@ -258,15 +253,13 @@
 																<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 															    	<span class="glyphicon glyphicon-option-vertical"></span>
 																</button>
-																<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+																<div class="resultoverlaymenu overlaymenu hideme">
 																	<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
 	                                                 					<a onclick="showDeleteColumnDialog('${child.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
 																	</c:if>
 															   </div>
 														   </div>
-														  
-														</div>
 													</c:when>
 													<c:otherwise>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(child.id, child.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${child.getCellType() == 'Number' || child.getCellType() == 'Formula' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${child.id}|${child.uniqueId}" />
@@ -274,7 +267,7 @@
 															<button type="button" class="unstyledbutton"  onclick="showOverlayMenu(this)" >
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
 															</button>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<div class="resultoverlaymenu overlaymenu hideme">
 																<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
 	                                                					<a onclick="showDeleteColumnDialog('${child.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
@@ -290,8 +283,7 @@
 										<th class="filtercell cell${question.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
 											<c:choose>
 												<c:when test="${question.getType() == 'GalleryQuestion'}">
-													<div>
-													<button type="button" class="btn btn-default" onclick="showOverlayMenu(this)" >
+													  <button type="button" class="btn btn-default dropdownFilter" onclick="showOverlayMenu(this)" >
 													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
 													    <span class="caret"></span>
 													  </button>
@@ -316,14 +308,13 @@
 														<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
 														</button>
-														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
 															</c:if>
 													   </div>
-													   </div>
-													</div>
+													  </div>
 												</c:when>
 												<c:when test="${question.getType() == 'Upload'}">
 													<div style="float: right">
@@ -332,22 +323,21 @@
 															<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
 															</button>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<div class="resultoverlaymenu overlaymenu hideme">
 																<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
 														   </div>
 															</c:if>
 													   </div>		
 													</div>
 													
-													<c:if test="${(sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1 || (form.survey.isDraft && USER.getLocalPrivilegeValue('AccessDraft') > 0) || (publication != null && publication.getShowUploadedDocuments())) && questionswithuploadedfiles != null && questionswithuploadedfiles.contains(question.uniqueId)}">
+													<c:if test="${(sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1 || USER.getResultAccessWrite() || (form.survey.isDraft && USER.getLocalPrivilegeValue('AccessDraft') > 0) || (publication != null && publication.getShowUploadedDocuments())) && questionswithuploadedfiles != null && questionswithuploadedfiles.contains(question.uniqueId)}">
 														<button type="button" class="unstyledbutton" onclick="showExportDialog('Files${question.uniqueId}${form.survey.isDraft}', 'zip');"  data-toggle="tooltip" data-placement="top" title="<spring:message code="label.DownloadAllFiles" />"><span class="glyphicon glyphicon-save"></span></button>
 													</c:if>		
 													
 													<div style="clear: both"></div>				
 												</c:when>
 												<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion'}">
-													<div>
-													  <button type="button" class="btn btn-default" onclick="showOverlayMenu(this)" >
+													  <button type="button" class="btn btn-default dropdownFilter" onclick="showOverlayMenu(this)" >
 													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
 													    <span class="caret"></span>
 													  </button>
@@ -388,19 +378,16 @@
 															<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
 															</button>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<div class="resultoverlaymenu overlaymenu hideme">
 																<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
                                                  					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
 																</c:if>
 														   </div>
 													   </div>
-													  
-													</div>
 												</c:when>
 												<c:when test="${question.getType() == 'RankingQuestion'}">
-													<div>
-													  <button type="button" class="btn btn-default" onclick="showOverlayMenu(this)" >
+													  <button type="button" class="btn btn-default dropdownFilter" onclick="showOverlayMenu(this)" >
 													    <span class="nobreak"><spring:message code="label.AllValues" /></span>
 													    <span class="caret"></span>
 													  </button>
@@ -426,15 +413,13 @@
 															<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
 															</button>
-															<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+															<div class="resultoverlaymenu overlaymenu hideme">
 																<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
                                                  					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
 																</c:if>
 														   </div>
 													   </div>
-													  
-													</div>													
 												</c:when>
 												<c:when test="${question.getType() == 'DateQuestion'}">
 													<div class="btn-toolbar" style="margin: 0px; text-align: center; display: inline-block; vertical-align: middle;">
@@ -477,7 +462,7 @@
 														<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
 														</button>
-														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
@@ -491,7 +476,7 @@
 														<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
 														</button>
-														<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
@@ -638,8 +623,7 @@
 						</c:if>
 						<c:if test='${filter.visible("languages") == true}'>
 							<th class="filtercell celllanguages">
-								<div>
-									<button type="button" class="btn btn-default" onclick="showOverlayMenu(this)" >
+									<button type="button" class="btn btn-default dropdownFilter" onclick="showOverlayMenu(this)" >
 									    <span class="nobreak"><spring:message code="label.AllValues" /></span>
 									    <span class="caret"></span>
 									  </button>
@@ -659,7 +643,6 @@
 											</div>
 										</c:forEach>
 									  </div>
-								</div>
 							</th>
 						</c:if>
 					</c:if>
@@ -746,12 +729,35 @@
 	#contentstablebody .reply a:first-of-type {
 		margin-right: 8px;
 	}
-	
+
+	/* Dummy class used as element selector */
+	#contentstable .question-title {
+	}
+
+
 </style>
 
 <script type="text/javascript"> 
-var scrollTimeout = null;
-var closeOverlayDivsEnabled = false;
+	var scrollTimeout = null;
+	var closeOverlayDivsEnabled = false;
+
+	$(".question-title").on('click', function() {
+		$(".question-title").each(function() {
+			if($(this).hasClass("nowrap-ellipsis-title")) {
+				$(this).removeClass("nowrap-ellipsis-title");
+			} else {
+				$(this).addClass("nowrap-ellipsis-title");
+			}
+		});
+		adaptScrollArea();
+	});
+
+	$(".question-title").each(function() {
+		$(this).addClass("nowrap-ellipsis-title");
+	});
+
+	adaptScrollArea();
+
 
 		$(function() {
 			
@@ -814,8 +820,10 @@ var closeOverlayDivsEnabled = false;
 				
 		         return result;
 		     });
-			
- 			  $(window).scroll(function() {$(".overlaymenu").hide();});
+
+ 			  $(window).scroll(function() {
+				   $(".overlaymenu").hide();
+			   });
  			  $(window).resize(function() {
  				  $(".overlaymenu").hide();
  				  adaptScrollArea();
@@ -1070,15 +1078,15 @@ var closeOverlayDivsEnabled = false;
 		{
 			<c:choose>
 				<c:when test="${publication != null}">
-				var height = $( window ).height() - 640; //530;
+				var height = $( window ).height() - $('#scrollarea').offset().top - 10; //530;
 				var statheight = $( window ).height() - 580;
 				</c:when>
 				<c:otherwise>
-				var height = $( window ).height() - 430;
+				var height = $( window ).height() - $('#scrollarea').offset().top - 10;
 				var statheight = $( window ).height() - 480;
 				</c:otherwise>
-			</c:choose>			
-			
+			</c:choose>
+
 			 if (height < 200) height = 200;
 			 $('#scrollarea').css("height", height);
 			 
@@ -1393,8 +1401,6 @@ var closeOverlayDivsEnabled = false;
 						  									$(div).append(escapeXml(list[i++]));
 						  								</c:otherwise>
 						  							</c:choose>
-													$(div).find(".hideme").remove();
-						  							div.innerText = div.innerText + " "
 													$(td).append(div);
 													$(tr).append(td);
 												

@@ -34,7 +34,7 @@ public class PdfExportCreator extends ExportCreator {
 	
 	@Override
 	void exportStatisticsQuiz() throws IOException {
-		File file = pdfService.createStatisticsQuizPDF(form.getSurvey(), export.getId().toString());
+		File file = pdfService.createStatisticsQuizPDF(form.getSurvey(), export.getId().toString(), locale);
 		FileInputStream fis = new FileInputStream(file);
 		IOUtils.copy(fis, outputStream);
 		fis.close();

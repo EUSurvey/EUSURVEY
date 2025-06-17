@@ -11,7 +11,7 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
 @Entity
-@Table(name = "MESSAGES")
+@Table(name = "MESSAGES", indexes = { @Index(name = "MESSAGE_USER", columnList = "M_USER")})
 public class Message{
 	
 	private int id;

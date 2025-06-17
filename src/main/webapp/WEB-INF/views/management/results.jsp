@@ -409,6 +409,7 @@
 					hideStatistics();
 					hideStatisticsDelphi();
 					showContent();
+					adaptScrollArea();
 					break;
 				case 'statistics':
 					hideECF();
@@ -1097,6 +1098,29 @@
 			}
 			
 		}
+
+		function settingsSubmit(){
+
+			//Find tds which are the first in their row (first-child, aka first column) that have a checked child (has(:checked))
+			const areAnyShown = $("#tblConfigurationFromResult").find("tr > td:first-child:has(:checked)").length > 0
+
+			//Same as above but for second column
+			const areAnyExported = $("#tblConfigurationFromResult").find("tr > td:nth-child(2):has(:checked)").length > 0
+
+			if (!areAnyShown) {
+				showError('<spring:message code="message.PleaseShowAnyQuestion" />')
+				return
+			}
+
+			if (!areAnyExported) {
+				showError('<spring:message code="message.PleaseExportAnyQuestion" />')
+				return
+			}
+
+			$('#resultsFormMode').val('configure');
+			$('#configure-columns-dialog').modal('hide');
+			$('#resultsForm').submit();
+		}
 		
 	</script>
 	
@@ -1455,7 +1479,7 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<a id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-primary" ><spring:message code="label.OK" /></a>		
+			<a id="btnOkFromConfigurationResult" onclick="settingsSubmit()" class="btn btn-primary" ><spring:message code="label.OK" /></a>
 			<a class="btn btn-default" onclick="resetSelections($('#tblConfigurationFromResult'))" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
@@ -1565,7 +1589,6 @@
 							<select class="form-control" style="width:150px;" id="exportnt-format-content"
 								onchange="if (this.value.startsWith('xls')) $('#export-split-mcq-row').show(); else $('#export-split-mcq-row').hide();">
 
-								<option value="xls">XLS</option>
 								<option value="xlsx">XLSX</option>
 								<option value="ods">ODS</option>
 								<option value="xml">XML</option>
@@ -1578,7 +1601,6 @@
 								<c:if test="${form.survey.isDelphi}">
 									<option value="pdfReport">PDF (+graphs)</option>
 								</c:if>
-								<option value="xls">XLS</option>
 								<option value="xlsx">XLSX</option>
 								<option value="ods">ODS</option>
 								<option value="docx">DOCX</option>
@@ -1588,15 +1610,12 @@
 								<option value="pdf">PDF</option>
 							</select>
 							<select class="form-control" id="exportnt-format-ecf1">
-								<option value="xls">XLS</option>
 								<option value="xlsx">XLSX</option>
 							</select>
 							<select class="form-control" id="exportnt-format-ecf2">
-								<option value="xls">XLS</option>
 								<option value="xlsx">XLSX</option>
 							</select>
 							<select class="form-control" id="exportnt-format-ecf3">
-								<option value="xls">XLS</option>
 								<option value="xlsx">XLSX</option>
 							</select>
 							<select class="form-control" id="exportnt-format-files">

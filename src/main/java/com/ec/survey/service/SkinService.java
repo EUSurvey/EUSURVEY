@@ -153,4 +153,11 @@ public class SkinService extends BasicService {
 		List<Skin> skins = query.list();
 		return !skins.isEmpty() ? skins.get(0) : null;
 	}
+
+	@Transactional
+	public void removeSurveySkins(List<Integer> skinIds) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("UPDATE Survey s SET s.skin = NULL WHERE s.skin.id IN (:skinIds)").setParameter("skinIds", skinIds);
+		query.executeUpdate();
+	}
 }

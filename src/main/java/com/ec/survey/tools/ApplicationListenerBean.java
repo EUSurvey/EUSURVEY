@@ -908,6 +908,24 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 
 		// the new settings are only created if they do not exist yet
 		schemaService.CreateLimitsForExternals();
+
+		if (status.getDbversion() < 126){
+			logger.info("starting upgrade step 126");
+			schemaService.step126();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 127){
+			logger.info("starting upgrade step 127");
+			schemaService.step127();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 128){
+			logger.info("starting upgrade step 128");
+			schemaService.step128();
+			status = schemaService.getStatus();
+		}
 	}
 
 	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {

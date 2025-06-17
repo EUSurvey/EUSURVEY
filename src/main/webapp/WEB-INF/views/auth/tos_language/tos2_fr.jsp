@@ -1,6 +1,6 @@
 <ol class="priv">
 	<li>
-		<h4>Version 1, dernière mise à jour: 22 mai 2019</h4>
+		<h4>Version 2, dernière mise à jour: 06.03.2024</h4>
 	</li>
 	<li>
 		<h4>Avant-propos:</h4>

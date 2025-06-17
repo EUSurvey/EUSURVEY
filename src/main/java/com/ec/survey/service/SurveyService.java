@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
@@ -9,9 +10,12 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.chargeback.MonthlyCharge;
 import com.ec.survey.model.chargeback.OrganisationCharge;
 import com.ec.survey.model.chargeback.PublishedSurvey;
+import com.ec.survey.model.delphi.DelphiCommentLike;
+import com.ec.survey.model.delphi.DelphiExplanationLike;
 import com.ec.survey.model.selfassessment.SACriterion;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.replacements.Pair;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.tools.*;
 import com.ec.survey.tools.activity.ActivityRegistry;
@@ -36,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +50,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.sql.Array;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -132,8 +136,10 @@ public class SurveyService extends BasicService {
 				" ,s.ECF" +
 				" ,s.EVOTE" +
 				" ,s.SELFASSESSMENT" +
+				" ,GROUP_CONCAT(t.TAG_NAME SEPARATOR ' ')" +
 				" from SURVEYS s" +
 				" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID" +
+				" LEFT JOIN SURVEYS_TAGS st ON s.SURVEY_ID = st.SURVEY_SURVEY_ID LEFT JOIN TAGS t ON st.TAGS_TAG_ID = t.TAG_ID" +
 				" where s.ISDRAFT = 1 and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)";
 		HashMap<String, Object> parameters = new HashMap<>();
 		sql += getSql(filter, parameters);
@@ -186,7 +192,16 @@ public class SurveyService extends BasicService {
 			survey.setIsDelphi((Boolean) row[rowIndex++]);// 21
 			survey.setIsECF((Boolean) row[rowIndex++]);
 			survey.setIsEVote((Boolean) row[rowIndex++]);	
-			survey.setIsSelfAssessment((Boolean) row[rowIndex]);	
+			survey.setIsSelfAssessment((Boolean) row[rowIndex++]);
+
+			String tags = (String) row[rowIndex];
+			if (tags != null && tags.length() > 1) {
+				for (String tagname : tags.split(" ")) {
+					Tag tag = new Tag();
+					tag.setName(tagname);
+					survey.getTags().add(tag);
+				}
+			}
 
 			surveys.add(survey);
 		}
@@ -710,28 +725,27 @@ public class SurveyService extends BasicService {
 				oQueryParameters.put("ownerId", filter.getUser().getId());
 			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("shared")) {
 				// Overriding condition by sharing condition
+				var suraccessOr = "";
+				//Access departments can be from ecas or just all from "SYSTEM"
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
-					sql.append(
-							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
-					oQueryParameters.put("ownerId", filter.getUser().getId());
+					suraccessOr = "OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))";
 					oQueryParameters.put("login", filter.getUser().getLogin());
-				} else {
-					sql.append(
-							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
-					oQueryParameters.put("ownerId", filter.getUser().getId());
+				} else if (filter.getUser().getType().equalsIgnoreCase("SYSTEM")) {
+					suraccessOr = "OR lower(a.ACCESS_DEPARTMENT) = \"system\"";
 				}
+				sql.append(" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId ").append(suraccessOr).append(") AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
+				oQueryParameters.put("ownerId", filter.getUser().getId());
 			} else {
-				// Searching for the last case, assuming selector is "all"
+				var suraccessOr = "";
+				//Access departments can be from ecas or just all from "SYSTEM"
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
-					sql.append(
-							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
-					oQueryParameters.put("ownerId", filter.getUser().getId());
+					suraccessOr = "OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))";
 					oQueryParameters.put("login", filter.getUser().getLogin());
-				} else {
-					sql.append(
-							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
-					oQueryParameters.put("ownerId", filter.getUser().getId());
+				} else if (filter.getUser().getType().equalsIgnoreCase("SYSTEM")) {
+					suraccessOr = "OR lower(a.ACCESS_DEPARTMENT) = \"system\"";
 				}
+				sql.append(" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId ").append(suraccessOr).append(") AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
+				oQueryParameters.put("ownerId", filter.getUser().getId());
 			}
 		}
 
@@ -833,6 +847,26 @@ public class SurveyService extends BasicService {
 			}
 			sql.append("firstPublished < :firstPublishedTo");
 			oQueryParameters.put("firstPublishedTo", Tools.getFollowingDay(filter.getFirstPublishedTo()));
+		}
+
+		sql.append(" GROUP BY s.SURVEY_ID");
+
+		if (filter.getTags() != null && !filter.getTags().isEmpty()) {
+			sql.append(" HAVING");
+
+			boolean firstLoop = true;
+			int tagcounter = 1;
+			for (String tag : filter.getTags()) {
+				if (firstLoop) {
+					sql.append(" SUM(t.TAG_NAME = :tag" + tagcounter +") > 0");
+					oQueryParameters.put("tag"+ tagcounter, tag);
+					firstLoop = false;
+				} else {
+					tagcounter++;
+					sql.append(" AND SUM(t.TAG_NAME = :tag" + tagcounter +") > 0");
+					oQueryParameters.put("tag"+ tagcounter, tag);
+				}
+			};
 		}
 
 		if (filter.getSortKey() != null && filter.getSortKey().length() > 0) {
@@ -969,7 +1003,6 @@ public class SurveyService extends BasicService {
 		return null;
 	}
 
-
 	@Transactional(readOnly = true)
 	public Survey getSurveyByAlias(String alias, boolean draft) {
 		Session session = sessionFactory.getCurrentSession();
@@ -1045,6 +1078,7 @@ public class SurveyService extends BasicService {
 	public void initializeSurvey(Survey survey) {
 		Hibernate.initialize(survey.getBackgroundDocuments());
 		Hibernate.initialize(survey.getUsefulLinks());
+		Hibernate.initialize(survey.getTags());
 		Hibernate.initialize(survey.getPublication().getFilter().getVisibleQuestions());
 		Hibernate.initialize(survey.getPublication().getFilter().getExportedQuestions());
 		Hibernate.initialize(survey.getPublication().getFilter().getFilterValues());
@@ -1649,6 +1683,12 @@ public class SurveyService extends BasicService {
 				}
 				translationService.save(translationsCopy);
 			} 
+		}
+
+		//During published, missing Translation elements might be added.
+		//So also add them in the original such that there is no difference
+		if (doTranslationsDiffer(originalSurvey, publishedSurvey)) {
+			synchronizeTranslation(originalSurvey, userId);
 		}
 
 		Survey ob = session.get(Survey.class, originalSurvey.getId());
@@ -2276,6 +2316,9 @@ public class SurveyService extends BasicService {
 		query = session.createSQLQuery("DELETE FROM TRANSLATIONS WHERE SURVEY_ID = :id");
 		query.setParameter("id", id).executeUpdate();
 
+		query = session.createSQLQuery("DELETE pae.* FROM POSSIBLEANSWER_ELEMENT pae LEFT JOIN ELEMENTS e3 ON e3.ID = pae.dependentElements_ID LEFT JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e3.ID LEFT JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE s.SURVEY_UID = :uid");
+		query.setParameter("uid", uid).executeUpdate();
+
 		if (deleteAccesses) {
 			List<Access> accesses = getAccesses(id);
 			for (Access access : accesses) {
@@ -2459,6 +2502,8 @@ public class SurveyService extends BasicService {
 			elem.setUniqueId(newUniqueId);
 		}
 
+		importSurveyTags(copy);
+
 		if (result.getActiveSurvey() != null) {
 			copy.setIsActive(false);
 			copy.setIsPublished(true);
@@ -2467,6 +2512,22 @@ public class SurveyService extends BasicService {
 		this.update(copy, false, true, false, user.getId());
 
 		return oldToNewUniqueIds;
+	}
+
+	private void importSurveyTags(Survey survey) {
+		var importedTags = survey.getTags();
+		if (importedTags != null && !importedTags.isEmpty()) {
+			var tags = getTagsForImport(importedTags.stream().map(t -> t.getName()).collect(toList()));
+
+			survey.setTags(tags);
+
+			for (Tag iTag : importedTags) {
+				if (tags.stream().noneMatch(t -> t.getName().equals(iTag.getName()))) {
+					var newTag = createTag(iTag.getName());
+					survey.getTags().add(newTag);
+				}
+			}
+		}
 	}
 
 	private Survey importOldPublishedSurvey(Survey survey, User user, Map<String, String> oldToNewUniqueIds)
@@ -2482,6 +2543,8 @@ public class SurveyService extends BasicService {
 				copyOld.setSkin(null);
 			}
 		}
+
+		importSurveyTags(copyOld);
 
 		// update source_ids
 		for (Element element : copyOld.getElementsRecursive(true)) {
@@ -2510,6 +2573,8 @@ public class SurveyService extends BasicService {
 				copyActive.setSkin(null);
 			}
 		}
+
+		importSurveyTags(copyActive);
 
 		// update source_ids
 		for (Element element : copyActive.getElementsRecursive(true)) {
@@ -2707,13 +2772,18 @@ public class SurveyService extends BasicService {
 		
 		List<AnswerExplanation> explanations;
 		List<AnswerComment> comments;
-		
+
+		List<DelphiExplanationLike> explanationLikes;
+		List<DelphiCommentLike> commentLikes;
+
 		if (draft) {
 			translations = result.getTranslations();
 			answerSets = result.getAnswerSets();
 			files = result.getFiles();
 			explanations = result.getExplanations();
-			comments = result.getComments();	
+			comments = result.getComments();
+			explanationLikes = result.getExplanationLikes();
+			commentLikes = result.getCommentLikes();
 			selfassessmentService.importData(result, survey, evaluationCriteriaMappings, oldIdToNewCriteria);
 		} else {
 			if (surveyid.equals(result.getActiveSurvey().getId())) {
@@ -2722,7 +2792,7 @@ public class SurveyService extends BasicService {
 				translations = result.getOldTranslations().get(surveyid);
 			}
 
-			if (result.getActiveAnswerSets() != null)
+			if (result.getActiveAnswerSets() != null) {
 				for (List<AnswerSet> list : result.getActiveAnswerSets()) {
 					for (AnswerSet as : list) {
 						if (as.getSurveyId() == surveyid) {
@@ -2730,14 +2800,17 @@ public class SurveyService extends BasicService {
 						}
 					}
 				}
+			}
 
 			files = result.getActiveFiles();
 			
 			explanations = result.getActiveExplanations();
 			comments = result.getActiveComments();
+			explanationLikes = result.getActiveExplanationLikes();
+			commentLikes = result.getActiveCommentLikes();
 			selfassessmentService.adaptEvaluationCriteria(survey, evaluationCriteriaMappings, oldIdToNewCriteria);
 		}
-	
+
 		if (translations != null) {
 			copyTranslations(translations, survey, oldToNewUniqueIds, result, true, convertedFileUIDs);
 		}
@@ -2756,6 +2829,8 @@ public class SurveyService extends BasicService {
 			}			
 
 			Set<AnswerSet> answerSets2 = new HashSet<>();
+
+			var oldToNewAnswerSets = new HashMap<AnswerSet, AnswerSet>();
 			
 			Map<Integer, List<AnswerExplanation>> explanationsByAnswerId = new HashMap<>();
 			if (explanations != null) {
@@ -2785,6 +2860,8 @@ public class SurveyService extends BasicService {
 				AnswerSet a = answerSets.remove(0);
 
 				AnswerSet b = a.copy(survey, files);
+
+				oldToNewAnswerSets.put(a, b);
 
 				for (Answer an : b.getAnswers()) {
 					if (!oldToNewUniqueIds.containsKey(an.getQuestionUniqueId())) {
@@ -2866,25 +2943,111 @@ public class SurveyService extends BasicService {
 
 				if (answerSets2.size() > 1000) {
 					logger.info("1000 answers imported");
-					SaveAnswerSets(answerSets2, tempFileDir, null);
+					SaveAnswerSets(answerSets2, tempFileDir, null, draft);
 					answerSets2 = new HashSet<>();
 				}
 			}
 
-			SaveAnswerSets(answerSets2, tempFileDir, null);
+			SaveAnswerSets(answerSets2, tempFileDir, null, draft);
 			logger.info("finished import of answers");
+
+			if (survey.getIsDelphi()) {
+				saveLikes(oldToNewUniqueIds, oldToNewAnswerSets, explanations, comments, explanationLikes, commentLikes);
+			}
 		}
 		
 		
 	}
 
 	@Transactional
-	public void SaveAnswerSets(Set<AnswerSet> answerSets, String fileDir, String draftid) throws Exception {
+	public void SaveAnswerSets(Set<AnswerSet> answerSets, String fileDir, String draftid, boolean areTestAnswers) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		for (AnswerSet answerSet : answerSets) {
 			saveAnswerSet(answerSet, fileDir, draftid);
 			session.evict(answerSet);
 		}
+
+		var reportingTodo = ToDo.NEWCONTRIBUTION;
+		if (areTestAnswers) {
+			reportingTodo = ToDo.NEWTESTCONTRIBUTION;
+		}
+
+		for (AnswerSet as : answerSets) {
+			reportingService.addToDo(reportingTodo, as.getSurvey().getUniqueId(), as.getUniqueCode());
+		}
+	}
+
+	@Transactional
+	public void saveLikes(Map<String, String> oldToNewUidMap, Map<AnswerSet, AnswerSet> oldToNewAnswers, List<AnswerExplanation> explanations, List<AnswerComment> comments, List<DelphiExplanationLike> explanationLikes, List<DelphiCommentLike> commentLikes) {
+
+		var session = sessionFactory.getCurrentSession();
+
+		var oldToNewAnswerIds = new HashMap<Integer, Integer>();
+
+
+		for (var kv : oldToNewAnswers.entrySet()) {
+			oldToNewAnswerIds.put(kv.getKey().getId(), kv.getValue().getId());
+		}
+
+
+		if (explanations != null && explanationLikes != null) {
+			var explanationsById = new HashMap<Integer, AnswerExplanation>();
+
+			for (var ex : explanations) {
+				explanationsById.put(ex.getId(), ex);
+			}
+
+			for (var exLike : explanationLikes) {
+				var like = new DelphiExplanationLike();
+				var oldExplanation = explanationsById.get(exLike.getAnswerExplanationId());
+				if (oldExplanation == null) continue;
+				var oldQuestion = oldExplanation.getQuestionUid();
+				var newQuestion = oldToNewUidMap.get(oldQuestion);
+				var newAnswerSet = oldToNewAnswerIds.get(oldExplanation.getAnswerSetId());
+
+				var query = session.createQuery("SELECT ae.id FROM AnswerExplanation ae WHERE ae.questionUid = :questionUid AND ae.answerSetId = :answerSetId", Integer.class);
+				query.setParameter("questionUid", newQuestion);
+				query.setParameter("answerSetId", newAnswerSet);
+
+				var newExplanationId = query.uniqueResultOptional();
+				if (newExplanationId.isEmpty()) continue;
+
+				like.setAnswerExplanationId(newExplanationId.get());
+				like.setUniqueCode(exLike.getUniqueCode());
+				answerExplanationService.addExplanationLike(like);
+			}
+		}
+
+		if (comments != null && commentLikes != null) {
+			var commentsById = new HashMap<Integer, AnswerComment>();
+
+			for (var co : comments) {
+				commentsById.put(co.getId(), co);
+			}
+
+			for (var coLike : commentLikes) {
+				var like = new DelphiCommentLike();
+				var oldComment = commentsById.get(coLike.getAnswerCommentId());
+				if (oldComment == null) continue;
+				var oldQuestion = oldComment.getQuestionUid();
+				var newQuestion = oldToNewUidMap.get(oldQuestion);
+				var newAnswerSet = oldToNewAnswerIds.get(oldComment.getAnswerSetId());
+
+				var query = session.createQuery("SELECT ac.id FROM AnswerComment ac WHERE ac.questionUid = :questionUid AND ac.answerSetId = :answerSetId AND ac.date = :date AND ac.text = :text", Integer.class);
+				query.setParameter("questionUid", newQuestion);
+				query.setParameter("answerSetId", newAnswerSet);
+				query.setParameter("date", oldComment.getDate());
+				query.setParameter("text", oldComment.getText());
+
+				var newCommentId = query.uniqueResultOptional();
+				if (newCommentId.isEmpty()) continue;
+
+				like.setAnswerCommentId(newCommentId.get());
+				like.setUniqueCode(coLike.getUniqueCode());
+				answerExplanationService.addCommentLike(like);
+			}
+		}
+
 	}
 
 	public void saveAnswerSet(AnswerSet answerSet, String fileDir, String draftid) throws Exception {
@@ -2908,6 +3071,13 @@ public class SurveyService extends BasicService {
 				Thread.sleep(1000);
 			}
 		}
+	}
+
+	public void copiedSurveyApplyTranslations(Survey copy, Survey original, Map<String, String> oldToNewUniqueIds, Map<String, String> convertedUIDs, boolean newTitle, int userId) {
+		List<Translations> translations = translationService.getTranslationsForSurvey(original.getId(),
+				false, false);
+		copyTranslations(translations, copy, oldToNewUniqueIds, null, newTitle, convertedUIDs);
+		synchronizeTranslation(copy, userId);
 	}
 
 	public void copyTranslations(List<Translations> translations, Survey survey, Map<String, String> oldToNewUniqueIds,
@@ -3336,7 +3506,7 @@ public class SurveyService extends BasicService {
 	public List<Survey> getSurveysToStart() {
 		Session session = sessionFactory.getCurrentSession();
 		Query<Survey> query = session.createQuery(
-				"FROM Survey s WHERE s.isDraft = true AND s.start <= :start AND ((s.end is not null AND s.end > :start) OR (s.end is null)) AND s.automaticPublishing = true AND s.isActive = false",
+				"FROM Survey s WHERE s.isDraft = true AND s.start <= :start AND ((s.end is not null AND s.end > :start) OR (s.end is null)) AND s.automaticPublishing = true AND s.isActive = false AND s.isDeleted = false AND s.archived = false",
 				Survey.class)
 				.setParameter("start", new Date());
 		return query.list();
@@ -3346,7 +3516,7 @@ public class SurveyService extends BasicService {
 	public List<Survey> getSurveysToStop() {
 		Session session = sessionFactory.getCurrentSession();
 		Query<Survey> query = session.createQuery(
-				"FROM Survey s WHERE s.isDraft = true AND s.end <= :end AND s.automaticPublishing = true AND s.isPublished = true AND s.isActive = true",
+				"FROM Survey s WHERE s.isDraft = true AND s.end <= :end AND s.automaticPublishing = true AND s.isPublished = true AND s.isActive = true AND s.isDeleted = false AND s.archived = false",
 				Survey.class)
 				.setParameter("end", new Date());
 		return query.list();
@@ -3356,7 +3526,7 @@ public class SurveyService extends BasicService {
 	public List<Survey> getSurveysToNotify() {
 		Session session = sessionFactory.getCurrentSession();
 		Query<Survey> query = session.createQuery(
-				"FROM Survey s WHERE s.isDraft = true AND s.notified = false AND s.automaticPublishing = true AND s.end != null AND s.notificationValue != null AND s.notificationUnit != null AND s.isActive = true",
+				"FROM Survey s WHERE s.isDraft = true AND s.notified = false AND s.automaticPublishing = true AND s.end != null AND s.notificationValue != null AND s.notificationUnit != null AND s.isActive = true AND s.isDeleted = false AND s.archived = false",
 				Survey.class);
 		List<Survey> surveys = query.list();
 
@@ -3483,8 +3653,7 @@ public class SurveyService extends BasicService {
 					Survey::getDedicatedResultPrivileges,
 					Survey::getAllowQuestionnaireDownload,
 					Survey::getRegistrationForm,
-					Survey::getOrganisation,
-					Survey::getWebhook
+					Survey::getOrganisation
 			);
 
 			if (doesLanguageDiffer(draftSurvey.getUniqueId())){
@@ -3548,20 +3717,24 @@ public class SurveyService extends BasicService {
 				result.put(new PropertiesElement(true), 1);
 			}
 
-			List<Translations> draftTranslations = translationService.getActiveTranslationsForSurvey(draftSurvey.getId());
-			List<Translations> publishedTranslations = translationService
-					.getActiveTranslationsForSurvey(publishedSurvey.getId());
-
-			Translations currentTranslations = TranslationsHelper.getTranslations(draftSurvey, false);
-			Map<String, Translation> currentKeys = currentTranslations.getTranslationsByKey();
-
-			if (checkTranslations(draftTranslations, publishedTranslations, currentKeys)
-					|| checkTranslations(publishedTranslations, draftTranslations, currentKeys)) {
+			if (doTranslationsDiffer(draftSurvey, publishedSurvey)) {
 				result.put(new TranslationsElement(), 1);
 			}
 		}
 
 		return result;
+	}
+
+	private boolean doTranslationsDiffer(Survey draftSurvey, Survey publishedSurvey) {
+		List<Translations> draftTranslations = translationService.getActiveTranslationsForSurvey(draftSurvey.getId());
+		List<Translations> publishedTranslations = translationService
+				.getActiveTranslationsForSurvey(publishedSurvey.getId());
+
+		Translations currentTranslations = TranslationsHelper.getTranslations(draftSurvey, false);
+		Map<String, Translation> currentKeys = currentTranslations.getTranslationsByKey();
+
+		return checkTranslations(draftTranslations, publishedTranslations, currentKeys)
+				|| checkTranslations(publishedTranslations, draftTranslations, currentKeys);
 	}
 	
 	private boolean publicationDiffers(Survey draftSurvey, Survey publishedSurvey) {
@@ -3984,6 +4157,8 @@ public class SurveyService extends BasicService {
 							Element parent = surveyelementsbyuid.get(questionUID);
 							if (parent instanceof ChoiceQuestion) {
 								((ChoiceQuestion) parent).getMissingPossibleAnswers().add((PossibleAnswer) pa);
+							} else if (parent instanceof ComplexTableItem) {
+								((ComplexTableItem) parent).getMissingPossibleAnswers().add((PossibleAnswer) pa);
 							}
 						} else if (missingelementuids.containsKey(questionUID)) {
 							Element parent = missingelementuids.get(questionUID);
@@ -4130,31 +4305,314 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public boolean changeOwner(String surveyuid, String owner, int currentuserid) throws MessageException {
-		int ownerid = 0;
-		User newowner = null;
+	public void save(ChangeOwnerRequest changeRequest) {
+		Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(changeRequest);
+	}
 
-		try {
-			ownerid = Integer.parseInt(owner);
-			newowner = administrationService.getUser(ownerid);
-		} catch (NumberFormatException e) {
-			newowner = administrationService.getUserForLogin(owner, true);
+	@Transactional(readOnly = true)
+	public @Nullable ChangeOwnerRequest getChangeOwnerRequestForSurvey(String surveyUid){
+		Session session = sessionFactory.getCurrentSession();
+		var query = session.createQuery("FROM ChangeOwnerRequest c WHERE c.surveyUid = :surveyUid", ChangeOwnerRequest.class);
+		query.setParameter("surveyUid", surveyUid);
+		return query.uniqueResult();
+	}
+
+	@Transactional
+	public boolean sendChangeOwnerRequest(ChangeOwnerRequest changeRequest) {
+		var recipientMail = "";
+
+		var survey = getSurveyByUniqueId(changeRequest.getSurveyUid(), false, true);
+
+		if (MailService.isNotEmptyAndValidEmailAddress(changeRequest.getEmail())) {
+			recipientMail = changeRequest.getEmail();
+		} else if (changeRequest.getLogin() != null && !changeRequest.getLogin().isBlank()) {
+			var user = administrationService.getUserForLogin(changeRequest.getLogin());
+			if (user == null) return false;
+			if (Objects.equals(user.getId(), survey.getOwner().getId())) return false;
+
+			recipientMail = user.getEmail();
+
+		} else {
+			return false;
 		}
 
-		if (newowner != null) {
-			Survey survey = surveyService.getSurveyByUniqueIdToWrite(surveyuid);
-			Integer oldownerid = survey.getOwner().getId();
 
-			if (!Objects.equals(survey.getOwner().getId(), newowner.getId())) {
-				survey.setOwner(newowner);
-				List<Integer> allsurveyids = surveyService.getAllPublishedSurveyVersions(survey.getId());
+		try {
+			sendChangeOwnerRequestEmail(recipientMail, changeRequest, survey);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return false;
+		}
 
-				for (int id : allsurveyids) {
-					Survey published = surveyService.getSurvey(id);
-					published.setOwner(newowner);
+		deleteAllFormerChangeOwnerRequests(survey.getUniqueId());
+
+		save(changeRequest);
+
+		activityService.log(ActivityRegistry.ID_CHANGE_OWNER_REQUEST_SENT, null, null, survey.getOwner().getId(), survey.getUniqueId());
+
+		return true;
+	}
+
+	@Transactional
+	public void deleteAllFormerChangeOwnerRequests(String surveyUid){
+		Session session = sessionFactory.getCurrentSession();
+
+		var query = session.createQuery("DELETE FROM ChangeOwnerRequest c WHERE c.surveyUid = :surveyUid");
+		query.setParameter("surveyUid", surveyUid);
+		int deletionCount = query.executeUpdate();
+
+		if (deletionCount > 0) {
+			activityService.log(ActivityRegistry.ID_CHANGE_OWNER_REQUEST_EXPIRED, null, null, 0, surveyUid);
+		}
+	}
+
+	@Transactional
+	public void deleteAllOutdatedChangeOwnerRequests(){
+		Session session = sessionFactory.getCurrentSession();
+
+		var deleteDate = new Date(System.currentTimeMillis() - 30L * 24L * 60L * 60L * 1000L);
+
+		var query = session.createQuery("FROM ChangeOwnerRequest c WHERE c.created < :deleteDate", ChangeOwnerRequest.class);
+		query.setParameter("deleteDate", deleteDate);
+		var expiredRequests = query.list();
+
+		for (var expired : expiredRequests) {
+			activityService.log(ActivityRegistry.ID_CHANGE_OWNER_REQUEST_EXPIRED, null, null, 0, expired.getSurveyUid());
+		}
+
+		if (!expiredRequests.isEmpty()) {
+			var deleteQuery = session.createQuery("DELETE FROM ChangeOwnerRequest c WHERE c.created < :deleteDate");
+			deleteQuery.setParameter("deleteDate", deleteDate);
+			deleteQuery.executeUpdate();
+		}
+	}
+
+	private void sendChangeOwnerRequestEmail(String recipientAddress, ChangeOwnerRequest request, Survey survey) throws Exception {
+
+		var acceptLink = host + "ownership/accept/" + request.getCode();
+		var rejectLink = host + "ownership/reject/" + request.getCode();
+
+		var mailBody =
+				"Dear User,<br/><br/>" +
+				"You have been requested to take ownership of the \"" + survey.cleanTitle() + "\" survey.<br/><br/>" +
+				"Link: <a href=\"" + host	+ "runner/" + survey.getShortname() + "\">" + host + "runner/" + survey.getShortname() + "</a><br />" +
+				"<br />" +
+				"Please review your options below: <ul>" +
+				"<li><b>To accept ownership</b> and become the new owner of the survey with full access, click the link below:<br/>" +
+				"<a href=\"" + acceptLink + "\">" + acceptLink + "</a>";
+
+		if (request.isAddAsFormManager()) {
+			mailBody += "<br/>The current owner has requested to <b>keep form manager access</b> to the survey after you accept ownership.";
+		}
+
+		mailBody +=
+				"<br/></li>" +
+				"<li><b>To decline ownership</b> and maintain the current ownership status, click the link below:<br/>" +
+				"<a href=\"" + rejectLink + "\">" + rejectLink + "</a>" +
+				"</li></ul>" +
+				"<br/>" +
+				"Please note that you can only choose one option. If no action is taken within <b>30 days</b>, the request will expire." +
+				"<br/><br/>" +
+				"Best regards,<br/><br/>" +
+				"EUSurvey Support";
+
+		var mail = mailService.getEUSurveyMailTemplate(mailBody);
+		mailService.SendHtmlMail(recipientAddress, sender, sender, "Action Required: Survey ownership transfer", mail, null);
+	}
+
+
+	private void sendOwnerChangeAcceptedEmail(String recipientAddress, Survey survey) throws Exception {
+
+		var mailBody =
+				"Dear User,<br/><br/>" +
+				"Thank you for your request regarding the ownership change of the \"" + survey.cleanTitle() + "\" survey.<br/><br/>" +
+				"Link: <a href=\"" + host	+ "runner/" + survey.getShortname() + "\">" + host + "runner/" + survey.getShortname() + "</a><br />" +
+				"<br />" +
+				"We are pleased to inform you that your request to transfer ownership has been accepted.<br/><br/>" +
+				"If you have any questions or need further assistance, please feel free to contact us.<br/><br/>" +
+				"Thank you for your attention.<br/><br/>" +
+				"Best regards,<br/><br/>" +
+				"EUSurvey Support";
+
+		var mail = mailService.getEUSurveyMailTemplate(mailBody);
+		mailService.SendHtmlMail(recipientAddress, sender, sender, "Survey ownership transfer accepted", mail, null);
+	}
+
+	private void sendOwnerChangeRejectedEmail(Survey survey) throws Exception {
+
+		var mailBody =
+				"Dear User,<br/><br/>" +
+				"Thank you for your request regarding the ownership change of the \"" + survey.cleanTitle() + "\" survey.<br/><br/>" +
+				"Link: <a href=\"" + host	+ "runner/" + survey.getShortname() + "\">" + host + "runner/" + survey.getShortname() + "</a><br />" +
+				"<br />" +
+				"We would like to inform you that the request to transfer ownership has been declined.<br/>" +
+				"As a result, the ownership status remains unchanged.<br/><br/>" +
+				"If you have any questions or need further assistance, please feel free to contact us.<br/><br/>" +
+				"Thank you for your attention.<br/><br/>" +
+				"Best regards,<br/><br/>" +
+				"EUSurvey Support";
+
+		var mail = mailService.getEUSurveyMailTemplate(mailBody);
+		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Survey ownership transfer declined", mail, null);
+	}
+
+	@Transactional
+	public String rejectOwnershipRequest(String code, User user) throws ForbiddenURLException {
+		Session session = sessionFactory.getCurrentSession();
+
+		var request = checkOwnershipRequestRecipient(code, user);
+
+		if (request == null) return null;
+
+		var surveyUid = request.getSurveyUid();
+
+		var deletionQuery = session.createQuery("DELETE FROM ChangeOwnerRequest c WHERE c.code = :code");
+		deletionQuery.setParameter("code", code);
+		deletionQuery.executeUpdate();
+
+		activityService.log(ActivityRegistry.ID_CHANGE_OWNER_REQUEST_REJECTED, null, null, user.getId(), surveyUid);
+
+		var survey = getSurveyByUniqueId(surveyUid, false, true);
+
+		try {
+			sendOwnerChangeRejectedEmail(survey);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return surveyUid;
+	}
+
+	//Returns the ChangeOwnerRequests if it exists (null otherwise), throws ForbiddenURLException if the USER is not the recipient
+	public ChangeOwnerRequest checkOwnershipRequestRecipient(String code, User user) throws ForbiddenURLException {
+		var session = sessionFactory.getCurrentSession();
+
+		var query = session.createQuery("FROM ChangeOwnerRequest c WHERE c.code = :code", ChangeOwnerRequest.class);
+		query.setParameter("code", code);
+
+		var changeRequestOptional = query.uniqueResultOptional();
+
+		if (changeRequestOptional.isEmpty()) {
+			return null;
+		}
+
+		var changeRequest = changeRequestOptional.get();
+
+		if (changeRequest.getLogin() != null && !changeRequest.getLogin().isBlank()) {
+			if (!user.getLogin().equals(changeRequest.getLogin())) {
+				throw new ForbiddenURLException();
+			}
+		} else if (changeRequest.getEmail() != null && !changeRequest.getEmail().isBlank()) {
+			var emails = user.getAllEmailAddresses();
+			var recipientEmail = changeRequest.getEmail();
+			for (var email : emails) {
+				if (email.equalsIgnoreCase(recipientEmail)) {
+					return changeRequest;
+				}
+			}
+
+			throw new ForbiddenURLException();
+		} else {
+			logger.error("Invalid Change Owner Request found. It contains neither an email nor a login. Code: " + code);
+			return null;
+		}
+
+		return changeRequest;
+    }
+
+	//Returns the Survey Uid, if successful. Null otherwise
+	@Transactional
+	public String acceptOwnershipRequest(String code, User user) throws ForbiddenURLException, MessageException {
+		Session session = sessionFactory.getCurrentSession();
+
+		var request = checkOwnershipRequestRecipient(code, user);
+
+		if (request == null) {
+			//Requests does not exist
+			return null;
+		}
+
+		var surveyUid = request.getSurveyUid();
+
+		var survey = getSurveyByUniqueId(surveyUid, false, true);
+
+		var oldOwner = survey.getOwner();
+
+		if (Objects.equals(oldOwner.getId(), user.getId())) {
+			throw new ForbiddenURLException();
+		}
+
+		var deleteQuery = session.createQuery("DELETE FROM ChangeOwnerRequest c WHERE c.code = :code");
+		deleteQuery.setParameter("code", code);
+
+		deleteQuery.executeUpdate();
+
+		activityService.log(ActivityRegistry.ID_CHANGE_OWNER_REQUEST_ACCEPTED, null, null, user.getId(), surveyUid);
+
+		changeOwner(surveyUid, user, request.isAddAsFormManager(), user.getId());
+
+		try {
+			sendOwnerChangeAcceptedEmail(oldOwner.getEmail(), survey);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return surveyUid;
+	}
+
+	@Transactional
+	public boolean changeOwner(String surveyUid, String owner, int currentUserId) throws MessageException
+	{
+
+		User newOwner;
+
+		try {
+			var ownerid = Integer.parseInt(owner);
+			newOwner = administrationService.getUser(ownerid);
+		} catch (NumberFormatException e) {
+			newOwner = administrationService.getUserForLogin(owner, true);
+		}
+		return changeOwner(surveyUid, newOwner, false, currentUserId);
+	}
+	@Transactional
+	public boolean changeOwner(String surveyUid, User newOwner, boolean keepOldOwnerAsFullManager, int currentUserId) throws MessageException {
+		Session session = sessionFactory.getCurrentSession();
+
+		if (newOwner != null) {
+			Survey survey = surveyService.getSurveyByUniqueIdToWrite(surveyUid);
+			var oldOwner = survey.getOwner();
+
+			if (!Objects.equals(survey.getOwner().getId(), newOwner.getId())) {
+				var updateOwnerQuery = session.createQuery("UPDATE Survey SET owner = :newOwner WHERE uniqueId = :surveyUid");
+				updateOwnerQuery.setParameter("newOwner", newOwner);
+				updateOwnerQuery.setParameter("surveyUid", surveyUid);
+				updateOwnerQuery.executeUpdate();
+
+				activityService.log(ActivityRegistry.ID_OWNER, oldOwner.getId().toString(), newOwner.getId().toString(), currentUserId, surveyUid);
+
+				if (keepOldOwnerAsFullManager) {
+					var access = getAccess(survey.getId(), oldOwner.getId());
+					if (access == null) {
+						access = new Access();
+						access.setSurvey(survey);
+						access.setUser(oldOwner);
+					}
+
+					var privs = new HashMap<LocalPrivilege, Integer>();
+					privs.put(LocalPrivilege.AccessDraft, 2);
+					privs.put(LocalPrivilege.AccessResults, 2);
+					privs.put(LocalPrivilege.FormManagement, 2);
+					privs.put(LocalPrivilege.ManageInvitations, 2);
+					access.setLocalPrivileges(privs);
+
+					saveAccess(access);
 				}
 
-				activityService.log(ActivityRegistry.ID_OWNER, oldownerid.toString(), newowner.getId().toString(), currentuserid, surveyuid);
+				var newOwnerAccess = getAccess(survey.getId(), newOwner.getId());
+				if (newOwnerAccess != null && newOwnerAccess.getId() > 0) {
+					session.delete(newOwnerAccess);
+				}
 
 				return true;
 			}
@@ -4222,25 +4680,25 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Survey getSurveyInOriginalLanguage(Integer id, String shortname, String uid) {
 		String code = getLanguageCode(shortname, uid);
 		return getSurvey(id, code);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public String getLanguageCode(String shortname, String uid) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<String> query = session
 				.createQuery("SELECT s.language.code FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = true", String.class)
 				.setParameter("uid", uid);
-		String result = query.uniqueResult();
+		String result = query.setMaxResults(1).uniqueResult();
 
 		if (result == null) {
 			query = session
 					.createQuery("SELECT s.language.code FROM Survey s WHERE s.shortname = :name AND s.isDraft = true", String.class)
 					.setParameter("name", shortname);
-			result = query.uniqueResult();
+			result = query.setMaxResults(1).uniqueResult();
 		}
 
 		return result;
@@ -4931,12 +5389,16 @@ public class SurveyService extends BasicService {
 	private String getOwnerWhere(String type) {
 		String ownerwhere;
 
+		var ecasDepartments = "SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login)";
+		var systemDepartment = "SELECT lower(USER_TYPE) FROM USERS us WHERE lower(us.USER_TYPE) = \"system\" AND us.USER_ID = :userid)";
+		var departments = ecasDepartments + " UNION " + systemDepartment;
+
 		if (type != null && type.equalsIgnoreCase("my")) {
 			ownerwhere = "s.OWNER = :userid";
 		} else if (type != null && type.equalsIgnoreCase("shared")) {
-			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :userid)";
+			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (" + departments + ") AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :userid)";
 		} else {
-			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :userid)";
+			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (" + departments + ") AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :userid)";
 		}
 
 		return ownerwhere;
@@ -4992,23 +5454,22 @@ public class SurveyService extends BasicService {
 			sql += " and (s.ARCHIVED = 0 or s.ARCHIVED is null)";
 		}
 
-		Query query = session.createSQLQuery(sql);
+		Query<String> query = session.createSQLQuery(sql);
 		query.setParameter("userid", user.getId());
 
 		if (type == null || !type.equalsIgnoreCase("my")) {
 			query.setParameter("login", user.getLogin());
 		}
 
-		List<String> result = new ArrayList<>();
+		var result = new ArrayList<String>();
 
-		@SuppressWarnings("rawtypes")
-		List res = query.list();
+		var res = query.list();
 
-		for (Object o : res) {
+		for (var sUid : res) {
 			if (escapeforsql) {
-				result.add("'" + (String) o + "'");
+				result.add("'" + sUid + "'");
 			} else {
-				result.add((String) o);
+				result.add(sUid);
 			}
 		}
 
@@ -5236,6 +5697,13 @@ public class SurveyService extends BasicService {
 		}
 		s.append("</BackgroundDocuments>\n");
 
+		s.append("<Tags>");
+		if (survey.getTags() != null) {
+			String joinedTags = survey.getTags().stream().map(t -> t.getName()).collect(Collectors.joining(";"));
+			s.append(joinedTags);
+		}
+		s.append("</Tags>\n");
+
 		s.append("<Security>");
 		if (survey.getSecurity().startsWith("open")) {
 			s.append("open");
@@ -5437,8 +5905,15 @@ public class SurveyService extends BasicService {
 
 			mailtext = mailtext.replace("[ALIAS]", survey.getShortname()).replace("[LINK]", link)
 					.replace("[TITLE]", survey.getTitle()).replace("[ID]", survey.getId().toString())
-					.replace("[EMAIL]", email).replace("[TYPE]", type).replace("[TEXT]", text)
+					.replace("[TYPE]", type).replace("[TEXT]", text)
 					.replace("[DATE]", abuse.getCreated().toString()).replace("[COUNT]", Integer.toString(count + 1));
+
+			//Email field is optional, remove by [EMAIL] when not provided
+			if (email.isBlank()) {
+				mailtext = mailtext.replaceAll("by\\s+\\[EMAIL\\]", "");
+			} else {
+				mailtext = mailtext.replace("[EMAIL]", email);
+			}
 
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailtext).replace("[HOST]", host);
@@ -5471,7 +5946,7 @@ public class SurveyService extends BasicService {
 			Date yesterday = cal.getTime();
 
 			Session session = sessionFactory.getCurrentSession();
-			String sql = "SELECT SURABUSE_SURVEY, s.SURVEYNAME, s.TITLESORT, COUNT(SURABUSE_ID) FROM SURABUSE sa LEFT JOIN SURVEYS s ON s.SURVEY_ID = (SELECT SURVEY_ID FROM SURVEYS s2 WHERE s2.SURVEY_UID = sa.SURABUSE_SURVEY LIMIT 1) WHERE SURABUSE_DATE >= :yesterday AND SURABUSE_DATE < :today GROUP BY SURABUSE_SURVEY";
+			String sql = "SELECT SURABUSE_SURVEY, s.SURVEYNAME, s.TITLESORT, COUNT(SURABUSE_ID) FROM SURABUSE sa INNER JOIN SURVEYS s ON s.SURVEY_ID = (SELECT SURVEY_ID FROM SURVEYS s2 WHERE s2.SURVEY_UID = sa.SURABUSE_SURVEY LIMIT 1) WHERE SURABUSE_DATE >= :yesterday AND SURABUSE_DATE < :today GROUP BY SURABUSE_SURVEY";
 			Query query = session.createSQLQuery(sql);
 			query.setParameter("today", today);
 			query.setParameter("yesterday", yesterday);
@@ -6316,4 +6791,53 @@ public class SurveyService extends BasicService {
 		s.append(period);
 		return s.toString();
 	}
+
+	@Transactional(readOnly = true)
+	public List<String> getTags(String term) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "SELECT t.name FROM Tag t WHERE t.name LIKE :term";
+		Query<String> query = session.createQuery(hql, String.class).setParameter("term", term + "%");
+		return query.list();
+	}
+
+	@Transactional
+	public Tag getTag(String name) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "FROM Tag t WHERE t.name = :name";
+		Query<Tag> query = session.createQuery(hql, Tag.class).setParameter("name", name);
+		return query.uniqueResult();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Tag> getTagsForImport(List<String> names) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "FROM Tag t WHERE t.name IN (:names)";
+		Query<Tag> query = session.createQuery(hql, Tag.class).setParameter("names", names);
+		return query.list();
+	}
+
+	@Transactional
+	public Tag createTag(String name) {
+		Session session = sessionFactory.getCurrentSession();
+		Tag tag = new Tag();
+		tag.setName(name);
+		session.save(tag);
+		return tag;
+	}
+
+	@Transactional
+	public Pair<Boolean, String> getIsDraftAndUniqueIDForSurveyId(int id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session
+				.createQuery("SELECT isDraft, uniqueId FROM Survey WHERE id = :id")
+				.setParameter("id", id);
+
+		Object result = query.uniqueResult();
+		if (result == null) return null;
+
+		Object[] array = (Object[]) query.uniqueResult();
+		return new Pair<>((Boolean)array[0], (String)array[1]);
+	}
+
+
 }

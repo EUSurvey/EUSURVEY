@@ -214,6 +214,10 @@
 						<td class="overview-label" style="vertical-align: top;"><spring:message code="label.Owner" /></td>
 						<td>
 							${form.survey.owner.getFirstLastName()}
+							&nbsp;
+							<c:if test="${sessioninfo.owner.equals(USER.id)}">
+								<a href="properties?tab=4&editelem=owner" class="visiblelink" rel="tooltip" title="<spring:message code="label.EditSettings" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
+							</c:if>
 						</td>
 						<td rowspan="5" style="vertical-align: top; text-align: right;">
 						
@@ -420,7 +424,7 @@
 	 		<tbody>
 	 			<c:forEach items="${newElements}" var="element">
 	 				<tr>
-	 					<td><esapi:encodeForHTML>${element.nameOrType}</esapi:encodeForHTML></td>
+	 					<td>${element.nameOrType}</td>
 	 					<td><spring:message code="label.New" /></td>
 	 				</tr>
 	 			</c:forEach>
@@ -438,7 +442,7 @@
 	 								<spring:message code="label.Translations" />
 	 							</c:when>
 	 							<c:otherwise>
-	 								<esapi:encodeForHTML>${element.nameOrType}</esapi:encodeForHTML>
+	 								${element.nameOrType}
 	 							</c:otherwise>
 	 						</c:choose>
 	 					</td>
@@ -447,7 +451,7 @@
 	 			</c:forEach>
 	 			<c:forEach items="${deletedElements}" var="element">
 	 				<tr>
-	 					<td><esapi:encodeForHTML>${element.nameOrType}</esapi:encodeForHTML></td>
+	 					<td>${element.nameOrType}</td>
 	 					<td><spring:message code="label.Deleted" /></td>
 	 				</tr>
 	 			</c:forEach>
@@ -539,5 +543,10 @@
 	<input type="hidden" name="delete" id="delete" value="" />
 </form:form>
 
+<script>
+	if (new URLSearchParams(location.search).has("isNewOwner", "true")) {
+		showSuccess("<spring:message code="message.OwnerAccepted" />")
+	}
+</script>
 </body>
 </html>

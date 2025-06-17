@@ -233,7 +233,8 @@
 			 			<a href="?language=el">Ελληνικά</a>&#160; 
 			 			<a href="?language=en">English</a>&#160; 
 			 			<a href="?language=es">Español</a>&#160; 
-			 			<a href="?language=fr">Français</a>&#160; 
+			 			<a href="?language=fr">Français</a>&#160;
+			 			<a href="?language=ga">Gaeilge</a>&#160;
 			 			<a href="?language=hr">Hrvatski jezik</a>&#160; 
 			 			<a href="?language=it">Italiano</a>&#160; 
 			 			<a href="?language=lv">Latviešu valoda</a>&#160; 
