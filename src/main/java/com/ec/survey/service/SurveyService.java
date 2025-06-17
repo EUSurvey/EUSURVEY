@@ -18,7 +18,6 @@ import com.ec.survey.tools.activity.ActivityRegistry;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.hibernate.Hibernate;
@@ -42,7 +41,6 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -3769,69 +3767,13 @@ public class SurveyService extends BasicService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<KeyValue> GetAllQuestionsAndPossibleAnswers(String surveyUid) {
-		Date start = new Date();
-
+	private List<Object> GetAllQuestionsAndPossibleAnswers(String surveyUid) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery(
-				"SELECT ans.ANSWER_SET_ID FROM ANSWERS_SET ans JOIN SURVEYS s ON ans.SURVEY_ID = s.SURVEY_ID WHERE s.ISDRAFT = FALSE AND s.SURVEY_UID = :surveyUid")
+				"SELECT DISTINCT QUESTION_UID, PA_UID FROM ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID JOIN SURVEYS s ON  ans.SURVEY_ID =  s.SURVEY_ID WHERE s.ISDRAFT = FALSE AND s.SURVEY_UID = :surveyUid")
 				.setParameter("surveyUid", surveyUid);
 
-		var ids = (List<Integer>) query.list();
-		Map<String, List<String>> map = new HashMap<>();
-
-		List<Integer> batch = new ArrayList<>();
-		int last = ids.get(ids.size()-1);
-		for (int id : ids) {
-
-			if (batch.size() < 1000 && id != last)
-			{
-				batch.add(id);
-			} else {
-
-				query = session.createSQLQuery(
-								"SELECT DISTINCT QUESTION_UID, PA_UID FROM ANSWERS WHERE AS_ID IN (:ids)")
-						.setParameter("ids", batch);
-
-				var pairs = (List<Object>) query.list();
-
-				for (Object o : pairs) {
-
-					Object[] a = (Object[]) o;
-
-					String questionUID = (String) a[0];
-					String possibleAnswerUID = (String) a[1];
-
-					if (!map.containsKey(questionUID)) {
-						map.put(questionUID, new ArrayList<>());
-					}
-
-					if (!map.get(questionUID).contains(possibleAnswerUID)) {
-						map.get(questionUID).add(possibleAnswerUID);
-					}
-				}
-
-				batch = new ArrayList<>();
-			}
-		}
-
-		List<KeyValue> result = new ArrayList<>();
-
-		for (String q : map.keySet()) {
-			if (map.get(q).isEmpty()) {
-				result.add(new KeyValue(q, null));
-			} else {
-				for (String a : map.get(q)) {
-					result.add(new KeyValue(q, a));
-				}
-			}
-		}
-
-		Date end = new Date();
-		long seconds = (end.getTime() - start.getTime()) / 1000;
-		logger.info("GetAllQuestionsAndPossibleAnswers for survey " + surveyUid + " took " + seconds + " seconds");
-
-		return result;
+		return (List<Object>) query.list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -3858,15 +3800,15 @@ public class SurveyService extends BasicService {
 				rankingQuestionUids.add("'" + element.getUniqueId() + "'");
 			}
 		}
+		
+		// the reporting database is not used here fore performance reasons
+		List<Object> res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
 
-		// the reporting database is not used here for performance reasons
-		List<KeyValue> res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
+		for (Object o : res) {
+			Object[] a = (Object[]) o;
 
-		for (KeyValue o : res) {
-			//Object[] a = (Object[]) o;
-
-			String questionUID = o.getKey();
-			String possibleAnswerUID = o.getValue();
+			String questionUID = (String) a[0];
+			String possibleAnswerUID = (String) a[1];
 
 			if (!surveyelementsbyuid.containsKey(questionUID) && !missingelementuids.containsKey(questionUID)) {
 				Element missingquestion = getNewestElementByUid(questionUID);
