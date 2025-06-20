@@ -198,11 +198,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 						logger.error(e.getMessage(), e);
 					}
 
-					if (no2fa){
-						weakAuthentication = true;
-						if (!surveyLoginMode){
-							throw new Bad2faCredentialsException();
-						}
+					if (no2fa && require2fa){
+						throw new Bad2faCredentialsException();
 					}
 									
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q")) 
@@ -214,6 +211,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 							administrationService.updateUser(user);
 						}
 					} else {
+						if (no2fa){
+							weakAuthentication = true;
+							if (!surveyLoginMode){
+								throw new Bad2faCredentialsException();
+							}
+						}
+
 						if (intRole != null)
 						{
 							if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().equalsIgnoreCase("Contributor")) {
