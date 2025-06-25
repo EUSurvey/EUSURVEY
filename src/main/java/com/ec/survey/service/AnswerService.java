@@ -1560,6 +1560,13 @@ public class AnswerService extends BasicService {
 		if (statisticsRequest == null)
 			return null;
 
+		if (statisticsRequest.isAllanswers()) {
+			Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId(), false, true);
+			if (!survey.isMissingElementsChecked()) {
+				surveyService.checkAndRecreateMissingElements(survey, statisticsRequest.getFilter());
+			}
+		}
+
 		Statistics statistics = this.getStatisticsForFilterHash(statisticsRequest.getSurveyId(), statisticsRequest.getFilter().getHash(statisticsRequest.isAllanswers()),
 				false);
 
