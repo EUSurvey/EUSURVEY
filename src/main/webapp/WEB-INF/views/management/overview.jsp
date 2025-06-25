@@ -424,7 +424,7 @@
 	 		<tbody>
 	 			<c:forEach items="${newElements}" var="element">
 	 				<tr>
-	 					<td>${element.nameOrType}</td>
+	 					<td>${element.nameOrTypeStripped}</td>
 	 					<td><spring:message code="label.New" /></td>
 	 				</tr>
 	 			</c:forEach>
@@ -442,7 +442,7 @@
 	 								<spring:message code="label.Translations" />
 	 							</c:when>
 	 							<c:otherwise>
-	 								${element.nameOrType}
+	 								${element.nameOrTypeStripped}
 	 							</c:otherwise>
 	 						</c:choose>
 	 					</td>
@@ -451,7 +451,7 @@
 	 			</c:forEach>
 	 			<c:forEach items="${deletedElements}" var="element">
 	 				<tr>
-	 					<td>${element.nameOrType}</td>
+	 					<td>${element.nameOrTypeStripped}</td>
 	 					<td><spring:message code="label.Deleted" /></td>
 	 				</tr>
 	 			</c:forEach>

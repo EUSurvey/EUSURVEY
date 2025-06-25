@@ -623,7 +623,9 @@
 															<!-- ko if: finished && error == null && replies > 0 -->
 															
 															<!-- ko if: surveyHasUploadedFiles -->
-																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.DownloadzipXls" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlszip/' + id}"><img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xls-zip"></a>
+																<!-- ko if: !hasXlsxResults -->
+																	<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.DownloadzipXls" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlszip/' + id}"><img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xls-zip"></a>
+																<!-- /ko -->
 																<!-- ko if: hasXlsxResults -->
 																	<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.DownloadzipXlsx" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlsxzip/' + id}"><img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xlsx-zip"></a>
 																<!-- /ko -->

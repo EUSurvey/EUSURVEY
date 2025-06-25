@@ -992,6 +992,12 @@ public class LdapService extends BasicService {
 		case MAIL:
 			if (isAttributeEligible(ldapMappingUserUid))
 				lstAttr.add(ldapMappingUserUid);
+			if (isAttributeEligible(ldapMappingUserO))
+				lstAttr.add(ldapMappingUserO);
+			if (isAttributeEligible(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg))
+				lstAttr.add(ldapMappingUserDg == null ? "dg" : ldapMappingUserDg);
+			if (isAttributeEligible(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber))
+				lstAttr.add(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber);
 		default:
 			break;
 		}		

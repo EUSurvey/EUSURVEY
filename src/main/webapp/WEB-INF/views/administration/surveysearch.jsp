@@ -451,13 +451,13 @@
 
 					if (list[i].surveyHasUploadedFiles)
 					{
-						a = document.createElement("a");
-						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.DownloadzipXls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlszip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xls-zip" />');
-						$(td).append(a);
-
 						if (list[i].hasXlsxResults) {
 							a = document.createElement("a");
 							$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.DownloadzipXlsx" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlsxzip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xlsx-zip" />');
+							$(td).append(a);
+						} else {
+							a = document.createElement("a");
+							$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.DownloadzipXls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlszip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xls-zip" />');
 							$(td).append(a);
 						}
 					}

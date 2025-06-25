@@ -96,7 +96,10 @@ public class AttendeeUpdater implements Runnable {
 				String message = resources.getMessage("message.ContactsDeletedBatchFinished",
 						new String[] { Integer.toString(numberOfDeletedAttendees) }, "Contacts deleted successfully",
 						locale);
-				systemService.sendUserSuccessMessage(user.getId(), message);
+
+				String message2 = resources.getMessage("message.PleaseReloadPage",null, "Please reload the page to see the changes.",
+						locale);
+				systemService.sendUserSuccessMessage(user.getId(), message + " " + message2);
 			} else {
 
 				List<Integer> selectedAttendees = new ArrayList<>();
@@ -157,9 +160,11 @@ public class AttendeeUpdater implements Runnable {
 				}
 
 				String message = resources.getMessage("message.ContactsUpdatedBatchFinished",
-						new String[] { Integer.toString(numberOfEditedAttendees) }, "Contacts updated successfully",
+						new String[] { Integer.toString(numberOfEditedAttendees) }, "Contacts updated successfully.",
 						locale);
-				systemService.sendUserSuccessMessage(user.getId(), message);
+				String message2 = resources.getMessage("message.PleaseReloadPage",null, "Please reload the page to see the changes.",
+						locale);
+				systemService.sendUserSuccessMessage(user.getId(), message + " " + message2);
 			}
 
 		} catch (Exception e) {

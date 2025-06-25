@@ -1945,6 +1945,8 @@ public class ReportingService extends BasicService {
 					query.setString(attrib, (String) values.get(attrib));
 				} else if (value instanceof Integer) {
 					query.setInteger(attrib, (Integer) values.get(attrib));
+				} else if (value instanceof Double) {
+					query.setDouble(attrib, (Double) values.get(attrib));
 				} else if (value instanceof Date) {
 					query.setTimestamp(attrib, (Date) values.get(attrib));
 				}

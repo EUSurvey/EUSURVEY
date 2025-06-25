@@ -676,7 +676,7 @@
 										${element.confirmationtext}
 									</div>
 								</c:if>
-								<c:if test="${element.useupload}">					
+								<c:if test="${element.isUseupload()}">
 									<div class="files" style="margin-left: 40px; margin-top: 10px;">
 										<c:forEach items="${element.files}" var="file">
 											<a class="visiblelink" target="_blank" href="${serverprefix}files/${form.survey.uniqueId}/${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a> <br />
