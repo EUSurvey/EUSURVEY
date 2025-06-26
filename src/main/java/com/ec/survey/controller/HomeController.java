@@ -38,11 +38,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.file.Files;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1112,14 +1108,11 @@ public class HomeController extends BasicController {
 		if (requestId == null) {
 			requestId = request.getParameter("request-id");
 		}
-		String targetLanguage = request.getParameter("target-language");
-		String translatedText = request.getParameter("translated-text");
-		logger.info("HomeController.notifySuccess called with for request " + requestId);
-		machineTranslationService.saveSuccessResponse(requestId,targetLanguage,translatedText);
+		logger.info("HomeController.notifySuccess called with for request " + requestId); // the actual translation is handled in returnTranslation
 	}
 
 	@PostMapping(value = "home/notifyError")
-	public void notifyError(HttpServletRequest request, Locale locale, HttpServletResponse response) {
+	public void notifyError(HttpServletRequest request) {
 		String requestId = request.getParameter("requestId");
 		if (requestId == null) {
 			requestId = request.getParameter("request-id");
@@ -1132,8 +1125,28 @@ public class HomeController extends BasicController {
 		String errorCode = request.getParameter("error-code");
 		String errorMessage = request.getParameter("error-message");
 
-		logger.error("HomeController.notifyError called for the translation with request ID " + requestId);
+		logger.info("HomeController.notifyError called for the translation with request ID " + requestId);
 		machineTranslationService.saveErrorResponse(requestId,targetLanguage,errorCode,errorMessage);
+	}
+
+	@PostMapping(value = "home/returnTranslation")
+	public @ResponseBody String returnTranslation(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String requestId = request.getParameter("requestId");
+		if (requestId == null) {
+			requestId = request.getParameter("request-id");
+		}
+
+		logger.info("HomeController.returnTranslation called for the translation with request ID " + requestId);
+
+		byte[] translationBytes = request.getInputStream().readAllBytes();
+		String encodedString = new String(translationBytes);
+		byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
+		String translationText = new String(decodedBytes);
+
+		machineTranslationService.saveSuccessResponse(requestId, translationText);
+
+		response.setStatus(200);
+		return "OK";
 	}
 	
 	@GetMapping(value = "/home/reportAbuse")

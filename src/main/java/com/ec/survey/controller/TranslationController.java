@@ -385,7 +385,7 @@ public class TranslationController extends BasicController {
 
 		boolean translateTranlations;
 		try {
-			translateTranlations = machineTranslationService.translateTranlations(ids, user, isUseECMT());
+			translateTranlations = machineTranslationService.translateTranslations(ids, user, isUseECMT());
 		} catch (Exception e) {
 			translateTranlations = false;
 		}
@@ -758,7 +758,7 @@ public class TranslationController extends BasicController {
 						ids[1] = newTranslation.getId().toString();
 						User user = sessionService.getCurrentUser(request);
 						try {
-							if (machineTranslationService.translateTranlations(ids, user, isUseECMT())) {
+							if (machineTranslationService.translateTranslations(ids, user, isUseECMT())) {
 								activityService.log(ActivityRegistry.ID_MACHINE_TRANSLATION, null, language.getCode(),
 										sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
 							} else {
@@ -1108,7 +1108,7 @@ public class TranslationController extends BasicController {
 		// if true then check if microsoft properties is set
 		// else if false then check that EC Mt is set
 		if (isUseECMT()) {
-			isMTAvailable = StringUtils.isNotEmpty(mtServiceWsdl);
+			isMTAvailable = true; //StringUtils.isNotEmpty(mtServiceWsdl);
 		} else {
 			isMTAvailable = (StringUtils.isNotEmpty(msClientId)
 					&& !msClientId.trim().equalsIgnoreCase("your account here"));

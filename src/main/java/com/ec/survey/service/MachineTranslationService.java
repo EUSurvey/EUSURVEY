@@ -33,31 +33,21 @@ public class MachineTranslationService extends BasicService {
 	private MicrosoftTranslationService microsoftTranslationService;
 	
 	@Transactional
-	public void saveSuccessResponse(String requestId, String targetLanguage, String translatedText) {
-
+	public void saveSuccessResponse(String requestId, String translatedText) {
 		Request request = getRequest(requestId);
 		Response response = new Response();		
 		response.setRequest(request);
-		response.setTargetLang(targetLanguage);
-		
-		// build the delivery Path from the path URL that has been set to the request
-		String deliveryURL= buildDeliveryURLFromRequest(request);		
-		logger.info("machineTransaltionService.saveSuccessResponse set the Delivery URL to "  + deliveryURL);
-		
-		response.setDeliveryURL(deliveryURL);
-		response.setTranslatedText(translatedText);
+		response.setTargetLang(request.getTargetLangs());
+		//response.setTranslatedText(translatedText);
 		addResponse(response);
-		updateTranslation(response);
+		updateTranslation(request, request.getTargetLangs(), translatedText);
 	}
 
-	private void updateTranslation(Response response) {
-		logger.info("MachineTranslationService.updateTranslation start to update for " + response.getDeliveryURL() );
-		Request request = response.getRequest();
+	private void updateTranslation(Request request, String targetLang, String translatedText) {
+		logger.info("MachineTranslationService.updateTranslation start to update for " + request.getId() );
 		Integer sourceTranslationsID = request.getTranslationsID();
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsID);
 		Translations targetTranslations = null;
-		String targetLang = response.getTargetLang();
-		String translatedText = getTranslatedText(response);
 		List<Translations> alltranslations = translationService.getTranslationsForSurvey(sourceTranslations.getSurveyId(), true);
 		for (Translations trans : alltranslations) {
 			if (trans.getLanguage().getCode().equalsIgnoreCase(targetLang) && !trans.getComplete()) {
@@ -92,19 +82,6 @@ public class MachineTranslationService extends BasicService {
 		}
 	}
 
-	private String getTranslatedText(Response response) {
-		logger.info("MachineTranslationService.getTranslatedText started to get translation " +response.getDeliveryURL() );
-		String result = "";
-		if (response.getTranslatedText() != null && response.getTranslatedText().length() > 0) {
-			result = response.getTranslatedText();
-		}else {
-			
-			FtpEndPoint ftpEndPoint = FtpEndPoint.createFromMT(response.getDeliveryURL());
-			result = ftpClient.getFile(ftpEndPoint);
-		}
-		return result;
-	}
-
 	private Map<String,Integer> getMap(List<Translation> translationsList) {
 		Map<String,Integer> result = new HashMap<>();
 		for (Translation translation : translationsList) {
@@ -130,7 +107,7 @@ public class MachineTranslationService extends BasicService {
 		response.setErrMsg(errorMessage);
 		addResponse(response);
 	}
-	public boolean translateTranlations(String[] ids, User user, boolean useECMT) throws Exception {
+	public boolean translateTranslations(String[] ids, User user, boolean useECMT) throws Exception {
 		boolean result = true ;
 		
 		Integer sourceTranslationsId = null;
@@ -177,7 +154,7 @@ public class MachineTranslationService extends BasicService {
 		if ((targetLanguage.length() > 0) && sourceTranslationsId != null) {
 			if (useECMT) 
 			{
-				translateTranlations(sourceTranslationsId, targetLanguage.toString(), user,targetIDs);
+				translateTranslations(sourceTranslationsId, targetLanguage.toString(), user,targetIDs);
 			}
 			else 
 			{
@@ -234,7 +211,7 @@ public class MachineTranslationService extends BasicService {
 		
 	}
 
-	private void translateTranlations(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) {
+	private void translateTranslations(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) {
 
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsId);
 		
@@ -249,7 +226,6 @@ public class MachineTranslationService extends BasicService {
 
 			textToTranslateMap.put(translation.getId(), translation.getLabel());
 		}
-		
         
 		textToTranslate = ConversionTools.mapToHTML(textToTranslateMap);
 		
@@ -262,29 +238,29 @@ public class MachineTranslationService extends BasicService {
 		request.setUniqueId(uuid);
 		request.setTranslationsID(sourceTranslationsId);
 		request.setEmail(user.getEmail());
-		String ftpURI = "";
+		//String ftpURI = "";
 		String originalFileName =""; 
-		String ftpTargetPath="";
+		//String ftpTargetPath="";
 
-		ftpURI = ftpClient.getFtpSourceURL();
-		
-		// construct the return ftp path used in the call back to get translated file
-		if (ftpURI.endsWith(Constants.PATH_DELIMITER)){
-			ftpTargetPath = ftpURI;
-		}else{
-			ftpTargetPath = ftpURI + '/';
-		}								
-		ftpTargetPath += uuid  + '/';
+//		ftpURI = ftpClient.getFtpSourceURL();
+//
+//		// construct the return ftp path used in the call back to get translated file
+//		if (ftpURI.endsWith(Constants.PATH_DELIMITER)){
+//			ftpTargetPath = ftpURI;
+//		}else{
+//			ftpTargetPath = ftpURI + '/';
+//		}
+//		ftpTargetPath += uuid  + '/';
 		
 		originalFileName = uuid + ".html";
 		try {
-			ftpClient.putFile(FtpEndPoint.createFromMT(ftpURI) , originalFileName, textToTranslate);	
+			//ftpClient.putFile(FtpEndPoint.createFromMT(ftpURI) , originalFileName, textToTranslate);
 		} catch (Exception e) {
 			logger.error("Error when try to put file to FTP " + e);
 		}
 		
-		ftpURI += originalFileName;
-		request.setFileURL(ftpURI);
+		//ftpURI += originalFileName;
+		//request.setFileURL(ftpURI);
 		
 		String username = user.getLogin();
 		request.setUsername(username);
@@ -294,12 +270,12 @@ public class MachineTranslationService extends BasicService {
 		RequestTranslationMessage rtm = new RequestTranslationMessage();
 		rtm.setExternalReference(uuid);
 		
-		rtm.setRequestType("doc");
-		rtm.setTextToTranslate("");
+		//rtm.setRequestType("doc");
+		rtm.setTextToTranslate(textToTranslate);
 		rtm.setOriginalFileName(originalFileName);
-		rtm.setDocumentToTranslate(ftpURI);	
-		rtm.setTargetTranslationPath(ftpTargetPath);
-	
+		//rtm.setDocumentToTranslate(ftpURI);
+		//rtm.setTargetTranslationPath(ftpTargetPath);
+
 		rtm.setSourceLanguage(sourceLanguage);
 		rtm.setTargetLanguage(targetLanguage);		
 
@@ -311,8 +287,7 @@ public class MachineTranslationService extends BasicService {
 			isOK = false;
 			logger.error("Error when send request for eTranslation " + e);
 		}
-		
-		
+
 		if (isOK) 
 		{
 			for (Integer targetID : targetIDs) {
