@@ -1125,7 +1125,7 @@ public class HomeController extends BasicController {
 		String errorCode = request.getParameter("error-code");
 		String errorMessage = request.getParameter("error-message");
 
-		logger.info("HomeController.notifyError called for the translation with request ID " + requestId);
+		logger.error("HomeController.notifyError called for the translation with request ID " + requestId);
 		machineTranslationService.saveErrorResponse(requestId,targetLanguage,errorCode,errorMessage);
 	}
 
