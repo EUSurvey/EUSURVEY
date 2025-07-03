@@ -11,10 +11,13 @@
 		<div id="results-table" style="margin-top: 0px;">		
 	</c:otherwise>
 </c:choose>
-	<div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
-		<span class="glyphicon glyphicon-info-sign"></span>
-		<spring:message code="info.ResultFilterLimit" />
-	</div>
+
+    <c:if test="${reportingdatabaseused == null}">
+        <div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
+            <span class="glyphicon glyphicon-info-sign"></span>
+            <spring:message code="info.ResultFilterLimit" />
+        </div>
+	</c:if>
 	
 	<span id="lastupdate"></span>
 
@@ -166,7 +169,7 @@
 										<c:forEach var="r" begin="1" end="${question.allRows-1}"> 
 											<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 																
 												<th class="filtercell cell${question.id}-${r}-${c}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" class="limitedfilter" style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
+													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" class="limitedfilter" style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
 											        <div style="display: inline-block; margin: 0px; width: 5px;">
 														<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
@@ -262,7 +265,7 @@
 														   </div>
 													</c:when>
 													<c:otherwise>
-														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(child.id, child.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${child.getCellType() == 'Number' || child.getCellType() == 'Formula' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${child.id}|${child.uniqueId}" />
+														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(child.id, child.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${child.getCellType() == 'Number' || child.getCellType() == 'Formula' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${child.id}|${child.uniqueId}" />
 														<div style="display: inline-block; margin: 0px; width: 5px;">
 															<button type="button" class="unstyledbutton"  onclick="showOverlayMenu(this)" >
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
@@ -471,7 +474,7 @@
 												   </div>
 												</c:when>													
 												<c:otherwise>
-													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${question.type == 'NumberQuestion' || question.type == 'FormulaQuestion' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
+													<input onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="${question.type == 'NumberQuestion' || question.type == 'FormulaQuestion' ? 'filter' : 'limitedfilter'}" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
 													<div style="display: inline-block; margin: 0px; width: 5px;">
 														<button type="button" class="unstyledbutton" onclick="showOverlayMenu(this)" >
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
@@ -508,7 +511,7 @@
 										<input disabled="disabled" type="text" style="margin:0px;" />
 									</c:when>
 									<c:otherwise>
-										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.invitation}</esapi:encodeForHTMLAttribute>' name="metafilterinvitation" />
+										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.invitation}</esapi:encodeForHTMLAttribute>' name="metafilterinvitation" />
 									</c:otherwise>
 								</c:choose>
 							</th>
@@ -520,7 +523,7 @@
 										<input disabled="disabled" type="text" style="margin:0px;" />
 									</c:when>
 									<c:otherwise>
-										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.caseId}</esapi:encodeForHTMLAttribute>' name="metafiltercase" />
+										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.caseId}</esapi:encodeForHTMLAttribute>' name="metafiltercase" />
 									</c:otherwise>
 								</c:choose>
 							</th>
@@ -532,7 +535,7 @@
 										<input disabled="disabled" type="text" style="margin:0px;" />
 									</c:when>
 									<c:otherwise>
-										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.user}</esapi:encodeForHTMLAttribute>' name="metafilteruser" />
+										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="100" style="margin:0px;" value='<esapi:encodeForHTMLAttribute>${filter.user}</esapi:encodeForHTMLAttribute>' name="metafilteruser" />
 									</c:otherwise>
 								</c:choose>
 							</th>
@@ -850,7 +853,7 @@
 				 });
 			 
 			 $(".checkFilterCell").click(function(event) {
-				    checkFilterCell($(this).closest('.filtercell'), false);
+				    checkFilterCell($(this).closest('.filtercell'), true);
 					checkNoBreaks();
 				    event.stopPropagation();
 				});

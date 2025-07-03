@@ -3753,6 +3753,11 @@ public class ManagementController extends BasicController {
 
 		result.addObject("resultType", resultType);
 		result.addObject("questionswithuploadedfiles", answerService.getQuestionsWithUploadedFiles(survey));
+
+		if (isReportingDatabaseEnabled() && reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
+			result.addObject("reportingdatabaseused", true);
+		}
+
 		if (active) {
 			int answers = 0;
 			if (this.isReportingDatabaseEnabled()) {

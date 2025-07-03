@@ -66,7 +66,8 @@
 			</table>
 	
 			<c:set var="openSection" value="false"/>
-			
+			<c:set var="tableOpen" value="false"/>
+
 			<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="element" varStatus="loop">
 				<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">
 					<c:choose>
@@ -121,9 +122,12 @@
 										<th><spring:message code="label.Ratio" /></th>
 									</tr>
 									<c:set var="openSection" value="true"/>
+
+									<c:set var="tableOpen" value="true"/>
 							</c:if>
 						</c:when>
 						<c:otherwise>
+
 							<c:if test="${loop.index == 0}">
 								<table class="table table-striped table-bordered">
 									<tr>
@@ -133,6 +137,7 @@
 										<th><spring:message code="label.Ratio" /></th>
 									</tr>
 									<c:set var="openSection" value="true"/>
+									<c:set var="tableOpen" value="true"/>
 							</c:if>
 
 							<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">
@@ -190,7 +195,9 @@
 					</c:choose>
 				</c:if>
 			</c:forEach>
+			<c:if test="${tableOpen eq true}">
 			</table>
+			</c:if>
 						
 			</div>
 		</div>			

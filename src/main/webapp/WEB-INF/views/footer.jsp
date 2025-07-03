@@ -52,7 +52,7 @@
 									<a href="<c:url value="/home/tos"/>">${form.getMessage("label.TermsOfService")}</a><br />
 								</c:if>
 								
-								<a href="https://ec.europa.eu/info/cookies_${localeCode}">${form.getMessage("label.Cookies")}</a><br />
+								<a href="https://commission.europa.eu/cookies-policy_${localeCode}">${form.getMessage("label.Cookies")}</a><br />
 							</c:when>
 							<c:otherwise>
 								<c:if test="${showprivacy}">
@@ -61,7 +61,7 @@
 									<a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a><br />
 								</c:if>
 								
-								<a href="https://ec.europa.eu/info/cookies_${localeCode}"><spring:message code="label.Cookies" /></a><br />
+								<a href="https://commission.europa.eu/cookies-policy_${localeCode}"><spring:message code="label.Cookies" /></a><br />
 							</c:otherwise>
 						</c:choose>
 					</div>

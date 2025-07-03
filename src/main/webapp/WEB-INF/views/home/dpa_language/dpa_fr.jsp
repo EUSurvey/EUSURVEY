@@ -233,7 +233,7 @@
                     que le troisième est un cookie de session (JSESSIONID) utilisé pour identifier l’utilisateur et
                     veiller à ce qu’il soit toujours redirigé vers le même serveur. La liste complète des cookies
                     utilisés par la Commission européenne est disponible à l’adresse
-                    <a href="https://ec.europa.eu/info/cookies_fr">https://ec.europa.eu/info/cookies_fr</a><br><br>
+                    <a href="https://commission.europa.eu/cookies-policy_fr">https://ec.europa.eu/info/cookies_fr</a><br><br>
                     La DG DIGIT ne traite AUCUNE catégorie particulière de données à caractère personnel dans le
                     cadre des enquêtes EUSurvey et de la fourniture du service. Néanmoins, il se peut que les
                     propriétaires d’enquêtes utilisent EUSurvey pour recueillir des catégories particulières de

@@ -395,6 +395,10 @@ select {
 	margin-left: 0px !important;
 }
 
+.yellowfilter {
+    background-color: #FFE93A;
+}
+
 .round {
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;

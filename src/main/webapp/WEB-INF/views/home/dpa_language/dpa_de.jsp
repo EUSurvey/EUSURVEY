@@ -208,7 +208,7 @@
                     dem Webanalysedienst _pk_id#; bei dem dritten handelt es sich um ein Sitzungscookie (JSESSIONID), das verwendet wird,
                     um den Benutzer zu identifizieren und sicherzustellen, dass er stets auf denselben Server weitergeleitet wird.
                     Die vollständige Liste der von der Europäischen Kommission verwendeten Cookies finden
-                    Sie hier: <a href="https://ec.europa.eu/info/cookies_de">https://ec.europa.eu/info/cookies_de</a><br><br>
+                    Sie hier: <a href="https://commission.europa.eu/cookies-policy_de">https://ec.europa.eu/info/cookies_de</a><br><br>
                     Die GD DIGIT verarbeitet im Rahmen von EUSurvey und für die Erbringung des Dienstes KEINE besonderen
                     Kategorien personenbezogener Daten. Dennoch könnten die Umfrage-Eigentümer EUSurvey nutzen, um besondere
                     Kategorien personenbezogener Daten zu erheben, die dann auf den Servern der Europäischen Kommission gehostet werden

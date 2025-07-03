@@ -772,8 +772,10 @@ public class ParticipantsController extends BasicController {
 
 			text2 = text2.replaceAll(linksA, "");
 			text2 = text2.replaceAll(linksB, "");
-		}
 
+			senderSubject = senderSubject.replaceAll(linksA, "");
+			senderSubject = senderSubject.replaceAll(linksB, "");
+		}
 
 		if (senderAddress == null || senderAddress.trim().length() == 0)
 			senderAddress = user.getEmail();

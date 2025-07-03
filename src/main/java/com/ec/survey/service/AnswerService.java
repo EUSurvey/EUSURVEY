@@ -495,12 +495,14 @@ public class AnswerService extends BasicService {
 			prefix = "SELECT DISTINCT ans.ANSWER_SET_ID";
 		}
 
-		StringBuilder sql = new StringBuilder(prefix + " FROM ANSWERS a1");
+		StringBuilder sql = null;
 		StringBuilder where;
 		int joincounter = 0;
 		boolean useSurveysTable = false;
 		boolean useDraftSurveysTable = false;
 		boolean usePublicationsTable = false;
+		boolean useAnswerSetJoin = false;
+
 		String joinSurveys = "";
 
 		if (surveyId > -1) {
@@ -661,7 +663,20 @@ public class AnswerService extends BasicService {
 			}
 
 			Map<String, String> filterValues = filter.getFilterValues();
-			if (filterValues != null && filterValues.size() > 0) {
+
+			if (filterValues != null && filterValues.size() > 3) {
+				throw new TooManyFiltersException("too many search filters");
+			}
+
+			if ((filterValues != null && !filterValues.isEmpty()) || prefix.contains("a1")) {
+				sql = new StringBuilder(prefix + " FROM ANSWERS a1");
+				useAnswerSetJoin = true;
+			} else {
+				sql = new StringBuilder(prefix + " FROM ANSWERS_SET ans");
+			}
+
+			if (filterValues != null && !filterValues.isEmpty()) {
+
 				Set<String> rankingQuestionUids = surveyId > -1 ? surveyService.getRankingQuestionUids(surveyId) : new HashSet<>();	
 				Set<String> galleryQuestionUids = surveyId > -1 ? surveyService.getGalleryQuestionUids(surveyId) : new HashSet<>();	
 				Set<String> targetDatasetQuestionUids = surveyId > -1 ? surveyService.getTargetDatasetQuestionUids(surveyId) : new HashSet<>();
@@ -807,6 +822,13 @@ public class AnswerService extends BasicService {
 				break;
 			default :
 			}
+		} else {
+			if (prefix.contains("a1")) {
+				sql = new StringBuilder(prefix + " FROM ANSWERS a1");
+				useAnswerSetJoin = true;
+			} else {
+				sql = new StringBuilder(prefix + " FROM ANSWERS_SET ans");
+			}
 		}
 
 		// if flag is set then we need to use the join with the surveys table
@@ -820,17 +842,17 @@ public class AnswerService extends BasicService {
 			joinSurveys += " JOIN PUBLICATION p ON p.PUB_ID = s.publication_PUB_ID";
 
 		if (prefix.contains("inv.")) {
-			return sql + " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " + joinSurveys
+			return sql + (useAnswerSetJoin ? " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " : " ") + joinSurveys
 					+ " LEFT OUTER JOIN INVITATIONS inv ON inv.INVITATION_ID = ans.ANSWER_SET_INVID WHERE " + where;
 		}
 
 		if (prefix.contains("inv.")
 				|| filter != null && filter.getDraftId() != null && filter.getDraftId().length() > 0) {
-			return sql + " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " + joinSurveys
+			return sql + (useAnswerSetJoin ? " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " : " ") + joinSurveys
 					+ " LEFT JOIN DRAFTS d ON ans.ANSWER_SET_ID = d.answerSet_ANSWER_SET_ID WHERE " + where;
 		}
 
-		return sql + " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " + joinSurveys + " WHERE " + where;
+		return sql + (useAnswerSetJoin ? " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " : " ") + joinSurveys + " WHERE " + where;
 
 	}
 
