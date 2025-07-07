@@ -1207,7 +1207,7 @@ function checkUniqueIdentifier(input)
 {
 	var id = $(input).val();
 	var result = true;
-	
+
 	$("li.survey-element:not(.selectedquestion)").each(function(){
 		var qid = $(this).find("input[name^='shortname']").first().val();
 		if (qid == id)

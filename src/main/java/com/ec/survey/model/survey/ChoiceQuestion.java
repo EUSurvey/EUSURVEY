@@ -167,6 +167,16 @@ public abstract class ChoiceQuestion extends Question {
 	}
 
 	@Transient
+	public PossibleAnswer getPossibleAnswerByAlias(String alias) {
+		for (PossibleAnswer possibleAnswer : getAllPossibleAnswers()) {
+			if (possibleAnswer.getShortname() != null && possibleAnswer.getShortname().length() > 0 && possibleAnswer.getShortname().equals(alias)) {
+				return possibleAnswer;
+			}
+		}
+		return null;
+	}
+
+	@Transient
 	public boolean isForeditor() {
 		return foreditor;
 	}

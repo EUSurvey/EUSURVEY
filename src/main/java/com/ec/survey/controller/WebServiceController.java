@@ -1174,7 +1174,7 @@ public class WebServiceController extends BasicController {
 
 		Survey survey = getSurvey(shortname, user, request, response, false, false);
 		if (survey == null)
-			return "";
+			return "unknown survey or survey not published";
 
 		String token = null;
 		var parameters = request.getParameterMap();
@@ -1186,14 +1186,14 @@ public class WebServiceController extends BasicController {
 			}
 			if (values.containsKey(entry.getKey())){
 				response.setStatus(412);
-				return "";
+				return "duplicate parameter found: " + entry.getKey();
 			}
 			values.put(entry.getKey(), entry.getValue()[0]);
 		}
 
 		if (token == null) {
 			response.setStatus(412);
-			return "";
+			return "no token found";
 		}
 
 		Invitation invitation = null;
@@ -1202,7 +1202,7 @@ public class WebServiceController extends BasicController {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			response.setStatus(412);
-			return "";
+			return "invalid invitation code";
 		}
 
 		Map<Integer, Element> matrixQuestions = survey.getMatrixMap();
@@ -1212,7 +1212,7 @@ public class WebServiceController extends BasicController {
 			Draft draft = answerService.getDraftByAnswerUID(token);
 			if (draft != null) {
 				response.setStatus(412);
-				return "";
+				return "there is already a draft for the given token";
 			}
 
 			draft = new Draft();
@@ -1249,7 +1249,7 @@ public class WebServiceController extends BasicController {
 						Date date = Tools.parseDateString(dateval, ConversionTools.DateFormat);
 						if (date == null) {
 							response.setStatus(412);
-							return "";
+							return "invalid date: " + dateval;
 						}
 
 						Answer answer = new Answer();
@@ -1263,6 +1263,7 @@ public class WebServiceController extends BasicController {
 						if (!Tools.isTimeString(timeval))
 						{
 							response.setStatus(412);
+							return "invalid time: " + timeval;
 						}
 
 						Answer answer = new Answer();
@@ -1273,15 +1274,19 @@ public class WebServiceController extends BasicController {
 					} else if (question instanceof ChoiceQuestion) {
 						String[] arrvalues = entry.getValue().split(",");
 						for (String alias : arrvalues) {
-							Integer paid = elementsByAlias.get(alias).getId();
+							ChoiceQuestion cq = (ChoiceQuestion) question;
+							PossibleAnswer pa = cq.getPossibleAnswerByAlias(alias);
+
+							if (pa == null) {
+								response.setStatus(412);
+								return "invalid option " + alias + " for question " + questionalias;
+							}
+
 							Answer answer = new Answer();
 							answer.setAnswerSet(answerSet);
 							answer.setQuestionUniqueId(question.getUniqueId());
-							answer.setValue(paid.toString());
-
-							ChoiceQuestion cq = (ChoiceQuestion) question;
-							answer.setPossibleAnswerUniqueId(cq.getPossibleAnswer(paid).getUniqueId());
-
+							answer.setValue(pa.getId().toString());
+							answer.setPossibleAnswerUniqueId(pa.getUniqueId());
 							answerSet.addAnswer(answer);
 						}
 					} else if (question instanceof GalleryQuestion) {
@@ -1300,6 +1305,12 @@ public class WebServiceController extends BasicController {
 							String[] arrvalues = entry.getValue().split(",");
 
 							for (String alias : arrvalues) {
+
+								if (!elementsByAlias.containsKey(alias)) {
+									response.setStatus(412);
+									return "invalid option " + alias + " for question " + questionalias;
+								}
+
 								Integer paid = elementsByAlias.get(alias).getId();
 
 								Answer answer = new Answer();
@@ -1330,7 +1341,7 @@ public class WebServiceController extends BasicController {
 					var colNum = table.getAnswers().indexOf(col) + 1;
 					if (rowNum <= 0 || colNum <= 0) {
 						response.setStatus(412);
-						return "";
+						return "invalid row or column index " + rowNum + " / " + colNum + " for question " + questionalias;
 					}
 
 					var answer = new Answer();
@@ -1343,13 +1354,16 @@ public class WebServiceController extends BasicController {
 					answer.setRow(rowNum);
 					answer.setColumn(colNum);
 					answerSet.addAnswer(answer);
+				} else {
+					response.setStatus(412);
+					return "unknown question: " + questionalias;
 				}
 			}
 			
 			if (answerSet.getAnswers().isEmpty()) {
 				logger.error("prefill call rejected as the draft contribution would be empty: " + getFullURL(request));
 				response.setStatus(412);
-				return "";
+				return "prefill call rejected as the draft contribution would be empty";
 			}
 			
 			//check that all readonly mandatory questions are answered
@@ -1357,7 +1371,7 @@ public class WebServiceController extends BasicController {
 			if (q != null) {
 				logger.error("prefill call rejected as the draft contribution would be missing a value for this mandatory read-only question: " + q.getUniqueId());
 				response.setStatus(412);
-				return "";
+				return "missing mandatory value for question " + q.getShortname();
 			}					
 
 			try {
@@ -1369,14 +1383,14 @@ public class WebServiceController extends BasicController {
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
 				response.setStatus(412);
-				return "";
+				return "internal error during execution";
 			}
 
 			response.setStatus(204);
 			return "";
 		} else {
 			response.setStatus(412);
-			return "";
+			return "no invitation found";
 		}
 	}
 	
