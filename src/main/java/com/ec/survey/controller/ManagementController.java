@@ -1111,13 +1111,13 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("evote").equalsIgnoreCase("true"));
 					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi() && !copy.getIsEVote());
 
-					surveyService.update(copy, false, false, true, u.getId());
+					if (copy.getIsSelfAssessment() && original.getIsSelfAssessment()) {
+						selfassessmentService.copyData(original.getUniqueId(), copy);
+					} else {
+						surveyService.update(copy, false, false, true, u.getId());
+					}
 
 					surveyService.copiedSurveyApplyTranslations(copy, original, oldToNewUniqueIds, convertedUIDs, newTitle, u.getId());
-
-					if (copy.getIsSelfAssessment() && original.getIsSelfAssessment()) {
-						selfassessmentService.copyData(original.getUniqueId(), copy);					
-					}
 
 					Form form = new Form(resources);
 					form.setSurvey(copy);
