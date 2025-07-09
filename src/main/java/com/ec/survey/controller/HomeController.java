@@ -352,8 +352,8 @@ public class HomeController extends BasicController {
 			createTemplate = createTemplate.replace("[ADDITIONALINFOSURVEYALIAS]", additionalsurveyinfoalias);
 			createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 			createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
-			createTemplate = createTemplate.replace("[BUSINESSSERVICE]", "Survey solutions");
-			createTemplate = createTemplate.replace("[SERVICEOFFERING]", "EU Survey");
+			createTemplate = createTemplate.replace("[BUSINESSSERVICE]", "EU Survey Solutions");
+			createTemplate = createTemplate.replace("[SERVICEOFFERING]", "");
 
 			sessionService.initializeProxy();
 			
