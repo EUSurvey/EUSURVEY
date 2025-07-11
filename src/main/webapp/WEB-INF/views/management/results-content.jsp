@@ -1323,7 +1323,7 @@
 														var td = document.createElement("td");
 														var div = document.createElement("div");
 														$(div).addClass("answercell tablecell");
-														$(div).append(escapeXml(list[i++]));
+														$(div).append(list[i++]);
 														$(td).append(div);
 														$(tr).append(td);
 														
@@ -1374,14 +1374,7 @@
 													var div = document.createElement("div");
 													$(div).addClass("answercell complextablecell");
 													
-													<c:choose>										
-														<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'MultipleChoice'}">
-															$(div).append(list[i++]);
-														</c:when>
-														<c:otherwise>
-															$(div).append(escapeXml(list[i++]));
-														</c:otherwise>
-													</c:choose>
+													$(div).append(list[i++]);
 													$(td).append(div);
 													$(tr).append(td);
 												
@@ -1396,14 +1389,7 @@
 													$(td).addClass("cell${question.id}");															
 													var div = document.createElement("div");
 													$(div).addClass("answercell");
-													<c:choose>
-						  								<c:when test="${question.getType() == 'SingleChoiceQuestion' || question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'RankingQuestion'}">
-						  									$(div).append(list[i++]);
-						  								</c:when>
-						  								<c:otherwise>
-						  									$(div).append(escapeXml(list[i++]));
-						  								</c:otherwise>
-						  							</c:choose>
+													$(div).append(list[i++]);
 													$(td).append(div);
 													$(tr).append(td);
 												
