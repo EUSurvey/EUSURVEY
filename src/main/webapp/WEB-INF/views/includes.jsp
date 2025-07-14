@@ -531,4 +531,15 @@
 
 		});
 	});
+
+	function getNumberOfPredefinedFilters() {
+	     <c:if test="${USER != null && USER.resultAccess != null && USER.resultAccess.resultFilter != null && USER.resultAccess.resultFilter.filterValues != null && USER.resultAccess.resultFilter.filterValues.size() > 0}">
+            return ${USER.resultAccess.resultFilter.filterValues.size()};
+         </c:if>
+         <c:if test="${publication != null && publication.filter != null && publication.filter.filterValues != null && publication.filter.filterValues.size() > 0}">
+            return ${publication.filter.filterValues.size()};
+         </c:if>
+         return 0;
+	}
+
 </script>

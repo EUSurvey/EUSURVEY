@@ -538,7 +538,8 @@ function initModals(item)
         if ($("#ResultFilterLimit").length > 0)
 		{
             var row = $(cell).closest("tr");
-            var count = $(row).find(".yellowfilter").length;
+            var count = $(row).find(".yellowfilter").length + getNumberOfPredefinedFilters();
+
             if (count > 2)
             {
                 $(row).find("input[type=text]").each(function(){

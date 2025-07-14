@@ -1372,6 +1372,13 @@
 						</tr>
 						<tr class="noborder" data-bind="visible: selectedContributions">
 							<td>
+							    <c:if test="${reportingdatabaseused == null}">
+                                    <div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                        <spring:message code="info.ResultFilterLimit" />
+                                    </div>
+                                </c:if>
+
 								<div style="float: right; max-width: 600px;">	
 									<div class="scrollablediv" id="contributionsToPublishDiv">
 										<c:forEach items="${form.survey.getQuestions()}" var="question">
@@ -1379,9 +1386,9 @@
 												<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion'}">
 													<div class="well">
 														${question.title}
-														<div>
+														<div class="filter">
 															<c:forEach items="${question.possibleAnswers}" var="possibleanswer" varStatus="status">
-																<input type="checkbox" class="check" name="contribution${question.id}|${question.uniqueId}" value="${possibleanswer.id}|${possibleanswer.uniqueId}" <c:if test="${form.survey.publication.filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId)}">checked="checked"</c:if> />${possibleanswer.title}<br />
+																<input onchange="checkNumberOfFilters(${reportingdatabaseused == null})" type="checkbox" class="check" name="contribution${question.id}|${question.uniqueId}" value="${possibleanswer.id}|${possibleanswer.uniqueId}" <c:if test="${form.survey.publication.filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId)}">checked="checked"</c:if> />${possibleanswer.title}<br />
 															</c:forEach>
 														</div>
 													</div>

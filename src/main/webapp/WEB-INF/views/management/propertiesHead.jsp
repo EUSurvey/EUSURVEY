@@ -1034,6 +1034,10 @@
 					searchUser();
 				}
 			});
+
+			 <c:if test="${reportingdatabaseused == null}">
+              checkNumberOfFilters(true);
+            </c:if>
 		});
 
 		function changeOwner() {
@@ -1106,6 +1110,41 @@
 					showError('<spring:message code="message.ChangeRequestError" />');
 				}});
 		}
+
+		function checkNumberOfFilters(reportingDBDisabled) {
+            if (!reportingDBDisabled) return;
+
+            let counter = 0;
+
+            $('#contributionsToPublishDiv').find(".filter").each(function(){
+                let valfound = false;
+
+                $(this).find("input[type=checkbox]").each(function(){
+                    if ($(this).is(":checked")) {
+                        valfound = true;
+                    }
+                });
+
+                if (valfound) {
+                    $(this).attr("data-filterset", "true");
+                    counter++;
+                } else {
+                    $(this).attr("data-filterset", "false");
+                }
+            });
+
+            if (counter > 2) {
+                $('#contributionsToPublishDiv').find(".filter").each(function(){
+                    if ($(this).attr("data-filterset") == "false") {
+                        $(this).find("input").attr("disabled", "disabled").addClass("disabled");
+                    }
+                });
+            } else {
+                $('#contributionsToPublishDiv').find("input.disabled").each(function(){
+                    $(this).removeAttr("disabled").removeClass("disabled");
+                });
+            }
+        }
 
 	</script>
 	

@@ -16,6 +16,14 @@
         <div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
             <span class="glyphicon glyphicon-info-sign"></span>
             <spring:message code="info.ResultFilterLimit" />
+            <c:choose>
+                <c:when test="${USER.resultAccess != null && USER.resultAccess.resultFilter != null && USER.resultAccess.resultFilter.filterValues != null && USER.resultAccess.resultFilter.filterValues.size() > 0}">
+                   - <spring:message code="info.ResultFilterLimitPredefined" arguments="${USER.resultAccess.resultFilter.filterValues.size()}" />
+                </c:when>
+                <c:when test="${publication != null && publication.filter != null && publication.filter.filterValues != null && publication.filter.filterValues.size() > 0}">
+                   - <spring:message code="info.ResultFilterLimitPredefined" arguments="${publication.filter.filterValues.size()}" />
+                </c:when>
+            </c:choose>
         </div>
 	</c:if>
 	
