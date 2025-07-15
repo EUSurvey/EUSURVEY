@@ -110,12 +110,11 @@
 				
 			})
 			
-			$('[data-toggle="tooltip"]').tooltip(); 
-			
-			<c:if test="${selectSecondTab != null}">
-				$('#resultsTab').tab('show');
-			</c:if>
+			$('[data-toggle="tooltip"]').tooltip();
 		})
+
+		const reportingdatabaseused = ${reportingdatabaseused != null};
+		
 	</script>
 </head>
 <body>

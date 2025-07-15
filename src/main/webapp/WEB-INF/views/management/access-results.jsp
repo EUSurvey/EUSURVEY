@@ -73,19 +73,19 @@
 					</tr>
 					
 				<c:forEach items="${form.survey.getElementsForResultAccessFilter()}" var="entry">								
-					<tr>
+					<tr class="filterrow">
 						<td>${entry.getKey().getStrippedTitleAtMost100()}</td>						
 						<td>
 							<c:choose>
 								<c:when test="${!entry.getValue().isEmpty()}">
 									<div id="${entry.getKey().uniqueId}">
 										<c:forEach items="${entry.getValue()}" var="child">
-											<input name="${entry.getKey().uniqueId}" type="checkbox" style="margin: 5px; vertical-align: middle; margin-bottom: 7px;" value="${child.id}|${child.uniqueId}" /> ${child.getStrippedTitleAtMost100()} <br />
+											<input onclick="checkNumberOfFilters(${reportingdatabaseused == null})" name="${entry.getKey().uniqueId}" type="checkbox" style="margin: 5px; vertical-align: middle; margin-bottom: 7px;" value="${child.id}|${child.uniqueId}" /> ${child.getStrippedTitleAtMost100()} <br />
 										</c:forEach>
 									</div>
 								</c:when>
 								<c:otherwise>
-									<input id="${entry.getKey().uniqueId}" name="${entry.getKey().uniqueId}" type="text" class="form-control" style="width: 400px" />
+									<input onkeyup="checkNumberOfFilters(${reportingdatabaseused == null})" id="${entry.getKey().uniqueId}" name="${entry.getKey().uniqueId}" type="text" class="form-control" style="width: 400px" />
 									<div class="help"><spring:message code="info.separateValuesBySemikolon"/></div>							
 								</c:otherwise>
 							</c:choose>
