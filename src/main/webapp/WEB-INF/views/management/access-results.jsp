@@ -56,7 +56,14 @@
 		<div class="modal-dialog modal-lg">
     	<div class="modal-content">
 		<div class="modal-body" style="max-height: calc(100vh - 212px);  overflow-y: auto;">
-		
+
+		    <c:if test="${reportingdatabaseused == null}">
+                <div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                    <spring:message code="info.ResultFilterLimit" />
+                </div>
+            </c:if>
+
 			<form:form id="updateResultFilterForm" method="POST" action="updateResultFilter">
 				<input type="hidden" name="accessid" id="accessid" />
 				<input type="hidden" name="resultMode" value="true" />
