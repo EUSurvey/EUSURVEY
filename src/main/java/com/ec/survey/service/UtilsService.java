@@ -39,6 +39,7 @@ public class UtilsService extends BasicService {
         result.setExecutiveAgencies(Tools.sortByComparator(result.getExecutiveAgencies()));
 
         result.getOtherEUIs().put("ACER",resources.getMessage("domain.eu.europa.acer", null, locale));
+        result.getOtherEUIs().put("AMLA",resources.getMessage("domain.eu.europa.amla", null, locale));
         result.getOtherEUIs().put("ARTEMIS",resources.getMessage("domain.eu.europa.artemis", null, locale));
         result.getOtherEUIs().put("CLEANSKY",resources.getMessage("domain.eu.europa.cleansky", null, locale));
         result.getOtherEUIs().put("CDR",resources.getMessage("domain.eu.europa.cor", null, locale));
@@ -52,7 +53,7 @@ public class UtilsService extends BasicService {
         result.getOtherEUIs().put("EUROJUST",resources.getMessage("domain.eu.europa.eurojust", null, locale));
         result.getOtherEUIs().put("OSHA",resources.getMessage("domain.eu.europa.osha", null, locale));
         result.getOtherEUIs().put("EASO",resources.getMessage("domain.eu.europa.easo", null, locale));
-        result.getOtherEUIs().put("EASA",resources.getMessage("domain.eu.europa.easa", null, locale));
+        result.getOtherEUIs().put("EASA",resources.getMessage("domain.eu.europa.easa2025", null, locale));
         result.getOtherEUIs().put("EBA",resources.getMessage("domain.eu.europa.eba", null, locale));
         result.getOtherEUIs().put("ECB",resources.getMessage("domain.eu.europa.ecb", null, locale));
         result.getOtherEUIs().put("ECCC",resources.getMessage("domain.eu.europa.eccc", null, locale));
@@ -77,7 +78,7 @@ public class UtilsService extends BasicService {
         result.getOtherEUIs().put("F4E",resources.getMessage("domain.eu.europa.f4e", null, locale));
         result.getOtherEUIs().put("EMSA",resources.getMessage("domain.eu.europa.emsa", null, locale));
         result.getOtherEUIs().put("EMA",resources.getMessage("domain.eu.europa.ema", null, locale));
-        result.getOtherEUIs().put("EMCDDA",resources.getMessage("domain.eu.europa.emcdda", null, locale));
+        result.getOtherEUIs().put("EUDA",resources.getMessage("domain.eu.europa.euda", null, locale));
         result.getOtherEUIs().put("OMBUDSMAN",resources.getMessage("domain.eu.europa.ombudsman", null, locale));
         result.getOtherEUIs().put("EUROPARL",resources.getMessage("domain.eu.europa.europarl", null, locale));
         result.getOtherEUIs().put("CEPOL",resources.getMessage("domain.eu.europa.cepol", null, locale));

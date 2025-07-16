@@ -116,6 +116,16 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<DelphiExplanationLike> getAllLikesForExplanations(List<AnswerExplanation> explanations) {
+
+		var session = sessionFactory.getCurrentSession();
+		var query = session.createQuery("FROM DelphiExplanationLike WHERE answerExplanationId in :explanationIds");
+		query.setParameterList("explanationIds", explanations.stream().map(ex -> ex.getId()).collect(Collectors.toList()));
+
+		return query.list();
+	}
+
+	@Transactional(readOnly = true)
 	public List<AnswerExplanation> getExplanationsOfSurvey(final String surveyUid, final boolean draft) {
 
 		final Session session = sessionFactory.getCurrentSession();
@@ -470,6 +480,16 @@ public class AnswerExplanationService extends BasicService {
 		query.setInteger("answerCommentId", answerCommentId).setString("uniqueCode", uniqueCode);
 
 		return (DelphiCommentLike) query.uniqueResult();
+	}
+
+	@Transactional(readOnly = true)
+	public List<DelphiCommentLike> getAllLikesForComments(List<AnswerComment> comments) {
+		var session = sessionFactory.getCurrentSession();
+
+		var query = session.createQuery("FROM DelphiCommentLike WHERE answerCommentId IN :commentIds", DelphiCommentLike.class);
+		query.setParameterList("commentIds", comments.stream().map(co -> co.getId()).collect(Collectors.toList()));
+
+		return query.list();
 	}
 
 	@Transactional

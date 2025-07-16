@@ -1,16 +1,15 @@
 package com.ec.survey.controller;
 
-import com.ec.survey.model.Form;
-import com.ec.survey.model.Paging;
-import com.ec.survey.model.SqlPagination;
-import com.ec.survey.model.SurveyFilter;
+import com.ec.survey.model.*;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -192,5 +193,22 @@ public class SurveyController extends BasicController {
 
 		return false;
 	}
-		
+
+	@GetMapping("/tags")
+	public @ResponseBody String[] getTagsJSON(HttpServletRequest request, Locale locale) {
+		try {
+			boolean createNewTag = request.getParameter("createNewTag") != null
+								  && request.getParameter("createNewTag").equalsIgnoreCase("true");
+			String term = request.getParameter("term").replace(" ", "");
+
+			List<String> result = surveyService.getTags(term);
+			if (createNewTag && !result.contains(term) && term.length() > 2) {
+				result.add(0, term + " (" + resources.getMessage("label.NewTag", null, "new tag", locale) + ")");
+			}
+			return result.toArray(new String[0]);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return null;
+		}
+	}
 }

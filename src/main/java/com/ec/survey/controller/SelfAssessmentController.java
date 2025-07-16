@@ -295,7 +295,7 @@ public class SelfAssessmentController extends BasicController {
 			final User user = sessionService.getCurrentUser(request, false, false);
 			Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 			
-			boolean userIsFormManager = sessionService.userIsFormAdmin(survey, user, request);
+			boolean userIsFormManager = sessionService.userIsFormReaderOrAdmin(survey, user, request);
 			
 			if (!userIsFormManager) {
 				throw new ForbiddenURLException();

@@ -15,15 +15,19 @@ function checkGalleryProperties(doupdate)
 
 function toggleAdvancedProperties(button)
 {
+	var classUntil = ".quiz"
+	if ($("#properties").find(".selfassessment").length > 0) {
+		classUntil = ".selfassessment"
+	}
 	if ($(button).parent().find(".glyphicon-minus-sign").length > 0)
 	{
 		$(button).parent().find(".glyphicon-minus-sign").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
-		$(button).closest("tr").nextUntil(".quiz").addClass("hideme");
+		$(button).closest("tr").nextUntil(classUntil).addClass("hideme");
 	} else {
 		$(button).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
-		$(button).closest("tr").nextAll(":not(.tinymcerow, .quiz)").removeClass("hideme");
+		$(button).closest("tr").nextAll(":not(.tinymcerow, .quiz, .selfassessment)").removeClass("hideme");
 		//registration form area
-		$(button).closest("tr").nextUntil(".quiz").find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
+		$(button).closest("tr").nextUntil(classUntil).find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
 	}
 }
 
@@ -472,10 +476,10 @@ function getCellHeaderPropertiesRow(cellID, isRow) {
 			units.push(unit);
 		}
 
-		const answers = child == null ? null : child.possibleAnswers()
+		const answers = child?.possibleAnswers() ?? []
 		if (possibleAnswers == null){
 			possibleAnswers = answers
-		} else if (possibleAnswersMatch && answers != null){
+		} else if (possibleAnswersMatch){
 			if (possibleAnswers.length === answers.length){
 				for (let i = 0; i < answers.length; i++){
 					if (answers[i].title() !== possibleAnswers[i].title()){
@@ -488,6 +492,7 @@ function getCellHeaderPropertiesRow(cellID, isRow) {
 			}
 		}
 	})
+
 	
 	if (types.length > 1) {
 		cell.cellTypeChildren(-1);
@@ -500,6 +505,7 @@ function getCellHeaderPropertiesRow(cellID, isRow) {
 	} else if (titles.length == 1) {
 		cell.titleChildren(titles[0]);
 	}
+	cell.titleChildrenMatch(titles.length <= 1)
 
 	if (allMandatorySame) {
 		cell.optionalChildren(lastOptional !== false); //!== false removes null case

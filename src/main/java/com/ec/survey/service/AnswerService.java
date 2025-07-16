@@ -495,12 +495,14 @@ public class AnswerService extends BasicService {
 			prefix = "SELECT DISTINCT ans.ANSWER_SET_ID";
 		}
 
-		StringBuilder sql = new StringBuilder(prefix + " FROM ANSWERS a1");
+		StringBuilder sql = null;
 		StringBuilder where;
 		int joincounter = 0;
 		boolean useSurveysTable = false;
 		boolean useDraftSurveysTable = false;
 		boolean usePublicationsTable = false;
+		boolean useAnswerSetJoin = false;
+
 		String joinSurveys = "";
 
 		if (surveyId > -1) {
@@ -661,7 +663,20 @@ public class AnswerService extends BasicService {
 			}
 
 			Map<String, String> filterValues = filter.getFilterValues();
-			if (filterValues != null && filterValues.size() > 0) {
+
+			if (filterValues != null && filterValues.size() > 3) {
+				throw new TooManyFiltersException("too many search filters");
+			}
+
+			if ((filterValues != null && !filterValues.isEmpty()) || prefix.contains("a1")) {
+				sql = new StringBuilder(prefix + " FROM ANSWERS a1");
+				useAnswerSetJoin = true;
+			} else {
+				sql = new StringBuilder(prefix + " FROM ANSWERS_SET ans");
+			}
+
+			if (filterValues != null && !filterValues.isEmpty()) {
+
 				Set<String> rankingQuestionUids = surveyId > -1 ? surveyService.getRankingQuestionUids(surveyId) : new HashSet<>();	
 				Set<String> galleryQuestionUids = surveyId > -1 ? surveyService.getGalleryQuestionUids(surveyId) : new HashSet<>();	
 				Set<String> targetDatasetQuestionUids = surveyId > -1 ? surveyService.getTargetDatasetQuestionUids(surveyId) : new HashSet<>();
@@ -807,6 +822,13 @@ public class AnswerService extends BasicService {
 				break;
 			default :
 			}
+		} else {
+			if (prefix.contains("a1")) {
+				sql = new StringBuilder(prefix + " FROM ANSWERS a1");
+				useAnswerSetJoin = true;
+			} else {
+				sql = new StringBuilder(prefix + " FROM ANSWERS_SET ans");
+			}
 		}
 
 		// if flag is set then we need to use the join with the surveys table
@@ -820,17 +842,17 @@ public class AnswerService extends BasicService {
 			joinSurveys += " JOIN PUBLICATION p ON p.PUB_ID = s.publication_PUB_ID";
 
 		if (prefix.contains("inv.")) {
-			return sql + " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " + joinSurveys
+			return sql + (useAnswerSetJoin ? " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " : " ") + joinSurveys
 					+ " LEFT OUTER JOIN INVITATIONS inv ON inv.INVITATION_ID = ans.ANSWER_SET_INVID WHERE " + where;
 		}
 
 		if (prefix.contains("inv.")
 				|| filter != null && filter.getDraftId() != null && filter.getDraftId().length() > 0) {
-			return sql + " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " + joinSurveys
+			return sql + (useAnswerSetJoin ? " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " : " ") + joinSurveys
 					+ " LEFT JOIN DRAFTS d ON ans.ANSWER_SET_ID = d.answerSet_ANSWER_SET_ID WHERE " + where;
 		}
 
-		return sql + " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " + joinSurveys + " WHERE " + where;
+		return sql + (useAnswerSetJoin ? " RIGHT JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID " : " ") + joinSurveys + " WHERE " + where;
 
 	}
 
@@ -1520,11 +1542,11 @@ public class AnswerService extends BasicService {
 	@Transactional
 	public Statistics getStatisticsForFilterHash(int surveyId, String hash, boolean useEagerLoading) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("from Statistics s where s.surveyId=:surveyId and filterHash=:filterHash order by id DESC");
-		query.setInteger("surveyId", surveyId);
-		query.setString("filterHash", hash);
+		Query<Statistics> query = session.createQuery("from Statistics s where s.surveyId=:surveyId and filterHash=:filterHash order by id DESC");
+		query.setParameter("surveyId", surveyId);
+		query.setParameter("filterHash", hash);
 		query.setMaxResults(1);
-		Statistics result = (Statistics) query.uniqueResult();
+		var result = query.uniqueResult();
 
 		if (result != null) {
 			if (result.getInvalid() != null && result.getInvalid()) {
@@ -1560,6 +1582,13 @@ public class AnswerService extends BasicService {
 		if (statisticsRequest == null)
 			return null;
 
+		if (statisticsRequest.isAllanswers()) {
+			Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId(), false, true);
+			if (!survey.isMissingElementsChecked()) {
+				surveyService.checkAndRecreateMissingElements(survey, statisticsRequest.getFilter());
+			}
+		}
+
 		Statistics statistics = this.getStatisticsForFilterHash(statisticsRequest.getSurveyId(), statisticsRequest.getFilter().getHash(statisticsRequest.isAllanswers()),
 				false);
 
@@ -1588,13 +1617,18 @@ public class AnswerService extends BasicService {
 	public Statistics getStatisticsOrStartCreator(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
 			boolean asynchronous) throws Exception {
 		filter = answerService.initialize(filter);
+
+		if (allanswers && !survey.isMissingElementsChecked()) {
+			surveyService.checkAndRecreateMissingElements(survey, filter);
+		}
+
 		Statistics statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers), useEagerLoading);
 
 		if (statistics == null) {
 			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
 			creator.init(survey, filter, allanswers);
 
-			if (asynchronous && !allanswers) {
+			if (asynchronous) {
 				try {
 
 					for (Runnable r : running) {
@@ -1645,9 +1679,6 @@ public class AnswerService extends BasicService {
 							logger.error(e.getLocalizedMessage(), e);
 						}
 
-						if (allanswers && !survey.isMissingElementsChecked()) {
-							surveyService.checkAndRecreateMissingElements(survey, filter);
-						}
 
 						statistics = this.getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers),
 								useEagerLoading);

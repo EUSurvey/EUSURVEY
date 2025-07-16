@@ -65,8 +65,11 @@
 		var labelreadonly = '<spring:message code="label.ReadingAccess" />';
 		var labelreadwrite = '<spring:message code="label.ReadWriteAccess" />';
 		var errorOperationFailed = '<spring:message code="error.OperationFailed" />';
+		var noMailsFound = '<spring:message code="label.NoMailsFound" />';
 		var atLeastOneMail = '<spring:message code="label.AtLeastOneMail" />';
 		var noEmptySearch = '<spring:message code="label.NoEmptySearch" />';
+		var invalidEmails = '<spring:message code="label.InvalidEmails" />';
+		var notFoundEmails = '<spring:message code="label.NotFoundEmails" />';
 		var page = ${resultspage};
 		var rows = 20;
 		
@@ -107,12 +110,11 @@
 				
 			})
 			
-			$('[data-toggle="tooltip"]').tooltip(); 
-			
-			<c:if test="${selectSecondTab != null}">
-				$('#resultsTab').tab('show');
-			</c:if>
+			$('[data-toggle="tooltip"]').tooltip();
 		})
+
+		const reportingdatabaseused = ${reportingdatabaseused != null};
+		
 	</script>
 </head>
 <body>

@@ -361,7 +361,13 @@
 				<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)"></span>
 			</div>
 			<form autocomplete="off">
+				<!-- ko if: Cell().titleChildrenMatch() -->
 				<div data-bind="html: Cell().titleChildren"></div>
+				<!-- /ko -->
+
+				<!-- ko if: !Cell().titleChildrenMatch() -->
+				<div><spring:message code="label.varying" /></div>
+				<!-- /ko -->
 			</form>
 		</td>
 	</tr>
@@ -376,7 +382,7 @@
 	</tr>
 
 	<!-- Mandatory -->
-	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() > 1 ? '' : 'display: none;'}">
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() > 1 && Cell().cellTypeChildren() != 3 ? '' : 'display: none;'}">
 		<td class="propertylabel" data-label="Mandatory">
 			<spring:message code="label.Mandatory" />
 		</td>
@@ -409,11 +415,11 @@
 				<table class="minmaxtable">
 					<tr>
 						<td><spring:message code="label.min" />&nbsp;</td>
-						<td><input class="spinner" data-forcell="true" data-label="MinMax" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChildren, attr: {id: Cell().id() + 'min', 'data-to' : Cell().id() + 'max'}" onchange="changeChildren(this, event)" /></td>
+						<td><input class="spinner" data-forcell="true" data-child="true" data-label="MinMax" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChildren, attr: {id: Cell().id() + 'min', 'data-to' : Cell().id() + 'max'}" onfocus='markActiveProperty(this)' onchange="changeChildren(this, event)" onblur="changeChildren(this, event)" /></td>
 					</tr>
 					<tr>
 						<td><spring:message code="label.max" />&nbsp;</td>
-						<td><input class="spinner" data-forcell="true" data-label="MinMax" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChildren, attr: {id: Cell().id() + 'max', 'data-from' : Cell().id() + 'min'}" onchange="changeChildren(this, event)" /></td>
+						<td><input class="spinner" data-forcell="true" data-child="true" data-label="MinMax" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChildren, attr: {id: Cell().id() + 'max', 'data-from' : Cell().id() + 'min'}" onfocus='markActiveProperty(this)' onchange="changeChildren(this, event)" onblur="changeChildren(this, event)"/></td>
 					</tr>
 				</table>
 			</form>
@@ -504,11 +510,11 @@
 				<table class="minmaxtable">
 					<tr>
 						<td><spring:message code="label.min" />&nbsp;</td>
-						<td><input class="spinner" data-label="MinMax" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChildren, attr: {id: Cell().id() + 'minValue'}" onchange="changeChildren(this, event)" role="spinbutton" /></td>
+						<td><input class="spinner" data-label="MinMax" data-child="true" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChildren, attr: {id: Cell().id() + 'minValue'}" onfocus='markActiveProperty(this)' onchange="changeChildren(this, event)" onblur="changeChildren(this, event)" role="spinbutton" /></td>
 					</tr>
 					<tr>
 						<td><spring:message code="label.max" />&nbsp;</td>
-						<td><input class="spinner" data-label="MinMax" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChildren, attr: {id: Cell().id() + 'maxValue'}" onchange="changeChildren(this, event)" role="spinbutton" /></td>
+						<td><input class="spinner" data-label="MinMax" data-child="true" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChildren, attr: {id: Cell().id() + 'maxValue'}" onfocus='markActiveProperty(this)'  onchange="changeChildren(this, event)" onblur="changeChildren(this, event)" role="spinbutton" /></td>
 					</tr>
 				</table>
 			</form>
@@ -522,6 +528,9 @@
 	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 4 || Cell().cellTypeChildren() == 5 ? '' : 'display: none;'}">
 		<td class="propertylabel" data-label="PossibleAnswers">
 			<spring:message code="label.PossibleAnswers" />
+			<!-- ko if: !Cell().possibleAnswersMatch() -->
+			<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.PossibleAnswersDiffer" />'><span class='glyphicon glyphicon-question-sign'></span></a>
+			<!-- /ko -->
 		</td>
 		<td class="propertycontent">
 			<div class="rightaligned">
@@ -611,7 +620,8 @@
 		</td>
 	</tr>
 
-	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() > 1 ? '' : 'display: none;'}">
+	<!-- Exclude Empty, Static Text and Formula from Mandatory -->
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() > 1 && Cell().cellType() != 3 ? '' : 'display: none;'}">
 		<td class="propertylabel" data-label="Mandatory">
 			<spring:message code="label.Mandatory" />
 		</td>
@@ -1169,7 +1179,7 @@
 </script>
 
 <script type="text/html" id="targetdataset-template">	
-	<tr class="firstpropertyrow collapsiblerow">
+	<tr class="firstpropertyrow collapsiblerow selfassessment">
 		<td colspan='2' style="text-align: left; border-bottom: 0px;">
 			<div style="padding: 10px"><spring:message code="info.targetdatasetcontent" arguments="${contextpath}/${sessioninfo.shortname}/management/parameters?tab=datasets" /></div>
 		</td>
@@ -1177,7 +1187,7 @@
 </script>
 
 <script type="text/html" id="targetdataset-template2">	
-	<tr>
+	<tr class="selfassessment">
 		<td colspan="2">
 			<div class="toolboxheader">
 				<a>
@@ -1190,7 +1200,7 @@
 </script>
 
 <script type="text/html" id="saquestion-template">	
-	<tr class="firstpropertyrow collapsiblerow">
+	<tr class="firstpropertyrow collapsiblerow selfassessment">
 		<td colspan='2' style="text-align: left; border-bottom: 0px;">
 			<div class="toolboxheader">
 				<a>
@@ -1200,7 +1210,7 @@
 			</div>
 		</td>
 	</tr>	
-	<tr class="firstpropertyrow collapsiblerow">
+	<tr class="firstpropertyrow collapsiblerow selfassessment">
 		<td colspan='2' style="text-align: left; border-bottom: 0px;">
 			<div style="padding: 5px"><spring:message code="info.saquestioncontent" arguments="${contextpath}/${sessioninfo.shortname}/management/parameters" /></div>
 		</td>
@@ -1208,7 +1218,7 @@
 </script>	
 
 <script type="text/html" id="saanswers-template">	
-	<tr class="firstpropertyrow">
+	<tr class="firstpropertyrow selfassessment">
 		<td class="propertylabel" style="border-bottom: 0px;"><spring:message code="label.Answers" /></td>
 	</tr>
 

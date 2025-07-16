@@ -26,7 +26,7 @@ var UndoProcessor = function() {
 
 	this.elementFromStep = function(step){
 
-		let id = step[1]
+		let id = String(step[1])
 		_elementProperties.selectedelement = $("#content").find("li[id='" + id + "']").first();
 		let el = _elements[id];
 		
@@ -38,7 +38,7 @@ var UndoProcessor = function() {
 			el = parent.getChild(id);
 		}
 
-		if (el == null && _elementProperties.selectedelement.length === 0){
+		if (el == null && (_elementProperties.selectedelement.length === 0 || _elementProperties.selectedelement.is(".cell"))){
 
 			_elementProperties.selectedelement = $(".cell[data-id='" + id + "']");
 
@@ -76,6 +76,44 @@ var UndoProcessor = function() {
 			}
 		}
 		return element;
+	}
+
+	this.complexChildrenStepHelper = function (step, redo = false) {
+		const table = _elements[step[4]]
+		const header = table.getChildbyId([step[1]])
+
+		const isRow = header.column() == 0
+		const children = []
+		if (isRow) {
+			for (let i = 1; i <= table.columns(); i++) {
+				children.push(table.getChild(i, header.row()))
+			}
+		} else {
+			for (let i = 1; i <= table.rows(); i++) {
+				children.push(table.getChild(header.column(), i))
+			}
+		}
+
+		let values = step[2]
+		if (redo) values = step[3]
+
+		function getValue(child) {
+			let id = child.row()
+			if (isRow) {
+				id = child.column()
+			}
+			return values.children[id]
+		}
+
+		return {
+			table,
+			header,
+			headerValue: values.header,
+			values,
+			children,
+			getValue,
+			additionalData: step[5]
+		}
 	}
 
 	this.undo = function()
@@ -391,6 +429,8 @@ var UndoProcessor = function() {
 					element.style(step[3]);
 				} else if (element.type == "MultipleChoiceQuestion" || element.type == "SingleChoiceQuestion") {
 					element.choiceType(step[3])
+				} else if (element.type == "ComplexTableItem") {
+					element.cellStyle(step[3])
 				} else {
 					if (step[3] == "RadioButton")
 					{
@@ -843,6 +883,85 @@ var UndoProcessor = function() {
 				answer.ecfScore(step[3]);
 				answer.scoring.points(step[3]);
 				break;
+			case "CellTypeComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step)
+
+				for (const child of children) {
+					child.cellType(getValue(child))
+				}
+				header.cellTypeChildren(headerValue)
+
+				break;
+			}
+			case "CellTextComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step)
+
+				for (const child of children) {
+					child.title(getValue(child))
+					child.originalTitle(getValue(child))
+				}
+				header.titleChildren(headerValue)
+
+				break;
+			}
+			case "MandatoryComplexChildren": {
+				const { children, getValue } = this.complexChildrenStepHelper(step)
+
+				for (const child of children) {
+					child.optional(getValue(child))
+				}
+
+				break;
+			}
+			case "RowsComplexChildren": {
+				const { children, getValue } = this.complexChildrenStepHelper(step)
+
+				for (const child of children) {
+					child.numRows(getValue(child))
+				}
+
+				break;
+			}
+			case "MinMaxComplexChildren": {
+				const { children, getValue, additionalData: useKey } = this.complexChildrenStepHelper(step)
+
+
+				for (const child of children) {
+					child[useKey](getValue(child))
+				}
+
+				break;
+			}
+			case "FormulaComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step)
+
+				for (const child of children) {
+					child.formula(getValue(child))
+				}
+				header.formulaChildren(headerValue)
+
+				break;
+			}
+			case "DecimalPlacesComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step)
+
+				for (const child of children) {
+					child.decimalPlaces(getValue(child))
+				}
+				header.decimalsChildren(headerValue)
+
+				break;
+			}
+			case "UnitComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step)
+
+				for (const child of children) {
+					child.unit(getValue(child))
+				}
+				header.unitChildren(headerValue)
+
+				break;
+			}
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -1030,7 +1149,8 @@ var UndoProcessor = function() {
 					element.style(step[4]);
 				} else if (element.type == "MultipleChoiceQuestion" || element.type == "SingleChoiceQuestion") {
 					element.choiceType(step[4])
-
+				} else if (element.type == "ComplexTableItem"){
+					element.cellStyle(step[4])
 				} else {
 					if (step[4] == "RadioButton")
 					{
@@ -1454,6 +1574,85 @@ var UndoProcessor = function() {
 				answer.ecfScore(step[4]);
 				answer.scoring.points(step[4]);
 				break;
+			case "CellTypeComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step, true)
+
+				for (const child of children) {
+					child.cellType(getValue(child))
+				}
+				header.cellTypeChildren(headerValue)
+
+				break;
+			}
+			case "CellTextComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step, true)
+
+				for (const child of children) {
+					child.title(getValue(child))
+					child.originalTitle(getValue(child))
+				}
+				header.titleChildren(headerValue)
+
+				break;
+			}
+			case "MandatoryComplexChildren": {
+				const { children, getValue } = this.complexChildrenStepHelper(step, true)
+
+				for (const child of children) {
+					child.optional(getValue(child))
+				}
+
+				break;
+			}
+			case "RowsComplexChildren": {
+				const { children, getValue } = this.complexChildrenStepHelper(step, true)
+
+				for (const child of children) {
+					child.numRows(getValue(child))
+				}
+
+				break;
+			}
+			case "MinMaxComplexChildren": {
+				const { children, getValue, additionalData: useKey } = this.complexChildrenStepHelper(step, true)
+
+
+				for (const child of children) {
+					child[useKey](getValue(child))
+				}
+
+				break;
+			}
+			case "FormulaComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step, true)
+
+				for (const child of children) {
+					child.formula(getValue(child))
+				}
+				header.formulaChildren(headerValue)
+
+				break;
+			}
+			case "DecimalPlacesComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step, true)
+
+				for (const child of children) {
+					child.decimalPlaces(getValue(child))
+				}
+				header.decimalsChildren(headerValue)
+
+				break;
+			}
+			case "UnitComplexChildren": {
+				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step, true)
+
+				for (const child of children) {
+					child.unit(getValue(child))
+				}
+				header.unitChildren(headerValue)
+
+				break;
+			}
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;

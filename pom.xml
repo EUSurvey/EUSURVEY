@@ -7,7 +7,7 @@
 	<artifactId>eusurvey</artifactId>
 	<name>eusurvey</name>
 	<packaging>war</packaging>
-	<version>1.5.3.5</version>
+	<version>1.5.3.6</version>
 	<properties>
 		<java-version>11</java-version>
 		<org.springframework-version>5.3.20</org.springframework-version>
@@ -624,6 +624,14 @@
 
 	</dependencies>
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java/Fonts</directory>
+				<includes>
+					<include>*.ttf</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<!-- Updates the build number from <scm> -->
@@ -744,8 +752,23 @@
                                  <include>spring.properties</include>
                             </includes>
                         </resource>
+						<!-- Copy Fonts -->
+						<resource>
+							<directory>src/main/java/Fonts</directory>
+							<targetPath>WEB-INF/classes/Fonts</targetPath>
+							<includes>
+								<include>*.ttf</include>
+							</includes>
+						</resource>
+						<resource>
+							<directory>src/main/resources</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+								<include>log4j.xml</include>
+							</includes>
+						</resource>
 					</webResources>
-					<warSourceExcludes>/WEB-INF/spring.propertie</warSourceExcludes>
+					<warSourceExcludes>/WEB-INF/spring.properties</warSourceExcludes>
 					<warName>eusurvey</warName>
 				</configuration>
 			</plugin>

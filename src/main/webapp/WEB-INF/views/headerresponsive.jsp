@@ -118,7 +118,7 @@
 		
 			<div style="border-bottom: 1px solid #777; padding-bottom: 10px; margin-bottom: 10px; margin-left: -10px; margin-right: -10px; padding-left: 10px; padding-right: 10px;">
 				<!-- Languages -->	
-				<c:if test="${form.getLanguages().size() != 0 && mode != 'editcontribution'}">
+				<c:if test="${form.getLanguages().size() != 0 && mode != 'editcontribution' && iseditcontribution != true}">
 					<b>${form.getMessage("label.Languages")}</b>
 					<div style="margin-bottom: 10px; margin-top: 10px;">	
 						<select style="margin-left: 15px; padding: 5px;" id="langSelectorRunner" name="langSelectorRunner" onchange="changeLanguageSelectOption('${mode}')">	

@@ -118,6 +118,7 @@
 			var shortnameText = "${form.getMessage("validation.name2")}";
 			var shortnameText2 = "${form.getMessage("validation.shortname2")}";
 			var shortnameText3 = "${form.getMessage("validation.shortname3")}";
+			var tagsText = "${form.getMessage("validation.tagsText")}";
 			var textnotlongenoughText = "${form.getMessage("validation.textNotLongEnough")}";
 			var texttoolongText = "${form.getMessage("validation.textTooLong")}";
 			var bracketCountNotMatching = "${form.getMessage("validation.numberBracketsNotMatching")}";
@@ -190,6 +191,7 @@
 			var labelEditYourContributionLater =  '${form.getMessage("label.EditYourContributionLater")}';
 			var labelmore = "${form.getMessage("label.more")}";
 			var labelless = "${form.getMessage("label.less")}";
+			var allValues = "${form.getMessage("label.AllValues")}";
 			var labelfrom = "${form.getMessage("label.from")}";
 			var labelto = "${form.getMessage("label.To")}";
 			var messageuploadnoconnection = "${form.getMessage("message.uploadnoconnection")}";
@@ -205,6 +207,8 @@
 			var likeOwnCommentOrExplanation = "${form.getMessage("message.likeOwnCommentOrExplanation")}";
 			var severalMore = "${form.getMessage("error.severalMore")}";
 			var errorInterdependencyMatrix = "${form.getMessage("error.InvalidInterdependencyMatrix")}";
+			var tagsPerSurvey = "${form.getMessage("validation.tagsPerSurvey")}";
+			var tagsPerFilter = "${form.getMessage("validation.tagsPerFilter")}";
 	</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
@@ -216,6 +220,7 @@
 			var shortnameText = "<spring:message code='validation.name2' />";
 			var shortnameText2 = "<spring:message code='validation.shortname2' />";
 			var shortnameText3 = "<spring:message code='validation.shortname3' />";
+			var tagsText = "<spring:message code='validation.tagsText' />";
 			var textnotlongenoughText = "<spring:message code='validation.textNotLongEnough' />";
 			var texttoolongText = "<spring:message code='validation.textTooLong' />";
 			var bracketCountNotMatching = "<spring:message code='validation.numberBracketsNotMatching' />";
@@ -285,6 +290,7 @@
 			var varErrorCheckValidation2 = "<spring:message code='error.CheckValidation2' />";
 			var labelmore = "<spring:message code='label.more' />";
 			var labelless = "<spring:message code='label.less' />";
+			var allValues = "<spring:message code='label.AllValues' />";
 			var labelfrom = "<spring:message code='label.from' />";
 			var labelto = "<spring:message code='label.To' />";
 			var messageuploadnoconnection = "<spring:message code='message.uploadnoconnection' />";
@@ -301,6 +307,8 @@
 			var likeOwnCommentOrExplanation = "<spring:message code='message.likeOwnCommentOrExplanation' />";
 			var severalMore = "<spring:message code='error.severalMore' />";
 			var errorInterdependencyMatrix = "<spring:message code='error.InvalidInterdependencyMatrix' />";
+			var tagsPerSurvey = "<spring:message code='validation.tagsPerSurvey' />";
+			var tagsPerFilter = "<spring:message code='validation.tagsPerFilter' />"
 		</c:otherwise>
 	</c:choose>
 	

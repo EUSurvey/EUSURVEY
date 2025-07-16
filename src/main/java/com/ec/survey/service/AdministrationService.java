@@ -86,6 +86,20 @@ public class AdministrationService extends BasicService {
 		return (Role) session.get(Role.class, id);
 	}
 
+	@Transactional(readOnly = true)
+	public Role getRole(String name) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<Role> query = session.createQuery("FROM Role r where r.name = :name", Role.class).setParameter("name", name);
+		List<Role> list = query.list();
+
+		if (!list.isEmpty())
+		{
+			return list.get(0);
+		}
+
+		return null;
+	}
+
 	@Transactional
 	public void createRole(Role role) {
 		Session session = sessionFactory.getCurrentSession();

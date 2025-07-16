@@ -423,35 +423,41 @@
 				td = document.createElement("td");				
 				$(td).append(list[i].formattedArchived);		
 				$(row).append(td);
-				
-				if (list[i].replies > 0 && list[i].finished && list[i].error == null)
+
+				if (list[i].finished && list[i].error == null)
+				{
+				  td = document.createElement("td");
+				  var a = document.createElement("a");
+				  $(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadpdf" />").attr("target","_blank").attr("href","${contextpath}/archive/surveypdf/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" />');
+				  $(td).append(a);
+				  $(row).append(td);
+				} else {
+				  $(row).append("<td>&nbsp;</td>");
+				}
+
+				  if (list[i].replies > 0 && list[i].finished && list[i].error == null)
 				{
 					td = document.createElement("td");
-					var a = document.createElement("a");
-					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadpdf" />").attr("target","_blank").attr("href","${contextpath}/archive/surveypdf/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" />');
-					$(td).append(a);
-					$(row).append(td);	
-					
-					td = document.createElement("td");
-					a = document.createElement("a");
-					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxls/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" />');
-					$(td).append(a);
 
 					if (list[i].hasXlsxResults) {
 						a = document.createElement("a");
 						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxlsx" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlsx/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xlsx_small.png" alt="xlsx" />');
 						$(td).append(a);
+					} else {
+						a = document.createElement("a");
+						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxls/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" />');
+						$(td).append(a);
 					}
 
 					if (list[i].surveyHasUploadedFiles)
 					{
-						a = document.createElement("a");
-						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.DownloadzipXls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlszip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xls-zip" />');
-						$(td).append(a);
-
 						if (list[i].hasXlsxResults) {
 							a = document.createElement("a");
 							$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.DownloadzipXlsx" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlsxzip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xlsx-zip" />');
+							$(td).append(a);
+						} else {
+							a = document.createElement("a");
+							$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.DownloadzipXls" />").attr("target","_blank").attr("href","${contextpath}/archive/resultsxlszip/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_zip_small.png" alt="xls-zip" />');
 							$(td).append(a);
 						}
 					}
@@ -463,19 +469,19 @@
 					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadpdf" />").attr("target","_blank").attr("href","${contextpath}/archive/statspdf/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="pdf" />');
 					$(td).append(a);
 
-					a = document.createElement("a");
-					$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("target","_blank").attr("href","${contextpath}/archive/statsxls/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" />');
-					$(td).append(a);
-
 					if (list[i].hasXlsxResults) {
 						a = document.createElement("a");
 						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxlsx" />").attr("target","_blank").attr("href","${contextpath}/archive/statsxlsx/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xlsx_small.png" alt="xlsx" />');
+						$(td).append(a);
+					} else {
+						a = document.createElement("a");
+						$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("target","_blank").attr("href","${contextpath}/archive/statsxls/" + list[i].id).html('<img src="${contextpath}/resources/images/file_extension_xls_small.png" alt="xls" />');
 						$(td).append(a);
 					}
 
 					$(row).append(td);
 				} else {
-					$(row).append("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
+					$(row).append("<td>&nbsp;</td><td>&nbsp;</td>");
 				}
 				
 				if (list[i].finished && list[i].error == null)
@@ -706,6 +712,7 @@
 			  
 			  $(window).trigger('resize.stickyTableHeaders');
 			  $( "#wheel" ).hide();
+			  $('[data-toggle="tooltip"]').tooltip();
 		}
 		
 		var changeownersurveyuid = "";

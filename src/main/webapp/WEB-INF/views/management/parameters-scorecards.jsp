@@ -12,22 +12,25 @@
 			</select>					
 		</div>
 		<!-- /ko -->
-		
-		<!--  ko if: scoreCard() != null && criteria().length > 0 && targetDatasets().length > 1 -->
-		<div style="display: flex; flex-direction: row; gap: 20px; background-color: #ddd; border-radius: 5px; padding: 15px; margin-top: 10px; width: fit-content;">
-			<div>
-				<label style="margin-bottom: 0;"><spring:message code="label.CopyScoresFrom" /></label><br />		
-				<select data-bind="foreach:targetDatasets()" id="scorecopydataset" class="form-control" style="display: inline; width: 300px;">
-					<!--  ko if: id() != $parent.scoreCard().datasetID() -->
-					<option data-bind="text: name, value: id, attr: {'data-p':  $parent.scoreCard().datasetID()}"></option>
-					<!-- /ko -->
-				</select>
+
+
+		<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+			<!--  ko if: scoreCard() != null && criteria().length > 0 && targetDatasets().length > 1 -->
+			<div style="display: flex; flex-direction: row; gap: 20px; background-color: #ddd; border-radius: 5px; padding: 15px; margin-top: 10px; width: fit-content;">
+				<div>
+					<label style="margin-bottom: 0;"><spring:message code="label.CopyScoresFrom" /></label><br />
+					<select data-bind="foreach:targetDatasets()" id="scorecopydataset" class="form-control" style="display: inline; width: 300px;">
+						<!--  ko if: id() != $parent.scoreCard().datasetID() -->
+						<option data-bind="text: name, value: id, attr: {'data-p':  $parent.scoreCard().datasetID()}"></option>
+						<!-- /ko -->
+					</select>
+				</div>
+				<div style="margin-top: 20px; margin-left: 5px;">
+					<button data-bind="click: copyScores" class="btn btn-primary"><spring:message code="label.Copy" /></button>
+				</div>
 			</div>
-			<div style="margin-top: 20px; margin-left: 5px;">
-				<button data-bind="click: copyScores" class="btn btn-primary"><spring:message code="label.Copy" /></button>
-			</div>
-		</div>
-		<!-- /ko -->	
+			<!-- /ko -->
+		</c:if>
 	</div>
 	
 	<!--  ko if: criteria().length == 0 -->
@@ -64,18 +67,24 @@
 							<span class="content" data-bind="text: criterionName" style="word-break: break-all;"></span>
 						</td>
 						<td>
-							<input class="form-control number" type="number" step="any" oninput="(this.value > 1000.00) ? (this.value = 1000) : ''" min="0" max="1000" data-bind="value: score, disable: notRelevant" />
+							<c:choose>
+								<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+									<input class="form-control number" type="number" step="any" oninput="(this.value > 1000.00) ? (this.value = 1000) : ''" min="0" max="1000" data-bind="value: score, disable: notRelevant" />
+								</c:when>
+								<c:otherwise>
+									<input disabled class="form-control number" type="number" data-bind="value: score" />
+								</c:otherwise>
+							</c:choose>
 						</td>
 						<td style="vertical-align: middle">
-							<input type="checkbox" data-bind="checked: notRelevant" />
-						</td>					
+							<input <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> type="checkbox" data-bind="checked: notRelevant" />
+						</td>
 					</tr>
 					
 				</tbody>
 			</table>
-			
-			<button class="btn btn-success" data-bind="click: saveScores"><spring:message code="label.Save" /></button>			
-		
+
+			<button <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> class="btn btn-success" data-bind="click: saveScores"><spring:message code="label.Save" /></button>
 		</div>
 	
 	<!-- /ko -->	

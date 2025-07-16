@@ -487,7 +487,7 @@
 																
 																<c:choose>
 																	<c:when test="${child.getCellType() == 'FreeText'}">
-																		<pre class="prepdf"><div style="word-wrap: break-word; min-height: ${child.getNumRows()*20}px;">${form.getValueStripInvalidXML(child)}</div></pre>
+																		${form.getValueStripInvalidXML(child)}
 																	</c:when>
 																	<c:when test="${child.getCellType() == 'SingleChoice'}">
 																		<c:choose>
@@ -495,11 +495,11 @@
 																				<div class="answer-columns">
 																					<div class="answer-column" style="word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px;">
 																						<div style="float: right"><i class="icon icon-chevron-down"></i></div>
-																						<c:forEach items="${child.orderedPossibleAnswers}" var="possibleanswer">												
+																						<c:forEach items="${child.orderedPossibleAnswers}" var="possibleanswer">
 																							<c:if test="${form.getValues(child).contains(possibleanswer.id.toString()) || form.getValues(child).contains(possibleanswer.uniqueId)}">
 																								${possibleanswer.getTitleForDisplayMode(child.displayMode)}
-																							</c:if>																																
-																						</c:forEach>			
+																							</c:if>
+																						</c:forEach>
 																					</div>
 																				</div>
 																				<div style="clear: both"></div>
@@ -676,7 +676,7 @@
 										${element.confirmationtext}
 									</div>
 								</c:if>
-								<c:if test="${element.useupload}">					
+								<c:if test="${element.isUseupload()}">
 									<div class="files" style="margin-left: 40px; margin-top: 10px;">
 										<c:forEach items="${element.files}" var="file">
 											<a class="visiblelink" target="_blank" href="${serverprefix}files/${form.survey.uniqueId}/${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a> <br />

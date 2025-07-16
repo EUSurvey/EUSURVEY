@@ -91,10 +91,10 @@
 				</c:forEach>				
 			</table>
 			<span id="import-attendees-step2-error-multiple" class="hideme" style="color: #f00; margin-right: 20px;">
-				<spring:message code="label.Attribute" /> <span id="import-attendees-step2-error-multiple-text"></span> <spring:message code="label.usedMoreThanOnce" />
+				<spring:message code="label.Attribute" />&#32; <span id="import-attendees-step2-error-multiple-text"></span> <spring:message code="label.usedMoreThanOnce" />
 			</span>			
 			<span id="import-attendees-step2-error-no-attribute" class="hideme" style="color: #f00; margin-right: 20px;">
-				<spring:message code="label.NoAttributeNameFor" /> <span id="import-attendees-step2-error-no-attribute-text"></span>
+				<spring:message code="label.NoAttributeNameFor" />&#32; <span id="import-attendees-step2-error-no-attribute-text"></span>
 			</span>	
 		</div>
 		<div class="modal-footer">

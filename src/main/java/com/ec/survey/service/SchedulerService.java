@@ -11,6 +11,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.ec.survey.replacements.Pair;
+import com.ec.survey.tools.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,24 +22,6 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
-import com.ec.survey.tools.AnswerSetAnonymWorker;
-import com.ec.survey.tools.ArchiveExecutor;
-import com.ec.survey.tools.ArchiveFlagExecutor;
-import com.ec.survey.tools.DeleteDraftsUpdater;
-import com.ec.survey.tools.DeleteInvalidStatisticsWorker;
-import com.ec.survey.tools.DeleteSurveyUpdater;
-import com.ec.survey.tools.DeleteTemporaryFolderUpdater;
-import com.ec.survey.tools.DeleteUserAccountsWorker;
-import com.ec.survey.tools.DepartmentUpdater;
-import com.ec.survey.tools.DomainUpdater;
-import com.ec.survey.tools.EcasUserDeactivator;
-import com.ec.survey.tools.EcasUserUpdater;
-import com.ec.survey.tools.ExportUpdater;
-import com.ec.survey.tools.FileUpdater;
-import com.ec.survey.tools.SendReportedSurveysWorker;
-import com.ec.survey.tools.SurveyUpdater;
-import com.ec.survey.tools.Tools;
-import com.ec.survey.tools.ValidCodesRemover;
 
 @Service
 @Configurable
@@ -90,6 +74,9 @@ public class SchedulerService extends BasicService {
 	
 	@Resource(name = "surveyWorker")
 	private SurveyUpdater surveyWorker;
+
+	@Resource(name = "fsCheckWorker")
+	private FsCheckWorker fsCheckWorker;
 
 	@Resource(name= "answerSetAnonymWorker")
 	private AnswerSetAnonymWorker answerSetAnonymWorker;
@@ -220,12 +207,12 @@ public class SchedulerService extends BasicService {
 				
 				while (currentDate.before(endDate) && id > 0)
 				{			
-					Survey survey = surveyService.getSurvey(id);
+					Pair<Boolean, String> isDraftAndUniqueId = surveyService.getIsDraftAndUniqueIDForSurveyId(id);
 					
-					if (survey != null && survey.getIsDraft())
+					if (isDraftAndUniqueId != null && isDraftAndUniqueId.getKey())
 					{
 						long tStart = System.currentTimeMillis();
-						int deletedfiles = fileService.deleteOldAnswerPDFs(survey.getUniqueId(), lastmonth);		
+						int deletedfiles = fileService.deleteOldAnswerPDFs(isDraftAndUniqueId.getValue(), lastmonth);
 	
 						long tEnd = System.currentTimeMillis();
 						long tDelta = tEnd - tStart;
@@ -233,7 +220,7 @@ public class SchedulerService extends BasicService {
 						
 						if(deletedfiles > 0)
                         {
-							logger.info(deletedfiles + " old answer pdfs of survey " + survey.getId() + " deleted, it took " + elapsedSeconds + " seconds");
+							logger.info(deletedfiles + " old answer pdfs of survey " + id + " deleted, it took " + elapsedSeconds + " seconds");
                         }
 					}
 					
@@ -506,12 +493,13 @@ public class SchedulerService extends BasicService {
 	}
 	
 	@Scheduled(cron="0 0 * * * *") //every hour
-	public void doHourlySchedule() {	
+	public void doHourlySchedule() {
 		if(!isHost2ExecuteStandardTask())
 			return;
 	  
 		surveyWorker.run();
 		fileWorker.run();
+		fsCheckWorker.run();
 	 }
 	
 	@Scheduled(cron="0 */5 * * * *") //every 5 minutes
@@ -548,6 +536,8 @@ public class SchedulerService extends BasicService {
 		sendReportedSurveysWorker.run();
 		deleteUserAccountsWorker.run();
 		answerSetAnonymWorker.run();
+
+		surveyService.deleteAllOutdatedChangeOwnerRequests();
 	 }
 
 	@Scheduled(cron="0 0 1 * * *") //every night at 1 a.m.
@@ -581,18 +571,18 @@ public class SchedulerService extends BasicService {
 		logger.info("Finished sendStatisticalEmails");
 	}
 	
-	private boolean isHost2ExecuteLDAPTask() {
+	public boolean isHost2ExecuteLDAPTask() {
 		return isHost2ExecuteTask(true, false);
 	}
 
-	private boolean isHost2ExecuteTODOTask() {
+	public boolean isHost2ExecuteTODOTask() {
 		return isHost2ExecuteTask(false, true);
 	}
-	
-	private boolean isHost2ExecuteStandardTask() {
+
+	public boolean isHost2ExecuteStandardTask() {
 		return isHost2ExecuteTask(false, false);
 	}
-	
+
 	private boolean isHost2ExecuteTask(boolean ldap, boolean todo){
 		
 		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("true"))

@@ -4,8 +4,10 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.MailTask;
 import com.ec.survey.tools.InvitationMailCreator;
 import com.ec.survey.tools.MailSender;
+import org.apache.commons.io.IOUtils;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service("mailService")
 public class MailService extends BasicService {
-	
+
+	private @Value("${server.prefix}") String serverPrefix;
+
 	public void SendHtmlMail(String to, String from, String reply, String subject, String body, File attachment, File attachment2, String info, boolean deleteFiles) throws MessageException {
 		MailSender sender = (MailSender) context.getBean("mailSender");
 		sender.init(to, from, subject, reply, body, attachment, attachment2, info, deleteFiles);		
@@ -36,7 +42,16 @@ public class MailService extends BasicService {
 	}
 	
 	public static boolean isNotEmptyAndValidEmailAddress(String email) {
-		return email != null && email.trim().length() > 0 && isValidEmailAddress(email.trim());
+		return email != null && !email.isBlank() && isValidEmailAddress(email.trim());
+	}
+
+
+	public String getEUSurveyMailTemplate(String mailContent) throws IOException {
+		return getEUSurveyMailTemplate(mailContent, this.serverPrefix);
+	}
+	public String getEUSurveyMailTemplate(String mailContent, String host) throws IOException {
+		var inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		return IOUtils.toString(inputStream, StandardCharsets.UTF_8).replace("[CONTENT]", mailContent).replace("[HOST]", host);
 	}
 	
 	public static boolean isValidEmailAddress(String email) {

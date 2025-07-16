@@ -375,13 +375,16 @@
 		
 		function openAnswersDialog(element) {
 			$('.answers-table-modal-error').hide();
+			$('[data-toggle="tooltip"]').tooltip("hide");
 			showModalDialog($('.answers-table-modal'), element);
 
 			const languageCode = "${form.language.code}";
 			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
 			const uniqueCode = $('#uniqueCode').val();
-			loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel);
-			$('[data-toggle="tooltip"]').tooltip("hide");
+			loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel, false);
+			if (answersTableViewModel.delphiTableEntries().length > 0) {
+				$('.answers-table-modal').find(".overlaymenu-sortingOptions").first().focus();
+			}
 		}
 
 		function changeLanguageSelectOption(mode) {

@@ -4,10 +4,10 @@
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <c:choose>
 	<c:when test="${publication != null}">
-		<div id="results-quorum" style="width: 730px; margin-top: 60px; min-height: 400px; max-width:100%; margin-left: auto; margin-right:auto;">
+		<div id="results-quorum" style="display: none; width: 730px; margin-top: 60px; min-height: 400px; max-width:100%; margin-left: auto; margin-right:auto;">
 	</c:when>
 	<c:otherwise>
-		<div id="results-quorum" style="width: 730px; margin-top: 0px; max-width:100%; margin-left: auto; margin-right:auto;">
+		<div id="results-quorum" style="display: none; width: 730px; margin-top: 0px; max-width:100%; margin-left: auto; margin-right:auto;">
 	</c:otherwise>
 </c:choose>
 	<div id="no-voters" data-bind="if: voterCount() == 0"><spring:message code="info.NoVoterFile" /></div>
@@ -26,6 +26,10 @@
 			<canvas id="quorumChart"></canvas>
 		</div>
 	</div>
+</div>
+
+<div id="results-quorum-loader" style="text-align: center">
+	<img src="${contextpath}/resources/images/ajax-loader.gif" />
 </div>
 
 <script type="text/javascript" src="${contextpath}/resources/js/results-quorum.js?version=<%@include file="../version.txt" %>"></script>

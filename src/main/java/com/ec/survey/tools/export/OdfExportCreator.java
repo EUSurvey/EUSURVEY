@@ -881,8 +881,13 @@ public class OdfExportCreator extends ExportCreator {
 							if (answerSet == null) {
 								String v = answerrow.get(answerrowcounter++);
 								if (v != null && v.length() > 0) {
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
+									if (question instanceof FreeTextQuestion) {
+										cell.setStringValue(v);
+										cell.setDisplayText(v);
+									} else {
+										cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
+										cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
+									}
 								}
 
 							} else {
@@ -896,8 +901,8 @@ public class OdfExportCreator extends ExportCreator {
 										cellValue.append(dataset);
 									} else {
 										cellValue.append((cellValue.length() > 0) ? ";" : "")
-												.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
-										if (export != null && export.getShowShortnames()) {
+												.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer, question instanceof RankingQuestion)));
+										if (export != null && export.getShowShortnames() && !(question instanceof RankingQuestion)) {
 											cellValue.append(" ").append(form.getAnswerShortname(answer));
 										}
 									}
@@ -926,23 +931,22 @@ public class OdfExportCreator extends ExportCreator {
 								explanationFilesToExport);
 					}
 
+					var paragraph = cell.addParagraph("");
+					var files = explanationFilesToExport.getFiles(answerSetUid, questionUid);
+					cell.setTextWrapped(true);
 					if (!explanation.isEmpty()) {
-						cell.setStringValue(ConversionTools.removeHTMLNoEscape(explanation, true));
-						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(explanation, true));
-						cell.setTextWrapped(true);
-						cell.setValueType(Constants.STRING);
+						paragraph.appendTextContent(ConversionTools.removeHTMLNoEscape(explanation, true), true);
+						if (!files.isEmpty()) paragraph.appendTextContent("; \n");
 					}
-					final List<File> files = explanationFilesToExport.getFiles(answerSetUid, questionUid);
 					if (!files.isEmpty()) {
-						final Paragraph p = cell.addParagraph("");
 						final Iterator<File> fileIterator = files.iterator();
 						while (fileIterator.hasNext()) {
 							final File file = fileIterator.next();
-							p.appendHyperlink(file.getNameForExport(),
+							paragraph.appendHyperlink(file.getNameForExport(),
 									new URI("../" + answerSetUid + Constants.PATH_DELIMITER + questionUid
 											+ Constants.PATH_DELIMITER + file.getNameForExport()));
 							if (fileIterator.hasNext()) {
-								p.appendTextContent(";");
+								paragraph.appendTextContent(";");
 							}
 						}
 					}

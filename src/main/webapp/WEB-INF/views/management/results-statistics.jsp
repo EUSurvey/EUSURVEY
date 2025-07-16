@@ -705,7 +705,7 @@
 														</tr>
 													</thead>						
 													<tbody>
-														<c:forEach items="${child.possibleAnswers}" var="answer" varStatus="status">
+														<c:forEach items="${child.allPossibleAnswers}" var="answer" varStatus="status">
 															<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[answer.id.toString()]}">
 																<td>${answer.getStrippedTitleNoEscape()}  <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${answer.shortname})</span></td>
 												

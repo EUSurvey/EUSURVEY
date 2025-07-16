@@ -290,6 +290,7 @@ function checkInputStates()
 		} else {
 			$("#idPropertyInterdependency").attr("disabled", "disabled").addClass("disabled").removeAttr("checked");
 		}
+		checkInterdependentMatrix($("#idPropertyInterdependency"))
 	}
 }
 
@@ -300,7 +301,9 @@ function checkInterdependentMatrix(input)
 	var rowstext = getRowsText(true);
 	var rows = splitText(rowstext).length;
 
-	if (columns < rows) {
+	let isMultipleChoice = $("#selectMultipleChoice").is(":checked")
+
+	if (columns < rows && !isMultipleChoice) {
 		addValidationInfo(input, "invalidInterdependencyCriteria");
 		return false;
 	} else {

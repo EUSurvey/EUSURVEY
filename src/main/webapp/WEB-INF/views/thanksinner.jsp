@@ -246,11 +246,10 @@
 								showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 						  	} else if (data == "errorcaptcha") {
 						  		$("#runner-captcha-error").show();
-						  		reloadCaptcha();
 							} else {
 								showError(message_PublicationExportFailed);
-								reloadCaptcha();
 							};
+						  reloadCaptcha();
 					}
 				});							
 			</c:when>
@@ -267,7 +266,6 @@
 								showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 							} else {
 								showError(message_PublicationExportFailed);
-								reloadCaptcha();
 							};
 					}
 				});							

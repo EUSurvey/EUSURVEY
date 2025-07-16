@@ -6,14 +6,11 @@ import com.ec.survey.model.Export;
 import com.ec.survey.model.Skin;
 import com.ec.survey.model.attendees.Share;
 import com.ec.survey.service.*;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 @Service("deleteUserAccountsWorker")
@@ -106,9 +103,10 @@ public class DeleteUserAccountsWorker implements Runnable {
 				}
 
 				//Deletion of all the user's skins
-				List<Skin> skins = skinService.getOwned(userid);
-				for (Skin skin : skins)
-				{
+				var skins = skinService.getOwned(userid);
+				var skinIds = skins.stream().map(skin -> skin.getId()).collect(Collectors.toList());
+				skinService.removeSurveySkins(skinIds);
+				for (Skin skin : skins) {
 					skinService.delete(skin);
 				}
 				

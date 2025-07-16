@@ -10,7 +10,8 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "TRANSLATIONS")
+@Table(name = "TRANSLATIONS", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "SURVEY_ID", "TRANSLATIONS_ID" }, name = "LANGUAGE_SURVEY") })
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Translations implements java.io.Serializable {

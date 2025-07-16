@@ -209,7 +209,7 @@
                     <b>Cookies</b>: EU Survey uses three different cookies. Two of them come from the EC official CCK1
                     (Cookie Consent Kit) and the _pk_id# and the third one is a session cookie (JSESSIONID) used to
                     identify the user and make sure he is always forwarded to the same server. Full list of cookies
-                    used by the European Commission here: <a href="https://ec.europa.eu/info/cookies_en">https://ec.europa.eu/info/cookies_en</a><br><br>
+                    used by the European Commission here: <a href="https://commission.europa.eu/cookies-policy_en">https://ec.europa.eu/info/cookies_en</a><br><br>
                     DIGIT does NOT process special categories of personal data within the context of EU-Survey and for
                     the provision of the service. Nevertheless, Survey Owners might use EU Survey to collect special
                     categories of personal data that might be hosted in the servers of the EC. The processing of such

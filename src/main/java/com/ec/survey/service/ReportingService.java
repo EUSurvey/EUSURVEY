@@ -616,7 +616,7 @@ public class ReportingService extends BasicService {
 							Element question = entry.getValue();
 
 							if (question == null || item == null) {
-								row.add(item != null ? item.toString() : "");
+								row.add(item != null ? ConversionTools.escape(item.toString()) : "");
 							} else if (question instanceof ChoiceQuestion) {
 								ChoiceQuestion choicequestion = (ChoiceQuestion) question;
 								String[] answerids = item.toString().split(";");
@@ -781,10 +781,10 @@ public class ReportingService extends BasicService {
 										row.add(item.toString());
 									}
 								} else {
-									row.add(item.toString());
+									row.add(ConversionTools.escape(item.toString()));
 								}
 							} else {
-								row.add(item.toString());
+								row.add(ConversionTools.escape(item.toString()));
 							}
 
 							if (question == null) {
@@ -1945,6 +1945,8 @@ public class ReportingService extends BasicService {
 					query.setString(attrib, (String) values.get(attrib));
 				} else if (value instanceof Integer) {
 					query.setInteger(attrib, (Integer) values.get(attrib));
+				} else if (value instanceof Double) {
+					query.setDouble(attrib, (Double) values.get(attrib));
 				} else if (value instanceof Date) {
 					query.setTimestamp(attrib, (Date) values.get(attrib));
 				}

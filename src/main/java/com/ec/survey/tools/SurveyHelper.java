@@ -2058,7 +2058,7 @@ public class SurveyHelper {
 		}
 		freetext.setScoring(scoring);
 
-		Integer points = getInteger(parameterMap, "points", id, 1);
+		Integer points = getInteger(parameterMap, "points", id, 0);
 		if (log220 && !points.equals(freetext.getQuizPoints())) {
 			oldValues += " points: " + freetext.getQuizPoints();
 			newValues += " points: " + points;
@@ -2417,7 +2417,7 @@ public class SurveyHelper {
 		}
 		number.setScoring(scoring);
 
-		Integer points = getInteger(parameterMap, "points", id, 1);
+		Integer points = getInteger(parameterMap, "points", id, 0);
 		if (log220 && !points.equals(number.getQuizPoints())) {
 			oldValues += " points: " + number.getQuizPoints();
 			newValues += " points: " + points;
@@ -2676,7 +2676,7 @@ public class SurveyHelper {
 		}
 		date.setScoring(scoring);
 
-		Integer points = getInteger(parameterMap, "points", id, 1);
+		Integer points = getInteger(parameterMap, "points", id, 0);
 		if (log220 && !points.equals(date.getQuizPoints())) {
 			oldValues += " points: " + date.getQuizPoints();
 			newValues += " points: " + points;
@@ -3319,29 +3319,29 @@ public class SurveyHelper {
 	}
 	
 	private static void getPossibleAnswers(String[] answers, String[] originalAnswers, String[] uniqueIDs, String[] dependenciesForAnswers, String[] shortnamesForAnswers, String[] correctForAnswers, String[] pointsForAnswers, String[] feedbackForAnswers, String[] exclusiveForAnswers, List<PossibleAnswer> possibleAnswers, Survey survey, boolean log220, StringBuilder newAnswers, HashMap<PossibleAnswer, String> dependencies) {
-		PossibleAnswer p;
+		var foundPas = new HashSet<String>();
 		int j = 0;
-		String shortname;
 		for (int k = 0; k < answers.length; k++) {
 
 			String answer = answers[k];
 			String originalAnswer = originalAnswers[k];
 			String uniqueID = "";
-			if (uniqueIDs != null && uniqueIDs.length > k)
+			boolean inUniqueIdList = uniqueIDs != null && uniqueIDs.length > k;
+			if (inUniqueIdList)
 				uniqueID = uniqueIDs[k];
 			String answerDependencies = "";
 			if (dependenciesForAnswers != null && dependenciesForAnswers.length > k)
 				answerDependencies = dependenciesForAnswers[k];
-			shortname = "";
+			var shortname = "";
 			if (shortnamesForAnswers != null && shortnamesForAnswers.length > k)
 				shortname = shortnamesForAnswers[k];
 
-			p = null;
+			PossibleAnswer p = null;
 			boolean found = false;
 
 			for (PossibleAnswer pa : possibleAnswers) {
-				if ((uniqueIDs != null && pa.getUniqueId().equals(uniqueID)) ||
-					(uniqueIDs == null && (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)))) {
+				if ((inUniqueIdList && pa.getUniqueId().equals(uniqueID)) ||
+					(!inUniqueIdList && (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)))) {
 					p = pa;
 					p.getDependentElements().getDependentElements().clear();
 					found = true;
@@ -3349,10 +3349,12 @@ public class SurveyHelper {
 				}
 			}
 
-			if (p == null) {
+			if (!found) {
 				p = new PossibleAnswer();
 				p.setUniqueId(UUID.randomUUID().toString());
 			}
+
+			foundPas.add(p.getUniqueId());
 
 			p.setTitle(answer);
 			p.setShortname(shortname);
@@ -3419,6 +3421,9 @@ public class SurveyHelper {
 				dependencies.put(p, answerDependencies);
 			}
 		}
+
+		//Remove all PAs that have not been reused after the edit (have been deleted)
+        possibleAnswers.removeIf(pa -> !foundPas.contains(pa.getUniqueId()));
 	}
 
 	private static SingleChoiceQuestion getSingleChoice(Map<String, String[]> parameterMap, Element currentElement,
@@ -3566,7 +3571,7 @@ public class SurveyHelper {
 		}
 		singlechoice.setScoring(scoring);
 
-		Integer points = getInteger(parameterMap, "points", id, 1);
+		Integer points = getInteger(parameterMap, "points", id, 0);
 		if (log220 && !points.equals(singlechoice.getQuizPoints())) {
 			oldValues += " points: " + singlechoice.getQuizPoints();
 			newValues += " points: " + points;
@@ -3791,7 +3796,7 @@ public class SurveyHelper {
 		}
 		multiplechoice.setScoring(scoring);
 
-		Integer points = getInteger(parameterMap, "points", id, 1);
+		Integer points = getInteger(parameterMap, "points", id, 0);
 		if (log220 && !points.equals(multiplechoice.getQuizPoints())) {
 			oldValues += " points: " + multiplechoice.getQuizPoints();
 			newValues += " points: " + points;
@@ -4281,7 +4286,7 @@ public class SurveyHelper {
 					}
 					question.setScoring(scoring);
 
-					Integer points = getInteger(parameterMap, "points", qid, 1);
+					Integer points = getInteger(parameterMap, "points", qid, 0);
 					if (log220 && !points.equals(question.getQuizPoints())) {
 						oldValues += " points: " + question.getQuizPoints();
 						newValues += " points: " + points;
@@ -5630,7 +5635,7 @@ public class SurveyHelper {
 		return false;
 	}
 
-	public static String getAnswerTitle(Survey survey, Answer answer, boolean publicationMode) {
+	public static String getAnswerTitle(Survey survey, Answer answer, boolean publicationMode, boolean addAssignedValue) {
 		String answerValue = answer.getValue();
 
 		try {
@@ -5687,7 +5692,7 @@ public class SurveyHelper {
 					return answerValue;
 				} else if (question instanceof RankingQuestion) {
 					RankingQuestion rankingQuestion = (RankingQuestion) question;
-					List<String> answerTitles = rankingQuestion.getAnswerWithStrippedTitleNoEscape(answerValue);
+					List<String> answerTitles = rankingQuestion.getAnswerWithStrippedTitleNoEscape(answerValue, addAssignedValue);
 					return String.join("; ", answerTitles);
 				} else if (question instanceof ChoiceQuestion) {
 					if (answerValue.equalsIgnoreCase("EVOTE-ALL")) {
@@ -5712,7 +5717,7 @@ public class SurveyHelper {
 				} else if (question instanceof ComplexTableItem) {
 					ComplexTableItem item = (ComplexTableItem) question;
 					if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
-						for (PossibleAnswer a : item.getPossibleAnswers()) {
+						for (PossibleAnswer a : item.getAllPossibleAnswers()) {
 							if (a.getUniqueId().equals(answer.getPossibleAnswerUniqueId())) {
 								return a.getStrippedTitleNoEscape2();
 							}

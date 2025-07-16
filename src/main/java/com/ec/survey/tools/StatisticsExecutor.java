@@ -57,10 +57,11 @@ public class StatisticsExecutor implements Runnable {
 	private String host;
 	private String hash;
 	private Locale locale;
+	private ResultFilter resultFilter;
 	
 	private static final Logger logger = Logger.getLogger(StatisticsExecutor.class);
 	
-	public void init(Survey survey, String type, String format, String hash, String email, String from, String host, Locale locale)
+	public void init(Survey survey, String type, String format, String hash, String email, String from, String host, Locale locale, ResultFilter resultFilter)
 	{
 		this.survey = survey;
 		this.type = type;
@@ -70,6 +71,7 @@ public class StatisticsExecutor implements Runnable {
 		this.host = host;
 		this.locale = locale;
 		this.hash = hash;
+		this.resultFilter = resultFilter;
 	}
 	
 	public void run()
@@ -92,6 +94,11 @@ public class StatisticsExecutor implements Runnable {
 			} else {	
 							
 				ResultFilter filter = survey.getPublication().getFilter().copy();
+
+				if (resultFilter != null) {
+					filter = resultFilter;
+				}
+
 				filter.setExportedQuestions(filter.getVisibleQuestions());
 				
 				String uid = UUID.randomUUID().toString();

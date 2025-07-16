@@ -58,6 +58,17 @@
 		 .language {
 		 	width: 26px;
 		 }
+
+		.badge {
+			margin-left: 7px;
+			margin-bottom: 10px;
+			background-color: #337ab7;
+			color: #fff;
+		}
+
+		.badge span {
+		    cursor: pointer;
+		}
 		 
 	</style>
 	
@@ -234,14 +245,26 @@
 						  
 						  $(divHeader).append('<div class="surveytitle">' + list[i].title.stripHtml115() + '<span class="completetitle hideme">' + list[i].title + '</span></div>');
 						  $(divHeader).append('<div class="shortname">' + list[i].shortname + '</div>');
-						  $(div).append(divHeader).append("<br />");
-						  
+						  $(div).append(divHeader);
+
 						  var table = document.createElement("table");
 						  $(table).addClass("formsSurveyItem");
 						  var tbody = document.createElement("tbody");
 						  
 						  var tr = document.createElement("tr");
-						  var td = document.createElement("td");						  
+						  var td = document.createElement("td");
+
+						  $(td).attr("colspan", "4").addClass("tags");
+						  for (var t = 0; t < list[i].tags.length; t++ )
+                          {
+						    $(td).append("<span class='badge'>" + list[i].tags[t].name + "</span>");
+						  }
+
+						  $(tr).append(td);
+						  $(tbody).append(tr);
+						  tr = document.createElement("tr");
+                          td = document.createElement("td");
+
 						  $(td).addClass("labelcell").append('<spring:message code="label.Created" />');						  
 						  $(tr).append(td);						  
 						  td = document.createElement("td");
@@ -466,7 +489,34 @@
 				$('#surveysShared').prop("disabled", false);
 			}
 		}
-		
+
+		function addTag(tag) {
+			let storedTags = $("#txtTagsSearch").val().split(";").filter((element) => element);
+			storedTags.push(tag);
+			$("#txtTagsSearch").val(storedTags.join(";"));
+
+			let tagElement = "<span class=\"badge\" tag=\"" + tag + "\" >" + tag + "&nbsp;<span onClick='removeTag(this)'>&#10006;</span> </span>";
+			$("#filterTags").append(tagElement);
+		}
+
+		function removeTag(element) {
+			let storedTags = $("#txtTagsSearch").val().split(";");
+
+			let text = $($(element).parent()).attr("tag");
+			let index = storedTags.indexOf(text);
+			storedTags.splice(index, 1);
+			$("#txtTagsSearch").val(storedTags.join(";"));
+
+			$(element).parent().remove();
+		}
+
+		function checkTagKeyDown(event) {
+			if(event.keyCode == 13) {
+				event.preventDefault();
+				return false;
+			}
+		}
+
 	</script>
 		
 </head>
@@ -641,8 +691,25 @@
 								<c:otherwise>															
 									<input class="check" value="Published" type="checkbox" name="statusPublished" /> <spring:message code="label.Published" />	
 								</c:otherwise>														
-							</c:choose>			
-		
+							</c:choose>
+
+							<h4 style="margin-top: 20px;"><spring:message code="label.Tags" />:</h4>
+
+							<div>
+								<input type="hidden" id="txtTagsSearch" name="tags" value="" />
+								<div id="filterTags">
+									<script>
+										<c:forEach items="${filter.tags}" var="tag">
+											addTag("${tag}");
+										</c:forEach>
+									</script>
+								</div>
+								<div>
+									<input id="tags" autocomplete="off" type="text" maxlength="100" class="form-control" style="width:150px; display:inline;" onkeydown="checkTagKeyDown(event)" />
+									<img id="tagsLoading" style="visibility: hidden" alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif" />
+								</div>
+							</div>
+
 							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Date" /></h4>
 								
 							<a id="date-options-a" style="cursor:pointer" onclick="showHideDateOptions();"><spring:message code="label.ShowDateOptions" /></a>
@@ -782,8 +849,14 @@
 										<div class="originalsurveytitle hideme">${survey.title}</div>
 										<div class="shortname"><esapi:encodeForHTML>${survey.shortname}</esapi:encodeForHTML></div>
 									</div>
-									<br />
 									<table class="formsSurveyItem">
+									    <tr>
+									        <td colspan="4" class="tags">
+									            <c:forEach items="${survey.getTags()}" var="tag">
+									                <span class="badge"><spring:eval expression="tag.name" /></span>
+									            </c:forEach>
+									        </td>
+									    </tr>
 										<tr>
 											<td class="labelcell"><spring:message code="label.Created" /></td>
 											<td><spring:eval expression="survey.created" /></td>
@@ -915,5 +988,55 @@
 		</script>
 	</c:if>
 
+	<script type="text/javascript">
+		$("#tags").autocomplete({
+			autoFocus: true,
+			source: "${contextpath}/forms/tags",
+			search: function( event, ui ) {
+				let term = event.target.value;
+				const reg = /^[a-zA-Z0-9-_]+$/;
+
+				if( !reg.test( term ) ) {
+					if ($("#tags").parent().find(".validation-error").length == 0)
+					{
+						$("#tags").parent().append("<div class='validation-error'>" + tagsText + "</div>");
+					}
+					event.preventDefault();
+					$("#tags").autocomplete("close");
+					$("#tagsLoading").attr("style", "visibility: hidden");
+					return false;
+				} else {
+					$("#tags").parent().find(".validation-error").remove();
+				}
+
+				let storedTags = $("#txtTagsSearch").val().split(";").filter((element) => element);
+				if (storedTags.length >= 20) {
+					$("#tags").parent().append("<div class='validation-error'>" + tagsPerFilter + "</div>");
+					event.preventDefault();
+					$("#tags").autocomplete("close");
+					$("#tagsLoading").attr("style", "visibility: hidden");
+					return false;
+				} else {
+					$("#tags").parent().find(".validation-error").remove();
+				}
+
+				$("#tagsLoading").attr("style", "visibility: visible");
+			},
+			response: function( event, ui ) {
+				$("#tagsLoading").attr("style", "visibility: hidden");
+			},
+			select: function( event, ui ) {
+				let tag = ui.item.value;
+
+				let storedTags = $("#txtTagsSearch").val().split(";").filter((element) => element);
+				if (!storedTags.includes(tag)) {
+					addTag(tag);
+				}
+				$("#tags").val("");
+				$("#tagsLoading").attr("style", "visibility: hidden");
+				return false;
+			}
+		});
+	</script>
 </body>
 </html>

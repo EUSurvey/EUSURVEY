@@ -130,6 +130,7 @@ public class PublicationController extends BasicController {
 					if (lang != null) {
 						survey = SurveyHelper.createTranslatedSurvey(survey.getId(), lang, surveyService,
 								translationService, true);
+						survey.setLanguage(surveyService.getLanguage(lang));
 					}
 
 					Form form = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), false),
@@ -145,6 +146,7 @@ public class PublicationController extends BasicController {
 					result.addObject(Constants.FILTER, userFilter);
 					result.addObject("publicationFilter", publicationFilter);
 					result.addObject("filtered", filtered);
+					result.addObject("useUILanguage", true);
 
 					String resultType = request.getParameter("resultType");
 					resultType = resultType == null ? "content" : resultType;
@@ -190,6 +192,9 @@ public class PublicationController extends BasicController {
 
 	private boolean putParameterFilters(Map<String, String[]> parameters, Map<String, String> filterValues){
 		boolean filtered = false;
+
+		var presetKeys = new HashSet<>(filterValues.keySet());
+
 		for (Entry<String, String[]> entry : parameters.entrySet()) {
 			if (entry.getKey().startsWith(Constants.FILTER)) {
 				String questionId = entry.getKey().substring(6);
@@ -200,7 +205,7 @@ public class PublicationController extends BasicController {
 					String uid = questionId.substring(questionId.indexOf('|') + 1);
 
 					boolean found = false;
-					for (String key : filterValues.keySet()) {
+					for (var key : presetKeys) {
 						if (key.endsWith(uid)) {
 							found = true;
 							break;
@@ -484,11 +489,21 @@ public class PublicationController extends BasicController {
 					}
 				}
 
+
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+
 				String email = parameters.get(Constants.EMAIL)[0];
+
+				ResultFilter filter = survey.getPublication().getFilter().copy();
+				putParameterFilters(parameters, filter.getFilterValues());
+
+				var hash = filter.getHash(false);
+				if (format.equalsIgnoreCase("pdf")){
+					hash += locale.getLanguage();
+				}
+
 				StatisticsExecutor export = (StatisticsExecutor) context.getBean("statisticsExecutor");
-				export.init(survey, type, format, survey.getPublication().getFilter().getHash(false), email, sender,
-						host, locale);
+				export.init(survey, type, format, hash, email, sender, host, locale, filter);
 				taskExecutor.execute(export);
 				return "success";
 			} else {

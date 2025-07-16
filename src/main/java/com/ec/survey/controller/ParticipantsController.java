@@ -1,8 +1,6 @@
 package com.ec.survey.controller;
 
-import com.ec.survey.exception.ForbiddenURLException;
-import com.ec.survey.exception.InvalidURLException;
-import com.ec.survey.exception.NoFormLoadedException;
+import com.ec.survey.exception.*;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
@@ -54,6 +52,10 @@ public class ParticipantsController extends BasicController {
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${participant.default.domain:@null}") String defaultDomain;
+	private @Value("${monitoring.recipient}") String monitoringEmail;
+
+	private @Value("${participants.warning.size:500}") int warningSizeGuestList;
+	private @Value("${participants.warning.count:10}") int warningCountGuestLists;
 
 	@Resource(name = "ecService")
 	private ECService ecService;
@@ -91,6 +93,8 @@ public class ParticipantsController extends BasicController {
 		int owner = u.getId();
 
 		ModelAndView result = new ModelAndView("management/participants", "form", form);
+		String enableEUGuestList = settingsService.get(Setting.EnableEUGuestList);
+		result.addObject("enableEUGuestList", enableEUGuestList.equalsIgnoreCase("true"));
 		result.addObject("useUILanguage", true);
 
 		String name = request.getParameter("name");
@@ -339,6 +343,8 @@ public class ParticipantsController extends BasicController {
 			List<Integer> userIDs = null;
 			List<String> tokens = null;
 			List<String> deactivatedTokens = null;
+			int size = 0;
+
 			if (participationGroup.getType() == ParticipationGroupType.Static) {
 				ArrayList<LinkedHashMap> attendees = (ArrayList) json.get("attendees");
 				attendeeIDs = new ArrayList<>();
@@ -371,6 +377,8 @@ public class ParticipantsController extends BasicController {
 					attendeeIDs.add((int) attendee.get("id"));
 				}
 
+				size = attendeeIDs.size();
+
 			} else if (participationGroup.getType() == ParticipationGroupType.Token) {
 				ArrayList<LinkedHashMap> invitations = (ArrayList) json.get("tokens");
 				tokens = new ArrayList<>();
@@ -383,6 +391,7 @@ public class ParticipantsController extends BasicController {
 						deactivatedTokens.add(token.get("uniqueId").toString());
 					}
 				}
+				size = tokens.size();
 			} else if (participationGroup.getType() == ParticipationGroupType.ECMembers) {
 				ArrayList<LinkedHashMap> users = (ArrayList) json.get("users");
 				userIDs = new ArrayList<>();
@@ -390,6 +399,7 @@ public class ParticipantsController extends BasicController {
 					LinkedHashMap ecasuser = users.get(i);
 					userIDs.add((int) ecasuser.get("id"));
 				}
+				size = userIDs.size();
 			}
 			participationGroup.setOwnerId(user.getId());
 			participationGroup.setInCreation(true);
@@ -402,6 +412,8 @@ public class ParticipantsController extends BasicController {
 			} else if (participationGroup.getType() == ParticipationGroupType.ECMembers) {
 				participationService.addUsersToGuestListAsync(participationGroup.getId(), userIDs);
 			}
+
+			CheckForSuspiciousGuestList(size, form.getSurvey(), user);
 
 			if (id > 0) {
 				activityService.log(ActivityRegistry.ID_GUEST_LIST_MODIFIED, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
@@ -421,6 +433,43 @@ public class ParticipantsController extends BasicController {
 		return resources.getMessage("error.OperationFailed", null,
 				"There was a problem during execution of the operation. The error was logged. Please contact support if the problem occurs again.",
 				locale);
+	}
+
+	private void CheckForSuspiciousGuestList(int listSize, Survey survey, User user) {
+		if (listSize > warningSizeGuestList) {
+			SendGuestListWarningMail("A user has created a very large guest list for their survey: " + listSize + " entries", "Very large guest list", survey, user);
+		}
+
+		var listCount = participationService.getParticipationGroupCount(survey.getUniqueId());
+		if (listCount > warningCountGuestLists) {
+			SendGuestListWarningMail("A user has created a large amount of guest lists for their survey: " + listCount + " lists", "Many guest lists", survey, user);
+		}
+	}
+
+	private void SendGuestListWarningMail(String title, String subject, Survey survey, User user) {
+		var mailBody = "<b>SECURITY ALERT</b><br />" +
+				"<br />" +
+				title + "<br />" +
+				"<br />" +
+				"Runner: <a href=\"" + host	+ "runner/" + survey.getShortname() + "\">" + host + "runner/" + survey.getShortname() + "</a><br />" +
+				"<br />" +
+				"<table>" +
+				"<tr><td><b>Username:</b></td>" + "<td style='padding-left: 10px;'>" + user.getLogin() + "</td></tr>" +
+				"<tr><td><b>First name:</b></td>" + "<td style='padding-left: 10px;'>" + user.getGivenName() + "</td></tr>" +
+				"<tr><td><b>Surname:</b></td>" + "<td style='padding-left: 10px;'>" + user.getSurName() + "</td></tr>" +
+				"<tr><td><b>Email address:</b></td>" + "<td style='padding-left: 10px;'>" + user.getEmail() + "</td></tr>" +
+				"<tr><td><b>Survey Title:</b></td>" + "<td style='padding-left: 10px;'>" + survey.cleanTitle() + "</td></tr>" +
+				"<tr><td><b>Survey Alias:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getShortname() + "</td></tr>" +
+				"<tr><td><b>Survey UID:</b></td>" + "<td style='padding-left: 10px;'>" + survey.getUniqueId() + "</td></tr>" +
+				"</table><br />" +
+				"Administration: <a href=\"" + host	+ survey.getShortname() + "/management/overview\">" + host + survey.getShortname() + "/management/overview</a><br />";
+
+		try {
+			var mail = mailService.getEUSurveyMailTemplate(mailBody);
+			mailService.SendHtmlMail(monitoringEmail, sender, sender, subject, mail, null);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
 	}
 
 	@RequestMapping(value = "/participants/finishedguestlists", method = { RequestMethod.GET, RequestMethod.HEAD })
@@ -723,8 +772,10 @@ public class ParticipantsController extends BasicController {
 
 			text2 = text2.replaceAll(linksA, "");
 			text2 = text2.replaceAll(linksB, "");
-		}
 
+			senderSubject = senderSubject.replaceAll(linksA, "");
+			senderSubject = senderSubject.replaceAll(linksB, "");
+		}
 
 		if (senderAddress == null || senderAddress.trim().length() == 0)
 			senderAddress = user.getEmail();

@@ -6,6 +6,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "EXPLANATION_LIKES", indexes = {@Index(name = "EXPLANATIONLIKE_IDX", columnList = "ANSWER_EXPLANATION_ID, ANSWER_SET_CODE")})
 public class DelphiExplanationLike implements java.io.Serializable  {
+    private static final long serialVersionUID = 1L;
     private Integer id;
     private Integer answerExplanationId;    //explanation of which answerset was liked
     private String uniqueCode;      //the code of the explanation of the person that liked this comment

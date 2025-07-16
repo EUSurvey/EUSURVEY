@@ -493,7 +493,12 @@
                             <br />
                             <p style="max-width: 510px"><i><spring:message code="message.NoLinksInInvite"/></i></p>
                         </c:if>
-					
+
+						<c:if test="${noInviteLinks != null}">
+							<br>
+							<p style="max-width: 510px"><i><spring:message code="message.NoLinksInInvite"/></i></p>
+						</c:if>
+
 					</div>
 					
 					<div style="clear: both"></div>

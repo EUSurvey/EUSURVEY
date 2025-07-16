@@ -1742,14 +1742,14 @@
 									</span>
 								<!-- /ko -->
 								<!-- ko ifnot: child.title() -->
-									<div hidden class='questiontitle' data-bind="attr: {id: 'questiontitle' + child.id()}">${form.getMessage("form.Question")}</div>
+									<div class='questiontitle hidden' data-bind="attr: {id: 'questiontitle' + child.id()}">${form.getMessage("form.Question")}</div>
 								<!-- /ko -->
 								
 								<!-- ko if: child.help() -->
 									<span class='questionhelp' data-bind="html: child.niceHelp(), attr:{id: 'questionhelp' + child.id()}"></span>
 								<!-- /ko -->
 								<!-- ko ifnot: child.help() -->
-									<span hidden class='questionhelp' data-bind="attr:{id: 'questionhelp' + child.id()}"></span>
+									<span class='questionhelp hidden' data-bind="attr:{id: 'questionhelp' + child.id()}"></span>
 								<!-- /ko -->
 							<!-- /ko -->
 							

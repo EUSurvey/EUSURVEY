@@ -70,10 +70,6 @@ var Guestlist = function() {
 		$('[data-toggle="tooltip"]').tooltip();
 	});
 	
-	this.exportxls = function() {
-		showExportDialog('Tokens', 'xls', self.id());
-	}
-	
 	this.exportods = function() {
 		showExportDialog('Tokens', 'ods', self.id());
 	}
@@ -93,12 +89,12 @@ var Guestlist = function() {
 				  {
 					model.active(true);  
 					showSuccess(p_activated);
+					$('[data-toggle="tooltip"]').tooltip();
 				  } else {
 					showError(result);
 				  }
 			  }
 			});
-		$('[data-toggle="tooltip"]').tooltip();
 	}
 	
 	this.deactivate = function() {
@@ -112,6 +108,7 @@ var Guestlist = function() {
 				  {
 					model.active(false);  
 					showSuccess(p_deactivated);
+					$('[data-toggle="tooltip"]').tooltip();
 				  } else {
 					showError(result);
 				  }

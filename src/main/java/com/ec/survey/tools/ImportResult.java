@@ -4,6 +4,8 @@ import com.ec.survey.model.AnswerComment;
 import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Translations;
+import com.ec.survey.model.delphi.DelphiCommentLike;
+import com.ec.survey.model.delphi.DelphiExplanationLike;
 import com.ec.survey.model.selfassessment.SACriterion;
 import com.ec.survey.model.selfassessment.SAReportConfiguration;
 import com.ec.survey.model.selfassessment.SAScoreCard;
@@ -33,9 +35,16 @@ public class ImportResult {
 	private Map<Integer, Survey> oldSurveys = new HashMap<>();
 	private Map<Integer, List<Translations>> oldTranslations = new HashMap<>();
 	private List<AnswerExplanation> explanations;
+
+
+	private List<DelphiExplanationLike> explanationLikes;
 	private List<AnswerExplanation> activeExplanations;
+
+	private List<DelphiExplanationLike> activeExplanationLikes;
 	private List<AnswerComment> comments;
+	private List<DelphiCommentLike> commentLikes;
 	private List<AnswerComment> activeComments;
+	private List<DelphiCommentLike> activeCommentLikes;
 	private List<SATargetDataset> targetDatasets;
 	private List<SACriterion> criteria;
 	private List<SAScoreCard> scoreCards;
@@ -155,6 +164,37 @@ public class ImportResult {
 	}
 	public void setActiveComments(List<AnswerComment> activeComments) {
 		this.activeComments = activeComments;
+	}
+	public List<DelphiExplanationLike> getExplanationLikes() {
+		return explanationLikes;
+	}
+
+	public void setExplanationLikes(List<DelphiExplanationLike> explanationLikes) {
+		this.explanationLikes = explanationLikes;
+	}
+
+	public List<DelphiExplanationLike> getActiveExplanationLikes() {
+		return activeExplanationLikes;
+	}
+
+	public void setActiveExplanationLikes(List<DelphiExplanationLike> activeExplanationLikes) {
+		this.activeExplanationLikes = activeExplanationLikes;
+	}
+
+	public List<DelphiCommentLike> getCommentLikes() {
+		return commentLikes;
+	}
+
+	public void setCommentLikes(List<DelphiCommentLike> commentLikes) {
+		this.commentLikes = commentLikes;
+	}
+
+	public List<DelphiCommentLike> getActiveCommentLikes() {
+		return activeCommentLikes;
+	}
+
+	public void setActiveCommentLikes(List<DelphiCommentLike> activeCommentLikes) {
+		this.activeCommentLikes = activeCommentLikes;
 	}
 	public List<SATargetDataset> getTargetDatasets() {
 		return targetDatasets;

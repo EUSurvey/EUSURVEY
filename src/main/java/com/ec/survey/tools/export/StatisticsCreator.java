@@ -83,7 +83,6 @@ public class StatisticsCreator implements Runnable {
 
 		Statistics statistics = new Statistics();
 		statistics.setSurveyId(survey.getId());
-		statistics.setFilterHash(filter.getHash(allanswers));
 
 		Session session = sessionFactory.getCurrentSession();
 		survey = (Survey) session.merge(survey);
@@ -93,6 +92,8 @@ public class StatisticsCreator implements Runnable {
 		if (allanswers && !survey.isMissingElementsChecked()) {
 			surveyService.checkAndRecreateMissingElements(survey, filter);
 		}
+
+		statistics.setFilterHash(filter.getHash(allanswers));
 
 		Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
 		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
@@ -506,7 +507,7 @@ public class StatisticsCreator implements Runnable {
 			ComplexTable table = (ComplexTable) q;
 			for (ComplexTableItem child : table.getQuestionChildElements()) {
 				if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
-					for (PossibleAnswer a : child.getPossibleAnswers()) {
+					for (PossibleAnswer a : child.getAllPossibleAnswers()) {
 						int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, false, where,
 								values);
 						map.put(a.getId(), count);
@@ -664,7 +665,7 @@ public class StatisticsCreator implements Runnable {
 			for (ComplexTableItem child : table.getQuestionChildElements()) {
 				
 				if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
-					for (PossibleAnswer a : child.getPossibleAnswers()) {
+					for (PossibleAnswer a : child.getAllPossibleAnswers()) {
 						if (countsUID.containsKey(a.getUniqueId() + "#" + child.getUniqueId())) {
 							map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + child.getUniqueId()));
 						}
@@ -828,41 +829,54 @@ public class StatisticsCreator implements Runnable {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		NumberQuestionStatistics numberQuestionStats = new NumberQuestionStatistics();
-
-		String where = answerService.getSql(null, survey.getId(), filter, values, true);
-		String sql = "SELECT a.VALUE FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
-		sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
-		values.put("questionuid", question.getUniqueId());
-
-		NativeQuery query = session.createSQLQuery(sql);
-		query.setReadOnly(true);
-
-		for (Entry<String, Object> entry : values.entrySet()) {
-			if (entry.getValue() instanceof String) {
-				query.setString(entry.getKey(), (String) entry.getValue());
-			} else if (entry.getValue() instanceof Integer) {
-				query.setInteger(entry.getKey(), (Integer) entry.getValue());
-			} else if (entry.getValue() instanceof Date) {
-				query.setTimestamp(entry.getKey(), (Date) entry.getValue());
-			}
-		}
-
-		query.setFetchSize(Integer.MIN_VALUE);
-		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
-
 		Map<String, Integer> map = new HashMap<>();
-		while (results != null && results.next()) {
-			Object[] a = results.get();
-			String value = (String) a[0];
-			//Integer qid = ConversionTools.getValue(a[1]);
 
-			Integer count = map.getOrDefault(value, 0);
-			map.put(value, count+1);
-			numberQuestionStats.incrementNumberVotes();
+		if (!survey.getIsDelphi() && reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
+			// we try to get the data from the reporting database
+			String where = ReportingService.getWhereClause(filter, values, survey);
+			List<String> answers = reportingService.getAnswersByQuestionUID(survey, question.getUniqueId(), where, values);
+
+			for (String v : answers) {
+				Integer count = map.getOrDefault(v, 0);
+				map.put(v, count + 1);
+				numberQuestionStats.incrementNumberVotes();
+			}
+		} else {
+			values.put("questionuid", question.getUniqueId());
+			String where = answerService.getSql(null, survey.getId(), filter, values, true);
+			String sql = "SELECT a.VALUE FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+			sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
+
+			NativeQuery query = session.createSQLQuery(sql);
+			query.setReadOnly(true);
+
+			for (Entry<String, Object> entry : values.entrySet()) {
+				if (entry.getValue() instanceof String) {
+					query.setString(entry.getKey(), (String) entry.getValue());
+				} else if (entry.getValue() instanceof Integer) {
+					query.setInteger(entry.getKey(), (Integer) entry.getValue());
+				} else if (entry.getValue() instanceof Date) {
+					query.setTimestamp(entry.getKey(), (Date) entry.getValue());
+				}
+			}
+
+			query.setFetchSize(Integer.MIN_VALUE);
+			ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
+
+			while (results != null && results.next()) {
+				Object[] a = results.get();
+				String value = (String) a[0];
+		
+				Integer count = map.getOrDefault(value, 0);
+				map.put(value, count + 1);
+				numberQuestionStats.incrementNumberVotes();
+			}
+			if (null != results) {
+				results.close();
+			}
+
 		}
-		if (null != results) {
-			results.close();
-		}
+
 		numberQuestionStats.setValuesMagnitude(map);
 		return numberQuestionStats;
 	}
@@ -872,35 +886,43 @@ public class StatisticsCreator implements Runnable {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		List<String> answers = new ArrayList<>();
-		
-		String where = answerService.getSql(null, survey.getId(), filter, values, true);
-		String sql = "SELECT a.VALUE FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
-		sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
-		values.put("questionuid", question.getUniqueId());
 
-		NativeQuery query = session.createSQLQuery(sql);
-		query.setReadOnly(true);
+		if (!survey.getIsDelphi() && reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
+			// we try to get the data from the reporting database
+			String where = ReportingService.getWhereClause(filter, values, survey);
+			answers = reportingService.getAnswersByQuestionUID(survey, question.getUniqueId(), where, values);
+		} else {
 
-		for (Entry<String, Object> entry : values.entrySet()) {
-			if (entry.getValue() instanceof String) {
-				query.setString(entry.getKey(), (String) entry.getValue());
-			} else if (entry.getValue() instanceof Integer) {
-				query.setInteger(entry.getKey(), (Integer) entry.getValue());
-			} else if (entry.getValue() instanceof Date) {
-				query.setTimestamp(entry.getKey(), (Date) entry.getValue());
+			String where = answerService.getSql(null, survey.getId(), filter, values, true);
+			String sql = "SELECT a.VALUE FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+			sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
+			values.put("questionuid", question.getUniqueId());
+
+			NativeQuery query = session.createSQLQuery(sql);
+			query.setReadOnly(true);
+
+			for (Entry<String, Object> entry : values.entrySet()) {
+				if (entry.getValue() instanceof String) {
+					query.setString(entry.getKey(), (String) entry.getValue());
+				} else if (entry.getValue() instanceof Integer) {
+					query.setInteger(entry.getKey(), (Integer) entry.getValue());
+				} else if (entry.getValue() instanceof Date) {
+					query.setTimestamp(entry.getKey(), (Date) entry.getValue());
+				}
 			}
-		}
 
-		query.setFetchSize(Integer.MIN_VALUE);
-		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
+			query.setFetchSize(Integer.MIN_VALUE);
+			ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
-		while (results != null && results.next()) {
-			Object[] a = results.get();
-			String value = (String) a[0];
-			answers.add(value);			
-		}
-		if (null != results) {
-			results.close();
+			while (results != null && results.next()) {
+				Object[] a = results.get();
+				String value = (String) a[0];
+				answers.add(value);
+			}
+			if (null != results) {
+				results.close();
+			}
+
 		}
 		
 		return answers;
@@ -1233,7 +1255,7 @@ public class StatisticsCreator implements Runnable {
 		int total = survey.getNumberOfAnswerSets();
 		int correct = 0;
 		
-		List<PossibleAnswer> answers = question instanceof ChoiceQuestion ? ((ChoiceQuestion)question).getAllPossibleAnswers() : ((ComplexTableItem)question).getPossibleAnswers();
+		List<PossibleAnswer> answers = question instanceof ChoiceQuestion ? ((ChoiceQuestion)question).getAllPossibleAnswers() : ((ComplexTableItem)question).getAllPossibleAnswers();
 		
 		if (survey.getIsSelfAssessment() && question instanceof SingleChoiceQuestion) {
 			SingleChoiceQuestion scq = (SingleChoiceQuestion)question;

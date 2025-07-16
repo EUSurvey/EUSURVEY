@@ -74,6 +74,49 @@ public class SchemaService extends BasicService {
 
 	}
 
+    @Transactional
+    public void step128() {
+        Session session = sessionFactory.getCurrentSession();
+        ensureActivities(session,
+                ActivityRegistry.ID_CHANGE_OWNER_REQUEST_SENT,
+                ActivityRegistry.ID_CHANGE_OWNER_REQUEST_ACCEPTED,
+                ActivityRegistry.ID_CHANGE_OWNER_REQUEST_REJECTED,
+                ActivityRegistry.ID_CHANGE_OWNER_REQUEST_EXPIRED
+        );
+    }
+
+	@Transactional
+	public void step127() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		Role contributorRole = administrationService.getRole("Contributor");
+		if (contributorRole == null) {
+			contributorRole = new Role();
+			contributorRole.setName("Contributor");
+			administrationService.createRole(contributorRole);
+		}
+
+		status.setDbversion(127);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step126() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		String existing = settingsService.get(Setting.EnableEUGuestList);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.EnableEUGuestList);
+			s.setValue("false");
+			s.setFormat("true / false");
+			session.saveOrUpdate(s);
+		}
+		status.setDbversion(126);
+		session.saveOrUpdate(status);
+	}
+
 	@Transactional
 	public void step125() {
 		Session session = sessionFactory.getCurrentSession();
@@ -1179,6 +1222,16 @@ public class SchemaService extends BasicService {
 		session.setReadOnly(states.get(0), false);
 
 		return states.get(0);
+	}
+
+
+	@Transactional
+	public void setFsCheckState(Status.FSCheckStates newState) {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		status.setFsCheckState(newState);
+		session.saveOrUpdate(status);
 	}
 
 	@Transactional

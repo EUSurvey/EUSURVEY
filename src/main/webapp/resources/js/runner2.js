@@ -117,6 +117,20 @@ function addElement(element, foreditor, forskin)
 		$(container).append('<div style="color: #f00" tabindex="0" class="validation-error-server" aria-live="polite">' + validation + '</div>');
 		$(container).find(".validation-error-server").first().focus();
 	}
+
+	if ($(container).hasClass("complextableitem")) {
+		$(container).find(".cell").each(function() {
+			const data_id = $(this).attr("data-id");
+			if (data_id != "") {
+				var validation = getValidationMessageByQuestion(data_id);
+				if (validation.length > 0)
+				{
+					$(this).append('<div style="color: #f00" tabindex="0" class="validation-error-server" aria-live="polite">' + validation + '</div>');
+					$(this).find(".validation-error-server").first().focus();
+				}
+			}
+		});
+	}
 	
 	if (!foreditor && (backupLoaded || doAnswersExist()))
 	{       
@@ -971,7 +985,7 @@ function hideCommentAndReplyForms() {
 	});
 }
 
-function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel) {
+function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel, loadAsync=true) {
 	const orderBy = viewModel.delphiTableOrder();
 	const offset = viewModel.delphiTableOffset();
 	const limit = viewModel.delphiTableLimit();
@@ -983,6 +997,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 		type: "GET",
 		url: contextpath + "/runner/delphiTable",
 		data: data,
+		async: loadAsync,
 		beforeSend: function (xhr) {
 			viewModel.delphiTableLoading(true);
 			xhr.setRequestHeader(csrfheader, csrftoken);
@@ -1209,6 +1224,9 @@ function delphiUpdate(div) {
 	}
 
 	delphiUpdateContinued(div);
+
+	$("#runnerLanguageSelector").hide();
+	$("#headerLanguageSelector").hide();
 }
 
 function confirmExplanationDeletion() {

@@ -515,6 +515,12 @@ public class User implements java.io.Serializable {
 		return resultAccess;
 	}
 
+	@Transient
+	@JsonIgnore
+	public Boolean getResultAccessWrite() {
+		return resultAccess != null && !resultAccess.isReadonly();
+	}
+
 	public void setResultAccess(ResultAccess resultAccess) {
 		this.resultAccess = resultAccess;
 	}

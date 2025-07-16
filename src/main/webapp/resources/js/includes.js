@@ -534,33 +534,41 @@ function initModals(item)
 	function checkFilterCell(cell, background)
 	{
 		checkFilterCell2(cell, true, background);
-		
-		if ($("#ResultFilterLimit").length > 0)
+
+        if ($("#ResultFilterLimit").length > 0)
 		{
-			var row = $(cell).closest("tr");
-			var count = $(row).find(".glyphicon-remove-circle").length;
-			if (count > 2)
-			{
-				$(row).find("input[type=text]").each(function(){
-					if ($(this).parent().find(".glyphicon-remove-circle").length == 0)
-					{
-						$(this).prop("disabled", true);
-					}
-				});
-				$(row).find("a").each(function(){
-					if ($(this).closest("th").find(".glyphicon-remove-circle").length == 0)
-					{
-						$(this).addClass("disabled");
-					}
-				});
-				
-				$('#ResultFilterLimit').show();
-			} else {
-				$(row).find("input").removeAttr("disabled");
-				$(row).find("a:not(#btnDeleteSelected)").removeClass("disabled");
-				$('#ResultFilterLimit').hide();
-			}
-		}
+            var row = $(cell).closest("tr");
+            var count = $(row).find(".yellowfilter").length + getNumberOfPredefinedFilters();
+
+            if (count > 2)
+            {
+                $(row).find("input[type=text]").each(function(){
+                    if (!$(this).closest("th").hasClass("yellowfilter"))
+                    {
+                        $(this).prop("disabled", true);
+                    }
+                });
+                $(row).find("a").each(function(){
+                    if (!$(this).closest("th").hasClass("yellowfilter"))
+                    {
+                        $(this).addClass("disabled");
+                    }
+                });
+                $(row).find("button").each(function(){
+                    if (!$(this).closest("th").hasClass("yellowfilter"))
+                    {
+                        $(this).addClass("disabled");
+                    }
+                });
+
+                //$('#ResultFilterLimit').show();
+            } else {
+                $(row).find("input").removeAttr("disabled");
+                $(row).find("a:not(#btnDeleteSelected)").removeClass("disabled");
+                $(row).find("button:not(#btnDeleteSelected)").removeClass("disabled");
+                //$('#ResultFilterLimit').hide();
+            }
+        }
 	}
 	
 	function checkFilterCell2(cell, recursive, background)
@@ -583,7 +591,7 @@ function initModals(item)
 
 		if ($(cell).find("input[type='checkbox']").length > 0)
 		{
-			$(cell).find(".dropdown-toggle").html("All values&nbsp;<span class='caret'></span>");
+			$(cell).find(".dropdown-toggle").html(allValues + "&nbsp;<span class='caret'></span>");
 			$(cell).removeAttr("title");
 		}
 
@@ -592,10 +600,17 @@ function initModals(item)
 			$(cell).find(".btn-toolbar").first().find(".datefilter").first().find("a").first().html(labelfrom + "&nbsp;<span class='caret'></span>");	
 			$($(cell).find(".btn-toolbar").find(".datefilter")[1]).find("a").first().html(labelto + "&nbsp;<span class='caret'></span>");	
 		}
+
+		if (background) {
+            $(cell).removeClass("yellowfilter");
+        }
 		 
 		if ($(cell).find("input:checked").length > 0 || text || hidden)
 		{
-			if (background) $(cell).css("background-color","#FFE93A");
+			if (background) {
+			    $(cell).addClass("yellowfilter");
+			}
+
 			$(cell).find(".icon-filter").remove();
 			$(cell).find(".glyphicon-remove-circle").parent().parent().remove();
 			
@@ -683,7 +698,7 @@ function initModals(item)
 		} else if ($(cell).find(".activityselect").length > 0) {
 			if ($(cell).find(".activityselect").first().val().length > 0)
 			{
-				if (background) $(cell).css("background-color","#FFE93A");
+				if (background)  $(cell).addClass("yellowfilter");
 	            $(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 	        }
 		} else {
@@ -784,7 +799,7 @@ function initModals(item)
 					$(this).attr("data-text",text);
 				}
 				
-				while ($(this).parent().height() > 30  || ($(this).closest("div").width() - $(this).width() < 70))
+				while ($(this).parent().height() > 30  || ($(this).closest(".filtercell").width() - $(this).width() < 70))
 				{
 					text = text.substring(0, text.length - 2);
 					$(this).text(text + "...");	
@@ -1078,7 +1093,7 @@ function initModals(item)
 				const self = addValidationError;
 				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
 				if (label.length){
-					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+					text = '<span class="screen-reader-only">' + escapeXml(label.text()) + ' - </span>' + text
 				}
 				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
 				self.commonImpl(element);
@@ -1091,7 +1106,7 @@ function initModals(item)
 				const self = addValidationError;
 				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
 				if (label.length){
-					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+					text = '<span class="screen-reader-only">' + escapeXml(label.text()) + ' - </span>' + text
 				}
 				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
 				self.commonImpl(element);
@@ -1100,7 +1115,7 @@ function initModals(item)
 				const self = addValidationError;
 				const label = $(`.questiontitle[for="${$(element).attr('id')}"]`)
 				if (label.length){
-					text = `<span class="screen-reader-only">${label.text()} - </span>` + text
+					text = '<span class="screen-reader-only">' + escapeXml(label.text()) + ' - </span>' + text
 				}
 				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' role='alert'>" + text + "</div>");
 				
@@ -1282,16 +1297,14 @@ function initModals(item)
 						{
 							validationinfo += $(this).attr("name") + " (R) ";
 							
-							if ($(this).attr("name") == "radio-new-survey-audience")
+							if ($(this).attr("name") == "radio-new-survey-audience" || $(this).attr("name") == "radio-new-survey-dpa" || $(this).attr("name") == "radio-new-survey-tos")
 							{
 								addValidationError.toElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent().parent(), requiredText);
+								$(this).parent().parent().find(".validation-error").first().attr("style", "margin-left: -30px");
 							} else if ($(this).closest(".confirmationitem").length > 0)
 							{
 								addValidationError.afterElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent().parent(), requiredText);
-							} else 	if ($(this).attr("name") == "radio-new-survey-dpa" || $(this).attr("name") == "radio-new-survey-tos")
-							{
-								addValidationError.toElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent().parent(), requiredText);
-							} else {							
+							} else {
 								addValidationError.toElementAndFocus(this, $("input[name='" + $(this).attr("name") + "']:last").parent(), requiredText);
 							}
 							
@@ -2756,6 +2769,10 @@ function initModals(item)
 	
 	function showOverlayMenu(btn)
 	{
+	    if ($(btn).hasClass("disabled")) {
+	        return;
+	    }
+
 		closeOverlayDivsEnabled = false;
 		var overlay = $(btn).parent().find('.overlaymenu').first();		
 		
@@ -2766,34 +2783,26 @@ function initModals(item)
 		}
 		
 		$(".overlaymenu").hide();
-		
-		var rect = $(btn).parent().parent()[0].getBoundingClientRect();	
-		
-		$(overlay).css("left","0px");
-		
-		if ($(btn).closest(".widget").length > 0)
-		{
-			$(overlay).css("top",rect.top);
-		} else {
-			var rectbtn = $(btn)[0].getBoundingClientRect();
-			$(overlay).css("top", rectbtn.top + rectbtn.height + 2);
+		$(overlay).css("left", "0px");
+
+		var rect = $(btn)[0].getBoundingClientRect();
+		$(overlay).css("top", rect.bottom);
+		if ($(overlay).hasClass("resultoverlaymenu")) {
+			rect = $(btn).parent()[0].getBoundingClientRect();
+			$(overlay).css("top", rect.bottom + 2);
 		}
+
+		rect = $(btn).parent()[0].getBoundingClientRect();
+		if ($(btn).hasClass("dropdownFilter") || $(overlay).parent().hasClass("datefilter"))
+			rect = $(btn)[0].getBoundingClientRect();
 		
 		var realwidth = overlay.width();
-		
-			if (overlay.width() > $(btn).parent().parent().width() && $(btn).closest("th").is(':last-child'))
-			{
-				$(overlay).css("left", rect.right - realwidth - 11);	
-			} else {
-				$(overlay).css("left",rect.left);
-				var newwidth = overlay.width();
-				if (newwidth < realwidth)
-				{
-					//the div does not fit to the page, so we also right-align it
-					$(overlay).css("left", rect.right - realwidth - 11);	
-				};
-			}
-						
+		if (rect.left + realwidth > window.innerWidth) {
+			$(overlay).css("left", window.innerWidth - (realwidth*1.25));
+		} else {
+			$(overlay).css("left", rect.left);
+		}
+
 		$(overlay).toggle();
 		$(btn).addClass("overlaybutton");
 					

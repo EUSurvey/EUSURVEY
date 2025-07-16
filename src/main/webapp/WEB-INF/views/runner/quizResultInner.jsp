@@ -19,7 +19,7 @@
 		<div class="quizresultsdiv">
 			<img src="${contextpath}/resources/images/logo_Eusurvey.png" style="width: 200px" /><br />
 		
-			<h1 class="surveytitle">${form.survey.title} - <spring:message code="label.Results" /></h1><br />
+			<h1 class="surveytitle">${form.survey.title} - ${form.getMessage("label.Results")} </h1><br />
 			<div style="margin-bottom: 20px;">${form.survey.quizResultsMessage}</div>
 		
 			<c:if test="${forpdf == null && form.survey.downloadContribution}">
@@ -30,26 +30,26 @@
 			
 			<c:if test="${form.survey.showTotalScore}">
 		
-				<div style="font-size: 25px;"><spring:message code="label.Summary" />:</div>
-			
+				<div style="font-size: 25px;">${form.getMessage("label.Summary")}:</div>
+
 				<div style="float: right; width: 130px; height: 130px; margin-top: 0px;">
 					
 				</div>
 				
 				<table class="scoretable" style="margin-left: 30px;">
 					<tr>
-						<th class="sr-only" colspan="2"><spring:message code="label.Score" /></th>
-						<th class="sr-only"><spring:message code="label.DelphiChartPie" /></th>
+						<th class="sr-only" colspan="2">${form.getMessage("label.Score")}</th>
+						<th class="sr-only">${form.getMessage("label.DelphiChartPie")}</th>
 					</tr>
 					<tr style="font-size: 130%;">
-						<td style="padding: 15px; color: #337ab7;"><b><spring:message code="label.YourScore" /></b></td>
+						<td style="padding: 15px; color: #337ab7;"><b>${form.getMessage("label.YourScore")}</b></td>
 						<td style="padding: 15px; color: #337ab7;">${quiz.score}</td>
 						<td rowspan="2" style="padding-left: 50px;">
 							<img style="margin-top: -18px" src="${contextpath}/graphics/pie.png?v=${quiz.score}&amp;m=${quiz.maximumScore}" />
 						</td>
 					</tr>
 					<tr>
-						<td style="padding: 15px; padding-top: 10px; border: 0px;"><b><spring:message code="label.MaximumScore" /></b></td>
+						<td style="padding: 15px; padding-top: 10px; border: 0px;"><b>${form.getMessage("label.MaximumScore")}</b></td>
 						<td style="padding: 15px; padding-top: 10px; border: 0px;">${quiz.maximumScore}</td>
 					</tr>
 				</table>			
@@ -60,8 +60,8 @@
 					<div style="margin-top: 20px; margin-bottom: 30px;">
 						<table class="quizsectionresults" <c:if test="${ismobile == null}">style="width: 500px;"</c:if>>
 							<tr>
-								<th><spring:message code="form.Section" /></th>
-								<th colspan="2"><spring:message code="label.ScoreForThisSection" /></th>
+								<th>${form.getMessage("form.Section")}</th>
+								<th colspan="2">${form.getMessage("label.ScoreForThisSection")}</th>
 							</tr>
 								<c:forEach var="page" items="${form.getPages()}" varStatus="rowCounter">
 				 					<c:forEach var="element" items="${page}">
@@ -85,12 +85,12 @@
 					</div>
 					</c:if>				
 				
-					<div style="font-size: 25px;"><spring:message code="label.ScoresByQuestion" />:</div>
+					<div style="font-size: 25px;">${form.getMessage("label.ScoresByQuestion")}:</div>
 					
 					<table style="margin-top: 20px; margin-bottom: 20px; table-layout:fixed; max-width: 100%">
 						<tr>
-							<th class="sr-only" colspan="2"><spring:message code="label.Answer" /></th>
-							<th class="sr-only"><spring:message code="label.Score" /></th>
+							<th class="sr-only" colspan="2">${form.getMessage("label.Answer")}</th>
+							<th class="sr-only">${form.getMessage("label.Score")}</th>
 						</tr>
 						<c:forEach var="page" items="${form.getPages()}" varStatus="rowCounter">
 				 			<c:forEach var="element" items="${page}">
@@ -108,7 +108,7 @@
 												<td colspan="2" style="padding-top: 20px;">
 													<c:if test="${scoring != null}">
 														<div style="float: right; font-size: 14px !important">
-															<spring:message code="label.ScoreForThisSection" />: ${scoring}
+															${form.getMessage("label.ScoreForThisSection")}: ${scoring}
 														</div>
 													</c:if>
 												</td>
@@ -130,9 +130,9 @@
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <div class="quizquestion">
-                                                                        <div class="fullcontent hideme">${element.getStrippedTitle()}: ${matrixQuestion.getStrippedTitle()}<a class='lessbutton' onclick='switchQuestionTitle(this);'><spring:message code="label.less" /></a>
+                                                                        <div class="fullcontent hideme">${element.getStrippedTitle()}: ${matrixQuestion.getStrippedTitle()}<a class='lessbutton' onclick='switchQuestionTitle(this);'>${form.getMessage("label.less")}</a>
                                                                         </div>
-                                                                        <div class='shortcontent'>${(element.getStrippedTitle() + ': ' + matrixQuestion.getStrippedTitle()).substring(0,190)}<a class="morebutton" onclick="switchQuestionTitle(this);"><spring:message code="label.more" /></a>
+                                                                        <div class='shortcontent'>${(element.getStrippedTitle() + ': ' + matrixQuestion.getStrippedTitle()).substring(0,190)}<a class="morebutton" onclick="switchQuestionTitle(this);">${form.getMessage("label.more")}</a>
                                                                         </div>
                                                                     </div>
                                                                 </c:otherwise>
@@ -143,7 +143,7 @@
                                                     <c:set var="answers" value="${form.answerSets[0].getAnswers(matrixQuestion.uniqueId)}" />
 
                                                     <tr class="scorerow">
-                                                        <td><spring:message code="label.YourAnswer" /></td>
+                                                        <td>${form.getMessage("label.YourAnswer")}</td>
                                                         <td>
                                                             <c:forEach items="${answers}" var="answer">
                                                                 <div class="quizanswer">
@@ -168,7 +168,7 @@
                                                                         </c:otherwise>
                                                                     </c:choose>
 
-                                                                    ${form.getAnswerTitle(answer)}
+                                                                    ${fn:escapeXml(form.getAnswerTitle(answer))}
                                                                     <div class="quizfeedback">${scoringItem.feedback}</div>
                                                                 </div>
                                                             </c:forEach>
@@ -180,18 +180,18 @@
 
                                                                         </c:when>
                                                                         <c:when test="${forpdf != null}">
-                                                                            <img style="width: 20px;vertical-align: text-top;" src="${contextpath}/resources/images/incorrect.png" />
+                                                                            <img style="width: 20px;vertical-align: text-top;" src="${contextpath}/resources/images/incorrect.png")}
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <span class="glyphicon glyphicon-remove" style="color: #f00"></span>
                                                                         </c:otherwise>
                                                                     </c:choose>
 
-                                                                    <spring:message code="info.NotAllCorrectAnswers" />
+                                                                    ${form.getMessage("info.NotAllCorrectAnswers")}
                                                                 </div>
                                                             </c:if>
                                                         </td>
-                                                        <td class="score">${quiz.getQuestionScore(matrixQuestion.uniqueId)}&#x20;<spring:message code="label.outOf" />&#x20;${quiz.getQuestionMaximumScore(matrixQuestion.uniqueId)}&#x20;<spring:message code="label.points" /></td>
+                                                        <td class="score">${quiz.getQuestionScore(matrixQuestion.uniqueId)}&#x20;${form.getMessage("label.outOf")}&#x20;${quiz.getQuestionMaximumScore(matrixQuestion.uniqueId)}&#x20;${form.getMessage("label.points")}</td>
                                                         <td>
                                                             <div class="progress hidden-xs hidden-md" style="width: 200px; margin-bottom: 2px;">
                                                               <div class="chartRequestedRecordsPercent progress-bar" style="width: ${quiz.getQuestionScore(matrixQuestion.uniqueId) / quiz.getQuestionMaximumScore(matrixQuestion.uniqueId) * 100}%;"></div>
@@ -221,9 +221,9 @@
 														</c:when>
 														<c:otherwise>
 															<div class="quizquestion">
-																<div class="fullcontent hideme">${element.getStrippedTitle()}<a class='lessbutton' onclick='switchQuestionTitle(this);'><spring:message code="label.less" /></a>	
+																<div class="fullcontent hideme">${element.getStrippedTitle()}<a class='lessbutton' onclick='switchQuestionTitle(this);'>${form.getMessage("label.less")}</a>
 																</div>
-																<div class='shortcontent'>${element.getStrippedTitle().substring(0,190)}<a class="morebutton" onclick="switchQuestionTitle(this);"><spring:message code="label.more" /></a>
+																<div class='shortcontent'>${element.getStrippedTitle().substring(0,190)}<a class="morebutton" onclick="switchQuestionTitle(this);">${form.getMessage("label.more")}</a>
 																</div>
 															</div>
 														</c:otherwise>
@@ -234,7 +234,7 @@
 						 					<c:set var="answers" value="${form.answerSets[0].getAnswers(element.uniqueId)}" />
 						 					
 						 					<tr class="scorerow">
-								 				<td><spring:message code="label.YourAnswer" /></td>
+								 				<td>${form.getMessage("label.YourAnswer")}</td>
 						 						<td>
 						 							<c:choose>
 							 							<c:when test="${element.getType() == 'SingleChoiceQuestion' || element.getType() == 'MultipleChoiceQuestion'}">
@@ -259,7 +259,7 @@
 								 										</c:otherwise>
 								 									</c:choose>
 								 									
-																	${form.getAnswerTitle(answer)}
+																	${fn:escapeXml(form.getAnswerTitle(answer))}
 																	<div class="quizfeedback">${pa.scoring.feedback}</div>
 																</div>
 															</c:forEach>		
@@ -278,7 +278,7 @@
 								 										</c:otherwise>
 							 										</c:choose>
 							 										
-							 										<spring:message code="info.NotAllCorrectAnswers" />
+							 										${form.getMessage("info.NotAllCorrectAnswers")}
 							 									</div>
 							 								</c:if> 							
 							 							</c:when>
@@ -304,7 +304,7 @@
 									 											<span class="glyphicon glyphicon-remove" style="color: #f00"></span>
 									 										</c:otherwise>
 									 									</c:choose>
-																		<spring:message code="label.emptyAnswer" />
+																		${form.getMessage("label.emptyAnswer")}
 																		<div class="quizfeedback">${scoring.feedback}</div>
 						 											</div>
 						 										</c:if>
@@ -348,7 +348,7 @@
 							 							</c:otherwise>
 						 							</c:choose>
 						 						</td>
-						 						<td class="score">${quiz.getQuestionScore(element.uniqueId)}&#x20;<spring:message code="label.outOf" />&#x20;${quiz.getQuestionMaximumScore(element.uniqueId)}&#x20;<spring:message code="label.points" /></td>
+						 						<td class="score">${quiz.getQuestionScore(element.uniqueId)}&#x20;${form.getMessage("label.outOf")}&#x20;${quiz.getQuestionMaximumScore(element.uniqueId)}&#x20;${form.getMessage("label.points")}</td>
 						 						<td>
 						 							<div class="progress hidden-xs hidden-md" style="width: 200px; margin-bottom: 2px;">
 													  <div class="chartRequestedRecordsPercent progress-bar" style="width: ${quiz.getQuestionScore(element.uniqueId) / quiz.getQuestionMaximumScore(element.uniqueId) * 100}%;"></div>
@@ -376,10 +376,10 @@
 			<hr />
 			<table style="margin-left: 20px;">
 				<tr>
-					<th class="sr-only" colspan="2"><spring:message code="label.ResultDetails" /></th>
+					<th class="sr-only" colspan="2">${form.getMessage("label.ResultDetails")}</th>
 				</tr>
 				<tr>
-					<td style="padding-right: 10px"><spring:message code="label.Contact" /></td>
+					<td style="padding-right: 10px">${form.getMessage("label.Contact")}</td>
 					<td>
 						<c:choose>
 							<c:when test="${form.survey.contact.startsWith('form:')}">
@@ -399,7 +399,7 @@
 				
 				<c:if test="${form.survey.getUsefulLinks().size() != 0}">	
 					<tr>
-						<td style="padding-right: 10px"><spring:message code="label.UsefulLinks" /></td>				
+						<td style="padding-right: 10px">${form.getMessage("label.UsefulLinks")}</td>
 						<td>					
 							<c:forEach var="link" items="${form.survey.getAdvancedUsefulLinks()}">
 								<div style="margin-top: 5px;" ><a class="link visiblelink" target="_blank" rel="noopener noreferrer" href="<esapi:encodeForHTMLAttribute>${link.value}</esapi:encodeForHTMLAttribute>">${link.key}</a></div>
@@ -410,7 +410,7 @@
 				
 				<c:if test="${form.survey.getBackgroundDocuments().size() != 0}">
 					<tr>
-						<td style="padding-right: 10px"><spring:message code="label.BackgroundDocuments" /></td>	
+						<td style="padding-right: 10px">${form.getMessage("label.BackgroundDocuments")}</td>
 						<td>
 							<c:forEach var="link" items="${form.survey.getBackgroundDocumentsAlphabetical()}">
 								<div style="margin-top: 5px;" ><a class="link visiblelink" target="_blank" href="<esapi:encodeForHTMLAttribute>${link.value}</esapi:encodeForHTMLAttribute>">${link.key}</a></div>
@@ -420,15 +420,15 @@
 				</c:if>	
 				
 				<tr>
-					<td style="padding-right: 10px; padding-top: 10px;"><spring:message code="label.ContributionId" /></td>
+					<td style="padding-right: 10px; padding-top: 10px;">${form.getMessage("label.ContributionId")}</td>
 					<td style="padding-top: 10px;">${form.answerSets[0].uniqueCode}</td>
 				</tr>
 				<tr>
-					<td style="padding-right: 10px"><spring:message code="label.CompletedAt" /></td>
+					<td style="padding-right: 10px">${form.getMessage("label.CompletedAt")}</td>
 					<td>${form.answerSets[0].niceDate}</td>
 				</tr>
 				<tr>
-					<td style="padding-right: 10px"><spring:message code="label.CompletionTime" /></td>
+					<td style="padding-right: 10px">${form.getMessage("label.CompletionTime")}</td>
 					<td>${form.answerSets[0].completionTime()}</td>
 				</tr>
 				
@@ -449,7 +449,7 @@
 			<div class="modal-dialog">
 		    <div class="modal-content">
 			<div class="modal-header">
-				<b><spring:message code="label.Info" /></b>
+				<b>${form.getMessage("label.Info")}</b>
 			</div>
 			<div class="modal-body">
 				<p>
@@ -458,7 +458,7 @@
 							${form.getMessage("question.EmailForPDF")}
 						</c:when>
 						<c:otherwise>
-							<spring:message code="question.EmailForPDF" />
+							${form.getMessage("question.EmailForPDF")}
 						</c:otherwise>	
 					</c:choose>
 				</p>
@@ -469,7 +469,7 @@
 							${form.getMessage("message.ProvideEmail")}
 						</c:when>
 						<c:otherwise>
-							<spring:message code="message.ProvideEmail" />
+							${form.getMessage("message.ProvideEmail")}
 						</c:otherwise>	
 					</c:choose>
 				</span>
@@ -485,7 +485,7 @@
 							${form.getMessage("message.captchawrongnew")}
 						</c:when>
 						<c:otherwise>
-							<spring:message code="message.captchawrongnew" />
+							${form.getMessage("message.captchawrongnew")}
 						</c:otherwise>	
 					</c:choose>
 		       		</c:if>
@@ -502,8 +502,8 @@
 						<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 					</c:when>
 					<c:otherwise>
-						<button type="button" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></button>
-						<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></button>
+						<button type="button" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</button>
+						<button type="button" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</button>
 					</c:otherwise>	
 				</c:choose>				
 			</div>

@@ -243,6 +243,14 @@ public abstract class Element implements java.io.Serializable {
 		return getType();
 	}
 
+	@Transient
+	public String getNameOrTypeStripped() {
+		String strippedTitle = getStrippedTitle();
+		if (strippedTitle != null && strippedTitle.length() > 0)
+			return strippedTitle;
+		return getType();
+	}
+
 	private Boolean isIsDependentMatrixQuestion = null;
 
 	@Transient

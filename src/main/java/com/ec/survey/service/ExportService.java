@@ -269,13 +269,15 @@ public class ExportService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Export> getExports(int userId, String sortKey, boolean ascending, boolean determinestate, boolean onlynotnotified) {
-		return getExports(userId,sortKey,ascending,-1,-1, false, determinestate, onlynotnotified, false);
+	public List<Export> getExports(int userId, String sortKey, boolean ascending, boolean determineState, boolean onlyNotNotified) {
+		return getExports(userId,sortKey,ascending,-1,-1, false, determineState, onlyNotNotified, false, true);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<Export> getExports(int userId, String sortKey, boolean ascending, int page, int rowsPerPage, boolean eagerloading, boolean determinestate, boolean onlynotnotified, boolean overrideSurveyTitle) {
+	public List<Export> getExports(int userId, String sortKey, boolean ascending, int page,
+								   int rowsPerPage, boolean eagerLoading, boolean determineState,
+								   boolean onlyNotNotified, boolean overrideSurveyTitle, boolean includeForArchive) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		//I do this for security reasons as we will use string concatenation below (bad practice but hibernate does not allow to use parameters for ordering)
@@ -288,39 +290,41 @@ public class ExportService extends BasicService {
 			sortKey = "survey.titleSort";
 		}
 		
-		Query query;
+		Query<Export> query;
 		if (userId == -1)
 		{
-			query = session.createQuery("SELECT e FROM Export e LEFT JOIN e.survey survey WHERE e.userId > 0 ORDER BY e." + sortKey + " " + (ascending? "ASC" : "DESC"));
+			var sql = "SELECT e FROM Export e LEFT JOIN e.survey survey WHERE e.userId > 0";
+			if (!includeForArchive) {
+				sql += " AND (e.forArchiving is null or e.forArchiving = false)";
+			}
+			sql += " ORDER BY e." + sortKey + " " + (ascending? "ASC" : "DESC");
+			query = session.createQuery(sql, Export.class);
 		} else {
 		
 			String sql = "SELECT e FROM Export e LEFT JOIN e.survey survey WHERE e.userId = :userId";
-			if (onlynotnotified)
+			if (onlyNotNotified)
 			{
 				sql += " AND e.state = 2 AND e.notified = false AND e.survey.archived = false";
 			}
-			
-			query = session.createQuery(sql + " ORDER BY e." + sortKey + " " + (ascending? "ASC" : "DESC"));
+
+
+			if (!includeForArchive) {
+				sql += " AND (e.forArchiving is null or e.forArchiving = false)";
+			}
+
+			query = session.createQuery(sql + " ORDER BY e." + sortKey + " " + (ascending? "ASC" : "DESC"), Export.class);
 			query.setInteger("userId", userId);
 		}
 		
-		List<Export> exports = null;
+		List<Export> exports;
 		
 		if(page > -1)
 		{
 			if(rowsPerPage < 0)
 				rowsPerPage = 0;
-			
-			@SuppressWarnings("rawtypes")
-			List list = query.setFirstResult(page * rowsPerPage).setMaxResults(rowsPerPage).setReadOnly(true).list();
-			exports = list;
+
+            exports = query.setFirstResult(page * rowsPerPage).setMaxResults(rowsPerPage).setReadOnly(true).list();
 		} else {
-			
-			if (onlynotnotified)
-			{
-				query.setMaxResults(1);
-			}
-			
 			@SuppressWarnings("rawtypes")
 			List list  = query.setReadOnly(true).list();
 			exports = list;
@@ -330,7 +334,7 @@ public class ExportService extends BasicService {
 			
 			if (export.getSurvey() == null || !export.getSurvey().getArchived())
 			{
-				if (eagerloading)
+				if (eagerLoading)
 				{
 					if (export.getResultFilter() != null)
 					{
@@ -350,9 +354,9 @@ public class ExportService extends BasicService {
 						Hibernate.initialize(export.getActivityFilter().getExportedColumns());
 					}
 					
-					if (determinestate) determineValidState(export, true);
+					if (determineState) determineValidState(export, true);
 				} else {
-					if (determinestate) determineValidState(export, false);
+					if (determineState) determineValidState(export, false);
 				}
 				
 				if (overrideSurveyTitle && export.getSurvey() != null) {

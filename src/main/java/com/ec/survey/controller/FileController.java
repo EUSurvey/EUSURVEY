@@ -175,6 +175,7 @@ public class FileController extends BasicController {
 								&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
 								&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
 								&& user.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 1
+								&& !user.getResultAccessWrite()
 								|| !survey.getIsDraft()) {
 							throw new ForbiddenURLException();
 						}

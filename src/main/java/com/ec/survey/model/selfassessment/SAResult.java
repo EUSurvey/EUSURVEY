@@ -1,12 +1,7 @@
 package com.ec.survey.model.selfassessment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SAResult {
@@ -69,8 +64,8 @@ public class SAResult {
 		return "";
 	}
 	
-	public Set<String> criteriaAboveBelowAverage(boolean above, int limitTableLines) {
-		Map<String, Double> result = new HashMap<String, Double>();
+	public List<String> criteriaAboveBelowAverage(boolean above, int limitTableLines) {
+		var result = new HashMap<String, Double>();
 		
 		for (int i = 0; i < criteria.size(); i++) {
 			double v1 = values.get(i);
@@ -82,19 +77,27 @@ public class SAResult {
 				result.put(criteria.get(i).getName(), v1-v2);
 			}
 		}
-		
-		Map<String, Double> sortedMap = 
-				result.entrySet().stream()
-			    .sorted(Entry.comparingByValue())
-			    .collect(Collectors.toMap(Entry::getKey, Entry::getValue,
-			                              (e1, e2) -> e1, LinkedHashMap::new));
-				
-		
-		if (limitTableLines == 0) {
-			return sortedMap.keySet();
-		}
-		
-		return sortedMap.keySet().stream().limit(limitTableLines).collect(Collectors.toSet());
+
+		Comparator<String> valueThenNameComparer = (a, b) -> {
+			var valueA = result.get(a);
+			var valueB = result.get(b);
+
+			var diff = valueA - valueB;
+
+			//If they are (almost) equal, sort them by name
+			if (Math.abs(diff) < 0.0001){
+				diff = a.compareTo(b);
+			}
+
+			return (int) Math.signum(diff);
+		};
+
+		if (limitTableLines == 0) limitTableLines = Integer.MAX_VALUE;
+
+		return result.keySet().stream()
+				.sorted(valueThenNameComparer)
+				.limit(limitTableLines)
+				.collect(Collectors.toList());
 	}
 
 	public List<List<Double>> getValuesForTypes() {

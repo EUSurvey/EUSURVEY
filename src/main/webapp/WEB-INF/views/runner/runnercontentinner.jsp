@@ -234,13 +234,14 @@
 					
 					<div id="page-tabs" class="panel panel-default${responsive != null ? " visible-lg" : ""}" style="margin-top:20px;">
 						<div class="panel-body">
-							<div style="font-size: 20px;float:left; width:10%">${form.getMessage("label.Pages")}</div>
+							<div style="font-size: 20px; margin-bottom: 1rem;">${form.getMessage("label.Pages")}</div>
 							
-							<div style="float:left; width:90">							
+							<div>
 								<ul class="nav nav-pills">
 								<c:forEach var="page" items="${form.getPages()}" varStatus="rowCounter">
 									<li data-id="${page[0].id}" id="tab${rowCounter.index}"
 										class="pagebutton ${rowCounter.index == 0 ? "active" : ""}"
+										style="margin-left: 0; margin-right: 0.3rem; margin-bottom: 0.3rem;"
 										data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 										title="${form.survey.isDelphi ? form.getMessage("label.SwitchPageDelphi") : ""}">
 										
@@ -483,34 +484,36 @@
 							</c:if>
 
 							<c:if test='${form.getLanguages().size() != 0 && mode != "editcontribution"}'>
-							<label for="langSelectorRunner">
-								<div class="linkstitle"
-									 style="margin-bottom: 5px;">${form.getMessage("label.Languages")}</div>
-							</label>
+								<span id="runnerLanguageSelector">
+									<label for="langSelectorRunner">
+										<div class="linkstitle"
+											 style="margin-bottom: 5px;">${form.getMessage("label.Languages")}</div>
+									</label>
 
-							<c:choose>
-								<c:when test="${readonlyMode != null && readonlyMode == true}">
-									<select id="langSelectorRunner" name="langSelectorRunner" disabled="disabled">
-								</c:when>
-								<c:otherwise>
-								<select id="langSelectorRunner" name="langSelectorRunner"
-										oninput="changeLanguageSelectOption('${mode}')">
-									</c:otherwise>
-							</c:choose>
-							
-							<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
-								<c:choose>
-									<c:when test="${lang.value.code == form.language.code}">
-										<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>" selected="selected"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></option>
-									</c:when>
-									<c:otherwise>
-										<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></option>
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-							</select>							
-							<hr style="margin-top: 15px;" />	
-						</c:if>			
+									<c:choose>
+										<c:when test="${readonlyMode != null && readonlyMode == true}">
+											<select id="langSelectorRunner" name="langSelectorRunner" disabled="disabled">
+										</c:when>
+										<c:otherwise>
+										<select id="langSelectorRunner" name="langSelectorRunner"
+												oninput="changeLanguageSelectOption('${mode}')">
+											</c:otherwise>
+									</c:choose>
+
+									<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
+										<c:choose>
+											<c:when test="${lang.value.code == form.language.code}">
+												<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>" selected="selected"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></option>
+											</c:when>
+											<c:otherwise>
+												<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></option>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
+									</select>
+									<hr style="margin-top: 15px;" />
+								</span>
+							</c:if>
 					
 					</c:if>
 					
@@ -854,7 +857,14 @@
 	 		}			
 			
 			<c:forEach items="${form.validationMessageElements}" var="element">
-				validationMessages["${element.uniqueId}"] = "${form.getValidationMessage(element)}";
+				<c:choose>
+					<c:when test="${element.type == 'ComplexTableItem'}">
+						validationMessages["${element.id}"] = "${form.getValidationMessage(element)}";
+					</c:when>
+					<c:otherwise>
+						validationMessages["${element.uniqueId}"] = "${form.getValidationMessage(element)}";
+					</c:otherwise>
+				</c:choose>
 			</c:forEach>
 			
 			<c:forEach items="${invisibleElements}" var="element">

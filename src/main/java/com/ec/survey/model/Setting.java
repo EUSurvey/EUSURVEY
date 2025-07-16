@@ -35,7 +35,8 @@ public class Setting {
 	public static final String LastSurveyToDeleteAnswerPDFs = "lastsurveytodeleteanswerpdfs";
 	
 	public static final String ActivityLoggingEnabled = "ActivityLoggingEnabled";
-	public static final String CreateSurveysForExternalsDisabled = "CreateSurveysForExternalsDisabled";	
+	public static final String CreateSurveysForExternalsDisabled = "CreateSurveysForExternalsDisabled";
+	public static final String EnableEUGuestList = "EnableEUGuestList";
 	
 	public static final String ReportingMigrationEnabled = "ReportingMigrationEnabled";
 	public static final String ReportingMigrationStart = "ReportingMigrationStart";
@@ -75,8 +76,12 @@ public class Setting {
 	public static final String DeleteSurveysAge = "DeleteSurveysAge";
 	public static final String ArchiveOlderThan = "ArchiveOlderThan";
 	public static final String ArchiveNotChangedInLast = "ArchiveNotChangedInLast";
-	public static final String DisableWebserviceAPI = "DisableWebserviceAPI";
+
 	public static final String DisableLoginPage = "DisableLoginPage";
+	public static final String DisableWebserviceAPI = "DisableWebserviceAPI";
+
+	public static final String ContactGuestlistLimitForExternals = "ContactGuestlistLimitForExternals";
+	public static final String ContactGuestlistSizeLimitForExternals = "ContactGuestlistSizeLimitForExternals";
 
 	public static final String ContactGuestlistLimitForExternals = "ContactGuestlistLimitForExternals";
 	public static final String ContactGuestlistSizeLimitForExternals = "ContactGuestlistSizeLimitForExternals";

@@ -415,18 +415,16 @@
 		function setEmailCheckFeedback(foundCount, invalidMails, notFoundMails) {
 			resetEmailFeedback();
 
-			$("#foundEmailUsers").text(foundCount + " user(s) (email) found.");
+			$("#foundEmailUsers").text(noMailsFound.replace("{0}", foundCount));
 
 			if(invalidMails.length > 0) {
-				let invalidMessage =  invalidMails.length + " invalid email address(es): ";
 				$("#invalidEmailsIcon").show();
-				$("#invalidEmailsText").html(invalidMessage.concat(' ', invalidMails.join(', ')));
+				$("#invalidEmailsText").html(invalidEmails.replace("{0}", invalidMails.length).concat(' ', invalidMails.join(', ')));
 			}
 
 			if(notFoundMails.length > 0) {
-				let notFoundMessage = notFoundMails.length + " email address(es) not found: ";
 				$("#notFoundEmailsIcon").show();
-				$("#notFoundEmailsText").html(notFoundMessage.concat(' ', notFoundMails.join(', ')));
+				$("#notFoundEmailsText").html(notFoundEmails.replace("{0}", notFoundMails.length).concat(' ', notFoundMails.join(', ')));
 			}
 		}
 
@@ -752,7 +750,11 @@
 				}
 			}
 		}
-		
+
+		if (!reportingdatabaseused) {
+            checkNumberOfFilters(true);
+        }
+
 		$('#edit-filter-dialog').modal('show');
 	}
 	
@@ -782,3 +784,42 @@
 			}});
 		
 	}
+
+	function checkNumberOfFilters(reportingDBDisabled) {
+        if (!reportingDBDisabled) return;
+
+        let counter = 0;
+
+        $('#updateResultFilterForm').find("table").find(".filterrow").each(function(){
+            let valfound = false;
+            $(this).find("input[type=text]").each(function(){
+                if ($(this).val() != null && $(this).val().length > 0) {
+                    valfound = true;
+                }
+            });
+            $(this).find("input[type=checkbox]").each(function(){
+                if ($(this).is(":checked")) {
+                    valfound = true;
+                }
+            });
+
+            if (valfound) {
+                $(this).attr("data-filterset", "true");
+                counter++;
+            } else {
+                $(this).attr("data-filterset", "false");
+            }
+        });
+
+        if (counter > 2) {
+            $('#updateResultFilterForm').find("table").find(".filterrow").each(function(){
+                if ($(this).attr("data-filterset") == "false") {
+                    $(this).find("input").attr("disabled", "disabled").addClass("disabled");
+                }
+            });
+        } else {
+            $('#updateResultFilterForm').find("input.disabled").each(function(){
+                $(this).removeAttr("disabled").removeClass("disabled");
+            });
+        }
+    }

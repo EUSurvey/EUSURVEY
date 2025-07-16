@@ -103,8 +103,7 @@
 										<div style="float: right; text-align: right; margin-bottom: 10px;">
 											<div style="margin-bottom: 5px;">${form.survey.organisation}</div>	
 											<form:input type="hidden" path="survey.organisation" />									
-											<spring:message code="label.Owner" />: ${form.survey.owner.getFirstLastName()} (${form.survey.owner.email})
-										
+
 											<c:if test="${(form.survey.owner.isExternal() || form.survey.owner.type == 'SYSTEM') && form.survey.validator != null && form.survey.validator.length() > 0}">
 												<div style="margin-top: 5px;">
 													<spring:message code="label.EmailValidator" />
@@ -119,7 +118,7 @@
 											<span style="margin-left: 10px">
 												<c:choose>
 													<c:when test="${form.survey.owner.isExternal() || form.survey.owner.type == 'SYSTEM'}">
-														<form:select path="survey.organisation" class="form-control survey-organisation" id="survey-organisation" style="width: auto; min-width: 200px; display: inline;" onchange="checkValidator()">
+														<form:select path="survey.organisation" class="form-control survey-organisation" id="survey-organisation" style="width: auto; min-width: 200px; max-width: 700px; display: inline;" onchange="checkValidator()">
 															<optgroup id="survey-organisation-dgs" label="<spring:message code="label.EuropeanCommission" />: <spring:message code="label.DGsAndServices" />">
 															</optgroup>
 		
@@ -141,10 +140,6 @@
 												</c:choose>
 											</span>
 										</div>
-		
-										<span style="float: right; margin-top: 10px; margin-bottom: 10px;">
-											<spring:message code="label.Owner" />: ${form.survey.owner.getFirstLastName()} (${form.survey.owner.email})
-										</span>
 		
 										<div style="float: right; margin-top: 10px; margin-bottom: 10px;">
 											<c:if test="${form.survey.owner.isExternal() || form.survey.owner.type == 'SYSTEM'}">
@@ -168,6 +163,27 @@
 							</td>
 						</tr>
 					</c:if>
+					<tr>
+						<td>
+							<div style="float: left">
+								<span class="mandatory owner">*</span><spring:message code="label.Owner" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+							</div>
+							<div style="float: right; text-align: right" id="owner-change-section">
+								${form.survey.owner.getFirstLastName()} (${form.survey.owner.email})
+								<c:if test="${form.survey.owner.id.equals(USER.id)}">
+									<a class="iconbutton" onclick="showChangeOwnerDialog()" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil"></span></a>
+									<br>
+									<c:if test="${newOwnerEmail != null}">
+										<small><spring:message code="message.OwnerChangeRequestInProgress" arguments="${newOwnerEmail}~${newOwnerRequestDate}" argumentSeparator="~" /></small>
+									</c:if>
+								</c:if>
+							</div>
+							<div class="help" style="float: left; display: none;">
+								<span><spring:message code="info.changeOwnership" /></span>
+							</div>
+						</td>
+					</tr>
 					<tr>
 						<td>
 							<div style="float: left">
@@ -647,7 +663,32 @@
 								<form:input id="edit-survey-webhook" type="text" maxlength="255" class="form-control freetext max255" path="survey.webhook" />
 							</div>
 						</td>
-					</tr>						
+					</tr>
+					<tr>
+                        <td>
+                            <div style="float: left">
+                                <spring:message code="label.Tags" />
+                                <a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+                                <div class="help hideme"><spring:message code="info.Tags" /></div>
+                            </div>
+                            <div style="float: right;">
+                                <div id="selectedtags">
+                                    <!--  ko foreach: sortedTags() -->
+                                        <span class='badge' data-bind="attr: {tag: $data}">
+                                            <span data-bind="text: $data"></span>&nbsp;<span onclick='_properties.removeTag(this)'>&#10006;</span>
+                                        </span>
+                                    <!-- /ko -->
+                                </div>
+                                <div style="float: right">
+                                	<img data-bind="style: { display: tagsLoading() ? 'inline' : 'none' }" alt="wait animation" src="${contextpath}/resources/images/ajax-loader.gif" />
+                                	<input id="tags" autocomplete="off" type="text" maxlength="16" onkeyup="checkTagKeyUp(event)" class="form-control freetext max255" style="float: right; margin-left: 5px;" />
+                                    <input type="hidden" name="tags" data-bind="value: tags" />
+                                </div>
+
+                                <div style="clear: both; margin-bottom: 10px;"></div>
+                            </div>
+                        </td>
+                    </tr>
 				</table>
 			</div>		
 			
@@ -698,7 +739,7 @@
 											<input class="check" type="checkbox" disabled="disabled" /><spring:message code="label.ShowPassword" />
 										</c:when>
 										<c:when test="${form.survey.password != null && form.survey.password.length() > 0}">
-											<form:password class="form-control" data-bind="enable: !_properties.eVote()" maxlength="255" autocomplete="off" value="********" path="survey.password" style="margin: 0px;" onchange="$('#clearpassword').val($(this).val())" />
+											<form:password class="form-control" data-bind="enable: !_properties.eVote()" maxlength="255" autocomplete="off" value="${form.survey.password}" path="survey.password" style="margin: 0px;" onchange="$('#clearpassword').val($(this).val())" />
 											<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpassword" readonly="readonly" disabled="disabled" value="${form.survey.password}" />
 											<input class="check" type="checkbox" onclick="checkShowPassword(this)" /><spring:message code="label.ShowPassword" />
 										</c:when>
@@ -1205,9 +1246,6 @@
 									<c:forEach items="${skins}" var="skin">
 										<option value="${skin.id}" <c:if test="${form.survey.skin.id == skin.id}">selected="selected"</c:if>><esapi:encodeForHTML>${skin.displayName}</esapi:encodeForHTML></option>										
 									</c:forEach>
-									<c:if test="${form.survey.skin != null}">
-										<option value="${form.survey.skin.id}" selected="selected"><esapi:encodeForHTML>${form.survey.skin.displayName}</esapi:encodeForHTML></option>
-									</c:if>
 								</select>
 								<a href="${contextpath}/settings/skin" class="btn btn-default" style="margin-top: -2px;"><spring:message code="label.Manage" /></a>
 							</div>
@@ -1334,6 +1372,13 @@
 						</tr>
 						<tr class="noborder" data-bind="visible: selectedContributions">
 							<td>
+							    <c:if test="${reportingdatabaseused == null}">
+                                    <div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                        <spring:message code="info.ResultFilterLimit" />
+                                    </div>
+                                </c:if>
+
 								<div style="float: right; max-width: 600px;">	
 									<div class="scrollablediv" id="contributionsToPublishDiv">
 										<c:forEach items="${form.survey.getQuestions()}" var="question">
@@ -1341,9 +1386,9 @@
 												<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion'}">
 													<div class="well">
 														${question.title}
-														<div>
+														<div class="filter">
 															<c:forEach items="${question.possibleAnswers}" var="possibleanswer" varStatus="status">
-																<input type="checkbox" class="check" name="contribution${question.id}|${question.uniqueId}" value="${possibleanswer.id}|${possibleanswer.uniqueId}" <c:if test="${form.survey.publication.filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId)}">checked="checked"</c:if> />${possibleanswer.title}<br />
+																<input onchange="checkNumberOfFilters(${reportingdatabaseused == null})" type="checkbox" class="check" name="contribution${question.id}|${question.uniqueId}" value="${possibleanswer.id}|${possibleanswer.uniqueId}" <c:if test="${form.survey.publication.filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId)}">checked="checked"</c:if> />${possibleanswer.title}<br />
 															</c:forEach>
 														</div>
 													</div>
@@ -1360,7 +1405,7 @@
 								<div style="float: right">
 									<c:choose>
 										<c:when test="${form.survey.publication.password != null && form.survey.publication.password.length() > 0}">
-											<form:password class="form-control" maxlength="255" autocomplete="off" value="********" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
+											<form:password class="form-control" maxlength="255" autocomplete="off" value="${form.survey.publication.password}" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
 											<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpublicationpassword" readonly="readonly" disabled="disabled" value="${form.survey.publication.password}" />
 											<input class="check" type="checkbox" onclick="checkShowPublicationPassword(this)" /><spring:message code="label.ShowPassword" />
 										</c:when>
@@ -1897,185 +1942,13 @@
 		</form:form>
 	</div>
 	
-<jsp:include page="properties-dialogs.jsp" />
+    <jsp:include page="properties-dialogs.jsp" />
 
 </div>
 
 <jsp:include page="../footer.jsp" />
-	
-	<script>
-	$(function() {
-		$("#form-menu-tab").addClass("active");
-		$("#properties-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
-		
-		$("#save-form").on("submit", function(){
-			var sec = "open";
-			if ($('#myonoffswitchsecured').is(":checked")) {
-				sec = "secured";
-			}				
-			if ($('#myonoffswitchprivacy').is(":checked")) {
-				sec += "anonymous";
-			}				
-			$("#survey-security").val(sec);
-		});
-		
-		var uploader = new qq.FileUploader({
-		    element: $("#file-uploader-logo")[0],
-		    action: contextpath + '/${sessioninfo.shortname}/management/uploadimage',
-		    uploadButtonText: selectFileForUpload,
-		    params: {
-		    	'_csrf': csrftoken
-		    },
-		    multiple: false,
-		    cache: false,
-		    sizeLimit: 1048576,
-		    onComplete: function(id, fileName, responseJSON)
-			{
-		    	if (responseJSON.success)
-		    	{
-			    	$("#logo-cell").find("img").remove();
-			    	var img = document.createElement("img");
-			    	$(img).attr("src", contextpath + "/files/" + surveyUniqueId +  "/" + responseJSON.id);
-			    	$(img).attr("width",responseJSON.width);
-			    	$(img).attr("data-width",responseJSON.width);
-			    	$("#logo-cell").find("img").remove();
-			    	$("#logo-cell").find("p").remove();
-			    	$("#logo-cell").prepend("<p>" + responseJSON.name + "</p>");
-			    	$("#logo-cell").prepend(img);
-			    	$("#logo").val(responseJSON.id);
-			    	$("#logo-cell").find(".disabled").removeClass("disabled").show();
-			    	$("#file-uploader-area-div").show();
-			    	$("#removelogobutton").removeClass("disabled").show();
-		    	} else {
-		    		showError(invalidFileError);
-		    	}
-			},
-			showMessage: function(message){
-				$("#file-uploader-logo").append("<div class='validation-error'>" + message + "</div>");
-			},
-			onUpload: function(id, fileName, xhr){
-				$("#file-uploader-logo").find(".validation-error").remove();			
-			}
-		});
-		
-		$(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
-		$(".qq-upload-list").hide();
-		$(".qq-upload-drop-area").css("margin-left", "-1000px");			
 
-		$('.navbar-default li a').click(function(event) {
-		    event.preventDefault();
-		    $($(this).attr('href'))[0].scrollIntoView();
-		    scrollBy(0, -offset);
-		});
-		
-		ko.applyBindings(_properties, $('#propertiespage')[0]);
-		
-		$('#propertiespage').find('input[type="hidden"][name^="_survey"]').each(function(){
-			$('#save-form').append(this);
-		});
-		
-		$(".datepicker").datepicker('option', 'dateFormat', "dd/mm/yy");
-		
-		$("#survey\\.contact").val($("#survey\\.contact").val().replace("form:", ""));
+<jsp:include page="propertiesFoot.jsp" />
 
-		//enablechargeback-feature: set all organisations for select dropdown
-		if ('${enablechargeback == 'true'}') {
-			var url = "/utils/Organisations";
-			var organisation = '${form.survey.organisation}';
-
-			$.ajax({type: "GET",
-				url: contextpath + url,
-				async: false,
-				success :function(result)
-				{
-					$.each(result.dgs, function(key, data){
-						var option = document.createElement("option");
-						$(option).attr("value", key).append(data);
-						if (organisation == key) {
-							$(option).attr("selected", "selected");
-						}
-						$('#survey-organisation-dgs').append(option);
-					});
-
-					$.each(result.executiveAgencies, function(key, data){
-						var option = document.createElement("option");
-						$(option).attr("value", key).append(data);
-						if (organisation == key) {
-							$(option).attr("selected", "selected");
-						}
-						$('#survey-organisation-aex').append(option);
-					});
-
-					$.each(result.otherEUIs, function(key, data){
-						var option = document.createElement("option");
-						$(option).attr("value", key).append(data);
-						if (organisation == key) {
-							$(option).attr("selected", "selected");
-						}
-						$('#survey-organisation-euis').append(option);
-					});
-
-					$.each(result.nonEUIs, function(key, data){
-						var option = document.createElement("option");
-						$(option).attr("value", key).append(data);
-						if (organisation == key) {
-							$(option).attr("selected", "selected");
-						}
-						$('#survey-organisation-noneuis').append(option);
-					});
-
-					if (organisation.length == 0 || organisation == 'external') organisation = "OTHER";
-					$('.survey-organisation').val(organisation);
-
-					checkValidator();
-				}
-			});
-		}
-	});
-
-	function checkValidator() {
-		let organisation = $('#survey-organisation').val();
-		if (organisation != "" && organisation != "CITIZEN" && organisation != "OTHER" && organisation != "PRIVATEORGANISATION" && organisation != "PUBLICADMINISTRATION") {
-			$('#survey-validator-div').show();
-			$('#survey-validator').addClass("required");
-			$('[data-toggle="tooltip"]').tooltip();
-		} else {
-			$('#survey-validator-div').hide();
-			$('#survey-validator').removeClass("required");
-		}
-	}
-
-	function openReminderDialog() {
-		if (!checkOrganisation($("#survey-validator").val(), $("#survey-organisation").val()))
-		{
-			$("#survey-validator-invalid").show();
-			return;
-		}
-
-		$("#survey-validator-invalid").hide();
-		$('#sendReminderDialog').modal('show');
-	}
-
-	var message_SuccessMailValidationReminder = "<spring:message code='message.mail.successMailValidationReminder' />";
-	var message_FailedMailValidationReminder = "<spring:message code='message.mail.failMailLinkDraft' />";
-	function sendReminder(surveyId) {
-		$.ajax({
-			type:'GET',
-			url: "${contextpath}/${sessioninfo.shortname}/management/sendOrganisationValidationReminder",
-			data: {surveyId : surveyId},
-			cache: false,
-			success: function( data ) {
-				if (data == "success") {
-					$('#sendReminderDialog').modal('hide');
-					showSuccess(message_SuccessMailValidationReminder);
-				} else {
-					showError(message_FailedMailValidationReminder);
-				}
-			}
-		});
-	}
-
-	</script>
-	
 </body>
 </html>

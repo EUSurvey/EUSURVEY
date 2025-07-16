@@ -12,17 +12,17 @@
 					<b><spring:message code="label.Algorithm" /></b>
 					<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Algorithm" />"><i class="glyphicon glyphicon-info-sign"></i></span>
 					<br />
-					<select data-bind="value: configuration().algorithm" class="form-control" style="width: auto;">
-						<option value="AVG"><spring:message code="label.Average" /></option>
-						<option value="MRAT"><spring:message code="label.MRATAverage" /></option>
-					</select>
+						<select <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> data-bind="value: configuration().algorithm" class="form-control" style="width: auto;">
+							<option value="AVG"><spring:message code="label.Average" /></option>
+							<option value="MRAT"><spring:message code="label.MRATAverage" /></option>
+						</select>
 				</div>
 				
 				<div data-bind="if: configuration().algorithm() == 'MRAT'">
 					<b><spring:message code="label.Variable" /></b>
 					<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Variable" />"><i class="glyphicon glyphicon-info-sign"></i></span>
 					<br />
-					<input class="form-control number" maxlength="4" type="number" oninput="this.value = Math.min(1000, Math.abs(Math.round(this.value)));" min="0" max="1000" step="1" data-bind="value: configuration().coefficient" />
+					<input <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> class="form-control number" maxlength="4" type="number" oninput="this.value = Math.min(1000, Math.abs(Math.round(this.value)));" min="0" max="1000" step="1" data-bind="value: configuration().coefficient" />
 				</div>
 			
 			</div>
@@ -31,86 +31,157 @@
 				<b><spring:message code="label.Introduction" /></b>
 				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Introduction" />"><i class="glyphicon glyphicon-info-sign"></i></span>		
 				<br />
-				<textarea id="report_introduction" class="tinymce" data-bind="value: configuration().introduction"></textarea>
+				<c:choose>
+					<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+						<textarea id="report_introduction" class="tinymce" data-bind="value: configuration().introduction"></textarea>
+					</c:when>
+					<c:otherwise>
+						<div class="tinymceSimilar" id="report_introduction" data-bind="html: configuration().introduction"></div>
+					</c:otherwise>
+				</c:choose>
 			</div>
 			
 			<div>
 				<b><spring:message code="label.CustomFeedback" /></b>
 				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.CustomFeedback" />"><i class="glyphicon glyphicon-info-sign"></i></span>		
 				<br />
-				<textarea id="report_customfeedback" class="tinymce" data-bind="value: configuration().customFeedback"></textarea>
+				<c:choose>
+					<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+						<textarea id="report_customfeedback" class="tinymce" data-bind="value: configuration().customFeedback"></textarea>
+					</c:when>
+					<c:otherwise>
+						<div class="tinymceSimilar" id="report_customfeedback" data-bind="html: configuration().customFeedback"></div>
+					</c:otherwise>
+				</c:choose>
 			</div>
-		
 		</div>
 		
 		<div style="display: flex; flex-direction: column; gap: 20px; border-left: 1px solid #ddd; padding: 10px; padding-left: 40px; padding-right: 40px;">
 			<div style="font-weight: bold; margin-left: -30px;"><spring:message code="label.Include" /></div>
-					
+
 			<div style="align-content: center; border-bottom: 1px solid #ddd; padding-bottom: 20px;">
-				<input type="checkbox" data-bind="checked: configuration().targetDatasetSelection" class="check" /> <spring:message code="label.TargetDatasetSelection" />
-				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.TargetDatasetSelection" />"><i class="glyphicon glyphicon-info-sign"></i></span>					
+				<input <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> type="checkbox" data-bind="checked: configuration().targetDatasetSelection" class="check" /> <spring:message code="label.TargetDatasetSelection" />
+				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.TargetDatasetSelection" />"><i class="glyphicon glyphicon-info-sign"></i></span>
 			</div>
-			
+
 			<div>
-				<input type="checkbox" class="check" data-bind="checked: configuration().charts" /> <spring:message code="label.Charts" />
+				<input <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> type="checkbox" class="check" data-bind="checked: configuration().charts" /> <spring:message code="label.Charts" />
 				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Charts" />"><i class="glyphicon glyphicon-info-sign"></i></span>
-				<select class="form-control" data-bind="value: configuration().selectedChart, enable: configuration().charts" style="display: inline; width: auto; margin-left: 10px;">
-					<option value="SPIDER"><spring:message code="label.SpiderChart" /></option>
-					<option value="BAR"><spring:message code="label.DelphiChartBar" /></option>
-					<option value="LINE"><spring:message code="label.DelphiChartLine" /></option>
-				</select>
+				<c:choose>
+					<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+						<select class="form-control" data-bind="value: configuration().selectedChart, enable: configuration().charts" style="display: inline; width: auto; margin-left: 10px;">
+							<option value="SPIDER"><spring:message code="label.SpiderChart" /></option>
+							<option value="BAR"><spring:message code="label.DelphiChartBar" /></option>
+							<option value="LINE"><spring:message code="label.DelphiChartLine" /></option>
+						</select>
+					</c:when>
+					<c:otherwise>
+						<select disabled class="form-control" data-bind="value: configuration().selectedChart" style="display: inline; width: auto; margin-left: 10px;">
+							<option value="SPIDER"><spring:message code="label.SpiderChart" /></option>
+							<option value="BAR"><spring:message code="label.DelphiChartBar" /></option>
+							<option value="LINE"><spring:message code="label.DelphiChartLine" /></option>
+						</select>
+					</c:otherwise>
+				</c:choose>
 			</div>
-			
-			<div style="padding-left: 10px; align-content: center;">
-				<input type="checkbox" class="check" data-bind="checked: configuration().legend, enable: configuration().charts" /> <spring:message code="label.Legend" />
-				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Legend" />"><i class="glyphicon glyphicon-info-sign"></i></span>
-			</div>
-			
-			<div style="padding-left: 10px; align-content: center;">
-				<input type="checkbox" class="check" data-bind="checked: configuration().scale, enable: configuration().charts" /> <spring:message code="label.Scale" />
-				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Scale" />"><i class="glyphicon glyphicon-info-sign"></i></span>
-			</div>
-			
-			<div style="padding-left: 10px; align-content: center; border-bottom: 1px solid #ddd; padding-bottom: 20px;">
-				<input type="checkbox" class="check" data-bind="checked: configuration().separateCompetencyTypes, enable: configuration().charts" /> <spring:message code="label.SeparatePerType" />
-				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.SeparateCompetencyTypes" />"><i class="glyphicon glyphicon-info-sign"></i></span>
-			</div>				
-			
+
+			<c:choose>
+				<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+					<div style="padding-left: 10px; align-content: center;">
+						<input type="checkbox" class="check" data-bind="checked: configuration().legend, enable: configuration().charts" /> <spring:message code="label.Legend" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Legend" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+
+					<div style="padding-left: 10px; align-content: center;">
+						<input type="checkbox" class="check" data-bind="checked: configuration().scale, enable: configuration().charts" /> <spring:message code="label.Scale" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Scale" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+
+					<div style="padding-left: 10px; align-content: center; border-bottom: 1px solid #ddd; padding-bottom: 20px;">
+						<input type="checkbox" class="check" data-bind="checked: configuration().separateCompetencyTypes, enable: configuration().charts" /> <spring:message code="label.SeparatePerType" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.SeparateCompetencyTypes" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div style="padding-left: 10px; align-content: center;">
+						<input disabled type="checkbox" class="check" data-bind="checked: configuration().legend" /> <spring:message code="label.Legend" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Legend" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+
+					<div style="padding-left: 10px; align-content: center;">
+						<input disabled type="checkbox" class="check" data-bind="checked: configuration().scale" /> <spring:message code="label.Scale" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Scale" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+
+					<div style="padding-left: 10px; align-content: center; border-bottom: 1px solid #ddd; padding-bottom: 20px;">
+						<input disabled type="checkbox" class="check" data-bind="checked: configuration().separateCompetencyTypes" /> <spring:message code="label.SeparatePerType" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.SeparateCompetencyTypes" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+				</c:otherwise>
+			</c:choose>
+
 			<div style="align-content: center;">
-				<input type="checkbox" class="check" data-bind="checked: configuration().resultsTable" /> <spring:message code="label.ResultsTable" />
+				<input <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> type="checkbox" class="check" data-bind="checked: configuration().resultsTable" /> <spring:message code="label.ResultsTable" />
 				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.ResultsTable" />"><i class="glyphicon glyphicon-info-sign"></i></span>
 			</div>
-			
-			<div style="padding-left: 10px; align-content: center;">
-				<input type="checkbox" class="check" data-bind="checked: configuration().competencyType, enable: configuration().resultsTable" /> <spring:message code="label.CompetencyType" />
-				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.CompetencyType" />"><i class="glyphicon glyphicon-info-sign"></i></span>					 
-			</div>
-			
-			<div style="padding-left: 10px; align-content: center;">
-				<input type="checkbox" class="check" data-bind="checked: configuration().targetScores, enable: configuration().resultsTable" /> <spring:message code="label.TargetScores" />
-				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.TargetScores" />"><i class="glyphicon glyphicon-info-sign"></i></span>	
-			</div>
-			
-			<div style="padding-left: 10px; align-content: center; border-bottom: 1px solid #ddd; padding-bottom: 20px;"">
-				<input type="checkbox" class="check" data-bind="checked: configuration().gaps, enable: configuration().resultsTable" /> <spring:message code="label.Gaps" />
-				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Gaps" />"><i class="glyphicon glyphicon-info-sign"></i></span>	
-			</div>
-					
+
+			<c:choose>
+				<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+					<div style="padding-left: 10px; align-content: center;">
+						<input type="checkbox" class="check" data-bind="checked: configuration().competencyType, enable: configuration().resultsTable" /> <spring:message code="label.CompetencyType" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.CompetencyType" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+
+					<div style="padding-left: 10px; align-content: center;">
+						<input type="checkbox" class="check" data-bind="checked: configuration().targetScores, enable: configuration().resultsTable" /> <spring:message code="label.TargetScores" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.TargetScores" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+
+					<div style="padding-left: 10px; align-content: center; border-bottom: 1px solid #ddd; padding-bottom: 20px;">
+						<input type="checkbox" class="check" data-bind="checked: configuration().gaps, enable: configuration().resultsTable" /> <spring:message code="label.Gaps" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Gaps" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div style="padding-left: 10px; align-content: center;">
+						<input disabled type="checkbox" class="check" data-bind="checked: configuration().competencyType" /> <spring:message code="label.CompetencyType" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.CompetencyType" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+
+					<div style="padding-left: 10px; align-content: center;">
+						<input disabled type="checkbox" class="check" data-bind="checked: configuration().targetScores" /> <spring:message code="label.TargetScores" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.TargetScores" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+
+					<div style="padding-left: 10px; align-content: center; border-bottom: 1px solid #ddd; padding-bottom: 20px;">
+						<input disabled type="checkbox" class="check" data-bind="checked: configuration().gaps" /> <spring:message code="label.Gaps" />
+						<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.Gaps" />"><i class="glyphicon glyphicon-info-sign"></i></span>
+					</div>
+				</c:otherwise>
+			</c:choose>
+
 			<div style="align-content: center;">
-				<input type="checkbox" class="check" data-bind="checked: configuration().performanceTable" /> <spring:message code="label.PerformanceTable" />
+				<input <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> type="checkbox" class="check" data-bind="checked: configuration().performanceTable" /> <spring:message code="label.PerformanceTable" />
 				<span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.PerformanceTable" />"><i class="glyphicon glyphicon-info-sign"></i></span>
 			</div>
-			
+
 			<div style="padding-left: 10px;">
 				<spring:message code="label.LimitTableLines" />
-				<input class="form-control number" style="display: inline; width: auto; margin-left: 10px;" maxlength="4" type="number" oninput="this.value = Math.min(Math.abs(Math.round(this.value)), 1000);" min="0" max="1000" step="1" data-bind="value: configuration().limitTableLines, enable: configuration().performanceTable()" />
-			</div>				
+				<c:choose>
+					<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+						<input class="form-control number" style="display: inline; width: auto; margin-left: 10px;" maxlength="4" type="number" oninput="this.value = Math.min(Math.abs(Math.round(this.value)), 1000);" min="0" max="1000" step="1" data-bind="value: configuration().limitTableLines, enable: configuration().performanceTable()" />
+					</c:when>
+					<c:otherwise>
+						<input disabled class="form-control number" style="display: inline; width: auto; margin-left: 10px;" maxlength="4" type="number" oninput="this.value = Math.min(Math.abs(Math.round(this.value)), 1000);" min="0" max="1000" step="1" data-bind="value: configuration().limitTableLines" />
+					</c:otherwise>
+				</c:choose>
+			</div>
 		</div>
 			
 	</div>
 	
 	<div style="text-align: right; margin-top: 20px;">
-		<button class="btn btn-success" data-bind="click: saveReportConfiguration"><spring:message code="label.Save" /></button>
+		<button class="btn btn-success" <c:if test="${!(USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1)}">disabled</c:if> data-bind="click: saveReportConfiguration"><spring:message code="label.Save" /></button>
 	</div>		
 	
 </div>

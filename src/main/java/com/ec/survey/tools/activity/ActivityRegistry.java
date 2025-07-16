@@ -99,7 +99,10 @@ public class ActivityRegistry {
             EVT_PAUSED = "Paused", 
             EVT_SENT = "Sent",
             EVT_OPENED = "Opened",
-            EVT_SUBMITTED = "Submitted";
+            EVT_SUBMITTED = "Submitted",
+            EVT_ACCEPTED = "Accepted",
+            EVT_REJECTED = "Rejected",
+            EVT_EXPIRED = "Expired";
 
     /**
      * Add new activity ids here
@@ -135,6 +138,10 @@ public class ActivityRegistry {
             ID_EVOTE_NUM_PREFERENTIAL_VOTES = 131, //Maximum number of votes changed
             ID_EVOTE_SEATS = 132, //Number of seats changed
             ID_EVOTE_TEST_PAGE = 133, //Evote Test Result Page changed
+            ID_CHANGE_OWNER_REQUEST_SENT = 134, //A new request to change Survey Ownership was sent
+            ID_CHANGE_OWNER_REQUEST_ACCEPTED = 135, //The request to change Survey Ownership was accepted
+            ID_CHANGE_OWNER_REQUEST_REJECTED = 136, //The request to change Survey Ownership was rejected
+            ID_CHANGE_OWNER_REQUEST_EXPIRED = 137, //The request to change Survey Ownership has expired
 
             ID_SURVEY_LOADED = 201, // Survey successfully loaded
             ID_PROPERTIES = 202, // Properties updated
@@ -289,6 +296,11 @@ public class ActivityRegistry {
         register(PROP_NUM_PREFERENTIAL_VOTES, EVT_MODIFIED, ID_EVOTE_NUM_PREFERENTIAL_VOTES);
         register(PROP_SEATS, EVT_MODIFIED, ID_EVOTE_SEATS);
         register(PROP_RESULT_TEST_PAGE, EVT_MODIFIED, ID_EVOTE_TEST_PAGE);
+
+        register(PROP_OWNER, EVT_SENT, ID_CHANGE_OWNER_REQUEST_SENT);
+        register(PROP_OWNER, EVT_ACCEPTED, ID_CHANGE_OWNER_REQUEST_ACCEPTED);
+        register(PROP_OWNER, EVT_REJECTED, ID_CHANGE_OWNER_REQUEST_REJECTED);
+        register(PROP_OWNER, EVT_EXPIRED, ID_CHANGE_OWNER_REQUEST_EXPIRED);
 
         //Draft Survey 200
         register(PROP_NA, EVT_OPENED, ID_SURVEY_LOADED);

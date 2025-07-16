@@ -278,17 +278,16 @@
 		    		
 		    let url = null;
 		    let data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse, selectedContribution : ""};
-		    if ($('#captcha_id').length > 0) {
-			 	data["captcha_id"] =  $('#captcha_id').val();
-				data["captcha_useaudio"] =  $('#captcha_useaudio').val();
-				data["captcha_original_cookies"] = $('#captcha_original_cookies').val();		    
-		    }
-		    
+
 		    let filterForm = $("#resultsForm")
 			if (filterForm.length > 0){
 				filterForm.serializeArray().forEach((inp) => {
 					if (inp.value.length > 0 && inp.name.includes("filter")){
-						data[inp.name] = inp.value
+						if (inp.name in data) {
+							data[inp.name] += ";" + inp.value
+						} else {
+							data[inp.name] = inp.value
+						}
 					}
 				})
 			}
@@ -342,7 +341,14 @@
 				url = "${contextpath}/publication/exportfiles/${form.survey.id}";
 				data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse, 'question' : exporttype.substring(5)};
 			}
-			
+
+
+			if ($('#captcha_id').length > 0) {
+				data["captcha_id"] =  $('#captcha_id').val();
+				data["captcha_useaudio"] =  $('#captcha_useaudio').val();
+				data["captcha_original_cookies"] = $('#captcha_original_cookies').val();
+			}
+
 			if (url != null)
 			{
 				var request = $.ajax({
@@ -384,7 +390,7 @@
 			<c:if test="${selectedtab == 3}">
 				$('.statisticsExportIcons').show();
 			</c:if>
-			<c:if test="${form.survey.isQuiz && selectedTab == 4}">
+			<c:if test="${form.survey.isQuiz && selectedtab == 4}">
 				$('.statisticsQuizExportIcons').show();
 			</c:if>
 		});
@@ -416,7 +422,7 @@
 					  		<li class="<c:if test="${selectedtab == 3}">active</c:if>"><a id="tab2" href="#statistics" data-toggle="tab" onclick="$('#selectedtab').val('3'); hideResults(); $('.statisticsExportIcons').show();"><spring:message code="label.Statistics" /></a></li>
 				
 							<c:if test="${form.survey.isQuiz}">
-								<li><a id="tab3" href="#statisticsquiz" data-toggle="tab" onclick="$('#selectedtab').val('4'); hideResults(); $('.statisticsQuizExportIcons').show();"><spring:message code="label.Quiz" /></a></li>
+								<li class="<c:if test="${selectedtab == 4}">active</c:if>"><a id="tab3" href="#statisticsquiz" data-toggle="tab" onclick="$('#selectedtab').val('4'); hideResults(); $('.statisticsQuizExportIcons').show();"><spring:message code="label.Quiz" /></a></li>
 							</c:if>			
 					  	</c:if>
 					</ul>
@@ -445,7 +451,6 @@
 
                         <span class="deactivatedstatexports">
                             <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>
-                            <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
                             <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" id="startExportStatisticsLinkxlsx" ><img src="${contextpath}/resources/images/file_extension_xlsx_small_grey.png" /></a>
                             <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
                             <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdocx" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_docx_small_grey.png" /></a>
@@ -453,7 +458,6 @@
                         </span>
                         <span class="activatedstatexports" style="display: none">
                             <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statspdf', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></button>
-                            <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('statsxls', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></button>
                             <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('statsxlsx', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></button>
                             <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('statsods', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></button>
                             <button type="button" class="unstyledbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Exportdocx" />" onclick="showExportDialog('statsdocx', this)" style="display: inline-block;" ><img src="${contextpath}/resources/images/file_extension_docx_small.png" /></button>
@@ -482,12 +486,10 @@
                             <span style="text-align: right; height: 36px; float: right; width: 200px; ">
                                 <b><spring:message code="label.Export" /></b>
                                 <span class="deactivatedexports">
-                                    <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
                                     <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_xlsx_small_grey.png" /></a>
                                     <a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" style="display:none;"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
                                 </span>
                                 <span class="activatedexports" style="display: none">
-                                    <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls', this);" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></button>
                                     <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('resultsxlsx', this);" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></button>
                                     <button type="button" class="unstyledbutton" data-toggle="tooltip" style="display: inline-block" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('resultsods', this);" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></button>
                                 </span>

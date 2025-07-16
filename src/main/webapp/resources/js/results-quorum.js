@@ -21,7 +21,10 @@ var QuorumResults = function() {
 				model.voteContributions(data);
 				model.voterCount(data.voters);
 				model.updateQuorumChart(scale);
-				
+
+				$("#results-quorum").show()
+				$("#results-quorum-loader").hide()
+
 				if (data.voters > 0 && data.numberOfContributions > 0) {
 					$('#results-statistics-seats-link').show();
 				}

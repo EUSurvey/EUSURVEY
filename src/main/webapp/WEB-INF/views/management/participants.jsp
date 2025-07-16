@@ -179,7 +179,11 @@
 							
 						<span style="margin-right: 20px"><spring:message code="label.CreateNew" /></span>
 						<a onclick="_participants.newContactList()" class="btn btn-success"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.ContactList" /></a>
-						<!-- <a onclick="_participants.newEUList()" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.EUList" /></a> -->
+						<c:choose>
+							<c:when test="${enableEUGuestList}">
+								<a onclick="_participants.newEUList()" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.EUList" /></a>
+							</c:when>
+						</c:choose>
 						<a onclick="_participants.newTokenList()" class="btn btn-success"><span class="glyphicon glyphicon-barcode"></span> <spring:message code="label.TokenList" /></a>
 						
 						</c:if>
@@ -233,7 +237,6 @@
 														<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
-														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 													<!-- /ko -->
 													<!-- ko if: detailsEnabled() -->
@@ -261,7 +264,6 @@
 													<!-- /ko -->
 													<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
-														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 													<!-- /ko -->
 													<!-- ko if: detailsEnabled() -->
@@ -340,7 +342,6 @@
 														<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 													<!-- /ko -->
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
-														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 													<!-- /ko -->
 													<!-- ko if: detailsEnabled() -->
@@ -368,7 +369,6 @@
 													<!-- /ko -->
 													<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
-														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 													<!-- /ko -->
 													<!-- ko if: detailsEnabled() -->
@@ -448,7 +448,6 @@
 															<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 														<!-- /ko -->
 														<!-- ko if: exportEnabled() && type() == 'Token' -->
-															<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 															<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 														<!-- /ko -->
 														<!-- ko if: detailsEnabled() -->
@@ -476,11 +475,10 @@
 														<!-- /ko -->
 														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 														<!-- ko if: exportEnabled() && type() == 'Token' -->
-															<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 															<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 														<!-- /ko -->
 														<!-- ko if: detailsEnabled() -->
-															<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+															<a class="iconbutton" data-bind="click: showDetails" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
 														<!-- /ko -->
 														<!-- ko if: !detailsEnabled() -->
 															<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
@@ -547,7 +545,6 @@
 														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- /ko -->
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
-														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 													<!-- /ko -->
 													<!-- ko if: deleteEnabled() && !published -->
@@ -574,7 +571,6 @@
 														<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- /ko -->
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
-														<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 														<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 													<!-- /ko -->
 													<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
@@ -624,11 +620,15 @@
 									<spring:message code="label.ContactList" /><br /><br />
 									<span class="info"><spring:message code="info.ContactList" /></span>
 								</a>
-								<!-- <a onclick="_participants.newEUList()" class="btn btn-success createlist">
-									<span class="glyphicon glyphicon-user"></span><br />
-									<spring:message code="label.EUList" /><br /><br />
-									<span class="info"><spring:message code="info.EUList" /></span>
-								</a> -->
+								<c:choose>
+									<c:when test="${enableEUGuestList}">
+										<a onclick="_participants.newEUList()" class="btn btn-success createlist">
+											<span class="glyphicon glyphicon-user"></span><br />
+											<spring:message code="label.EUList" /><br /><br />
+											<span class="info"><spring:message code="info.EUList" /></span>
+										</a>
+									</c:when>
+								</c:choose>
 								<a onclick="_participants.newTokenList()" class="btn btn-success createlist">
 									<span class="glyphicon glyphicon-barcode"></span><br />
 									<spring:message code="label.TokenList" /><br /><br />
@@ -654,7 +654,6 @@
 						</div>
 						<div class="col-md-4" style="text-align: right">
 							<!-- ko if: selectedGroup() != null && selectedGroup().exportEnabled() -->
-								<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: selectedGroup().exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 								<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: selectedGroup().exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 							<!-- /ko -->
 						</div>

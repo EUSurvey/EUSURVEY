@@ -3,9 +3,11 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.delphi.*;
 import com.ec.survey.model.selfassessment.SATargetDataset;
@@ -26,6 +28,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -156,12 +160,41 @@ public class DelphiController extends BasicController {
 				{
 					invitation.setAnswers(1);
 				}
-			}
-			
-			if (survey.getEcasSecurity() && user != null) {
+
+
+				if (invitation.getAttendeeId() != 0) {
+
+					ParticipationGroup group = participationService.get(invitation.getParticipationGroupId());
+
+					if (group.getType() == ParticipationGroupType.ECMembers) {
+						EcasUser ecasUser = group.getEcasUser(invitation.getAttendeeId());
+
+						if (survey.isAnonymous()) {
+							answerSet.setResponderEmail(Tools.md5hash(ecasUser.getEmail()));
+						} else {
+							answerSet.setResponderEmail(ecasUser.getEmail());
+						}
+					} else {
+
+						Attendee attendee = attendeeService.get(invitation.getAttendeeId());
+
+						if (attendee != null) {
+							if (survey.isAnonymous()) {
+								answerSet.setResponderEmail(Tools.md5hash(attendee.getEmail()));
+							} else {
+								answerSet.setResponderEmail(attendee.getEmail());
+							}
+						} else {
+							logger.error("Attendee " + invitation.getAttendeeId() + " referenced by invitation "
+									+ invitation.getId() + " not found!");
+						}
+					}
+				}
+
+			} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null && user != null) {
 				answerSet.setResponderEmail(user.getEmail());
 			}
-			
+
 			Set<String> invisibleElements = new HashSet<>();
 			
 			List<Element> elements = new ArrayList<>();
@@ -716,7 +749,7 @@ public class DelphiController extends BasicController {
 									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getUniqueId());
 									
 									for (Answer answer: answers) {
-										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+										result += SurveyHelper.getAnswerTitle(survey, answer, false, false) + " ";
 									}
 								}
 								
@@ -740,7 +773,7 @@ public class DelphiController extends BasicController {
 
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
-										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+										result += SurveyHelper.getAnswerTitle(survey, answer, false, false) + " ";
 									}
 								}
 							} else {
@@ -748,7 +781,7 @@ public class DelphiController extends BasicController {
 
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
-										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+										result += SurveyHelper.getAnswerTitle(survey, answer, false, false) + " ";
 										
 										DelphiMedian median = null;										
 										
@@ -1230,7 +1263,7 @@ public class DelphiController extends BasicController {
 				List<String> additionalValues = answerExplanationService.getDelphiDependentAnswers(dependentElementUid, firstValue.getAnswerSetId());
 				
 				for (String value : additionalValues) {
-					DelphiTableAnswer answer = new DelphiTableAnswer(null, value);
+					DelphiTableAnswer answer = new DelphiTableAnswer(null, HtmlUtils.htmlEscape(value));
 					tableEntry.getAnswers().add(answer);
 				}
 			}
@@ -1717,7 +1750,10 @@ public class DelphiController extends BasicController {
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 
 			for (DelphiContribution contrib : entry) {
-				String label = "<span>" + colLabels[contrib.getColumn()] + " - " + rowLabels[contrib.getRow()] + "</span>";
+				String colLabel = colLabels.length > contrib.getColumn() ? colLabels[contrib.getColumn()] : "";
+				String rowLabel = rowLabels.length > contrib.getRow() ? rowLabels[contrib.getRow()] : "";
+
+				String label = "<span>" + colLabel + " - " + rowLabel + "</span>";
 				DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
 				tableEntry.getAnswers().add(answer);
 			}

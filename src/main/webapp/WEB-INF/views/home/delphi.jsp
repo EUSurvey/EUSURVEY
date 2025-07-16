@@ -100,7 +100,7 @@
 			If you are interested in how this methodology works in practice,
 			please check the Delphi survey carried out within the project <a
 				target="_blank"
-				href="https://ec.europa.eu/jrc/en/publication/future-customs-eu-2040-results-real-time-delphi-survey">The
+				href="https://publications.jrc.ec.europa.eu/repository/handle/JRC117813">The
 				Future of Customs in the EU 2040</a>.
 		</p>
 

@@ -431,9 +431,9 @@ public class ArchiveService extends BasicService {
 				}
 			}
 			
-			form.setStatistics(answerService.getStatisticsOrStartCreator(survey, resultFilter, true, false, false));
+			form.setStatistics(answerService.getStatisticsOrStartCreator(published, resultFilter, true, false, false));
 			
-			for (var ef : new ExportFormat[]{ ExportFormat.xls, ExportFormat.xlsx, ExportFormat.pdf }) {
+			for (var ef : new ExportFormat[]{ /* ExportFormat.xls, */ ExportFormat.xlsx, ExportFormat.pdf }) {
 				logger.info("archiving statistics (" + ef + ") of survey " + survey.getShortname());
 				Export exportstats = new Export();
 				exportstats.setForArchiving(true);
@@ -455,7 +455,7 @@ public class ArchiveService extends BasicService {
 				}
 			}
 
-			for (var ef : new ExportFormat[]{ ExportFormat.xls, ExportFormat.xlsx }) {
+			for (var ef : new ExportFormat[]{ /* ExportFormat.xls, */ ExportFormat.xlsx }) {
 				logger.info("archiving results (" + ef + ") of survey " + survey.getShortname());
 				Export export = new Export();
 				export.setDate(new Date());

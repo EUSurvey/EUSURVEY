@@ -374,7 +374,6 @@
 						<div style="float: right; text-align: right">
 							<span style="padding: 0px 10px;"><spring:message code="label.Export" />:</span>
 							<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportcsv" />" onclick="showExportDialog('AddressBook', 'csv')" ><img src="${contextpath}/resources/images/file_extension_csv_small.png" /></a>
-							<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('AddressBook', 'xls')" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
 							<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxlsx" />" onclick="showExportDialog('AddressBook', 'xlsx')" ><img src="${contextpath}/resources/images/file_extension_xlsx_small.png" /></a>
 							<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('AddressBook', 'ods')" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
 						</div>				
@@ -601,7 +600,7 @@
 						<spring:message code="label.Attribute" />&#32; <span id="add-attendee-error-multiple-text"></span> <spring:message code="label.usedMoreThanOnce" />
 					</div>			
 					<div id="add-attendee-error-no-attribute" class="hideme" style="color: #f00; margin: 10px;">
-						<spring:message code="label.NoAttributeNameFor" /> <span id="add-attendee-error-no-attribute-text"></span>
+						<spring:message code="label.NoAttributeNameFor" />&#32; <span id="add-attendee-error-no-attribute-text"></span>
 					</div>
 					<div style="height: 180px; overflow: auto;">
 						<table id="attributes" style="margin-left: 20px;">
@@ -678,7 +677,7 @@
 							<spring:message code="label.Attribute" />&#32; <span id="edit-attendee-error-multiple-text"></span> <spring:message code="label.usedMoreThanOnce" />
 						</div>
 						<div id="edit-attendee-error-no-attribute" class="hideme" style="color: #f00; margin: 10px;">
-							<spring:message code="label.NoAttributeNameFor" /> <span id="edit-attendee-error-no-attribute-text"></span>
+							<spring:message code="label.NoAttributeNameFor" />&#32; <span id="edit-attendee-error-no-attribute-text"></span>
 						</div>
 						<div style="height: 170px; overflow: auto; margin-bottom: 2px;">
 							<table id="edit-attributes" style="margin-left: 20px;">

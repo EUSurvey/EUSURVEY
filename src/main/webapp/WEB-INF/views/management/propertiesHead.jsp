@@ -54,6 +54,8 @@
 			this.progressBar = ko.observable(${form.survey.progressBar});
 			this.motivationPopup = ko.observable(${form.survey.motivationPopup});
 			this.progressDisplay = ko.observable(${form.survey.progressDisplay});
+			this.tags = ko.observableArray(${form.survey.tagsAsArray()});
+			this.tagsLoading = ko.observable(false);
 			
 			this.addLinksRow = function()
 			{
@@ -345,8 +347,34 @@
 					this.reportEmails(nonEmptyReportEmails)
 				}
 			}
+
+            this.addTag = function(tag) {
+                if (tag.indexOf(" ") > -1) {
+                    tag = tag.substring(0, tag.indexOf(" ")); // remove " (new tag)"
+                };
+
+                // no duplicates
+                if (this.tags.indexOf(tag) > -1) {
+                    return;
+                }
+
+                this.tags.push(tag);
+            }
+
+            this.removeTag = function(icon) {
+                const tag = $(icon).closest('.badge').attr("tag");
+                this.tags.remove(function(item) {
+                    return item == tag;
+                });
+            }
+
+            this.sortedTags = function() {
+                return this.tags().sort(function (a, b) {
+                                            return a.toLowerCase().localeCompare(b.toLowerCase());
+                                        });
+            }
 		}
-		
+
 		var _properties = new PropertiesViewModel();
 
 		function checkProperties(regformconfirmed, publishingconfirmed) {
@@ -758,7 +786,366 @@
 			}
 			return openBrackets == closedBrackets;
 		}
-		
+
+        function openReminderDialog() {
+            if (!checkOrganisation($("#survey-validator").val(), $("#survey-organisation").val()))
+            {
+                $("#survey-validator-invalid").show();
+                return;
+            }
+
+            $("#survey-validator-invalid").hide();
+            $('#sendReminderDialog').modal('show');
+        }
+
+        var message_SuccessMailValidationReminder = "<spring:message code='message.mail.successMailValidationReminder' />";
+        var message_FailedMailValidationReminder = "<spring:message code='message.mail.failMailLinkDraft' />";
+        function sendReminder(surveyId) {
+            $.ajax({
+                type:'GET',
+                url: "${contextpath}/${sessioninfo.shortname}/management/sendOrganisationValidationReminder",
+                data: {surveyId : surveyId},
+                cache: false,
+                success: function( data ) {
+                    if (data == "success") {
+                        $('#sendReminderDialog').modal('hide');
+                        showSuccess(message_SuccessMailValidationReminder);
+                    } else {
+                        showError(message_FailedMailValidationReminder);
+                    }
+                }
+            });
+        }
+
+		var noMailsFound = '<spring:message code="label.NoMailsFound" />';
+		var atLeastOneMail = '<spring:message code="label.AtLeastOneMail" />';
+		var noEmptySearch = '<spring:message code="label.NoEmptySearch" />';
+		var invalidEmail = '<spring:message code="label.InvalidEmail" />';
+		var notFoundEmail = '<spring:message code="label.NotFoundEmail" />';
+		let changeRequestJustSent = '<spring:message code="message.OwnerChangeRequestJustSent" />';
+		function showChangeOwnerDialog() {
+			resetEmailFeedback();
+
+			// select european commision if exists
+			var exists = false;
+			$('#change-owner-type-ecas option').each(function(){
+				if (this.value == "eu.europa.ec") {
+					exists = true;
+					return false;
+				}
+			});
+			if (exists)
+			{
+				$("#change-owner-type-ecas").val("eu.europa.ec");
+			}
+
+			checkUserType();
+			$('#change-department-name').val('');
+			$('#change-owner-name').val('');
+			$('#change-first-name').val('');
+			$('#change-last-name').val('');
+			$('#change-owner-email').val('');
+			$("#search-results-more").hide();
+			$("#btnOkChangeOwnerFromAccess").attr("disabled", true);
+			$('#change-owner-dialog').modal();
+		}
+
+		function searchEmailUser(order) {
+			let mailInput = $("#change-owner-email").val();
+			if (mailInput.length <= 0) {
+				$("#invalidEmailsIcon").show();
+				$("#invalidEmailsText").text(atLeastOneMail);
+				return;
+			}
+
+			if (!validateEmail(mailInput.trim()) && mailInput != "") {
+				setEmailCheckFeedback(0, 1, 0);
+				return;
+			}
+
+			$.ajax({
+				type:'GET',
+				url: contextpath + "/logins/usersEmailJSON",
+				data: {emails: $("#change-owner-email").val()},
+				dataType: 'json',
+				cache: false,
+				success: function( foundMails ) {
+					if (foundMails.length > 0) {
+						setEmailCheckFeedback(foundMails.length, 0, 0);
+					} else {
+						setEmailCheckFeedback(0, 0, 1);
+					}
+					$("#btnOkChangeOwnerFromAccess").removeAttr("disabled");
+				}, error: function(e) {
+					
+				}});
+		}
+
+		function resetEmailFeedback() {
+			$("#foundEmailUsers").text("");
+			$("#invalidEmailsText").text("");
+			$("#invalidEmailsIcon").hide();
+			$("#notFoundEmailsIcon").hide();
+			$("#notFoundEmailsText").text("");
+		}
+
+		function setEmailCheckFeedback(foundCount, invalidMails, notFoundMails) {
+			resetEmailFeedback();
+
+			$("#foundEmailUsers").text(noMailsFound.replace("{0}", foundCount));
+
+			if(invalidMails > 0) {
+				$("#invalidEmailsIcon").show();
+				$("#invalidEmailsText").html(invalidEmail);
+			}
+
+			if(notFoundMails > 0) {
+				$("#notFoundEmailsIcon").show();
+				$("#notFoundEmailsText").html(notFoundEmail);
+			}
+		}
+
+		function checkUserType()
+		{
+			$("#noEmptySearchIcon").hide();
+			$("#noEmptySearchText").text('');
+
+			$("#search-results").find("tbody").empty();
+
+			if ($("#change-owner-type-ecas").val() != "system" && $("#change-owner-type-ecas").val() != "external")
+			{
+				$("#change-owner-department-div").show();
+				$("#change-owner-firstname-div").show();
+				$("#change-owner-lastname-div").show();
+				$("#eulogin-span").show();
+			} else if ($("#change-owner-type-ecas").val() == "external")
+			{
+				$("#change-owner-department-div").hide();
+				$("#change-owner-firstname-div").show();
+				$("#change-owner-lastname-div").show();
+				$("#eulogin-span").show();
+			} else {
+				$("#change-owner-department-div").hide();
+				$("#change-owner-firstname-div").hide();
+				$("#change-owner-lastname-div").hide();
+				$("#eulogin-span").hide();
+			}
+		}
+
+		function searchUser(order)
+		{
+			$("#btnOkChangeOwnerFromAccess").attr("disabled", true);
+			$("#noEmptySearchIcon").hide();
+			$("#noEmptySearchText").text("");
+
+			var name = $("#change-owner-name").val();
+			var first = $("#change-first-name").val();
+			var last = $("#change-last-name").val();
+			var email = $("#change-owner-email").val();
+			var department = $("#change-department-name").val();
+			var type = $("#change-owner-type-ecas").val();
+
+            $('#change-owner-dialog').find(".validation-error").remove();
+
+			if (email != '' && !validateEmail(email)) {
+			    addValidationError.afterElementAndFocus($("#change-owner-email"), $("#change-owner-email"), invalidEmail);
+			    return;
+			}
+
+			if (type != "system" && type != "external")
+			{
+				//case eu.europa.ec: Admin and form manager EC
+				if (!(email != '' || department != '' || first != '' || last != '' || name != '')) {
+					$("#noEmptySearchIcon").show();
+					$("#noEmptySearchText").text(noEmptySearch);
+					return;
+				}
+			} else if (type == "system")
+			{
+				//case system
+				if (!(email != '' || name != '')) {
+					$("#noEmptySearchIcon").show();
+					$("#noEmptySearchText").text(noEmptySearch);
+					return;
+				}
+			}
+
+			var s = "name=" + name + "&type=" + type + "&department=" + department+ "&email=" + email + "&first=" + first + "&last=" + last + "&order=" + order;
+
+			$("#change-owner-dialog").modal('hide');
+			$("#busydialog").modal('show');
+
+			$("#search-results-more").hide();
+
+			$.ajax({
+				type:'GET',
+				url: contextpath + "/logins/usersJSON",
+				data: s,
+				dataType: 'json',
+				cache: false,
+				success: function( users ) {
+					$("#search-results").find("tbody").empty();
+					var body = $("#search-results").find("tbody").first();
+
+					for (var i = 0; i < users.length; i++ )
+					{
+						$(body).append(users[i]);
+					}
+
+					var hiddenTableHeaders = $("#search-results th.hideme");
+					for (var i = 0; i < hiddenTableHeaders.length; i++ )
+					{
+						$('#search-results td:nth-child(' + hiddenTableHeaders[i].cellIndex + ')').hide();
+					}
+
+					if (type != "system" && users.length >= 100)
+					{
+						$("#search-results-more").show();
+					}
+
+					$(body).find("tr").click(function() {
+						$("#search-results").find(".success").removeClass("success");
+						$(this).addClass("success");
+						$("#btnOkChangeOwnerFromAccess").removeAttr("disabled");
+					});
+
+					$("#busydialog").modal('hide');
+					$("#change-owner-dialog").modal('show');
+				}, error: function() {
+					$("#busydialog").modal('hide');
+					$("#change-owner-dialog").modal('show');
+				}});
+
+			$("#search-results-none").hide();
+
+		}
+
+		$(function() {
+			checkUserType();
+
+			$('#change-owner-name').keyup(function(e){
+				if(e.keyCode == 13){
+					searchUser();
+				}
+			});
+
+			$('#change-department-name').keyup(function(e){
+				if(e.keyCode == 13){
+					searchUser();
+				}
+			});
+
+			 <c:if test="${reportingdatabaseused == null}">
+              checkNumberOfFilters(true);
+            </c:if>
+		});
+
+		function changeOwner() {
+			if ($("#btnOkChangeOwnerFromAccess").attr("disabled") == "disabled") {
+				return;
+			}
+
+			if ($("#search-results").find(".success").length == 0)
+			{
+				$("#search-results-none").show();
+				return;
+			}
+			$("#search-results-none").hide();
+
+			var login = $("#search-results").find(".success").first().attr("id");
+			let mail = $("#search-results").find(".success").find("td").first().text();
+			var addAsFormManager = $("#add-as-form-manager").is(":checked");
+			var s = "change-owner-type=loginAndEcas&change-owner-login=" + login + "&change-owner-email=" + mail + "&add-as-form-manager=" + addAsFormManager;
+
+			if (login == '${form.survey.owner.getLogin()}') {
+				showError('<spring:message code="message.ChangeRequestSameUser" />')
+				return;
+			}
+
+			$.ajax({
+				type:'POST',
+				beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+				url: "${contextpath}/${sessioninfo.shortname}/management/changeOwner",
+				data: s,
+				cache: false,
+				success: function(response) {
+					if (response == "success"){
+						$("#change-owner-dialog").modal('hide');
+						showSuccess('<spring:message code="message.ChangeRequestSend" />');
+						$("#owner-change-section small").remove()
+						$("#owner-change-section").append("<small>" + changeRequestJustSent.replace("{0}", mail) + "</small>");
+					} else {
+						showError('<spring:message code="message.ChangeRequestError" />');
+					}
+				}, error: function() {
+					showError('<spring:message code="message.ChangeRequestError" />');
+				}});
+		}
+
+		function changeOwnerByEmail() {
+			if ($("#btnOkChangeOwnerFromAccess").attr("disabled") == "disabled") {
+				return;
+			}
+
+			let mail = $("#change-owner-email").val();
+			var addAsFormManager = $("#add-as-form-manager").is(":checked");
+			var s = "change-owner-type=email&change-owner-mail=" + mail + "&add-as-form-manager=" + addAsFormManager;
+
+			$.ajax({
+				type:'POST',
+				url: "${contextpath}/${sessioninfo.shortname}/management/changeOwner",
+				data: s,
+				beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+				cache: false,
+				success: function(response) {
+					if (response == "success"){
+						$("#change-owner-dialog").modal('hide');
+						showSuccess('<spring:message code="message.ChangeRequestSend" />');
+						$("#owner-change-section small").remove()
+						$("#owner-change-section").append("<small>" + changeRequestJustSent.replace("{0}", mail) + "</small>");
+					} else {
+						showError('<spring:message code="message.ChangeRequestError" />');
+					}
+				}, error: function() {
+					showError('<spring:message code="message.ChangeRequestError" />');
+				}});
+		}
+
+		function checkNumberOfFilters(reportingDBDisabled) {
+            if (!reportingDBDisabled) return;
+
+            let counter = 0;
+
+            $('#contributionsToPublishDiv').find(".filter").each(function(){
+                let valfound = false;
+
+                $(this).find("input[type=checkbox]").each(function(){
+                    if ($(this).is(":checked")) {
+                        valfound = true;
+                    }
+                });
+
+                if (valfound) {
+                    $(this).attr("data-filterset", "true");
+                    counter++;
+                } else {
+                    $(this).attr("data-filterset", "false");
+                }
+            });
+
+            if (counter > 2) {
+                $('#contributionsToPublishDiv').find(".filter").each(function(){
+                    if ($(this).attr("data-filterset") == "false") {
+                        $(this).find("input").attr("disabled", "disabled").addClass("disabled");
+                    }
+                });
+            } else {
+                $('#contributionsToPublishDiv').find("input.disabled").each(function(){
+                    $(this).removeAttr("disabled").removeClass("disabled");
+                });
+            }
+        }
+
 	</script>
 	
 	<style type="text/css">
@@ -941,6 +1328,40 @@
 		    top: 120px;
 		    visibility: hidden;
 		}
-		
+
+        .ui-menu-item {
+          font-size: 13px !important;
+        }
+
+        .ui-state-hover,
+        .ui-state-active,
+        .ui-state-focus {
+          text-decoration: none !important;
+          color: #fff !important;
+          background-image: none !important;
+          background-color: #767676 !important;
+          border-color: #555 !important;
+          font-weight: normal !important;
+        }
+
+        #selectedtags {
+            text-align: right;
+            max-width: 670px;
+        }
+
+        #selectedtags .badge {
+            margin-left: 7px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-color: #337ab7;
+            color: #fff;
+        }
+
+        #change-owner-dialog label {
+            margin-bottom: 0;
+            margin-top: 10px;
+        }
+
+
 	</style>
 

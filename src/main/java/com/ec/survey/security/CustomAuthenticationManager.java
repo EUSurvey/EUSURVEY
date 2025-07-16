@@ -140,9 +140,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				List<Role> roles = administrationService.getAllRoles();
 				Role ecRole = null;
 				Role intRole = null;
+				Role contributorRole = null;
 				for (Role role : roles) {
 					if (role.getName().equalsIgnoreCase("Form Manager (EC)")) ecRole = role;
 					if (role.getName().equalsIgnoreCase("Form Manager")) intRole = role;
+					if (role.getName().equalsIgnoreCase("Contributor")) contributorRole = role;
 				}	
 				
 				if (user == null)
@@ -156,8 +158,10 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
 					organisationSet = true;
 					user.setOrganisation(organisation);
-					
-					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q")) 
+
+					if (surveyLoginMode) {
+						user.getRoles().add(contributorRole);
+					} else if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q"))
 					{
 						user.getRoles().add(ecRole);
 					} else {
@@ -193,18 +197,33 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}
+
+					if (no2fa && require2fa){
+						throw new Bad2faCredentialsException();
+					}
 									
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q")) 
 					{
 						// internal EC users
+						if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().equalsIgnoreCase("Contributor")) {
+							user.getRoles().clear();
+							user.getRoles().add(ecRole);
+							administrationService.updateUser(user);
+						}
 					} else {
+						if (no2fa){
+							weakAuthentication = true;
+							if (!surveyLoginMode){
+								throw new Bad2faCredentialsException();
+							}
+						}
+
 						if (intRole != null)
 						{
-							if (no2fa){
-		    					weakAuthentication = true;
-		    					if (!surveyLoginMode){
-			    					throw new Bad2faCredentialsException();
-			    				}
+							if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().equalsIgnoreCase("Contributor")) {
+								user.getRoles().clear();
+								user.getRoles().add(intRole);
+								administrationService.updateUser(user);
 							}
 						}
 					}

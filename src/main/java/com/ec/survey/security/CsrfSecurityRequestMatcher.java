@@ -12,17 +12,17 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
 	private Pattern allowedMethods = Pattern.compile("^(GET|HEAD|TRACE|OPTIONS|PATCH|PUT|DELETE)$");
     private RegexRequestMatcher notifySuccessMatcher = new RegexRequestMatcher("/home/notifySuccess.*",  "POST");
     private RegexRequestMatcher notifyErrorMatcher = new RegexRequestMatcher("/home/notifyError.*",  "POST");
-    
-    
- 
+    private RegexRequestMatcher notifyTranslationMatcher = new RegexRequestMatcher("/home/returnTranslation.*",  "POST");
+
+
+
     @Override
     public boolean matches(HttpServletRequest request) {
     	
     	if(allowedMethods.matcher(request.getMethod()).matches()){
             return false;
         }
-        return !(notifySuccessMatcher.matches(request) || notifyErrorMatcher.matches(request));
-
+        return !(notifySuccessMatcher.matches(request) || notifyErrorMatcher.matches(request) || notifyTranslationMatcher.matches(request));
     }
     	
 }

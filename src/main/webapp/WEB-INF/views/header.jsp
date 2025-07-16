@@ -76,8 +76,8 @@
 								</ul>
 							</div>
 		 					
-							<c:if test='${form.getLanguages().size() != 0 && (readonlyMode == null || readonlyMode == false) && mode != "editcontribution"}'>	
-							
+							<c:if test='${form.getLanguages().size() != 0 && (readonlyMode == null || readonlyMode == false) && mode != "editcontribution" && iseditcontribution != true}'>
+							<span id="headerLanguageSelector">
 								|
 		
 								<div class="dropdown" >
@@ -88,9 +88,9 @@
 			  						
 			  						<ul class="dropdown-menu dropdown-menu-right" id="dropdownLangElements" aria-labelledby="dropdownLang">	 						
 			  							<c:choose>	  							
-											<c:when test="${isthankspage != null || isdraftinfopage != null}">
+											<c:when test="${isthankspage != null || isdraftinfopage != null || isquizresultpage != null || issaresultpage != null}">
 												<li>
-													<button type="button"><esapi:encodeForHTML>[${form.language.code}] ${form.language.name}</esapi:encodeForHTML></button>
+													<a type="button"><esapi:encodeForHTML>[${form.language.code}] ${form.language.name}</esapi:encodeForHTML></a>
 												</li>
 											</c:when>
 											<c:otherwise>																				
@@ -115,7 +115,8 @@
 											</c:otherwise>					
 										</c:choose>
 						 			</ul>							
-								</div>	
+								</div>
+							</span>
 							</c:if>	
 		
 						</c:when>
