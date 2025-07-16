@@ -83,9 +83,6 @@ public class Setting {
 	public static final String ContactGuestlistLimitForExternals = "ContactGuestlistLimitForExternals";
 	public static final String ContactGuestlistSizeLimitForExternals = "ContactGuestlistSizeLimitForExternals";
 
-	public static final String ContactGuestlistLimitForExternals = "ContactGuestlistLimitForExternals";
-	public static final String ContactGuestlistSizeLimitForExternals = "ContactGuestlistSizeLimitForExternals";
-	
 	@Id
 	@Column(name = "SETTINGS_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
