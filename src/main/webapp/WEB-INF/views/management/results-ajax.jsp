@@ -7,10 +7,9 @@
 		var statisticsrequestid = null;
 		function loadStatisticsAsync(publication)
 		{
-		
+
 			$(".ajaxloaderimage").show();
-			$(".loadstatisticsbutton").hide();
-			
+
 				var s = "active=${active eq true}&allanswers=${allanswers eq true}";	
 				
 				if (publication)

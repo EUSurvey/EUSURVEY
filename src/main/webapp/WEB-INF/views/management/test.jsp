@@ -97,7 +97,8 @@
 						selectPageAndScrollToQuestionIfSet();
 					},
 					error: function( result ) {	
-						alert(result);
+						console.log(result);
+						//alert(result);
 					}
 				});				
 			} else {

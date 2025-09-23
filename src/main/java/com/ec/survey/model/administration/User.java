@@ -455,6 +455,12 @@ public class User implements java.io.Serializable {
 	}
 
 	@Transient
+	public String getOrganisationCode() {
+		if (organisation == null || !organisation.contains("eu.europa.")) return organisation;
+		return organisation.replace("eu.europa.", "").toUpperCase();
+	}
+
+	@Transient
 	public String getName() {
 		if (displayName != null && displayName.length() > 0) {
 			return displayName;
@@ -565,6 +571,11 @@ public class User implements java.io.Serializable {
 	@Transient
 	public int getECPrivilege() {
 		return getGlobalPrivileges().get(GlobalPrivilege.ECAccess);
+	}
+
+	@Transient
+	public int getSystemManagementPrivilege() {
+		return getGlobalPrivileges().get(GlobalPrivilege.SystemManagement);
 	}
 
 	@Transient

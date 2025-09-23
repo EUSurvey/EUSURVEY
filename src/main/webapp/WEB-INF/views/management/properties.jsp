@@ -134,7 +134,7 @@
 													</c:when>
 													<c:otherwise>
 														<form:select path="survey.organisation" class="form-control survey-organisation" style="width: auto; min-width: 200px; display: inline" disabled="disabled">
-															<form:option selected="selected" value="${form.survey.owner.organisation}"></form:option>
+															<form:option selected="selected" value="${form.survey.owner.organisationCode}"></form:option>
 														</form:select>
 													</c:otherwise>
 												</c:choose>
@@ -232,7 +232,28 @@
 								<span><spring:message code="message.Contact" /></span>	
 							</div>
 						</td>
-					</tr>			
+					</tr>
+					<c:if test="${USER.getSystemManagementPrivilege() == 2}">
+						<tr>
+							<td>
+								<div style="float: left">
+									<spring:message code="label.DoNotDelete" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+									<div class="help hideme"><spring:message code="info.DoNotDelete" /></div>
+								</div>
+								<div style="float: right">
+									<div class="onoffswitch">
+										<form:checkbox path="survey.doNotDelete" data-bind="checked: doNotDelete" class="onoffswitch-checkbox" id="myonoffswitchdoNotDelete" />
+										<label class="onoffswitch-label" for="myonoffswitchdoNotDelete">
+											<span class="onoffswitch-inner"></span>
+											<span class="onoffswitch-switch"></span>
+										</label>
+									</div>
+								</div>
+							</td>
+						</tr>
+
+					</c:if>
 				</table>
 			</div>
 			
@@ -907,11 +928,23 @@
 							</div>
 							<div style="float: right">
 								<div class="onoffswitch">
-									<form:checkbox path="survey.allowQuestionnaireDownload" class="onoffswitch-checkbox" id="myonoffswitchquestionnairedwnld" />
-									<label class="onoffswitch-label" for="myonoffswitchquestionnairedwnld">
-										<span class="onoffswitch-inner"></span>
-										<span class="onoffswitch-switch"></span>
-									</label>
+									<c:choose>
+										<c:when test='${form.survey.isQuiz || form.survey.isEVote || form.survey.isSelfAssessment || form.survey.isECF}'>
+											<input type="checkbox" disabled="disabled" class="onoffswitch-checkbox" id="myonoffswitchcaptcha" />
+											<form:hidden path="survey.allowQuestionnaireDownload"/>
+											<label class="onoffswitch-label disabled" for="myonoffswitchquestionnairedwnld">
+												<span class="onoffswitch-inner"></span>
+												<span class="onoffswitch-switch"></span>
+											</label>
+										</c:when>
+										<c:otherwise>
+											<form:checkbox path="survey.allowQuestionnaireDownload" class="onoffswitch-checkbox" id="myonoffswitchquestionnairedwnld" />
+											<label class="onoffswitch-label" for="myonoffswitchquestionnairedwnld">
+												<span class="onoffswitch-inner"></span>
+												<span class="onoffswitch-switch"></span>
+											</label>
+										</c:otherwise>
+									</c:choose>
 								</div>
 							</div>
 						</td>
@@ -1341,13 +1374,13 @@
 									<div id="questionsToPublishDiv" class="well scrollablediv">
 										<table>
 										<c:forEach items="${form.survey.getQuestions()}" var="question">
-											<c:if test="${!question.getType().equals('Image') && !question.getType().equals('Text') && !question.getType().equals('Download')}">									
+											<c:if test="${!question.getType().equals('Image') && !question.getType().equals('Text') && !question.getType().equals('Download') && !question.getType().equals('Ruler') && !(question.getType().equals('GalleryQuestion') && !question.selection) && !question.getType().equals('Confirmation')}">
 												<tr>
-													<td>
+													<td style="vertical-align: top;">
 														<input type="checkbox" class="check" name="question${question.id}" value="${question.id}" <c:if test="${form.survey.publication.isSelected(question.id)}">checked="checked"</c:if> />
 													</td>
 													<td>
-														${question.title}
+														${question.strippedTitle}
 													</td>
 												</tr>
 											</c:if>																
@@ -1385,10 +1418,10 @@
 											<c:choose>
 												<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion'}">
 													<div class="well">
-														${question.title}
+														${question.strippedTitle}
 														<div class="filter">
 															<c:forEach items="${question.possibleAnswers}" var="possibleanswer" varStatus="status">
-																<input onchange="checkNumberOfFilters(${reportingdatabaseused == null})" type="checkbox" class="check" name="contribution${question.id}|${question.uniqueId}" value="${possibleanswer.id}|${possibleanswer.uniqueId}" <c:if test="${form.survey.publication.filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId)}">checked="checked"</c:if> />${possibleanswer.title}<br />
+																<input onchange="checkNumberOfFilters(${reportingdatabaseused == null})" type="checkbox" class="check" name="contribution${question.id}|${question.uniqueId}" value="${possibleanswer.id}|${possibleanswer.uniqueId}" <c:if test="${form.survey.publication.filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId)}">checked="checked"</c:if> />${possibleanswer.strippedTitle}<br />
 															</c:forEach>
 														</div>
 													</div>

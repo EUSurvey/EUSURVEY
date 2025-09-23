@@ -62,7 +62,7 @@
                     <span class="glyphicon glyphicon-info-sign"></span>
                     <spring:message code="info.ResultFilterLimit" />
                 </div>
-            </c:if>
+        	</c:if>
 
 			<form:form id="updateResultFilterForm" method="POST" action="updateResultFilter">
 				<input type="hidden" name="accessid" id="accessid" />

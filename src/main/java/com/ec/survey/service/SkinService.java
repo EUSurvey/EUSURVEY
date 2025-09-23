@@ -50,7 +50,7 @@ public class SkinService extends BasicService {
 		
 		for (Skin skin: skins)
 		{
-			if (skin.getOwner().getLogin().equalsIgnoreCase("admin"))
+			if (skin.getIsPublic())
 			{
 				switch (skin.getName())
 				{

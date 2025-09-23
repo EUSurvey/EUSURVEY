@@ -196,17 +196,9 @@
 			$('.dropdown-menu').click(function(event){
 			     event.stopPropagation();
 			 });
-			
-			<c:choose>
-			<c:when test="${skipstatistics == null}">
-			loadStatisticsAsync(false);
-			</c:when>
-			<c:otherwise>
+
 			$(".ajaxloaderimage").hide();
-			$("#loadstatisticsbutton").show();
-			</c:otherwise>
-			</c:choose>
-			
+
 			<c:if test="${form.survey.isDelphi}">
 				loadDelphiStatisticsAsync();
 			</c:if>
@@ -542,7 +534,9 @@
 			$("#scrollareaheader").css("overflow-x", "auto");
 			$("#scrollareaheader").css("overflow-y","auto");
 		}
-		
+
+		var statisticsLoaded = false;
+
 		function showStatistics() {
 			$("#results-statistics-link").addClass("btn-primary");
 			$("#results-statistics").removeClass('hidden');
@@ -553,10 +547,13 @@
 			$("#charts-export-buttons").addClass('hidden');
 
 			$("#scrollareaheader").css({ 'overflow-x' : 'auto'})
-		
-			delphiPopulateAllGraphs($("#results-statistics"));
-			doResize();
 
+            if (!statisticsLoaded) {
+		        loadStatisticsAsync(false);
+			    delphiPopulateAllGraphs($("#results-statistics"));
+			    statisticsLoaded = true;
+			}
+			doResize();
 		}
 		
 		function hideStatistics() {
@@ -1528,7 +1525,7 @@
 		<div class="modal-body">
 			<spring:message code="question.DeleteColumns" />
 			<br /><br />
-			<span style="color: #FF9800;  font-size: 40px; margin-left: 20px;" class="glyphicon glyphicon-exclamation-sign"></span>
+			<span style="color: #c11c1c;  font-size: 40px; margin-left: 20px;" class="glyphicon glyphicon-exclamation-sign"></span>
 			<div style="display: inline-block; vertical-align: top; padding-top: 10px;">
 				<input style="margin-left: 30px;" type="checkbox" id="agreedeletecolumn" onclick="checkColumnConfirmationTicked(this)" /> <spring:message code="label.Imsure" />
 			</div>

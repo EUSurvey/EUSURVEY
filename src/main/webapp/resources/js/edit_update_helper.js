@@ -292,6 +292,15 @@ function checkInputStates()
 		}
 		checkInterdependentMatrix($("#idPropertyInterdependency"))
 	}
+	if ($("#idPropertyReadOnly").length > 0 && $("#idPropertyHidden").length > 0) {
+		const readonly = $("#idPropertyReadOnly").is(":checked")
+		const hiddenEl = $("#idPropertyHidden")
+		if (readonly) {
+			hiddenEl.removeAttr("disabled").removeClass("disabled")
+		} else {
+			hiddenEl.attr("disabled", "disabled").addClass("disabled").removeAttr("checked")
+		}
+	}
 }
 
 function checkInterdependentMatrix(input)
@@ -301,9 +310,10 @@ function checkInterdependentMatrix(input)
 	var rowstext = getRowsText(true);
 	var rows = splitText(rowstext).length;
 
-	let isMultipleChoice = $("#selectMultipleChoice").is(":checked")
+	const isMultipleChoice = $("#selectMultipleChoice").is(":checked")
+    const isInterdependencyChecked = $("#idPropertyInterdependency").is(":checked")
 
-	if (columns < rows && !isMultipleChoice) {
+	if (columns < rows && !isMultipleChoice && isInterdependencyChecked) {
 		addValidationInfo(input, "invalidInterdependencyCriteria");
 		return false;
 	} else {

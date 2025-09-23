@@ -190,6 +190,16 @@ table {
 	background-color: transparent;
 }
 
+.unstyledbutton:disabled {
+	color: #ccc;
+	cursor: not-allowed;
+}
+
+.unstyledbutton:disabled span {
+	color: #ccc;
+	cursor: not-allowed;
+}
+
 .unstyledbuttonBlack {
 	border: 0;
 	padding: 0;
@@ -2289,7 +2299,6 @@ a.elearningWelcomeLink:hover
     word-break: break-all;
     word-wrap: break-word;
     page-break-inside: avoid;
-    white-space: normal;
 }
 
 #menutab1 li a:not(.menudropdownaction), #menutab2 li:not(.menudropdown) a:not(.menudropdownaction), #menutab3  li a:not(.menudropdownaction)
@@ -2878,4 +2887,8 @@ input[type=radio]:checked + .choice-button-label:hover{
 
 .saDependentHidden {
 	display: none;
+}
+
+#new-survey-table .btn-group label {
+    height: 35px;
 }

@@ -357,7 +357,7 @@
 							  if(list[i].formManagementRights && list[i].canCreateSurveys)
 							  {
 							     $(acopy).addClass("actionRowAction").append("<span class='glyphicon glyphicon-copy'></span>");
-							     $(acopy).attr('onclick', "copySurvey('" + list[i].id + "','" + list[i].title + "','" + list[i].language.code + "', '" + list[i].security+ "', '" + list[i].isQuiz + "', '" + list[i].isDelphi + "', '" + list[i].isEVote + "', '" + list[i].isSelfAssessment + ");");
+							     $(acopy).attr('onclick', "copySurvey('" + list[i].id + "','" + list[i].title + "','" + list[i].language.code + "', '" + list[i].security+ "', '" + list[i].isQuiz + "', '" + list[i].isDelphi + "', '" + list[i].isEVote + "', '" + list[i].isSelfAssessment + "');");
 							  } else {
 								  $(acopy).addClass("disabled actionRowAction").append("<span style='color: #ccc' class='glyphicon glyphicon-copy'></span>");
 							  }							     

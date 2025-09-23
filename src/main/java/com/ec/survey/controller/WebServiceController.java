@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLDecoder;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -1160,6 +1161,159 @@ public class WebServiceController extends BasicController {
 		return "";
 	}
 
+	public static String initDraftForURLParameters(Draft draft, String token, Survey survey, Invitation invitation, Map<String, String> values, boolean ignoreUnknownParameters) {
+		draft.setUniqueId(token);
+
+		AnswerSet answerSet = new AnswerSet();
+		answerSet.setUpdateDate(new Date());
+		answerSet.setLanguageCode(survey.getLanguage().getCode());
+		answerSet.setDate(answerSet.getUpdateDate());
+		answerSet.setSurvey(survey);
+		answerSet.setSurveyId(survey.getId());
+		answerSet.setUniqueCode(token);
+		answerSet.setIsDraft(true);
+		draft.setAnswerSet(answerSet);
+		if (invitation != null) {
+			draft.getAnswerSet().setInvitationId(invitation.getUniqueId());
+		}
+
+		Map<String, Element> elementsByAlias = survey.getElementsByAlias();
+		Map<Integer, Element> matrixQuestions = survey.getMatrixMap();
+		Map<String, Element> matrixQuestionsByAlias = survey.getMatrixMapByAlias();
+
+		for (Entry<String, String> entry : values.entrySet()) {
+			String questionalias = entry.getKey();
+			if (elementsByAlias.containsKey(questionalias)) {
+				Element question = elementsByAlias.get(questionalias);
+
+				if (question instanceof FreeTextQuestion || question instanceof EmailQuestion
+						|| question instanceof NumberQuestion || question instanceof RegExQuestion) {
+					Answer answer = new Answer();
+					answer.setAnswerSet(answerSet);
+					answer.setQuestionUniqueId(question.getUniqueId());
+					answer.setValue(entry.getValue());
+					answerSet.addAnswer(answer);
+				} else if (question instanceof DateQuestion) {
+
+					String dateval = entry.getValue();
+						Date date = null;
+
+						try {
+							date = Tools.parseDateString(dateval, ConversionTools.DateFormat);
+						} catch (DateTimeParseException dpe) {}
+
+					if (date == null) {
+						return "invalid date: " + dateval;
+					}
+
+					Answer answer = new Answer();
+					answer.setAnswerSet(answerSet);
+					answer.setQuestionUniqueId(question.getUniqueId());
+					answer.setValue(dateval);
+					answerSet.addAnswer(answer);
+				} else if (question instanceof TimeQuestion) {
+
+					String timeval = values.get(questionalias);
+					if (!Tools.isTimeString(timeval))
+					{
+						return "invalid time: " + timeval;
+					}
+
+					Answer answer = new Answer();
+					answer.setAnswerSet(answerSet);
+					answer.setQuestionUniqueId(question.getUniqueId());
+					answer.setValue(timeval);
+					answerSet.addAnswer(answer);
+				} else if (question instanceof ChoiceQuestion) {
+					String[] arrvalues = entry.getValue().split(",");
+					for (String alias : arrvalues) {
+						ChoiceQuestion cq = (ChoiceQuestion) question;
+						PossibleAnswer pa = cq.getPossibleAnswerByAlias(alias);
+
+						if (pa == null) {
+							return "invalid option " + alias + " for question " + questionalias;
+						}
+
+						Answer answer = new Answer();
+						answer.setAnswerSet(answerSet);
+						answer.setQuestionUniqueId(question.getUniqueId());
+						answer.setValue(pa.getId().toString());
+						answer.setPossibleAnswerUniqueId(pa.getUniqueId());
+						answerSet.addAnswer(answer);
+					}
+				} else if (question instanceof GalleryQuestion) {
+					String[] arrvalues = entry.getValue().split(",");
+					for (String value : arrvalues) {
+						Answer answer = new Answer();
+						answer.setAnswerSet(answerSet);
+						answer.setQuestionUniqueId(question.getUniqueId());
+						answer.setValue(value);
+						answerSet.addAnswer(answer);
+					}
+				} else {
+					// this is a matrix
+					if (matrixQuestionsByAlias.containsKey(questionalias)) {
+						// a matrix question
+						String[] arrvalues = entry.getValue().split(",");
+
+						for (String alias : arrvalues) {
+
+							if (!elementsByAlias.containsKey(alias)) {
+								return "invalid option " + alias + " for question " + questionalias;
+							}
+
+							Integer paid = elementsByAlias.get(alias).getId();
+
+							Answer answer = new Answer();
+							answer.setAnswerSet(answerSet);
+							answer.setQuestionUniqueId(matrixQuestionsByAlias.get(questionalias).getUniqueId());
+							answer.setValue(paid.toString());
+
+							Element pa = matrixQuestions.get(paid);
+							if (pa != null) {
+								answer.setPossibleAnswerUniqueId(pa.getUniqueId());
+							}
+
+							answerSet.addAnswer(answer);
+						}
+					}
+				}
+			} else if (questionalias.contains(" ")) {
+				//"+" in the query param gets parsed to space " "
+				// this is a table
+				String[] data = questionalias.split(" ");
+
+				var row = elementsByAlias.get(data[1]);
+				var col = elementsByAlias.get(data[2]);
+
+				var table = (Table) elementsByAlias.get(data[0]);
+
+				var rowNum = table.getQuestions().indexOf(row) + 1;
+				var colNum = table.getAnswers().indexOf(col) + 1;
+				if (rowNum <= 0 || colNum <= 0) {
+					return "invalid row or column index " + rowNum + " / " + colNum + " for question " + questionalias;
+				}
+
+				var answer = new Answer();
+				answer.setAnswerSet(answerSet);
+				answer.setQuestionUniqueId(table.getUniqueId());
+
+				answer.setPossibleAnswerUniqueId(row.getUniqueId() + "#" + col.getUniqueId());
+
+				answer.setValue(entry.getValue());
+				answer.setRow(rowNum);
+				answer.setColumn(colNum);
+				answerSet.addAnswer(answer);
+			} else {
+				if (!ignoreUnknownParameters) {
+					return "unknown question: " + questionalias;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	@RequestMapping(value = "/prefill/{shortname}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prefill(@PathVariable String shortname, HttpServletRequest request,
@@ -1184,7 +1338,7 @@ public class WebServiceController extends BasicController {
 				token = entry.getValue()[0];
 				continue;
 			}
-			if (values.containsKey(entry.getKey())){
+			if (values.containsKey(entry.getKey()) || entry.getValue().length > 1){
 				response.setStatus(412);
 				return "duplicate parameter found: " + entry.getKey();
 			}
@@ -1205,9 +1359,6 @@ public class WebServiceController extends BasicController {
 			return "invalid invitation code";
 		}
 
-		Map<Integer, Element> matrixQuestions = survey.getMatrixMap();
-		Map<String, Element> matrixQuestionsByAlias = survey.getMatrixMapByAlias();
-
 		if (invitation != null) {
 			Draft draft = answerService.getDraftByAnswerUID(token);
 			if (draft != null) {
@@ -1216,151 +1367,13 @@ public class WebServiceController extends BasicController {
 			}
 
 			draft = new Draft();
-			draft.setUniqueId(token);
-
-			AnswerSet answerSet = new AnswerSet();
-			answerSet.setUpdateDate(new Date());
-			answerSet.setLanguageCode(survey.getLanguage().getCode());
-			answerSet.setDate(answerSet.getUpdateDate());
-			answerSet.setSurvey(survey);
-			answerSet.setSurveyId(survey.getId());
-			answerSet.setUniqueCode(token);
-			answerSet.setIsDraft(true);
-			draft.setAnswerSet(answerSet);
-			draft.getAnswerSet().setInvitationId(invitation.getUniqueId());
-
-			Map<String, Element> elementsByAlias = survey.getElementsByAlias();
-
-			for (Entry<String, String> entry : values.entrySet()) {
-				String questionalias = entry.getKey();
-				if (elementsByAlias.containsKey(questionalias)) {
-					Element question = elementsByAlias.get(questionalias);
-
-					if (question instanceof FreeTextQuestion || question instanceof EmailQuestion
-							|| question instanceof NumberQuestion || question instanceof RegExQuestion) {
-						Answer answer = new Answer();
-						answer.setAnswerSet(answerSet);
-						answer.setQuestionUniqueId(question.getUniqueId());
-						answer.setValue(entry.getValue());
-						answerSet.addAnswer(answer);
-					} else if (question instanceof DateQuestion) {
-
-						String dateval = entry.getValue();
-						Date date = Tools.parseDateString(dateval, ConversionTools.DateFormat);
-						if (date == null) {
-							response.setStatus(412);
-							return "invalid date: " + dateval;
-						}
-
-						Answer answer = new Answer();
-						answer.setAnswerSet(answerSet);
-						answer.setQuestionUniqueId(question.getUniqueId());
-						answer.setValue(dateval);
-						answerSet.addAnswer(answer);
-					} else if (question instanceof TimeQuestion) {
-
-						String timeval = values.get(questionalias);
-						if (!Tools.isTimeString(timeval))
-						{
-							response.setStatus(412);
-							return "invalid time: " + timeval;
-						}
-
-						Answer answer = new Answer();
-						answer.setAnswerSet(answerSet);
-						answer.setQuestionUniqueId(question.getUniqueId());
-						answer.setValue(timeval);
-						answerSet.addAnswer(answer);
-					} else if (question instanceof ChoiceQuestion) {
-						String[] arrvalues = entry.getValue().split(",");
-						for (String alias : arrvalues) {
-							ChoiceQuestion cq = (ChoiceQuestion) question;
-							PossibleAnswer pa = cq.getPossibleAnswerByAlias(alias);
-
-							if (pa == null) {
-								response.setStatus(412);
-								return "invalid option " + alias + " for question " + questionalias;
-							}
-
-							Answer answer = new Answer();
-							answer.setAnswerSet(answerSet);
-							answer.setQuestionUniqueId(question.getUniqueId());
-							answer.setValue(pa.getId().toString());
-							answer.setPossibleAnswerUniqueId(pa.getUniqueId());
-							answerSet.addAnswer(answer);
-						}
-					} else if (question instanceof GalleryQuestion) {
-						String[] arrvalues = entry.getValue().split(",");
-						for (String value : arrvalues) {
-							Answer answer = new Answer();
-							answer.setAnswerSet(answerSet);
-							answer.setQuestionUniqueId(question.getUniqueId());
-							answer.setValue(value);
-							answerSet.addAnswer(answer);
-						}
-					} else {
-						// this is a matrix
-						if (matrixQuestionsByAlias.containsKey(questionalias)) {
-							// a matrix question
-							String[] arrvalues = entry.getValue().split(",");
-
-							for (String alias : arrvalues) {
-
-								if (!elementsByAlias.containsKey(alias)) {
-									response.setStatus(412);
-									return "invalid option " + alias + " for question " + questionalias;
-								}
-
-								Integer paid = elementsByAlias.get(alias).getId();
-
-								Answer answer = new Answer();
-								answer.setAnswerSet(answerSet);
-								answer.setQuestionUniqueId(matrixQuestionsByAlias.get(questionalias).getUniqueId());
-								answer.setValue(paid.toString());
-
-								Element pa = matrixQuestions.get(paid);
-								if (pa != null) {
-									answer.setPossibleAnswerUniqueId(pa.getUniqueId());
-								}
-
-								answerSet.addAnswer(answer);
-							}
-						}
-					}
-				} else if (questionalias.contains(" ")) {
-					//"+" in the query param gets parsed to space " "
-					// this is a table
-					String[] data = questionalias.split(" ");
-
-					var row = elementsByAlias.get(data[1]);
-					var col = elementsByAlias.get(data[2]);
-
-					var table = (Table) elementsByAlias.get(data[0]);
-
-					var rowNum = table.getQuestions().indexOf(row) + 1;
-					var colNum = table.getAnswers().indexOf(col) + 1;
-					if (rowNum <= 0 || colNum <= 0) {
-						response.setStatus(412);
-						return "invalid row or column index " + rowNum + " / " + colNum + " for question " + questionalias;
-					}
-
-					var answer = new Answer();
-					answer.setAnswerSet(answerSet);
-					answer.setQuestionUniqueId(table.getUniqueId());
-
-					answer.setPossibleAnswerUniqueId(row.getUniqueId() + "#" + col.getUniqueId());
-
-					answer.setValue(entry.getValue());
-					answer.setRow(rowNum);
-					answer.setColumn(colNum);
-					answerSet.addAnswer(answer);
-				} else {
-					response.setStatus(412);
-					return "unknown question: " + questionalias;
-				}
+			var message = initDraftForURLParameters(draft, token, survey, invitation, values, false);
+			if (message != null) {
+				response.setStatus(412);
+				return message;
 			}
 			
-			if (answerSet.getAnswers().isEmpty()) {
+			if (draft.getAnswerSet().getAnswers().isEmpty()) {
 				logger.error("prefill call rejected as the draft contribution would be empty: " + getFullURL(request));
 				response.setStatus(412);
 				return "prefill call rejected as the draft contribution would be empty";
@@ -1493,7 +1506,11 @@ public class WebServiceController extends BasicController {
 			Date startdate = null;
 			if (start != null) {
 				try {
-					startdate = Tools.parseDateString(start, StandardDateString);
+					Calendar startcalendar = Calendar.getInstance();
+					startcalendar.setTime(Tools.parseDateString(start, StandardDateString));
+					startcalendar.set(Calendar.MINUTE, 0);
+					startcalendar.set(Calendar.SECOND, 0);
+					startdate = startcalendar.getTime();
 				} catch (Exception pe) {
 					logger.error(pe.getLocalizedMessage(), pe);
 					response.setStatus(412);
@@ -1504,7 +1521,11 @@ public class WebServiceController extends BasicController {
 			Date enddate = null;
 			if (end != null) {
 				try {
-					enddate = Tools.parseDateString(end, StandardDateString);
+					Calendar endcalendar = Calendar.getInstance();
+					endcalendar.setTime(Tools.parseDateString(end, StandardDateString));
+					endcalendar.set(Calendar.MINUTE, 0);
+					endcalendar.set(Calendar.SECOND, 0);
+					enddate = endcalendar.getTime();
 				} catch (Exception pe) {
 					logger.error(pe.getLocalizedMessage(), pe);
 					response.setStatus(412);
@@ -2008,7 +2029,7 @@ public class WebServiceController extends BasicController {
 			survey.getBackgroundDocuments().put(label,
 					servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + uid);
 
-			surveyService.update(survey, true, true, true, user.getId());
+			surveyService.update(survey, true, true, user.getId());
 			webserviceService.increaseServiceRequest(user.getId());
 			response.setStatus(200);
 			return "1";
@@ -2109,7 +2130,7 @@ public class WebServiceController extends BasicController {
 			}
 			
 			survey.getUsefulLinks().put(survey.getUsefulLinks().size() + "#" + label, url);
-			surveyService.update(survey, true, true, true, user.getId());
+			surveyService.update(survey, true, true, user.getId());
 
 			response.setStatus(200);
 			webserviceService.increaseServiceRequest(user.getId());

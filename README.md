@@ -1,58 +1,54 @@
 # EUSurvey
 EUSurvey is the official online survey management tool of the European Commission. Its development was started in 2013 under the supervision of [DIGIT](https://ec.europa.eu/dgs/informatics/index_en.htm) and is published as open source software under the terms of the EUPL public license. EUSurvey is a servlet based application and can be installed on any servlet container.
-* Travis build on master branch [![Build Status](https://travis-ci.com/EUSurvey/EUSURVEY.svg?branch=master)](https://travis-ci.com/EUSurvey/EUsurvey)
-* [Latest Sonar Cloud analysis](https://sonarcloud.io/dashboard?id=EUSURVEY) ![Bugs](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=bugs) ![Code smells](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=code_smells) ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=EUSURVEY&metric=coverage)
 
 ## Installation requirements
-1. Tomcat 8
-1. Java 8
-1. MySQL 5.7
+1. Tomcat 9
+1. Java 11
+1. MySQL 8.0
 1. Maven
 
+Make sure to create a JRE_HOME environment variable that points to the Java installation folder.
+Make sure to create a CATALINA_HOME environment variable that points to Tomcat's installation folder.
+Make sure to add Maven's bin folder to the PATH environment variable.
+
 ## Quick start
-Extensive installation guidelines may be found [here](https://joinup.ec.europa.eu/sites/default/files/document/2017-08/eusurvey_oss_installation_guide_v1_4_0_1.pdf). We give a summary of installation guidelines here.
+Extensive installation guidelines may be found in our [installation guide](https://joinup.ec.europa.eu/sites/default/files/document/2017-08/eusurvey_oss_installation_guide_v1_4_0_1.pdf). We give a summary of installation guidelines here.
 
 ### Database initialization
-1. Create eusurvey schemas;
+Connect to the database server using a tool like MySQL Command Line Client to execute the following commands:
+
+1. Create eusurvey schema:
 ``` sql 
-create database eusurveydb character set utf8 COLLATE utf8_general_ci;
-create database eusurveyreportdb character set utf8 COLLATE utf8_general_ci;
+CREATE SCHEMA `eusurveydb` DEFAULT CHARACTER SET utf8mb4;
 ```
 
 2. Create a user which will access this schema;
 ``` sql 
-CREATE USER 'eusurveyuser'@'localhost' IDENTIFIED BY 'eusurveyuser'; 
+CREATE USER 'eusurveyuser'@'localhost' IDENTIFIED BY 'eusurveyuserpassword'; 
 GRANT ALL PRIVILEGES ON eusurveydb.* TO 'eusurveyuser'@'localhost';
 GRANT EVENT ON *.* TO 'eusurveyuser'@'localhost'; 
-
-CREATE USER 'eusurveyruser'@'localhost' IDENTIFIED BY 'eusurveyruser'; 
-GRANT ALL PRIVILEGES ON eusurveyreportdb.* TO 'eusurveyruser'@'localhost';
 ```
 
 3. Set Mysql variables
 ``` sql 
 SET GLOBAL event_scheduler = ON;
-SET GLOBAL log_bin_trust_function_creators = 1;
-SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;
 ```
+
+### Download source code
+Either download EUSurvey's source code as a ZIP archive an extract its content or use git to clone the repository.
+
 
 ### Spring properties modification
 Modify the spring properties from src/main/config file to match your requirements.
+For the standard OSS version please modify src/main/config/oss.
+If you want to use docker, please modify src/main/config/ossdocker.
 
 ### Run the application
 Build EUSurvey's war using the following command:
 ``` batch
 mvn clean install -Denvironment=oss
 ```
-
-Build & deploy the application on your tomcat manager using the following command:
-``` batch
-mvn clean tomcat7:deploy 
--Dtomcat.admin.password=your_tomcat_password
--Dtomcat.admin=your_tomcat_username
--Dtomcat.deploy.url=your_tomcat_url
--Denvironment=oss
-```
+Copy the war file from target/eusurvey.war to your Tomcat's webapps folder and restart Tomcat to automatically deploy the application. 
 
 ## Repository conventions
 ### Workflow

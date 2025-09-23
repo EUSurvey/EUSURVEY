@@ -29,6 +29,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,15 +79,21 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			if (surveyLoginMode)
 			{
 				survey = auth.getName().replace("surveyloginmode", "");
-				service = "auth/surveylogin?survey=" + survey;
+
+				if (auth.getDetails() != null && auth.getDetails() instanceof String) {
+					service = "auth/surveylogin?" + auth.getDetails();
+				} else {
+					service = "auth/surveylogin?survey=" + survey;
+				}
+
 			}
-					
+
 			// check if we are on open Cas solution then use the validateservice  url to avoid exception
 			// other (ecas) we have to use the laxValidate to allow login with external user JIRA ESURVEY-2759
 			if(ldapService.isCasOss()){
 				validationUrl = ecasvalidationhost + "/serviceValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
 			} else {
-				validationUrl = ecasvalidationhost + "/laxValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
+				validationUrl =  ecasvalidationhost + "/laxValidate?userDetails=true&ticket=" + ticket + "&service=" + host + URLEncoder.encode(service);
 			}
 			
 			boolean weakAuthentication = false;
@@ -262,8 +270,16 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 						}
 						authorities.add(new SimpleGrantedAuthority("ROLE_ECUSER_" + ecmoniker));
 					}
-					
+
 					authorities.add(new SimpleGrantedAuthority("ROLE_ECAS_SURVEY_" + survey));
+
+					if (auth.getDetails() != null && auth.getDetails() instanceof String) {
+						var details = auth.getDetails().toString();
+						if (details.contains("&")) {
+							details = details.substring(details.indexOf("&"));
+                            authorities.add(new SimpleGrantedAuthority("ROLE_ECAS_PARAMS_" + details));
+						}
+					}
 				}
 				
 				UsernamePasswordAuthenticationToken t = new UsernamePasswordAuthenticationToken(

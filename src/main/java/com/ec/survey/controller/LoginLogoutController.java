@@ -91,7 +91,7 @@ public class LoginLogoutController extends BasicController {
 			try {
 				User user = sessionService.getCurrentUser(request);
 
-				if (user != null) return "redirect:/dashboard";
+				if (user != null) return "redirect:/forms";
 			} catch (WeakAuthenticationException e) {
 				request.getSession().invalidate();
 				//and allow new login
@@ -158,8 +158,11 @@ public class LoginLogoutController extends BasicController {
 		String shortname = request.getParameter(Constants.SURVEY);
 		String draftid = request.getParameter("draftid");
 		String surveylanguage = request.getParameter("surveylanguage");
+		String query = request.getQueryString().substring(0, request.getQueryString().indexOf("&ticket"));
 		
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("surveyloginmode" + shortname, ticket + "&draftid=" + draftid + "&surveylanguage=" + surveylanguage);
+		token.setDetails(query);
+
 		Authentication authenticatedUser = customAuthenticationManager.authenticate(token);
 		SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
 		
@@ -204,7 +207,7 @@ public class LoginLogoutController extends BasicController {
 			user.setAgreedToPS(true);
 			administrationService.updateUser(user);
 			sessionService.setCurrentUser(request, user);
-			return new ModelAndView("redirect:/dashboard");
+			return new ModelAndView("redirect:/forms");
 		}
 	}
 	
@@ -225,7 +228,7 @@ public class LoginLogoutController extends BasicController {
 			
 			RequestCache requestCache = new HttpSessionRequestCache();
 			SavedRequest savedRequest = requestCache.getRequest(request, response);
-			String targetUrl = "/dashboard";
+			String targetUrl = "/forms";
 			if (savedRequest != null) {
 				 targetUrl = savedRequest.getRedirectUrl();
 			}
@@ -247,7 +250,7 @@ public class LoginLogoutController extends BasicController {
 			user.setAgreedToToS(true);
 			administrationService.updateUser(user);
 			sessionService.setCurrentUser(request, user);
-			return new ModelAndView("redirect:/dashboard");
+			return new ModelAndView("redirect:/forms");
 		}
 	}
 	
@@ -269,7 +272,7 @@ public class LoginLogoutController extends BasicController {
 			
 			RequestCache requestCache = new HttpSessionRequestCache();
 			SavedRequest savedRequest = requestCache.getRequest(request, response);
-			String targetUrl = "/dashboard";
+			String targetUrl = "/forms";
 			if (savedRequest != null) {
 				 targetUrl = savedRequest.getRedirectUrl();
 			}

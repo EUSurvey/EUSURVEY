@@ -189,7 +189,11 @@ public class SkinController extends BasicController {
 		
 		if (parameterMap.containsKey("name")) {
 			newSkin.setName(parameterMap.get("name")[0]);
-		}		
+		}
+
+		if (parameterMap.containsKey("isPublic")) {
+			newSkin.setIsPublic(parameterMap.get("isPublic")[0].equalsIgnoreCase("true"));
+		}
 
 		for (SkinElement element : newSkin.getElements()) {
 			if (parameterMap.containsKey("background-color" + element.getName())) {

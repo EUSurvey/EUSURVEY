@@ -99,16 +99,7 @@
 		  	sneaky = new ScrollSneak(location.hostname);
 		  	
 		  	<c:if test="${publication.showStatistics || publication.showCharts}">
-		  	<c:choose>
-			<c:when test="${skipstatistics == null}">
-			loadStatisticsAsync(true);
-			</c:when>
-			<c:otherwise>
-			$(".ajaxloaderimage").hide();
-			$("#loadstatisticsbutton").find("a").attr("onclick", "loadStatisticsAsync(true)");
-			$("#loadstatisticsbutton").show();
-			</c:otherwise>
-			</c:choose>
+                $(".ajaxloaderimage").hide();
 		  	</c:if>
 		  	
 		  	$('[data-toggle="tooltip"]').tooltip(); 
@@ -133,6 +124,15 @@
 			}
 			adaptTableToFilter();
 		}
+
+		var statisticsLoaded = false;
+		function showStatistics()
+        {
+            if (statisticsLoaded) return;
+
+            loadStatisticsAsync(true);
+            statisticsLoaded = true;
+        }
 		
 		function hideResults()
 		{
@@ -419,7 +419,7 @@
 					  		<li class="<c:if test="${selectedtab == 2}">active</c:if>"><a id="tab1" href="#individual" data-toggle="tab" onclick="$('#selectedtab').val('2'); hideResults();"><spring:message code="label.IndividualResults" /></a></li>
 					  	</c:if>
 					  	<c:if test="${publication.showStatistics}">
-					  		<li class="<c:if test="${selectedtab == 3}">active</c:if>"><a id="tab2" href="#statistics" data-toggle="tab" onclick="$('#selectedtab').val('3'); hideResults(); $('.statisticsExportIcons').show();"><spring:message code="label.Statistics" /></a></li>
+					  		<li class="<c:if test="${selectedtab == 3}">active</c:if>"><a id="tab2" href="#statistics" data-toggle="tab" onclick="$('#selectedtab').val('3'); hideResults(); $('.statisticsExportIcons').show(); showStatistics();"><spring:message code="label.Statistics" /></a></li>
 				
 							<c:if test="${form.survey.isQuiz}">
 								<li class="<c:if test="${selectedtab == 4}">active</c:if>"><a id="tab3" href="#statisticsquiz" data-toggle="tab" onclick="$('#selectedtab').val('4'); hideResults(); $('.statisticsQuizExportIcons').show();"><spring:message code="label.Quiz" /></a></li>

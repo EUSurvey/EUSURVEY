@@ -78,7 +78,7 @@ public class SavedRequestAwareAuthenticationSuccessHandlerExtended extends Simpl
 		String targetUrl = savedRequest.getRedirectUrl();
 
 		if (!savedRequest.getMethod().equalsIgnoreCase("GET") || isAjax(targetUrl, savedRequest) || targetUrl.equals("@null") || targetUrl.endsWith("addUser")) {
-			targetUrl = "/dashboard";
+			targetUrl = "/forms";
 		}
 
 		getRedirectStrategy().sendRedirect(request, response, targetUrl);

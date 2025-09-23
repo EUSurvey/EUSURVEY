@@ -74,7 +74,7 @@ function newFilesViewModel(files)
 	return viewModel;
 }
 
-function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, title, originalTitle, isDependentMatrixQuestion, css, index, useAndLogic, scoring, points, noNegativeScore)
+function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, title, originalTitle, isDependentMatrixQuestion, css, index, useAndLogic, scoring, points, noNegativeScore, hidden)
 {
 	var viewModel = newBasicViewModel();
 	viewModel.type = ko.observable('matrixitem');
@@ -83,6 +83,7 @@ function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, tit
 	viewModel.optional = ko.observable(optional);
 	viewModel.shortname = ko.observable(shortname);
 	viewModel.readonly = ko.observable(readonly);
+	viewModel.hidden = ko.observable(hidden);
 	viewModel.title = ko.observable(title);
 	viewModel.originalTitle = ko.observable(originalTitle == null ? title : originalTitle);
 	viewModel.isDependentMatrixQuestion = ko.observable(isDependentMatrixQuestion);
@@ -100,7 +101,7 @@ function newMatrixItemsViewModel(items)
 	var viewModel = ko.observableArray();
 	for (var i = 0; i < items.length; i++)
 	{
-		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i, items[i].useAndLogic, items[i].scoring, items[i].quizPoints, items[i].noNegativeScore));
+		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i, items[i].useAndLogic, items[i].scoring, items[i].quizPoints, items[i].noNegativeScore, items[i].hidden));
 	}
 	return viewModel;
 }
@@ -608,7 +609,8 @@ function newChoiceViewModel(element)
 	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.numColumns = ko.observable(element.numColumns);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));	
@@ -1099,7 +1101,8 @@ function newFreeTextViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.numRows = ko.observable(element.numRows);	
@@ -1168,7 +1171,8 @@ function getVariablesForFormula(formula) {
 function newFormulaViewModel(element)
 {
 	const viewModel = newBasicViewModel(element);
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.formula = ko.observable(element.formula);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));	
@@ -1252,7 +1256,8 @@ function newConfirmationViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.confirmationlabel = ko.observable(element.confirmationlabel);
 	viewModel.confirmationtext = ko.observable(element.confirmationtext);
 	viewModel.files = newFilesViewModel(element.files);	
@@ -1272,8 +1277,9 @@ function newRatingViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
-	viewModel.numIcons = ko.observable(element.numIcons);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
+	viewModel.numIcons = ko.observable(element.numIcons);
 	viewModel.iconType = ko.observable(element.iconType);	
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
@@ -1305,8 +1311,9 @@ function newNumberViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
-	viewModel.isUnique = ko.observable(element.isUnique);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
+	viewModel.isUnique = ko.observable(element.isUnique);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
@@ -1476,7 +1483,8 @@ function newEmailViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
@@ -1493,7 +1501,8 @@ function newDateViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
@@ -1516,7 +1525,8 @@ function newTimeViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
@@ -1537,7 +1547,8 @@ function newUploadViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
@@ -1556,7 +1567,8 @@ function newDownloadViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
@@ -1581,6 +1593,7 @@ function newGalleryViewModel(element)
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.optional = ko.observable(element.optional);
 	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.css = ko.observable(element.css);
 	
 	viewModel.getChild = function(uid)
@@ -1628,7 +1641,8 @@ function newMatrixViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
@@ -1752,7 +1766,8 @@ function newTableViewModel(element)
 	var viewModel = newBasicViewModel(element);
 	
 	viewModel.optional = ko.observable(element.optional);	
-	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.readonly = ko.observable(element.readonly);
+	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
@@ -1971,7 +1986,8 @@ function newComplexTableItemViewModel(element)
 			viewModel.maxString = ko.observable(element.maxString());
 			viewModel.formula = ko.observable(element.formula());
 			viewModel.readonly = ko.observable(element.readonly());
-		} else {	
+			viewModel.hidden = ko.observable(element.hidden());
+		} else {
 			viewModel.help = ko.observable(element.help);
 			viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 			viewModel.css = ko.observable(element.css);
@@ -2000,6 +2016,7 @@ function newComplexTableItemViewModel(element)
 			viewModel.maxString = ko.observable(element.maxString);
 			viewModel.formula = ko.observable(element.formula);
 			viewModel.readonly = ko.observable(element.readonly);
+			viewModel.hidden = ko.observable(element.hidden);
 		}
 
 		if (viewModel.cellType() == 3 || viewModel.cellType() == 1) {

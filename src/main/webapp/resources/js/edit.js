@@ -501,7 +501,7 @@ function getDeleteElementRow(element, addignorebutton)
 		var isAnswer = element.closest("thead").length > 0 || (element.hasClass("table-header") &&  element.closest("tr").index() == 0);
 		if (isAnswer)
 		{
-			var remainingAnswers = element.closest("tr").find("th").length - 1 - element.closest("tr").find("th.selectedquestion").length;
+			var remainingAnswers = element.closest("tr").find("td").length - 1 - element.closest("tr").find("td.selectedquestion").length;
 			if (remainingAnswers < 1)
 			{
 				stop = true;

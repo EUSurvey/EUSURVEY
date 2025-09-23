@@ -84,9 +84,10 @@
 <script type="text/javascript" src="${contextpath}/resources/js/scroll-sneak.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/system.js?version=<%@include file="version.txt" %>"></script>
 <c:if test="${enablecookieconsentkit == 'true'}">
-	<script defer="defer" src="https://europa.eu/webtools/load.js" type="text/javascript"></script>
+	<script defer="defer" src="https://webtools.europa.eu/load.js" type="text/javascript"></script>
 	<script type="application/json">{
-  "utility": "cck"
+  "utility" : "cck",
+  "url": "https://commission.europa.eu/cookies-policy_{lang}"
 }</script>
 </c:if>
 <script type="text/javascript" src="${contextpath}/resources/js/bootstrap-slider.min.js?version=<%@include file="version.txt" %>"></script>

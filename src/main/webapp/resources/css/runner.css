@@ -598,3 +598,7 @@ textarea:disabled, input:disabled {
 .single-page fieldset:last-child .delphitonextquestion {
 	display: none;
 }
+
+fieldset:has(.hidden-element-marker) {
+	display: none;
+}

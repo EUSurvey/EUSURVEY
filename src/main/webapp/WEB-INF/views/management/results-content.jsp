@@ -670,11 +670,16 @@
 			</table>
 		</div>
 		<div id="scrollarea" class="scrollarea" tabindex="-1">
-			<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0}">style="display:block;"</c:if>>
+			<div id="tbllist-empty" class="noDataPlaceHolder" style="display:none;">
 				<p>
 					<spring:message code="label.NoDataContributionText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
 				<p>
-			</div>	
+			</div>
+			<div id="tbllist-loading" class="noDataPlaceHolder" style="display:block;">
+				<p>
+					<spring:message code="label.Loading"/>...&nbsp;
+				<p>
+			</div>
 		<table id="contentstable2" class="table table-bordered table-striped">
 		<tbody id="contentstablebody">
 			
@@ -836,7 +841,7 @@
 				   $(".overlaymenu").hide();
 			   });
  			  $(window).resize(function() {
- 				  $(".overlaymenu").hide();
+ 				  //$(".overlaymenu").hide();
  				  adaptScrollArea();
  			  });		
 			 
@@ -1171,8 +1176,10 @@
 			$( "#wheel" ).show();
 			
 			var rows = 40;
+
+			const thisPage = newPage++
 			
-			var s = "page=" + newPage++ + "&rows=" + rows;	
+			var s = "page=" + thisPage + "&rows=" + rows;
 			
 			<c:if test="${publication != null}">
 				s = s + "&publicationmode=true";			
@@ -1186,17 +1193,32 @@
 				  dataType: 'json',
 				  data: s,
 				  cache: false,
+
+				  error: function(jqXHR) {
+                  	 showError('<spring:message code="error.unexpected" />');
+                  	 endreached = true;
+                     inloading = false;
+					 $("#tbllist-loading").hide();
+					 $("#tbllist-empty").show();
+                     $( "#wheel" ).hide();
+                  },
+
 				  success: function( list ) {
 				  
 					  if (list.length <= 1)
 					  {
 						  endreached = true;
 						  inloading = false;
-						  $( "#wheel" ).hide();	
+						  $("#tbllist-loading").hide();
+						  if (thisPage === 1) {
+							  $("#tbllist-empty").show();
+						  } else {
+							  $("#tbllist-empty").hide();
+						  }
+						  $( "#wheel" ).hide();
 						  return;
 					  }
-					  
-					  $("#tbllist-empty").hide();
+
 					  if ('${resultType}' == 'content')
 						  $("#scrollareaheader").css({ 'overflow-x' : 'hidden'});
 					  
@@ -1451,6 +1473,7 @@
 							$(tr).append('<td class="cellscore"><div class="answercell">' + list[i++] + '</div></td>');
 						</c:if>
 
+						$("#tbllist-loading").hide();
 						$( "#contentstablebody").append(tr);
 					  }
 

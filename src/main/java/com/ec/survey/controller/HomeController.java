@@ -353,7 +353,7 @@ public class HomeController extends BasicController {
 			createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 			createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
 			createTemplate = createTemplate.replace("[BUSINESSSERVICE]", "EU Survey Solutions");
-			createTemplate = createTemplate.replace("[SERVICEOFFERING]", "EU Survey - General issue");
+			createTemplate = createTemplate.replace("[SERVICEOFFERING]", "");
 
 			sessionService.initializeProxy();
 			

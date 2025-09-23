@@ -325,8 +325,8 @@ function updateProgress() {
 
 	// progressbar
 	if ($('#progressBar').length != 0) {
-		var totalForProgress = $('.forprogress').not(".untriggered,.sahidden,.saDependentHidden").length;
-		var answered = $('.forprogress.answered').not(".untriggered,.sahidden,.saDependentHidden").length;
+		var totalForProgress = $('.forprogress').not(".untriggered,.sahidden,.saDependentHidden,:has(.hidden-element-marker)").length;
+		var answered = $('.forprogress.answered').not(".untriggered,.sahidden,.saDependentHidden,:has(.hidden-element-marker)").length;
 		percent = answered == 0 ? 0 : Math.round(answered / totalForProgress * 100);
 
 		$('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);

@@ -360,7 +360,7 @@ var UndoProcessor = function() {
 						{
 							$("#content").prepend(item);
 						} else {
-							$(item).insertAfter($($("#content").find("li")[position-1]));
+							$(item).insertAfter($($("#content").find("li.survey-element")[position-1]));
 						}
 						moveItemInNavigation(oldpos[i],newpos[i]);
 					}
@@ -1060,7 +1060,7 @@ var UndoProcessor = function() {
 					{
 						$("#content").prepend(item);
 					} else {
-						$(item).insertAfter($("#content").find("li")[position-1]);
+						$(item).insertAfter($("#content").find("li.survey-element")[position-1]);
 					}
 					addElementHandler(item);
 					addToNavigation(item, position);
@@ -1081,7 +1081,7 @@ var UndoProcessor = function() {
 						{
 							$("#content").prepend(item);
 						} else {
-							$(item).insertAfter($($("#content").find("li")[position-1]));
+							$(item).insertAfter($($("#content").find("li.survey-element")[position-1]));
 						}	
 						moveItemInNavigation(newpos[i],oldpos[i]);
 					}

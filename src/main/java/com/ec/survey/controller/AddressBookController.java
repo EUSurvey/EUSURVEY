@@ -91,7 +91,16 @@ public class AddressBookController extends BasicController {
 		paging.setNumberOfItems(numberOfAttendees);
 		
 		List<Attendee> attendees = attendeeService.getAttendees(ownerId, filter, paging.getCurrentPage(), paging.getItemsPerPage());
-		paging.setItems(attendees);		
+		paging.setItems(attendees);
+
+		boolean filterSet = false;
+
+		for (Entry<String, String> entry : filter.entrySet()) {
+            if (!entry.getValue().isEmpty()) {
+                filterSet = true;
+                break;
+            }
+		}
 		
     	ModelAndView result = new ModelAndView("addressbook/addressbook", "paging", paging);
     	result.addObject("attributeNames", user.getSelectedAttributes());
@@ -177,7 +186,7 @@ public class AddressBookController extends BasicController {
     		if (deleted) result.addObject("deletedcontacts", true);
     		result.addObject("editedattendeesids", StringUtils.collectionToCommaDelimitedString(ids));
 		}
-    	    	
+    	    	result.addObject("filterSet", filterSet);
     	return result;
 	}
 	
@@ -1253,15 +1262,17 @@ public class AddressBookController extends BasicController {
 		Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 10);		
 		HashMap<String, String> filter = new HashMap<>();
 		
+		boolean filterSet = false;
+		
 		for (Entry<String, String[]> entry : parameterMap.entrySet()) {
 			if (!entry.getKey().equalsIgnoreCase("newPage") && !entry.getKey().equalsIgnoreCase("itemsPerPage"))
 			{
-				if (entry.getKey().startsWith("visibleAttendee") || entry.getKey().startsWith("selectedAttendee"))
-				{
-					//ignore
-				} else 
+				if (!entry.getKey().startsWith("visibleAttendee") && !entry.getKey().startsWith("selectedAttendee"))
 				{
 					filter.put(entry.getKey(), entry.getValue()[0]);
+					if (!entry.getKey().equals("_csrf") && !entry.getValue()[0].isEmpty()) {
+						filterSet = true;
+					}
 				}
 			}
 		}		
@@ -1279,6 +1290,7 @@ public class AddressBookController extends BasicController {
     	result.addObject("attributeNames", user.getSelectedAttributes());
     	result.addObject("allAttributeNames", attendeeService.getAllAttributes(ownerId));
     	result.addObject(Constants.FILTER, filter);
+		result.addObject("filterSet", filterSet);
     	result.addObject("uploadItem", new UploadItem());
     	
     	request.getSession().setAttribute("attendees-paging", paging.clean());

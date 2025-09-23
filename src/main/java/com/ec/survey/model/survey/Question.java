@@ -41,6 +41,8 @@ public abstract class Question extends Element {
 	private boolean showExplanationBox;
 	private boolean noNegativeScore;
 
+	private boolean hidden;
+
 	public Question() {
 	}
 
@@ -127,6 +129,14 @@ public abstract class Question extends Element {
 
 	public void setIsDelphiQuestion(Boolean delphiQuestion) {
 		this.delphiQuestion = delphiQuestion != null && delphiQuestion;
+	}
+
+	@Column(name = "QHIDDEN")
+	public Boolean getHidden() {
+		return hidden;
+	}
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden != null && hidden;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -246,7 +256,8 @@ public abstract class Question extends Element {
 		copy.setShowExplanationBox(getShowExplanationBox());
 		copy.setDelphiChartType(getDelphiChartType());
 		copy.setNoNegativeScore(getNoNegativeScore());
-		
+		copy.setHidden(getHidden());
+
 		if (ecfCompetency != null) {
 			copy.setEcfCompetency(this.getEcfCompetency());
 		}
@@ -336,6 +347,8 @@ public abstract class Question extends Element {
 			if (!(Objects.equals(getShowExplanationBox(), question.getShowExplanationBox()))) return true;
 			if (!(Objects.equals(getDelphiChartType(), question.getDelphiChartType()))) return true;
 			if (!(Objects.equals(getNoNegativeScore(), question.getNoNegativeScore()))) return true;
+
+			if (!(Objects.equals(getHidden(), question.getHidden()))) return true;
 		} else {
 			return true;
 		}

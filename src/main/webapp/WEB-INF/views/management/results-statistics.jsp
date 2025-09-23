@@ -21,10 +21,6 @@
 	</c:otherwise>
 </c:choose>		
 
-	<div id="loadstatisticsbutton" class="hideme" style="text-align: center">
-		<a class="btn btn-default" onclick="loadStatisticsAsync(false);"><spring:message code="label.LoadStatistics" /></a>
-	</div>
-	
 	<div id="scrollareastatistics" class="scrollarea" style="height: auto">
 
 		<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="question">			

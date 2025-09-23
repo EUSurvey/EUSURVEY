@@ -30,7 +30,7 @@ public class ChangeOwnerController extends BasicController {
 
 		var model = new ModelAndView("error/generic");
 
-		model.addObject("message", resources.getMessage("message.OwnerChangeRequestInvalid ", null, "This request to change survey ownership is not valid anymore.", locale));
+		model.addObject("message", resources.getMessage("message.OwnerChangeRequestInvalid", null, "This request to change survey ownership is not valid anymore.", locale));
 
 		return model;
 	}
@@ -55,7 +55,7 @@ public class ChangeOwnerController extends BasicController {
 
 		var model = new ModelAndView("error/generic");
 
-		model.addObject("message", resources.getMessage("message.OwnerChangeRequestInvalid ", null, "This request to change survey ownership is not valid anymore.", locale));
+		model.addObject("message", resources.getMessage("message.OwnerChangeRequestInvalid", null, "This request to change survey ownership is not valid anymore.", locale));
 
 		return model;
 	}

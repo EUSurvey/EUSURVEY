@@ -124,7 +124,7 @@
 			<c:forEach var="element" items="${page}">
 								
 				<c:choose>
-					<c:when test="${invisibleElements != null && invisibleElements.contains(element.uniqueId)}">
+					<c:when test="${element.isElementHidden() || (invisibleElements != null && invisibleElements.contains(element.uniqueId))}">
 						<div class="survey-element" id="${element.id}" style="margin: 5px; margin-top: 25px; display: none;">
 					</c:when>
 					<c:otherwise>
@@ -700,7 +700,7 @@
 				<c:if test="${element.getType() == 'Confirmation'}">
 					<div class="questiontitle">${form.getQuestionTitle(element)}</div>																			
 					
-					<c:if test="${element.useupload}">						
+					<c:if test="${element.isUseupload()}">
 						<div class="files" style="margin-left: 40px;">
 							<c:forEach items="${element.files}" var="file">
 								<a class="visiblelink" target="_blank" href="${contextpath}/files/${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a> <br />

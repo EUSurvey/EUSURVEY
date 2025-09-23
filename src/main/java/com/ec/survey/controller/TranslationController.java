@@ -107,6 +107,11 @@ public class TranslationController extends BasicController {
 			result.addObject(Constants.MESSAGE, message);
 		}
 
+        if ("true".equalsIgnoreCase(request.getParameter("requested"))) {
+            String message = resources.getMessage("info.RequestTranslation", null, "Request for translation was successful", locale);
+            result.addObject(Constants.MESSAGE, message);
+        }
+
 		if (request.getParameter("done") != null && request.getParameter("done").equalsIgnoreCase("1")) {
 			String message = resources.getMessage("message.TranslationImportedSuccessfully", null,
 					"Translation has been imported successfully.", locale);
@@ -160,12 +165,12 @@ public class TranslationController extends BasicController {
 
 			if (id == 0) {
 				SurveyHelper.replace(form.getSurvey(), search, replace);
-				surveyService.update(form.getSurvey(), true, true, true, u.getId());
+				surveyService.update(form.getSurvey(), true, true, u.getId());
 			} else {
 				Translations translations = translationService.getTranslations(id);
 				if (form.getSurvey().getLanguage().getCode().equalsIgnoreCase(translations.getLanguage().getCode())) {
 					SurveyHelper.replace(form.getSurvey(), search, replace);
-					surveyService.update(form.getSurvey(), true, false, true, u.getId());
+					surveyService.update(form.getSurvey(), false, true, u.getId());
 				}
 
 				for (Translation translation : translations.getTranslations()) {
@@ -177,7 +182,7 @@ public class TranslationController extends BasicController {
 					}
 				}
 				translationService.save(translations);
-				surveyService.makeDirty(form.getSurvey().getId());
+				surveyService.updatePendingChanges(form.getSurvey());
 			}
 
 			return new ModelAndView("redirect:/" + shortname + "/management/translations");
@@ -246,7 +251,7 @@ public class TranslationController extends BasicController {
 
 			if (success) {
 				if (blnActive) {
-					surveyService.makeDirty(translations.getSurveyId());
+					surveyService.updatePendingChanges(survey);
 				}
 
 				result = "{\"success\": true}";
@@ -523,7 +528,7 @@ public class TranslationController extends BasicController {
 				translations.setActive(active);
 				translationService.save(translations);
 
-				surveyService.makeDirty(translations.getSurveyId());
+				surveyService.updatePendingChanges(form.getSurvey());
 			}
 		}
 
@@ -655,7 +660,7 @@ public class TranslationController extends BasicController {
 			}
 
 			if (dirty) {
-				surveyService.makeDirty(Integer.parseInt(survey));
+				surveyService.updatePendingChanges(surveyByID);   //.makeDirty(Integer.parseInt(survey));
 			}
 
 			return new ModelAndView("redirect:/" + shortname + "/management/translations?saved=true");
@@ -782,7 +787,9 @@ public class TranslationController extends BasicController {
 					return new ModelAndView(
 							"redirect:/" + shortname + "/management/translations?error=RequestTranslation");
 				} else {
-					return new ModelAndView("redirect:/" + shortname + "/management/translations");
+                    var param = "";
+                    if (newTranslation.getRequested()) param = "?requested=true";
+					return new ModelAndView("redirect:/" + shortname + "/management/translations" + param);
 				}
 			}
 		}
@@ -1000,7 +1007,7 @@ public class TranslationController extends BasicController {
 				}
 				if (translations.getLanguage().getCode().equalsIgnoreCase(form.getSurvey().getLanguage().getCode())) {
 					TranslationsHelper.synchronizePivot(form.getSurvey(), translations);
-					surveyService.update(form.getSurvey(), true, true, true,
+					surveyService.update(form.getSurvey(), true, true,
 							sessionService.getCurrentUser(request).getId());
 					activityService.logTranslations(ActivityRegistry.ID_TRANSLATION_MODIFIED, translations.getLanguage().getCode(), oldInfo,
 							translations.getInfo(), sessionService.getCurrentUser(request).getId(),
@@ -1014,7 +1021,7 @@ public class TranslationController extends BasicController {
 							sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
 
 					if (translations.getActive()) {
-						surveyService.makeDirty(form.getSurvey().getId());
+						surveyService.updatePendingChanges(form.getSurvey());
 					}
 
 					return new ModelAndView("redirect:/" + shortname + "/management/translations?done=2");
@@ -1027,7 +1034,7 @@ public class TranslationController extends BasicController {
 					}
 					translationService.save(existingTranslations);
 					if (dirty) {
-						surveyService.makeDirty(form.getSurvey().getId());
+						surveyService.updatePendingChanges(form.getSurvey());
 					}
 					activityService.logTranslations(ActivityRegistry.ID_TRANSLATION_MODIFIED, existingTranslations.getLanguage().getCode(), oldInfo,
 							existingTranslations.getInfo(), sessionService.getCurrentUser(request).getId(),

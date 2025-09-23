@@ -348,6 +348,19 @@ public class SurveyService extends BasicService {
 			sql += "(s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)";
 		}
 
+		// Take all organisations in filter and append the corresponding full name (e.g. ACER -> eu.europa.acer)
+		if (filter.getOrganisations() != null) {
+			List<String> organisationFull = new ArrayList<>();
+			for (String organisation : filter.getOrganisations()) {
+				if (!organisation.contains("eu.europa.")) {
+					organisationFull.add("eu.europa." + organisation.toLowerCase());
+				}
+			}
+			for (String organisation : organisationFull) {
+				filter.addOrganisation(organisation);
+			}
+		}
+
 		HashMap<String, Object> parameters = new HashMap<>();
 		sql += getSql(filter, parameters);
 
@@ -364,7 +377,16 @@ public class SurveyService extends BasicService {
 			int userId = ConversionTools.getValue(row[columnNum++]);
 			User user = administrationService.getUser(userId);
 			survey.setOwner(user);
-			survey.setOrganisation(utilsService.getAllOrganisations(new Locale(languageMap.get(row[columnNum++]).toString())).get(row[columnNum++]));
+
+			Locale locale = new Locale(languageMap.get(row[columnNum++]).toString());
+			String organisation = (String) row[columnNum++];
+
+			// Convert organisation full name to Code
+			if (organisation != null && organisation.contains("eu.europa.")) {
+				organisation = organisation.replace("eu.europa.", "").toUpperCase();
+			}
+
+			survey.setOrganisation(utilsService.getAllOrganisations(locale).get(organisation));
 
 			survey.setIsOPC((Boolean) row[columnNum++]);
 			survey.setIsQuiz((Boolean) row[columnNum++]);
@@ -1238,6 +1260,127 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
+	public PendingChanges getPendingChanges(String surveyUid) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "FROM PendingChanges pc WHERE pc.surveyUid = :uid";
+		Query<PendingChanges> query = session.createQuery(hql, PendingChanges.class).setParameter("uid", surveyUid).setMaxResults(1);
+		return  query.uniqueResult();
+	}
+
+	@Transactional
+	public PendingChanges getOrCreatePendingChanges(Survey survey) {
+		PendingChanges pc = getPendingChanges(survey.getUniqueId());
+		if (pc == null) {
+			return updatePendingChanges(survey);
+		}
+		return pc;
+	}
+
+	@Transactional
+	public void deletePendingChanges(String surveyUid) {
+		Session session = sessionFactory.getCurrentSession();
+		PendingChanges pc = getPendingChanges(surveyUid);
+
+		try {
+			if (pc != null) {
+				session.delete(pc); // this also deletes the child collections
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Transactional
+	public void clearPendingChanges(String surveyUid) {
+		Session session = sessionFactory.getCurrentSession();
+		PendingChanges pc = getPendingChanges(surveyUid);
+
+		try {
+			if (pc != null) {
+				pc.getNewElements().clear();
+				pc.getChangedElements().clear();
+				pc.getDeletedElements().clear();
+				session.saveOrUpdate(pc);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Transactional
+	public PendingChanges updatePendingChanges(Survey survey) {
+		Session session = sessionFactory.getCurrentSession();
+
+		PendingChanges pc = getPendingChanges(survey.getUniqueId());
+
+		if (pc == null) {
+			pc = new PendingChanges();
+			pc.setSurveyUid(survey.getUniqueId());
+		} else {
+			pc.getNewElements().clear();
+			pc.getChangedElements().clear();
+			pc.getDeletedElements().clear();
+		};
+
+		Map<Element, Integer> pendingChanges = surveyService.getPendingChanges(survey);
+		for (Entry<Element, Integer> entry : pendingChanges.entrySet()) {
+			switch (entry.getValue()) {
+				case 0:
+					pc.getNewElements().add(entry.getKey().getNameOrTypeStrippedAtMost100());
+					break;
+				case 1:
+					if (entry.getKey() instanceof PropertiesElement && ((PropertiesElement)entry.getKey()).isOrderChanged()) {
+						pc.getChangedElements().add("PropertiesElementOrderChanged");
+					} else {
+						pc.getChangedElements().add(entry.getKey().getNameOrTypeStrippedAtMost100());
+					}
+					break;
+				case 2:
+					pc.getDeletedElements().add(entry.getKey().getNameOrTypeStrippedAtMost100());
+					break;
+				default:
+					break;
+			}
+		}
+
+		session.saveOrUpdate(pc);
+
+		boolean pending = pc.hasPendingChanges();
+		if (survey.getHasPendingChanges() != pending) {
+			survey.setHasPendingChanges(pending);
+			if (pending) {
+				surveyService.makeDirty(survey.getId());
+			} else {
+				surveyService.makeClean(survey.getId());
+			}
+		}
+
+		return pc;
+	}
+
+	@Transactional
+	public Survey getSurveyLight(String uidorshortname, boolean isDraft, boolean checkNotDeleted) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "FROM Survey s WHERE (s.shortname = :uid OR s.uniqueId = :uid) AND s.isDraft = :draft";
+		if (checkNotDeleted) {
+			hql += " AND (s.isDeleted is null OR s.isDeleted = false)";
+		}
+		hql += " ORDER BY s.id DESC";
+
+		try {
+
+			Query<Survey> query = session.createQuery(hql, Survey.class).setParameter("uid", uidorshortname).setParameter("draft", isDraft)
+					.setReadOnly(true).setMaxResults(1);
+
+			Survey survey = query.uniqueResult();
+			return survey;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Transactional
 	public Survey getSurvey(String uidorshortname, boolean isDraft, boolean checkActive, boolean readReplies,
 			boolean useEagerLoading, String language, boolean readonly, boolean checkNotDeleted, boolean shortnamefirst,
 			boolean synchronize) {
@@ -1493,7 +1636,7 @@ public class SurveyService extends BasicService {
 		if (deactivateAutoPublishing) {
 			publishedSurvey.setAutomaticPublishing(false);
 		}
-		publishedSurvey = update(publishedSurvey, false, true, false, userId);
+		publishedSurvey = update(publishedSurvey, true, false, userId);
 
 		this.computeTrustScore(originalSurvey);
 
@@ -1775,7 +1918,7 @@ public class SurveyService extends BasicService {
 			if (deactivateAutoPublishing) {
 				published.setAutomaticPublishing(false);
 			}
-			update(published, false, false, false, userId);
+			update(published, false, false, userId);
 		} else {
 			throw new MessageException("Survey does not exist");
 		}
@@ -1826,6 +1969,8 @@ public class SurveyService extends BasicService {
 		deleteSurveyData(survey.getId(), false, false, survey.getUniqueId(), false);
 		session.delete(survey);
 
+		clearPendingChanges(survey.getUniqueId());
+
 		return newDraft;
 	}
 
@@ -1846,7 +1991,7 @@ public class SurveyService extends BasicService {
 				publishedSurvey.setNotificationValue(null);
 				publishedSurvey.setNotificationUnit(null);
 			}
-			update(publishedSurvey, false, false, false, userId);
+			update(publishedSurvey, false, false, userId);
 		}
 
 		Survey ob = session.get(Survey.class, survey.getId());
@@ -2008,25 +2153,25 @@ public class SurveyService extends BasicService {
 		answerService.deleteStatisticsForSurvey(publishedSurvey.getId());
 
 		reportingService.addToDo(ToDo.CHANGEDSURVEY, draftSurvey.getUniqueId(), null);
+		clearPendingChanges(draftSurvey.getUniqueId());
 
 		return newPublishedSurvey.getId();
 	}
 
-	@Transactional
+	@Transactional(readOnly = false)
 	public void makeDirty(int id) {
 		Session session = sessionFactory.getCurrentSession();
-		Survey survey = session.get(Survey.class, id);
-		session.setReadOnly(survey, false);
-		survey.setHasPendingChanges(true);
-		session.update(survey);
+
+		var query = session.createQuery("UPDATE Survey s SET s.hasPendingChanges = true WHERE s.id = :id");
+		query.setParameter("id", id);
+		query.executeUpdate();
 	}
 
 	@Transactional(readOnly = false)
 	public void makeClean(int id) {
 		Session session = sessionFactory.getCurrentSession();
 
-		@SuppressWarnings("unchecked")
-		Query<Survey> query = session.createQuery("UPDATE Survey s SET s.hasPendingChanges = false WHERE s.id = :id");
+		var query = session.createQuery("UPDATE Survey s SET s.hasPendingChanges = false WHERE s.id = :id");
 		query.setParameter("id", id);
 		query.executeUpdate();
 	}
@@ -2074,9 +2219,9 @@ public class SurveyService extends BasicService {
 		Survey survey = SurveyHelper.parseSurvey(request, this, fileService, selfassessmentService, servletContext,
 				activityService.isEnabled(ActivityRegistry.ID_ELEMENT_ORDER), activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), fileIDsByUID);
 
-		Map<Element, Integer> pendingChanges = surveyService.getPendingChanges(survey);
+		//Map<Element, Integer> pendingChanges = surveyService.getPendingChanges(survey);
 
-		update(survey, pendingChanges.size() > 0, true, false, sessionService.getCurrentUser(request).getId());
+		update(survey, true, false, sessionService.getCurrentUser(request).getId());
 
 		Map<String, Integer> referencedFilesNew = survey.getReferencedFileUIDs(contextpath);
 
@@ -2096,10 +2241,10 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-	public Survey update(Survey survey, boolean hasPendingChanges, boolean synchronizeTranslations, boolean mergeFirst,
+	public Survey update(Survey survey, boolean synchronizeTranslations, boolean mergeFirst,
 			int userId) {
 		Session session = sessionFactory.getCurrentSession();
-		survey.setHasPendingChanges(hasPendingChanges);
+		//survey.setHasPendingChanges(hasPendingChanges);
 		survey.setUpdated(new Date());
 
 		if (survey.getRegistrationForm()) {
@@ -2306,7 +2451,8 @@ public class SurveyService extends BasicService {
 			
 			NativeQuery query6 = session.createSQLQuery("DELETE FROM DELETEDCONTRIBUTIONS WHERE DELETEDCONTRIBUTIONS_SURVEY = :uid");
 			query6.setParameter("uid", uid).executeUpdate();
-			
+
+			deletePendingChanges(uid);
 		}
 
 		//NativeQuery query = session.createSQLQuery("DELETE FROM TRANSLATION WHERE SURVEY_ID = :id");
@@ -2504,12 +2650,15 @@ public class SurveyService extends BasicService {
 
 		importSurveyTags(copy);
 
-		if (result.getActiveSurvey() != null) {
+		//Must be the same condition as for the active survey branch in importSurvey()
+		if (result.getActiveSurvey() != null && result.getActiveAnswerSets() != null && !result.getActiveAnswerSets().isEmpty()) {
 			copy.setIsActive(false);
 			copy.setIsPublished(true);
+		} else {
+			copy.setIsPublished(false);
 		}
 
-		this.update(copy, false, true, false, user.getId());
+		this.update(copy, true, false, user.getId());
 
 		return oldToNewUniqueIds;
 	}
@@ -2559,7 +2708,7 @@ public class SurveyService extends BasicService {
 			}
 		}
 
-		this.update(copyOld, false, true, false, user.getId());
+		this.update(copyOld, true, false, user.getId());
 		return copyOld;
 	}
 
@@ -2594,7 +2743,7 @@ public class SurveyService extends BasicService {
 			copyActive.setIsPublished(true);
 		}
 
-		this.update(copyActive, false, true, false, user.getId());
+		this.update(copyActive, true, false, user.getId());
 	}
 
 	@Transactional
@@ -2694,6 +2843,7 @@ public class SurveyService extends BasicService {
 			
 			importSurveyData(result, true, copy, oldToNewUniqueIds, result.getSurvey().getId(), convertedUIDs, evaluationCriteriaMappings, oldIdToNewCriteria);
 
+			//Needs to be the same condition as the active survey branch inside importDraftSurvey()
 			if (result.getActiveSurvey() != null && result.getActiveAnswerSets() != null
 					&& !result.getActiveAnswerSets().isEmpty()) {
 				Map<Integer, Integer> oldSourceIdsById = getSourceIdsById(result.getActiveSurvey());
@@ -5344,7 +5494,7 @@ public class SurveyService extends BasicService {
 
 		Date deletedBefore = cal.getTime();
 		Query<Integer> query = session.createQuery(
-				"SELECT s.id FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true AND s.deleted < :deletedBefore", Integer.class);
+				"SELECT s.id FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true AND (s.doNotDelete = false or s.doNotDelete is null) AND s.deleted < :deletedBefore", Integer.class);
 		query.setParameter("deletedBefore", deletedBefore);
 
 		return query.list();
@@ -6024,8 +6174,10 @@ public class SurveyService extends BasicService {
 
 		String url = "[HOST]/" + survey.getShortname() + "/management/overview";
 
-		String mailText = "Your survey<br />" + survey.getShortname() + "<br /><a href='" + url + "'>" + url + "</a>"
-				+ "<br />" + survey.getTitleSort() + "<br />is now available again and can be published.";
+		String mailText = "Dear Sir or Madam,<br /><br />" +
+				"Your survey is now available again and can be published.<br /><br />" +
+				"<table><tr><td>Alias:</td><td><a href='" + url + "'>" + survey.getShortname() + "</a>" + "</td></tr>" +
+				"<tr><td>Survey name:&nbsp;&nbsp;</td><td>" + survey.getTitleSort() + "</td></tr></table>";
 
 		// send email
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
@@ -6701,7 +6853,7 @@ public class SurveyService extends BasicService {
 	@Transactional
 	public List<Survey> getSurveysToBeMarkedArchived() {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "FROM Survey s WHERE s.isDraft = true AND s.archived = false and s.isDeleted = false and s.created < :created and s.updated < :updated";
+		String sql = "FROM Survey s WHERE s.isDraft = true AND s.archived = false and s.isDeleted = false and (s.doNotDelete = false or s.doNotDelete is null) and s.created < :created and s.updated < :updated";
 		
 		String olderThanMonths = settingsService.get(Setting.ArchiveOlderThan);
 		String notChangedInMonths = settingsService.get(Setting.ArchiveNotChangedInLast);
@@ -6838,6 +6990,5 @@ public class SurveyService extends BasicService {
 		Object[] array = (Object[]) query.uniqueResult();
 		return new Pair<>((Boolean)array[0], (String)array[1]);
 	}
-
 
 }

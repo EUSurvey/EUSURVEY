@@ -349,6 +349,8 @@ public class Form implements java.io.Serializable {
 		Integer currentPage = 0;
 		ArrayList<Element> currentList = new ArrayList<>();
 		pages.add(currentList);
+
+		if (survey == null) return pages;
 		
 		List<Element> elements = null;
 		if (forPDF) {

@@ -750,12 +750,12 @@
 				}
 			}
 		}
+		
+		$('#edit-filter-dialog').modal('show');
 
 		if (!reportingdatabaseused) {
-            checkNumberOfFilters(true);
-        }
-
-		$('#edit-filter-dialog').modal('show');
+		    checkNumberOfFilters(true);
+		}
 	}
 	
 	function updateResultFilter() {
@@ -786,40 +786,40 @@
 	}
 
 	function checkNumberOfFilters(reportingDBDisabled) {
-        if (!reportingDBDisabled) return;
+	    if (!reportingDBDisabled) return;
 
-        let counter = 0;
+	    let counter = 0;
 
-        $('#updateResultFilterForm').find("table").find(".filterrow").each(function(){
-            let valfound = false;
-            $(this).find("input[type=text]").each(function(){
-                if ($(this).val() != null && $(this).val().length > 0) {
-                    valfound = true;
-                }
-            });
-            $(this).find("input[type=checkbox]").each(function(){
+	    $('#updateResultFilterForm').find("table").find(".filterrow").each(function(){
+	        let valfound = false;
+	        $(this).find("input[type=text]").each(function(){
+	            if ($(this).val() != null && $(this).val().length > 0) {
+	                valfound = true;
+	            }
+	        });
+	        $(this).find("input[type=checkbox]").each(function(){
                 if ($(this).is(":checked")) {
                     valfound = true;
                 }
             });
 
-            if (valfound) {
-                $(this).attr("data-filterset", "true");
-                counter++;
-            } else {
-                $(this).attr("data-filterset", "false");
-            }
-        });
+	        if (valfound) {
+	            $(this).attr("data-filterset", "true");
+	            counter++;
+	        } else {
+	            $(this).attr("data-filterset", "false");
+	        }
+	    });
 
-        if (counter > 2) {
-            $('#updateResultFilterForm').find("table").find(".filterrow").each(function(){
-                if ($(this).attr("data-filterset") == "false") {
-                    $(this).find("input").attr("disabled", "disabled").addClass("disabled");
-                }
-            });
-        } else {
-            $('#updateResultFilterForm').find("input.disabled").each(function(){
-                $(this).removeAttr("disabled").removeClass("disabled");
-            });
-        }
-    }
+	    if (counter > 2) {
+	        $('#updateResultFilterForm').find("table").find(".filterrow").each(function(){
+	            if ($(this).attr("data-filterset") == "false") {
+	                $(this).find("input").attr("disabled", "disabled").addClass("disabled");
+	            }
+	        });
+	    } else {
+	        $('#updateResultFilterForm').find("input.disabled").each(function(){
+	            $(this).removeAttr("disabled").removeClass("disabled");
+	        });
+	    }
+	}

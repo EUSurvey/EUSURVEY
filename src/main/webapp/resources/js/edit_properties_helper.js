@@ -1646,7 +1646,8 @@ function moveGalleryFile(uid, button, up, undo)
 			
 			element.files.valueHasMutated();
 			
-			updateGallery(null);	
+			updateGallery(null);
+			createNavigation(true);
 			if (!undo) _undoProcessor.addUndoStep(["FileMoved", $(_elementProperties.selectedelement).attr("id"), uid, up]);
 			
 			break;
@@ -1677,7 +1678,9 @@ function deleteGalleryFile(uid, button, noundo)
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
 	element.files.remove( function (item) { return item.uid() == uid; } ) 	
-	updateGallery(null);	
+	updateGallery(null);
+	createNavigation(true);
+
 	
 	if (!noundo) _actions.SaveEnabled(true);
 //	_undoProcessor.addUndoStep(["FileDeleted", $(_elementProperties.selectedelement).attr("id"), uid]);
@@ -1930,6 +1933,7 @@ function createFileUploader(instance)
 		    	}
 				
 				deactivateLinks();
+				createNavigation(true);
 				
 				_undoProcessor.addUndoStep(["FileUpload", $(_elementProperties.selectedelement).attr("id"), responseJSON.id]);
 	    	} else {
@@ -2200,7 +2204,7 @@ function addColumn(noundo)
 		newelement = newComplexTableItemViewModel(newElement);
 		element.childElements.push(newelement);
 	} else {	
-		var newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, text, text, false, "", element.answers().length, 0, 0);
+		var newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, text, text, false, "", element.answers().length, 0, 0, false);
 		element.answers.push(newelement);
 		
 		if (element.type == "Matrix")
@@ -2340,7 +2344,7 @@ function addRow(noundo)
 		newelement = newComplexTableItemViewModel(newElement);
 		element.childElements.push(newelement);
 	} else {
-		newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, text, text, false, "", element.questions().length, 0, 0);
+		newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, text, text, false, "", element.questions().length, 0, 0, false);
 
 		if (isQuiz && $(_elementProperties.selectedelement).hasClass("matrixitem")) {
             newelement.scoring(1);
@@ -2913,6 +2917,7 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='DisplayGraduationScale']").show();
 		$("tr[data-label='MaxDistanceToMedian']").show();
 		$("tr[data-label='ReadOnly']").hide();
+		$("tr[data-label='Hidden']").hide();
 	} else {
 		$("tr[data-label='Mandatory']").show();
 		$("tr[data-label='Unit']").show();
@@ -2922,6 +2927,7 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='DisplayGraduationScale']").hide();
 		$("tr[data-label='MaxDistanceToMedian']").hide();
 		$("tr[data-label='ReadOnly']").show();
+		$("tr[data-label='Hidden']").show();
 	}
 }
 

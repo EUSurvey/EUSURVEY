@@ -629,7 +629,7 @@ function delphiPrefill(editorElement) {
 				editorElement[0].setContent(currentExplanationText.text);
 				var uploaderElement = surveyElement.find(".explanation-file-upload-section").children(".file-uploader").first();
 				var updateinfo = {"success":true, "files":currentExplanationText.fileList, "wrongextension":false};
-				updateFileList(uploaderElement, updateinfo);
+				updateFileList(uploaderElement, updateinfo, true);
 				disableDelphiSaveButtons(surveyElement);
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
@@ -1110,28 +1110,29 @@ function loadMedianData(div, viewModel) {
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
-		error: function () {
+		error: function (err) {
+            if (err.readyState < 4) return
 			showError("Not possible to retrieve median data");
 		},
 		success: function (result, textStatus) {
-			
+
 			if (textStatus === "nocontent") {
 				return;
-			}			
-			
+			}
+
 			viewModel.maxDistanceExceeded(result != undefined && result.maxDistanceExceeded);
 			viewModel.median(result != undefined ? result.median : 0);
-			
+
 			$(div).find(".medianpa").removeClass("medianpa");
-			
+
 			if (viewModel.maxDistanceExceeded())
 			{
-				for (let i = 0; i < result.medianUids.length; i++) {				
+				for (let i = 0; i < result.medianUids.length; i++) {
 					$('.answertext[data-pa-uid="' + result.medianUids[i] + '"]').closest(".likert-pa").addClass("medianpa");
 				}
 			}
 		}
-	 });		
+	 });
 }
 
 function selectPageAndScrollToQuestionIfSet() {

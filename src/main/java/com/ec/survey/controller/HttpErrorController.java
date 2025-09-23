@@ -124,7 +124,7 @@ public class HttpErrorController extends BasicController {
 				
 	    String msg = ex.getMessage();
 
-	    logger.error(String.format("Request with URI [%s] rejected. %s", uri, msg));
+	    logger.debug(String.format("Request with URI [%s] rejected. %s", uri, msg));
 
 	    request.getSession().setAttribute("lastErrorCode", 403);
 		request.getSession().setAttribute("lastErrorTime", new Date());

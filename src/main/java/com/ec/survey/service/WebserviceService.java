@@ -4,6 +4,7 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.ParticipationGroup;
 import com.ec.survey.model.ServiceRequest;
 import com.ec.survey.model.WebserviceTask;
+import com.ec.survey.model.administration.User;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.ExportsRemover;
@@ -35,6 +36,13 @@ public class WebserviceService extends BasicService {
 	{
 		Session session = sessionFactory.getCurrentSession();
 		return session.get(WebserviceTask.class, id);
+	}
+
+	@Transactional
+	public void delete(WebserviceTask task)
+	{
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(task);
 	}
 	
 	@Transactional
@@ -331,10 +339,16 @@ public class WebserviceService extends BasicService {
 	}
 
 	@Transactional
+	public List<WebserviceTask> getTasksForUser(User user) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<WebserviceTask> query = session.createQuery("FROM WebserviceTask WHERE user = :user", WebserviceTask.class).setParameter("user", user);
+		return query.list();
+	}
+
+	@Transactional
 	public ServiceRequest getServiceRequest(Integer userId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<ServiceRequest> query = session.createQuery("FROM ServiceRequest r WHERE r.userId = :userId", ServiceRequest.class).setParameter("userId", userId);
-		
 		return query.uniqueResult();
 	}
 

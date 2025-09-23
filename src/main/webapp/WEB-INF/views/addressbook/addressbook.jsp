@@ -370,6 +370,12 @@
 							<a onclick="$('#operation').val('');$('#load-attendees').submit();" class="btn btn-primary"><spring:message code="label.Search" /></a>
 							<a onclick="$('#show-wait-image').modal('show');" href="<c:url value="/addressbook?clear=true"/>" class="btn btn-default"><spring:message code="label.ResetFilter" /></a>
 						</div>
+
+						<c:if test="${filterSet}">
+							<div style="float: left; padding-top:7px; margin-left: 10px; padding-left: 10px;">
+								<b><spring:message code="label.CurrentFiltersApplied" /></b>
+							</div>
+						</c:if>
 												
 						<div style="float: right; text-align: right">
 							<span style="padding: 0px 10px;"><spring:message code="label.Export" />:</span>
@@ -470,10 +476,16 @@
 				<div style="text-align: center">
 					<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
 				</div>
-				
-				<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0}">style="display:block; margin-top:250px;"</c:if>>
+
+				<div id="tbllist-empty-filter" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0 && filterSet}">style="display:block; margin-top:250px;"</c:if>>
 					<p>
-						<spring:message code="label.NoDataAddressBookText"/>
+							<spring:message code="label.NoDataAddressBookTextFilter"/>
+					<p>
+				</div>
+
+				<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0 && !filterSet}">style="display:block; margin-top:250px;"</c:if>>
+					<p>
+							<spring:message code="label.NoDataAddressBookText"/>
 					<p>
 				</div>
 				

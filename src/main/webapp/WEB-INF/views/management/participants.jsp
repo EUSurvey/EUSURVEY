@@ -14,20 +14,22 @@
 	
 	<script>
 		var surveyuid = '${form.survey.uniqueId}';
+		var surveyshortname = '${form.survey.shortname}';
 		var published = ${form.survey.isActive};
 		var attributeIDs = new Array();
 		var attributeNames = new Array();
-		
-		<c:forEach items="${attributeNames}" var="attributeName" varStatus="rowCounter">
-			attributeIDs.push(${attributeName.id});		
-			attributeNames.push("${attributeName.name}");	
+
+		<c:forEach items="${attributeNamesForTableHead}" var="attributeName" varStatus="rowCounter">
+		attributeIDs.push(${attributeName.id});
+		attributeNames.push("${attributeName.name}");
 		</c:forEach>
-		
+
 		var errorMaxTokenNumberExceeded = "<spring:message code="error.MaxTokenNumberExceeded" />";
 		var errorProblemDuringSave = "<spring:message code="error.ProblemDuringSave" />";
 	</script>
-	
-	<script type="text/javascript" src="${contextpath}/resources/js/jquery.stickytableheaders.js?version=<%@include file="../version.txt" %>"></script>
+
+	<script type="text/javascript"
+			src="${contextpath}/resources/js/jquery.stickytableheaders.js?version=<%@include file="../version.txt" %>"></script>
 	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/participants.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/configure.js?version=<%@include file="../version.txt" %>"></script>

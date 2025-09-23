@@ -15,7 +15,7 @@
 					<div class="col-md-6">
 						<c:choose>
 							<c:when test="${USER != null}">
-								<a class="logolink" href="<c:url value="/dashboard"/>"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" alt="EUSurvey"/></a>
+								<a class="logolink" href="<c:url value="/forms"/>"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" alt="EUSurvey"/></a>
 							</c:when>
 							<c:otherwise>
 								<a class="logolink" href="<c:url value="/home/welcome"/>"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" alt="EUSurvey"/></a>

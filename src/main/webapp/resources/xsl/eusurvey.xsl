@@ -135,7 +135,7 @@
 				
 				<xsl:when test="@type = 'RankingQuestion'">
 					<div>
-						Use drag&amp;drop or the up/down buttons to change the order or accept the intial order
+						Use drag&amp;drop or the up/down buttons to change the order or accept the initial order
 						<xsl:for-each select="Children/Element">
 							<div style="width: 200px; border: 1px solid #777; padding: 5px; margin: 5px; border-radius: 3px; background-color: #eee;">&#8593; &#8595; <xsl:apply-templates select="Label"/></div>
 						</xsl:for-each>
