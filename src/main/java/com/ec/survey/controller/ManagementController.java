@@ -229,7 +229,7 @@ public class ManagementController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 
 		Form form;
-		Survey survey = surveyService.getSurveyLight(shortname, true, true);  //.getSurveyByShortname(shortname, true, user, request, false, true, true, false); //
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 
 		if (this.isReportingDatabaseEnabled()) {
 			survey.setNumberOfAnswerSetsPublished(reportingService.getCount(false, survey.getUniqueId()));
