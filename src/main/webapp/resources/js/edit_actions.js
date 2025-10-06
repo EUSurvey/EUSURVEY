@@ -255,7 +255,7 @@ var Actions = function() {
     			}
     		});
 
-			if ($(copiedmodel).find(".interdependent")) {
+			if (copiedmodel.isInterdependent()) {
 				$(newitem).find(".matrixtable").addClass("interdependent");
 			}
     		
@@ -902,4 +902,5 @@ $(function() {
 		}
 	}
     
+
 });
