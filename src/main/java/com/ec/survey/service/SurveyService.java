@@ -32,6 +32,7 @@ import org.hibernate.query.NativeQuery;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -5789,8 +5790,10 @@ public class SurveyService extends BasicService {
 		User owner = survey.getOwner();
 		EcasHelper.readData(owner, this.ldapService);
 
+        var encoder = ESAPI.encoder();
+
 		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
-		s.append("<Survey id='").append(survey.getId()).append("' uid='").append(survey.getUniqueId()).append("' alias='").append(survey.getShortname())
+		s.append("<Survey id='").append(survey.getId()).append("' uid='").append(survey.getUniqueId()).append("' alias='").append(encoder.encodeForXML(survey.getShortname()))
 				.append("'>\n");
 
 		s.append("<ModifiedDate>").append(ConversionTools.getFullString4Webservice(survey.getUpdated())).append("</ModifiedDate>\n");
@@ -5799,15 +5802,15 @@ public class SurveyService extends BasicService {
 				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : (survey.getIsDelphi() ? "Delphi" : "Standard")))
 				.append("</SurveyType>\n");
 
-		s.append("<Title>").append(survey.getTitle()).append("</Title>\n");
+		s.append("<Title>").append(encoder.encodeForXML(survey.getTitle())).append("</Title>\n");
 
 		s.append("<PivotLanguage>").append(survey.getLanguage().getCode().toUpperCase()).append("</PivotLanguage>\n");
 
-		s.append("<Owner>").append(owner.getGivenName()).append(" ").append(owner.getSurName()).append("</Owner>\n");
+		s.append("<Owner>").append(encoder.encodeForXML(owner.getGivenName())).append(" ").append(encoder.encodeForXML(owner.getSurName())).append("</Owner>\n");
 
-		s.append("<OwnerDepartment>").append(owner.getDepartment()).append("</OwnerDepartment>\n");
+		s.append("<OwnerDepartment>").append(encoder.encodeForXML(owner.getDepartment())).append("</OwnerDepartment>\n");
 
-		s.append("<Contact>").append(survey.getContact()).append("</Contact>\n");
+		s.append("<Contact>").append(encoder.encodeForXML(survey.getContact())).append("</Contact>\n");
 
 		s.append("<Status>").append(survey.getIsPublished() && survey.getIsActive() ? "published" : "unpublished")
 				.append("</Status>\n");
@@ -5832,8 +5835,8 @@ public class SurveyService extends BasicService {
 		s.append("<UseFulLinks>");
 		for (String label : survey.getAdvancedUsefulLinks().keySet()) {
 			s.append("<UseFulLink>\n");
-			s.append("<url>").append(survey.getAdvancedUsefulLinks().get(label)).append("</url>\n");
-			s.append("<label>").append(label).append("</label>\n");
+			s.append("<url>").append(encoder.encodeForXML(survey.getAdvancedUsefulLinks().get(label))).append("</url>\n");
+			s.append("<label>").append(encoder.encodeForXML(label)).append("</label>\n");
 			s.append("</UseFulLink>\n");
 		}
 		s.append("</UseFulLinks>\n");
@@ -5841,15 +5844,15 @@ public class SurveyService extends BasicService {
 		s.append("<BackgroundDocuments>");
 		for (String label : survey.getBackgroundDocumentsAlphabetical().keySet()) {
 			s.append("<BackgroundDocument>\n");
-			s.append("<url>").append(survey.getBackgroundDocumentsAlphabetical().get(label)).append("</url>\n");
-			s.append("<label>").append(label).append("</label>\n");
+			s.append("<url>").append(encoder.encodeForXML(survey.getBackgroundDocumentsAlphabetical().get(label))).append("</url>\n");
+			s.append("<label>").append(encoder.encodeForXML(label)).append("</label>\n");
 			s.append("</BackgroundDocument>\n");
 		}
 		s.append("</BackgroundDocuments>\n");
 
 		s.append("<Tags>");
 		if (survey.getTags() != null) {
-			String joinedTags = survey.getTags().stream().map(t -> t.getName()).collect(Collectors.joining(";"));
+			String joinedTags = survey.getTags().stream().map(t -> encoder.encodeForXML(t.getName())).collect(Collectors.joining(";"));
 			s.append(joinedTags);
 		}
 		s.append("</Tags>\n");
@@ -5860,7 +5863,7 @@ public class SurveyService extends BasicService {
 		} else {
 			s.append("secured");
 			if (survey.getPassword() != null && survey.getPassword().length() > 0) {
-				s.append(";PW:").append(survey.getPassword());
+				s.append(";PW:").append(encoder.encodeForXML(survey.getPassword()));
 			}
 			if (survey.getEcasSecurity()) {
 				if (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("all")) {
@@ -5885,7 +5888,7 @@ public class SurveyService extends BasicService {
 
 		s.append("<Draft>").append(survey.getSaveAsDraft() ? "yes" : "no").append("</Draft>\n");
 
-		s.append("<Skin>").append(survey.getSkin() != null ? survey.getSkin().getName() : "no skin")
+		s.append("<Skin>").append(survey.getSkin() != null ? encoder.encodeForXML(survey.getSkin().getName()) : "no skin")
 				.append("</Skin>\n");
 
 		s.append("<PublishedResults>");
@@ -5912,17 +5915,17 @@ public class SurveyService extends BasicService {
 
 		s.append("<ConfirmationPage>");
 		if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink()) {
-			s.append(survey.getConfirmationLink());
+			s.append(encoder.encodeForXML(survey.getConfirmationLink()));
 		} else {
-			s.append(survey.getConfirmationPage());
+			s.append(encoder.encodeForXML(survey.getConfirmationPage()));
 		}
 		s.append("</ConfirmationPage>\n");
 
 		s.append("<UnavailabilityPage>");
 		if (survey.getEscapePageLink() != null && survey.getEscapePageLink()) {
-			s.append(survey.getEscapeLink());
+			s.append(encoder.encodeForXML(survey.getEscapeLink()));
 		} else {
-			s.append(survey.getEscapePage());
+			s.append(encoder.encodeForXML(survey.getEscapePage()));
 		}
 		s.append("</UnavailabilityPage>\n");
 
