@@ -1073,7 +1073,11 @@ function update(input)
 			}
 			
 			element.isInterdependent(checked);
-			$(_elementProperties.selectedelement).find(".matrixtable").addClass("interdependent");
+			if (checked) {
+			    $(_elementProperties.selectedelement).find(".matrixtable").addClass("interdependent");
+			} else {
+			    $(_elementProperties.selectedelement).find(".matrixtable").removeClass("interdependent");
+			}
 			_undoProcessor.addUndoStep(["Interdependency", id, $(_elementProperties.selectedelement).index(), !checked, checked]);
 			
 			break;
@@ -2189,3 +2193,4 @@ function updateLogicOfQuestion(radio, selectedquestion) {
 		_undoProcessor.addUndoStep(["UseAndLogic", id, $(selectedquestion).index(), oldValue, newValue]);
 	}
 }
+
