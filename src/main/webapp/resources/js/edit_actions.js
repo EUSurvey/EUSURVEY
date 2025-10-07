@@ -257,6 +257,8 @@ var Actions = function() {
 
 			if (copiedmodel.isInterdependent()) {
 				$(newitem).find(".matrixtable").addClass("interdependent");
+			} else {
+			    $(newitem).find(".matrixtable").removeClass("interdependent");
 			}
     		
 			_elements[copiedmodel.id()] = copiedmodel;
@@ -904,3 +906,4 @@ $(function() {
     
 
 });
+
