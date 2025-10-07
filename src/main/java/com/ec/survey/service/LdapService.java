@@ -180,6 +180,8 @@ public class LdapService extends BasicService {
 						String departmentNumber = (String) userAttributes.get(ldapMappingUserDepartmentNumber == null ? "departmentNumber" : ldapMappingUserDepartmentNumber).get();
 						if (departmentNumber != null && departmentNumber.contains(".")) {
 							organisations.add(departmentNumber.substring(0, departmentNumber.indexOf(".")));
+						} else if (departmentNumber != null) {
+							organisations.add(departmentNumber);
 						}
 					} else {
 						organisations.add(organisation);

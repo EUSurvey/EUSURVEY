@@ -7,6 +7,7 @@
 <head>
 	<title>EUSurvey - <spring:message code="contribution.edit" /></title>	
 	<%@ include file="../includes.jsp" %>
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 </head>
 <body id="bodyContribution">
 	<div class="page-wrap">
@@ -37,7 +38,7 @@
 				
 				<%@ include file="../captcha.jsp" %>	
 					        
-			    <a onclick="validateInputAndSubmit($('#form'))" class="btn btn-default"><spring:message code="label.EditMyContribution" /></a>
+			    <a onclick="validateInputAndSubmit($('#form'))" class="btn btn-default" href="#"><spring:message code="label.EditMyContribution" /></a>
 		
 			</form:form>
 						

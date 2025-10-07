@@ -199,7 +199,7 @@
 		</div>
 		
 		<div id="contribution-id-save-hint" style="color: #777; margin-top: 20px; margin-bottom: 20px; max-width: 616px; margin-left: auto; margin-right: auto;">
-			${form.getMessage("label.ContributionSavingHint")} <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
+			${form.getMessage("label.ContributionSavingHint")}:&nbsp;<esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML>
 			<button type="button" class="unstyledbutton" style="margin-left: 8px; text-decoration: none; display: inline-block;" id="copyIconButton" onclick="navigator.clipboard.writeText('${uniqueCode}');" data-toggle="tooltip" aria-label='${form.getMessage("label.CopyContributionID")}' title='${form.getMessage("label.CopyContributionID")}'>
 				<i class="glyphicon glyphicon-copy copy-icon"></i>
 			</button>

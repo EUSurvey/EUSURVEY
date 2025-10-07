@@ -1355,7 +1355,14 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		text.setReadonly(isReadonly);
-		
+
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(text.getHidden())) {
+			oldValues += " hidden: " + text.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		text.setHidden(isHidden);
+
 		Boolean noNegativeScore = getBoolean(parameterMap, "noNegativeScore", id);
 		if (log220 && !noNegativeScore.equals(text.getNoNegativeScore())) {
 			oldValues += " noNegativeScore: " + text.getNoNegativeScore();
@@ -1571,6 +1578,13 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		gallery.setReadonly(isReadonly);
+
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(gallery.getHidden())) {
+			oldValues += " hidden: " + gallery.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		gallery.setHidden(isHidden);
 
 		Integer cols = getInteger(parameterMap, "columns", id);
 		if (log220 && !cols.equals(gallery.getColumns())) {
@@ -1988,6 +2002,13 @@ public class SurveyHelper {
 		}
 		freetext.setReadonly(isReadonly);
 
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(freetext.getHidden())) {
+			oldValues += " hidden: " + freetext.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		freetext.setHidden(isHidden);
+
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && freetext.getHelp() != null && !freetext.getHelp().equals(help)) {
 			oldValues += " help: " + freetext.getHelp();
@@ -2139,6 +2160,13 @@ public class SurveyHelper {
 		}
 		regex.setReadonly(isReadonly);
 
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(regex.getHidden())) {
+			oldValues += " hidden: " + regex.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		regex.setHidden(isHidden);
+
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && regex.getHelp() != null && !regex.getHelp().equals(help)) {
 			oldValues += " help: " + regex.getHelp();
@@ -2251,6 +2279,13 @@ public class SurveyHelper {
 		}
 		email.setReadonly(isReadonly);
 
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(email.getHidden())) {
+			oldValues += " hidden: " + email.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		email.setHidden(isHidden);
+
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && email.getHelp() != null && !email.getHelp().equals(help)) {
 			oldValues += " help: " + email.getHelp();
@@ -2353,6 +2388,13 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		number.setReadonly(isReadonly);
+
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(number.getHidden())) {
+			oldValues += " hidden: " + number.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		number.setHidden(isHidden);
 
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && number.getHelp() != null && !number.getHelp().equals(help)) {
@@ -2516,6 +2558,13 @@ public class SurveyHelper {
 		}
 		formula.setReadonly(isReadonly);
 
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(formula.getHidden())) {
+			oldValues += " hidden: " + formula.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		formula.setHidden(isHidden);
+
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && formula.getHelp() != null && !formula.getHelp().equals(help)) {
 			oldValues += " help: " + formula.getHelp();
@@ -2633,6 +2682,13 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		date.setReadonly(isReadonly);
+
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(date.getHidden())) {
+			oldValues += " hidden: " + date.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		date.setHidden(isHidden);
 
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && date.getHelp() != null && !date.getHelp().equals(help)) {
@@ -2755,6 +2811,13 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		time.setReadonly(isReadonly);
+
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(time.getHidden())) {
+			oldValues += " hidden: " + time.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		time.setHidden(isHidden);
 
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && time.getHelp() != null && !time.getHelp().equals(help)) {
@@ -3263,7 +3326,14 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		item.setReadonly(isReadonly);
-		
+
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(item.getHidden())) {
+			oldValues += " hidden: " + item.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		item.setHidden(isHidden);
+
 		if (item.getCellType() == CellType.SingleChoice || item.getCellType() == CellType.MultipleChoice) {
 			String[] answers = getAnswers(parameterMap, id);
 			String[] originalAnswers = getOriginalAnswers(parameterMap, id);
@@ -3513,6 +3583,13 @@ public class SurveyHelper {
 		}
 		singlechoice.setReadonly(isReadonly);
 
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(singlechoice.getHidden())) {
+			oldValues += " hidden: " + singlechoice.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		singlechoice.setHidden(isHidden);
+
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && singlechoice.getHelp() != null && !singlechoice.getHelp().equals(help)) {
 			oldValues += " help: " + singlechoice.getHelp();
@@ -3723,6 +3800,13 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		multiplechoice.setReadonly(isReadonly);
+
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(multiplechoice.getHidden())) {
+			oldValues += " hidden: " + multiplechoice.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		multiplechoice.setHidden(isHidden);
 
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && multiplechoice.getHelp() != null && !multiplechoice.getHelp().equals(help)) {
@@ -4148,6 +4232,13 @@ public class SurveyHelper {
 		}
 		matrix.setReadonly(isReadonly);
 
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(matrix.getHidden())) {
+			oldValues += " hidden: " + matrix.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		matrix.setHidden(isHidden);
+
 		Integer order = getInteger(parameterMap, "order", id);
 		if (log220 && !order.equals(matrix.getOrder())) {
 			oldValues += " order: " + matrix.getOrder();
@@ -4432,6 +4523,13 @@ public class SurveyHelper {
 			newValues += " readonly: " + isReadonly;
 		}
 		table.setReadonly(isReadonly);
+
+		Boolean isHidden = getBoolean(parameterMap, "hidden", id);
+		if (log220 && !isHidden.equals(table.getHidden())) {
+			oldValues += " hidden: " + table.getHidden();
+			newValues += " hidden: " + isHidden;
+		}
+		table.setHidden(isHidden);
 
 		String widths = getString(parameterMap, "widths", id, servletContext);
 		if (log220 && table.getWidths() != null && !table.getWidths().equals(widths)) {

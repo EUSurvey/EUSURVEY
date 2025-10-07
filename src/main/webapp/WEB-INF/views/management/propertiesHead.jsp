@@ -55,6 +55,7 @@
 			this.motivationPopup = ko.observable(${form.survey.motivationPopup});
 			this.progressDisplay = ko.observable(${form.survey.progressDisplay});
 			this.tags = ko.observableArray(${form.survey.tagsAsArray()});
+			this.doNotDelete = ko.observable(${form.survey.doNotDelete});
 			this.tagsLoading = ko.observable(false);
 			
 			this.addLinksRow = function()
@@ -1035,7 +1036,7 @@
 				}
 			});
 
-			 <c:if test="${reportingdatabaseused == null}">
+            <c:if test="${reportingdatabaseused == null}">
               checkNumberOfFilters(true);
             </c:if>
 		});

@@ -220,6 +220,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean validated;
 	private String webhook = "";
 	private List<Tag> tags = new ArrayList<>();
+	private Boolean doNotDelete;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -2961,6 +2962,15 @@ final public class Survey implements java.io.Serializable {
 
 	public void setWebhook(String webhook) {
 		this.webhook = webhook;
+	}
+
+	@Column(name = "DONOTDELETE")
+	public Boolean getDoNotDelete() {
+		return doNotDelete;
+	}
+
+	public void setDoNotDelete(Boolean doNotDelete) {
+		this.doNotDelete = doNotDelete != null ? doNotDelete : false;
 	}
 
 	public Integer getMaxPrefVotes() {

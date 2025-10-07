@@ -17,7 +17,7 @@
 				<div style="float: left; line-height: 20px;">
 					<c:choose>
 						<c:when test="${USER != null}">
-							<a class="logolink" href="<c:url value="/dashboard"/>" style="float: left; padding-top:3px;"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" style="margin-top: -3px;" alt="EUSurvey"/></a>&#160;&#160;&#160;&#160;
+							<a class="logolink" href="<c:url value="/forms"/>" style="float: left; padding-top:3px;"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" style="margin-top: -3px;" alt="EUSurvey"/></a>&#160;&#160;&#160;&#160;
 						</c:when>
 						<c:otherwise>
 							<a class="logolink" href="<c:url value="/home/welcome"/>" style="float: left; padding-top:3px;"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" style="margin-top: -3px;" alt="EUSurvey"/></a>&#160;&#160;&#160;&#160;
@@ -40,7 +40,7 @@
 					
 				<div style="float: right; line-height: 22px;">		
 				
-					<span tabindex="0" id="messages-button" onclick="$('#messages-log-div').show()" onfocus="$('#loginBtnFromHeader').focus()">
+					<span tabindex="-1" style="margin-right:3px" id="messages-button" onclick="$('#messages-log-div').show()">
 						<!-- ko if: messages().length > 0 || systemMessages.length > 0 -->
 						<span class="glyphicon glyphicon-bell" style="font-size: 17px;"></span>
 						<span class="badge" style="background-color: #e90000; margin-left: -10px; margin-top: -3px; z-index: 100;" data-bind="visible: totalMessages() > 0, text: totalMessages"></span>

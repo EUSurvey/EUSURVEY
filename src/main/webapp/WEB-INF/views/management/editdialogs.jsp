@@ -538,7 +538,7 @@
 		strings["Mandatory"] = "<spring:message code="label.Mandatory" />";
 		strings["Help"] = "<spring:message code="label.HelpMessage" />";
 		strings["Identifier"] = "<spring:message code="label.Identifier" />";
-		const readonly = '<spring:message code="info.Readonly" />'.replace('"',"`");
+		const readonly = '<spring:message code="info.Readonly" />';
 		strings["ReadOnly"] = "<spring:message code="label.Readonly" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + readonly + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
 		const readonlyFormula = '<spring:message code="info.ReadonlyFormula" />';
 		strings["ReadOnlyFormula"] = "<spring:message code="label.Readonly" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + readonlyFormula + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
@@ -753,7 +753,10 @@
 		strings["Exclusive"] = "<spring:message code="label.Exclusive" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Exclusive" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 		strings["DisplayAllQuestions"] = "<spring:message code="label.DisplayAllQuestions" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.DisplayAllQuestions" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 		strings["EvaluationCriteria"]= "<spring:message code="label.EvaluationCriteria" />";
-		
+
+		const hiddenInfo = '<spring:message code="info.Hidden" />'
+		strings["Hidden"] = "<spring:message code="label.Hidden" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + hiddenInfo + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
+
 	 	function getPropertyLabel(label)
 	 	{
 	 		if (!isNaN(label)) return label;

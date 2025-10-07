@@ -1463,6 +1463,16 @@ function initModals(item)
 			
 			var value = $(this).val();
 			if (value.trim().length == 0) return;
+
+			var count = getCharacterCount(this);
+
+			if (count > 5000)
+			{
+				validationinfo += $(this).attr("name") + " (MaxFT) ";
+				addValidationError.andFocus(this, texttoolong5000Text);
+
+				result = false;
+			}
 			
 			var regex = $(this).closest(".survey-element").find("input[name^='regex']").val();
 			
@@ -2766,7 +2776,31 @@ function initModals(item)
 	{
 		return html.replace(/id="(\w+)"/g,"");
 	}
-	
+
+	function reposition() {
+        var overlay = $(currentOverlayMenuBtn).parent().find('.overlaymenu').first();
+        if (overlay.is(":hidden")) return
+
+        let rect = $(currentOverlayMenuBtn)[0].getBoundingClientRect();
+        $(overlay).css("top", rect.bottom);
+        if ($(overlay).hasClass("resultoverlaymenu")) {
+            rect = $(currentOverlayMenuBtn).parent()[0].getBoundingClientRect();
+            $(overlay).css("top", rect.bottom + 2);
+        }
+
+        rect = $(currentOverlayMenuBtn).parent()[0].getBoundingClientRect();
+        if ($(currentOverlayMenuBtn).hasClass("dropdownFilter") || $(overlay).parent().hasClass("datefilter"))
+            rect = $(currentOverlayMenuBtn)[0].getBoundingClientRect();
+
+        let realwidth = overlay.width();
+        if (rect.left + realwidth > window.innerWidth) {
+            $(overlay).css("left", window.innerWidth - (realwidth*1.25));
+        } else {
+            $(overlay).css("left", rect.left);
+        }
+    }
+
+	let currentOverlayMenuBtn = null;
 	function showOverlayMenu(btn)
 	{
 	    if ($(btn).hasClass("disabled")) {
@@ -2779,34 +2813,25 @@ function initModals(item)
 		if ($(overlay).is(":visible"))
 		{
 			$(overlay).hide();
+			window.removeEventListener('resize', asyncCallReposition);
 			return;
 		}
 		
 		$(".overlaymenu").hide();
 		$(overlay).css("left", "0px");
 
-		var rect = $(btn)[0].getBoundingClientRect();
-		$(overlay).css("top", rect.bottom);
-		if ($(overlay).hasClass("resultoverlaymenu")) {
-			rect = $(btn).parent()[0].getBoundingClientRect();
-			$(overlay).css("top", rect.bottom + 2);
-		}
-
-		rect = $(btn).parent()[0].getBoundingClientRect();
-		if ($(btn).hasClass("dropdownFilter") || $(overlay).parent().hasClass("datefilter"))
-			rect = $(btn)[0].getBoundingClientRect();
-		
-		var realwidth = overlay.width();
-		if (rect.left + realwidth > window.innerWidth) {
-			$(overlay).css("left", window.innerWidth - (realwidth*1.25));
-		} else {
-			$(overlay).css("left", rect.left);
-		}
-
 		$(overlay).toggle();
 		$(btn).addClass("overlaybutton");
+		currentOverlayMenuBtn = btn;
+        reposition()
 					
-		setTimeout(function(){closeOverlayDivsEnabled = true;},1000);			
+		setTimeout(function(){closeOverlayDivsEnabled = true;},1000);
+
+		window.addEventListener('resize', asyncCallReposition);
+	}
+
+	function asyncCallReposition() {
+	    setTimeout(reposition, 100);
 	}
 	
 	function hideOverlayMenu(btn)
@@ -2814,6 +2839,7 @@ function initModals(item)
 		var overlay = $(btn).parent().parent();			
 		$(overlay).toggle();
 		closeOverlayDivsEnabled = false;
+		window.removeEventListener('resize', asyncCallReposition);
 	}	
 	
 	function checkAliasExistsForRestore(fromchangedialog) {

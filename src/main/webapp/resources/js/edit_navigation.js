@@ -11,7 +11,7 @@ var NavigationItem = function(type, css, id, title) {
     
     this.hasChildren = function()
     {
-    	if (this.type == "section" || this.type== "matrix" || this.type== "table" || this.type == "choicequestion" || this.type == "ratingquestion" || this.type == "rankingquestion" || this.type == "complextable")
+    	if (this.type == "section" || this.type== "matrix" || this.type== "table" || this.type == "choicequestion" || this.type == "ratingquestion" || this.type == "rankingquestion" || this.type == "complextable" || this.type == "galleryquestion")
     	{
     		return true;
     	}
@@ -40,7 +40,7 @@ var NavigationModel = function () {
     {
     	var id = $(e).attr("id");
     	var ni = new NavigationItem("question","",id,"");
-    	
+
     	if ($(e).hasClass("sectionitem"))
     	{
     		ni.type = "section";
@@ -66,7 +66,10 @@ var NavigationModel = function () {
     		} else if ($(e).hasClass("imageitem") || $(e).hasClass("textitem") || $(e).hasClass("ruleritem"))
     		{
     			ni.title = getLimitedText($(e).find("textarea[name^=text]").first().text());
-    		} else {
+    		} else if ($(e).hasClass("galleryelement"))
+			{
+				ni.title = getLimitedText($(e).find(".answerlabel").first()[0].innerText);
+			} else {
     			ni.title = getLimitedText(adaptNumbering($(e).find(".questiontitle").first()));
     		}
     		if ($(e).hasClass("singlechoiceitem") || $(e).hasClass("multiplechoiceitem"))
@@ -110,11 +113,14 @@ var NavigationModel = function () {
     		} else if ($(e).hasClass("complextableitem")) {
 				ni.type = "complextable";
 				ni.css = "navigationitemcomplextable navquestion";
+			} else if ($(e).hasClass("galleryitem")) {
+				ni.type = "galleryquestion";
+				ni.css = "navigationitemcomplextable navquestion";
 			} else {
     			ni.css += " navquestion";
     		}
     		
-    	};
+    	}
     	
     	if ($(e).hasClass("selectedquestion"))
     	{
@@ -144,6 +150,11 @@ var NavigationModel = function () {
 				$(matrix).find("tr").first().find(".matrix-header").each(function(){
 					niq.addItem(model.getNavigationItem(this, false, parentid));
 				});
+			});
+		} else if ($(element).hasClass("galleryitem")) {
+			let parentId = $(element).attr("data-id")
+			$(element).find("table").first().find("tbody").first().find("td").each(function(){
+				ni.addItem(model.getNavigationItem(this, false, parentId));
 			});
 		} else if ($(element).hasClass("mytableitem"))
 		{
@@ -259,16 +270,19 @@ var NavigationModel = function () {
     {
     	var model = this;
     	var oldItem = model.items()[oldposition];
-    	
-    	var visible = $(".navigationitem[data-id='" + oldItem.id + "']").is(":visible");
-    	    	
-    	model.items.remove(oldItem);    	
-    	model.items.splice(newposition, 0, oldItem);
-    	
-    	if (!visible)
-    	{
-    		$(".navigationitem[data-id='" + oldItem.id + "']").hide();
-    	}
+
+		if (oldItem === undefined) return;
+
+		var visible = $(".navigationitem[data-id='" + oldItem.id + "']").is(":visible");
+
+		model.items.remove(oldItem);
+		model.items.splice(newposition, 0, oldItem);
+
+		if (!visible)
+		{
+			$(".navigationitem[data-id='" + oldItem.id + "']").hide();
+		}
+
     }
     
     this.removeFromNavigation = function(id)

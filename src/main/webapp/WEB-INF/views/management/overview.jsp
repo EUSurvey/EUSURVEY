@@ -422,39 +422,45 @@
 	 			</tr>
 	 		</thead>
 	 		<tbody>
-	 			<c:forEach items="${newElements}" var="element">
-	 				<tr>
-	 					<td>${element.nameOrTypeStripped}</td>
-	 					<td><spring:message code="label.New" /></td>
-	 				</tr>
-	 			</c:forEach>
-	 			<c:forEach items="${changedElements}" var="element">
-	 				<tr>
-	 					<td>
-	 						<c:choose>
-	 							<c:when test="${element.nameOrType == 'PropertiesElement' && element.orderChanged}">
-	 								<spring:message code="label.ElementOrder" />
-	 							</c:when>
-	 							<c:when test="${element.nameOrType == 'PropertiesElement'}">
-	 								<spring:message code="label.Properties" />
-	 							</c:when>
-	 							<c:when test="${element.nameOrType == 'TranslationsElement'}">
-	 								<spring:message code="label.Translations" />
-	 							</c:when>
-	 							<c:otherwise>
-	 								${element.nameOrTypeStripped}
-	 							</c:otherwise>
-	 						</c:choose>
-	 					</td>
-	 					<td><spring:message code="label.Changed" /></td>
-	 				</tr>
-	 			</c:forEach>
-	 			<c:forEach items="${deletedElements}" var="element">
-	 				<tr>
-	 					<td>${element.nameOrTypeStripped}</td>
-	 					<td><spring:message code="label.Deleted" /></td>
-	 				</tr>
-	 			</c:forEach>
+	 		    <c:if test="${newElements != null}">
+                    <c:forEach items="${newElements}" var="element">
+                        <tr>
+                            <td>${element}</td>
+                            <td><spring:message code="label.New" /></td>
+                        </tr>
+                    </c:forEach>
+	 			</c:if>
+	 			<c:if test="${changedElements != null}">
+                    <c:forEach items="${changedElements}" var="element">
+                        <tr>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${element == 'PropertiesElementOrderChanged'}">
+                                        <spring:message code="label.ElementOrder" />
+                                    </c:when>
+                                    <c:when test="${element == 'PropertiesElement'}">
+                                        <spring:message code="label.Properties" />
+                                    </c:when>
+                                    <c:when test="${element == 'TranslationsElement'}">
+                                        <spring:message code="label.Translations" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        ${element}
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td><spring:message code="label.Changed" /></td>
+                        </tr>
+                    </c:forEach>
+	 				</c:if>
+	 			<c:if test="${deletedElements != null}">
+                    <c:forEach items="${deletedElements}" var="element">
+                        <tr>
+                            <td>${element}</td>
+                            <td><spring:message code="label.Deleted" /></td>
+                        </tr>
+                    </c:forEach>
+                </c:if>
 	 		</tbody>
 	 	</table>
 	</div>

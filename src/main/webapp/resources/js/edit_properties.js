@@ -398,7 +398,7 @@ var ElementProperties = function() {
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getReadOnlyAndHiddenRow(e)
 				getCheckPropertiesRow("Unique", $(e).find("input[name^='unique']").val() == 'true');
 				getCheckPropertiesRow("Comparable", $(e).find("input[name^='comparable']").val() == 'true');
 				getCheckPropertiesRow("Password", $(e).find("input[name^='password']").val() == 'true');
@@ -454,9 +454,9 @@ var ElementProperties = function() {
 								
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getReadOnlyAndHiddenRow(e)
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
-								
+
 				if (isQuiz)
 				{
 					getQuizPropertiesRow();
@@ -507,8 +507,8 @@ var ElementProperties = function() {
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
-				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());		
+				getReadOnlyAndHiddenRow(e)
+				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 				
 				if (isQuiz)
 				{
@@ -623,8 +623,8 @@ var ElementProperties = function() {
 					
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
-				getCheckPropertiesRow("Unique", $(e).find("input[name^='unique']").val() == 'true');		
+				getReadOnlyAndHiddenRow(e)
+				getCheckPropertiesRow("Unique", $(e).find("input[name^='unique']").val() == 'true');
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());	
 				
 				if (isQuiz)
@@ -667,7 +667,7 @@ var ElementProperties = function() {
 				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getReadOnlyAndHiddenRow(e)
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 
 				if (isDelphi)
@@ -761,7 +761,7 @@ var ElementProperties = function() {
 				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getReadOnlyAndHiddenRow(e)
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 				
 				if (isDelphi)
@@ -878,7 +878,7 @@ var ElementProperties = function() {
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getReadOnlyAndHiddenRow(e)
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 								
 				if (isQuiz)
@@ -906,7 +906,7 @@ var ElementProperties = function() {
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getReadOnlyAndHiddenRow(e)
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 				
 				if (isDelphi)
@@ -961,8 +961,8 @@ var ElementProperties = function() {
 				getVisibilityRow(false);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
-				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());	
+				getReadOnlyAndHiddenRow(e)
+				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 			} else if ($(e).hasClass("regexitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
@@ -979,7 +979,7 @@ var ElementProperties = function() {
 				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getReadOnlyAndHiddenRow(e)
 				getCheckPropertiesRow("Unique", $(e).find("input[name^='unique']").val() == 'true');
 				getCheckPropertiesRow("Comparable", $(e).find("input[name^='comparable']").val() == 'true');
 				getCheckPropertiesRow("Password", $(e).find("input[name^='password']").val() == 'true');
@@ -999,8 +999,8 @@ var ElementProperties = function() {
 				getVisibilityRow(false);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
-				
+				getReadOnlyAndHiddenRow(e)
+
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);
@@ -1021,8 +1021,8 @@ var ElementProperties = function() {
 				getVisibilityRow(false);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
-				
+				getReadOnlyAndHiddenRow(e)
+
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);
@@ -1040,7 +1040,7 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getCheckPropertiesRow("AutoNumbering", $(e).find("input[name^='numbering']").val() == 'true');
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getReadOnlyAndHiddenRow(e)
 				checkGalleryProperties(false);
 			} else if ($(e).hasClass("confirmationitem"))
 			{
@@ -1240,6 +1240,13 @@ var ElementProperties = function() {
 		});
 	}	
 };
+
+function getReadOnlyAndHiddenRow(e) {
+	const readonly = $(e).find("input[name^='readonly']").val() == 'true'
+	const hidden = $(e).find("input[name^='hidden']").val() == 'true'
+	getCheckPropertiesRow("ReadOnly", readonly);
+	getCheckPropertiesRow("Hidden", hidden, !readonly)
+}
 
 var _elementProperties = new ElementProperties();
 

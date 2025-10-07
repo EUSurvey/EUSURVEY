@@ -8,6 +8,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.machinetranslation.Request;
 import com.ec.survey.model.machinetranslation.RequestTranslationMessage;
 import com.ec.survey.model.machinetranslation.Response;
+import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.commons.lang3.StringUtils;
@@ -35,12 +36,18 @@ public class MachineTranslationService extends BasicService {
 	@Transactional
 	public void saveSuccessResponse(String requestId, String translatedText) {
 		Request request = getRequest(requestId);
-		Response response = new Response();		
+		Response response = new Response();
 		response.setRequest(request);
 		response.setTargetLang(request.getTargetLangs());
 		//response.setTranslatedText(translatedText);
 		addResponse(response);
 		updateTranslation(request, request.getTargetLangs(), translatedText);
+
+		Integer sourceTranslationsID = request.getTranslationsID();
+		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsID);
+		Survey survey = surveyService.getSurvey(sourceTranslations.getSurveyId());
+		User user = administrationService.getUserForLogin(request.getUsername());
+		systemService.sendUserSuccessMessage(user.getId(), resources.getMessage("message.TranslationMachineRequestCompleted", new String[]{ survey.cleanTitle() }, "The machine translation request for the survey \"{0}\" has been completed.", new Locale(user.getLanguage().toLowerCase())));
 	}
 
 	private void updateTranslation(Request request, String targetLang, String translatedText) {

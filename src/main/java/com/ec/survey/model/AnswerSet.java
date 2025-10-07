@@ -7,6 +7,7 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.ConversionTools;
 
+import com.ec.survey.tools.Tools;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -464,5 +465,14 @@ public class AnswerSet implements java.io.Serializable {
 	}
 	public void setChangeExplanationText(Boolean changeExplanationText) {
 		this.changeExplanationText = changeExplanationText;
+	}
+
+	public void mapToUser(String email, String login, boolean anonymous) {
+		String value = (email != null && !email.isEmpty()) ? email : login;
+		if (anonymous) {
+			this.setResponderEmail(Tools.md5hash(value));
+		} else {
+			this.setResponderEmail(value);
+		}
 	}
 }

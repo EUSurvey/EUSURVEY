@@ -1236,7 +1236,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH));
+		cal.setTime(DateUtils.truncate(new Date(), java.util.Calendar.DATE));
 
 		Date start = null;
 		Date end = null;
@@ -2074,7 +2074,7 @@ public class AnswerService extends BasicService {
 		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(surveyId);
 
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH));
+		cal.setTime(DateUtils.truncate(new Date(), Calendar.DATE));
 
 		if (span.equalsIgnoreCase("month")) {
 			cal.add(Calendar.DATE, -30);
@@ -2118,7 +2118,7 @@ public class AnswerService extends BasicService {
 		}
 
 		if (span.equalsIgnoreCase("week") || span.equalsIgnoreCase("month") || span.equalsIgnoreCase("total")) {
-			Date lastDay = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
+			Date lastDay = DateUtils.truncate(new Date(), java.util.Calendar.DATE);
 
 			if (first == null || first.after(firstDay)) {
 				result.put(firstDay, 0);
@@ -2157,14 +2157,11 @@ public class AnswerService extends BasicService {
 			sqlVotesBefore += " AND ANSWER_SET_DATE >= :today";
 		};
 		
-		Date lastDay = this.getNewestAnswerDate(surveyId);
-		if (lastDay == null) {
-			lastDay = new Date();
-		}
-		lastDay = DateUtils.truncate(lastDay, Calendar.DAY_OF_MONTH);		
+		Date lastDay = new Date();
+		lastDay = DateUtils.truncate(lastDay, Calendar.DATE);
 		
 		if (span.equalsIgnoreCase("quorumDays")) {					
-			cal.setTime(DateUtils.truncate(lastDay, Calendar.DAY_OF_MONTH));
+			cal.setTime(DateUtils.truncate(lastDay, Calendar.DATE));
 			cal.add(Calendar.DATE, -10);
 		} else if (span.equalsIgnoreCase("quorumHours")){
 			cal.setTime(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY));
@@ -2175,18 +2172,18 @@ public class AnswerService extends BasicService {
 
 		Date firstDay = cal.getTime();
 		
-		int counter = 0;
+		int votesBefore = 0;
 		if (span.equalsIgnoreCase("quorumDays")) {
 			// get the number of votes before the first day
 			NativeQuery queryBefore = session.createSQLQuery(sqlVotesBefore);
 			queryBefore.setParameter("start", firstDay);
-			counter = ConversionTools.getValue(queryBefore.uniqueResult());
+			votesBefore = ConversionTools.getValue(queryBefore.uniqueResult());
 		} else if (span.equalsIgnoreCase("quorumHours")){
 			//get the number of votes of that day before the first hour		
 			NativeQuery queryBefore = session.createSQLQuery(sqlVotesBefore);
 			queryBefore.setParameter("start", firstDay);
 			queryBefore.setParameter("today", DateUtils.truncate(new Date(), Calendar.DATE));
-			counter = ConversionTools.getValue(queryBefore.uniqueResult());
+			votesBefore = ConversionTools.getValue(queryBefore.uniqueResult());
 		}
 
 		NativeQuery query = session.createSQLQuery(sql);
@@ -2195,9 +2192,11 @@ public class AnswerService extends BasicService {
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
 
-		Map<Date, Integer> result = new TreeMap<>();
+		var result = new TreeMap<Date, Integer>();
 
-		if(res.size() <= 0) return generateGenericQuorumResult(span);
+		if(res.isEmpty() && votesBefore == 0) return generateGenericQuorumResult(span);
+
+		int counter = votesBefore;
 
 		Date first = null;
 		Date last = null;
@@ -2217,14 +2216,14 @@ public class AnswerService extends BasicService {
 		}
 
 		if (span.equalsIgnoreCase("quorumDays")) {
-			if (first == null || first.after(firstDay)) result.put(firstDay, 0);
+			if (first == null || first.after(firstDay)) result.put(firstDay, votesBefore);
 
 			if (last == null || last.before(lastDay)) result.put(lastDay, counter);
 		}
 
 		if (span.equalsIgnoreCase("quorumHours")) {
 			Date lastHour = DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY);
-			if (first == null || first.after(firstDay)) result.put(firstDay, 0);
+			if (first == null || first.after(firstDay)) result.put(firstDay, votesBefore);
 
 			if (last == null || last.before(lastHour)) result.put(lastHour, counter);
 		}
@@ -2237,7 +2236,7 @@ public class AnswerService extends BasicService {
 		Calendar cal = Calendar.getInstance();
 
 		if(span.equalsIgnoreCase("quorumDays")){
-			cal.setTime(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH));
+			cal.setTime(DateUtils.truncate(new Date(), Calendar.DATE));
 			result.put(cal.getTime(), 0);
 			cal.add(Calendar.DATE, -10);
 			result.put(cal.getTime(), 0);
@@ -2904,9 +2903,21 @@ public class AnswerService extends BasicService {
 			for (Question question : questions) {
 				if (question.isUsedInResults() && filter.getVisibleQuestions().contains(question.getId().toString())) {
 					
-					if (question instanceof MatrixOrTable) {
+					if (question instanceof Matrix) {
 						MatrixOrTable parent = (MatrixOrTable)question;						
 						for (Element child: parent.getQuestions()) {
+							questionUidsByIndex.put(questionUidsByIndex.size(), child.getUniqueId());
+						}
+					} else if (question instanceof Table) {
+						Table parent = (Table)question;
+						for (Element q: parent.getQuestions()) {
+							for (Element a: parent.getAnswers()) {
+								questionUidsByIndex.put(questionUidsByIndex.size(), q.getUniqueId());
+							}
+						}
+					} else if (question instanceof ComplexTable) {
+						ComplexTable parent = (ComplexTable)question;
+						for (Element child: parent.getQuestionChildElements()) {
 							questionUidsByIndex.put(questionUidsByIndex.size(), child.getUniqueId());
 						}
 					} else if (question instanceof RatingQuestion) {

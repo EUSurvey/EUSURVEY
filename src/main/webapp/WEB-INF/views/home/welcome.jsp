@@ -8,12 +8,8 @@
 	<title>EUSurvey - <spring:message code="label.Welcome" /></title>	
 	<%@ include file="../includes.jsp" %>	
 	<script type="text/javascript" src="${contextpath}/resources/js/menu.js?version=<%@include file="../version.txt" %>"></script>
-	
-	<style>
-		@media screen and (max-height: 575px){
-			#rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;}
-		}	
-	</style>
+
+	<link href="${contextpath}/resources/css/welcome.css" rel="stylesheet" type="text/css" />
 	
 	<script type="text/javascript">
 		
@@ -225,30 +221,30 @@
 						
 						<br style="clear:both"/><br/><br/>
 							
-						<a href="?language=bg">Български</a>&#160; 
-			 			<a href="?language=cs">Čeština</a>&#160; 
-			 			<a href="?language=da">Dansk</a>&#160; 
-			 			<a href="?language=de">Deutsch</a>&#160; 
-			 			<a href="?language=et">Eesti keel</a>&#160; 
-			 			<a href="?language=el">Ελληνικά</a>&#160; 
-			 			<a href="?language=en">English</a>&#160; 
-			 			<a href="?language=es">Español</a>&#160; 
-			 			<a href="?language=fr">Français</a>&#160;
-			 			<a href="?language=ga">Gaeilge</a>&#160;
-			 			<a href="?language=hr">Hrvatski jezik</a>&#160; 
-			 			<a href="?language=it">Italiano</a>&#160; 
-			 			<a href="?language=lv">Latviešu valoda</a>&#160; 
-			 			<a href="?language=lt">Lietuvių kalba</a>&#160; 
-			 			<a href="?language=hu">Magyar</a>&#160; 
-			 			<a href="?language=mt">Malti</a>&#160; 
-			 			<a href="?language=nl">Nederlands</a>&#160; 
-			 			<a href="?language=pl">Polski</a>&#160; 
-			 			<a href="?language=pt">Português</a>&#160; 
-			 			<a href="?language=ro">Română</a>&#160; 
-			 			<a href="?language=sk">Slovenčina</a>&#160; 
-			 			<a href="?language=sl">Slovenščina</a>&#160; 
-			 			<a href="?language=fi">Suomi</a>&#160; 
-			 			<a href="?language=sv">Svenska</a>&#160;			 
+						<a class="language-link" href="?language=bg">Български</a>&#160;
+			 			<a class="language-link" href="?language=cs">Čeština</a>&#160;
+			 			<a class="language-link" href="?language=da">Dansk</a>&#160;
+			 			<a class="language-link" href="?language=de">Deutsch</a>&#160;
+			 			<a class="language-link" href="?language=et">Eesti keel</a>&#160;
+			 			<a class="language-link" href="?language=el">Ελληνικά</a>&#160;
+			 			<a class="language-link" href="?language=en">English</a>&#160;
+			 			<a class="language-link" href="?language=es">Español</a>&#160;
+			 			<a class="language-link" href="?language=fr">Français</a>&#160;
+			 			<a class="language-link" href="?language=ga">Gaeilge</a>&#160;
+			 			<a class="language-link" href="?language=hr">Hrvatski jezik</a>&#160;
+			 			<a class="language-link" href="?language=it">Italiano</a>&#160;
+			 			<a class="language-link" href="?language=lv">Latviešu valoda</a>&#160;
+			 			<a class="language-link" href="?language=lt">Lietuvių kalba</a>&#160;
+			 			<a class="language-link" href="?language=hu">Magyar</a>&#160;
+			 			<a class="language-link" href="?language=mt">Malti</a>&#160;
+			 			<a class="language-link" href="?language=nl">Nederlands</a>&#160;
+			 			<a class="language-link" href="?language=pl">Polski</a>&#160;
+			 			<a class="language-link" href="?language=pt">Português</a>&#160;
+			 			<a class="language-link" href="?language=ro">Română</a>&#160;
+			 			<a class="language-link" href="?language=sk">Slovenčina</a>&#160;
+			 			<a class="language-link" href="?language=sl">Slovenščina</a>&#160;
+			 			<a class="language-link" href="?language=fi">Suomi</a>&#160;
+			 			<a class="language-link" href="?language=sv">Svenska</a>&#160;
 							
 					</div>
 					

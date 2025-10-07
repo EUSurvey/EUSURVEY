@@ -44,6 +44,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeEcmaScript;
+
 @Controller
 @RequestMapping("/{shortname}/management")
 public class ParticipantsController extends BasicController {
@@ -65,6 +67,15 @@ public class ParticipantsController extends BasicController {
 	
 	@Resource(name = "eVoteService")
 	private EVoteService eVoteService;
+
+	private List<AttributeName> escapeAttributeNameList(List<AttributeName> list) {
+		List<AttributeName> escapedList = new ArrayList<>();
+		for (AttributeName attributeName : list) {
+			attributeName.setName(escapeEcmaScript(attributeName.getName()));
+			escapedList.add(attributeName);
+		}
+		return escapedList;
+	}
 
 	@RequestMapping(value = "/participants", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView participants(@PathVariable String shortname, HttpServletRequest request, Locale locale)
@@ -111,6 +122,7 @@ public class ParticipantsController extends BasicController {
 		int numberOfAttendees = attendeeService.getNumberOfAttendees(owner, filter);
 		result.addObject("numberOfAttendees", numberOfAttendees);
 		result.addObject("attributeNames", u.getSelectedAttributes());
+		result.addObject("attributeNamesForTableHead", escapeAttributeNameList(u.getSelectedAttributes()));
 		result.addObject(Constants.FILTER, filter);
 		result.addObject("allAttributeNames", attendeeService.getAllAttributes(owner));
 		if (request.getParameter("action") != null) {
@@ -825,14 +837,13 @@ public class ParticipantsController extends BasicController {
 	@RequestMapping(value = "/participantsjson", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public @ResponseBody List<ParticipationGroup> participantsjson(@PathVariable String shortname,
 			HttpServletRequest request) throws Exception {
-
 		User user = sessionService.getCurrentUser(request);
 
-		Form form = sessionService.getFormFromSessionInfo(request);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, false, false, false);
+		sessionService.upgradePrivileges(survey, user, request);
 
-		sessionService.upgradePrivileges(form.getSurvey(), user, request);
 		int accessPrivilege = 0;
-		if (form.getSurvey().getOwner().getId().equals(user.getId())) {
+		if (survey.getOwner().getId().equals(user.getId())) {
 			accessPrivilege = 2;
 		} else if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
 			accessPrivilege = 2;
@@ -844,7 +855,7 @@ public class ParticipantsController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		List<ParticipationGroup> participationGroups = participationService.getAll(form.getSurvey().getUniqueId(), true,
+		List<ParticipationGroup> participationGroups = participationService.getAll(survey.getUniqueId(), true,
 				0, Integer.MAX_VALUE);
 		for (ParticipationGroup group : participationGroups) {
 			if (group.getType() == ParticipationGroupType.ECMembers) {
@@ -854,8 +865,8 @@ public class ParticipantsController extends BasicController {
 				group.setChildren(group.getAttendees().size());
 				group.setAttendees(null);
 			} else if (group.getType() == ParticipationGroupType.VoterFile) {
-				group.setChildren((int) eVoteService.getVoterCount(form.getSurvey().getUniqueId(), null));
-				group.setInvited((int) eVoteService.getVoterCount(form.getSurvey().getUniqueId(), true));
+				group.setChildren((int) eVoteService.getVoterCount(survey.getUniqueId(), null));
+				group.setInvited((int) eVoteService.getVoterCount(survey.getUniqueId(), true));
 			} else {
 				group.setChildren(group.getAll());
 			}

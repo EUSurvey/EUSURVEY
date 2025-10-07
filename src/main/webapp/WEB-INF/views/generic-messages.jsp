@@ -328,6 +328,16 @@
 			this.systemMessages.splice(0, 0, message);
 
 			window.setTimeout("showMessages()", 100);
+
+			return message
+		}
+
+		this.removeSystemMessage = function (m) {
+			const mIndex = this.systemMessages.indexOf(m)
+			if (mIndex >= 0) {
+				this.systemMessages.splice(mIndex, 1)
+			}
+
 		}
 
 		this.sanitizeErrorPageText = function (text){
@@ -402,7 +412,12 @@
 
 	function showSystemMessage(message)
 	{
-		_messages.addSystemMessage(message);
+		return _messages.addSystemMessage(message);
+	}
+
+	function removeSystemMessage(message)
+	{
+		return _messages.removeSystemMessage(message);
 	}
 
 	function showMessages() {

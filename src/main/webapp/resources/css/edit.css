@@ -738,3 +738,14 @@ a.accordion-toggle:hover {
 .toolboxitem.disallowed, .toolboxgroup.disallowed{
 	display: none;
 }
+
+/* Selects the first div of a survey-element, if it has an input with name "hidden*", set to true */
+.survey-element > div:has(input[name^=hidden][value=true]) {
+	background-image: repeating-linear-gradient(-45deg, #0001, #0001 4px, transparent 4px, transparent 18px)
+}
+
+.readonly-hidden-icon {
+	float: right;
+	font-size: 16px;
+	margin-right: 4px;
+}

@@ -36,7 +36,7 @@
 				}
 				
 				<c:if test="${messagesent != null}">
-					showSuccess('<spring:message code="support.messagesent" />')
+					$("#support-confirmation-dialog").modal("show")
 				</c:if>
 			});
 	</script>
@@ -265,8 +265,23 @@
 		</div>
 	</div>
 
-	<%@ include file="../footer.jsp" %>	
-	
+	<%@ include file="../footer.jsp" %>
+
+	<div class="modal" id="support-confirmation-dialog" data-backdrop="static">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<spring:message code="message.SupportConfirmation" />
+				</div>
+				<div class="modal-footer">
+					<button onclick="$('#support-confirmation-dialog').modal('hide')" class="btn btn-primary">
+						<spring:message code="label.OK" />
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<c:if test="${USER == null || runnermode != null || responsive != null}">
 		<%@ include file="../generic-messages.jsp" %>
 	</c:if>

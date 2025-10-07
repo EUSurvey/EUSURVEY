@@ -1,6 +1,5 @@
 var lastshownmessageversion;
 var retrievedmessageversion;
-var alreadydoneseconds = 0;
 var messagedisplaydate;
 var currentmessageversion = 0;
 var startDate = new Date();
@@ -9,13 +8,17 @@ var usermessage = false;
 var usermessageid;
 
 $(function() {
+	let lastSystemMessageCheck = 0
 	try
 	{
 		lastshownmessageversion = localStorage.getItem("lastshownmessageversion");
-		alreadydoneseconds = parseInt(localStorage.getItem("alreadydoneseconds"));
 		currentmessageversion = parseInt(localStorage.getItem("currentmessageversion"));
+
+		lastSystemMessageCheck = parseInt(sessionStorage.getItem("lastSystemMessageCheck") ?? "0")
 	} catch (e) {};
-	window.setTimeout("checkSystemMessages()", 500);
+
+	const sysMsgTimeout = lastSystemMessageCheck - Date.now() + 5 * 60 * 1000
+	window.setTimeout("checkSystemMessages()", Math.max(sysMsgTimeout, 500));
 	
 	$("input, textarea, select").change(function() {
 		  lastEditDate = new Date();
@@ -26,10 +29,8 @@ $(function() {
 		{
 			var now = new Date(); 
 			var dif = now.getTime() - messagedisplaydate.getTime();
-			alreadydoneseconds = alreadydoneseconds + Math.round(dif / 1000);
 			try
 			{
-				localStorage.setItem("alreadydoneseconds", alreadydoneseconds);
 				localStorage.setItem("currentmessageversion", currentmessageversion);
 			} catch (e) {};
 		}
@@ -51,6 +52,8 @@ function checkSystemMessages()
 	{
 		d = "runnermode=true";
 	}
+
+	sessionStorage.setItem("lastSystemMessageCheck", Date.now().toString())
 	
 	$.ajax({
 	  url: contextpath + "/administration/system/message",
@@ -60,7 +63,7 @@ function checkSystemMessages()
 	  error: function(e)
 	  {
 		  //this happens when there is no message
-		  window.setTimeout("checkSystemMessages()", 60000);
+		  window.setTimeout("checkSystemMessages()", 5 * 60 * 1000);
 		 
 		  // refresh if available
 		  if (typeof refreshTimeout === "function") { 
@@ -76,15 +79,6 @@ function checkSystemMessages()
 		  
 		  if (message != null)
 		  {
-			  if (currentmessageversion != message.version)
-			  {
-				  alreadydoneseconds = 0;
-				  try
-				  {
-					localStorage.setItem("alreadydoneseconds", alreadydoneseconds);
-				  } catch (e) {};
-			  }
-			  
 			  retrievedmessageversion = message.version;
 			  currentmessageversion = retrievedmessageversion;
 			  
@@ -102,17 +96,20 @@ function checkSystemMessages()
 			  
 			  if (usermessage || retrievedmessageversion != lastshownmessageversion)
 			  {
-				  showSystemMessage(message);
+				  const messageModel = showSystemMessage(message);
 				  lastshownmessageversion = retrievedmessageversion;
 				  messagedisplaydate = new Date();
 				  if (message.time > 0)
 				  {
-					  window.setTimeout("hideSystemMessage()", (message.time - alreadydoneseconds) * 1000);
+					  window.setTimeout(() => {
+						  removeSystemMessage(messageModel)
+						  deleteUserMessage()
+					  }, message.time * 1000);
 				  }		
 			  }			  
 		  }
 		  		  
-		  window.setTimeout("checkSystemMessages()", 60000);
+		  window.setTimeout("checkSystemMessages()", 5 * 60 * 1000);
 	  }
 	});
 }

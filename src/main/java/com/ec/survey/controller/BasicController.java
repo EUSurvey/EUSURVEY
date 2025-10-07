@@ -3,14 +3,9 @@ package com.ec.survey.controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -732,5 +727,39 @@ public class BasicController implements BeanFactoryAware {
 		}
 		
 		return !answerSet.getAnswers(question.getUniqueId()).isEmpty();
+	}
+
+	protected Map<String, String> getMapForRequestParameters(HttpServletRequest request) {
+		var values = new HashMap<String, String>();
+		for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
+			if (entry.getKey().equalsIgnoreCase("token")){
+				continue;
+			}
+			if (!values.containsKey(entry.getKey())){
+				values.put(entry.getKey(), entry.getValue()[0]);
+			}
+		}
+
+		if (request.getSession().getAttribute("ECASSURVEYPARAMS") != null) {
+			String params = request.getSession().getAttribute("ECASSURVEYPARAMS").toString();
+			//if (params.contains("&")) {
+				var p = params.split("&");
+				for (String entry : p) {
+					if (entry.contains("=")) {
+						var l = entry.split("=");
+						var name = URLDecoder.decode(l[0], StandardCharsets.UTF_8);
+						var value = URLDecoder.decode(l[1], StandardCharsets.UTF_8);
+						if (!name.isEmpty() && !value.isEmpty()) {
+							if (!values.containsKey(name)){
+								values.put(name, value);
+							}
+						}
+					}
+				}
+			//}
+			request.getSession().removeAttribute("ECASSURVEYPARAMS"); // use only directly after login
+		}
+
+		return values;
 	}
 }

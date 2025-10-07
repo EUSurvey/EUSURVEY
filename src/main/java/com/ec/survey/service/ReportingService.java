@@ -2013,7 +2013,7 @@ public class ReportingService extends BasicService {
 			queryinsert.setString("code", code);
 			try {
 				queryinsert.executeUpdate();
-			} catch (ConstraintViolationException ce) {
+			} catch (PersistenceException pe) {
 				//this means there is already the same entry in the table: ignore
 				return;
 			} catch (Exception e) {

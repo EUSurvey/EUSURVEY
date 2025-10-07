@@ -48,7 +48,7 @@
 
 						<div class="elementwrapper">
 					
-						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">
+						<c:if test="${(publication == null && !element.isElementHidden())|| publication.isAllQuestions() || publication.isSelected(element.id)}">
 					
 						<c:choose>
 							<c:when test="${element.isDummy() && element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
@@ -393,7 +393,7 @@
 															<c:otherwise>
 																<c:set var="answer" value="${element.childElements.get(c-1)}" />
 																<c:set var="question" value="${element.childElements.get(element.columns + r - 2)}" />
-																<pre class="prepdf" style="margin: 0px; background-color: #fff; border: 0px;"><div style="word-wrap: break-word;">${form.answerSets[0].getTableAnswer(element, r-1, c-1, true)}</div></pre>
+																<pre class="prepdf" style="white-space: normal; margin: 0px; background-color: #fff; border: 0px;"><div style="word-wrap: break-word;">${form.answerSets[0].getTableAnswer(element, r-1, c-1, true)}</div></pre>
 															</c:otherwise>
 														</c:choose>															
 													</td>											
@@ -734,7 +734,7 @@
 						</c:if> 
 						
 						<c:if test="${(element.getType() == 'FreeTextQuestion' || element.getType() == 'RegExQuestion')}">
-							<pre class="prepdf" style="margin-left: 20px;"><div style="word-wrap: break-word; min-height: ${element.getNumRows()*20}px;">${form.getValueStripInvalidXML(element)}</div></pre>									
+							<pre class="prepdf" style="white-space: pre-wrap; margin-left: 20px;"><div style="word-wrap: break-word; min-height: ${element.getNumRows()*20}px;">${form.getValueStripInvalidXML(element)}</div></pre>
 						</c:if>
 						
 						<c:if test="${element.getType() == 'NumberQuestion'}">								

@@ -162,7 +162,7 @@
 	
 	<script type="text/javascript">
 	//<![CDATA[
-	function updateFileList(element, responseJSON) {
+	function updateFileList(element, responseJSON, doNotRemove=false) {
 		$(element).siblings(".uploaded-files").first().empty();
 		
 		$(element).siblings(".validation-error").remove();
@@ -171,7 +171,9 @@
 		$(surveyElement).find("a[data-type='delphisavebutton']").removeClass("disabled");
 
 		if (responseJSON.files.length == 0) {
-			$(surveyElement).removeClass("answered");
+			if (!doNotRemove) {
+				$(surveyElement).removeClass("answered");
+			}
 			updateProgress();
 		}
 		

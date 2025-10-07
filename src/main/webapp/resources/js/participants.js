@@ -459,7 +459,7 @@ var Participants = function() {
 	this.loadGuestlists = function() {
 		var model = this;
 		var request = $.ajax({
-			  url: contextpath + "/noform/management/participantsjson",
+			  url: contextpath + "/" + surveyshortname+ "/management/participantsjson",
 			  dataType: "json",
 			  cache: false,
 			  success: function(result)

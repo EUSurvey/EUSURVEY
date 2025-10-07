@@ -9,7 +9,7 @@
 
 	<!-- This is where we configure Spring-Security -->
 	<security:http auto-config="false" request-matcher="mvc"
-		entry-point-ref="authenticationEntryPoint">
+		entry-point-ref="authenticationEntryPoint" disable-url-rewriting="true">
 		
 		<security:access-denied-handler error-page="/auth/login?securityerror=true"/>
 		
@@ -156,7 +156,7 @@
 	<!-- We just actually need to set the default target url here -->
 	<bean id="customAuthenticationSuccessHandler"
 		class="com.ec.survey.security.CustomAuthenticationSuccessHandler"
-		p:defaultTargetUrl="/dashboard" />
+		p:defaultTargetUrl="/forms" />
 
 	<!-- The AuthenticationEntryPoint is responsible for redirecting the user 
 		to a particular page, like a login page, whenever the server sends back a 

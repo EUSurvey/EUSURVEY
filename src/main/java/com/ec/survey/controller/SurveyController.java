@@ -30,10 +30,15 @@ public class SurveyController extends BasicController {
 	protected PaginationMapper paginationMapper;       
 		
 	@RequestMapping()
-	public ModelAndView surveys(HttpServletRequest request) throws Exception {	
-		
-		SurveyFilter filter = sessionService.getSurveyFilter(request, true);			
-		
+	public ModelAndView surveys(HttpServletRequest request) throws Exception {
+        User user = sessionService.getCurrentUser(request);
+
+        if (user.getFormPrivilege() <= 0) {
+            return new ModelAndView("redirect:/dashboard");
+        }
+
+		SurveyFilter filter = sessionService.getSurveyFilter(request, true);
+
 		String delete = request.getParameter("delete");
 		String origin = request.getParameter("origin");
 		
@@ -41,8 +46,7 @@ public class SurveyController extends BasicController {
 		boolean currentlyloaded = false;
 		String shortname = "";
 		
-		User user = sessionService.getCurrentUser(request);
-		
+
 		if (delete != null && delete.trim().length() > 0)
 		{
 			Survey survey = surveyService.getSurvey(Integer.parseInt(delete), false, true);

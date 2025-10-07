@@ -1068,7 +1068,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 							if (question instanceof FreeTextQuestion) {
 								cell.setCellValue(v);
 							} else if (export != null && export.getSplitMCQ() && question instanceof MultipleChoiceQuestion) {
-								v = ConversionTools.removeHTMLNoEscape(v);
+								v = ConversionTools.removeHTMLNoEscape(v).replace("\"", "'");
 								v += "; ";
 								MultipleChoiceQuestion mcq = (MultipleChoiceQuestion) question;
 								for (var pa : mcq.getPossibleAnswers()) {

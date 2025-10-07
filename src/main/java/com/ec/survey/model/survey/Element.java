@@ -251,6 +251,14 @@ public abstract class Element implements java.io.Serializable {
 		return getType();
 	}
 
+    @Transient
+    public String getNameOrTypeStrippedAtMost100() {
+        String strippedTitle = getNameOrTypeStripped();
+        if (strippedTitle.length() > 100)
+            return strippedTitle.substring(0, 100) + "...";
+        return strippedTitle;
+    }
+
 	private Boolean isIsDependentMatrixQuestion = null;
 
 	@Transient
@@ -446,6 +454,15 @@ public abstract class Element implements java.io.Serializable {
 		if (this instanceof Question)
 		{
 			return ((Question)this).getIsDelphiQuestion();
+		}
+		return false;
+	}
+
+	@Transient
+	public boolean isElementHidden() {
+		//Used for PDFs
+		if (this instanceof Question) {
+			return ((Question) this).getHidden();
 		}
 		return false;
 	}

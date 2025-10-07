@@ -278,13 +278,27 @@ function update(input)
 			element.numbering(checked);
 			_undoProcessor.addUndoStep(["AutoNumbering", id, !checked, checked]);
 			break;
-		case "ReadOnly":
-			var checked = $(input).is(":checked");
-			var text = checked ? "true" : "false";
-			var oldtext = checked ? "false" : "true";
+		case "ReadOnly": {
+			const checked = $(input).is(":checked");
+			const text = checked ? "true" : "false";
+			const oldtext = checked ? "false" : "true";
 			element.readonly(checked);
+			if (!checked) {
+				element.hidden(false)
+			}
 			_undoProcessor.addUndoStep(["ReadOnly", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+
+			checkInputStates();
 			break;
+		}
+		case "Hidden": {
+			const hidden = $(input).is(":checked");
+			const text = checked ? "true" : "false";
+			const oldtext = checked ? "false" : "true";
+			element.hidden(hidden);
+			_undoProcessor.addUndoStep(["Hidden", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			break;
+		}
 		case "Identifier":
 			var text = $(input).val();		
 			if (!checkMandatory(text) || !checkCharacters(text) || !checkUniqueIdentifier(input))
@@ -455,8 +469,13 @@ function update(input)
 			if (text === "Slider")
 			{
 				element.optional(true);
+				element.readonly(false)
+				element.hidden(false)
+
+
 				$('#idPropertyMandatory').removeAttr("checked");
-				
+				$('#idPropertyReadOnly').removeAttr("checked");
+
 				element.unit("");
 				$('tr[data-label=Unit]').find("input[type=text]").val("");
 				
@@ -486,6 +505,7 @@ function update(input)
 				}
 				
 				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
+				checkInputStates();
 			}
 			
 			break;
@@ -941,8 +961,10 @@ function update(input)
 			{
 				return;
 			}
-			
-			var galleryid =  $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+
+			const galleryElement = $(_elementProperties.selectedelement).closest(".survey-element")
+
+			var galleryid =  galleryElement.attr("data-id");
 			var gallery = _elements[galleryid];
 			
 			var uid = $(_elementProperties.selectedelement).attr("data-uid");
@@ -958,6 +980,8 @@ function update(input)
 					break;
 				}
 			}
+
+			updateNavigation(galleryElement, galleryid)
 			break;
 		case "RegularExpression":
 			var text = $(input).val();
@@ -1049,7 +1073,11 @@ function update(input)
 			}
 			
 			element.isInterdependent(checked);
-			$(_elementProperties.selectedelement).find(".matrixtable").addClass("interdependent");
+			if (checked) {
+			    $(_elementProperties.selectedelement).find(".matrixtable").addClass("interdependent");
+			} else {
+			    $(_elementProperties.selectedelement).find(".matrixtable").removeClass("interdependent");
+			}
 			_undoProcessor.addUndoStep(["Interdependency", id, $(_elementProperties.selectedelement).index(), !checked, checked]);
 			
 			break;
@@ -1983,7 +2011,7 @@ function updateColumns(element, columns)
 		}
 		
 		if (newelement == null) {
-			newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, columns[i], columns[i], false, "", element.answers().length, 0, 0);			
+			newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, columns[i], columns[i], false, "", element.answers().length, 0, 0, false);
 		}		
 		
 		element.answers.push(newelement);
@@ -2017,7 +2045,7 @@ function updateRows(element, rows)
 		}
 		
 		if (newelement == null) {
-			newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, rows[i], rows[i], false, "", element.questions().length, 0, 0);
+			newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, rows[i], rows[i], false, "", element.questions().length, 0, 0, false);
 		}
 		
 		
@@ -2165,3 +2193,4 @@ function updateLogicOfQuestion(radio, selectedquestion) {
 		_undoProcessor.addUndoStep(["UseAndLogic", id, $(selectedquestion).index(), oldValue, newValue]);
 	}
 }
+

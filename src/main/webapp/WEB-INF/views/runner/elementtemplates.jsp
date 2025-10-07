@@ -65,6 +65,8 @@
 	</div>
 	
 	<div id="formula-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<label for="defaultFormulaTemplateID" class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
 			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
 			<span data-bind='html: title'></span>
@@ -97,7 +99,8 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
-			<input type="hidden" data-bind="value: formula, attr: {'name': 'formula' + id()}" />	
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
+			<input type="hidden" data-bind="value: formula, attr: {'name': 'formula' + id()}" />
 			<input type="hidden" data-bind="value: min, attr: {'name': 'min' + id()}" />	
 			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
 			<input type="hidden" data-bind="value: decimalPlaces, attr: {'name': 'decimalplaces' + id()}" />
@@ -146,6 +149,7 @@
 	</div>
 	
 	<div id="single-choice-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
 
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
@@ -290,6 +294,7 @@
 				<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 				<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+				<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 				<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 				<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
@@ -333,6 +338,8 @@
 	</div>
 	
 	<div id="multiple-choice-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -395,7 +402,7 @@
 				<ul role="listbox" data-bind="foreach: orderedPossibleAnswers(false), attr: {'class':css + ' multiple-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 					<li role="listitem" data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion($parent.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '') }">
 						<label for="defaultMCListBoxTemplateID" data-bind="attr: {for: id()}">
-							<button type="button" class="unstyledbutton" data-bind="attr: {'data-shortname': shortname(), 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
+							<button type="button" class="unstyledbutton" data-bind="disable: $parent.readonly(), attr: {'data-shortname': shortname(), 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
 								<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
 								<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
 							</button>
@@ -480,6 +487,7 @@
 				<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 				<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+				<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 				<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 				<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
@@ -600,6 +608,8 @@
 	</div>
 	
 	<div id="password-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -619,8 +629,9 @@
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
-			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
-			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
+			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
@@ -644,7 +655,9 @@
 		<!-- /ko -->
 	</div>
 	
-	<div id="freetext-template">	
+	<div id="freetext-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -694,8 +707,9 @@
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
-			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
-			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
+			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
@@ -887,6 +901,8 @@
 	</div>
 	
 	<div id="number-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -971,8 +987,9 @@
 			<input type="hidden" data-bind="value: unit, attr: {'name': 'unit' + id()}" />
 			<input type="hidden" data-bind="value: min, attr: {'name': 'min' + id()}" />	
 			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />	
-			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
-			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
+			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
@@ -1007,6 +1024,8 @@
 	</div> 
 	
 	<div id="email-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -1026,8 +1045,9 @@
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />
-			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
-			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
+			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
@@ -1037,6 +1057,8 @@
 	</div>
 	
 	<div id="date-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -1079,8 +1101,9 @@
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: minString(), attr: {'name': 'min' + id()}" />	
 			<input type="hidden" data-bind="value: maxString(), attr: {'name': 'max' + id()}" />	
-			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
-			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
+			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />	
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
@@ -1105,6 +1128,8 @@
 	</div>
 	
 	<div id="time-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -1141,8 +1166,9 @@
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: min(), attr: {'name': 'min' + id()}" />	
 			<input type="hidden" data-bind="value: max(), attr: {'name': 'max' + id()}" />	
-			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
-			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
+			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
@@ -1152,6 +1178,8 @@
 	</div>
 	
 	<div id="upload-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -1188,7 +1216,8 @@
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
-			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<input type="hidden" data-bind="value: extensions, attr: {'name': 'extensions' + id()}" />
@@ -1228,6 +1257,8 @@
 	</div>
 	
 	<div id="gallery-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
@@ -1250,18 +1281,18 @@
 				<table data-bind="attr: {'class':'gallery-table limit' + limit()}">
 					<thead>
 						<tr>
-							<th class="sr-only">${form.getMessage("label.PhotoScenery")}"</th>
-							<th class="sr-only">${form.getMessage("label.PhotoScenery")}"</th>
+							<!-- ko foreach: new Array(columns()) -->
+								<th class="sr-only">${form.getMessage("label.PhotoScenery")}</th>
+							<!-- /ko -->
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td>
-								<img alt="${form.getMessage("label.PhotoScenery")}" style="max-width: none;" src="${contextpath}/resources/images/photo_scenery.png" data-width="128" data-original-width="247" width="247px">
-							</td>
-							<td>
-								<img alt="${form.getMessage("label.PhotoScenery")}" style="max-width: none;" src="${contextpath}/resources/images/photo_scenery.png" data-width="128" data-original-width="247" width="247px">
-							</td>
+							<!-- ko foreach: new Array(columns()) -->
+								<td>
+									<img alt="${form.getMessage("label.PhotoScenery")}" style="max-width: none;" src="${contextpath}/resources/images/photo_scenery.png" data-width="128" data-original-width="247" width="247px">
+								</td>
+							<!-- /ko -->
 						</tr>		
 					</tbody>
 				</table>			
@@ -1278,15 +1309,15 @@
 				</thead>
 				<tbody data-bind="foreach: rows">
 					<tr data-bind="foreach: $data">
-						<td data-bind="attr: {'data-uid':uid()}" style="vertical-align: top">
+						<td data-bind="attr: {'data-uid':uid(), 'data-id': 'answertd' + $parents[1].id() + uid(), id: 'answertd' + $parents[1].id() + uid(), class:'galleryelement'}" style="vertical-align: top">
 							<div class="galleryinfo">
 								<span data-bind="if: $parents[1].selection()">																			
-									<input aria-labelledby="defaultGalleryTemplateID" data-bind="value: $parentContext.$index() * $parents[1].columns() + $index(), checked: getValueByQuestionGallery($parents[1].uniqueId()).indexOf(($parentContext.$index() * $parents[1].columns() + $index()).toString()) > -1, attr: {'onclick': $parents[1].readonly() ? 'return false;':'propagateChange(this);', 'data-shortname': $parents[1].shortname(), 'class': $parents[1].css() + ' selection', 'name':'answer'+$parents[1].id(), 'aria-labelledby': 'answerlabel' + $parents[1].id() + $index()}" type="checkbox" />
+									<input aria-labelledby="defaultGalleryTemplateID" data-bind="disable: $parents[1].readonly(), value: $parentContext.$index() * $parents[1].columns() + $index(), checked: getValueByQuestionGallery($parents[1].uniqueId()).indexOf(($parentContext.$index() * $parents[1].columns() + $index()).toString()) > -1, attr: {'onclick': $parents[1].readonly() ? 'return false;':'propagateChange(this);', 'data-shortname': $parents[1].shortname(), 'class': $parents[1].css() + ' selection', 'name':'answer'+$parents[1].id(), 'aria-labelledby': 'answerlabel' + $parents[1].id() + $index()}" type="checkbox" />
 								</span>
 								<!-- ko if: $parents[1].numbering() -->
 								<span data-bind='html: ($parentContext.$index() * $parents[1].columns() + $index()+1) + "."'></span>
 								<!-- /ko -->
-								<span data-bind='html: name().replace("%20"," "), attr: {id: "answerlabel" + $parents[1].id() + $index()}'></span>
+								<span data-bind='html: name().replace("%20"," "), attr: {id: "answerlabel" + $parents[1].id() + $index(), class:"answerlabel"}'></span>
 							</div>
 							<a onclick="showGalleryBrowser($(this).parent())">																	
 								<img class="gallery-image" alt="${form.getMessage("form.GalleryImageItem")}" data-bind="attr: {'alt': (desc() != '' ? desc() : 'Gallery Image' + $index()) + (longdesc != '' ? '; URL ' + longdesc() : ''), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px'}"  style="max-width: 100%;" />
@@ -1312,6 +1343,7 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: columns, attr: {'name': 'columns' + id()}" />
 			<input type="hidden" data-bind="value: selection, attr: {'name': 'selectable' + id()}" />
 			<input type="hidden" data-bind="value: numbering, attr: {'name': 'numbering' + id()}" />
@@ -1353,6 +1385,8 @@
 	</div>
 	
 	<div id="matrix-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'matrix', attr: {'name': 'type' + id()}" />
 			<input type="hidden" data-bind="value: tableType, attr: {'name': 'tabletype' + id()}" />
@@ -1362,6 +1396,7 @@
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
@@ -1415,6 +1450,7 @@
 					<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 					<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 					<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+					<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 					<input type="hidden" data-bind="value: noNegativeScore, attr: {'name': 'noNegativeScore' + id()}" />
 					<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 					
@@ -1457,6 +1493,7 @@
 								<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 								<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 								<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+								<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 								<label hidden><textarea data-bind="text: title, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.Title")}</label>
 								 <!-- /ko -->
 								<span class="matrixheadertitle" data-bind="html: title"></span>
@@ -1488,6 +1525,8 @@
 	</div>
 	
 	<div id="table-template">
+		<span data-bind="template: 'hidden-element-logic'"></span>
+
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'table', attr: {'name': 'type' + id()}" />
 			<input type="hidden" data-bind="value: tableType, attr: {'name': 'tabletype' + id()}" />	
@@ -1498,6 +1537,7 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
@@ -1866,7 +1906,7 @@
 										<ul role="listbox" data-bind="attr: {'class': child.css() + ' multiple-choice', 'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}, foreach: child.orderedPossibleAnswers(false),">
 											<li role="listitem" data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion(child.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '')}">
 												<label for="defaultComplexMCListBoxTemplateID" data-bind="attr: {for: id()}">
-													<button type="button" class="unstyledbutton" data-bind="attr: {'data-shortname': shortname(), 'onclick' : child.readonly() || child.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
+													<button type="button" class="unstyledbutton" data-bind="disable: child.readonly(), attr: {'data-shortname': shortname(), 'onclick' : child.readonly() || child.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
 														<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
 														<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
 													</button>
@@ -1951,7 +1991,8 @@
 					<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
 					<input type="hidden" data-bind="value: formula, attr: {'name': 'formula' + id()}" />
 					<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
-									
+					<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
+
 					<!-- ko foreach: possibleAnswers() -->
 						<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
 						<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
@@ -1962,6 +2003,17 @@
 			<!-- /ko -->
 			</div>
 			
+		<!-- /ko -->
+	</div>
+
+	<div id="hidden-element-logic">
+		<!-- ko if: foreditor && hidden() -->
+			<span class="readonly-hidden-icon" data-bind="childrenComplete: () => $($element).find('a').tooltip()">
+				<a data-toggle="tooltip" data-placement="left" data-original-title="${form.getMessage("label.ElementIsHidden")}"><span class="glyphicon glyphicon-eye-close"></span></a>
+			</span>
+		<!-- /ko -->
+		<!-- ko if: !foreditor && hidden() -->
+			<mark hidden class="hidden-element-marker"></mark>
 		<!-- /ko -->
 	</div>
 </div>

@@ -168,22 +168,13 @@ public class DelphiController extends BasicController {
 
 					if (group.getType() == ParticipationGroupType.ECMembers) {
 						EcasUser ecasUser = group.getEcasUser(invitation.getAttendeeId());
-
-						if (survey.isAnonymous()) {
-							answerSet.setResponderEmail(Tools.md5hash(ecasUser.getEmail()));
-						} else {
-							answerSet.setResponderEmail(ecasUser.getEmail());
-						}
+						answerSet.mapToUser(ecasUser.getEmail(), ecasUser.getEcMoniker(), survey.isAnonymous());
 					} else {
 
 						Attendee attendee = attendeeService.get(invitation.getAttendeeId());
 
 						if (attendee != null) {
-							if (survey.isAnonymous()) {
-								answerSet.setResponderEmail(Tools.md5hash(attendee.getEmail()));
-							} else {
-								answerSet.setResponderEmail(attendee.getEmail());
-							}
+							answerSet.mapToUser(attendee.getEmail(), attendee.getName(), survey.isAnonymous());
 						} else {
 							logger.error("Attendee " + invitation.getAttendeeId() + " referenced by invitation "
 									+ invitation.getId() + " not found!");
@@ -192,7 +183,7 @@ public class DelphiController extends BasicController {
 				}
 
 			} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null && user != null) {
-				answerSet.setResponderEmail(user.getEmail());
+				answerSet.mapToUser(user.getEmail(), user.getLogin(), survey.isAnonymous());
 			}
 
 			Set<String> invisibleElements = new HashSet<>();

@@ -82,7 +82,7 @@ public class Skin implements java.io.Serializable {
 	@Transient 
 	public String getDisplayName()
 	{
-		if (getOwner().getLogin().equalsIgnoreCase("admin"))
+		if (getIsPublic())
 		{
 			switch (getName())
 			{
@@ -100,9 +100,9 @@ public class Skin implements java.io.Serializable {
 					return "European Court of Auditors";
 				default:
 					break;
-			}	
+			}
 		}
-		
+
 		return getName();
 	}
 	

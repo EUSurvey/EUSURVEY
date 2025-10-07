@@ -46,8 +46,7 @@ public class PublicationController extends BasicController {
 
 		try {
 
-			Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, false, true, true,
-					false);
+			Survey survey = surveyService.getSurveyLight(shortname, false, true); //ByShortname(shortname, false, null, request, false, true, true, false);
 			String lang = request.getParameter("surveylanguage");
 
 			ResultFilter userFilter = new ResultFilter();
@@ -161,15 +160,6 @@ public class PublicationController extends BasicController {
 					String selectedtab = request.getParameter("selectedtab");
 					result.addObject("selectedtab", selectedtab == null ? 1 : Integer.parseInt(selectedtab));
 
-					int answers = 0;
-					if (this.isReportingDatabaseEnabled()) {
-						answers = reportingService.getCount(false, survey.getUniqueId());
-					} else {
-						answers = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
-					}
-					if (answers > 100000)
-						result.addObject("skipstatistics", true);
-					
 					if (survey.getIsSelfAssessment()) {
 						List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());
 						result.addObject("targetdatasets", datasets);

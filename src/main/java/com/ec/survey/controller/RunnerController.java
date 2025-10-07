@@ -13,6 +13,7 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.xml.serializer.Encodings;
 import org.hibernate.exception.ConstraintViolationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Validator;
@@ -33,6 +34,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -336,6 +339,22 @@ public class RunnerController extends BasicController {
 
 								model.addObject("draftid", draft.getUniqueId());
 							} else {
+
+								var values = getMapForRequestParameters(request);
+
+								draft = new Draft();
+								if (!values.isEmpty()) {
+									var message = WebServiceController.initDraftForURLParameters(draft, invitation.getUniqueId(), survey, null, values, false);
+									if (message != null) {
+										logger.error(message);
+									}
+									if (!draft.getAnswerSet().getAnswers().isEmpty()) {
+										f.getAnswerSets().add(draft.getAnswerSet());
+										uniqueCode = draft.getAnswerSet().getUniqueCode();
+										model.addObject("draftid", invitation.getUniqueId());
+									}
+								}
+
 								if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 									model = new ModelAndView("runner/quiz", "form", f);
 									model.addObject("isquizpage", true);
@@ -598,30 +617,28 @@ public class RunnerController extends BasicController {
 			answerSet.setInvitationId(invitation.getUniqueId());
 
 			String email = "";
+			String login = "";
 
 			switch (participationGroup.getType()) {
 			case ECMembers:
 				EcasUser ecasUser = participationGroup.getEcasUser(invitation.getAttendeeId());
 				if (ecasUser != null) {
 					email = ecasUser.getEmail();
+					login = ecasUser.getEcMoniker();
 				}
 				break;
 			case Token:
 				email = invitation.getUniqueId();
+				login = "token";
 				break;
 			default:
 				if (attendee != null) {
 					email = attendee.getEmail();
+					login = attendee.getName();
 				}
 			}
 
-			if (email != null) {
-				if (survey.isAnonymous()) {
-					answerSet.setResponderEmail(Tools.md5hash(email));
-				} else {
-					answerSet.setResponderEmail(email);
-				}
-			}
+			answerSet.mapToUser(email, login, survey.isAnonymous());
 
 			boolean hibernateOptimisticLockingFailureExceptionCatched = false;
 
@@ -682,7 +699,7 @@ public class RunnerController extends BasicController {
 				
 				List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(answerSet.getSurvey().getUniqueId());
 				result.addObject("SATargetDatasets", datasets);
-							
+
 				return result;
 			}
 
@@ -1108,11 +1125,26 @@ public class RunnerController extends BasicController {
 							serviceurl += "?surveylanguage=" + lang;
 						}
 
+						var values = getMapForRequestParameters(request);
+						if (!values.isEmpty()) {
+                            StringBuilder params = new StringBuilder();
+							for (String name : values.keySet()) {
+                                params.append('&');
+                                params.append(URLEncoder.encode(name, StandardCharsets.UTF_8));
+                                params.append('=');
+                                params.append(URLEncoder.encode(values.get(name), StandardCharsets.UTF_8));
+							}
+							serviceurl += params;
+						}
+
 						modelReturn.addObject("serviceurl", serviceurl);
 
 						if (survey.getPassword() == null || survey.getPassword().trim().length() == 0) {
 							modelReturn.addObject("hidepassword", true);
 						}
+					} else {
+						var values = request.getQueryString();
+						request.getSession().setAttribute("PWSURVEYPARAMS", values);
 					}
 
 					modelReturn.addObject("draftid", draftid);
@@ -1297,6 +1329,19 @@ public class RunnerController extends BasicController {
 					logger.error(e.getLocalizedMessage(), e);
 				}
 			} else {
+				var values = getMapForRequestParameters(request);
+				var draft = new Draft();
+				if (!values.isEmpty()) {
+					var message = WebServiceController.initDraftForURLParameters(draft, uniqueCode, survey, null, values, true);
+					if (message != null) {
+						logger.error(message);
+					}
+					if (!draft.getAnswerSet().getAnswers().isEmpty()) {
+						f.getAnswerSets().add(draft.getAnswerSet());
+						model.addObject("draftid", uniqueCode);
+					}
+				}
+
 				if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 					model = new ModelAndView("runner/quiz", "form", f);
 					model.addObject("isquizpage", true);
@@ -1648,22 +1693,13 @@ public class RunnerController extends BasicController {
 
 						if (group.getType() == ParticipationGroupType.ECMembers) {
 							EcasUser ecasUser = group.getEcasUser(invitation.getAttendeeId());
-
-							if (survey.isAnonymous()) {
-								draft.getAnswerSet().setResponderEmail(Tools.md5hash(ecasUser.getEmail()));
-							} else {
-								draft.getAnswerSet().setResponderEmail(ecasUser.getEmail());
-							}
+							draft.getAnswerSet().mapToUser(ecasUser.getEmail(), ecasUser.getEcMoniker(), survey.isAnonymous());
 						} else {
 
 							Attendee attendee = attendeeService.get(invitation.getAttendeeId());
 
 							if (attendee != null) {
-								if (survey.isAnonymous()) {
-									draft.getAnswerSet().setResponderEmail(Tools.md5hash(attendee.getEmail()));
-								} else {
-									draft.getAnswerSet().setResponderEmail(attendee.getEmail());
-								}
+								draft.getAnswerSet().mapToUser(attendee.getEmail(), attendee.getName(), survey.isAnonymous());
 							} else {
 								logger.error("Attendee " + invitation.getAttendeeId() + " referenced by invitation "
 										+ invitation.getId() + " not found!");
@@ -1674,7 +1710,8 @@ public class RunnerController extends BasicController {
 					draft.getAnswerSet().setInvitationId(invitation.getUniqueId());
 				} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null
 						&& user != null) {
-					draft.getAnswerSet().setResponderEmail(user.getEmail());
+
+					draft.getAnswerSet().mapToUser(user.getEmail(), user.getLogin(), survey.isAnonymous());
 				}
 
 				//check that all readonly mandatory questions are answered
@@ -1827,7 +1864,11 @@ public class RunnerController extends BasicController {
 						request.getSession().setAttribute("passwordauthentication", true);
 						
 						loadSurvey(survey, request, locale, uidorshortname, true, false);
-						return new ModelAndView("redirect:/runner/" + uidorshortname + "?" + request.getQueryString() + "&pw=true");
+						String queryParameters = request.getQueryString() + "&pw=true";
+						if (request.getSession().getAttribute("PWSURVEYPARAMS") != null) {
+							queryParameters += "&" + request.getSession().getAttribute("PWSURVEYPARAMS").toString();
+						}
+						return new ModelAndView("redirect:/runner/" + uidorshortname + "?" + queryParameters);
 					}
 
 					// check for token
@@ -1981,7 +2022,7 @@ public class RunnerController extends BasicController {
 
 			if (origsurvey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null && user != null) {
 				if (!origsurvey.getIsEVote()) {
-					answerSet.setResponderEmail(user.getEmail());
+					answerSet.mapToUser(user.getEmail(), user.getLogin(), origsurvey.isAnonymous());
 					email = user.getEmail();
 				}				
 

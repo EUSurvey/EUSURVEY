@@ -110,6 +110,7 @@ public class SystemService extends BasicService {
 		m.setCriticality(1);
 		m.setText(message);
 		m.setUserId(userid);
+		m.setTime(5);
 		save(m);
 	}
 	

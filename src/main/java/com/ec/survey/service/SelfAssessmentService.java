@@ -424,7 +424,7 @@ public class SelfAssessmentService extends BasicService {
 			}
 		}
 		
-		surveyService.update(surveyCopy, false, true, true, surveyCopy.getOwner().getId());		
+		surveyService.update(surveyCopy, true, true, surveyCopy.getOwner().getId());
 	}
 
 	public SAResult getSAResult(int datasetid, String contributionuid) {

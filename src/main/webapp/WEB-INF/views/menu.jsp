@@ -424,40 +424,40 @@
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Type" /></td>
 					<td>					
 						<div class="btn-group" data-toggle="buttons">
-						  <label style="height: auto" class="btn btn-default active">
+						  <label class="btn btn-default active">
 							<img style="height: 16px" src="${contextpath}/resources/images/icons/64/survey.png" />
 						    <input checked="checked" onchange="checkSurveyTypes()" type="radio" name="new-survey-type" id="new-survey-type-normal" value="normal" />&#160;<spring:message code="label.StandardSurvey" />
 						  </label>
-						  <label style="height: auto" class="btn btn-default" title="<spring:message code="info.Quiz" />" aria-label="<spring:message code="info.Quiz" />" data-toggle='tooltip'>
+						  <label class="btn btn-default" title="<spring:message code="info.Quiz" />" aria-label="<spring:message code="info.Quiz" />" data-toggle='tooltip'>
 						    <span class="glyphicon glyphicon-education" style="font-size: 15px"></span>
 						    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-quiz" value="quiz" />&#160;<spring:message code="label.Quiz" />
 						  </label>
 						  <c:if test="${enableopc && USER.getGlobalPrivilegeValue('ECAccess') > 0}">
-							  <label style="height: auto" class="btn btn-default hidecopy" title="<spring:message code="info.OPC" />" aria-label="<spring:message code="info.OPC" />" data-toggle='tooltip'>
+							  <label class="btn btn-default hidecopy" title="<spring:message code="info.OPC" />" aria-label="<spring:message code="info.OPC" />" data-toggle='tooltip'>
 							    <img style="height: 18px;" src="${contextpath}/resources/images/icons/24/people.png">
 							    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-opc" value="opc" />&#160;<spring:message code="label.OPC" />
 							  </label>
 						  </c:if>
 						 <c:if test="${enableecf}">
-							<label style="height: auto" class="btn btn-default hidecopy" title="<spring:message code="info.ECF" />" aria-label="<spring:message code="info.ECF" />" data-toggle='tooltip'>
+							<label class="btn btn-default hidecopy" title="<spring:message code="info.ECF" />" aria-label="<spring:message code="info.ECF" />" data-toggle='tooltip'>
 								<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/table.png">
 								<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-ecf" value="ecf" />&#160;<spring:message code="label.ECF" />
 						  	</label>
 						  </c:if>
 						  <c:if test="${enableselfassessment}">
-							<label style="height: auto" class="btn btn-default" title="<spring:message code="info.SelfAssessment" />" aria-label="<spring:message code="info.SelfAssessment" />" data-toggle='tooltip'>
+							<label class="btn btn-default" title="<spring:message code="info.SelfAssessment" />" aria-label="<spring:message code="info.SelfAssessment" />" data-toggle='tooltip'>
 								<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/table.png">
 								<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-selfassessment" value="selfassessment" />&#160;<spring:message code="label.SelfAssessment" />
 							</label>
 					      </c:if>
 						  <c:if test="${enabledelphi}">
-								<label style="height: auto" class="btn btn-default" title="<spring:message code="info.Delphi" />" aria-label="<spring:message code="info.Delphi" />" data-toggle='tooltip'>
+								<label class="btn btn-default" title="<spring:message code="info.Delphi" />" aria-label="<spring:message code="info.Delphi" />" data-toggle='tooltip'>
 									<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/delphi.png">
 									<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-delphi" value="delphi" />&#160;<spring:message code="label.Delphi" />
 								</label>
 					      </c:if>
 					      <c:if test="${enableevote}">
-								<label style="height: auto" class="btn btn-default" title="<spring:message code="info.eVote" />" aria-label="<spring:message code="info.eVote" />" data-toggle='tooltip'>
+								<label class="btn btn-default" title="<spring:message code="info.eVote" />" aria-label="<spring:message code="info.eVote" />" data-toggle='tooltip'>
 									<span class="glyphicon glyphicon-ok" style="font-size: 11px; border: 2px solid #555; padding: 3px;"></span>
 									<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-evote" value="evote" />&#160;<spring:message code="label.eVote" />
 								</label>
@@ -839,7 +839,7 @@
 		    		$('#new-survey-organisation-noneuis').append(option);
 		    	});	
 		    	
-		    	var organisation = "${USER.organisation}";
+		    	var organisation = "${USER.organisationCode}";
 		    	if (organisation.length == 0 || organisation == 'external') organisation = "OTHER";
 		    	$('.new-survey-organisation').val(organisation);
 		    	
