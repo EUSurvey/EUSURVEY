@@ -200,6 +200,7 @@
                 <thead>
                     <th>Query</th>
                     <th>Answer</th>
+                    <th>References</th>
                 </thead>
                 <tbody id="response">
 
@@ -240,13 +241,31 @@
                       });
                 }
 
+                let queriesArray = [];
+                let counter = 0;
+
                 function call2() {
                     const queries = document.getElementById("queries").value;
-                    const queriesArray = queries.split('\n');
+                    queriesArray = queries.split('\n');
+                    counter = 0;
                     $("#response").empty();
-                    for (let i = 0; i < queriesArray.length; i++) {
+                    executeBatch();
+                }
+
+                function executeBatch() {
+                    for (let i = counter; i < counter + 10; i++) {
+                        if (i >= queriesArray.length) {
+                            return;
+                        }
+
                         executeQuery(queriesArray[i].trim());
                     }
+
+                    counter += 10;
+
+                    setTimeout(() => {
+                      executeBatch();
+                    }, "15000");
                 }
 
                 function executeQuery(query) {
@@ -289,6 +308,8 @@
                     td = document.createElement("td");
                     $(td).text("waiting for response...");
                     $(tr).append(td);
+                    var td2 = document.createElement("td");
+                    $(tr).append(td2);
 
                     fetch(apiUrl, requestOptions)
                       .then(response => {
@@ -301,6 +322,14 @@
                         console.log(data);
 
                         $(td).text(data.answer);
+
+                        var citations = data.citations;
+                        for (let i = 0; i < citations.length; i++) {
+                            var a = document.createElement("a");
+                            $(a).attr("href", citations[i].link).append(citations[i].title);
+                            $(td2).append(a).append("&nbsp;");
+                        }
+
                         //document.getElementById("response").value = data.answer;
                       })
                       .catch(error => {
