@@ -48,10 +48,10 @@
                 My survey has been cloned and is being distributed by someone else.
                 Can I import contacts to use for invitations?
                 I cannot import my contact list into the Address Book.
-                The system says “invalid email address” during import.
+                The system says &quot;invalid email address&quot; during import.
                 Some contacts are missing after importing my list.
                 How can I delete or update existing contacts?
-                The imported contacts don’t appear in my survey invitations.
+                The imported contacts don&#39;t appear in my survey invitations.
                 My contact import fails without error.
                 How do I group contacts for different surveys?
                 Why are some emails duplicated in my Address Book?
@@ -62,51 +62,51 @@
                 The given link does not work, how to access the survey?
                 How to get access to my draft contribution?
                 How can I add translations to my survey?
-                How to add a text box into a choice question like “Other, please specify…”?
+                How to add a text box into a choice question like &quot;Other, please specify...&quot;?
                 My survey shows 'Page not found' when I open the invitation link.
                 How can I reset a respondent who made a mistake in their submission?
-                The captcha doesn’t work when I try to access a survey.
+                The captcha doesn&#39;t work when I try to access a survey.
                 Can I see who already answered?
-                I submitted my response, but the survey owner says they can’t see it.
+                I submitted my response, but the survey owner says they can&#39;t see it.
                 My contribution disappeared after submission.
-                I accidentally submitted twice — can I delete one contribution?
-                My contribution shows as “incomplete.”
+                I accidentally submitted twice - can I delete one contribution?
+                My contribution shows as &quot;incomplete.&quot;
                 The survey owner says some answers are missing from my submission.
-                I can’t open the contribution summary after submission.
-                I edited my contribution, but the changes don’t appear.
-                I submitted the survey, but didn’t receive a confirmation message.
+                I can&#39;t open the contribution summary after submission.
+                I edited my contribution, but the changes don&#39;t appear.
+                I submitted the survey, but didn&#39;t receive a confirmation message.
                 A respondent needs to correct their submission.
                 I need to reopen a submission that was already completed.
                 How can I allow a respondent to re-enter their survey?
                 Can I bulk reset several respondents at once?
                 A respondent wants to change one answer after submission.
-                I reset a respondent, but they didn’t receive a new link.
+                I reset a respondent, but they didn&#39;t receive a new link.
                 I reset the wrong respondent by mistake.
-                Can I reopen a respondent’s submission without deleting their data?
+                Can I reopen a respondent&#39;s submission without deleting their data?
                 It seems my invitations were not delivered to all users. What can i do to check ?
                 How can I send a reminder to respondents?
-                Some recipients didn’t receive the invitation email.
-                The invitation link in the email doesn’t work.
-                How can I resend invitations to users who haven’t answered?
+                Some recipients didn&#39;t receive the invitation email.
+                The invitation link in the email doesn&#39;t work.
+                How can I resend invitations to users who haven&#39;t answered?
                 The invitation email shows the wrong language.
-                I sent invitations but can’t see their status.
-                The system says “invalid email address” during invitation import.
+                I sent invitations but can&#39;t see their status.
+                The system says &quot;invalid email address&quot; during invitation import.
                 Can I personalize each invitation email?
                 Recipients say they received the same invitation twice.
                 How do I cancel an invitation I already sent?
                 My invitation emails go to spam folders.
                 I get an error saying access denied when opening my survey.
                 The system is asking for EU login,  what should I do?
-                I can’t open a survey; it says “Access denied.”
+                I can&#39;t open a survey; it says &quot;Access denied.&quot;
                 What second factor authentication method can I configure with my account?
                 When I try to log in, it keeps redirecting me back to the homepage.
-                I get an “Invalid credentials” message when trying to access my survey.
+                I get an &quot;Invalid credentials&quot; message when trying to access my survey.
                 My link worked yesterday, but now it asks me to log in again.
-                The system logs me out while I’m editing the survey.
-                I can’t access my private survey after duplication.
-                I’ve received reports from respondents that the survey link isn’t opening.
-                I get a “403 forbidden” error when opening the survey.
-                The system doesn’t recognize my EU Login account.
+                The system logs me out while I&#39;m editing the survey.
+                I can&#39;t access my private survey after duplication.
+                I&#39;ve received reports from respondents that the survey link isn&#39;t opening.
+                I get a &quot;403 forbidden&quot; error when opening the survey.
+                The system doesn&#39;t recognize my EU Login account.
                 Why is my survey loading so slowly?
                 The survey takes too long to load.
                 My respondents say the survey freezes after a few pages.
@@ -118,46 +118,46 @@
                 Uploading attachments in my survey is slow.
                 The charts in Results take too long to appear.
                 How can I improve the speed of my survey?
-                I submitted the survey but don’t see my answers in results.
+                I submitted the survey but don&#39;t see my answers in results.
                 Why do I see 'technical problem' when exporting results?
                 Where can I download all responses?
                 Can I get statistics of my survey?
                 Can I backup my survey/Can i take backup of my survey
-                I can’t see the latest submissions in my results.
+                I can&#39;t see the latest submissions in my results.
                 The report still shows old data even after new responses.
-                My statistics don’t match the number of contributions.
+                My statistics don&#39;t match the number of contributions.
                 Results show only part of the collected data.
-                The charts don’t update when new answers arrive.
-                My exported file doesn’t include new contributions.
+                The charts don&#39;t update when new answers arrive.
+                My exported file doesn&#39;t include new contributions.
                 Contributions appear, but the report total is wrong.
                 When will the results update automatically?
                 I see more submissions in Contributions than in Results.
-                The graphs show yesterday’s results instead of today’s.
+                The graphs show yesterday&#39;s results instead of today&#39;s.
                 Can I edit my survey after publishing it?
                 How do I delete a survey?
                 Why does my question not appear when I select an option?
                 What are different type of surveys in eusurvey
-                I can’t submit my survey; it says technical error.
-                I get a “technical problem” error when submitting my survey.
+                I can&#39;t submit my survey; it says technical error.
+                I get a &quot;technical problem&quot; error when submitting my survey.
                 The system shows an error message when I open my survey.
                 My survey crashes when respondents reach the last page.
                 The survey freezes during submission.
-                I can’t access the preview mode — it gives an internal error.
-                I received a “500 internal server error” when editing my survey.
-                The system won’t load my survey, it stays on a blank screen.
+                I can&#39;t access the preview mode - it gives an internal error.
+                I received a &quot;500 internal server error&quot; when editing my survey.
+                The system won&#39;t load my survey, it stays on a blank screen.
                 When I try to duplicate a survey, I get an error message.
                 A respondent reports the survey crashes after clicking Next.
-                My export fails with “unexpected error.”
+                My export fails with &quot;unexpected error.&quot;
                 I created my survey in English, how can I add translations?
                 The French version of my survey is missing even though I added translations.
                 Some labels remain in English after switching to German.
                 My respondents see part of the text in English and part in their selected language.
                 When exporting my survey, questions appear only in English.
-                The PDF version of my survey isn’t translated.
-                I changed translations, but they don’t show in the published version.
-                Some system messages (like “Next” or “Submit”) are not translated.
+                The PDF version of my survey isn&#39;t translated.
+                I changed translations, but they don&#39;t show in the published version.
+                Some system messages (like &quot;Next&quot; or &quot;Submit&quot;) are not translated.
                 How can I translate the invitation email content?
-                My survey automatically opens in English instead of the respondent’s language.
+                My survey automatically opens in English instead of the respondent&#39;s language.
                 How do I make a question mandatory or optional?
                 How do I give other people permission to edit my survey questionnaire?
                 How do I set dependencies or visibility rules for questions?
