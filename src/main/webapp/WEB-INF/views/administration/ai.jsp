@@ -108,7 +108,7 @@
                       })
                       .then(data => {
                         console.log(data);
-                        document.getElementById("response").value = data.access_token;
+                        document.getElementById("response").value = data.answer;
                       })
                       .catch(error => {
                         console.error('Error:', error);
