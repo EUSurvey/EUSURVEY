@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html lang="${pageContext.response.locale.language}">
 <head>
-	<title>EUSurvey - AI Caller /></title>
+	<title>EUSurvey - AI Caller</title>
 	<%@ include file="../includes.jsp" %>	
 </head>
 <body>
@@ -192,6 +192,18 @@
             <b>Threshold</b><br />
             <input id="threshold" value="0.2" />
 
+            <br />
+            <b>Waiting time [seconds] between requests</b><br />
+            <input id="pause" value="10" />
+
+            <br />
+            <b>Number of parallel requests</b><br />
+            <input id="parallel" value="10" />
+
+            <br />
+            <b>Maximum number of repeats for failed requests</b><br />
+            <input id="repeats" value="3" />
+
             <br /><br />
             <button class="btn btn-primary" onclick="call2()">Execute</button>
 
@@ -253,24 +265,33 @@
                 }
 
                 function executeBatch() {
-                    for (let i = counter; i < counter + 10; i++) {
+                    const parallel = parseInt(document.getElementById("parallel").value);
+                    const pause = parseInt(document.getElementById("pause").value);
+                    let stop = false;
+                    console.log("executeBatch");
+
+                    for (let i = counter; i < counter + parallel; i++) {
                         if (i >= queriesArray.length) {
+                            stop = true;
                             return;
                         }
 
-                        executeQuery(queriesArray[i].trim());
+                        executeQuery(queriesArray[i].trim(), 1, null);
                     }
 
-                    counter += 10;
+                    if (stop) return;
+
+                    counter += parallel;
 
                     setTimeout(() => {
                       executeBatch();
-                    }, "15000");
+                    }, pause + "000");
                 }
 
-                function executeQuery(query) {
+                function executeQuery(query, repeatCounter, tr) {
                     console.log("Executing '" + query + "'");
 
+                    const repeats = parseInt(document.getElementById("repeats").value);
                     const token = document.getElementById("token").value;
                     const model = document.getElementById("model").value;
                     const temperature = document.getElementById("temperature").value;
@@ -301,15 +322,23 @@
 
                     console.log(requestOptions);
 
-                    var tr = document.createElement("tr");
-                    var td = document.createElement("td");
-                    $(td).text(query);
-                    $(tr).append(td);
-                    td = document.createElement("td");
-                    $(td).text("waiting for response...");
-                    $(tr).append(td);
-                    var td2 = document.createElement("td");
-                    $(tr).append(td2);
+                    var td;
+                    var td2;
+
+                    if (tr == null) {
+                        tr = document.createElement("tr");
+                        var td = document.createElement("td");
+                        $(td).text(query);
+                        $(tr).append(td);
+                        td = document.createElement("td");
+                        $(td).text("waiting for response...");
+                        $(tr).append(td);
+                        td2 = document.createElement("td");
+                        $(tr).append(td2);
+                    } else {
+                        td = $(tr).find("td")[1];
+                        td2 = $(tr).find("td")[2];
+                    }
 
                     fetch(apiUrl, requestOptions)
                       .then(response => {
@@ -320,7 +349,6 @@
                       })
                       .then(data => {
                         console.log(data);
-
                         $(td).text(data.answer);
 
                         var citations = data.citations;
@@ -329,12 +357,16 @@
                             $(a).attr("href", citations[i].link).append(citations[i].title);
                             $(td2).append(a).append("&nbsp;");
                         }
-
-                        //document.getElementById("response").value = data.answer;
                       })
                       .catch(error => {
+                        if (repeatCounter <= repeats) {
+                            console.log("repeat " + repeatCounter);
+                            $(td).text("repeat " + (repeatCounter));
+                            repeatCounter += 1;
+                            executeQuery(query, repeatCounter, tr);
+                            return;
+                        }
                         console.error('Error:', error);
-
                         $(td).text(error);
                       });
 
