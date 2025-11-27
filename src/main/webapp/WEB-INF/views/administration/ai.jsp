@@ -180,8 +180,8 @@
             <select id="model">
                 <option>gpt-4o</option>
                 <option>llama-3.3-70b-instruct</option>
-                <option>Mistral-Small-3.2-24B-Instruct-2506</option>
-                <option>Mistral-Small-3.1-24B-Instruct-2503</option>
+                <option>mistral-small-3.2-24b-instruct-2506</option>
+                <option>mistral-small-3.1-24b-instruct-2503</option>
             </select>
 
             <br />
