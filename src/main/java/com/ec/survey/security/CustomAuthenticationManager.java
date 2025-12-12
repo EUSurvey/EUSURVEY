@@ -223,7 +223,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q")) 
 					{
 						// internal EC users
-						if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().equalsIgnoreCase("Contributor")) {
+						if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().startsWith("Contributor")) {
 							user.getRoles().clear();
 							user.getRoles().add(ecRole);
 							administrationService.updateUser(user);
