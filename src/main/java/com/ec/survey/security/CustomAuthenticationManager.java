@@ -149,10 +149,12 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				Role ecRole = null;
 				Role intRole = null;
 				Role contributorRole = null;
+				Role contributorECRole = null;
 				for (Role role : roles) {
 					if (role.getName().equalsIgnoreCase("Form Manager (EC)")) ecRole = role;
 					if (role.getName().equalsIgnoreCase("Form Manager")) intRole = role;
 					if (role.getName().equalsIgnoreCase("Contributor")) contributorRole = role;
+					if (role.getName().equalsIgnoreCase("Contributor (EC)")) contributorECRole = role;
 				}	
 				
 				if (user == null)
@@ -167,20 +169,28 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					organisationSet = true;
 					user.setOrganisation(organisation);
 
-					if (surveyLoginMode) {
-						user.getRoles().add(contributorRole);
-					} else if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q"))
+					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q"))
 					{
-						user.getRoles().add(ecRole);
+						// internal user
+						if (surveyLoginMode) {
+							user.getRoles().add(contributorECRole);
+						} else {
+							user.getRoles().add(ecRole);
+						}
 					} else {
-						if (no2fa){
-	    					weakAuthentication = true;
-	    					if (!surveyLoginMode){
-		    					throw new Bad2faCredentialsException();
-		    				}
-						}						
-						
-						user.getRoles().add(intRole);							
+						// external user
+						if (surveyLoginMode) {
+							user.getRoles().add(contributorRole);
+						} else {
+							if (no2fa) {
+								weakAuthentication = true;
+								if (!surveyLoginMode) {
+									throw new Bad2faCredentialsException();
+								}
+							}
+
+							user.getRoles().add(intRole);
+						}
 					}
 					
 					try {
@@ -213,9 +223,14 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q")) 
 					{
 						// internal EC users
-						if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().equalsIgnoreCase("Contributor")) {
+						if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().startsWith("Contributor")) {
 							user.getRoles().clear();
 							user.getRoles().add(ecRole);
+							administrationService.updateUser(user);
+						} else if (surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().equals("Contributor")) {
+							// the user has the "Contributor" role although he is internal -> Upgrade to "Contributor (EC)"
+							user.getRoles().clear();
+							user.getRoles().add(contributorECRole);
 							administrationService.updateUser(user);
 						}
 					} else {
