@@ -804,7 +804,7 @@
 						<tr class="subsubelement noborder" data-bind="visible: secured() && ecasSecurity()">
 							<td>
 								<div style="float: left">
-									<spring:message code="label.Users" />
+									<spring:message code="label.Users" /><a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								</div>
 								<div style="float: right">
 									<c:choose>
@@ -821,6 +821,8 @@
 										</c:otherwise>
 									</c:choose>													
 								</div>
+								<div style="clear: both"></div>
+                                <div class="help hideme"><spring:message code="info.SecureYourSurveyUsers" /></div>
 							</td>
 						</tr>
 						<c:if test='${!form.survey.isOPC}'>

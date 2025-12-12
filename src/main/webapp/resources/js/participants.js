@@ -13,7 +13,7 @@ var Guestlist = function() {
 	this.attendees = ko.observableArray().extend({ deferred: true });
 	this.tokens = ko.observableArray();
 	this.users = ko.observableArray();
-	this.authenticationMethod = ko.observable(0);
+	this.authenticationMethod = ko.observableArray([0]);
 	
 	this.activateEnabled = ko.computed(function() {
 		return !this.inCreation() && !this.active();
