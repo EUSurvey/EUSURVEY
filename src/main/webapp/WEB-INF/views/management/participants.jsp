@@ -921,6 +921,12 @@
 									<!-- ko if: selectedGroup() != null -->
 									<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.NameYourGuestList" />
 									<input type="textbox" class="form-control required" data-bind="value: selectedGroup().name" />
+									<br /><br />
+									<spring:message code="label.AuthenticationMethod" /><br />
+                                    <div style="padding-left: 10px; margin-top: 5px">
+                                        <input name="authenticationMethod" data-bind="checked: selectedGroup().authenticationMethod() == 0" onclick="update(this)" class="check" type="radio" id="selectPersonalLink" value="0" /><spring:message code="label.PersonalLink" /><br />
+                                        <input name="authenticationMethod" data-bind="checked: selectedGroup().authenticationMethod() == 1" onclick="update(this)" class="check" type="radio" id="selectPersonalLink" value="1" /><spring:message code="label.EULogin" />
+                                    </div>
 									<!-- /ko -->
 								</div>
 							</div>

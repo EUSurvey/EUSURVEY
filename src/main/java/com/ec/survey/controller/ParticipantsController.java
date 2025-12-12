@@ -416,6 +416,9 @@ public class ParticipantsController extends BasicController {
 			participationGroup.setOwnerId(user.getId());
 			participationGroup.setInCreation(true);
 
+			int authenticationMethod = json.get("authenticationMethod") != null && json.get("authenticationMethod").toString().length() > 0 ? (int) json.get("authenticationMethod") : 0;
+			participationGroup.setAuthenticationMethod(authenticationMethod);
+
 			participationService.save(participationGroup);
 			if (participationGroup.getType() == ParticipationGroupType.Static) {
 				participationService.addParticipantsToGuestListAsync(participationGroup.getId(), attendeeIDs);

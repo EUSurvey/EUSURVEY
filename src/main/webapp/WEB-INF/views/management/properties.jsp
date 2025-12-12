@@ -811,11 +811,13 @@
 										<c:when test='${form.survey.isOPC}'>
 											<input type="radio" disabled="disabled" checked="checked" name="ecas-mode" class="check" /><spring:message code="label.everybody" /><br />
 											<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" />
+											<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.ContactListMembers" />
 											<form:hidden path="survey.ecasMode" name="ecas-mode" />
 										</c:when>
 										<c:otherwise>
 											<form:radiobutton path="survey.ecasMode" data-bind="enable: !_properties.eVote()" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.everybody" /><br />
 											<form:radiobutton path="survey.ecasMode"  data-bind="enable: !_properties.eVote()" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
+											<form:radiobutton path="survey.ecasMode"  data-bind="enable: !_properties.eVote()" id="ecas-mode-internal" name="ecas-mode" value="listmembers" class="check" /><spring:message code="label.ContactListMembers" /><br />
 										</c:otherwise>
 									</c:choose>													
 								</div>
