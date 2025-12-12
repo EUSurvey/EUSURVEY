@@ -74,7 +74,24 @@ public class SchemaService extends BasicService {
 
 	}
 
-    @Transactional
+	@Transactional
+	public void step131() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		Role contributorECRole = administrationService.getRole("Contributor (EC)");
+		if (contributorECRole == null) {
+			contributorECRole = new Role();
+			contributorECRole.setName("Contributor (EC)");
+			contributorECRole.getGlobalPrivileges().put(GlobalPrivilege.ECAccess, 1);
+			administrationService.createRole(contributorECRole);
+		}
+
+		//status.setDbversion(131); TODO: enable again in sprint 37
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
     public void step128() {
         Session session = sessionFactory.getCurrentSession();
         ensureActivities(session,
