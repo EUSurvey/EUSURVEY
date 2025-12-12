@@ -413,5 +413,14 @@ public class ParticipationService extends BasicService {
 		
 		return result;		
 	}
-	
+
+	@Transactional(readOnly = true)
+	public boolean validInvitiationForEmail(String surveyUid, String email) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("SELECT COUNT(*) FROM PARTICIPANTS p JOIN PARTICIPANTS_ATTENDEE pa ON pa.PARTICIPANTS_PARTICIPATION_ID = p.PARTICIPATION_ID JOIN ATTENDEE a ON a.ATTENDEE_ID = pa.attendees_ATTENDEE_ID JOIN SURVEYS s ON s.SURVEY_ID = p.PARTICIPATION_SURVEY_ID LEFT JOIN INVITATIONS i ON i.PARTICIPATIONGROUP_ID = p.PARTICIPATION_ID AND i.ATTENDEE_ID = a.ATTENDEE_ID WHERE s.SURVEY_UID = :survey AND a.ATTENDEE_EMAIL LIKE :email AND p.PARTICIPATION_ACTIVE = 1 AND p.AUTHENTICATIONMETHOD = 1");
+		query.setString(Constants.EMAIL, email);
+		query.setString(Constants.SURVEY, surveyUid);
+		int count = ConversionTools.getValue(query.uniqueResult());
+		return count > 0;
+	}
 }

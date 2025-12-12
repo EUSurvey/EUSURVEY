@@ -5868,6 +5868,8 @@ public class SurveyService extends BasicService {
 			if (survey.getEcasSecurity()) {
 				if (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("all")) {
 					s.append(";EULogin_all");
+				} else if (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("listmembers")) {
+					s.append(";EULogin_listmembers");
 				} else {
 					s.append(";EULogin_internal");
 				}

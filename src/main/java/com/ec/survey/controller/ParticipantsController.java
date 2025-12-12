@@ -419,7 +419,7 @@ public class ParticipantsController extends BasicController {
 			int authenticationMethod = json.get("authenticationMethod") != null && json.get("authenticationMethod").toString().length() > 0 ? (int) json.get("authenticationMethod") : 0;
 			participationGroup.setAuthenticationMethod(authenticationMethod);
 			if (authenticationMethod == 1) {
-				if (form.getSurvey().getSecurity().startsWith("open") || !form.getSurvey().getEcasSecurity() || !form.getSurvey().getEcasSecurity().equals("listmembers")) {
+				if (form.getSurvey().getSecurity().startsWith("open") || !form.getSurvey().getEcasSecurity() || !form.getSurvey().getEcasMode().equals("listmembers")) {
 					if (form.getSurvey().getSecurity().contains("anonymous")) {
 						form.getSurvey().setSecurity("securedanonymous");
 					} else {
@@ -428,6 +428,14 @@ public class ParticipantsController extends BasicController {
 					form.getSurvey().setEcasSecurity(true);
 					form.getSurvey().setEcasMode("listmembers");
 					surveyService.update(form.getSurvey(), true);
+
+					Survey published = surveyService.getSurveyByUniqueId(form.getSurvey().getUniqueId(),false,false);
+					if (published != null) {
+						published.setSecurity(form.getSurvey().getSecurity());
+						published.setEcasSecurity(true);
+						published.setEcasMode("listmembers");
+						surveyService.update(published, false);
+					}
 				}
 			}
 
