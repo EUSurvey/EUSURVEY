@@ -85,7 +85,7 @@
 		function loadTemplate()
 		{
 			var id = $("#mailtext").val();
-			
+
 			if (id == "0")
 			{
 				$("#mailtemplate").val("eusurvey");
@@ -439,8 +439,10 @@
 						</textarea>
 						
 						<textarea id="text2default" style="display:none">
+						    <c:if test="${!form.survey.security.equalsIgnoreCase('openanonymous') && participationGroup.authenticationMethod != 1}">
 							Note that this is a unique personal link.<br />
 							<b>Please do not share it.</b><br /><br />
+							</c:if>
 							Best regards,<br />			
 							<esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
 						</textarea>
@@ -464,7 +466,7 @@
 						
 						<span id="url">
 							<c:choose>
-								<c:when test="${form.survey.security.equalsIgnoreCase('openanonymous')}">
+								<c:when test="${form.survey.security.equalsIgnoreCase('openanonymous') || participationGroup.authenticationMethod == 1}">
 									{host}/runner/${form.survey.uniqueId}
 								</c:when>
 								<c:otherwise>
@@ -480,6 +482,10 @@
 								<c:when test="${participationGroup.template2 != null}">
 									${participationGroup.template2}
 								</c:when>
+								<c:when test="${form.survey.security.equalsIgnoreCase('openanonymous') || participationGroup.authenticationMethod == 1}">
+                                    Best regards,<br />
+                                    <esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
+                                </c:when>
 								<c:otherwise>
 									Note that this is a unique personal link.<br />
 									<b>Please do not share it.</b><br /><br />
