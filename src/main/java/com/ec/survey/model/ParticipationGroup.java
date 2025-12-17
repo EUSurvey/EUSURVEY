@@ -47,6 +47,7 @@ public class ParticipationGroup {
 	private Date created;
 	private int children;
 	private Integer lastUsedTemplateID;
+	private Integer authenticationMethod;
 
 	//needed for Hibernate
 	public ParticipationGroup() {}
@@ -301,5 +302,14 @@ public class ParticipationGroup {
 	}
 	public void setLastUsedTemplateID(Integer lastUsedTemplateID) {
 		this.lastUsedTemplateID = lastUsedTemplateID;
-	} 
+	}
+
+	@Column(name = "AUTHENTICATIONMETHOD")
+	public Integer getAuthenticationMethod() {
+		return authenticationMethod == null ? 0 : authenticationMethod;
+	}
+	public void setAuthenticationMethod(Integer authenticationMethod) {
+		this.authenticationMethod = authenticationMethod;
+	}
+
 }

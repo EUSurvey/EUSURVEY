@@ -1072,12 +1072,26 @@ public class RunnerController extends BasicController {
 
 							if (readonlyMode
 									|| (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("all"))) {
+								// case "all"
 								return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
 							} else {
-								if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) > 0) {
-									return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
+								if (survey.getEcasMode().equalsIgnoreCase("listmembers")) {
+									// case "listmember"
+									if (participationService.validInvitiationForEmail(survey.getUniqueId(), user.getEmail())) {
+										return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
+									} else {
+										modelReturn.addObject(Constants.MESSAGE, resources.getMessage("error.UserNotFoundInGuestlist",
+												null,
+												"You account is not part of an active guest list.",
+												locale));
+									}
 								} else {
-									internalUsersOnly = true;
+									// case "internal"
+									if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) > 0) {
+										return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
+									} else {
+										internalUsersOnly = true;
+									}
 								}
 							}
 						}

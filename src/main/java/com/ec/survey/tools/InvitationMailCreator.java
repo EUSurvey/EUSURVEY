@@ -256,6 +256,10 @@ public class InvitationMailCreator implements Runnable {
 			
 		String middleText = host + "runner/invited/" + participationGroup.getId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
 
+		if (participationGroup.getAuthenticationMethod() == 1) {
+			middleText = host + "runner/" + survey.getShortname();
+		}
+
 		String body = text1;
 		if (!text1.endsWith("</p>")) {
 			body += "<br /><br />";

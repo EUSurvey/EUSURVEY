@@ -416,6 +416,30 @@ public class ParticipantsController extends BasicController {
 			participationGroup.setOwnerId(user.getId());
 			participationGroup.setInCreation(true);
 
+			int authenticationMethod = participationGroup.getType() == ParticipationGroupType.Static && json.get("authenticationMethod") != null && json.get("authenticationMethod").toString().length() > 0 ? (int) json.get("authenticationMethod") : 0;
+			participationGroup.setAuthenticationMethod(authenticationMethod);
+			if (authenticationMethod == 1) {
+				if (form.getSurvey().getSecurity().startsWith("open") || !form.getSurvey().getEcasSecurity() || !form.getSurvey().getEcasMode().equals("listmembers")) {
+					if (form.getSurvey().getSecurity().contains("anonymous")) {
+						form.getSurvey().setSecurity("securedanonymous");
+					} else {
+						form.getSurvey().setSecurity("secured");
+					}
+					form.getSurvey().setEcasSecurity(true);
+					form.getSurvey().setEcasMode("listmembers");
+					activityService.log(ActivityRegistry.ID_PROPERTIES,null, null, user.getId(), form.getSurvey().getUniqueId());
+					surveyService.update(form.getSurvey(), true);
+
+					Survey published = surveyService.getSurveyByUniqueId(form.getSurvey().getUniqueId(),false,false);
+					if (published != null) {
+						published.setSecurity(form.getSurvey().getSecurity());
+						published.setEcasSecurity(true);
+						published.setEcasMode("listmembers");
+						surveyService.update(published, false);
+					}
+				}
+			}
+
 			participationService.save(participationGroup);
 			if (participationGroup.getType() == ParticipationGroupType.Static) {
 				participationService.addParticipantsToGuestListAsync(participationGroup.getId(), attendeeIDs);

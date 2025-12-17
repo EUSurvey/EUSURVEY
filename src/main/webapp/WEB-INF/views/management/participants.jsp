@@ -162,7 +162,7 @@
 	</script>
 </head>
 <body>
-	<div class="page-wrap" style="padding-bottom: 0; margin-bottom: -272px;">
+	<div class="page-wrap" style="padding-bottom: 0; margin-bottom: -200px;">
 		<%@ include file="../header.jsp" %>
 		<%@ include file="../menu.jsp" %>
 		<%@ include file="formmenu.jsp" %>
@@ -921,6 +921,15 @@
 									<!-- ko if: selectedGroup() != null -->
 									<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.NameYourGuestList" />
 									<input type="textbox" class="form-control required" data-bind="value: selectedGroup().name" />
+									<br />
+									<spring:message code="label.AuthenticationMethod" />&nbsp;<a onclick="$('#AuthenticationMethodHelp').toggle()"><span class="glyphicon glyphicon-info-sign" style="color: #aaa;"></span></a></label>
+                                    <div id="AuthenticationMethodHelp" class="help hideme" style="margin-top: 5px;">
+                                        <spring:message code="help.AuthenticationMethod" />
+                                    </div>
+                                    <div style="padding-left: 10px; margin-top: 5px">
+                                        <input name="authenticationMethod" data-bind="checked: selectedGroup().authenticationMethod, checkedValue: 0" class="check" type="radio" id="selectPersonalLink" /><spring:message code="label.PersonalLink" /><br />
+                                        <input name="authenticationMethod" data-bind="checked: selectedGroup().authenticationMethod, checkedValue: 1" class="check" type="radio" id="selectPersonalLink" /><spring:message code="label.EULogin" />
+                                    </div>
 									<!-- /ko -->
 								</div>
 							</div>
