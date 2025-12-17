@@ -27,6 +27,7 @@
 			this.showBackgroundDocs = ko.observable(${form.survey.getBackgroundDocumentsAlphabetical().size() > 0});
 			this.secured = ko.observable(${!(form.survey.security.equals("open") || form.survey.security.equals("openanonymous"))});
 			this.ecasSecurity = ko.observable(${form.survey.ecasSecurity});
+			this.ecasMode = ko.observable("${form.survey.ecasMode}");
 			this.publishResults = ko.observable(${form.survey.publication.showContent || form.survey.publication.showStatistics});
 			this.selectedQuestions = ko.observable(${!form.survey.publication.allQuestions});
 			this.selectedContributions = ko.observable(${!form.survey.publication.allContributions});

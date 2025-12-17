@@ -645,6 +645,9 @@ public class ManagementController extends BasicController {
 		form.setResources(resources);
 		form.setSurvey(survey);
 
+		List<ParticipationGroup> groups = participationService.getAll(survey.getId());
+		form.setSurveyHasEULoginContactList(groups.stream().anyMatch(g -> g.getType() == ParticipationGroupType.Static && g.getAuthenticationMethod() == 1));
+
 		User u = sessionService.getCurrentUser(request);
 		if (!sessionService.userIsFormManager(form.getSurvey(), u, request)) {
 			throw new ForbiddenURLException();

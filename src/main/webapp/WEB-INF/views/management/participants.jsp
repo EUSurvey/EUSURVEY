@@ -162,7 +162,7 @@
 	</script>
 </head>
 <body>
-	<div class="page-wrap" style="padding-bottom: 0; margin-bottom: -272px;">
+	<div class="page-wrap" style="padding-bottom: 0; margin-bottom: -200px;">
 		<%@ include file="../header.jsp" %>
 		<%@ include file="../menu.jsp" %>
 		<%@ include file="formmenu.jsp" %>

@@ -85,6 +85,7 @@ public class Form implements java.io.Serializable {
 	private Date startDate = new Date();
 	private Date currentDate = new Date();
 	private Boolean codaEnabled;
+	private Boolean surveyHasEULoginContactList;
 
 	protected static final Logger logger = Logger.getLogger(Form.class);
 
@@ -207,6 +208,10 @@ public class Form implements java.io.Serializable {
 	public Boolean getCodaEnabled() { return codaEnabled; }
 
 	public void setCodaEnabled(Boolean codaEnabled) { this.codaEnabled = codaEnabled; }
+
+	public Boolean getSurveyHasEULoginContactList() { return surveyHasEULoginContactList; }
+
+	public void setSurveyHasEULoginContactList(Boolean surveyHasEULoginContactList) { this.surveyHasEULoginContactList = surveyHasEULoginContactList; }
 
 	public String getAnswerTitleStripInvalidXML(Answer answer) {
 		return ConversionTools.removeInvalidHtmlEntities(getAnswerTitle(answer));

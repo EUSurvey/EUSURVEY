@@ -677,6 +677,7 @@ var Participants = function() {
 		$('#newcontactlist').find('[data-toggle="tooltip"]').tooltip();
 		var g = new Guestlist();
 		g.type("Static");
+		g.authenticationMethod(0);
 		this.selectedGroup(g);
 		this.loadAttendees(true);
 	}
