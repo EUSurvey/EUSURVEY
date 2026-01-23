@@ -74,7 +74,7 @@ public class ReportingService extends BasicService {
 	
 	protected static final Logger logger = Logger.getLogger(ReportingService.class);
 
-	@Resource(name="sessionFactoryReporting")
+	//@Resource(name="sessionFactoryReporting")
 	protected SessionFactory sessionFactoryReporting;
 	
 	@Resource(name="sessionFactory")
