@@ -96,6 +96,9 @@ public class ChatbotController extends BasicController {
 			try (CloseableHttpResponse response = httpclient.execute(httppost)) {
 				HttpEntity entity = response.getEntity();
 				int statusCode = response.getStatusLine().getStatusCode();
+
+				logger.info(statusCode + " " + response.getStatusLine().getReasonPhrase());
+
 				if (statusCode != 200) return null;
 				String responseString = EntityUtils.toString(entity);
 				JSONObject responseObject = new JSONObject(responseString);
