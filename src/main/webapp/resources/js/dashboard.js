@@ -1386,10 +1386,11 @@ $(function() {
 	}
 	applyEvents();
 	
-	 $(window).scroll(function() {$(".overlaymenu").hide();});
-	  $(window).resize(function() {
+	 //$(window).scroll(function() {$(".overlaymenu").hide();});
+
+     /* $(window).resize(function() {
 		  $(".overlaymenu").hide();
-	  });	
+	  }); */
 	  
 	$(document).mouseup(function (e)
 	{

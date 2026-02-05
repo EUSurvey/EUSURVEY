@@ -59,7 +59,7 @@ public class RunnerController extends BasicController {
 	protected SelfAssessmentService selfassessmentService;
 
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 
 	@PostMapping(value = "/checksession")
 	public @ResponseBody String checkSession() {
@@ -885,11 +885,11 @@ public class RunnerController extends BasicController {
 			return "runner/contactForm";
 		}
 
-		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
-		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
-		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
-		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
-		String message = ConversionTools.removeHTML(request.getParameter(Constants.MESSAGE), true);
+		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true, false);
+		String name = ConversionTools.removeHTML(request.getParameter("name"), true, false);
+		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true, false);
+		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true, false);
+		String message = ConversionTools.removeHTML(request.getParameter(Constants.MESSAGE), true, false);
 		String[] uploadedfiles = request.getParameterValues("uploadedfile");
 
 		StringBuilder body = new StringBuilder();
@@ -1072,12 +1072,26 @@ public class RunnerController extends BasicController {
 
 							if (readonlyMode
 									|| (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("all"))) {
+								// case "all"
 								return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
 							} else {
-								if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) > 0) {
-									return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
+								if (survey.getEcasMode().equalsIgnoreCase("listmembers")) {
+									// case "listmember"
+									if (participationService.validInvitiationForEmail(survey.getUniqueId(), user.getEmail())) {
+										return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
+									} else {
+										modelReturn.addObject(Constants.MESSAGE, resources.getMessage("error.UserNotFoundInGuestlist",
+												null,
+												"You account is not part of an active guest list.",
+												locale));
+									}
 								} else {
-									internalUsersOnly = true;
+									// case "internal"
+									if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) > 0) {
+										return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
+									} else {
+										internalUsersOnly = true;
+									}
 								}
 							}
 						}
@@ -1642,7 +1656,7 @@ public class RunnerController extends BasicController {
 					draft = answerService.getDraft(draftid);
 					if (draft != null) {
 						SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, draft.getAnswerSet(),
-								lang, user, fileService);
+								lang, user, fileService, true);
 						draft.getAnswerSet().setIsDraft(true); // this also sets the
 																// ISDRAFT flag of
 																// the answers
@@ -1657,7 +1671,7 @@ public class RunnerController extends BasicController {
 					draft = answerService.getDraftForInvitation(invitation.getUniqueId());
 					if (draft != null) {
 						SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, draft.getAnswerSet(),
-								lang, user, fileService);
+								lang, user, fileService, true);
 						draft.getAnswerSet().setIsDraft(true);
 						uid = draft.getUniqueId();
 					}
@@ -1667,7 +1681,7 @@ public class RunnerController extends BasicController {
 					draft = answerService.getDraftByAnswerUID(uniqueCode);
 					if (draft != null) {
 						SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, draft.getAnswerSet(),
-								lang, user, fileService);
+								lang, user, fileService, true);
 						draft.getAnswerSet().setIsDraft(true);
 						uid = draft.getUniqueId();
 					}

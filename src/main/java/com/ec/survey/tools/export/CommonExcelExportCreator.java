@@ -21,6 +21,7 @@ import com.ec.survey.model.survey.ecf.ECFProfileResult;
 import com.ec.survey.service.ExportService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.SurveyHelper;
 import com.mysql.cj.util.StringUtils;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -118,8 +119,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					Matrix matrix = (Matrix) question;
 					for (Element matrixQuestion : matrix.getQuestions()) {
 						Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
-						cellValue = ConversionTools.removeHTMLNoEscape(ConversionTools
-								.removeHTMLNoEscape(matrix.getTitle() + ": " + matrixQuestion.getTitle()));
+						cellValue = matrix.getStrippedTitleNoEscape2() + ": " + matrixQuestion.getStrippedTitleNoEscape2();
 						if (export != null && export.getShowShortnames()) {
 							cellValue += " (" + matrixQuestion.getShortname() + ")";
 						}
@@ -144,8 +144,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					RatingQuestion rating = (RatingQuestion) question;
 					for (Element childQuestion : rating.getQuestions()) {
 						Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
-						cellValue = ConversionTools.removeHTMLNoEscape(ConversionTools
-								.removeHTMLNoEscape(rating.getTitle() + ": " + childQuestion.getTitle()));
+						cellValue = rating.getStrippedTitleNoEscape2() + ": " + childQuestion.getStrippedTitleNoEscape2();
 						if (export != null && export.getShowShortnames()) {
 							cellValue += " (" + childQuestion.getShortname() + ")";
 						}
@@ -158,8 +157,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					ComplexTable table = (ComplexTable) question;
 					for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
 						Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
-						cellValue = ConversionTools.removeHTMLNoEscape(
-								ConversionTools.removeHTMLNoEscape(childQuestion.getResultTitle(table)));
+						cellValue = ConversionTools.removeHTMLNoEscape(childQuestion.getResultTitle(table));
 						if (export != null && export.getShowShortnames()) {
 							cellValue += " (" + childQuestion.getShortname() + ")";
 						}
@@ -469,7 +467,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, values, true)
-					+ ") ORDER BY ans.ANSWER_SET_ID";
+					+ ") ORDER BY ans.ANSWER_SET_DATE DESC";
 
 			NativeQuery query = session.createSQLQuery(sql);
 
@@ -741,12 +739,12 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 							StringBuilder cellValue = new StringBuilder();
 							for (Answer answer : answers) {
 								cellValue.append((cellValue.length() > 0) ? ";" : "")
-										.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+										.append(form.getAnswerTitle(answer));
 								if (export != null && export.getShowShortnames()) {
 									cellValue.append(" ").append(form.getAnswerShortname(answer));
 								}
 							}
-							cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
+							cell.setCellValue(cellValue.toString());
 						}
 					}
 				} else if (question instanceof RatingQuestion) {
@@ -768,7 +766,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 								cellValue.append((cellValue.length() > 0) ? ";" : "")
 										.append(ConversionTools.removeHTMLNoEscape(answers.get(0).getValue()));
 							}
-							cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
+							cell.setCellValue(cellValue.toString());
 						}
 					}
 				} else if (question instanceof ComplexTable) {
@@ -810,12 +808,12 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 							StringBuilder cellValue = new StringBuilder();
 							for (Answer answer : answers) {
 								cellValue.append((cellValue.length() > 0) ? ";" : "")
-										.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+										.append(form.getAnswerTitle(answer));
 								if (export != null && export.getShowShortnames()) {
 									cellValue.append(" ").append(form.getAnswerShortname(answer));
 								}
 							}
-							cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
+							cell.setCellValue(cellValue.toString());
 						}
 					}
 				} else if (question instanceof Table) {
@@ -834,7 +832,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 								String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
 								if (answer == null)
 									answer = "";
-								cell.setCellValue(ConversionTools.removeHTMLNoEscape(answer));
+								cell.setCellValue(answer);
 							}
 						}
 					}
@@ -1108,13 +1106,21 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 								cellValue.append((cellValue.length() > 0) ? ";" : "")
 										.append(form.getAnswerTitle(answer));
 							} else {
-								cellValue.append((cellValue.length() > 0) ? ";" : "")
-										.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer, question instanceof RankingQuestion)));
+								cellValue.append((cellValue.length() > 0) ? ";" : "").append(form.getAnswerTitle(answer));
 							}
 
-							if (export != null && export.getShowShortnames() && !(question instanceof RankingQuestion)) {
-								cellValue.append(" ").append(form.getAnswerShortname(answer));
-							}
+                            if (export != null && export.getShowShortnames()) {
+                                if (question instanceof RankingQuestion) {
+                                    cellValue = new StringBuilder(SurveyHelper.insertRankingAnswerShortnames(
+                                            cellValue.toString(),
+                                            (RankingQuestion) question,
+                                            " (",
+                                            ")",
+                                            false));
+                                } else {
+                                    cellValue.append(" ").append(form.getAnswerShortname(answer));
+                                }
+                            }
 						}
 						int additionalRows = 0;
 						while (cellValue != null && cellValue.length() > 32767) {
@@ -1508,7 +1514,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					for (File file : galleryQuestion.getAllFiles()) {
 						row = sheet.createRow(rowIndex++);
 
-						cellValue = ConversionTools.removeHTMLNoEscape(file.getName());
+						cellValue = file.getName();
 
 						row.createCell(0).setCellValue(cellValue);
 
@@ -1854,7 +1860,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					row = sheet.createRow(rowIndex++);
 				} else if (question instanceof NumberQuestion) {
 					NumberQuestion number = (NumberQuestion) question;
-					if (number.showStatisticsForNumberQuestion()) {
+					if (number.showStatisticsForNumberQuestion(export.isAllAnswers())) {
 
 						cellValue = question.getTitle();
 						if (export.getShowShortnames()) {
@@ -1863,7 +1869,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 
 						CreateTableForAnswer(cellValue, boldstyle);
 
-						for (String answer : number.getAllPossibleAnswers()) {
+						for (String answer : number.getAllPossibleAnswers(export.isAllAnswers())) {
 							row = sheet.createRow(rowIndex++);
 
 							cellValue = answer;
@@ -1915,7 +1921,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					}
 				} else if (question instanceof FormulaQuestion) {
 					FormulaQuestion formula = (FormulaQuestion) question;
-					if (formula.showStatisticsForNumberQuestion()) {
+					if (formula.showStatisticsForNumberQuestion(export.isAllAnswers())) {
 
 						cellValue = question.getTitle();
 						if (export.getShowShortnames()) {
@@ -1924,7 +1930,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 
 						CreateTableForAnswer(cellValue, boldstyle);
 
-						for (String answer : formula.getAllPossibleAnswers()) {
+						for (String answer : formula.getAllPossibleAnswers(export.isAllAnswers())) {
 							row = sheet.createRow(rowIndex++);
 
 							cellValue = answer;
@@ -2315,7 +2321,12 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 						} else {
 							row.createCell(3);
 						}
-						row.createCell(4).setCellValue(invitation.getAnswers());
+
+						if (participationGroup.getAuthenticationMethod() == 1 && invitation.getAnswers() == 0) {
+							row.createCell(4).setCellValue(answerService.getNumberOfAnswersetsForParticipant(attendee.getEmail(), participationGroup.getSurveyUid()));
+						} else {
+							row.createCell(4).setCellValue(invitation.getAnswers());
+						}
 
 						row.getCell(2).setCellStyle(dateCellStyle);
 						row.getCell(3).setCellStyle(dateCellStyle);

@@ -59,6 +59,7 @@ public class AnswerSet implements java.io.Serializable {
 	private Integer ecfTotalGap;
 	private boolean changeExplanationText = false;
 	private Date startDate;
+	private String checksum;
 	
 	@Id
 	@Column(name = "ANSWER_SET_ID")
@@ -418,6 +419,15 @@ public class AnswerSet implements java.io.Serializable {
 	}
 	public void setEcfTotalGap(Integer ecfTotalGap) {
 		this.ecfTotalGap = ecfTotalGap;
+	}
+
+	@Column(name = "ANSWER_SET_CHECKSUM", length = 64)
+	public String getChecksum() {
+		return checksum;
+	}
+
+	public void setChecksum(String checksum) {
+		this.checksum = checksum;
 	}
 	
 	@Transient

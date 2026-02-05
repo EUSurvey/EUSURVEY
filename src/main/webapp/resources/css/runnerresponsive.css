@@ -97,6 +97,7 @@
 
 .questiontitle div {
 	display: inline-block;
+	width: 99%;
 }
 
 .answertext {
@@ -184,6 +185,7 @@
 	font-weight: normal;
 	margin-left: 10px;
 	margin-right: 5px;
+    flex-grow: 1;
 }
 
 .text {

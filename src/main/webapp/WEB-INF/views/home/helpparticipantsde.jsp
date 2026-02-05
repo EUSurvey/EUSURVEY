@@ -136,7 +136,7 @@
 					</ul>
 				</p>
 				<p>
-					<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">EU-Login-Konto erstellen</a> (sofern nicht bereits vorhanden)
+					<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">EU-Login-Konto erstellen</a> (sofern nicht bereits vorhanden)
 				</p>
 				<p>
 					<a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">Registrieren Sie bitte Ihr Mobiltelefon</a> (sofern Sie nicht für eine EU-Institution arbeiten)

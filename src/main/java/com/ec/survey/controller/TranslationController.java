@@ -36,12 +36,11 @@ public class TranslationController extends BasicController {
 	@Resource(name = "machineTranslationService")
 	MachineTranslationService machineTranslationService;
 
-	private @Value("${export.xsllink}") String xsllink;
+	private @Value("${export.xsllink:}") String xsllink;
 
-	public @Value("${mt.use.ec.mt}") String useECMT;
+	public @Value("${mt.use.ec.mt:false}") String useECMT;
 
-	private @Value("${mt.servicewsdl}") String mtServiceWsdl;
-	private @Value("${microsoft.translation.client.id}") String msClientId;
+	private @Value("${microsoft.translation.client.id:#{null}}") String msClientId;
 
 	public boolean isMTAvailable = true;
 

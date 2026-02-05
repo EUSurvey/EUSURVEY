@@ -552,7 +552,7 @@ public class ResultFilter implements java.io.Serializable {
 							}
 						} else if (question instanceof NumberQuestion) {
 							NumberQuestion n = (NumberQuestion)question;
-							if (n.showStatisticsForNumberQuestion()) {
+							if (n.showStatisticsForNumberQuestion(false)) {
 								return true;
 							}
 						} else if (question instanceof Question) {

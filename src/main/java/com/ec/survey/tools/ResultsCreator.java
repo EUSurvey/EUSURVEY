@@ -76,7 +76,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	@Resource(name = "pdfService")
 	protected PDFService pdfService;
 
-	protected @Value("${export.fileDir}") String fileDir;
+	protected @Value("${export.fileDir:}") String fileDir;
 
 	private int task;
 

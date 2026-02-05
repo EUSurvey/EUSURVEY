@@ -16,6 +16,7 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.ImportResult;
 import com.ec.survey.tools.SurveyExportHelper;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.hibernate.query.Query;
 import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
@@ -154,6 +155,8 @@ public class ArchiveService extends BasicService {
 					// the survey still exists in the database
 					surveyService.unmarkAsArchived(existing.getUniqueId());
 					delete(archive);
+
+					activityService.log(ActivityRegistry.ID_ARCHIVED_SURVEY_RESTORED, null, null, user.getId(), existing.getUniqueId());
 					return surveyService.getSurvey(existing.getId());
 				}
 
@@ -176,7 +179,11 @@ public class ArchiveService extends BasicService {
 
 					delete(archive);
 
-					return surveyService.getSurvey(id);
+					var survey = surveyService.getSurvey(id);
+
+					activityService.log(ActivityRegistry.ID_ARCHIVED_SURVEY_RESTORED, null, null, user.getId(), survey.getUniqueId());
+
+					return survey;
 				}
 
 			} else {
@@ -298,7 +305,7 @@ public class ArchiveService extends BasicService {
 		archive.setCreated(survey.getCreated());
 		archive.setHasXlsxResults(true);
 
-		String title = ConversionTools.removeHTML(survey.getTitle(), true).replace("\"", "'");
+		String title = ConversionTools.removeHTML(survey.getTitle(), true, false).replace("\"", "'");
 		if (title.length() > 250)
 			title = title.substring(0, 250) + "...";
 
@@ -445,6 +452,7 @@ public class ArchiveService extends BasicService {
 				exportstats.setFormat(ef);
 				exportstats.setSurvey(published);
 				exportstats.setResultFilter(resultFilter);
+                exportstats.setNotified(true); //No notification should be sent
 
 				if (ef == ExportFormat.pdf)
 					exportstats = exportService.update(exportstats); // needed as the pdf creation loads the export from the db
@@ -467,6 +475,7 @@ public class ArchiveService extends BasicService {
 				export.setSurvey(published);
 				export.setResultFilter(resultFilter);
 				export.setForArchiving(true);
+                export.setNotified(true); //No notification should be sent
 				exportService.startExport(form, export, true, resources, new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "results." + ef, true);
 				if (export.getState() == ExportState.Failed) {
 					throw new MessageException("export failed, abort archiving");
@@ -487,7 +496,7 @@ public class ArchiveService extends BasicService {
 		//make sure the archive exists before finally deleting the survey
 		if (target.exists())
 		{
-			surveyService.markDeleted(survey.getId(), survey.getOwner().getId(), survey.getShortname(), survey.getUniqueId(), !survey.getIsDraft() || survey.getIsPublished());
+			surveyService.markDeleted(survey.getOwner().getId(), survey.getShortname(), survey.getUniqueId(), !survey.getIsDraft() || survey.getIsPublished());
 		} else {
 			throw new MessageException("archive file not found, abort archiving");
 		}

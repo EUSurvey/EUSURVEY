@@ -55,7 +55,7 @@ public class WebServiceController extends BasicController {
 	@Resource(name = "xmlExportCreator")
 	private XmlExportCreator xmlExportCreator;
 
-	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;
+	private @Value("${webservice.maxrequestsperday:100}") String maxrequestsperday;
 
 	private static String StandardDateString = "yyyy-MM-dd_HH-mm-ss";
 

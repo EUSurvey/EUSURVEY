@@ -954,14 +954,17 @@ function newRankingViewModel(element)
 	viewModel.initOn = function(domElement) {
 		const viewmodel = this;
 		if (viewmodel.foreditor) return;
-		const formeranswervaluesstringly = getValueByQuestion(viewmodel.uniqueId());
-		const formeranswervalues = formeranswervaluesstringly.split(';');
-		const isAnswerFormatSemicolon = formeranswervalues.join(';') == formeranswervaluesstringly;
-		const isAnswerFormatLength = formeranswervalues.length == viewmodel.answervalues().length;
+		let formerAnswerString = getValueByQuestion(viewmodel.uniqueId());
+        if (formerAnswerString.endsWith(";")) {
+            formerAnswerString = formerAnswerString.substring(0, formerAnswerString.length - 1)
+        }
+		const formerAnswerValues = formerAnswerString.split(';');
+		const isAnswerFormatSemicolon = formerAnswerValues.join(';') === formerAnswerString;
+		const isAnswerFormatLength = formerAnswerValues.length === viewmodel.answervalues().length;
 		let allIdsValid = false;
 		if (isAnswerFormatSemicolon && isAnswerFormatLength) {
 			allIdsValid = true;
-			$.each(formeranswervalues, function(index, uniqueId) {
+			$.each(formerAnswerValues, function(index, uniqueId) {
 				if (!(uniqueId in viewmodel.itemTitleLookup)) {
 					allIdsValid = false;
 				}
@@ -970,10 +973,10 @@ function newRankingViewModel(element)
 		const self = $(domElement).find(".rankingitem-list")[0];
 
 		if (allIdsValid) {
-			const permutation = $.map(formeranswervalues, uniqueId => viewmodel.originalItemUniqueIdOrder().indexOf(uniqueId));
+			const permutation = $.map(formerAnswerValues, uniqueId => viewmodel.originalItemUniqueIdOrder().indexOf(uniqueId));
 			const rankingItemReordered = $.map(permutation, index => viewmodel.rankingItems()[index]);
 			viewmodel.rankingItems(rankingItemReordered);
-			viewmodel.answervalues(formeranswervalues);
+			viewmodel.answervalues(formerAnswerValues);
 			let rankingitemFormData = $(self).find(".rankingitem-form-data");
 			let rankingitemFormDataReOrdered = $.map(permutation, value => rankingitemFormData.get(value));
 			$.each(rankingitemFormDataReOrdered, (_, that) => self.append(that));
@@ -1954,83 +1957,82 @@ function newComplexTableItemViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);
 	
-	if (element != null)
-	{
-		if (element.hasOwnProperty("isViewModel") && element.isViewModel)
-		{
-			viewModel.help = ko.observable(element.help());
-			viewModel.niceHelp = ko.observable(getNiceHelp(element.help()));
-			viewModel.css = ko.observable(element.css());
-			viewModel.row = ko.observable(element.row());
-			viewModel.column = ko.observable(element.column());
-			viewModel.cellType = ko.observable(element.cellType());
-			viewModel.columnSpan = ko.observable(element.columnSpan());
-			viewModel.minCharacters = ko.observable(element.minCharacters());
-			viewModel.maxCharacters = ko.observable(element.maxCharacters());
-			viewModel.minChoices = ko.observable(element.minChoices() == null ? 0 : element.minChoices());
-			viewModel.maxChoices = ko.observable(element.maxChoices() == null ? 0 : element.maxChoices());
-			viewModel.numRows = ko.observable(element.numRows() == null ? 1 : element.numRows());
-		
-			viewModel.possibleAnswers = newComplexPossibleAnswersViewModel(element.possibleAnswers());
-			
-			viewModel.useRadioButtons = ko.observable(element.useRadioButtons());
-			viewModel.useCheckboxes = ko.observable(element.useCheckboxes());	
-			viewModel.numColumns = ko.observable(element.numColumns());
-			viewModel.order = ko.observable(element.order() == null ? 0 : element.order());
-			viewModel.resultText = ko.observable(element.resultText());
-			viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces() : 0);	
-			viewModel.unit = ko.observable(element.unit());	
-			viewModel.min = ko.observable(element.min());	
-			viewModel.max = ko.observable(element.max());	
-			viewModel.minString = ko.observable(element.minString());	
-			viewModel.maxString = ko.observable(element.maxString());
-			viewModel.formula = ko.observable(element.formula());
-			viewModel.readonly = ko.observable(element.readonly());
-			viewModel.hidden = ko.observable(element.hidden());
-		} else {
-			viewModel.help = ko.observable(element.help);
-			viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
-			viewModel.css = ko.observable(element.css);
-			viewModel.row = ko.observable(element.row);
-			viewModel.column = ko.observable(element.column);
-			viewModel.cellType = ko.observable(element.cellType);
-			viewModel.columnSpan = ko.observable(element.columnSpan);
-			viewModel.minCharacters = ko.observable(element.minCharacters);
-			viewModel.maxCharacters = ko.observable(element.maxCharacters);
-			viewModel.minChoices = ko.observable(element.minChoices == null ? 0 : element.minChoices);
-			viewModel.maxChoices = ko.observable(element.maxChoices == null ? 0 : element.maxChoices);
-			viewModel.numRows = ko.observable(element.numRows == null || element.numRows < 1 ? 1 : element.numRows);
-		
-			viewModel.possibleAnswers = newComplexPossibleAnswersViewModel(element.possibleAnswers);
-			
-			viewModel.useRadioButtons = ko.observable(element.useRadioButtons);
-			viewModel.useCheckboxes = ko.observable(element.useCheckboxes);	
-			viewModel.numColumns = ko.observable(element.numColumns == null || element.numColumns < 1 ? 1 : element.numColumns);
-			viewModel.order = ko.observable(element.order == null ? 0 : element.order);
-			viewModel.resultText = ko.observable(element.resultText);
-			viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces : 0);	
-			viewModel.unit = ko.observable(element.unit);	
-			viewModel.min = ko.observable(element.min);	
-			viewModel.max = ko.observable(element.max);	
-			viewModel.minString = ko.observable(element.minString);	
-			viewModel.maxString = ko.observable(element.maxString);
-			viewModel.formula = ko.observable(element.formula);
-			viewModel.readonly = ko.observable(element.readonly);
-			viewModel.hidden = ko.observable(element.hidden);
-		}
+	if (element != null) {
+        if (element.hasOwnProperty("isViewModel") && element.isViewModel) {
+            viewModel.help = ko.observable(element.help());
+            viewModel.niceHelp = ko.observable(getNiceHelp(element.help()));
+            viewModel.css = ko.observable(element.css());
+            viewModel.row = ko.observable(element.row());
+            viewModel.column = ko.observable(element.column());
+            viewModel.cellType = ko.observable(element.cellType());
+            viewModel.columnSpan = ko.observable(element.columnSpan());
+            viewModel.minCharacters = ko.observable(element.minCharacters());
+            viewModel.maxCharacters = ko.observable(element.maxCharacters());
+            viewModel.minChoices = ko.observable(element.minChoices() == null ? 0 : element.minChoices());
+            viewModel.maxChoices = ko.observable(element.maxChoices() == null ? 0 : element.maxChoices());
+            viewModel.numRows = ko.observable(element.numRows() == null ? 1 : element.numRows());
 
-		if (viewModel.cellType() == 3 || viewModel.cellType() == 1) {
-			viewModel.optional(true)
-		}
+            viewModel.possibleAnswers = newComplexPossibleAnswersViewModel(element.possibleAnswers());
 
-		viewModel.variables = [];				
-		viewModel.result = ko.observable("");
+            viewModel.useRadioButtons = ko.observable(element.useRadioButtons());
+            viewModel.useCheckboxes = ko.observable(element.useCheckboxes());
+            viewModel.numColumns = ko.observable(element.numColumns());
+            viewModel.order = ko.observable(element.order() == null ? 0 : element.order());
+            viewModel.resultText = ko.observable(element.resultText());
+            viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces() : 0);
+            viewModel.unit = ko.observable(element.unit());
+            viewModel.min = ko.observable(element.min());
+            viewModel.max = ko.observable(element.max());
+            viewModel.minString = ko.observable(element.minString());
+            viewModel.maxString = ko.observable(element.maxString());
+            viewModel.formula = ko.observable(element.formula());
+            viewModel.readonly = ko.observable(element.readonly());
+            viewModel.hidden = ko.observable(element.hidden());
+        } else {
+            viewModel.help = ko.observable(element.help);
+            viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
+            viewModel.css = ko.observable(element.css);
+            viewModel.row = ko.observable(element.row);
+            viewModel.column = ko.observable(element.column);
+            viewModel.cellType = ko.observable(element.cellType);
+            viewModel.columnSpan = ko.observable(element.columnSpan);
+            viewModel.minCharacters = ko.observable(element.minCharacters);
+            viewModel.maxCharacters = ko.observable(element.maxCharacters);
+            viewModel.minChoices = ko.observable(element.minChoices == null ? 0 : element.minChoices);
+            viewModel.maxChoices = ko.observable(element.maxChoices == null ? 0 : element.maxChoices);
+            viewModel.numRows = ko.observable(element.numRows == null || element.numRows < 1 ? 1 : element.numRows);
 
-		viewModel.result.subscribe(function (){
-			setTimeout(() => {
-				validateInput($(".cell[data-id=" + viewModel.id() + "]"))
-			})
-		})
+            viewModel.possibleAnswers = newComplexPossibleAnswersViewModel(element.possibleAnswers);
+
+            viewModel.useRadioButtons = ko.observable(element.useRadioButtons);
+            viewModel.useCheckboxes = ko.observable(element.useCheckboxes);
+            viewModel.numColumns = ko.observable(element.numColumns == null || element.numColumns < 1 ? 1 : element.numColumns);
+            viewModel.order = ko.observable(element.order == null ? 0 : element.order);
+            viewModel.resultText = ko.observable(element.resultText);
+            viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces : 0);
+            viewModel.unit = ko.observable(element.unit);
+            viewModel.min = ko.observable(element.min);
+            viewModel.max = ko.observable(element.max);
+            viewModel.minString = ko.observable(element.minString);
+            viewModel.maxString = ko.observable(element.maxString);
+            viewModel.formula = ko.observable(element.formula);
+            viewModel.readonly = ko.observable(element.readonly);
+            viewModel.hidden = ko.observable(element.hidden);
+        }
+
+        if (viewModel.cellType() == 3 || viewModel.cellType() == 1) {
+            viewModel.optional(true)
+        }
+
+        viewModel.variables = [];
+        viewModel.result = ko.observable("");
+
+        viewModel.result.subscribe(function () {
+            setTimeout(() => {
+                validateInput($(".cell[data-id=" + viewModel.id() + "]"))
+            })
+        })
+    }
 
 	viewModel.orderedPossibleAnswers = function(mobile, responsive){
 		if (this.order() != null && this.order() === 1){
@@ -2104,22 +2106,34 @@ function newComplexTableItemViewModel(element)
 
 		return this.possibleAnswers().length < this.numColumns()
 	}
-		
-		//properties for rows / columns
-		viewModel.cellTypeChildren = ko.observable("");
-		viewModel.titleChildren = ko.observable("");
-		viewModel.titleChildrenMatch = ko.observable(false);
-		viewModel.optionalChildren = ko.observable(true);
-		viewModel.optionalIndeterminate = ko.observable(false); //Visual Checkbox indicator for different values
-		viewModel.numRowsChildren = ko.observable("");
-		viewModel.minChildren = ko.observable(""); //minCharacters, minChoices or min depending on child type
-		viewModel.maxChildren = ko.observable("");
-		viewModel.formulaChildren = ko.observable("");
-		viewModel.decimalsChildren = ko.observable("");
-		viewModel.unitChildren = ko.observable("");
-		viewModel.possibleAnswersChildren = ko.observableArray();
-		viewModel.possibleAnswersMatch = ko.observable(false);
-	}
+
+    viewModel.minChoicesStr = function () {
+        const min = viewModel.minChoices()
+        if (min <= 0) return ""
+        return min.toString()
+    }
+
+    viewModel.maxChoicesStr = function () {
+        const max = viewModel.maxChoices()
+        if (max <= 0) return ""
+        return max.toString()
+    }
+
+    //properties for rows / columns
+    viewModel.cellTypeChildren = ko.observable("");
+    viewModel.titleChildren = ko.observable("");
+    viewModel.titleChildrenMatch = ko.observable(false);
+    viewModel.optionalChildren = ko.observable(true);
+    viewModel.optionalIndeterminate = ko.observable(false); //Visual Checkbox indicator for different values
+    viewModel.numRowsChildren = ko.observable("");
+    viewModel.minChildren = ko.observable(""); //minCharacters, minChoices or min depending on child type
+    viewModel.maxChildren = ko.observable("");
+    viewModel.formulaChildren = ko.observable("");
+    viewModel.decimalsChildren = ko.observable("");
+    viewModel.unitChildren = ko.observable("");
+    viewModel.possibleAnswersChildren = ko.observableArray();
+    viewModel.possibleAnswersMatch = ko.observable(false);
+
 
 	viewModel.cellTypeChanged = function (newType){
 		if (newType == 3){

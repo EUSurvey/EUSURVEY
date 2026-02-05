@@ -5,6 +5,8 @@ import java.io.InputStream;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 
+import com.ec.survey.service.ActivityService;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class QuizExecutor implements Runnable {
 	
 	@Resource(name="mailService")
 	private MailService mailService;
+
+    @Resource(name = "activityService")
+    protected ActivityService activityService;
 	
 	public @Autowired ServletContext servletContext;
 	
@@ -60,7 +65,9 @@ public class QuizExecutor implements Runnable {
 				
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
-								
+
+                activityService.log(answerSet.getIsDraft() ? ActivityRegistry.ID_DRAFT_CONTRIBUTION_PDF_SENT : ActivityRegistry.ID_CONTRIBUTION_PDF_SENT, null, answerSet.getUniqueCode() + ", " + email, -1, answerSet.getSurvey().getUniqueId());
+
 				mailService.SendHtmlMail(email, from, from, "Copy of your PDF quiz results", text, file, file2, null, false);
 			}
 		} catch (Exception e) {

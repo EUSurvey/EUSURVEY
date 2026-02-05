@@ -65,10 +65,11 @@ public class TestDataGenerator implements Runnable {
 	private int surveys;
 	private int contacts;
 	private int users;
+    private boolean forDeletion;
 	
 	//private boolean archive = false;
 	
-	public void init(User user, int answers, String fileDir, String sender, String email, String shortname, Integer questions, BeanFactory context, int files, int surveys, int contacts, int users)
+	public void init(User user, int answers, String fileDir, String sender, String email, String shortname, Integer questions, BeanFactory context, int files, int surveys, int contacts, int users, boolean forDeletion)
 	{
 		this.user = user;
 		this.answers = answers;
@@ -82,6 +83,7 @@ public class TestDataGenerator implements Runnable {
 		this.surveys = surveys;
 		this.contacts = contacts;
 		this.users = users;
+        this.forDeletion = forDeletion;
 	}
 	
 	@Override
@@ -93,10 +95,13 @@ public class TestDataGenerator implements Runnable {
 			{
 				attendeeService.createDummyAttendees(contacts, user.getId());
 				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", contacts + " contacts have been generated", null);
-			} else if (files > 0)
-			{
-				fileService.createDummyFiles(files);
-				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", files + " files have been generated", null);
+			} else if (files > 0) {
+                fileService.createDummyFiles(files);
+                if (email != null)
+                    mailService.SendHtmlMail(email, sender, sender, "Test data generated", files + " files have been generated", null);
+            } else if (forDeletion) {
+                ApplicationListenerBean.createSurveysForDeletionTests(user, surveyService.getLanguage("EN"), surveyService);
+                mailService.SendHtmlMail(email, sender, sender, "Test data generated", "Test surveys have been generated", null);
 			} else {
 				if (shortname != null && shortname.length() > 0)
 				{

@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.HtmlUtils;
 
 @Controller
 @RequestMapping("/publication")
@@ -38,8 +39,8 @@ public class PublicationController extends BasicController {
 
 	private @Value("${server.prefix}") String host;
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
-	private @Value("${stresstests.createdata}") String createStressData;
+	private @Value("${smtp.port:25}") String smtpPort;
+	private @Value("${stresstests.createdata:0}") String createStressData;
 
 	@RequestMapping(value = "/{shortname}")
 	public ModelAndView publication(@PathVariable String shortname, HttpServletRequest request, Locale locale) {
@@ -379,7 +380,7 @@ public class PublicationController extends BasicController {
 							GalleryQuestion gallery = (GalleryQuestion) question;
 							for (int i = 0; i < gallery.getFiles().size(); i++) {
 								if (answer.getValue().equals(Integer.toString(i))) {
-									String name = gallery.getFiles().get(i).getName() + "<br />";
+									String name = HtmlUtils.htmlEscape(gallery.getFiles().get(i).getName()) + "<br />";
 
 									if (result.containsKey(answer.getQuestionUniqueId())) {
 										result.put(answer.getQuestionUniqueId(),

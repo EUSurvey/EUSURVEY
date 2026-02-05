@@ -222,8 +222,7 @@ public class ContributionController extends BasicController {
 
 	@RequestMapping(value = "/preparedraft/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparedraft(@PathVariable String code, Locale locale, HttpServletRequest request)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
-			InvalidURLException, InterruptedException, IOException, ECFException {
+            throws Exception {
 		ModelAndView result = editContributionInner(code, locale, request, false, false, true);
 
 		Form f = (Form) result.getModel().get("form");
@@ -236,8 +235,7 @@ public class ContributionController extends BasicController {
 
 	@RequestMapping(value = "/preparepublishedcontribution/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView showforpublishedpdf(@PathVariable String id, Locale locale, HttpServletRequest request)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
-			InvalidURLException, InterruptedException, IOException, ECFException {
+            throws Exception {
 		AnswerSet answerSet = answerService.get(Integer.parseInt(id));
 		ModelAndView result = editContributionInner(answerSet.getUniqueCode(), locale, request, false, false, false);
 		result.addObject("forpdf", "true");
@@ -259,22 +257,19 @@ public class ContributionController extends BasicController {
 
 	@RequestMapping(value = "/editcontribution/{code}/back", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView editcontributionfrombackoffice(@PathVariable String code, Locale locale,
-			HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException,
-			NotAgreedToPsException, ForbiddenURLException, InvalidURLException, InterruptedException, IOException {
+			HttpServletRequest request) throws Exception {
 		return editContributionInner(code, locale, request, true, true, false);
 	}
 
 	@RequestMapping(value = "/editcontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView editcontribution(@PathVariable String code, Locale locale, HttpServletRequest request)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
-			InvalidURLException, InterruptedException, IOException {
+            throws Exception {
 		return editContributionInner(code, locale, request, false, true, false);
 	}
 
 	private ModelAndView editContributionInner(String code, Locale locale, HttpServletRequest request,
 			boolean fromBackOffice, boolean useNewestSurvey, boolean isdraft)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
-			InvalidURLException, InterruptedException, IOException {
+            throws Exception {
 
 		if (!Tools.isUUID(code)) {
 			throw new ForbiddenURLException();
@@ -466,7 +461,7 @@ public class ContributionController extends BasicController {
 
 				String uniqueCode = request.getParameter(Constants.UNIQUECODE);
 				SurveyHelper.parseAndMergeAnswerSet(request, origsurvey, uniqueCode, oldAnswerSet,
-						oldAnswerSet.getLanguageCode(), null, fileService);
+						oldAnswerSet.getLanguageCode(), null, fileService, false);
 
 				Set<String> invisibleElements = new HashSet<>();
 
@@ -656,7 +651,7 @@ public class ContributionController extends BasicController {
 
 	@GetMapping(value = "/contribution/{uid}/preview")
 	public ModelAndView preview(@PathVariable String uid, HttpServletRequest request, Locale locale)
-			throws InterruptedException, IOException, InvalidURLException, ECFException {
+            throws Exception {
 		if (uid != null && uid.length() > 0) {
 			AnswerSet answerSet = answerService.get(uid);
 			if (answerSet != null) {

@@ -43,7 +43,7 @@ public class PDFService extends BasicService {
 	private TaskExecutor taskExecutor;
 
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${sender}") String sender;
 
 	private int max = 15;

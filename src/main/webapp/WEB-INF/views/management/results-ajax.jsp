@@ -155,6 +155,9 @@
 							  }
 						  });
 
+						  if (publication) {
+							  $(".ajaxloaderimage").hide();
+						  }
 					  },
 					  error: function () {
 						//this means the asynchronous computation has been started

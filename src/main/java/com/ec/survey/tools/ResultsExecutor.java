@@ -53,7 +53,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 	@Resource(name="mailService")
 	private MailService mailService;
 	
-	protected @Value("${export.deleteexportstimeout}") String deleteexportstimeout;
+	protected @Value("${export.deleteexportstimeout:30}") String deleteexportstimeout;
 	
 	public @Autowired ServletContext servletContext;
 	

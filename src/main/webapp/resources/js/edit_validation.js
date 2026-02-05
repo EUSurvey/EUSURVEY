@@ -790,20 +790,22 @@ function checkMinMax(input, hasInputError, globalmax, showrulehint)
 		if (minstring.length > 0)
 		{
 			var min = parseInt(minstring);
-			
+
+            const el = $(_elementProperties.selectedelement)
+
 			if (min == null || isNaN(min) || !isFinite(minstring))
 			{
 				addValidationInfo(input, "mininvalid");
 				return false;
 			}
 			
-			if ($(_elementProperties.selectedelement).hasClass("freetextitem") && min > 5000)
+			if (el.hasClass("freetextitem") && min > 5000)
 			{
 				addValidationInfo(input, "mininvalid5k");
 				return false;
 			}
 			
-			if ($(_elementProperties.selectedelement).hasClass("multiplechoiceitem") && min < 0)
+			if (el.hasClass("multiplechoiceitem") && min < 0)
 			{
 				addValidationInfo(input, "mininvalid");
 				return false;
@@ -825,7 +827,7 @@ function checkMinMax(input, hasInputError, globalmax, showrulehint)
 					return false;
 				}
 				
-				if ($(_elementProperties.selectedelement).hasClass("multiplechoiceitem") && max < 0)
+				if (el.hasClass("multiplechoiceitem") && max < 0)
 				{
 					addValidationInfo(input, "mininvalid");
 					return false;
@@ -837,8 +839,7 @@ function checkMinMax(input, hasInputError, globalmax, showrulehint)
 					return false;
 				}
 				
-				if (min == max)
-				{
+				if (min == max && !el.is(".multiplechoiceitem, .cell[data-type=5]")) { // Allowed for MC since ESURVEY-8074
 					addValidationInfo(input, "invalidMinMaxEqual");
 					return false;
 				}
@@ -903,11 +904,11 @@ function checkMinMax(input, hasInputError, globalmax, showrulehint)
 					return false;
 				}
 				
-				if (min == max)
+				 /* if (min == max) Allowed since ESURVEY-8074
 				{
 					addValidationInfo(input, "invalidMinMaxEqual");
 					return false;
-				}
+				} */
 			}
 			
 			if (globalmax != null && max > globalmax)

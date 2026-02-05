@@ -156,25 +156,25 @@ public class BasicController implements BeanFactoryAware {
 	@Resource(name = "selfassessmentService")
 	protected SelfAssessmentService selfassessmentService;
 	
-	public @Value("${captcha.secret}") String captchasecret;
-	public @Value("${captcha.serverprefix}") String captchaserverprefix;
-	public @Value("${captcha.serverprefixtarget}") String captchaserverprefixtarget;
+	public @Value("${captcha.secret:}") String captchasecret;
+	public @Value("${captcha.serverprefix:/eusurvey/EuCaptchaApi/}") String captchaserverprefix;
+	public @Value("${captcha.serverprefixtarget:}") String captchaserverprefixtarget;
 	public @Value("${captcha.token:#{null}}") String captchatoken;
 	public @Value("${captcha.x-bypass-secret:#{null}}") String captchabypasssecret;
-	public @Value("${ui.enableresponsive}") String enableresponsive;
-	private @Value("${ecaslogout}") String ecaslogout;
-	public @Value("${showecas}") String showecas;
-	public @Value("${ecashost}") String ecashost;
+	public @Value("${ui.enableresponsive:true}") String enableresponsive;
+	private @Value("${ecaslogout:}") String ecaslogout;
+	public @Value("${showecas:false}") String showecas;
+	public @Value("${ecashost:}") String ecashost;
 	public @Value("${sender}") String sender;
-	public @Value("${captcha.bypass:@null}") String bypassCaptcha;
-	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
-	public @Value("${enablereportingdatabase}") String enablereportingdatabase;
+	public @Value("${captcha.bypass:false}") String bypassCaptcha;
+	public @Value("${ui.enablepublicsurveys:false}") String enablepublicsurveys;
+	public @Value("${enablereportingdatabase:false}") String enablereportingdatabase;
 
 	public @Value("${ecas.require2fa:#{false}}") boolean require2fa;
 
 	// OCAS
-	public @Value("${casoss}") String cassOss;
-	protected @Value("${contextpath}") String contextpath;
+	public @Value("${casoss:false}") String cassOss;
+	protected @Value("${contextpath:/eusurvey}") String contextpath;
 
 	@Autowired
 	public ServletContext servletContext;
@@ -183,16 +183,16 @@ public class BasicController implements BeanFactoryAware {
 	public String serverPrefix;
 
 	protected @Value("${export.tempFileDir}") String tempFileDir;
-	public @Value("${export.fileDir}") String fileDir;
-	protected @Value("${isworkerserver}") String isworkerserver;
-	protected @Value("${useworkerserver}") String useworkerserver;
-	protected @Value("${workerserverurl}") String workerserverurl;
-	protected @Value("${archive.fileDir}") String archiveFileDir;
+	public @Value("${export.fileDir:}") String fileDir;
+	protected @Value("${isworkerserver:false}") String isworkerserver;
+	protected @Value("${useworkerserver:false}") String useworkerserver;
+	protected @Value("${workerserverurl:#{null}}") String workerserverurl;
+	protected @Value("${archive.fileDir:}") String archiveFileDir;
 
-	protected @Value("${oss}") String oss;
-	protected @Value("${show.privacy}") String showPrivacy;
+	protected @Value("${oss:true}") String oss;
+	protected @Value("${show.privacy:true}") String showPrivacy;
 
-	protected @Value("${opc.redirect}") String opcredirect;
+	protected @Value("${opc.redirect:#{null}}") String opcredirect;
 
 	protected BeanFactory context;
 

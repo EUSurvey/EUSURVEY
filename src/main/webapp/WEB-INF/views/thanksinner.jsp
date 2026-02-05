@@ -136,7 +136,17 @@
 				</c:otherwise>	
 			</c:choose>
 		</p>
-		
+
+		<div>
+			<c:choose>
+				<c:when test="${runnermode == true}">
+					${form.getMessage("label.Email")}:
+				</c:when>
+				<c:otherwise>
+					<spring:message code="label.Email" />:
+				</c:otherwise>
+			</c:choose>
+		</div>
 		<c:choose>
 			<c:when test='${participantsemail != null && participantsemail.indexOf("@") > 0}'>
 				<input type="text" maxlength="255" name="email" id="email" value="${participantsemail}" />

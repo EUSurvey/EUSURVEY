@@ -237,7 +237,7 @@ public class AdministrationController extends BasicController {
 	            	List<String> codes = surveyService.getLanguageCodes();
 	            	List<Language> newLanguages = new ArrayList<>();
 					Workbook wb;
-					if (file.getName().endsWith("xlsx")) {
+					if (file.getOriginalFilename().endsWith("xlsx")) {
 						wb = new XSSFWorkbook(inputStream);
 					} else {
 						wb = new HSSFWorkbook(inputStream);

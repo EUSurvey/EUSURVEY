@@ -9,7 +9,7 @@
 		
 	</c:when>	
 	<c:otherwise>
-		<div id="captchadiv" class="captcha" style="margin-left: 20px; margin-bottom: 10px; margin-top: 20px;">
+		<div id="captchadiv" class="captcha" style="margin-bottom: 10px; margin-top: 20px;">
 			<c:choose>
 				<c:when test="${form != null}">
 					${form.getMessage("info.verifyhuman")}
@@ -25,7 +25,7 @@
 					<div class="internalcaptcha">
 						<div style="margin-bottom: 10px;">
 							<img style="max-width: 100%; margin-bottom: 10px" alt="Captcha Loading" src="${contextpath}/resources/images/ajax-loader.gif" id="captchaImg" captchaId="">
-							<audio class="focussable" controls autostart="1" src="" id="audioCaptcha" onplay="onPlayAudio()"></audio>
+							<audio class="focussable" style="max-width: 75vw;" controls autostart="1" src="" id="audioCaptcha" onplay="onPlayAudio()"></audio>
 						</div>
 
 						<input type="hidden" name="captcha_id" id="captcha_id" />
@@ -35,17 +35,19 @@
 						<c:choose>
 							<c:when test="${form != null}">
 								<label for="internal_captcha_response">${form.getMessage("info.entertext")}</label>
-								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="${form.getMessage("info.entertext")}" style="width: 260px">
-								
-								<button title='${form.getMessage("label.ReloadCaptcha")}' data-toggle="tooltip" type="button" class="btn btn-primary btn-sm" id="captchaReload"><span class="sr-only">${form.getMessage("label.ReloadCaptcha")}</span><span class="glyphicon glyphicon-refresh"></span></button>
+								<div>
+									<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="${form.getMessage("info.entertext")}">
 
+									<button title='${form.getMessage("label.ReloadCaptcha")}' data-toggle="tooltip" type="button" class="btn btn-primary btn-sm" id="captchaReload"><span class="sr-only">${form.getMessage("label.ReloadCaptcha")}</span><span class="glyphicon glyphicon-refresh"></span></button>
+								</div>
 							</c:when>
 							<c:otherwise>
 								<label for="internal_captcha_response"><spring:message code="info.entertext" /></label>
-								<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="<spring:message code="info.entertext" />" style="width: 260px">
-								
-								<button title='<spring:message code="label.ReloadCaptcha" />' data-toggle="tooltip" type="button" class="btn btn-primary btn-sm" id="captchaReload"><span class="sr-only"><spring:message code="label.ReloadCaptcha" /></span><span class="glyphicon glyphicon-refresh"></span></button>
+								<div>
+									<input type="text" id="internal_captcha_response" name="internal_captcha_response" autocomplete="off" placeholder="<spring:message code="info.entertext" />" >
 
+									<button title='<spring:message code="label.ReloadCaptcha" />' data-toggle="tooltip" type="button" class="btn btn-primary btn-sm" id="captchaReload"><span class="sr-only"><spring:message code="label.ReloadCaptcha" /></span><span class="glyphicon glyphicon-refresh"></span></button>
+								</div>
 							</c:otherwise>
 						</c:choose>
 

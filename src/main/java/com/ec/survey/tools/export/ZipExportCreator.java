@@ -24,7 +24,7 @@ import com.ec.survey.model.survey.base.File;
 @Scope("prototype")
 public class ZipExportCreator extends ExportCreator {
 
-	protected @Value("${export.fileDir}") String fileDir;
+	protected @Value("${export.fileDir:}") String fileDir;
 	
 	@Override
 	void exportContent(boolean sync) throws Exception {

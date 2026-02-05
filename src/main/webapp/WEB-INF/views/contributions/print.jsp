@@ -174,6 +174,9 @@
 						<c:when test="${element.getType() == 'FreeTextQuestion' && element.getMaxCharacters() != null && element.getMaxCharacters() > 0}">
 							<div class='limits'><spring:message code="limits.MaxCharacters" arguments="${element.getMaxCharacters()}" /></div>
 						</c:when>
+                        <c:when test="${element.getType() == 'MultipleChoiceQuestion' && element.getMinChoices() == element.getMaxChoices() && element.getMinChoices() != null && element.getMinChoices() > 0}">
+                            <div class='limits'><spring:message code="limits.MinMaxChoicesEqual" arguments="${element.getMinChoices()}" /></div>
+                        </c:when>
 						<c:when test="${element.getType() == 'MultipleChoiceQuestion' && element.getMinChoices() != null && element.getMinChoices() > 0 && element.getMaxChoices() != null && element.getMaxChoices() > 0}">
 							<div class='limits'><spring:message code="limits.MinMaxChoicesNew" arguments="${element.getMinChoices()},${element.getMaxChoices()}" /></div>
 						</c:when>
@@ -481,6 +484,9 @@
 															<c:when test="${child.getCellType() == 'FreeText' && child.getMaxCharacters() != null && child.getMaxCharacters() > 0}">
 																<div class='limits'>${form.getMessage("limits.MaxCharacters", child.getMaxCharacters())}&nbsp;<span class="charactercounter"></span></div>
 															</c:when>
+                                                            <c:when test="${child.getCellType() == 'MultipleChoice' && child.getMinChoices() == child.getMaxChoices() && child.getMinChoices() != null && child.getMinChoices() > 0}">
+                                                                <div class='limits'>${form.getMessage("limits.MinMaxChoicesEqual", child.getMinChoices())}</div>
+                                                            </c:when>
 															<c:when test="${child.getCellType() == 'MultipleChoice' && child.getMinChoices() != null && child.getMinChoices() > 0 && child.getMaxChoices() != null && child.getMaxChoices() > 0}">
 																<div class='limits'>${form.getMessage("limits.MinMaxChoicesNew", child.getMinChoices(), child.getMaxChoices())}</div>
 															</c:when>
@@ -812,10 +818,10 @@
 						<div class="rankingitem-list">
 							<c:forEach items="${form.getRankingItems(element)}" var="child">			
 								<div class="rankingitem-form-data">
-									<table>
+									<table style="width: 100%">
 										<tr>
 											<td>
-												<div class="rankingitem-decoration" style="padding-top: 2px">
+												<div class="rankingitem-decoration" style="padding-top: 2px; width: 22px">
 													<img src="${contextpath}/resources/images/drag.png" />
 												</div>														
 											</td>

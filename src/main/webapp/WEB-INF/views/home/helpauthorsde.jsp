@@ -469,7 +469,7 @@
 				</li>
 			</ul>
 			<p>
-				<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">
+				<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">
 					EU-Login-Konto erstellen
 				</a>
 				(sofern nicht bereits vorhanden)
@@ -640,29 +640,6 @@
 						„Ergebnissen“, „Übersetzungen“, „Eigenschaften“ usw. anzeigen.
 					</li>
 				</ol>
-			</p>
-			<h2>
-				Wie exportiere ich eine vorhandene Umfrage?
-			</h2>
-			<p>
-				Suchen Sie auf der Seite „Umfragen“ nach der Umfrage, die Sie exportieren
-				möchten. Sie können entweder:
-			</p>
-			<ul>
-				<li>
-					auf das Symbol „Exportieren“ klicken oder
-				</li>
-				<li>
-					auf das Symbol „Öffnen“ klicken ? auf der Seite „Übersicht“ auf das
-					Symbol „Exportieren“ klicken.
-				</li>
-			</ul>			
-			<p>
-				Ihre Umfrage wird dann mit allen gewählten Einstellungen auf Ihrem Computer
-				gespeichert.
-			</p>
-			<p>
-				Die Dateierweiterung der Dateien im EUSurvey-Format lautet „.eus“.
 			</p>
 			<h2>
 				Wie kopiere ich eine vorhandene Umfrage?
@@ -1171,7 +1148,7 @@
 			<p>
 				Weitere Informationen erhalten Sie unter
 				<a
-						href="#_Toc_9_8"
+						href="#_Toc_9_7"
 						>
 					„Wie erhalten andere Nutzer Zugang zu meiner Umfrage?“
 				</a>
@@ -1635,7 +1612,7 @@
 			<p>
 				Weitere Informationen hierzu siehe:
 				<a
-						href="#_Toc_9_8"
+						href="#_Toc_9_7"
 						>
 					„Wie erhalten andere Nutzer Zugang zu meiner Umfrage?“
 				</a>
@@ -2261,32 +2238,6 @@
 				„Übersicht“ und klicken Sie auf „Änderungen anwenden“.
 			</p>
 			<h2>
-				Kann ich eine Umfrage archivieren?<u> </u>
-			</h2>
-			<p>
-				Ja, Sie können Ihre Umfrage archivieren und zu einem späteren Zeitpunkt
-				wieder aufrufen und veröffentlichen.
-			</p>
-			<p>
-				Um Ihre Umfrage zu archivieren &#8594;  öffnen Sie die Seite „Übersicht“ und
-				klicken auf das Symbol „Umfrage Archivieren“.
-			</p>
-			<p>
-				Archivierte Umfragen können nicht bearbeitet werden und auch nicht
-				verwendet werden, um weitere Daten zu erfassen.
-			</p>
-			<p>
-				Sie können aber die Ergebnisse Ihrer Umfrage exportieren und eine PDF-Datei
-				der Umfrage erstellen lassen.
-			</p>
-			<p>
-				Von der Seite „Übersicht“ können Sie können auf archivierte Umfragen
-				zugreifen und diese hier auch wieder aktivieren.
-			</p>
-			<p>
-				Eine wieder aktivierte Umfrage kann dann erneut bearbeitet werden.
-			</p>
-			<h2>
 				Wie erhalten andere Nutzer Zugang zu meiner Umfrage?
 			</h2>
 			<p>
@@ -2390,7 +2341,7 @@
 							Stellen Sie die Farbe auf Grün um, können sie die Antworten sowohl
 							einsehen als auch bearbeiten und löschen (siehe auch „
 							<a
-									href=#_Toc_9_8"
+									href=#_Toc_9_7"
 									>
 								Wie erhalten andere Nutzer Zugang zu den Ergebnissen meiner Umfrage?
 							</a>
@@ -2525,34 +2476,6 @@
 				“
 			</p>
 			<h2>
-				Wie kann ich eingereichte Antworten herunterladen?
-			</h2>
-			<p>
-				<ol>
-					<li>
-						Öffnen Sie Ihre Umfrage und gehen Sie zur Seite „Ergebnisse“.
-					</li>
-					<li>
-						Klicken Sie rechts oben auf „Exportieren“.
-					</li>
-					<li>
-						Wählen Sie eines der verfügbaren Dateiformate für den Export aus.
-					</li>
-					<li>
-						Geben Sie im Dialogfenster einen Dateinamen ein. Unter diesem Namen wird
-						die Exportdatei dann auf der Seite „Export“ angezeigt.
-					</li>
-				</ol>
-			</p>
-			<p>
-				Es stehen verschiedene Exportdateiformate zur Verfügung, je nach
-				Anzeigemodus (Vollständiger Inhalt/Diagramme/Statistiken).
-			</p>
-			<p>
-				Hinweis: Die Exportdatei enthält nur die als exportierbar markierten Fragen
-				sowie die gefilterten Suchergebnisse.
-			</p>
-			<h2>
 				Wie kann ich die Antworten in der Entwurfsfassung extrahieren?
 			</h2>
 			<p>
@@ -2594,15 +2517,17 @@
 				Hinweis: Um Ergebnisse anzusehen und zu analysieren, benötigen Sie
 				bestimmte Rechte (siehe „
 				<a
-						href="#_Toc_9_8"
+						href="#_Toc_9_7"
 						>
 					Wie erhalten andere Nutzer Zugang zu den Ergebnissen meiner Umfrage?
 				</a>
 				“).
 			</p>
 			<p>
-				Für den Export einer Teilmenge von Beiträgen siehe „Wie kann ich
-				eingereichte Antworten herunterladen?“.
+				Für den Export einer Teilmenge von Beiträgen siehe
+				<a href="#_Toc_10_13">
+					„Wie kann ich eine Umfrage und ihre Daten exportieren?“
+				</a>.
 			</p>
 			<p>
 				Siehe auch „
@@ -2664,7 +2589,7 @@
 			<p>
 				Weitere Informationen hierzu erhalten Sie unter
 				<a
-						href="#_Toc_9_8"
+						href="#_Toc_9_7"
 						>
 					„Wie erhalten andere Nutzer Zugang zu meiner Umfrage?“
 				</a>
@@ -2848,24 +2773,45 @@
 				Der Score errechnet sich aus der durchschnittlichen Gewichtung durch die Umfrageteilnehmer.
 			</p>
 			<h2>
-				Exportieren des Datensatzes (d. h. der Umfrageantworten)
+				Wie kann ich eine Umfrage und ihre Daten exportieren?
 			</h2>
 			<p>
-				Sie können die Antworten Ihrer Umfrage mithilfe der Exportfunktion exportieren.
-				Dies kann z. B. für die weitere Datenverarbeitung in Excel nützlich sein.
+				Sie können sowohl den Fragenbogen Ihrer Umfrage als auch die abgegebenen Antworten exportieren. Im Folgenden finden Sie die Schritte zum Exportieren beider Dateien:
 			</p>
 			<p>
-				Schritte zum Exportieren der Antworten:
+				<b>Exportieren der Umfrageergebnisse (d.h. des Datensatzes)</b><br>
+				Um die Antworten Ihrer Umfrage zu exportieren, folgen Sie diesen Schritten:
+				<ol>
+					<li>Gehen Sie zur Registerkarte „Ergebnisse“ (erste Ansicht, Ergebnistabelle).</li>
+					<li>Klicken Sie „Exportieren“ (ein Dialogfenster öffnet sich).</li>
+					<li>Geben Sie einen Namen für Ihren Export ein.</li>
+					<li>
+						Wählen Sie das Dateiformat aus (wenn die Exportdatei erstellt wurde, werden Sie eine Benachrichtigung erhalten).
+						<ul>
+							<li>Hinweis: Die exportierten Daten können im XLSX Format gespeichert werden, welches einen hohen Sicherheitsstandard mit sich bringt. Beispielsweise kann diese Datei mit AES-256 verschlüsselt werden, um sicherzustellen, dass sensible Daten geschützt bleiben.</li>
+						</ul>
+					</li>
+					<li>Gehen Sie zur Seite „Exporte“.</li>
+					<li>Laden Sie Ihre Datei herunter, sobald der Export abgeschlossen ist.</li>
+				</ol>
+				Dies ermöglicht Ihnen abgegebene Umfrageantworten in Programmen wie Excel ausführlicher zu analysieren und gleichzeitig die Datensicherheit zu gewährleisten. Die exportierten Dateien berücksichtigten alle angewendeten Filter sowie die Anzeigeeinstellungen der Fragen.
 			</p>
+			<p>
+				<b>Exportieren einer bestehen Umfrage (d.h. des Fragebogens)</b><br>
+				Um die gesamte Umfrage einschließlich aller Einstellungen und ihrer Gliederung zu exportieren, folgen Sie diesen Schritten:
+				<ol>
+					<li>Suchen Sie auf der Seite „Umfragen“ nach der Umfrage, die Sie exportieren möchten.</li>
+					<li>
+						Klicken Sie auf das Symbol „Exportieren“.
+						<ul>
+							<li>Alternativ: Klicken Sie auf das Symbol „Öffnen”, um zur Seite „Übersicht“ zu gelangen, und klicken Sie dort das Symbol „Exportieren“.</li>
+						</ul>
+					</li>
+					<li>Ihre Umfrage wird einschließlich aller gewählten Einstellungen auf Ihrem Computer gespeichert.</li>
+					<li>Die exportierte Datei im EUSurvey-Format hat die Dateiendung „.eus“.</li>
+				</ol>
+				Dies ermöglicht Ihnen Ihre Umfrage zu sichern oder auf andere Instanzen von EUSurvey zu übertragen.
 			</p>
-			<ol>
-				<li>Gehen Sie zur Registerkarte „Ergebnisse“ (erste Ansicht, Ergebnistabelle).</li>
-				<li>Klicken Sie „Exportieren“ (ein Dialogfenster öffnet sich).</li>
-				<li>Geben Sie einen Namen für Ihren Export ein.</li>
-				<li>Wählen Sie das Dateiformat aus (wenn die Exportdatei erstellt wurde, werden Sie eine Benachrichtigung erhalten).</li>
-				<li>Gehen Sie zur Seite „Exporte“.</li>
-				<li>Laden Sie Ihre Datei herunter.</li>
-			</ol>
 
 			<h1>
 				Design und Layout

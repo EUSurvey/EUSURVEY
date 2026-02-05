@@ -11,14 +11,12 @@
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	
 	<style type="text/css">		    
-	    .dep-tree { list-style-type: none; margin: 0; padding: 0; }
-	    .dep-tree-child { margin-left: 30px;}
 
-		#search-results td, th {
+		#search-results-access td, th {
 	    	white-space:nowrap;
 		}
 		
-		#search-results td {
+		#search-results-access td {
 	    	cursor: pointer;
 		}
 		
@@ -38,10 +36,6 @@
 		input[type="text"] {
 		    width: 250px;
 		}
-		
-		.dep-tree .check {
-			margin-right: 5px !important;
-		}
 
 		#tblResultPrivileges select {
 			background-color: #fff;
@@ -51,9 +45,8 @@
 			color: #ccc;
 		}
 
-		#add-user-dialog label {
-			margin-bottom: 0;
-			margin-top: 10px;
+		#tblPrivilegesFromAccess {
+		    width: 700px;
 		}
 		
 	</style>
@@ -138,17 +131,20 @@
 			<input type="hidden" name="target" value="addUser" />
 			<input type="hidden" name="login" id="add-form-login" value="" />
 			<input type="hidden" name="ecas" id="add-form-ecas" value="" />
+			<input type="hidden" name="givefullaccess" id="add-form-givefullaccess" value="false" />
 			<input type="hidden" name="resultMode" id="add-resultMode" value="false" />
 		</form:form>
 		
 		<form:form style="display: none" id="add-form-email" method="POST" action="access">
 			<input type="hidden" name="target" value="addUserEmail" />
 			<input type="hidden" name="emails" id="add-form-emails" value="" />
+			<input type="hidden" name="emailgivefullaccess" id="add-form-emailgivefullaccess" value="false" />
 			<input type="hidden" name="resultMode" id="add-resultMode-Email" value="false" />
 		</form:form>
 		
 		<form:form style="display: none" id="add-form-group" method="POST" action="access">
 			<input type="hidden" name="target" value="addGroup" />
+			<input type="hidden" name="groupgivefullaccess" id="add-form-groupgivefullaccess" value="false" />
 			<input type="hidden" name="groupname" id="add-form-group-name" value="" />
 		</form:form>
 		
@@ -191,6 +187,9 @@
 					</div>
 				</c:when>
 				<c:when test="${showSecondTab}">
+					<div style="display: none">
+						<%@ include file="access-general.jsp" %>
+					</div>
 					<div style="padding-top: 130px;">
 						<%@ include file="access-results.jsp" %>
 					</div>
@@ -202,200 +201,8 @@
 	</div>
 
 	<%@ include file="../footer.jsp" %>	
+    <%@ include file="access-modals.jsp" %>
 
-	<div class="modal" id="add-user-dialog" data-backdrop="static">
-		<div class="modal-dialog modal-lg">
-    	<div class="modal-content">
-		<div class="modal-header">			
-			<spring:message code="label.AddUser" />
-			&nbsp;
-			<a onclick="$(this).closest('.modal-header').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-													
-			<div style="clear: both"></div>
-			<c:if test="${!USER.isExternal()}">
-				<div class="help" style="display: none; margin-top: 10px;">
-					<span><spring:message code="info.AddUserAccess" /></span>
-				</div>
-			</c:if>
-			<c:if test="${USER.isExternal()}">
-				<div class="help" style="display: none; margin-top: 10px;">
-					<span><spring:message code="info.AddUserAccessFormManager" /></span>
-				</div>
-			</c:if>
-		</div>
-		<div class="modal-body">
-			<c:choose>
-				<c:when test="${USER.isExternal()}">
-					<div style="float: left; width: 250px;  margin-right: 10px;">
-						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
-						<input type="text" maxlength="500" id="add-user-email" style="min-width: 400px;"/>
-						<p class="help" style="min-width: 400px;">
-							<spring:message code="info.AddUserFormManagerInstructions" /><br />
-							<spring:message code="info.AddUserFormManagerInstructions2" />
-						</p>
-					</div>
-					<div style="clear: both"></div>
-					<div style="margin-top: 20px">
-						<a id="btnCheck"  style="float: left;" onclick="searchEmailUser('mail');" class="btn btn-default" style="margin: 10px"><spring:message code="label.Check" /></a>
-					</div>
-					<div style="clear: both"></div>
-					<div style="margin-top: 20px">
-						<div id="foundEmailUsers" style="color: green; margin-bottom: 0.8rem;"></div>
-						<div id="invalidEmails" style="margin-bottom: 0.8rem; display: inline-flex">
-							<img id="invalidEmailsIcon" src="${contextpath}/resources/images/exclamation-triangle.svg" style="display: none; height: 2rem; margin-right: 8px;"></img>
-							<div id="invalidEmailsText" style="color: red"></div>
-						</div>
-						<div style="clear: both"></div>
-						<div id="notFoundEmails" style="color: red; display: inline-flex">
-							<img id="notFoundEmailsIcon" src="${contextpath}/resources/images/exclamation-triangle.svg" style="display: none; height: 2rem; margin-right: 8px;"></img>
-							<div id="notFoundEmailsText" style="color: red"></div>
-						</div>
-					</div>
-				</c:when>
-				<c:when test="${USER.getGlobalPrivilegeValue('ECAccess') > 0}">
-					<div style="float: left; width: 250px;  margin-right: 10px;">
-						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
-						<input type="text" maxlength="255" id="add-user-email" />
-					</div>
-				
-					<div style="clear: both"></div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-firstname-div">
-						<label for="add-department-name"><spring:message code="label.FirstName" /></label><br />
-						<input type="text" maxlength="255" id="add-first-name" />
-					</div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-lastname-div">						
-						<label for="add-last-name"><spring:message code="label.LastName" /></label><br />
-						<input type="text" maxlength="255" id="add-last-name" />
-					</div>	
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.UserName" /><span id="eulogin-span"> (EU Login)</span></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
-					</div>
-					
-					<div style="clear: both"></div>
-					
-					<div style="float: left; width: 250px; margin-right: 10px;" id="add-user-department-div">
-						<label for="add-department-name"><spring:message code="label.Department" /></label><br />
-						<input type="text" maxlength="255" id="add-department-name" />
-					</div>
-					
-					<div style="float: left; width: 510px" id="add-user-domain-div">
-						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
-						<select id="add-user-type-ecas" onchange="checkUserType()" style="width: 510px" >
-							<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
-								<option value="${domain.key}">${domain.value} </option>
-							</c:forEach>
-						</select>	
-					</div>
-					<div style="clear: both"></div>
-					<div style="margin-top: 20px">
-						<div id="noEmptySearch" style="margin-bottom: 0.8rem; display: inline-flex">
-							<img id="noEmptySearchIcon" src="${contextpath}/resources/images/exclamation-triangle.svg" style="display: none; height: 2rem; margin-right: 8px;"></img>
-							<div id="noEmptySearchText" style="color: red"></div>
-						</div>
-					</div>
-				</c:when>
-				<c:when test="${USER.type == 'SYSTEM'}">
-					<div style="float: left; width: 250px;  margin-right: 10px;">
-						<label for="add-user-email"><spring:message code="label.EmailAddress" /></label><br />
-						<input type="text" maxlength="255" id="add-user-email" />
-					</div>
-
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.UserName" /></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
-					</div>
-
-					<div style="clear: both"></div>
-
-					<div style="width: 250px" id="add-user-domain-div">
-						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
-						<select id="add-user-type-ecas" onchange="checkUserType()">
-							<option value="system" selected="selected"><spring:message code="label.System" /></option>
-						</select>
-					</div>
-				</c:when>
-				<c:otherwise>
-					<div style="float: left; width: 250px;  margin-right: 10px;">
-						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
-						<input type="text" maxlength="255" id="add-user-email" />
-					</div>
-					
-					<div style="clear: both"></div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-firstname-div">
-						<label for="add-department-name"><spring:message code="label.FirstName" /></label><br />
-						<input type="text" maxlength="255" id="add-first-name" />
-					</div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-lastname-div">						
-						<label for="add-last-name"><spring:message code="label.LastName" /></label><br />
-						<input type="text" maxlength="255" id="add-last-name" />
-					</div>	
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.UserName" /></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
-					</div>
-					
-					<div style="clear: both"></div>		
-					
-					<div style="width: 250px" id="add-user-domain-div">
-						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
-						<select id="add-user-type-ecas" onchange="checkUserType()">
-							<option value="external" selected="selected"><spring:message code="label.EXT" /></option>
-						</select>
-					</div>
-				</c:otherwise>
-			</c:choose>
-			
-			<div style="clear: both"></div>
-
-			<c:if test="${!USER.isExternal()}">
-				<div style="text-align: right">
-					<div style="float: left; color: #f00; padding: 15px;" id="search-results-more" class="hideme"><spring:message code="message.SearchLimit100" /></div>
-					<a id="btnSearchFromAccess"  onclick="searchUser('login');" class="btn btn-default" style="margin: 10px"><spring:message code="label.Search" /></a>
-				</div>
-
-				<div class="round" style="min-height: 323px; max-height: 323px; overflow: auto; width: 100%; overflow: auto; border: 1px solid #ddd" id="search-results-div">
-					<table id="search-results" class="table table-bordered table-hover table-styled" style="max-width: none; margin-bottom: 0px">
-						<thead>
-							<tr>
-								<th onclick="searchUser('mail');"><spring:message code="label.Email" /></th>
-								<th onclick="searchUser('login');"><spring:message code="label.UserName" /></th>
-								<th onclick="searchUser('first');"><spring:message code="label.FirstName" /></th>
-								<th onclick="searchUser('last',);"><spring:message code="label.LastName" /></th>
-								<th onclick="searchUser('department');" <c:if test="${oss}">class="hideme"</c:if> ><spring:message code="label.Department" /></th>
-							</tr>
-						</thead>
-						<tbody></tbody>
-					</table>
-					<div id="search-results-none" class="hideme"><spring:message code="message.NoResultSelected" /></div>
-				</div>
-			</c:if>
-			
-		</div>
-		<div class="modal-footer">
-			<c:choose>
-				<c:when test="${USER.isExternal()}">
-					<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-					<a id="btnAddUserFromMails"  onclick="addUserByEmail();" class="btn btn-primary"><spring:message code="label.Add" /></a>
-					<a id="btnCancelAdddUserFromAccess"  onclick="resetEmailFeedback();" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
-				</c:when>
-				<c:otherwise>
-					<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-					<a id="btnOkAddUserFromAccess"  onclick="addUser();" class="btn btn-primary"><spring:message code="label.OK" /></a>
-					<a id="btnCancelAdddUserFromAccess"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
-				</c:otherwise>
-			</c:choose>
-		</div>
-		</div>
-		</div>
-	</div>
-	
 	<div class="modal" id="remove-user-dialog" data-backdrop="static">
 		<div class="modal-dialog modal-sm">
     	<div class="modal-content">

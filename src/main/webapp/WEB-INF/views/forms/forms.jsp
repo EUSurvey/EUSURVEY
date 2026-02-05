@@ -69,6 +69,12 @@
 		.badge span {
 		    cursor: pointer;
 		}
+
+		.wizardstep {
+		    font-weight: bold;
+		    font-size: 18px;
+		    margin-bottom: 20px;
+		}
 		 
 	</style>
 	
@@ -542,8 +548,23 @@
 				<div style="margin-top: 10px;">			
 					
 						<div class="right-area">
+
+						    <c:if test="${USER.formPrivilege > 1 }">
+
+                                <div style="font-size: 20px; font-weight: bold; margin-bottom: 10px;"><spring:message code="label.BulkChange" /></div>
+                                <div class="btn-group">
+                                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <spring:message code="label.BulkEdit" /> <span class="caret" style="margin-left: 5px"></span>
+                                  </button>
+                                  <ul class="dropdown-menu">
+                                    <li><a onclick="showBulkEditWizard(true)"><spring:message code="label.AllSurveysNew" /></a></li>
+                                    <li><a onclick="showBulkEditWizard(false)"><spring:message code="label.SurveysDisplayed" /></a></li>
+                                  </ul>
+                                </div>
+
+                            </c:if>
 						
-							<div style="font-size: 20px; font-weight: bold; margin-bottom: 10px;"><spring:message code="label.SearchCriteria" /></div>
+							<div style="font-size: 20px; font-weight: bold; margin-bottom: 10px; margin-top: 20px;"><spring:message code="label.SearchCriteria" /></div>
 						
 							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-primary" value="<spring:message code="label.Search" />" />
 							<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
@@ -717,31 +738,31 @@
 								<label class="bold"><spring:message code="label.CreationDate" /></label>								
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="generatedFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedFrom" />" style="width: 105px" />
+							      	<input class="form-control datepicker date dp-autopos" name="generatedFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedFrom" />" style="width: 105px" />
 							    </div>							
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="generatedTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedTo" />" style="width: 105px" />
+							      	<input class="form-control datepicker date dp-autopos" name="generatedTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedTo" />" style="width: 105px" />
 							    </div><br />
 								
 								<label class="bold"><spring:message code="label.StartDate" /></label>
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="startFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.startFrom" />" style="width: 105px" />
+							      	<input class="form-control datepicker date dp-autopos" name="startFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.startFrom" />" style="width: 105px" />
 							    </div>							
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="startTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.startTo" />" style="width: 105px" />
+							      	<input class="form-control datepicker date dp-autopos" name="startTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.startTo" />" style="width: 105px" />
 							    </div><br />
 							    
 								<label class="bold"><spring:message code="label.ExpiryDate" /></label>
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="endFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.endFrom" />" style="width: 105px" />
+							      	<input class="form-control datepicker date dp-autopos" name="endFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.endFrom" />" style="width: 105px" />
 							    </div>
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="endTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.endTo" />" style="width: 105px" />
+							      	<input class="form-control datepicker date dp-autopos" name="endTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.endTo" />" style="width: 105px" />
 							    </div>								
 							</div>
 							
@@ -963,6 +984,8 @@
 	
 		</form:form>
 	</div>
+
+    <%@ include file="bulkEditWizard.jsp" %>
 
 	<%@ include file="../footer.jsp" %>	
 	<%@ include file="../import-survey-dialog.jsp" %>	

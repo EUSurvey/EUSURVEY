@@ -34,18 +34,18 @@
 				<form:input type="hidden" path="survey.validator" />
 			</c:if>
 			
-			<div class="actions">
-				<div style="width: 950px; margin-left: auto; margin-right: auto;">
-					<div style="float: left">
-						<a onclick="checkPropertiesAndSubmit(false, false);" class="btn btn-primary" style="margin-top: 2px; margin-left: 1px;"><spring:message code="label.Save" /></a>
-					</div>
-						
-					<div style="width: auto;">			
-						 <nav class="navbar navbar-default" id="navbar-example" style="width: 730px;">	
+			<div class="actions" style="">
+				<div style="display: flex; justify-content: center; margin-right: 60px;">
+                    <div style="padding-top: 12px;">
+                        <a onclick="checkPropertiesAndSubmit(false, false);" class="btn btn-primary" style="margin-right: 20px;"><spring:message code="label.Save" /></a>
+                    </div>
+				    <div style="">
+                         <nav class="navbar navbar-default" id="navbar-example">
 						    <ul class="nav nav-tabs scrolltabs" role="tablist">
 						      <li class="active"><a href="#basic"><spring:message code="label.Basic" /></a></li>
 						      <li><a href="#advanced"><spring:message code="label.Advanced" /></a></li>
-						      <li><a href="#security"><spring:message code="label.Security" /></a></li>
+						      <li><a href="#security"><spring:message code="label.SurveySecurity" /></a></li>
+						      <li><a href="#contribution"><spring:message code="label.ContributionSettings" /></a></li>
 						      <li><a href="#appearance"><spring:message code="label.Appearance" /></a></li>
 						      <c:if test="${!form.survey.isOPC}">
 						      	<li><a href="#publishresults"><spring:message code="label.PublishResults" /></a></li>
@@ -53,7 +53,7 @@
 						      <li><a href="#specialpages"><spring:message code="label.SpecialPages" /></a></li>
 						      <li><a href="#type"><spring:message code="label.Type" /></a></li>						      
 						    </ul>			
-						</nav>				
+						</nav>
 					</div>
 				</div>
 			</div>
@@ -233,6 +233,20 @@
 							</div>
 						</td>
 					</tr>
+                    <tr>
+                        <td>
+                            <div style="float: left"><spring:message code="message.CollectSNCShort" /></div>
+                            <div style="float: right">
+                                <div class="onoffswitch">
+                                    <form:checkbox path="survey.collectSNC" data-bind="checked: collectSNC" class="onoffswitch-checkbox" id="myonoffswitchCollectSNC" />
+                                    <label class="onoffswitch-label" for="myonoffswitchCollectSNC">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
 					<c:if test="${USER.getSystemManagementPrivilege() == 2}">
 						<tr>
 							<td>
@@ -469,6 +483,23 @@
 							<div class="help hideme"><spring:message code="info.FrequencyReportEmails" /></div>
 						</td>
 					</tr>
+                    <tr class="subelement" data-bind="visible: sendReportEmail">
+                        <td>
+                            <div style="float: left">
+                                <spring:message code="label.ReportEmailOnlyWhenContributionsExist" />
+                            </div>
+                            <div style="float: right">
+                                <div class="onoffswitch">
+                                    <form:checkbox path="survey.sendReportEmailOnlyWhenContributionsExist" data-bind="checked: sendReportEmailOnlyWhenContributionsExist" class="onoffswitch-checkbox" id="myonoffswitchSendReportOnlyWhenContributionsExist" />
+                                    <label class="onoffswitch-label" for="myonoffswitchSendReportOnlyWhenContributionsExist">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="clear: both"></div>
+                        </td>
+                    </tr>
 					<tr class="subelement" data-bind="visible: sendReportEmail">
 						<td>
 							<div>
@@ -715,7 +746,7 @@
 			
 			<div class="propertiesbox">
 				<a class="anchor" id="security"></a>
-				<label><spring:message code="label.Security" /></label>
+				<label><spring:message code="label.SurveySecurity" /></label>
 				<table class="table table-bordered">
 					<tr>
 						<td>
@@ -726,7 +757,7 @@
 							<div style="float: right">
 								<div class="onoffswitch">
 									<c:choose>
-										<c:when test='${form.survey.isOPC}'>
+										<c:when test='${form.survey.isOPC || form.surveyHasEULoginContactList}'>
 											<input data-bind="checked: secured" type="checkbox" disabled name="radio-new-survey-security" class="onoffswitch-checkbox" id="myonoffswitchsecured">
 											<label class="onoffswitch-label disabled" for="myonoffswitchsecured">
 												<span class="onoffswitch-inner"></span>
@@ -755,7 +786,7 @@
 							<div style="float: right">
 								<div id="edit-password">
 									<c:choose>
-										<c:when test='${form.survey.isOPC}'>
+										<c:when test='${form.survey.isOPC || form.surveyHasEULoginContactList}'>
 											<input class="form-control" type="text" maxlength="255" disabled="disabled" autocomplete="off" style="margin: 0px; width: 150px;" />
 											<input class="check" type="checkbox" disabled="disabled" /><spring:message code="label.ShowPassword" />
 										</c:when>
@@ -781,8 +812,10 @@
 								<div style="float: right">
 									<div class="onoffswitch">
 										<c:choose>
-											<c:when test='${form.survey.isOPC}'>	
-												<input disabled="disabled" checked="checked" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
+											<c:when test='${form.survey.isOPC || form.surveyHasEULoginContactList}'>
+											    <form:hidden path="survey.ecasSecurity" name="survey.ecasSecurity" />
+												<input data-bind="checked: ecasSecurity" type="checkbox" disabled name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas">
+
 												<label class="onoffswitch-label disabled" for="myonoffswitchecas">
 											        <span class="onoffswitch-inner"></span>
 											        <span class="onoffswitch-switch"></span>
@@ -804,21 +837,36 @@
 						<tr class="subsubelement noborder" data-bind="visible: secured() && ecasSecurity()">
 							<td>
 								<div style="float: left">
-									<spring:message code="label.Users" />
+									<spring:message code="label.Users" /><a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								</div>
 								<div style="float: right">
 									<c:choose>
 										<c:when test='${form.survey.isOPC}'>
 											<input type="radio" disabled="disabled" checked="checked" name="ecas-mode" class="check" /><spring:message code="label.everybody" /><br />
-											<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" />
+											<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
+											<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.ContactListMembers" />
 											<form:hidden path="survey.ecasMode" name="ecas-mode" />
 										</c:when>
+										<c:when test='${form.surveyHasEULoginContactList}'>
+                                            <input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.everybody" /><br />
+                                            <input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
+                                            <input type="radio" disabled="disabled" checked="checked" name="ecas-mode" class="check" /><spring:message code="label.ContactListMembers" />
+                                            <form:hidden path="survey.ecasMode" name="ecas-mode" />
+                                        </c:when>
 										<c:otherwise>
-											<form:radiobutton path="survey.ecasMode" data-bind="enable: !_properties.eVote()" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.everybody" /><br />
-											<form:radiobutton path="survey.ecasMode"  data-bind="enable: !_properties.eVote()" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
+											<form:radiobutton path="survey.ecasMode" data-bind="checked: ecasMode, enable: !_properties.eVote()" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.everybody" /><br />
+											<form:radiobutton path="survey.ecasMode" data-bind="checked: ecasMode, enable: !_properties.eVote()" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
+											<form:radiobutton path="survey.ecasMode" data-bind="checked: ecasMode, enable: !_properties.eVote()" id="ecas-mode-internal" name="ecas-mode" value="listmembers" class="check" /><spring:message code="label.ContactListMembers" /><br />
 										</c:otherwise>
-									</c:choose>													
+									</c:choose>
 								</div>
+								<div style="clear: both"></div>
+
+                                <div style="text-align: right; margin: 10px; font-size: 12px; color: #777;" data-bind="visible: ecasMode() == 'listmembers'">
+                                    <spring:message code="info.ContactListMembers" />
+                                </div>
+
+                                <div class="help hideme"><spring:message code="info.SecureYourSurveyUsers" /></div>
 							</td>
 						</tr>
 						<c:if test='${!form.survey.isOPC}'>
@@ -922,7 +970,7 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<spring:message code="label.AllowQuestionnaireDownload" />
+								<spring:message code="label.AllowQuestionnaireDownloadNew" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
 								<div class="help hideme"><spring:message code="info.AllowQuestionnaireDownload" /></div>
 							</div>
@@ -949,6 +997,13 @@
 							</div>
 						</td>
 					</tr>
+				</table>
+			</div>
+
+	        <div class="propertiesbox">
+    			<a class="anchor" id="contribution"></a>
+    			<label><spring:message code="label.ContributionSettings" /></label>
+    			<table class="table table-bordered">
 					<tr>
 						<td>
 							<div style="float: left">
@@ -978,7 +1033,7 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<spring:message code="label.AllowChangeContributionNew" />
+								<spring:message code="label.AllowChangeContributionNewNew" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								<div class="help hideme">
 									<!-- ko if: _properties.delphi() -->
@@ -1003,7 +1058,7 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<spring:message code="label.AllowDownloadContributionPDFnew" />
+								<spring:message code="label.AllowDownloadContributionPDFnewnew" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 								<div class="help hideme">
 									<!-- ko if: _properties.delphi() -->

@@ -95,28 +95,28 @@ public class BasicService implements BeanFactoryAware {
 	protected MessageSource resources;
 	
 	protected @Value("${export.tempFileDir}") String tempFileDir;
-	protected @Value("${export.fileDir}") String fileDir;
-	protected @Value("${archive.fileDir}") String archiveFileDir;
+	protected @Value("${export.fileDir:}") String fileDir;
+	protected @Value("${archive.fileDir:}") String archiveFileDir;
 	
 	protected @Value("${filesystem.surveys}") String surveysDir;
 	protected @Value("${filesystem.users}") String usersDir;
 	protected @Value("${filesystem.archive}") String archiveDir;
 	
-	private @Value("${export.poolSize}") String poolSize;
-	protected @Value("${export.timeout}") String exporttimeout;
-	private @Value("${mail.mailPoolSize}") String mailPoolSize;
+	private @Value("${export.poolSize:1}") String poolSize;
+	protected @Value("${export.timeout:5}") String exporttimeout;
+	private @Value("${mail.mailPoolSize:2}") String mailPoolSize;
 	protected @Value("${pdfserver.prefix}") String pdfhost;
 	protected @Value("${server.prefix}") String serverPrefix;	
-	protected @Value("${isworkerserver}") String isworkerserver;
-	protected @Value("${useworkerserver}") String useworkerserver;
-	protected @Value("${workerserverurl}") String workerserverurl;	
-	protected @Value("${contextpath}") String contextpath;	
-	protected @Value("${oss}") String oss;
+	protected @Value("${isworkerserver:false}") String isworkerserver;
+	protected @Value("${useworkerserver:false}") String useworkerserver;
+	protected @Value("${workerserverurl:#{null}}") String workerserverurl;
+	protected @Value("${contextpath:/eusurvey}") String contextpath;
+	protected @Value("${oss:true}") String oss;
 	protected @Autowired ServletContext servletContext;
 	
-	protected @Value("${enablereportingdatabase}") String enablereportingdatabase;
-	protected @Value("${ui.enabledelphi}") String enableDelphi;
-	protected @Value("${ui.enableevote:null}") String enableevote;
+	protected @Value("${enablereportingdatabase:false}") String enablereportingdatabase;
+	protected @Value("${ui.enabledelphi:false}") String enableDelphi;
+	protected @Value("${ui.enableevote:false}") String enableevote;
 	
 	private ExecutorService pool;
 	private ExecutorService pdfpool;

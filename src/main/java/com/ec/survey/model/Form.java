@@ -85,6 +85,7 @@ public class Form implements java.io.Serializable {
 	private Date startDate = new Date();
 	private Date currentDate = new Date();
 	private Boolean codaEnabled;
+	private Boolean surveyHasEULoginContactList;
 
 	protected static final Logger logger = Logger.getLogger(Form.class);
 
@@ -208,24 +209,20 @@ public class Form implements java.io.Serializable {
 
 	public void setCodaEnabled(Boolean codaEnabled) { this.codaEnabled = codaEnabled; }
 
+	public Boolean getSurveyHasEULoginContactList() { return surveyHasEULoginContactList; }
+
+	public void setSurveyHasEULoginContactList(Boolean surveyHasEULoginContactList) { this.surveyHasEULoginContactList = surveyHasEULoginContactList; }
+
 	public String getAnswerTitleStripInvalidXML(Answer answer) {
 		return ConversionTools.removeInvalidHtmlEntities(getAnswerTitle(answer));
 	}
 
-	public String getStrippedAnswerTitle(Answer answer) {
-		return  getStrippedAnswerTitle(answer, false);
-	}
-
-	public String getStrippedAnswerTitle(Answer answer, boolean addAssignedValue) {
-		return  ConversionTools.removeHTML(SurveyHelper.getAnswerTitle(survey, answer, publicationMode, addAssignedValue), true).replace("\"", "'");
+	public String getEscapedAnswerTitle(Answer answer) {
+		return  ConversionTools.escape(SurveyHelper.getAnswerTitle(survey, answer, publicationMode));
 	}
 
 	public String getAnswerTitle(Answer answer) {
-		return getAnswerTitle(answer, false);
-	}
-
-	public String getAnswerTitle(Answer answer, boolean addAssignedValue) {
-		return SurveyHelper.getAnswerTitle(survey, answer, publicationMode, addAssignedValue);
+		return SurveyHelper.getAnswerTitle(survey, answer, publicationMode);
 	}
 
 	public String getAnswerShortname(Answer answer) {
@@ -497,10 +494,10 @@ public class Form implements java.io.Serializable {
 
 		if (prefix.length() > 0) {
 
-			return prefix + " " + ConversionTools.removeHTML(section.getTitle(), false);
+			return prefix + " " + ConversionTools.removeHTML(section.getTitle(), false, false);
 
 		} else {
-			return ConversionTools.removeHTML(section.getTitle(), false);
+			return ConversionTools.removeHTML(section.getTitle(), false, false);
 		}
 	}
 
@@ -550,7 +547,7 @@ public class Form implements java.io.Serializable {
 	}
 
 	public String getCleanQuestionTitle(Element element) {
-		return ConversionTools.removeHTML(getQuestionTitle(element), true);
+		return ConversionTools.removeHTML(getQuestionTitle(element), true, false);
 	}
 
 	public String getQuestionTitle(Element question) {
@@ -976,7 +973,7 @@ public class Form implements java.io.Serializable {
 			case "SingleChoiceQuestion":
 			case "MultipleChoiceQuestion":
 			case "ComplexTableItem":
-				return as.size() > 0 ? ConversionTools.removeHTML(constructAnswerString(as, "; "), true) : "-";
+				return as.size() > 0 ? ConversionTools.removeHTML(constructAnswerString(as, "; "), true, false) : "-";
 			case "Upload":
 				return as.size() > 0 ? as.get(0).getFiles().get(0).getName() : "-";
 			case "GalleryQuestion":
@@ -988,7 +985,7 @@ public class Form implements java.io.Serializable {
 					if(i > 0) result = result + "; ";
 					result = result + files.get(Integer.parseInt(getAnswerTitle(as.get(i)))).getName();
 				}
-				return ConversionTools.removeHTML(result, true);
+				return ConversionTools.removeHTML(result, true, false);
 			case "Text":
 				// Matrix Question
 				if(isMatrix)
@@ -1002,7 +999,7 @@ public class Form implements java.io.Serializable {
 				}
 				return getAnswerTitle(as.get(0));
 			default:
-				return as.size() > 0 ? ConversionTools.removeHTML(getAnswerTitle(as.get(0)), true) : "-";
+				return as.size() > 0 ? ConversionTools.removeHTML(getAnswerTitle(as.get(0)), true, false) : "-";
 		}
 	}
 

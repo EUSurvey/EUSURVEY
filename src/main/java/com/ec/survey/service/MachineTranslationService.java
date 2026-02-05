@@ -27,9 +27,6 @@ public class MachineTranslationService extends BasicService {
 	@Resource(name = "eTranslationService")
 	private ETranslationService eTranslationService;
 
-	@Resource(name = "ftpClient")
-	private FtpClient ftpClient;
-	
 	@Resource(name = "microsoftTranslationService")
 	private MicrosoftTranslationService microsoftTranslationService;
 	

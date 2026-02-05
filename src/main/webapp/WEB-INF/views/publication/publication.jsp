@@ -74,8 +74,8 @@
 			
 			$("ul.dropdown-menu").on("click", "[data-stopPropagation]", function(e) {
 		        e.stopPropagation();
-		    });		
-			
+		    });
+
 			<c:choose>
 				<c:when test="${tab != null && tab == '1'}">
 				 	$('#tab1').tab('show');
@@ -215,13 +215,6 @@
 					  $("#individuals-div").find(".widget-move-previous").attr("disabled", "disabled");
 				  }
 				  
-				  if (currentIndividual < ${paging.numberOfItems-1} )
-				  {
-					  $("#individuals-div").find(".widget-move-next").removeAttr("disabled");
-				  } else {
-					  $("#individuals-div").find(".widget-move-next").attr("disabled", "disabled");
-				  }
-
 				  //focus previous or next button if own button gets disabled
 				  if ($(element).attr("disabled") != null) {
 					if ($(element).hasClass("widget-move-previous")) {
@@ -233,7 +226,8 @@
 				  }
 				  
 				  $(".add-wait-animation-individual").hide();
-				  
+                  $("#scrollareaheader").css({ 'overflow-x' : 'auto'});
+
 				}});
 		}
 		
@@ -388,9 +382,11 @@
 				hideResults();
 			</c:if>
 			<c:if test="${selectedtab == 3}">
+			    showStatistics();
 				$('.statisticsExportIcons').show();
 			</c:if>
 			<c:if test="${form.survey.isQuiz && selectedtab == 4}">
+			    showStatistics();
 				$('.statisticsQuizExportIcons').show();
 			</c:if>
 		});
@@ -422,7 +418,7 @@
 					  		<li class="<c:if test="${selectedtab == 3}">active</c:if>"><a id="tab2" href="#statistics" data-toggle="tab" onclick="$('#selectedtab').val('3'); hideResults(); $('.statisticsExportIcons').show(); showStatistics();"><spring:message code="label.Statistics" /></a></li>
 				
 							<c:if test="${form.survey.isQuiz}">
-								<li class="<c:if test="${selectedtab == 4}">active</c:if>"><a id="tab3" href="#statisticsquiz" data-toggle="tab" onclick="$('#selectedtab').val('4'); hideResults(); $('.statisticsQuizExportIcons').show();"><spring:message code="label.Quiz" /></a></li>
+								<li class="<c:if test="${selectedtab == 4}">active</c:if>"><a id="tab3" href="#statisticsquiz" data-toggle="tab" onclick="$('#selectedtab').val('4'); hideResults(); $('.statisticsQuizExportIcons').show(); showStatistics();"><spring:message code="label.Quiz" /></a></li>
 							</c:if>			
 					  	</c:if>
 					</ul>

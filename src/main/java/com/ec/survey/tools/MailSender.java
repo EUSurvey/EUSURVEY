@@ -30,7 +30,7 @@ public class MailSender implements Runnable {
 	private @Value("${server.prefix}") String host;
 	private @Value("${sender}") String sender;
 	private @Value("${smtpserver}") String server;
-	private @Value("${smtp.port}") String port;
+	private @Value("${smtp.port:25}") String port;
 	
 	private String to;
 	private String from;

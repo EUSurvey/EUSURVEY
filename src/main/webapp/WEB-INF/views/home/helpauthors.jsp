@@ -522,25 +522,6 @@
 				survey's 'Results', 'Translations', 'Properties' etc.
 			</p>
 			<h2>
-				How do I export an existing survey?    
-			</h2>
-			<p>
-				On the 'Surveys' page, search for the survey you want to export. You can either
-
-				<ul>
-					<li>
-						click on the 'Export' icon, OR
-					</li>
-					<li>
-						click on the 'Open' icon, and from the 'Overview' page, click on the 'Export' icon.
-					</li>
-				</ul>
-			</p>
-			<p>
-				Your survey, together with all your settings, will be saved to your computer.
-				The file extension of an EUSurvey form file is '.eus'.
-			</p>
-			<h2>
 				How do I copy an existing survey?    
 			</h2>
 			<p>
@@ -926,7 +907,7 @@
 			</p>
 			<p>
 				Read more about this under
-				<a href="#_Toc_9_8">
+				<a href="#_Toc_9_7">
 					'How do I give other users access to my survey?'
 				</a>
 			</p>
@@ -1308,7 +1289,7 @@
 			<p>
 				The added users will automatically see the survey in their 'Surveys' page once they log into the EUSurvey
 				application. Read more about this under '
-				<a href="#_Toc_9_8">
+				<a href="#_Toc_9_7">
 					How do I give other users access to my survey?
 				</a>
 				'
@@ -1695,22 +1676,6 @@
 				and click on 'Apply Changes'.
 			</p>
 			<h2>
-				Archiving feature
-			</h2>
-			<p>
-				You can archive your survey with all its submitted answers to
-				reload it or to launch the same survey again at a later point in
-				time. To archive your survey, select the 'Archive Survey' icon in
-				the action menu of the 'Overview' page.
-			</p>
-			<p>
-				Archived surveys cannot be edited or collect any data. But you
-				can export results or request a PDF-file of your survey. The
-				archived survey will be available from the 'Dashboard' page, from
-				where it can also be restored. A restored survey can be edited
-				again.
-			</p>
-			<h2>
 				How do I give other users access to my survey?
 			</h2>
 			<p>
@@ -1848,20 +1813,6 @@
 				left corner of the screen.
 			</p>
 			<h2>
-				How can I download submitted contributions?
-			</h2>
-			<p>
-				To export submitted answers from EUSurvey to your computer,
-				open your survey and go to the 'Results' page. Click on the
-				'Export' button in the top right-hand corner of the page, select
-				from the available export file formats and specify a name in the
-				dialogue box. Under this name the export file will appear on the
-				'Export' page. Different export file formats are available,
-				depending on the view mode (Full Content/ Statistics). N.B. The
-				export file will contain the set of configured questions only as
-				well as the current search results of a filter process.
-			</p>
-			<h2>
 				How can I extract the Draft answers?
 			</h2>
 			<p>
@@ -1885,8 +1836,7 @@
 				the data collected. Note: to view and analyse results, you need
 				certain privileges (see '<a href="#_Toc_10_7"> How do I give
 					other users access to the results of my survey? </a>'). To export a
-				subset of contributions, please read '<a href="#_Toc_10_2">How
-					can I download submitted contributions?</a>'.
+				subset of contributions, please read '<a href="#_Toc_10_14">How to Export a Survey and its Data?</a>'.
 			</p>
 			<h2>
 				How can I get back to the full set of answers, after
@@ -2106,24 +2056,45 @@
 				The score is calculated as being the average weight given by survey respondents.
 			</p>
 			<h2>
-				Export the dataset (i.e. survey's answers)
+				How to Export a Survey and its Data?
 			</h2>
 			<p>
-				You can export your survey's answers using the export feature.
-				This can be useful for further data processing in Excel for example.
+				You can export both your survey's questionnaire and the responses you've collected. Below are the steps for exporting both:
 			</p>
 			<p>
-				To export your answers:
+				<b>Export Survey Responses (i.e. its Data)</b><br>
+				To export the answers to your survey, follow these steps:
+				<ol>
+					<li>Go to the 'Results' tab (the first screen, which displays the tabular view of your survey results).</li>
+					<li>Click on the 'Export' button (a popup will appear).</li>
+					<li>Enter a name for your export file.</li>
+					<li>
+						Select your preferred file format for export (you'll be notified when the file is ready).
+						<ul>
+							<li>Note: The exported data can be saved in an XLSX format, which offers greater security. For instance, you can encrypt the file using AES-256 to ensure sensitive data remains protected.</li>
+						</ul>
+					</li>
+					<li>Navigate to the 'Exports' tab.</li>
+					<li>Download your file once the export is complete.</li>
+				</ol>
+				This feature is useful if you want to analyse the survey responses further in programs like Excel while ensuring data security. The exported file reflects all applied filters and question-display settings.
 			</p>
-			<ol>
-				<li>Go to the 'Results' tab (first screen, the tabular view).</li>
-				<li>Click on the 'Export' button (a popup opens).</li>
-				<li>Enter a name for your export.</li>
-				<li>Select the file format (when export file is generated, you will receive a notification).</li>
-				<li>Go to the 'Exports' tab.</li>
-				<li>Download your file.</li>
-			</ol>
-
+			<p>
+				<b>Export an Existing Survey (i.e. the questionnaire)</b><br>
+				To export the full survey, including all your settings and structure, follow these steps:
+				<ol>
+					<li>On the 'Surveys' page, search for the survey you want to export.</li>
+					<li>
+						Click on the 'Export' icon next to your survey.
+						<ul>
+							<li>Alternatively: Click on the 'Open' icon to go to the 'Overview' page, and then click on the 'Export' icon from there.</li>
+						</ul>
+					</li>
+					<li>Your survey questionnaire (i.e. the web form designed via the 'Editor') and settings will be saved to your computer.</li>
+					<li>The exported file will have a .eus extension.</li>
+				</ol>
+				This method allows you to back up your survey or transfer it to another instance of EUSurvey.
+			</p>
 
 			<h1>
 				Design and layout

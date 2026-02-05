@@ -1548,7 +1548,7 @@ function getUploadRow(label)
 				
 				var trf = document.createElement("tr");
 				var tdf = document.createElement("td");
-				$(tdf).append(f.name);
+				$(tdf).append(document.createTextNode(f.name))
 				$(trf).attr("data-uid", f.uid).append(tdf);
 				
 				tdf = document.createElement("td");
@@ -2902,6 +2902,55 @@ function getRowsText(useparagraphs)
 	} else {
 		return arr;
 	}
+}
+
+function numberSliderDisplayUpdate(element) {
+
+    const text = element.display()
+
+    adaptSliderDisplay(text === "Slider");
+    if (text === "Slider")
+    {
+        element.optional(true);
+        element.readonly(false)
+        element.hidden(false)
+
+
+        $('#idPropertyMandatory').removeAttr("checked");
+        $('#idPropertyReadOnly').removeAttr("checked");
+
+        element.unit("");
+        $('tr[data-label=Unit]').find("input[type=text]").val("");
+
+        if (element.min() == null)
+        {
+            $("tr[data-label='Values']").find("input[data-type='min']").val("0");
+            element.min(0);
+            element.minString("0");
+            element.initVal = null;
+        }
+        if (element.max() == null)
+        {
+            $("tr[data-label='Values']").find("input[data-type='max']").val("10");
+            element.max(10);
+            element.maxString("10");
+        }
+
+        if (element.minLabel() == null)
+        {
+            element.minLabel("Very unlikely");
+            $("tr[data-label='MinLabel']").find("input[type='text']").val("Very unlikely");
+        }
+        if (element.maxLabel() == null)
+        {
+            element.maxLabel("Very likely");
+            $("tr[data-label='MaxLabel']").find("input[type='text']").val("Very likely");
+        }
+
+        initSlider($("#" + element.id()).find(".sliderbox").first(), true, element);
+        checkInputStates();
+    }
+
 }
 
 function adaptSliderDisplay(isSlider)

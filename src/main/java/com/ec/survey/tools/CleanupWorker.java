@@ -48,10 +48,10 @@ public class CleanupWorker implements Runnable {
 	private String email;
 	
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	public @Value("${sender}") String sender;
 	public @Value("${server.prefix}") String host;
-	private @Value("${contextpath}") String contextpath;
+	private @Value("${contextpath:/eusurvey}") String contextpath;
 	
 	public void init(String[] options, Date pdfbefore, Date tempbefore, String email)
 	{

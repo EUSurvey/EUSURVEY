@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
 <c:choose>
 	<c:when test="${forpdf != null}">
@@ -174,7 +175,7 @@
 									<tbody>
 										<c:forEach items="${question.allFiles}" var="file" varStatus="status">
 											<tr data-position="${status.index}" data-value="${statistics.getRequestedRecordsPercentForGallery(question, file.uid)}">
-												<td>${file.name}</td>
+                                                <td><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></td>
 												<td>
 													<div class="progress" style="width: 200px; margin-bottom: 2px;">
 													  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}-${file.uid}" style="width: ${statistics.getRequestedRecordsPercentForGallery(question, file.uid)}%;"></div>
@@ -472,7 +473,7 @@
 	
 						</c:when>		
 			
-						<c:when test="${(question.type == 'NumberQuestion' || question.type == 'FormulaQuestion') && question.showStatisticsForNumberQuestion()}">
+						<c:when test="${(question.type == 'NumberQuestion' || question.type == 'FormulaQuestion') && question.showStatisticsForNumberQuestion(allanswers)}">
 							<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
 						
 								<div class="questiontitle" style="font-weight: bold;">${question.getStrippedTitleNoEscape()} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
@@ -487,7 +488,7 @@
 										</tr>
 									</thead>						
 									<tbody>
-										<c:forEach items="${question.allPossibleAnswers}" var="answer" varStatus="status">
+										<c:forEach items="${question.getAllPossibleAnswers(allanswers)}" var="answer" varStatus="status">
 											<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[question.id.toString() + answer]}">
 												<td>${answer}</td>
 								

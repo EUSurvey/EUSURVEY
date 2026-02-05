@@ -202,7 +202,8 @@ font-size: 16px;
 }
 
 .questiontitle div {
-    display: inline-block;
+	display: inline-block;
+	width: 99%;
 }
 
 #runner-content .handsontable td {
@@ -397,6 +398,7 @@ font-size: 16px;
 	font-weight: normal;
 	margin-left: 10px;
 	margin-right: 5px;
+    flex-grow: 1;
 }
 
 .progressBarPlaceholder {

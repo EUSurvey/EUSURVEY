@@ -2,6 +2,20 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<style>
+    .dep-tree { list-style-type: none; margin: 0; padding: 0; }
+    .dep-tree-child { margin-left: 30px;}
+
+    .dep-tree .check {
+        margin-right: 5px !important;
+    }
+
+    #add-user-dialog label {
+        margin-bottom: 0;
+        margin-top: 10px;
+    }
+</style>
+
 	<div style="text-align: center; margin-top: 20px;">
 		<c:choose>
 			<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
@@ -16,7 +30,7 @@
 		</c:choose>
 	</div>
 	
-	<table id="tblPrivilegesFromAccess" class="table table-bordered table-striped table-styled" style="margin-left: auto; margin-right: auto; margin-top: 40px; width: 500px;">
+	<table id="tblPrivilegesFromAccess" class="table table-bordered table-striped table-styled" style="margin-left: auto; margin-right: auto; margin-top: 40px;">
 	
 		<thead>
 			<tr style="text-align: center;">
@@ -28,7 +42,7 @@
 				<th style="vertical-align: middle; width: 20%; text-align: center"><spring:message code="label.Results" /></th>
 				<th style="vertical-align: middle; width: 20%; text-align: center"><spring:message code="label.FormManagement" /></th>
 				<th style="vertical-align: middle; width: 20%; text-align: center"><spring:message code="label.ManageInvitations" /></th>
-				<th style="width: 10%"><spring:message code="label.Actions" /></th>
+				<th style="vertical-align: middle; width: 10%; text-align: center"><spring:message code="label.Actions" /></th>
 			</tr>
 		</thead>
 		
@@ -194,96 +208,495 @@
 		<p>
 	</div>
 
-	<div class="modal" id="user-dialog" data-backdrop="static">
-		<div class="modal-dialog">
-    	<div class="modal-content">
-		<div class="modal-body">
-			<a onclick="updatePrivilege(0);" id="btnNoAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-		  		<img src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="read/write" />
-		  	</a>
-		  	<spring:message code="label.NoAccess" /><br />
-		  	<span id="yellowArea">
-			  	<a onclick="updatePrivilege(1);" id="btnROAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-			  		<img src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read/write" />
-			  	</a>
-			  	<spring:message code="label.ReadingAccess" /><br />
-		  	</span>
-		  	<a onclick="updatePrivilege(2);" id="btnRWAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-		  		<img src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-		  	</a>
-		  	<spring:message code="label.ReadWriteAccess" />
-		</div>
-		<div class="modal-footer">
-			<img id="wait-animation" class="hideme" style="margin-right:120px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-		  	<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
-		</div>
-		</div>
-		</div>
-	</div>
-	
-	<div class="modal" id="add-group-dialog" data-backdrop="static">
-		<div class="modal-dialog">
-    	<div class="modal-content">
-		<div class="modal-header"><spring:message code="label.SelectPrivilegedDepartment" /></div>
-		<div class="modal-body">
-			
-			<div id="add-group-domain-div" style="margin-bottom: 10px;">
-				<label for="add-group-type-ecas"><spring:message code="label.Domain" /></label>
-				<select id="add-group-type-ecas" onchange="domainChanged()"  style="width: 450px" >
-					<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
-						<option value="${domain.key}">${domain.value} </option>	
-					</c:forEach>
-				</select>	
-			</div>
-			
-			<div style="height: 400px; overflow: auto;" id="add-group-tree-div" >
-				<label for="add-group-name"><spring:message code="label.SelectAnEntity" />:</label>
-				
-				<ul id="tree" class="dep-tree" style="-moz-user-select: none;">
-					<li>
-						<span onclick="disabledEventPropagation(event);" onselectstart="return false;" id="spanRoot">
-							<a onclick="openEntities($(this).closest('li').find('ul').first(), true)">
-								<img class="folderimage" src="/eusurvey/resources/images/folderclosed.png" />
-							</a>
-							<input onclick="disabledEventPropagation(event);" type="radio" class="check" name="department" value="ec" style="margin-left: 10px;">
-							<spring:message code="label.DGsAndServices" />
-							<ul class="dep-tree dep-tree-child" style="display: block;"></ul>
-						</span>
-					</li>
-					<li>
-						<span onclick="disabledEventPropagation(event);" onselectstart="return false;" id="spanRoot">
-							<a onclick="openEntities($(this).closest('li').find('ul').first(), false)">
-								<img class="folderimage" src="/eusurvey/resources/images/folderclosed.png" />
-							</a>
-							<input onclick="disabledEventPropagation(event);" type="radio" class="check" name="department" value="ec" style="margin-left: 10px;">
-							<spring:message code="label.ExecutiveAgencies" />
-							<ul class="dep-tree dep-tree-child" style="display: block;"></ul>
-						</span>
-					</li>
-				</ul>
-			</div>	
-						
-		</div>
-		<div class="modal-footer">
-			<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="btnOkAddDptFromAccess"  onclick="addGroup();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>
-			<a id="btnCancelAdddDptFromAccess"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
-		</div>
-		</div>
-		</div>
-	</div>
-	
-	<div class="modal" id="ManageInvitations4Externals-dialog" data-backdrop="static">
-		<div class="modal-dialog modal-sm">
-    	<div class="modal-content">
-    	<div class="modal-header"><spring:message code="label.Warning" /></div>
-		<div class="modal-body">
-			<spring:message code="question.ManageInvitations4Externals" />
-		</div>
-		<div class="modal-footer">
-			<a onclick="updatePrivilege2();" class="btn btn-primary"><spring:message code="label.Yes" /></a>
-			<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
-		</div>
-		</div>
-		</div>
-	</div>
+	<script>
+	    function showAddUserDialog(results)
+        {
+            $("#add-resultMode").val(results);
+            $("#add-resultMode-Email").val(results);
+
+            // select european commision if exists
+            var exists = false;
+            $('#add-user-type-ecas option').each(function(){
+                if (this.value == "eu.europa.ec") {
+                    exists = true;
+                    return false;
+                }
+            });
+            if (exists)
+            {
+                $("#add-user-type-ecas").val("eu.europa.ec");
+            }
+
+            checkUserTypeAccess();
+
+            if (results || $("#add-form").length == 0) {
+                $("#add-user-div-GiveFullAccess").hide();
+            } else {
+                $("#add-user-div-GiveFullAccess").show();
+            }
+
+            $('#add-department-name').val('');
+            $('#add-user-name').val('');
+            $('#add-first-name').val('');
+            $('#add-last-name').val('');
+            $('#add-user-email').val('');
+            $("#search-results-more").hide();
+            $('#add-user-dialog').modal();
+        }
+
+        function showAddDepartmentDialog()
+        {
+            if ($("#add-form").length == 0) {
+                $("#add-department-div-GiveFullAccess").hide();
+            } else {
+                $("#add-department-div-GiveFullAccess").show();
+            }
+
+            $('#add-group-dialog').modal();
+            $("#add-group-type-ecas").val("eu.europa.ec");
+
+            var domainSelected;
+            domainSelected=$("#add-group-type-ecas").val();
+            if(domainSelected==null)
+                domainSelected="eu.europa.ec";
+
+            loadTopDepartments(domainSelected);
+        }
+
+        function searchUserForAccess(order)
+        {
+            $("#noEmptySearchIconAccess").hide();
+            $("#noEmptySearchTextAccess").text("");
+
+            var name = $("#add-user-name").val();
+            var first = $("#add-first-name").val();
+            var last = $("#add-last-name").val();
+            var email = $("#add-user-email").val();
+            var department = $("#add-department-name").val();
+            var type = $("#add-user-type-ecas").val();
+
+            if (type != "system" && type != "external")
+            {
+                //case eu.europa.ec: Admin and form manager EC
+                if (!(email != '' || department != '' || first != '' || last != '' || name != '')) {
+                    $("#noEmptySearchIconAccess").show();
+                    $("#noEmptySearchTextAccess").text(noEmptySearch);
+                    return;
+                }
+            } else if (type == "system")
+            {
+                //case system
+                if (!(email != '' || name != '')) {
+                    $("#noEmptySearchIconAccess").show();
+                    $("#noEmptySearchTextAccess").text(noEmptySearch);
+                    return;
+                }
+            }
+
+            var s = "name=" + name + "&type=" + type + "&department=" + department+ "&email=" + email + "&first=" + first + "&last=" + last + "&order=" + order;
+
+            $("#add-user-dialog").modal('hide');
+            $("#busydialog").modal('show');
+
+            $("#search-results-more").hide();
+
+            $.ajax({
+                type:'GET',
+                  url: contextpath + "/logins/usersJSON",
+                  data: s,
+                  dataType: 'json',
+                  cache: false,
+                  success: function( users ) {
+                      $("#search-results-access").find("tbody").empty();
+                      var body = $("#search-results-access").find("tbody").first();
+
+                      for (var i = 0; i < users.length; i++ )
+                      {
+                        $(body).append(users[i]);
+                      }
+
+                      var hiddenTableHeaders = $("#search-results-access th.hideme");
+                      for (var i = 0; i < hiddenTableHeaders.length; i++ )
+                      {
+                          $('#search-results-access td:nth-child(' + hiddenTableHeaders[i].cellIndex + ')').hide();
+                      }
+
+                      if (type != "system" && users.length >= 100)
+                      {
+                          $("#search-results-more").show();
+                      }
+
+                      $(body).find("tr").click(function() {
+                          $("#search-results-access").find(".success").removeClass("success");
+                          $(this).addClass("success");
+                        });
+
+                      $("#busydialog").modal('hide');
+                      $("#add-user-dialog").modal('show');
+                  }, error: function() {
+                      $("#busydialog").modal('hide');
+                      $("#add-user-dialog").modal('show');
+                }});
+
+            $("#search-results-access-none").hide();
+
+        }
+
+        function checkUserTypeAccess()
+        {
+            $("#noEmptySearchIconAccess").hide();
+            $("#noEmptySearchTextAccess").text('');
+
+            $("#search-results-access").find("tbody").empty();
+
+            if ($("#add-user-type-ecas").val() != "system" && $("#add-user-type-ecas").val() != "external")
+            {
+                $("#add-user-department-div").show();
+                $("#add-user-firstname-div").show();
+                $("#add-user-lastname-div").show();
+                $("#eulogin-span-access").show();
+            } else if ($("#add-user-type-ecas").val() == "external")
+            {
+                $("#add-user-department-div").hide();
+                $("#add-user-firstname-div").show();
+                $("#add-user-lastname-div").show();
+                $("#eulogin-span-access").show();
+            } else {
+                $("#add-user-department-div").hide();
+                $("#add-user-firstname-div").hide();
+                $("#add-user-lastname-div").hide();
+                $("#eulogin-span-access").hide();
+            }
+        }
+
+        function addUser()
+        {
+            if ($("#search-results-access").find(".success").length == 0)
+            {
+                $("#search-results-access-none").show();
+                return;
+            }
+
+            var login = $("#search-results-access").find(".success").first().attr("id");
+            var ecas = $("#add-user-type-ecas").val() != "system";
+            var chkGiveFullAccess = $("#chkGiveFullAccess").is(":checked");
+
+            $("#search-results-access-none").hide();
+
+            if ($("#add-form").length > 0) {
+                // in access page
+                $("#add-wait-animation").show();
+                $("#add-form-login").val(login);
+                $("#add-form-ecas").val(ecas);
+                $("#add-form-givefullaccess").val(chkGiveFullAccess);
+                $("#add-form").submit();
+            } else {
+                // in bulk change dialog
+                addEntryToBulkChangeDetails(login, true, ecas);
+            }
+        }
+
+        //TODO: adapt for bulk change
+        function addUserByEmail()
+        {
+            var chkGiveFullAccess = $("#chkGiveFullAccess").is(":checked");
+
+            let mailInput = $("#add-user-email").val();
+            if (mailInput.length <= 0) {
+                $("#invalidEmailsIcon").show();
+                $("#invalidEmailsText").text(atLeastOneMail);
+                return;
+            }
+
+            let emails = mailInput.split(";").map(s => s.trim());
+
+            $("#add-wait-animation").show();
+            $("#add-form-emails").val(emails);
+            $("#add-form-emailgivefullaccess").val(chkGiveFullAccess);
+            $("#add-form-email").submit();
+        }
+
+        function addGroup()
+        {
+           $("#add-wait-animation").show();
+           var chkGiveFullAccess = $("#chkGiveFullAccessGroup").is(":checked");
+
+           let department = "";
+           if ($("input[name='department']:checked").length == 0) {
+               department = $('#add-group-type-ecas').val();
+           } else {
+               department = $("input[name='department']:checked").val();
+           }
+
+           if ($("#add-form").length > 0) {
+              // in access page
+              $("#add-form-group-name").val(department);
+              $("#add-form-groupgivefullaccess").val(chkGiveFullAccess);
+              $("#add-form-group").submit();
+           } else {
+              // in bulk change dialog
+              addEntryToBulkChangeDetails(department, false);
+           }
+        }
+
+        function removeUser()
+        {
+            $("#remove-wait-animation").show();
+            $("#remove-id").val(selectedId);
+            $("#remove-form").submit();
+        }
+
+		function openEntities(targetul, isDGs) {
+        if ($(targetul).closest("span").find("a").first().find(".folderimage").length > 0)
+        {
+            //open
+            if ($(targetul).children().length > 0)
+            {
+                $(targetul).show();
+                $(targetul).closest("span").find("a").first().find(".folderimage").each(function(){
+                  $(this).removeClass("folderimage").addClass("folderopenimage").attr("src", contextpath + "/resources/images/folderopen.png");
+                });
+            } else {
+                $( "#wheel" ).show();
+                $.ajax({
+                    type:'GET',
+                      url: contextpath + "/noform/management/departmentsJSON",
+                      data: {term: isDGs ? "dgs" : "aex", isdgs: isDGs},
+                      dataType: 'json',
+                      success: function( list ) {
+
+                      for (var i = 0; i < list.length; i++ )
+                      {
+                        var li = document.createElement("li");
+                        var span = document.createElement("span");
+
+                        $(span).attr("onclick","disabledEventPropagation(event);").attr("onselectstart","return false;").attr("id","span" + list[i].key);
+
+                        var input = document.createElement("input");
+                        $(input).css("margin-left","10px").attr("onclick","disabledEventPropagation(event);").attr("type","radio").addClass("check").attr("name","department").val(list[i].key);
+
+                        if ($("#readonlytree").length > 0 && $("#readonlytree").val() == 'true')
+                        {
+                            $(input).attr("disabled", "disabled");
+                        }
+
+                        if (list[i].value == '0')
+                        {
+                            //this means there are children
+                            var link = document.createElement("a");
+                            $(link).attr("onclick","openChildren($(this).closest('li').find('ul').first(), '" + list[i].key + "'," + isDGs + ")").html("<img class='folderimage' src='" + contextpath + "/resources/images/folderclosed.png'></img>");
+                            $(span).append(link);
+                        } else {
+                            $(span).append("<img class='folderitemimage' src='" + contextpath + "/resources/images/folderitem.png' />");
+                        }
+
+                        $(span).append(input);
+                        $(span).append(list[i].key);
+
+                        $(li).append(span);
+
+                        if (list[i].value == '0')
+                        {
+                            //this means there are children
+                            var ul = document.createElement("ul");
+                            $(ul).addClass("dep-tree").addClass("dep-tree-child").hide();
+                            $(span).append(ul);
+                        }
+
+                        $(targetul).append(li);
+                      }
+
+                      $(targetul).closest("span").find("a").first().find(".folderimage").each(function(){
+                            $(this).removeClass("folderimage").addClass("folderopenimage").attr("src", contextpath + "/resources/images/folderopen.png");
+                        });
+
+
+                      $(targetul).show();
+                      $( "#wheel" ).hide();
+
+                    }});
+            }
+        } else {
+            //close
+            $(targetul).hide();
+            $(targetul).closest("span").find("a").first().find(".folderopenimage").each(function(){
+                $(this).removeClass("folderopenimage").addClass("folderimage").attr("src", contextpath + "/resources/images/folderclosed.png");
+            });
+        }
+    }
+
+    function domainChanged()
+    {
+        const domain = $("#add-group-type-ecas").val();
+
+        if (domain != 'eu.europa.ec') {
+            $('#add-group-tree-div').hide();
+            return;
+        }
+
+        $('#add-group-tree-div').show();
+        loadTopDepartments(domain);
+    }
+
+    function loadTopDepartments(domain)
+    {
+        if (domain != "eu.europa.ec") {
+
+        } else {
+
+        }
+    }
+
+    function recursiveOpenChildren(child, globalprefix)
+    {
+        if (child.indexOf(".") > -1)
+        {
+            var prefix = child.substring(0, child.indexOf("."));
+
+            $("input[name='node" + globalprefix + prefix + "']").each(function(){
+                if ($(this).parent().find(".folderopenimage").length == 0)
+                {
+                     openChildren($(this).closest("li").find('ul'), $(this).val());
+                }
+            });
+            recursiveOpenChildren(child.substring(child.indexOf(".")+1), globalprefix + prefix + ".");
+        }
+    }
+
+    function openChildren(targetul, department, isDGs)
+    {
+        if ($(targetul).closest("span").find("a").first().find(".folderimage").length > 0)
+        {
+            //open
+            if ($(targetul).children().length > 0)
+            {
+                $(targetul).show();
+                  $(targetul).closest("span").find("a").first().find(".folderimage").each(function(){
+                      $(this).removeClass("folderimage").addClass("folderopenimage").attr("src", contextpath + "/resources/images/folderopen.png");
+                    });
+            } else {
+                $.ajax({
+                    type:'GET',
+                      url: contextpath + "/noform/management/departmentsJSON",
+                      data: {term:department, isdgs:isDGs},
+                      dataType: 'json',
+                      success: function( list ) {
+
+                      for (var i = 0; i < list.length; i++ )
+                      {
+                        var li = document.createElement("li");
+                        var span = document.createElement("span");
+
+                        $(span).attr("onclick","disabledEventPropagation(event);").attr("onselectstart","return false;").attr("id","span" + list[i].key);
+
+                        var input = document.createElement("input");
+                        $(input).css("margin-left","10px").attr("onclick","disabledEventPropagation(event);").attr("type","radio").addClass("check").attr("name","department").val(list[i].key);
+
+                        if ($("#readonlytree").length > 0 && $("#readonlytree").val() == 'true')
+                        {
+                            $(input).attr("disabled", "disabled");
+                        }
+
+                        if (list[i].value == '0')
+                        {
+                            //this means there are children
+                            var link = document.createElement("a");
+                            $(link).attr("onclick","openChildren($(this).closest('li').find('ul').first(), '" + list[i].key + "', " + isDGs + ")").html("<img class='folderimage' src='" + contextpath + "/resources/images/folderclosed.png'></img>");
+                            $(span).append(link);
+                        } else {
+                            $(span).append("<img class='folderitemimage' src='" + contextpath + "/resources/images/folderitem.png' />");
+                        }
+
+                        $(span).append(input);
+                        $(span).append(list[i].key);
+
+                        $(li).append(span);
+
+                        if (list[i].value == '0')
+                        {
+                            //this means there are children
+                            var ul = document.createElement("ul");
+                            $(ul).addClass("dep-tree").addClass("dep-tree-child").hide();
+                            $(span).append(ul);
+                        }
+
+                        $(targetul).append(li);
+                      }
+
+                      $(targetul).closest("span").find("a").first().find(".folderimage").each(function(){
+                            $(this).removeClass("folderimage").addClass("folderopenimage").attr("src", contextpath + "/resources/images/folderopen.png");
+                        });
+
+
+                      $(targetul).show();
+                      $( "#wheel" ).hide();
+
+                    }});
+            }
+        } else {
+            //close
+            $(targetul).hide();
+            $(targetul).closest("span").find("a").first().find(".folderopenimage").each(function(){
+                $(this).removeClass("folderopenimage").addClass("folderimage").attr("src", contextpath + "/resources/images/folderclosed.png");
+            });
+        }
+    }
+
+	var selectedPrivilege = null;
+	var selectedId = null;
+
+    function changePrivilege(privilege, id)
+    {
+        selectedPrivilege = privilege;
+        selectedId = id;
+
+        if (privilege == 'AccessDraft')
+        {
+            $("#yellowArea").hide();
+        } else {
+            $("#yellowArea").show();
+        }
+
+        $('#user-dialog').modal();
+    }
+
+    let selectedPrivilegeValue;
+    function updatePrivilege(value)
+    {
+        $("#update-form-value").val(value);
+        selectedPrivilegeValue = value;
+
+        if (value == 2 && selectedPrivilege == "ManageInvitations")
+        {
+            let row
+            if ($("#update-form-privilege").length > 0) {
+                row = $("#accessrow" + selectedId)
+            } else {
+                row = $(selectedId).closest("tr")
+            }
+
+            if (row.find(".externaluser").length > 0)
+            {
+                $("#user-dialog").modal("hide");
+                $("#ManageInvitations4Externals-dialog").modal("show");
+                return;
+            }
+        }
+
+        updatePrivilege2();
+    }
+
+    function updatePrivilege2()
+    {
+        $("#ManageInvitations4Externals-dialog").modal("hide");
+        if ($("#update-form-privilege").length > 0) {
+            $("#wait-animation").show();
+            $("#update-form-id").val(selectedId);
+            $("#update-form-privilege").val(selectedPrivilege);
+            $("#update-form").submit();
+        } else {
+            updatePrivilegeInBulkChangeDetails(selectedId, selectedPrivilegeValue);
+            $("#user-dialog").modal("hide");
+        }
+    }
+</script>

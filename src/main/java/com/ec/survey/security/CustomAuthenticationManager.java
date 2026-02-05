@@ -59,7 +59,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	@Resource(name="settingsService")
 	private SettingsService settingsService;
 	
-	private @Value("${ecasvalidationhost}") String ecasvalidationhost;
+	private @Value("${ecasvalidationhost:}") String ecasvalidationhost;
 	private @Value("${server.prefix}") String host;
 	private @Value("${ecas.require2fa:#{false}}") boolean require2fa;
 	
@@ -108,11 +108,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				String organisation = domain;
 				if (domain.equalsIgnoreCase("eu.europa.ec")) {
 					String departmentNumber = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:departmentNumber");
-					if (departmentNumber.contains(".")) {
-						organisation = departmentNumber.substring(0, departmentNumber.indexOf('.'));
-					} else {
-						organisation = departmentNumber;
-					}
+                    if (departmentNumber != null) {
+                        if (departmentNumber.contains(".")) {
+                            organisation = departmentNumber.substring(0, departmentNumber.indexOf('.'));
+                        } else {
+                            organisation = departmentNumber;
+                        }
+                    }
 				}
 				
 				String whiteList = settingsService.get(Setting.EULoginWhitelist);
@@ -149,12 +151,12 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				Role ecRole = null;
 				Role intRole = null;
 				Role contributorRole = null;
-				Role contributorECRole = null;
+                Role contributorECRole = null;
 				for (Role role : roles) {
 					if (role.getName().equalsIgnoreCase("Form Manager (EC)")) ecRole = role;
 					if (role.getName().equalsIgnoreCase("Form Manager")) intRole = role;
 					if (role.getName().equalsIgnoreCase("Contributor")) contributorRole = role;
-					if (role.getName().equalsIgnoreCase("Contributor (EC)")) contributorECRole = role;
+                    if (role.getName().equalsIgnoreCase("Contributor (EC)")) contributorECRole = role;
 				}	
 				
 				if (user == null)
@@ -171,26 +173,25 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q"))
 					{
-						// internal user
-						if (surveyLoginMode) {
-							user.getRoles().add(contributorECRole);
-						} else {
-							user.getRoles().add(ecRole);
-						}
+                        // internal user
+                        if (surveyLoginMode) {
+                            user.getRoles().add(contributorECRole);
+                        } else {
+                            user.getRoles().add(ecRole);
+                        }
 					} else {
-						// external user
-						if (surveyLoginMode) {
-							user.getRoles().add(contributorRole);
-						} else {
-							if (no2fa) {
-								weakAuthentication = true;
-								if (!surveyLoginMode) {
-									throw new Bad2faCredentialsException();
-								}
-							}
-
-							user.getRoles().add(intRole);
-						}
+                        // external user
+                        if (surveyLoginMode) {
+                            user.getRoles().add(contributorRole);
+                        } else {
+                            if (no2fa) {
+                                weakAuthentication = true;
+                                if (!surveyLoginMode) {
+                                    throw new Bad2faCredentialsException();
+                                }
+                            }
+                            user.getRoles().add(intRole);
+                        }
 					}
 					
 					try {
@@ -243,7 +244,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 
 						if (intRole != null)
 						{
-							if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().equalsIgnoreCase("Contributor")) {
+							if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().startsWith("Contributor")) {
 								user.getRoles().clear();
 								user.getRoles().add(intRole);
 								administrationService.updateUser(user);
@@ -279,7 +280,10 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					}
 					Survey draft = surveyService.getSurvey(survey, true, false, false, false, null, true, false, false, false);
 					if (draft.getIsEVote()) {
-						String ecmoniker = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
+                        String ecmoniker = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:domainUsername");
+                        if (ecmoniker == null) {
+                            ecmoniker = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user"); // fallback if domainUsername is missing
+                        }
 						if (!eVoteService.checkVoter(draft.getUniqueId(), ecmoniker)) {
 							throw new BadSurveyCredentialsException("VOTERREJECTED");
 						}

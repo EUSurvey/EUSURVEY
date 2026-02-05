@@ -208,23 +208,37 @@ public class ActivityService extends BasicService {
 	
 	private String getHQL(ActivityFilter filter, Map<String, Object> params)
 	{
-		String hql = "FROM Activity WHERE surveyUID = :uid";
+		StringBuilder hql = new StringBuilder("FROM Activity WHERE surveyUID = :uid");
 		
 		if (filter.getLogId() > 0)
 		{
-			hql += " AND logID = :logid";
+			hql.append(" AND logID = :logid");
 			params.put("logid", filter.getLogId());
 		}
 		
 		if (filter.getObject() != null)
 		{
-			Range<Integer> range = ActivityRegistry.getObjectRange(filter.getObject());
+			List<Range<Integer>> ranges = ActivityRegistry.getObjectRanges(filter.getObject());
 
-			if (range.getMaximum() > 0){
-				hql += " AND logID >= :rangemin AND logID <= :rangemax";
-				params.put("rangemin", range.getMinimum());
-				params.put("rangemax", range.getMaximum());
-			}
+            if (!ranges.isEmpty()) {
+                hql.append(" AND (");
+
+                for (int i = 0; i < ranges.size(); i++) {
+                    var range = ranges.get(i);
+                    if (i > 0) {
+                        hql.append(" OR");
+                    }
+
+                    hql.append(" logID >= :rangemin").append(i);
+                    hql.append(" AND logID <= :rangemax").append(i);
+
+                    params.put("rangemin" + i, range.getMinimum());
+                    params.put("rangemax" + i, range.getMaximum());
+
+                }
+
+                hql.append(")");
+            }
 		}
 		
 		if (filter.getProperty() != null)
@@ -232,7 +246,7 @@ public class ActivityService extends BasicService {
 			Integer[] logIds = ActivityRegistry.getPropertyIds(filter.getProperty());
 
 			if (logIds.length > 0) {
-				hql += " AND logID IN :logids";
+				hql.append(" AND logID IN :logids");
 				params.put("logids", logIds);
 			}
 		}
@@ -242,42 +256,42 @@ public class ActivityService extends BasicService {
 			Integer[] logIds2 = ActivityRegistry.getEventIds(filter.getEvent());
 
 			if (logIds2.length > 0) {
-				hql += " AND logID IN :logids2";
+				hql.append(" AND logID IN :logids2");
 				params.put("logids2", logIds2);
 			}
 		}
 		
 		if (filter.getUserId() > 0)
 		{
-			hql += " AND userId = :userid";
+			hql.append(" AND userId = :userid");
 			params.put("userid", filter.getUserId());
 		}
 		
 		if (filter.getOldValue() != null && filter.getOldValue().length() > 0)
 		{
-			hql += " AND oldValue LIKE :old";
+			hql.append(" AND oldValue LIKE :old");
 			params.put("old", "%" + filter.getOldValue() + "%");
 		}
 		
 		if (filter.getNewValue() != null && filter.getNewValue().length() > 0)
 		{
-			hql += " AND newValue LIKE :new";
+			hql.append(" AND newValue LIKE :new");
 			params.put("new", "%" + filter.getNewValue() + "%");
 		}
 		
 		if (filter.getDateFrom() != null)
 		{
-			hql += " AND date >= :dateFrom";
+			hql.append(" AND date >= :dateFrom");
 			params.put("dateFrom", filter.getDateFrom());
 		}
 		
 		if (filter.getDateTo() != null)
 		{
-			hql += " AND date <= :dateTo";
+			hql.append(" AND date <= :dateTo");
 			params.put("dateTo", Tools.getFollowingDay(filter.getDateTo()));
 		}
 		
-		return hql;
+		return hql.toString();
 	}
 
 	@Transactional(readOnly = true)

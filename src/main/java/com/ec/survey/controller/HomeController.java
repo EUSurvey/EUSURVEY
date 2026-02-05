@@ -46,13 +46,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Controller("homeController")
 public class HomeController extends BasicController {
 	
-	public @Value("${stresstests.createdata}") String createStressData;
+	public @Value("${stresstests.createdata:0}") String createStressData;
 	private @Value("${server.prefix}") String host;
 	
-	private @Value("${support.recipient}") String supportEmail;
-	private @Value("${support.recipientinternal}") String supportEmailInternal;
+	private @Value("${support.recipient:#{null}}") String supportEmail;
+	private @Value("${support.recipientinternal:#{null}}") String supportEmailInternal;
 
-	private @Value("${support.smIncidentHost}") String incidentHost;
+	private @Value("${support.smIncidentHost:#{null}}") String incidentHost;
 	private @Value("${support.smAttachmentHost:#{null}}") String attachmentHost;
 	private @Value("${support.smBasicAuth:#{null}}") String smtpAuth;
 
@@ -194,7 +194,7 @@ public class HomeController extends BasicController {
 			return "home/support";
 		}
 		
-		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
+		//String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
 		
 		//String SMTServiceEnabled = settingsService.get(Setting.UseSMTService);
 		//if (email.toLowerCase().endsWith("ec.europa.eu") && SMTServiceEnabled != null && SMTServiceEnabled.equalsIgnoreCase("true") && incidentHost != null){
@@ -244,11 +244,11 @@ public class HomeController extends BasicController {
 	}
 
 	private String sendSupportEmail(HttpServletRequest request, Locale locale, ModelMap model) throws IOException, MessageException {
-		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
-		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
-		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
-		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
-		String message = ConversionTools.removeHTML(request.getParameter(Constants.MESSAGE), true);
+		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true, false);
+		String name = ConversionTools.removeHTML(request.getParameter("name"), true, false);
+		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true, false);
+		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true, false);
+		String message = ConversionTools.removeHTML(request.getParameter(Constants.MESSAGE), true, false);
 		String additionalinfo  = request.getParameter("additionalinfo");
 		String additionalsurveyinfotitle = request.getParameter("additionalsurveyinfotitle");
 		String additionalsurveyinfoalias = request.getParameter("additionalsurveyinfoalias");
@@ -319,19 +319,19 @@ public class HomeController extends BasicController {
 	}
 
 	private String sendSupportSmt(HttpServletRequest request, Locale locale, ModelMap model, boolean useJSON) throws IOException, MessageException {
-		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
-		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
-		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
-		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
-		String message = ConversionTools.removeHTML(GetLabelForReason(reason, locale) + ": " + request.getParameter(Constants.MESSAGE), true);
-		String additionalinfo  = ConversionTools.removeHTML(request.getParameter("additionalinfo"), true);
-		String additionalsurveyinfotitle = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfotitle"), true);
-		String additionalsurveyinfoalias = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfoalias"), true);
+		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), !useJSON, useJSON);
+		String name = ConversionTools.removeHTML(request.getParameter("name"), !useJSON, useJSON);
+		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), !useJSON, useJSON);
+		String subject = ConversionTools.removeHTML(request.getParameter("subject"), !useJSON, useJSON);
+		String message = ConversionTools.removeHTML(GetLabelForReason(reason, locale) + ": " + request.getParameter(Constants.MESSAGE), !useJSON, useJSON);
+		String additionalinfo  = ConversionTools.removeHTML(request.getParameter("additionalinfo"), !useJSON, useJSON);
+		String additionalsurveyinfotitle = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfotitle"), !useJSON, useJSON);
+		String additionalsurveyinfoalias = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfoalias"), !useJSON, useJSON);
 		String login = "";
-		
+
 		boolean external = !email.toLowerCase().endsWith("ec.europa.eu");
-		InputStream inputStreamXML = servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.xml");
-		InputStream inputStreamJSON = external ? servletContext.getResourceAsStream("/WEB-INF/Content/createIncidentExternal.json") : servletContext.getResourceAsStream("/WEB-INF/Content/createIncident.json");
+		InputStream inputStreamXML = servletContext.getResourceAsStream("/WEB-INF/Content/EC/createIncident.xml");
+		InputStream inputStreamJSON = external ? servletContext.getResourceAsStream("/WEB-INF/Content/EC/createIncidentExternal.json") : servletContext.getResourceAsStream("/WEB-INF/Content/EC/createIncident.json");
 		String createTemplate = IOUtils.toString(useJSON ? inputStreamJSON : inputStreamXML, "UTF-8");
 		
 		CloseableHttpClient httpclient = HttpClients.createSystem();	
@@ -949,7 +949,7 @@ public class HomeController extends BasicController {
 		}
 
 		SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-		List<Survey> surveys = surveyService.getSurveys(filter, sqlPagination);
+		List<Survey> surveys = surveyService.getSurveys(filter, sqlPagination, false);
 		paging.setItems(surveys);
 		
 		request.getSession().setAttribute("lastPublicSurveyFilter", filter);
@@ -1005,7 +1005,7 @@ public class HomeController extends BasicController {
 		SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lastPublicSurveyFilter");
 
 		SqlPagination sqlPagination = new SqlPagination(newPage, itemsPerPage);
-		return surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, false);
+		return surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, false, false);
 	}
 	
 	@RequestMapping(value = "/validate/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})

@@ -19,12 +19,18 @@ public class EcasHelper {
 	protected static final Logger logger = Logger.getLogger(EcasHelper.class);
 	
 	public static String getXmlTagValue(String xml, String tag) {
-	    int begin = xml.indexOf("<" + tag + ">") + tag.length() + 2;
-	    int end = xml.indexOf("</" + tag + ">");
-	    String value = xml.substring(begin, end);
-	    value = value.replaceFirst("\\<\\!\\[CDATA\\[","");
-	    value = value.replaceFirst("\\]\\]\\>","");
-	    return value;
+	    try {
+            int begin = xml.indexOf("<" + tag + ">") + tag.length() + 2;
+            int end = xml.indexOf("</" + tag + ">");
+            String value = xml.substring(begin, end);
+            value = value.replaceFirst("\\<\\!\\[CDATA\\[", "");
+            value = value.replaceFirst("\\]\\]\\>", "");
+            return value;
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+        }
+
+        return null;
 	}
 	
 	public static String getSourceContents(String urlToRead) {

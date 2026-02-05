@@ -1127,7 +1127,9 @@ function checkDependenciesAsync(input, override) {
 				checkDependencies(input, override != null && override);
 				updateProgress();
 				updateEVoteStatus();
-			} catch (e) {}
+			} catch (e) {
+			    console.log(e);
+			}
 			
 			$(input).closest(".elementwrapper").removeClass("waiting").find(".waitingdiv").remove();
 		}, 100);
@@ -1139,7 +1141,6 @@ function checkDependencies(input) {
 }
 
 function checkDependencies(input, overrideinvisible) {
-	
 	var dependencies = $(input).attr("data-dependencies");
 	var type = $(input).attr("type");
 	var active = $(input).is(":checked");
@@ -1385,14 +1386,17 @@ function checkSectionDependencies(element, triggered) {
 var cachedElements = {};
 function getCachedElementById(id)
 {
+    if (cachedElements[id] == null && id.indexOf("|") > 0)
+	{
+	    if ($("input[data-cellid='" + id + "']").length > 0) {
+		    cachedElements[id] = $("input[data-cellid='" + id + "']");
+		}
+	}
 	if (cachedElements[id] == null)
 	{
 		cachedElements[id] = document.getElementById(id);
 	}
-	if (cachedElements[id] == null && id.indexOf("|") > 0)
-	{
-		cachedElements[id] = $("input[data-cellid='" + id + "']");
-	}
+
 	return cachedElements[id];
 }
 
@@ -1403,7 +1407,6 @@ function getCachedIsTriggered(id)
 }
 
 function isTriggered(element, stoprecursion) {
-		
 	var id =  $(element).attr("id");
 	if ($(element).hasClass("matrix-question")) id = $(element).attr("data-id");
 	var useAndLogic = $(element).attr("data-useAndLogic") == "true";

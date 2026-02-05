@@ -56,12 +56,12 @@ public class RecreateWorker implements Runnable {
 	private String email;
 	
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${sender}") String sender;
 	private @Value("${server.prefix}") String host;
 	private @Value("${export.tempFileDir}") String tempFileDir;
-	private @Value("${export.fileDir}") String fileDir;
-	private @Value("${archive.fileDir}") String archiveFileDir;
+	private @Value("${export.fileDir:}") String fileDir;
+	private @Value("${archive.fileDir:}") String archiveFileDir;
 	
 	public void init(String[] files, FileFilter filter, String email)
 	{

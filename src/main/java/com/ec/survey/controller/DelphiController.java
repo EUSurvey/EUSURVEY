@@ -315,13 +315,13 @@ public class DelphiController extends BasicController {
 			if (question instanceof NumberQuestion) {
 				NumberQuestion numq = (NumberQuestion) question;
 				NumberQuestionStatistics numberQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, numq);
-				return handleDelphiNumberQuestion(survey, numq, numberQuestionStats);
+				return handleDelphiNumberQuestion(survey, numq, numberQuestionStats, allanswers);
 			}
 
 			if (question instanceof FormulaQuestion) {
 				FormulaQuestion formula = (FormulaQuestion) question;
 				NumberQuestionStatistics formulaQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, formula);
-				return handleDelphiFormulaQuestion(survey, formula, formulaQuestionStats);
+				return handleDelphiFormulaQuestion(survey, formula, formulaQuestionStats, allanswers);
 			}
 			
 			if (question instanceof FreeTextQuestion) {
@@ -379,7 +379,7 @@ public class DelphiController extends BasicController {
 				}
 				if (item.getCellType() == ComplexTableItem.CellType.Number || item.getCellType() == ComplexTableItem.CellType.Formula) {
 					NumberQuestionStatistics numberQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, item);
-					return handleDelphiNumberQuestion(survey, item, numberQuestionStats);
+					return handleDelphiNumberQuestion(survey, item, numberQuestionStats, allanswers);
 				}
 			}
 
@@ -549,31 +549,45 @@ public class DelphiController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, Question question, NumberQuestionStatistics numberQuestionStatistics) {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, Question question, NumberQuestionStatistics numberQuestionStatistics, boolean allAnswers) {
 		
 		boolean showStatisticsForNumberQuestion = false;
 		boolean isSlider = false;
+        Double min = null;
+        Double max = null;
 		if (question instanceof NumberQuestion) {
 			NumberQuestion num = (NumberQuestion) question;
-			showStatisticsForNumberQuestion = num.showStatisticsForNumberQuestion();
+			showStatisticsForNumberQuestion = num.showStatisticsForNumberQuestion(allAnswers);
 			isSlider = num.isSlider();
+            min = num.getMin();
+            max = num.getMax();
 		} else {
 			ComplexTableItem item = (ComplexTableItem) question;
 			showStatisticsForNumberQuestion = item.showStatisticsForNumberQuestion();
+            min = item.getMin();
+            max = item.getMax();
 		}
-		
 		if ((survey.getIsDelphi() && numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics()) || (!showStatisticsForNumberQuestion && !isSlider)) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 
-		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+
+        Map<String, Integer> valuesMagnitude;
+        if (allAnswers) {
+             valuesMagnitude = numberQuestionStatistics.getValuesMagnitude();
+        } else {
+            valuesMagnitude = numberQuestionStatistics.getValuesMagnitudeFiltered(min, max);
+        }
+
+        showStatisticsForNumberQuestion &= valuesMagnitude.size() <= 10;
+
+                DelphiGraphDataSingle result = new DelphiGraphDataSingle();
 		result.setChartType(showStatisticsForNumberQuestion ? question.getDelphiChartType() : DelphiChartType.None);
 
 		result.setQuestionType(DelphiQuestionType.Number);
 		result.setLabel(question.getStrippedTitle());
 
-		Map<String, Integer> valuesMagnitude = numberQuestionStatistics.getValuesMagnitude();
 
 		if (valuesMagnitude.isEmpty()) {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -591,19 +605,24 @@ public class DelphiController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiFormulaQuestion(Survey survey, FormulaQuestion question, NumberQuestionStatistics numberQuestionStatistics) {
-		if ((survey.getIsDelphi() && numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics()) || (!question.showStatisticsForNumberQuestion())) {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiFormulaQuestion(Survey survey, FormulaQuestion question, NumberQuestionStatistics numberQuestionStatistics, boolean allAnswers) {
+		if ((survey.getIsDelphi() && numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics()) || (!question.showStatisticsForNumberQuestion(allAnswers))) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 
 		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
-		result.setChartType(question.showStatisticsForNumberQuestion() ? question.getDelphiChartType() : DelphiChartType.None);
+		result.setChartType(question.showStatisticsForNumberQuestion(allAnswers) ? question.getDelphiChartType() : DelphiChartType.None);
 
 		result.setQuestionType(DelphiQuestionType.Formula);
 		result.setLabel(question.getStrippedTitle());
 
-		Map<String, Integer> valuesMagnitude = numberQuestionStatistics.getValuesMagnitude();
+        Map<String, Integer> valuesMagnitude;
+        if (allAnswers) {
+            valuesMagnitude = numberQuestionStatistics.getValuesMagnitude();
+        } else {
+            valuesMagnitude = numberQuestionStatistics.getValuesMagnitudeFiltered(question.getMin(), question.getMax());
+        }
 
 		if (valuesMagnitude.isEmpty()) {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -668,8 +687,7 @@ public class DelphiController extends BasicController {
 			}
 		}
 
-		List<PossibleAnswer> answers = question instanceof ChoiceQuestion ? ((ChoiceQuestion)question).getAllPossibleAnswers() : ((ComplexTableItem)question).getPossibleAnswers();
-		
+		List<PossibleAnswer> answers = question instanceof ChoiceQuestion ? ((ChoiceQuestion)question).getAllPossibleAnswers() : ((ComplexTableItem)question).getAllPossibleAnswers();
 		for (PossibleAnswer answer : answers) {
 			DelphiGraphEntry entry = new DelphiGraphEntry();
 			entry.setLabel(answer.getStrippedTitleNoEscape());
@@ -740,7 +758,7 @@ public class DelphiController extends BasicController {
 									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getUniqueId());
 									
 									for (Answer answer: answers) {
-										result += SurveyHelper.getAnswerTitle(survey, answer, false, false) + " ";
+										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
 									}
 								}
 								
@@ -764,7 +782,7 @@ public class DelphiController extends BasicController {
 
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
-										result += SurveyHelper.getAnswerTitle(survey, answer, false, false) + " ";
+										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
 									}
 								}
 							} else {
@@ -772,7 +790,7 @@ public class DelphiController extends BasicController {
 
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
-										result += SurveyHelper.getAnswerTitle(survey, answer, false, false) + " ";
+										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
 										
 										DelphiMedian median = null;										
 										

@@ -548,11 +548,8 @@
 
 			$("#scrollareaheader").css({ 'overflow-x' : 'auto'})
 
-            if (!statisticsLoaded) {
-		        loadStatisticsAsync(false);
-			    delphiPopulateAllGraphs($("#results-statistics"));
-			    statisticsLoaded = true;
-			}
+            checkLoadStatistics()
+
 			doResize();
 		}
 		
@@ -572,7 +569,18 @@
 			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
+
+            checkLoadStatistics()
 		}
+
+        function checkLoadStatistics() {
+            if (!statisticsLoaded) {
+                loadStatisticsAsync(false);
+                delphiPopulateAllGraphs($("#results-statistics"));
+                statisticsLoaded = true;
+            }
+        }
+
 		function hideStatisticsQuiz() {
 			$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
 			$("#results-statistics-quiz").addClass('hidden');

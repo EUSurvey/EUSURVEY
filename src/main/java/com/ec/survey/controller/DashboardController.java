@@ -774,7 +774,7 @@ public class DashboardController extends BasicController {
 			}
 			
 			SqlPagination paging = new SqlPagination(page, 10);
-			List<Survey> surveyList = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false, false);		
+			List<Survey> surveyList = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false, false, false);
 			
 			List<Object[]> result = new ArrayList<Object[]>();
 		

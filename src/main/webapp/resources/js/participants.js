@@ -13,6 +13,7 @@ var Guestlist = function() {
 	this.attendees = ko.observableArray().extend({ deferred: true });
 	this.tokens = ko.observableArray();
 	this.users = ko.observableArray();
+	this.authenticationMethod = ko.observableArray([0]);
 	
 	this.activateEnabled = ko.computed(function() {
 		return !this.inCreation() && !this.active();
@@ -478,6 +479,7 @@ var Participants = function() {
 					  g.runningMails(result[i].runningMails);
 					  g.error(result[i].error);
 					  g.active(result[i].active);
+					  g.authenticationMethod(result[i].authenticationMethod);
 					  
 					  model.Guestlists.push(g);
 					  $('[data-toggle="tooltip"]').tooltip();
@@ -675,6 +677,7 @@ var Participants = function() {
 		$('#newcontactlist').find('[data-toggle="tooltip"]').tooltip();
 		var g = new Guestlist();
 		g.type("Static");
+		g.authenticationMethod(0);
 		this.selectedGroup(g);
 		this.loadAttendees(true);
 	}

@@ -23,7 +23,7 @@ public class FileUpdater implements Runnable {
 	@Resource(name = "fileService")
 	private FileService fileService;
 	
-	private @Value("${export.fileDir}") String fileDir;
+	private @Value("${export.fileDir:}") String fileDir;
 	
 	@Override
 	@Transactional

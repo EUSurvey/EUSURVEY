@@ -27,7 +27,7 @@ public class ReportingServiceProxy {
 	@Resource(name = "surveyService")
 	protected SurveyService surveyService;
 	
-	protected @Value("${enablereportingdatabase}") String enablereportingdatabase;
+	protected @Value("${enablereportingdatabase:false}") String enablereportingdatabase;
 	
 	private boolean isReportingDatabaseEnabled()
 	{

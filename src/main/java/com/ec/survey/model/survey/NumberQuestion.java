@@ -18,7 +18,7 @@ import javax.persistence.*;
 @DiscriminatorValue("NUMBER")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class NumberQuestion extends Question {
+public class NumberQuestion extends Question implements ICommonNumberQuestion {
 	public static final String MAXLABEL = "MAXLABEL";
 	public static final String MINLABEL = "MINLABEL";
 	public static final String UNIT = "UNIT";
@@ -39,6 +39,8 @@ public class NumberQuestion extends Question {
 	private String initialSliderPosition;
 	private Boolean displayGraduationScale;
 	private Double maxDistance = -1.0;
+
+    private DeletedMinMax deletedMinMax = null;
 	
 	//this is for backward compatibility (serializer), do not remove!
 	private double min;
@@ -185,7 +187,16 @@ public class NumberQuestion extends Question {
 		
 		return css;
 	}
-	
+
+    @Transient
+    public DeletedMinMax getDeletedMinMax() {
+        return deletedMinMax;
+    }
+
+    public void setDeletedMinMax(DeletedMinMax minMax) {
+        this.deletedMinMax = minMax;
+    }
+
 	@Override
 	public boolean differsFrom(Element element) {
 		if (basicDiffersFrom(element)) return true;
@@ -237,35 +248,6 @@ public class NumberQuestion extends Question {
 	@Transient
 	public boolean isSlider() {
 		return getDisplay().equals("Slider");
-	}
-	
-	@Transient
-	public boolean showStatisticsForNumberQuestion() {
-		if (decimalPlaces > 0 || minD == null || maxD == null) {
-			return false;
-		}
-		
-		return (maxD - minD) <= 10;
-	}
-	
-	@Transient
-	public List<String> getAllPossibleAnswers() {
-		List<String> answers = new ArrayList<>();
-		
-		if (!showStatisticsForNumberQuestion()) {
-			return answers;
-		}
-		
-		NumberFormat nf = DecimalFormat.getInstance();
-		nf.setMaximumFractionDigits(0);
-		
-		double v = minD;
-		while (v <= maxD) {
-			answers.add(nf.format(v));
-			v++;
-		}
-				
-		return answers;
 	}
 	
 	@Transient

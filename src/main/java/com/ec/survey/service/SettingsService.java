@@ -3,6 +3,7 @@ package com.ec.survey.service;
 import com.ec.survey.model.Setting;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +12,20 @@ import java.util.List;
 
 @Service("settingsService")
 public class SettingsService extends BasicService {
-	
+
+    public @Value("${oss:true}") String oss;
+
+    @Transactional(readOnly = true)
+    public boolean isCreateSurveysForExternalsDisabled() {
+
+        if (oss.equalsIgnoreCase("true")) {
+            return false;
+        }
+
+        String disabled = get(Setting.CreateSurveysForExternalsDisabled);
+        return disabled.equalsIgnoreCase("true");
+    }
+
 	@Transactional(readOnly = true)
 	public String get(String key) {
 		Session session = sessionFactory.getCurrentSession();		

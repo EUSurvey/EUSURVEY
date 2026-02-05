@@ -174,6 +174,11 @@ public class PossibleAnswer extends Element {
 				.differsFrom(other.getScoring())) {
 			return true;
 		}
+
+		if (!Tools.isEqual(getPosition(),
+			other.getPosition()))
+			return true;
+
 		return false;
 	}
 }

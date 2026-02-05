@@ -128,6 +128,8 @@
 			var invalidCharacter = "${form.getMessage("validation.invalidCharacter")}";
 			var valuetoosmall = "${form.getMessage("validation.valueTooSmall")}";
 			var valuetoolarge = "${form.getMessage("validation.valueTooLarge")}";
+			var datetoosmall = "${form.getMessage("validation.dateTooSmall")}";
+			var datetoolarge = "${form.getMessage("validation.dateTooLarge")}";
 			var timevaluetoosmall = "${form.getMessage("validation.valueTooSmallTime")}";
 			var timevaluetoolarge = "${form.getMessage("validation.valueTooLargeTime")}";
 			var notenoughanswers = "${form.getMessage("validation.notEnoughSelections")}";
@@ -229,6 +231,8 @@
 			var invalidnumberText = "<spring:message code='validation.invalidNumber' />";
 			var valuetoosmall = "<spring:message code='validation.valueTooSmall' />";
 			var valuetoolarge = "<spring:message code='validation.valueTooLarge' />";
+			var datetoosmall = "<spring:message code='validation.dateTooSmall' />";
+			var datetoolarge = "<spring:message code='validation.dateTooLarge' />";
 			var timevaluetoosmall = "<spring:message code='validation.valueTooSmallTime' />";
 			var timevaluetoolarge = "<spring:message code='validation.valueTooLargeTime' />";
 			var notenoughanswers = "<spring:message code='validation.notEnoughSelections' />";
@@ -465,13 +469,13 @@
 
 <c:choose>
 	<c:when test="${forpdf == null && !oss && piwik && is404}">
-		<script defer="defer" src="//europa.eu/webtools/load.js" type="text/javascript"></script>
+		<script defer="defer" src="https://webtools.europa.eu/load.js" type="text/javascript"></script>
 		<script type="application/json">
 		{ "utility":"analytics", "siteID":"63", "sitePath":["ec.europa.eu/eusurvey"], "is404":true, "is403":false, "instance":"ec.europa.eu"}
 		</script>
 	</c:when>
 	<c:when test="${forpdf == null && !oss && piwik}">
-		<script defer="defer" src="//europa.eu/webtools/load.js" type="text/javascript"></script>
+		<script defer="defer" src="https://webtools.europa.eu/load.js" type="text/javascript"></script>
 		<script type="application/json">
 		{ "utility":"analytics", "siteID":"63", "sitePath":["ec.europa.eu/eusurvey"], "is404":false, "is403":false, "instance":"ec.europa.eu"} 
 		</script>

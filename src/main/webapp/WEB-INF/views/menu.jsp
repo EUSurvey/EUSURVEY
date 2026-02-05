@@ -580,6 +580,15 @@
 						<input class="required check" style="margin-left: 20px;" type="radio" name="new-survey-security" id="new-survey-security-secured" value="secured" /><spring:message code="form.Secured" />&#160;
 					</td>
 				</tr>
+				<tr class="hideimport hidecreate">
+                    <td class="table-label"><spring:message code="label.UserPrivileges" /></td>
+                    <td style="padding-left: 35px">
+                        <div style="float: left; margin-left: -25px;">
+                            <input class="check" type="checkbox" name="new-survey-userprivileges" id="new-survey-userprivileges" value="1" />
+                        </div>
+                        <spring:message code="label.CopyUsersAndPrivileges" />
+                    </td>
+                </tr>
 				<tr class="hideme">
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Privacy" /></td>
 					<td>
@@ -606,6 +615,15 @@
 						</select>				
 					</td>
 				</tr>
+                <tr>
+                    <td class="table-label"><spring:message code="label.SNC" /></td>
+                    <td style="padding-left: 35px">
+                        <div style="float: left; margin-left: -25px;">
+                            <input class="check" type="checkbox" name="radio-collect-snc" id="new-survey-collect-snc" value="1" />
+                        </div>
+                        <spring:message code="message.CollectSNC" />
+                    </td>
+                </tr>
 				<c:if test="${oss != true}">
 					<tr>
 						<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Confirmation" /></td>
@@ -655,6 +673,7 @@
 	<input type="hidden" name="uuid" id="create-survey-uuid" value="" />
 	<input type="hidden" name="original" id="create-survey-original" value="" />
 	<input type="hidden" name="security" id="create-survey-security" value="" />
+	<input type="hidden" name="userprivileges" id="create-survey-userprivileges" value="" />
 	<input type="hidden" name="audience" id="create-survey-audience" value="" />
 	<input type="hidden" name="surveylanguage" id="create-survey-language" value="" />
 	<textarea style="display: none;" name="title" id="create-survey-title"></textarea>	
@@ -671,6 +690,7 @@
 	<input type="hidden" name="organisation" id="create-survey-organisation" value="" />
 	<input type="hidden" name="validator" id="create-survey-validator" value="" />
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />
+    <input type="hidden" name="collectsnc" id="create-survey-collect-snc" value=""/>
 </form:form>
 
 	<div class="modal" id="delete-survey-dialog" data-backdrop="static">

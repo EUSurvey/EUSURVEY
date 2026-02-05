@@ -25,7 +25,7 @@ public class LanguageTools {
 	{
 		 InputStream inputStream = null;
 	     try {
-	        inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/EC/iso639-1.xls");
+	        inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/iso639-1.xls");
 	           
 	        List<String> codes = surveyService.getLanguageCodes();
          	List<Language> newLanguages = new ArrayList<>();

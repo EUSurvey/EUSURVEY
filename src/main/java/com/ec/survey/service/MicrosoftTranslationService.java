@@ -12,8 +12,8 @@ import java.util.Arrays;
 @Service("microsoftTranslationService")
 public class MicrosoftTranslationService extends BasicService {
 
-	public @Value("${microsoft.translation.client.id}") String clientID;
-	public @Value("${microsoft.translation.client.secret}") String clientSecret;
+	public @Value("${microsoft.translation.client.id:#{null}}") String clientID;
+	public @Value("${microsoft.translation.client.secret:#{null}}") String clientSecret;
 
 	@PostConstruct
 	private void init() {
