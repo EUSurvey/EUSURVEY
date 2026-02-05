@@ -73,7 +73,7 @@ public class ChatbotController extends BasicController {
 			return reply != null ? reply : Constants.ERROR;
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getLocalizedMessage(), e);
 			return Constants.ERROR;
 		}
 	}
