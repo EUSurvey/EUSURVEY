@@ -222,7 +222,7 @@
             <script>
                 function call1() {
                     const header = document.getElementById("header").value.replace("Authorization: pop ","");
-                    const apiUrl = 'https://api.np.myworkplace.services.ec.europa.eu/capi/federation-token-service-keycloak/dev/token';
+                    const apiUrl = 'https://api.np.myworkplace.services.ec.europa.eu/capi/fts/dev/token';
 
                     const requestOptions = {
                         method: 'POST',
