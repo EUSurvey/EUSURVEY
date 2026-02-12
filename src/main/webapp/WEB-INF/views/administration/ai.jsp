@@ -179,9 +179,11 @@
             <b>Model</b><br />
             <select id="model">
                 <option>gpt-4o</option>
+                <option>gpt-5</option>
                 <option>llama-3.3-70b-instruct</option>
                 <option>mistral-small-3.2-24b-instruct-2506</option>
                 <option>mistral-small-3.1-24b-instruct-2503</option>
+                <option>mistral-medium-2508</option>
             </select>
 
             <br />
