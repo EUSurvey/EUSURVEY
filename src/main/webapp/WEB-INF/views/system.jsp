@@ -87,6 +87,7 @@
             $.ajax({
                 type:'POST',
                 url: "${contextpath}/chatbot/send",
+                encoding:"UTF-8",
                 beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
                 data: {message: message, firstChatMessage: firstChatMessage},
                 cache: false,
