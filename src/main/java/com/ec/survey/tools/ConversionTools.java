@@ -192,7 +192,7 @@ public class ConversionTools {
 	
 	public static String removeHTML(String htmlString, boolean escape, boolean forJson)
     {
-		if (htmlString == null) return "";
+		if (htmlString == null || htmlString.isEmpty()) return "";
 		
 		String result = "";
 
