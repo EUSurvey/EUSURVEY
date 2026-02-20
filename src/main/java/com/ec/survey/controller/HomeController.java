@@ -341,7 +341,9 @@ public class HomeController extends BasicController {
 			if (!external) {
 				//get login from ldap
 				login = ldapService.getLoginForEmail(email);
-				createTemplate = createTemplate.replace("[CALLER]", login);
+				if (login != null && !login.isEmpty()) {
+					createTemplate = createTemplate.replace("[CALLER]", login);
+				}
 			}				
 	
 			createTemplate = createTemplate.replace("[MESSAGE]", message);
@@ -353,7 +355,7 @@ public class HomeController extends BasicController {
 			createTemplate = createTemplate.replace("[SUBJECT]", subject);		
 			createTemplate = createTemplate.replace("[REASON]", GetSmtLabelForReason(reason));
 			createTemplate = createTemplate.replace("[BUSINESSSERVICE]", "EU Survey Solutions");
-			createTemplate = createTemplate.replace("[SERVICEOFFERING]", "");
+			createTemplate = createTemplate.replace("[SERVICEOFFERING]", "EU Survey - General issue");
 
 			sessionService.initializeProxy();
 			
