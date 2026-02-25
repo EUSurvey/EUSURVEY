@@ -360,7 +360,7 @@ public class HomeController extends BasicController {
 			sessionService.initializeProxy();
 			
 			HttpPost httppost = new HttpPost(incidentHost);
-			httppost.addHeader("Content-type", useJSON ? "application/json" : "text/xml;charset=UTF-8");
+			httppost.addHeader("Content-type", useJSON ? "application/json; charset=utf-8" : "text/xml;charset=UTF-8");
 			
 			if (!useJSON) {
 				httppost.addHeader("SOAPAction", "Create");
@@ -370,7 +370,7 @@ public class HomeController extends BasicController {
 				httppost.addHeader("Authorization", "Basic " + smtpAuth);
 			}
 
-			httppost.setEntity(new StringEntity(createTemplate));
+			httppost.setEntity(new StringEntity(createTemplate,"UTF-8"));
 			
 			CloseableHttpResponse response = httpclient.execute(httppost);
 			
