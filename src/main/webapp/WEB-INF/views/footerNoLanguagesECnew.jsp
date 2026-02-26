@@ -82,7 +82,7 @@
 					<ul class="ecl-site-footer__list">
 						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/language-policy_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.LanguagesOnWebsites" /></a></li>
 						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/cookies_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.Cookies" /></a></li>
-						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/privacy-policy_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.PrivacyPolicy.bis" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/privacy-policy_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.PrivacyPolicy" /></a></li>
 						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/legal-notice_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.LegalNotice" /></a></li>
 					</ul>
 				</div>
