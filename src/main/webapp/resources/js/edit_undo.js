@@ -68,14 +68,14 @@ var UndoProcessor = function() {
 
 	this.popDeletedElementById = function(id)
 	{
-		let element;
-		for(let k = 0; k < _actions.deletedElements.length; k++) {
-			if (_actions.deletedElements[k][0].id == id) {
-				element = _actions.deletedElements[k];
-				_actions.deletedElements.splice(k, 1);
+		for(let k = _actions.deletedElements.length - 1; k >= 0; k--) {
+            const iterEl = _actions.deletedElements[k]
+			if (iterEl.prop("id") === id || (iterEl.is(".matrix-question") && iterEl.find("th").prop("id") === id)) {
+				const popped = _actions.deletedElements.splice(k, 1);
+                return popped[0]
 			}
 		}
-		return element;
+		return undefined;
 	}
 
 	this.complexChildrenStepHelper = function (step, redo = false) {
@@ -156,6 +156,12 @@ var UndoProcessor = function() {
 				}
 				moveItemInNavigation(oldindex, newindex);
 				break;
+			case "MOVEPA":
+		        var oldindex = parseInt(step[2]);
+                var newindex = parseInt(step[3]);
+		        var parent = step[4];
+			    updatePossibleAnswersPosition(id, parent, oldindex < newindex);
+			    break;
 			case "DELETE":
 				var idsandpositions = step[1];
 				var arrelements = idsandpositions.split(";");
@@ -175,7 +181,7 @@ var UndoProcessor = function() {
 							var index = elemposition.substring(0, elemposition.indexOf("@"));
 							var matrix = _elements[parentid];
 							var elem = _actions.deletedModels.pop();
-							matrix.questions.splice(index-1, 0, elem);
+							matrix.questions.splice(index, 0, elem);
 							
 							var dependentElementsStrings = step[2];
 							matrix.setDependentElementsStrings(dependentElementsStrings[matrix.id()]);
@@ -459,6 +465,10 @@ var UndoProcessor = function() {
 				if (step[3] == "3") display = 3;		
 				element.displayMode(display);
 				break;
+            case "DisplaySlider":
+                element.display(step[3])
+                numberSliderDisplayUpdate(element)
+                break
 			case "Order":
 				var order = 0;
 				if (step[3] == "1") order = 1;
@@ -1029,6 +1039,12 @@ var UndoProcessor = function() {
 				}
 				moveItemInNavigation(newindex, oldindex);
 				break;
+			case "MOVEPA":
+                var oldindex = parseInt(step[2]);
+                var newindex = parseInt(step[3]);
+                var parent = step[4];
+                updatePossibleAnswersPosition(id, parent, oldindex > newindex);
+                break;
 			case "DELETE":
 				_elementProperties.deselectAll();
 				
@@ -1179,6 +1195,10 @@ var UndoProcessor = function() {
 				if (step[4] == "3") display = 3;		
 				element.displayMode(display);
 				break;
+            case "DisplaySlider":
+                element.display(step[4])
+                numberSliderDisplayUpdate(element)
+                break
 			case "Order":
 				var order = 0;
 				if (step[4] == "Alphabetical") order = 1;

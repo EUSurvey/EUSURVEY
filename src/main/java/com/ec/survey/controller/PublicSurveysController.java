@@ -31,7 +31,7 @@ public class PublicSurveysController extends BasicController {
 	private MailService mailService;
 	
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView publicsurveys(HttpServletRequest request, Model model, Locale locale) {	

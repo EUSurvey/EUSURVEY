@@ -37,7 +37,7 @@ import java.util.UUID;
 @RequestMapping("/administration/files")
 public class FileManagementController extends BasicController {
 	
-	public @Value("${ui.enablefilemanagement}") String enablefilemanagement;
+	public @Value("${ui.enablefilemanagement:true}") String enablefilemanagement;
 	
 	protected @Value("${filesystem.surveys}") String surveysDir;
 	protected @Value("${filesystem.users}") String usersDir;

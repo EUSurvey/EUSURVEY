@@ -25,6 +25,9 @@ public class ECService extends BasicService {
 				.getResourceAsStream("/WEB-INF/Content/EC/dgs.txt");
 				
 		linesDGS = new ArrayList<>();
+        linesAEX = new ArrayList<>();
+
+        if (inputStream == null) return;
 		
 		try {
 			String text = IOUtils.toString(inputStream, "UTF-8");
@@ -36,14 +39,12 @@ public class ECService extends BasicService {
 			}
 			scanner.close();		
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
 		inputStream = servletContext
 				.getResourceAsStream("/WEB-INF/Content/EC/aex.txt");
-				
-		linesAEX = new ArrayList<>();
 		
 		try {
 			String text = IOUtils.toString(inputStream, "UTF-8");
@@ -55,7 +56,7 @@ public class ECService extends BasicService {
 			}
 			scanner.close();		
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}	
 	}

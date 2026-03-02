@@ -255,12 +255,12 @@ var Actions = function() {
     			}
     		});
 
-			if (this.type == "Matrix") {
-				if (copiedmodel.isInterdependent()) {
-					$(newitem).find(".matrixtable").addClass("interdependent");
-				} else {
-				    $(newitem).find(".matrixtable").removeClass("interdependent");
-				}
+            if (this.type == "Matrix") {
+                if (copiedmodel.isInterdependent()) {
+                    $(newitem).find(".matrixtable").addClass("interdependent");
+                } else {
+                    $(newitem).find(".matrixtable").removeClass("interdependent");
+                }
 			}
     		
 			_elements[copiedmodel.id()] = copiedmodel;
@@ -515,7 +515,18 @@ var Actions = function() {
     {
     	if (!this.MoveDownEnabled()) return;
     	$($("#content").find(".selectedquestion").get().reverse()).each(function(){  
-    	
+
+            if ($(this).hasClass("answertext")) {
+                var answerId = parseInt($(this).attr("data-id"));
+                var parent = _elements[$(this).closest(".survey-element").attr("data-id")];
+                var oldindex = parent.possibleAnswers().findIndex((a) => a.id() == answerId);
+
+                updatePossibleAnswersPosition(answerId, parent, false);
+                _undoProcessor.addUndoStep(["MOVEPA", answerId, oldindex, oldindex + 1, parent]);
+
+                return;
+            }
+
 	    	var current =  $(this); // $(_elementProperties.selectedelement);
 	    	var oldindex = $(this).index();
 	
@@ -540,7 +551,19 @@ var Actions = function() {
     {
     	if (!this.MoveUpEnabled()) return;
     	$("#content").find(".selectedquestion").each(function(){    	
-    	
+
+    	    if ($(this).hasClass("answertext")) {
+    	        var answerId = parseInt($(this).attr("data-id"));
+    	        var parent = _elements[$(this).closest(".survey-element").attr("data-id")];
+    	        var oldindex = parent.possibleAnswers().findIndex((a) => a.id() == answerId);
+
+                updatePossibleAnswersPosition(answerId, parent, true);
+
+                _undoProcessor.addUndoStep(["MOVEPA", answerId, oldindex, oldindex - 1, parent]);
+
+    	        return;
+    	    }
+
 	    	var current = $(this); // $(_elementProperties.selectedelement);
 	    	var oldindex = $(this).index();	    	
 	    	
@@ -598,7 +621,7 @@ var Actions = function() {
     	var galleryimagestodelete = [];
     	
     	var selectedquestions = $("#content").find(".selectedquestion");
-    	
+
     	$(selectedquestions).each(function(){
     		
     		if ($(this).hasClass("matrix-header") || $(this).hasClass("table-header"))
@@ -783,7 +806,7 @@ var Actions = function() {
     		}
     	}
     	
-    	if (!noundo)
+    	if (!noundo && selectedquestions.length > 0)
         	_undoProcessor.addUndoStep(["DELETE", idsandpositions, dependentElementsStrings]);	
     	
     	_elementProperties.deselectAll();
@@ -906,7 +929,4 @@ $(function() {
 		}
 	}
     
-
 });
-
-

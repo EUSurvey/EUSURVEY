@@ -12,119 +12,84 @@
 	</c:choose>
 </div>
 
-<div class="layout-footer" style="margin-top: 10px;">
-	<div style="width: 1206px; max-width: 100%; margin-left: auto; margin-right: auto">
-		<div class="container-fluid">
-			<div class="row">
-	        	<div class="col-md-4 ecl-footer__column2" style="padding-left: 15px; padding-top: 8px;">
-			        <div style="font-weight: bold; font-size: 18px; margin-top: 10px; margin-bottom: 10px;">EUSurvey</div>
-	            </div>
-	            <div class="col-md-4 ecl-footer__column2">
-	            	 <ul class="footer-items ecl-footer__menu ecl-list--inline">
-			          	<li class="ecl-footer__menu-item">
-				           <a style="margin-riht: 10px;" href="<c:url value="/home/documentation"/>">${form.getMessage("label.Documentation")}</a>
-						</li>	
-				         <li class="ecl-footer__menu-item">
-							 <a target="_blank" href="<c:url value="/home/helpparticipants"/>" aria-label="${form.getMessage("label.FAQ")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.FAQ")}</a>
-				         </li>
-				      </ul>
-	            </div>
-	            <div class="col-md-4 ecl-footer__column2">
-	                <ul class="footer-items ecl-footer__menu ecl-list--inline">
-	                	<li class="ecl-footer__menu-item">
-				           <a href="<c:url value="/home/about"/>">${form.getMessage("label.About")}</a>
-				        </li>
-				        <li class="ecl-footer__menu-item">
-				             <a href="https://ec.europa.eu/geninfo/query/search_en.html">${form.getMessage("label.Search")}</a>
-				        </li>
-				        <li class="ecl-footer__menu-item">
-				           <a href="<c:url value="/home/download"/>">${form.getMessage("label.Download")}</a>
-						</li>					
-	                </ul>
-	        	</div>
-	    	</div>
-	    </div>
-	</div>     
- </div>
- 
-<div class="ecl-footer__site-corporate" style="">
-	<div style="width: 1206px; max-width: 100%;margin-left: auto; margin-right: auto">
-		<div class="container-fluid">
-	  		<div class="row">
-	        	<div class="col-md-4 ecl-footer__column">
-			        <div style="font-weight: bold; font-size: 18px; margin-top: 10px;" class="ecl-h4 ecl-footer__title">European Commission</div>
-	                <ul class="ecl-footer__menu">
-		            	<li class="ecl-footer__menu-item">
-		        	    	<a class="ecl-link ecl-footer__link" href="https://ec.europa.eu/commission/index_en">Commission and its priorities</a>
-		            	</li>
-		                <li class="ecl-footer__menu-item">
-		              		<a class="ecl-link ecl-footer__link" href="https://ec.europa.eu/info/index_en">Policies information and services</a>
-		            	</li>
-	                </ul>
-	            </div>
-	            <div class="col-md-4 ecl-footer__column">
-		           	<div style="font-weight: bold; font-size: 18px; margin-top: 10px;" class="ecl-h4 ecl-footer__title">Follow the European Commission</div>
-	                <ul class="ecl-footer__menu ecl-list--inline ecl-footer__social-links" style="margin-left: -8px; padding-right: 80px;">
-	    				<li class="ecl-footer__menu-item">
-	              			<a class="ecl-link ecl-footer__link" href="https://www.facebook.com/EuropeanCommission"><span class="ecl-icon ecl-icon--facebook ecl-footer__social-icon"></span>Facebook</a>
-	            		</li>
-	                   	<li class="ecl-footer__menu-item">
-	              			<a class="ecl-link ecl-footer__link" href="https://twitter.com/EU_commission"><span class="ecl-icon ecl-icon--twitter ecl-footer__social-icon"></span>Twitter</a>
-	            		</li>
-	                    <li class="ecl-footer__menu-item">
-	              			<a class="ecl-link ecl-footer__link ecl-link--external" href="https://europa.eu/european-union/contact/social-networks_en">Other social media</a>
-	            		</li>
-	               	</ul>
-	            </div>
-	            <div class="col-md-4 ecl-footer__column">
-	                <div style="font-weight: bold; font-size: 18px; margin-top: 10px;" class="ecl-h4 ecl-footer__title">European Union</div>
-	                <ul class="ecl-footer__menu">
-	                	<li class="ecl-footer__menu-item">
-	          				<a class="ecl-link ecl-footer__link ecl-link--external" href="https://europa.eu/european-union/about-eu/institutions-bodies_en">EU institutions</a>
-	        			</li>
-	                    <li class="ecl-footer__menu-item">
-	          				<a class="ecl-link ecl-footer__link ecl-link--external" href="https://europa.eu/european-union/index_en">European Union</a>
-	        			</li>
-	                </ul>
-	        	</div>
-	    	</div>
+<div class="layout-footer ecl-site-footer" style="margin-top: 10px;">
+	<div class="ecl-container container-fluid container">
+		<div class="row ecl-site-footer__row" style="width: 1206px; max-width: 100%; margin-left: auto; margin-right: auto">
+			<div class="col-md-4 ecl-site-footer__column" style="padding-left: 0px; padding-rightt: 0px;">
+				<div class="ecl-site-footer__section ecl-site-footer__section--site-info">
+					<div class="ecl-site-footer__title">
+						<c:choose>
+							<c:when test="${USER != null}">
+								<a class="logolink" href="<c:url value="/forms"/>"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" alt="EUSurvey"/></a>
+							</c:when>
+							<c:otherwise>
+								<a class="logolink" href="<c:url value="/home/welcome"/>"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" alt="EUSurvey"/></a>
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<ul class="ecl-site-footer__list">
+						<li class="ecl-site-footer__list-item"><a href="${contextpath}/home/accessibilitystatement" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.AccessibilityStatement" /></a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-4 ecl-site-footer__column" style="padding-left: 0px; padding-rightt: 0px;">
+				<div class="ecl-site-footer__section">
+					<div class="ecl-site-footer__title"><spring:message code="label.ContactUs" /></div>
+					<ul class="ecl-site-footer__list">
+						<li class="ecl-site-footer__list-item"><a href="${contextpath}/home/support" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.ContactInformation" /></a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-4 ecl-site-footer__column" style="padding-left: 0px; padding-rightt: 0px;">
+				<div class="ecl-site-footer__section">
+					<div class="ecl-site-footer__title"><spring:message code="label.AboutUs" /></div>
+					<ul class="ecl-site-footer__list">
+						<li class="ecl-site-footer__list-item"><a href="${contextpath}/home/about" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="message.about.title" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="${contextpath}/home/tos" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.TermsOfService" /></a></li>
+					</ul>
+				</div>
+				<div class="ecl-site-footer__section">
+					<div class="ecl-site-footer__title"><spring:message code="label.RelatedSites" /></div>
+					<ul class="ecl-site-footer__list">
+						<li class="ecl-site-footer__list-item"><a href="${contextpath}/home/documentation" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.Documentation" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="${contextpath}/home/helpparticipants" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.FAQ" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="${contextpath}/home/download" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.Download" /></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="row ecl-site-footer__row" style="width: 1206px; max-width: 100%; margin-left: auto; margin-right: auto;">
+			<div class="col-md-4 ecl-site-footer__column" style="padding-left: 0px; padding-rightt: 0px;">
+				<div class="ecl-site-footer__section"><a href="https://commission.europa.eu/index_en" class="ecl-link ecl-link--standalone ecl-site-footer__logo-link">
+					<picture class="ecl-picture ecl-site-footer__picture">
+						<img class="ecl-site-footer__logo-image" src="${contextpath}/resources/images/logo-en-new-white.svg" alt="European Commission">
+					</picture>
+				</a></div>
+			</div>
+			<div class="col-md-4 ecl-site-footer__column" style="padding-left: 0px; padding-rightt: 0px;">
+				<div class="ecl-site-footer__section ecl-site-footer__section--split-list">
+					<ul class="ecl-site-footer__list">
+						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/about-european-commission/contact_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.ContactEC" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="https://european-union.europa.eu/contact-eu/social-media-channels_en#/search?page=0&institutions=european_commission" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.FollowECSocialMedia" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/resources-partners_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.ResourcesForPartners" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/legal-notice/vulnerability-disclosure-policy_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.ReportITVulnerability" /></a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-4 ecl-site-footer__column" style="padding-left: 0px; padding-rightt: 0px;">
+				<div class="ecl-site-footer__section ecl-site-footer__section--split-list">
+					<ul class="ecl-site-footer__list">
+						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/language-policy_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.LanguagesOnWebsites" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/cookies_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.Cookies" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/privacy-policy_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.PrivacyPolicy" /></a></li>
+						<li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/legal-notice_en" class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link"><spring:message code="label.LegalNotice" /></a></li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
-
-
-<div class="bottom-footer-items">
-	<div style="width: 1206px; max-width: 100%; margin-left: auto; margin-right: auto; text-align: left;">
-		<ul style="padding: 0px;">
-			<li>
-		        <a href="https://ec.europa.eu/info/about-commissions-new-web-presence_en">About the Commission's new web presence</a>
-			</li>
-			<li>
-		        <a href="https://ec.europa.eu/info/resources-partners_en">Resources for partners  </a>
-			</li>   
-		    <li>
-		        <a href="https://ec.europa.eu/cookies/index_en.htm">${form.getMessage("label.Cookies")}</a>
-			</li>
-			 <li>
-		     	<a href="https://ec.europa.eu/geninfo/legal_notices_en.htm">${form.getMessage("label.LegalNotice")}</a>
-		    </li>
-			<li>
-		       <a href="<c:url value="/home/documentation"/>">${form.getMessage("label.Contact")}</a>
-			</li>
-			<c:if test="${showprivacy}">
-				<li>
-					<a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a>
-				</li>
-				<li>
-					<a href="<c:url value="/home/accessibilitystatement"/>"><spring:message code="label.AccessibilityStatement" /></a>
-				</li>
-				<li>
-					<a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a>
-				</li>
-			</c:if>
-		</ul>
-	</div>
- </div>
  
  <script type="text/javascript">
  	$("#versionfootertarget").text(version);

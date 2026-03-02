@@ -1,5 +1,6 @@
 package com.ec.survey.tools;
 
+import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.extended.NamedMapConverter;
 import org.apache.commons.lang.math.NumberUtils;
@@ -167,7 +168,7 @@ public class ConversionTools {
 	
 	public static String removeHTML(String htmlString)
     {
-		return removeHTML(htmlString, false);
+		return removeHTML(htmlString, false, false);
     }
 	
 	public static String escape(String input)
@@ -189,12 +190,12 @@ public class ConversionTools {
 		return Jsoup.parse(htmlString).text().trim();
 	}
 	
-	public static String removeHTML(String htmlString, boolean escape)
+	public static String removeHTML(String htmlString, boolean escape, boolean forJson)
     {
-		if (htmlString == null) return "";
+		if (htmlString == null || htmlString.isEmpty()) return "";
 		
 		String result = "";
-		
+
 		if (escape) 
 		{
 			result = HtmlUtils.htmlEscape(Jsoup.parse(htmlString).text().trim());
@@ -204,7 +205,11 @@ public class ConversionTools {
 			{
 				result = result.substring(6).trim();
 			}
-		} else {
+		} else if (forJson) {
+            Gson gson = new Gson();
+            result = gson.toJson(Jsoup.parse(htmlString).text().trim());
+            if (result.length() > 3) result = result.substring(1, result.length() - 1);
+        } else {
 			char nbsp = (char)160;
 			String nbsps = Character.toString(nbsp);
 			

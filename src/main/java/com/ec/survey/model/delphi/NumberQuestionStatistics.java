@@ -2,6 +2,7 @@ package com.ec.survey.model.delphi;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NumberQuestionStatistics {
 	private int numberVotes = 0;
@@ -30,6 +31,18 @@ public class NumberQuestionStatistics {
 	public Map<String, Integer> getValuesMagnitude() {
 		return valuesMagnitude;
 	}
+
+    public Map<String, Integer> getValuesMagnitudeFiltered(Double min, Double max) {
+        return valuesMagnitude.entrySet().stream().filter(e -> {
+            var val = Double.parseDouble(e.getKey());
+
+            if (min != null && val < min) return false;
+            if (max != null && val > max) return false;
+
+            return true;
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
 	public void setValuesMagnitude(Map<String, Integer> valuesMagnitude) {
 		this.valuesMagnitude = valuesMagnitude;
 	}

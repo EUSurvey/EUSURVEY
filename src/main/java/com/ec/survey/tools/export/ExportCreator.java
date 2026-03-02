@@ -80,7 +80,7 @@ public abstract class ExportCreator implements Runnable {
 	protected ECFService ecfService;
 	
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${sender}") String sender;
 	
 	protected @Autowired ServletContext servletContext;

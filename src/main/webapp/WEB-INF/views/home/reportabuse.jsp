@@ -89,7 +89,7 @@
 						<spring:message code="error.InvalidEmail" />
 					</div>
 					
-					<div class="captcha" style="margin-left: -20px; margin-bottom: 20px; margin-top: 40px;">						
+					<div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 40px;">
 						<c:if test="${captchaBypass !=true}">
 						<%@ include file="../captcha.jsp" %>
 						
@@ -105,8 +105,10 @@
 			       	
 			       	
 				</div>
-			
-				<button style="margin-left: 30px; margin-bottom: 50px;" type="submit" onclick="return checkReportAbuse()" class="btn btn-primary"><spring:message code="label.Report" /></button>
+
+			    <div style="text-align: center">
+				    <button style="margin-bottom: 50px;" type="submit" onclick="return checkReportAbuse()" class="btn btn-primary"><spring:message code="label.Report" /></button>
+				</div>
 			</form:form>					
 		</div>
 		

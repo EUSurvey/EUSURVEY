@@ -589,8 +589,16 @@ var ElementProperties = function() {
 
 				_actions.CopyEnabled(false);
 				_actions.CutEnabled(false);
-				_actions.MoveUpEnabled(false);
-				_actions.MoveDownEnabled(false);
+
+				var answerIndex = parent.possibleAnswers().findIndex((a) => a.id() == id);
+
+				if (parent != null && parent.order() == 0 && ((parent.type === "MultipleChoiceQuestion" && parent.styleType() == "CheckBox") || (parent.type === "SingleChoiceQuestion" && parent.styleType() == "RadioButton"))) {
+				    _actions.MoveUpEnabled(answerIndex > 0);
+				    _actions.MoveDownEnabled(answerIndex < parent.possibleAnswers().length - 1);
+				} else {
+				    _actions.MoveUpEnabled(false);
+				    _actions.MoveDownEnabled(false);
+				}
 			} else if ($(e).hasClass("numberitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';

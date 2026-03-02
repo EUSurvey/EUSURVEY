@@ -203,11 +203,13 @@
 				<table style="width:100%; margin-top: 20px;" class="overviewtable">		
 					<tr>
 						<td class="overview-label" style="vertical-align: top;"><spring:message code="label.PublishedSurveyLink" /></td>
-						<td colspan="2" style="padding-bottom: 20px;">
-							<div class="shortname" style="max-width: 500px;">
+						<td colspan="2" style="padding-bottom: 20px; position: relative;">
+							<div class="shortname" style="max-width: 500px; padding-right: 30px;">
 								<a id="lnkOverviewAccessSurvey" target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/<esapi:encodeForHTML>${form.survey.shortname}</esapi:encodeForHTML></a>
-								<a style="font-size: 20px; margin: 10px; position: absolute; margin-top: -2px;" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ShowLinksInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');"><span class="glyphicon glyphicon-info-sign"></span></a>
 							</div>
+							<a style="font-size: 20px; position: absolute; right: 40px; top:0px;" rel="tooltip"  data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />" onclick="navigator.clipboard.writeText('${serverprefix}runner/${form.survey.shortname}');"><i class="glyphicon glyphicon-copy"></i></a>
+							<a style="font-size: 20px; position: absolute; right: 10px; top:1px;" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ShowLinksInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');"><span class="glyphicon glyphicon-info-sign"></span></a>
+
 						</td>
 					</tr>	
 					<tr>
@@ -386,6 +388,7 @@
 				<td>${form.survey.language.code}</td>
 				<td>
 					<a target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/${form.survey.shortname}</a>
+					<a style="font-size: 20px; margin-left: 10px; position: absolute; margin-top: -3px;" rel="tooltip"  data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />" onclick="navigator.clipboard.writeText('${serverprefix}runner/${form.survey.shortname}');"><i class="glyphicon glyphicon-copy"></i></a>
 				</td>
 			</tr>
 			
@@ -395,6 +398,7 @@
 		 				<td>${lang}</td>
 			 			<td>
 							<a target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}">${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}</a>
+							<a style="font-size: 20px; margin-left: 10px; position: absolute; margin-top: -3px;" rel="tooltip"  data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />" onclick="navigator.clipboard.writeText('${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}');"><i class="glyphicon glyphicon-copy"></i></a>
 						</td>
 					</tr>
 		 		</c:if>

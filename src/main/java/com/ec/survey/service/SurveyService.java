@@ -51,6 +51,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -60,15 +61,15 @@ import static java.util.stream.Collectors.toList;
 @Service("surveyService")
 public class SurveyService extends BasicService {
 
-	private @Value("${publicsurveynotification}") String publicsurveynotification;
+	private @Value("${publicsurveynotification:#{null}}") String publicsurveynotification;
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${sender}") String sender;
 	private @Value("${server.prefix}") String host;
-	public @Value("${opc.notify}") String opcnotify;
-	private @Value("${monitoring.recipient}") String monitoringEmail;
-	private @Value("${opc.users}") String opcusers;
-	private @Value("${opc.department:@null}") String opcdepartments;
+	public @Value("${opc.notify:#{null}}") String opcnotify;
+	private @Value("${monitoring.recipient:#{null}}") String monitoringEmail;
+	private @Value("${opc.users:#{null}}") String opcusers;
+	private @Value("${opc.department:#{null}}") String opcdepartments;
 
 	@Autowired
 	protected SqlQueryService sqlQueryService;
@@ -109,7 +110,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Survey> getSurveys(SurveyFilter filter, SqlPagination sqlPagination) throws Exception {
+	public List<Survey> getSurveys(SurveyFilter filter, SqlPagination sqlPagination, boolean initPublishedDates) throws Exception {
 
 		//No StringBuilder needed the Compiler handles this well
 		String sql = "SELECT s.SURVEY_ID" + // 0
@@ -203,6 +204,10 @@ public class SurveyService extends BasicService {
 					survey.getTags().add(tag);
 				}
 			}
+
+            if (initPublishedDates) {
+                initPublishedDates(survey);
+            }
 
 			surveys.add(survey);
 		}
@@ -448,8 +453,8 @@ public class SurveyService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public List<Survey> getSurveysIncludingTranslationLanguages(SurveyFilter filter, SqlPagination sqlPagination,
-			boolean addInvitedAndDrafts, boolean addNumberOfReports) throws Exception {
-		List<Survey> surveys = getSurveys(filter, sqlPagination);
+			boolean addInvitedAndDrafts, boolean addNumberOfReports, boolean initPublishedDates) throws Exception {
+		List<Survey> surveys = getSurveys(filter, sqlPagination, initPublishedDates);
 		for (Survey survey : surveys) {
 			survey.setTranslations(translationService.getTranslationLanguagesForSurvey(survey.getId(), false));
 			survey.setCompleteTranslations(this.getCompletedTranslations(survey));
@@ -578,7 +583,7 @@ public class SurveyService extends BasicService {
 	public List<Survey> getPopularSurveys(SurveyFilter filter) throws Exception {
 		filter.setSortKey("replies");
 		SqlPagination sqlPagination = new SqlPagination(1, 5);
-		return getSurveys(filter, sqlPagination);
+		return getSurveys(filter, sqlPagination, false);
 	}
 
 	private String getSql(SurveyFilter filter, HashMap<String, Object> oQueryParameters) {
@@ -1468,6 +1473,22 @@ public class SurveyService extends BasicService {
 		}
 		return null;
 	}
+
+    @Transactional
+    public Survey addSkipUpdateDate(Survey survey, int userId) {
+        survey.setDBVersion(getDBVersion());
+        if (survey.getUniqueId() == null || survey.getUniqueId().length() == 0) {
+            survey.setUniqueId(UUID.randomUUID().toString());
+        }
+        Session session = sessionFactory.getCurrentSession();
+        int id = (Integer) session.save(survey);
+        Survey result = session.get(Survey.class, id);
+
+        UpdatePossibleAnswers(result);
+        session.update(result);
+
+        return result;
+    }
 
 	@Transactional
 	public Survey add(Survey survey, int userId) {
@@ -3043,10 +3064,9 @@ public class SurveyService extends BasicService {
 					
 					if (an.getValue() != null && rankingQuestions.contains(an.getQuestionUniqueId())) {
 						String[] items = an.getValue().split(";");
-						String newValue = "";
-						for (String uid : items) {
-							newValue += oldToNewUniqueIds.get(uid) + ";";
-						}
+                        var newValue = Arrays.stream(items)
+                                .map(oldToNewUniqueIds::get)
+                                .collect(Collectors.joining(";"));
 						an.setValue(newValue);
 					}
 				}
@@ -3221,6 +3241,19 @@ public class SurveyService extends BasicService {
 
 				Thread.sleep(1000);
 			}
+		}
+	}
+
+	public void copiedSurveyApplyPrivileges(Survey copy, Survey original) {
+		List<Access> accesses = this.getAccesses(original.getId());
+		for (Access access : accesses) {
+			Access accessCopy = new  Access();
+			accessCopy.setSurvey(copy);
+			accessCopy.setUser(access.getUser());
+			accessCopy.setDepartment(access.getDepartment());
+			accessCopy.setPrivileges(access.getPrivileges());
+			accessCopy.setReadonly(access.isReadonly());
+			this.saveAccess(accessCopy);
 		}
 	}
 
@@ -4100,17 +4133,17 @@ public class SurveyService extends BasicService {
 		return (List<Object>) query.list();
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<Object> GetAllRankingQuestionAnswers(String surveyUid, Set<String> rankingQuestionUids) {
+    @SuppressWarnings("unchecked")
+	private List<Object> getAllAnswersForSpecificQuestions(String surveyUid, Set<String> questionUids) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery(
 				"SELECT DISTINCT QUESTION_UID, VALUE FROM ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID JOIN SURVEYS s ON  ans.SURVEY_ID =  s.SURVEY_ID WHERE s.ISDRAFT = FALSE AND s.SURVEY_UID = :surveyUid AND a.QUESTION_UID IN (" 
-									+ StringUtils.collectionToCommaDelimitedString(rankingQuestionUids) + ")")
+									+ StringUtils.collectionToCommaDelimitedString(questionUids) + ")")
 				.setParameter("surveyUid", surveyUid);
 
 		return (List<Object>) query.list();
 	}
-	
+
 	@Transactional(readOnly = true)
 	public void checkAndRecreateMissingElements(Survey survey, ResultFilter filter) {
 		List<Element> surveyelements = survey.getElementsRecursive(true);
@@ -4118,11 +4151,14 @@ public class SurveyService extends BasicService {
 		Map<String, Element> missingelementuids = new HashMap<>();
 		Map<String, File> missingfileuids = new HashMap<>();
 		Set<String> rankingQuestionUids = new HashSet<>();
+        Set<String> numberQuestionUids = new HashSet<>();
 		for (Element element : surveyelements) {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
 			if (element instanceof RankingQuestion) {
 				rankingQuestionUids.add("'" + element.getUniqueId() + "'");
-			}
+			} else if (element instanceof ICommonNumberQuestion) {
+                numberQuestionUids.add("'" + element.getUniqueId() + "'");
+            }
 		}
 		
 		// the reporting database is not used here fore performance reasons
@@ -4154,13 +4190,6 @@ public class SurveyService extends BasicService {
 								&& !missingelementuids.containsKey(parentMatrix.getUniqueId())) {
 							survey.getMissingElements().add(parentMatrix);
 							missingelementuids.put(parentMatrix.getUniqueId(), parentMatrix);
-							if (filter != null) {
-								if (!filter.getVisibleQuestions().contains(parentMatrix.getId().toString()))
-									filter.getVisibleQuestions().add(parentMatrix.getId().toString());
-
-								if (!filter.getExportedQuestions().contains(parentMatrix.getId().toString()))
-									filter.getExportedQuestions().add(parentMatrix.getId().toString());
-							}
 
 							// check if matrix contains question
 							if (!parentMatrix.containsChild(missingquestion.getId())) {
@@ -4184,13 +4213,6 @@ public class SurveyService extends BasicService {
 								&& !missingelementuids.containsKey(parentRating.getUniqueId())) {
 							survey.getMissingElements().add(parentRating);
 							missingelementuids.put(parentRating.getUniqueId(), parentRating);
-							if (filter != null) {
-								if (!filter.getVisibleQuestions().contains(parentRating.getId().toString()))
-									filter.getVisibleQuestions().add(parentRating.getId().toString());
-
-								if (!filter.getExportedQuestions().contains(parentRating.getId().toString()))
-									filter.getExportedQuestions().add(parentRating.getId().toString());
-							}
 
 							// check if rating contains question
 							if (!(parentRating).containsChild(missingquestion.getId())) {
@@ -4209,23 +4231,19 @@ public class SurveyService extends BasicService {
 					
 					if (parent instanceof ComplexTable) {
 						ComplexTable parentComplexTable = (ComplexTable) parent;
+
+						//always insert ComplexTableItem to recreate all possibleanswers
+						missingelementuids.put(missingquestion.getUniqueId(), missingquestion);
+
 						if (surveyelementsbyuid.containsKey(parentComplexTable.getUniqueId())) {
 							// the complextable element still exists (only the cell was deleted)
 							ComplexTable table = (ComplexTable) surveyelementsbyuid
 									.get(parentComplexTable.getUniqueId());
 							table.getMissingChildElements().add((ComplexTableItem)missingquestion);
-							missingelementuids.put(missingquestion.getUniqueId(), missingquestion);
 						} else if (!surveyelementsbyuid.containsKey(parentComplexTable.getUniqueId())
 								&& !missingelementuids.containsKey(parentComplexTable.getUniqueId())) {
 							survey.getMissingElements().add(parentComplexTable);
 							missingelementuids.put(parentComplexTable.getUniqueId(), parentComplexTable);
-							if (filter != null) {
-								if (!filter.getVisibleQuestions().contains(parentComplexTable.getId().toString()))
-									filter.getVisibleQuestions().add(parentComplexTable.getId().toString());
-
-								if (!filter.getExportedQuestions().contains(parentComplexTable.getId().toString()))
-									filter.getExportedQuestions().add(parentComplexTable.getId().toString());
-							}
 
 							// check if rating contains question
 							if (!(parentComplexTable).containsChild(missingquestion.getId())) {
@@ -4240,15 +4258,9 @@ public class SurveyService extends BasicService {
 					
 					if (missingquestion instanceof RankingQuestion) {
 						rankingQuestionUids.add("'" + missingquestion.getUniqueId() + "'");
-					}
-					
-					if (filter != null) {
-						if (!filter.getVisibleQuestions().contains(missingquestion.getId().toString()))
-							filter.getVisibleQuestions().add(missingquestion.getId().toString());
-
-						if (!filter.getExportedQuestions().contains(missingquestion.getId().toString()))
-							filter.getExportedQuestions().add(missingquestion.getId().toString());
-					}
+					} else if (missingquestion instanceof ICommonNumberQuestion) {
+                        numberQuestionUids.add("'" + missingquestion.getUniqueId() + "'");
+                    }
 
 					if (missingquestion instanceof Table) {
 						for (Element child : ((Table) missingquestion).getChildElements()) {
@@ -4366,7 +4378,7 @@ public class SurveyService extends BasicService {
 		}
 		
 		if (!rankingQuestionUids.isEmpty()) {
-			List<Object> allRankingQuestionAnswers = GetAllRankingQuestionAnswers(survey.getUniqueId(), rankingQuestionUids);
+			List<Object> allRankingQuestionAnswers = getAllAnswersForSpecificQuestions(survey.getUniqueId(), rankingQuestionUids);
 			Set<String> distinctRankingItemUids = new HashSet<>();
 			for (Object o : allRankingQuestionAnswers) {
 				Object[] a = (Object[]) o;
@@ -4404,6 +4416,54 @@ public class SurveyService extends BasicService {
 				}
 			}
 		}
+
+        if (!numberQuestionUids.isEmpty()) {
+            List<Object> allNumberQuestionAnswers = getAllAnswersForSpecificQuestions(survey.getUniqueId(), numberQuestionUids);
+
+            for (Object o : allNumberQuestionAnswers) {
+                Object[] a = (Object[]) o;
+
+                String questionUID = (String) a[0];
+                String answerSt = (String) a[1];
+
+                Double answer;
+
+                try {
+                    answer = Double.valueOf(answerSt);
+                } catch (NumberFormatException e) {
+                    continue;
+                }
+
+                ICommonNumberQuestion question;
+                if (surveyelementsbyuid.containsKey(questionUID))
+                {
+                    question = (ICommonNumberQuestion) surveyelementsbyuid.get(questionUID);
+                } else if (missingelementuids.containsKey(questionUID))
+                {
+                    question = (ICommonNumberQuestion) missingelementuids.get(questionUID);
+                } else {
+                    logger.error("no number question found: " + questionUID);
+                    continue;
+                }
+
+                var delMinMax = question.getDeletedMinMax();
+                if (delMinMax == null) {
+                    delMinMax = new DeletedMinMax();
+                    delMinMax.setMin(answer);
+                    delMinMax.setMax(answer);
+                    question.setDeletedMinMax(delMinMax);
+                } else {
+                    if (answer < delMinMax.getMin()) {
+                        delMinMax.setMin(answer);
+                    }
+
+                    if (answer > delMinMax.getMax()) {
+                        delMinMax.setMax(answer);
+                    }
+                }
+
+            }
+        }
 
 		survey.setMissingElementsChecked(true);
 	}
@@ -4487,7 +4547,6 @@ public class SurveyService extends BasicService {
 		} else {
 			return false;
 		}
-
 
 		try {
 			sendChangeOwnerRequestEmail(recipientMail, changeRequest, survey);
@@ -5039,7 +5098,7 @@ public class SurveyService extends BasicService {
 	}
 
 	public void sendOPCApplyChangesMail(Survey survey, int userId) throws Exception {
-		if (survey.getIsOPC() && opcnotify != null && opcnotify.length() > 0) {
+		if (survey.getIsOPC() && opcnotify != null && !opcnotify.isEmpty()) {
 			User user = userId > 0 ? administrationService.getUser(userId) : null;
 
 			String body = "The survey <a href=\"" + host + survey.getShortname() + "/management/overview\">"
@@ -5443,7 +5502,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public void markDeleted(int surveyid, Integer userid, String shortname, String uniqueId, boolean published) {
+	public void markDeleted(Integer userid, String shortname, String uniqueId, boolean published) {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		Query<Survey> query = session
@@ -5797,6 +5856,18 @@ public class SurveyService extends BasicService {
 				.append("'>\n");
 
 		s.append("<ModifiedDate>").append(ConversionTools.getFullString4Webservice(survey.getUpdated())).append("</ModifiedDate>\n");
+
+        if (survey.getAutomaticDeletionMessage1Date() != null) {
+            s.append("<AutodeleteEmail1Sent>").append(ConversionTools.getFullString4Webservice(survey.getAutomaticDeletionMessage1Date())).append("</AutodeleteEmail1Sent>\n");
+        }
+
+        if (survey.getAutomaticDeletionMessage2Date() != null) {
+            s.append("<AutodeleteEmail2Sent>").append(ConversionTools.getFullString4Webservice(survey.getAutomaticDeletionMessage2Date())).append("</AutodeleteEmail2Sent>\n");
+        }
+
+        if (survey.getAutomaticDeletionMessage3Date() != null) {
+            s.append("<AutodeleteEmail3Sent>").append(ConversionTools.getFullString4Webservice(survey.getAutomaticDeletionMessage3Date())).append("</AutodeleteEmail3Sent>\n");
+        }
 		
 		s.append("<SurveyType>")
 				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : (survey.getIsDelphi() ? "Delphi" : "Standard")))
@@ -5868,6 +5939,8 @@ public class SurveyService extends BasicService {
 			if (survey.getEcasSecurity()) {
 				if (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("all")) {
 					s.append(";EULogin_all");
+				} else if (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("listmembers")) {
+					s.append(";EULogin_listmembers");
 				} else {
 					s.append(";EULogin_internal");
 				}
@@ -5887,6 +5960,8 @@ public class SurveyService extends BasicService {
 				.append("</DownloadContribution>\n");
 
 		s.append("<Draft>").append(survey.getSaveAsDraft() ? "yes" : "no").append("</Draft>\n");
+
+        s.append("<CollectSNC>").append(Boolean.TRUE.equals(survey.getCollectSNC()) ? "yes" : "no").append("</CollectSNC>\n");
 
 		s.append("<Skin>").append(survey.getSkin() != null ? encoder.encodeForXML(survey.getSkin().getName()) : "no skin")
 				.append("</Skin>\n");
@@ -5974,8 +6049,7 @@ public class SurveyService extends BasicService {
 								|| access.getLocalPrivileges().get(LocalPrivilege.AccessDraft) > 0));
 			}
 
-			String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
-			if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
+			if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
 				survey.setCanCreateSurveys(false);
 			}
 		}
@@ -6888,7 +6962,7 @@ public class SurveyService extends BasicService {
 	@Transactional
 	public void sendStatisticalEmails(Survey.ReportEmailFrequency reportEmailFrequency) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
-		String hql = "SELECT s.uniqueId, s.shortname, s.title, s.reportEmails FROM Survey s WHERE s.isDraft = true AND s.isActive = true AND s.isFrozen = false AND s.archived = false AND s.isDeleted = false AND s.sendReportEmail = true AND reportEmailFrequency = :frequency";
+		String hql = "SELECT s.uniqueId, s.shortname, s.title, s.reportEmails, s.sendReportEmailOnlyWhenContributionsExist FROM Survey s WHERE s.isDraft = true AND s.isActive = true AND s.isFrozen = false AND s.archived = false AND s.isDeleted = false AND s.sendReportEmail = true AND reportEmailFrequency = :frequency";
 		Query query = session.createQuery(hql).setParameter("frequency", reportEmailFrequency);
 		List<Object[]> rows = query.list();
 
@@ -6897,9 +6971,14 @@ public class SurveyService extends BasicService {
 			String alias = (String) row[1];
 			String title = (String) row[2];
 			String recipients = (String) row[3];
+            Boolean onlyWhenContributionsExist = (Boolean) row[4];
 			String[] emails = recipients.split(";");
 			int total = answerService.getNumberOfAnswerSetsPublished(uid);
 			int inPeriod = answerService.getNumberOfAnswerSetsPublishedInPeriod(uid, reportEmailFrequency);
+
+            if (inPeriod == 0 && Boolean.TRUE.equals(onlyWhenContributionsExist)) {
+                continue;
+            }
 
 			for (String email : emails) {
 				if (email.trim().isEmpty()) {
@@ -6994,4 +7073,186 @@ public class SurveyService extends BasicService {
 		return new Pair<>((Boolean)array[0], (String)array[1]);
 	}
 
+    @Transactional
+    public void save(BulkChange change) {
+        Session session = sessionFactory.getCurrentSession();
+
+        if (change.getId() != null && change.getId() > 0) {
+            change = (BulkChange) session.merge(change);
+        }
+
+        session.saveOrUpdate(change);
+    }
+
+    @Transactional
+    public BulkChange getBulkChange(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(BulkChange.class, id);
+    }
+
+    @Transactional
+    public List<String> getShortnamesForSurveys(List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) return new ArrayList<>();
+
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "SELECT s.shortname FROM Survey s WHERE s.id in (:ids)";
+        Query<String> query = session.createQuery(hql, String.class).setParameter("ids", ids);
+        return query.list();
+    }
+
+    @Transactional
+    private List<Survey> getInactiveSurveysInFuture(int days, int messageNumber, int daysSinceLastMessage) {
+        Session session = sessionFactory.getCurrentSession();
+        String sql = "SELECT s.SURVEY_ID FROM SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS m ON m.SURVEYUID = s.SURVEY_UID WHERE s.ISDRAFT = 1 AND s.DELETED != 1 AND s.ARCHIVED != 1 AND s.FROZEN != 1 AND s.DONOTDELETE != 1 AND (m.LASTANSWER is null OR m.LASTANSWER < :date) AND (s.SURVEY_UPDATED < :date)";
+        switch (messageNumber) {
+            case 1:
+                sql += " AND s.SURVEY_DELETEMESSAGEDATE1 IS NULL";
+                break;
+            case 2:
+                sql += " AND s.SURVEY_DELETEMESSAGEDATE1 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE1 <= :lastmaildate AND s.SURVEY_DELETEMESSAGEDATE2 IS NULL";
+                break;
+            case 3:
+                sql += " AND s.SURVEY_DELETEMESSAGEDATE1 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE2 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE2 <= :lastmaildate AND s.SURVEY_DELETEMESSAGEDATE3 IS NULL";
+                break;
+            case 4:
+                sql += " AND s.SURVEY_DELETEMESSAGEDATE1 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE2 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE3 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE3 <= :lastmaildate";
+                break;
+            case 5:
+                sql += " AND s.SURVEY_DELETEMESSAGEDATE1 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE2 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE2 <= :lastmaildate";
+                break;
+            case 6:
+                sql += " AND s.SURVEY_DELETEMESSAGEDATE1 IS NOT NULL AND s.SURVEY_DELETEMESSAGEDATE1 <= :lastmaildate";
+                break;
+            case 7:
+                break;
+        }
+        NativeQuery<Integer> query = session.createSQLQuery(sql);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -1 * days);
+        Date date = cal.getTime();
+        query.setParameter("date", date);
+
+        if (messageNumber != 1 && messageNumber != 7) {
+            cal.setTime(new Date());
+
+            if (daysSinceLastMessage > 0) {
+                cal.add(Calendar.DAY_OF_YEAR, -1 * daysSinceLastMessage);
+            }
+
+            Date lastmaildate = cal.getTime();
+            query.setParameter("lastmaildate", lastmaildate);
+        }
+
+        var ids = query.list();
+        var result = new ArrayList<Survey>();
+
+        for (int id : ids) {
+            result.add(getSurvey(id));
+        }
+
+        return result;
+    }
+
+    @Transactional
+    private List<Survey> getReactivatedSurveys(int days) {
+        Session session = sessionFactory.getCurrentSession();
+        String sql = "SELECT s.SURVEY_ID FROM SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS m ON m.SURVEYUID = s.SURVEY_UID WHERE s.ISDRAFT = 1 AND s.DELETED != 1 AND s.ARCHIVED != 1 AND s.FROZEN != 1 AND s.DONOTDELETE != 1 AND s.SURVEY_DELETEMESSAGEDATE1 IS NOT NULL AND ((m.LASTANSWER is not null AND m.LASTANSWER > :date) OR (s.SURVEY_UPDATED > :date))";
+
+        NativeQuery<Integer> query = session.createSQLQuery(sql);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -1 * days);
+        Date date = cal.getTime();
+        query.setParameter("date", date);
+
+        var ids = query.list();
+        var result = new ArrayList<Survey>();
+
+        for (int id : ids) {
+            result.add(getSurvey(id));
+        }
+
+        return result;
+    }
+
+    @Transactional
+    public void getInactiveSurveys(List<Survey> sendFirstEmail, List<Survey> sendSecondEmail, List<Survey> sendThirdEmail, List<Survey> delete, List<Survey> reactivated) {
+        int inactiveSurveysDays = Integer.parseInt(settingsService.get(Setting.InactiveSurveysDays));
+        int inactiveSurveysNotification1Days = Integer.parseInt(settingsService.get(Setting.InactiveSurveysNotification1Days));
+        int inactiveSurveysNotification2Days = Integer.parseInt(settingsService.get(Setting.InactiveSurveysNotification2Days));
+        int inactiveSurveysNotification3Days = Integer.parseInt(settingsService.get(Setting.InactiveSurveysNotification3Days));
+
+        // surveys to send first email
+        // each survey has to be inactive in x = inactiveSurveysDays - inactiveSurveysNotification1Days days and the first email must hot have been sent yet
+        if (inactiveSurveysNotification1Days > 0)
+            sendFirstEmail.addAll(getInactiveSurveysInFuture(inactiveSurveysDays - inactiveSurveysNotification1Days, 1, -1));
+
+        // surveys to send second email
+        // each survey has to be inactive in x = inactiveSurveysDays - inactiveSurveysNotification2Days days and the first email must have been sent but the second one must hot have been sent yet
+        // the first email must have been sent more than y = inactiveSurveysNotification1Days - inactiveSurveysNotification2Days days before
+        if (inactiveSurveysNotification2Days > 0)
+            sendSecondEmail.addAll(getInactiveSurveysInFuture(inactiveSurveysDays - inactiveSurveysNotification2Days, 2, inactiveSurveysNotification1Days - inactiveSurveysNotification2Days));
+
+        // surveys to send third email
+        // each survey has to be inactive in x = inactiveSurveysDays - inactiveSurveysNotification3Days days and the first and second emails must have been sent but the third one must hot have been sent yet
+        // the second email must have been sent more than y = inactiveSurveysNotification2Days - inactiveSurveysNotification3Days days before
+        if (inactiveSurveysNotification3Days > 0)
+            sendThirdEmail.addAll(getInactiveSurveysInFuture(inactiveSurveysDays - inactiveSurveysNotification3Days, 3, inactiveSurveysNotification2Days - inactiveSurveysNotification3Days));
+
+
+        // surveys to delete
+        if (inactiveSurveysNotification3Days > 0)
+        {
+            // all three dates
+            // each survey has to be inactive now and all three emails must have been set
+            // the third email must have been sent more than inactiveSurveysNotification3Days days before
+            delete.addAll(getInactiveSurveysInFuture(inactiveSurveysDays, 4, inactiveSurveysNotification3Days));
+        } else if (inactiveSurveysNotification2Days > 0)
+        {
+            // 2 dates
+            // each survey has to be inactive now and two emails must have been set
+            // the second email must have been sent more than inactiveSurveysNotification2Days days before
+            delete.addAll(getInactiveSurveysInFuture(inactiveSurveysDays, 5, inactiveSurveysNotification2Days));
+        } else if (inactiveSurveysNotification1Days > 0)
+        {
+            // 1 date
+            // each survey has to be inactive now and one email must have been set
+            // the email must have been sent more than inactiveSurveysNotification1Days days before
+            delete.addAll(getInactiveSurveysInFuture(inactiveSurveysDays, 6, inactiveSurveysNotification1Days));
+        } else {
+            // no date
+            // each survey has to be inactive now
+            delete.addAll(getInactiveSurveysInFuture(inactiveSurveysDays, 7, 0));
+        }
+
+        reactivated.addAll(getReactivatedSurveys(inactiveSurveysDays- inactiveSurveysNotification1Days));
+    }
+
+    @Transactional
+    public void resetInactiveDates(int surveyId) {
+        Session session = sessionFactory.getCurrentSession();
+        var query = session.createNativeQuery("UPDATE SURVEYS SET SURVEY_DELETEMESSAGEDATE1 = NULL, SURVEY_DELETEMESSAGEDATE2 = NULL, SURVEY_DELETEMESSAGEDATE3 = NULL WHERE SURVEY_ID = :id");
+        query.setParameter("id", surveyId);
+        query.executeUpdate();
+    }
+
+    @Transactional
+    public void setDeletionMessageDate(int surveyId, int message) {
+        Session session = sessionFactory.getCurrentSession();
+
+        String column = "SURVEY_DELETEMESSAGEDATE1";
+        if (message == 2) {
+            column = "SURVEY_DELETEMESSAGEDATE2";
+        } else  if (message == 3) {
+            column = "SURVEY_DELETEMESSAGEDATE3";
+        }
+
+        var query = session.createNativeQuery("UPDATE SURVEYS SET " + column +  " = :date WHERE SURVEY_ID = :id");
+        query.setParameter("id", surveyId);
+        query.setParameter("date", new Date());
+        query.executeUpdate();
+    }
 }

@@ -377,7 +377,57 @@ function initModals(item)
 				if ($(this).closest(".survey-element").length > 0) {
 					propagateChange(this);
 				}
-			 }
+			 },
+
+             beforeShow: function(input, datepickerInstance) {
+                 if (input.classList.contains("dp-autopos")) {
+                    datepickerInstance.__reposition = () => {
+                        const datePickerEl = datepickerInstance.dpDiv[0]
+                        const dpStyle = window.getComputedStyle(datePickerEl)
+                        if (dpStyle.position !== "absolute") return
+
+                        const dpBox = datePickerEl.getBoundingClientRect()
+
+                        const inputBox = input.getBoundingClientRect()
+                        const docBox = window.document.body.getBoundingClientRect()
+
+                        const wantedTop = inputBox.bottom - docBox.top
+                        const wantedLeft = inputBox.left - docBox.left
+
+                        if (wantedLeft + dpBox.width <= docBox.width) {
+                            datePickerEl.style.left = wantedLeft + "px"
+                            datePickerEl.style.right = ""
+                        } else {
+                            datePickerEl.style.left = ""
+                            datePickerEl.style.right = "0px"
+                        }
+
+                        datePickerEl.style.top = wantedTop + "px"
+                        datePickerEl.style.bottom = ""
+                    }
+
+                     window.addEventListener("resize", datepickerInstance.__reposition)
+
+                     window.setTimeout(datepickerInstance.__reposition)
+                 }
+             },
+
+            onClose: function(selectedDate, datepickerInstance) {
+                const reposListener = datepickerInstance.__reposition
+
+                if (reposListener != null) {
+                    window.removeEventListener("resize", reposListener)
+                    delete datepickerInstance.__reposition
+
+                    const datePickerEl = datepickerInstance.dpDiv[0]
+                    datePickerEl.style.top = ""
+                    datePickerEl.style.bottom = ""
+                    datePickerEl.style.left = ""
+                    datePickerEl.style.right = ""
+                }
+            }
+
+
 		});
 	
 		$(instance).parent().find(".hiddendate").each(function(){
@@ -385,11 +435,11 @@ function initModals(item)
 			$(instance).datepicker( "setDate", d );
 		});
  }
-	let firstFocusableElement;
-	let lastFocusableElement;
+	var firstFocusableElement;
+	var lastFocusableElement;
 	$(document).ready(function(){
 		$("#evoteConfirmPopup").on('shown.bs.modal', function(){
-			let focusableElements = $(this).find("a");
+			let focusableElements = $(this).find("a, button");
 			firstFocusableElement = focusableElements[0];
 			lastFocusableElement = focusableElements[focusableElements.length -1];
 			firstFocusableElement.focus();
@@ -538,9 +588,15 @@ function initModals(item)
         if ($("#ResultFilterLimit").length > 0)
 		{
             var row = $(cell).closest("tr");
-            var count = $(row).find(".yellowfilter").length + getNumberOfPredefinedFilters();
+            let filterCount =  getNumberOfPredefinedFilters();
 
-            if (count > 2)
+            //Active Filters, excluding Date
+            filterCount += $(row).find(".yellowfilter:not(:has(.datefilter))").length
+
+            //Active Date Filters
+            filterCount += $(row).find(".yellowfilter .datefilter .hiddendate").filter((_, el) => $(el).val()).length
+
+            if (filterCount > 2)
             {
                 $(row).find("input[type=text]").each(function(){
                     if (!$(this).closest("th").hasClass("yellowfilter"))
@@ -555,9 +611,19 @@ function initModals(item)
                     }
                 });
                 $(row).find("button").each(function(){
-                    if (!$(this).closest("th").hasClass("yellowfilter"))
+
+                    const jqEl = $(this)
+
+                    const dateFilter = jqEl.closest(".datefilter")
+
+                    if (!jqEl.closest("th").hasClass("yellowfilter"))
                     {
-                        $(this).addClass("disabled");
+                        jqEl.addClass("disabled");
+                    } else if (dateFilter.length > 0) {
+                        const dateInput = dateFilter.find(".hiddendate")
+                        if (!dateInput.val()) {
+                            jqEl.addClass("disabled");
+                        }
                     }
                 });
 
@@ -1082,7 +1148,7 @@ function initModals(item)
          return cs + addition;
 	}
 	
-	const addValidationError = {
+	var addValidationError = {
 			validationErrorCounter : 1,
 			commonImpl : function(element) {
 				const self = addValidationError;
@@ -1140,6 +1206,7 @@ function initModals(item)
 	function validateInput(parent, blur)
 	{
 		validationinfo = "";
+		const validationIcon = "<span class=\"glyphicon glyphicon-alert\" />&nbsp;"
 		//this is a workaround for a problem with placeholders in IE8
 		if (inPlaceHolderInit) return;
 
@@ -1576,11 +1643,12 @@ function initModals(item)
 					 		if (minD > date)
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MinDate) ";
+								const validationMessageWithIcon = validationIcon + datetoosmall;
 					 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
 								{
-									addValidationError.afterElementAndFocus(this, $(this).parent().find(".ui-datepicker-trigger").first(), valuetoosmall);
+									addValidationError.afterElementAndFocus(this, $(this).parent().find(".ui-datepicker-trigger").first(), validationMessageWithIcon);
 								} else {
-									addValidationError.afterElementAndFocus(this, $(this).parent(), valuetoosmall);
+									addValidationError.afterElementAndFocus(this, $(this).parent(), validationMessageWithIcon);
 								}
 					 			result = false;
 					 		};
@@ -1592,11 +1660,12 @@ function initModals(item)
 					 		if (maxD < date)
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MaxDate) ";
+								const validationMessageWithIcon = validationIcon + datetoolarge;
 					 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
 								{
-									addValidationError.afterElementAndFocus(this, $(this).parent().find(".ui-datepicker-trigger").first(), valuetoolarge);
+									addValidationError.afterElementAndFocus(this, $(this).parent().find(".ui-datepicker-trigger").first(), validationMessageWithIcon);
 								} else {
-									addValidationError.afterElementAndFocus(this, $(this).parent(), valuetoolarge);
+									addValidationError.afterElementAndFocus(this, $(this).parent(), validationMessageWithIcon);
 								}
 					 			result = false;
 					 		};
@@ -1640,7 +1709,7 @@ function initModals(item)
 					 		if (min > valuewithoutcolons)
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MinTime) ";
-					 			addValidationError.afterElementAndFocus(this, $(this).parent(), timevaluetoosmall);
+					 			addValidationError.afterElementAndFocus(this, $(this).parent(), validationIcon+timevaluetoosmall);
 					 			result = false;
 					 		};
 					 	} else if (strStartsWith(classes[i], 'max'))
@@ -1650,7 +1719,7 @@ function initModals(item)
 					 		if (max < valuewithoutcolons)
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MaxTime) ";
-					 			addValidationError.afterElementAndFocus(this, $(this).parent(), timevaluetoolarge);
+					 			addValidationError.afterElementAndFocus(this, $(this).parent(), validationIcon+timevaluetoolarge);
 					 			result = false;
 					 		};
 					 	};
@@ -2451,7 +2520,14 @@ function initModals(item)
 		$("#create-survey-title").text($("#new-survey-title").html());
 		
 		setCombinedSecPriv("new-survey","#create-survey-security");
-		
+
+		if ($("#new-survey-userprivileges:checked").length > 0)
+        {
+            $("#create-survey-userprivileges").val("true");
+        } else {
+            $("#create-survey-userprivileges").val("false");
+        }
+
 		$("#create-survey-audience").val($("input[name='radio-new-survey-audience']:checked").val());
 		
 		if ($("#new-survey-listform-true:checked").length > 0)
@@ -2519,7 +2595,9 @@ function initModals(item)
 		$("#create-survey-organisation").val($("#new-survey-organisation").val());
 		
 		$("#create-survey-validator").val($("#new-survey-validator").val());
-		
+
+        $("#create-survey-collect-snc").val($("#new-survey-collect-snc").is(":checked"));
+
 		if (!checkShortname($("#new-survey-shortname").val()))
 		{
 			$("#new-survey-shortname-exists").show();
@@ -2800,7 +2878,7 @@ function initModals(item)
         }
     }
 
-	let currentOverlayMenuBtn = null;
+	var currentOverlayMenuBtn = null;
 	function showOverlayMenu(btn)
 	{
 	    if ($(btn).hasClass("disabled")) {
@@ -2814,6 +2892,7 @@ function initModals(item)
 		{
 			$(overlay).hide();
 			window.removeEventListener('resize', asyncCallReposition);
+            window.removeEventListener('scroll', asyncCallReposition);
 			return;
 		}
 		
@@ -2828,10 +2907,13 @@ function initModals(item)
 		setTimeout(function(){closeOverlayDivsEnabled = true;},1000);
 
 		window.addEventListener('resize', asyncCallReposition);
+        window.addEventListener('scroll', asyncCallReposition);
 	}
 
+    var reposTimeout = 0
 	function asyncCallReposition() {
-	    setTimeout(reposition, 100);
+        clearTimeout(reposTimeout)
+	    reposTimeout = setTimeout(reposition, 10);
 	}
 	
 	function hideOverlayMenu(btn)
@@ -2919,7 +3001,7 @@ function initModals(item)
 		return sprefix + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".substring(counter,counter+1);				
 	}
 	
-	const CHART_LEGEND_LABEL_DIVISOR = 9;
+	var CHART_LEGEND_LABEL_DIVISOR = 9;
 
 
 	function truncateLabel(text, canvasWidth) {

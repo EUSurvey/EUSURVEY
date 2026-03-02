@@ -15,6 +15,7 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SqlQueryService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.SurveyHelper;
 import com.mysql.cj.util.StringUtils;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -23,6 +24,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.poi.ss.formula.functions.Rank;
 import org.hibernate.*;
 import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
@@ -119,8 +121,7 @@ public class OdfExportCreator extends ExportCreator {
 							RatingQuestion rating = (RatingQuestion) question;
 							for (Element childQuestion : rating.getQuestions()) {
 								cell = sheet.getCellByPosition(columnIndex++, rowIndex);
-								cellValue = ConversionTools.removeHTMLNoEscape(ConversionTools
-										.removeHTMLNoEscape(rating.getTitle() + ": " + childQuestion.getTitle()));
+								cellValue = rating.getStrippedTitleNoEscape2() + ": " + childQuestion.getStrippedTitleNoEscape2();
 								if (export != null && export.getShowShortnames()) {
 									cellValue += " (" + childQuestion.getShortname() + ")";
 								}
@@ -134,8 +135,7 @@ public class OdfExportCreator extends ExportCreator {
 							ComplexTable table = (ComplexTable) question;
 							for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
 								cell = sheet.getCellByPosition(columnIndex++, rowIndex);
-								cellValue = ConversionTools.removeHTMLNoEscape(
-										ConversionTools.removeHTMLNoEscape(childQuestion.getResultTitle(table)));
+								cellValue = ConversionTools.removeHTMLNoEscape(childQuestion.getResultTitle(table));
 								if (export != null && export.getShowShortnames()) {
 									cellValue += " (" + childQuestion.getShortname() + ")";
 								}
@@ -593,15 +593,14 @@ public class OdfExportCreator extends ExportCreator {
 
 									StringBuilder cellValue = new StringBuilder();
 									for (Answer answer : answers) {
-										cellValue.append((cellValue.length() > 0) ? ";" : "").append(
-												ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+										cellValue.append((cellValue.length() > 0) ? ";" : "").append(form.getAnswerTitle(answer));
 										if (export != null && export.getShowShortnames()) {
 											cellValue.append(" ").append(form.getAnswerShortname(answer));
 										}
 									}
 
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+									cell.setStringValue(cellValue.toString());
+									cell.setDisplayText(cellValue.toString());
 								}
 								cell.setValueType(Constants.STRING);
 							}
@@ -621,15 +620,14 @@ public class OdfExportCreator extends ExportCreator {
 
 									StringBuilder cellValue = new StringBuilder();
 									for (Answer answer : answers) {
-										cellValue.append((cellValue.length() > 0) ? ";" : "").append(
-												ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+										cellValue.append((cellValue.length() > 0) ? ";" : "").append(form.getAnswerTitle(answer));
 										if (export != null && export.getShowShortnames()) {
 											cellValue.append(" ").append(form.getAnswerShortname(answer));
 										}
 									}
 
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+									cell.setStringValue(cellValue.toString());
+									cell.setDisplayText(cellValue.toString());
 								}
 								cell.setValueType(Constants.STRING);
 							}
@@ -648,11 +646,10 @@ public class OdfExportCreator extends ExportCreator {
 
 									StringBuilder cellValue = new StringBuilder();
 									if (!answers.isEmpty()) {
-										cellValue.append((cellValue.length() > 0) ? ";" : "").append(
-												ConversionTools.removeHTMLNoEscape(answers.get(0).getValue(), true));
+										cellValue.append((cellValue.length() > 0) ? ";" : "").append(answers.get(0).getValue());
 									}
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+									cell.setStringValue(cellValue.toString());
+									cell.setDisplayText(cellValue.toString());
 								}
 								cell.setValueType(Constants.STRING);
 							}
@@ -763,8 +760,8 @@ public class OdfExportCreator extends ExportCreator {
 										if (answer == null)
 											answer = "";
 
-										cell.setStringValue(ConversionTools.removeHTMLNoEscape(answer, true));
-										cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answer, true));
+										cell.setStringValue(answer);
+										cell.setDisplayText(answer);
 									}
 									cell.setValueType(Constants.STRING);
 								}
@@ -774,8 +771,8 @@ public class OdfExportCreator extends ExportCreator {
 							if (answerSet == null) {
 								String v = answerrow.get(answerrowcounter++);
 								if (v != null && v.length() > 0) {
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
+									cell.setStringValue(v);
+									cell.setDisplayText(v);
 								}
 							} else {
 								List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
@@ -802,8 +799,8 @@ public class OdfExportCreator extends ExportCreator {
 									}
 								}
 
-								cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
-								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+								cell.setStringValue(cellValue.toString());
+								cell.setDisplayText(cellValue.toString());
 							}
 							cell.setValueType(Constants.STRING);
 						} else if ((question instanceof NumberQuestion || question instanceof FormulaQuestion)
@@ -901,14 +898,28 @@ public class OdfExportCreator extends ExportCreator {
 										cellValue.append(dataset);
 									} else {
 										cellValue.append((cellValue.length() > 0) ? ";" : "")
-												.append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer, question instanceof RankingQuestion)));
-										if (export != null && export.getShowShortnames() && !(question instanceof RankingQuestion)) {
-											cellValue.append(" ").append(form.getAnswerShortname(answer));
+												.append(form.getAnswerTitle(answer));
+										if (export != null && export.getShowShortnames()) {
+                                            if (question instanceof RankingQuestion) {
+                                                cellValue = new StringBuilder(SurveyHelper.insertRankingAnswerShortnames(
+                                                        cellValue.toString(),
+                                                        (RankingQuestion) question,
+                                                        " (",
+                                                        ")",
+                                                        false));
+                                            } else {
+                                                cellValue.append(" ").append(form.getAnswerShortname(answer));
+                                            }
 										}
 									}
 								}
-								cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
-								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+                                if (question instanceof FreeTextQuestion || question instanceof RankingQuestion) {
+                                    cell.setStringValue(cellValue.toString());
+                                    cell.setDisplayText(cellValue.toString());
+                                } else {
+                                    cell.setStringValue(cellValue.toString());
+                                    cell.setDisplayText(cellValue.toString());
+                                }
 							}
 							cell.setValueType(Constants.STRING);
 						}
@@ -1324,7 +1335,7 @@ public class OdfExportCreator extends ExportCreator {
 					for (File file : galleryQuestion.getAllFiles()) {
 						rowIndex++;
 
-						cellValue = ConversionTools.removeHTMLNoEscape(file.getName());
+						cellValue = file.getName();
 
 						cell = sheet.getCellByPosition(0, rowIndex);
 						cell.setStringValue(cellValue);
@@ -1738,7 +1749,7 @@ public class OdfExportCreator extends ExportCreator {
 					rowIndex++;
 				} else if (question instanceof NumberQuestion) {
 					NumberQuestion numberQuestion = (NumberQuestion) question;
-					if (numberQuestion.showStatisticsForNumberQuestion()) {
+					if (numberQuestion.showStatisticsForNumberQuestion(export.isAllAnswers())) {
 
 						cellValue = question.getTitle();
 						if (export.getShowShortnames()) {
@@ -1747,7 +1758,7 @@ public class OdfExportCreator extends ExportCreator {
 
 						CreateTableForAnswerStat(cellValue);
 
-						for (String answer : numberQuestion.getAllPossibleAnswers()) {
+						for (String answer : numberQuestion.getAllPossibleAnswers(export.isAllAnswers())) {
 							rowIndex++;
 
 							cellValue = answer;
@@ -1808,7 +1819,7 @@ public class OdfExportCreator extends ExportCreator {
 					}
 				} else if (question instanceof FormulaQuestion) {
 					FormulaQuestion formulaQuestion = (FormulaQuestion) question;
-					if (formulaQuestion.showStatisticsForNumberQuestion()) {
+					if (formulaQuestion.showStatisticsForNumberQuestion(export.isAllAnswers())) {
 
 						cellValue = question.getTitle();
 						if (export.getShowShortnames()) {
@@ -1817,7 +1828,7 @@ public class OdfExportCreator extends ExportCreator {
 
 						CreateTableForAnswerStat(cellValue);
 
-						for (String answer : formulaQuestion.getAllPossibleAnswers()) {
+						for (String answer : formulaQuestion.getAllPossibleAnswers(export.isAllAnswers())) {
 							rowIndex++;
 
 							cellValue = answer;
@@ -2032,7 +2043,7 @@ public class OdfExportCreator extends ExportCreator {
 
 					document.addParagraph("");
 				} else if (question instanceof GalleryQuestion && ((GalleryQuestion) question).getSelection()) {
-					cellValue = ConversionTools.removeHTMLNoEscape(question.getTitle());
+					cellValue = question.getStrippedTitleNoEscape2();
 					if (export != null && export.getShowShortnames()) {
 						cellValue += " (" + question.getShortname() + ")";
 					}
@@ -2042,7 +2053,7 @@ public class OdfExportCreator extends ExportCreator {
 					for (File file : galleryQuestion.getAllFiles()) {
 						Row row = table.appendRow();
 
-						cellValue = ConversionTools.removeHTMLNoEscape(file.getName());
+						cellValue = file.getName();
 
 						row.getCellByIndex(0).setStringValue(cellValue);
 
@@ -2362,7 +2373,7 @@ public class OdfExportCreator extends ExportCreator {
 				} else if (question instanceof NumberQuestion) {
 					NumberQuestion numberQuestion = (NumberQuestion) question;
 
-					if (numberQuestion.showStatisticsForNumberQuestion()) {
+					if (numberQuestion.showStatisticsForNumberQuestion(export.isAllAnswers())) {
 						cellValue = ConversionTools.removeHTMLNoEscape(question.getTitle());
 						if (export != null && export.getShowShortnames()) {
 							cellValue += " (" + question.getShortname() + ")";
@@ -2370,7 +2381,7 @@ public class OdfExportCreator extends ExportCreator {
 
 						org.odftoolkit.simple.table.Table table = CreateTableForAnswer(document, cellValue);
 
-						for (String answer : numberQuestion.getAllPossibleAnswers()) {
+						for (String answer : numberQuestion.getAllPossibleAnswers(export.isAllAnswers())) {
 							Row row = table.appendRow();
 
 							cellValue = answer;
@@ -2411,7 +2422,7 @@ public class OdfExportCreator extends ExportCreator {
 				} else if (question instanceof FormulaQuestion) {
 					FormulaQuestion formulaQuestion = (FormulaQuestion) question;
 
-					if (formulaQuestion.showStatisticsForNumberQuestion()) {
+					if (formulaQuestion.showStatisticsForNumberQuestion(export.isAllAnswers())) {
 						cellValue = ConversionTools.removeHTMLNoEscape(question.getTitle());
 						if (export != null && export.getShowShortnames()) {
 							cellValue += " (" + question.getShortname() + ")";
@@ -2419,7 +2430,7 @@ public class OdfExportCreator extends ExportCreator {
 
 						org.odftoolkit.simple.table.Table table = CreateTableForAnswer(document, cellValue);
 
-						for (String answer : formulaQuestion.getAllPossibleAnswers()) {
+						for (String answer : formulaQuestion.getAllPossibleAnswers(export.isAllAnswers())) {
 							Row row = table.appendRow();
 
 							cellValue = answer;
@@ -2475,7 +2486,7 @@ public class OdfExportCreator extends ExportCreator {
 	}
 
 	private org.odftoolkit.simple.table.Table CreateTableForAnswer(TextDocument document, String title) {
-		Paragraph paragraph = document.addParagraph(ConversionTools.removeHTMLNoEscape(title));
+		Paragraph paragraph = document.addParagraph(title);
 		paragraph.getOdfElement().setProperty(OdfParagraphProperties.KeepWithNext, "always");
 
 		Font font = paragraph.getFont();
@@ -2498,7 +2509,7 @@ public class OdfExportCreator extends ExportCreator {
 
 	private org.odftoolkit.simple.table.Table CreateTableForRankingQuestion(TextDocument document, String title,
 			int children, Border border) {
-		Paragraph paragraph = document.addParagraph(ConversionTools.removeHTMLNoEscape(title));
+		Paragraph paragraph = document.addParagraph(title);
 		paragraph.getOdfElement().setProperty(OdfParagraphProperties.KeepWithNext, "always");
 
 		Font font = paragraph.getFont();

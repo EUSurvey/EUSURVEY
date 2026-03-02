@@ -187,6 +187,7 @@ final public class Survey implements java.io.Serializable {
 	private String maxNumberContributionLink = "";
 	private Boolean sendConfirmationEmail = false;
 	private Boolean sendReportEmail = false;
+    private Boolean sendReportEmailOnlyWhenContributionsExist = false;
 	private ReportEmailFrequency reportEmailFrequency = ReportEmailFrequency.Never;
 	private String reportEmails = "";		// String with mails separated by semicolons to avoid needing to store mails in separate table
 	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
@@ -221,6 +222,10 @@ final public class Survey implements java.io.Serializable {
 	private String webhook = "";
 	private List<Tag> tags = new ArrayList<>();
 	private Boolean doNotDelete;
+    private Date automaticDeletionMessage1Date;
+    private Date automaticDeletionMessage2Date;
+    private Date automaticDeletionMessage3Date;
+    private Boolean collectSNC;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1888,6 +1893,7 @@ final public class Survey implements java.io.Serializable {
 		copy.automaticPublishing = automaticPublishing;
 		copy.sendConfirmationEmail = sendConfirmationEmail;
 		copy.sendReportEmail = sendReportEmail;
+		copy.sendReportEmailOnlyWhenContributionsExist = sendReportEmailOnlyWhenContributionsExist;
 		copy.reportEmailFrequency = reportEmailFrequency;
 		copy.reportEmails = reportEmails;
 		copy.setStart(start);
@@ -1984,6 +1990,7 @@ final public class Survey implements java.io.Serializable {
 		copy.setOrganisation(organisation);
 		copy.setValidator(validator);
 		copy.setWebhook(webhook);
+        copy.setCollectSNC(collectSNC);
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -2301,7 +2308,7 @@ final public class Survey implements java.io.Serializable {
 
 	@Transient
 	public String cleanTitle() {
-		return ConversionTools.removeHTML(title, true);
+		return ConversionTools.removeHTML(title, true, false);
 	}
 
 	@Transient
@@ -2497,7 +2504,7 @@ final public class Survey implements java.io.Serializable {
 			
 			if (question instanceof NumberQuestion) {
 				NumberQuestion number = (NumberQuestion) question;
-				if (number.showStatisticsForNumberQuestion()) {
+				if (number.showStatisticsForNumberQuestion(false)) {
 					return false;
 				}
 			}
@@ -2743,7 +2750,17 @@ final public class Survey implements java.io.Serializable {
 		this.sendReportEmail = sendReportEmail  != null ? sendReportEmail : false;
 	}
 
-	@Column(name = "SENDREPORTFREQUENCY")
+    @Column(name = "SENDREPORTONLYWHENCONTRIBUTIONSEXIST")
+    public Boolean getSendReportEmailOnlyWhenContributionsExist() {
+        return sendReportEmailOnlyWhenContributionsExist;
+    }
+
+    public void setSendReportEmailOnlyWhenContributionsExist(Boolean sendReportEmailOnlyWhenContributionsExist) {
+        this.sendReportEmailOnlyWhenContributionsExist = sendReportEmailOnlyWhenContributionsExist != null ? sendReportEmailOnlyWhenContributionsExist : false;
+    }
+
+
+    @Column(name = "SENDREPORTFREQUENCY")
 	public ReportEmailFrequency getReportEmailFrequency() {
 		return reportEmailFrequency  != null ? reportEmailFrequency : ReportEmailFrequency.Never;
 	}
@@ -2973,6 +2990,15 @@ final public class Survey implements java.io.Serializable {
 		this.doNotDelete = doNotDelete != null ? doNotDelete : false;
 	}
 
+    @Column(name = "COLLECTSNC")
+    public Boolean getCollectSNC() {
+        return collectSNC;
+    }
+
+    public void setCollectSNC(Boolean collectSNC) {
+        this.collectSNC = collectSNC != null ? collectSNC : false;
+    }
+
 	public Integer getMaxPrefVotes() {
 		if (maxPrefVotes == null) {
 			if (eVoteTemplate != null) {
@@ -3019,5 +3045,38 @@ final public class Survey implements java.io.Serializable {
 		
 		return true;
 	}
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "SURVEY_DELETEMESSAGEDATE1")
+    @DateTimeFormat(pattern = ConversionTools.DateTimeFormatSmall)
+    public Date getAutomaticDeletionMessage1Date() {
+        return automaticDeletionMessage1Date;
+    }
+
+    public void setAutomaticDeletionMessage1Date(Date automaticDeletionMessage1Date) {
+        this.automaticDeletionMessage1Date = automaticDeletionMessage1Date;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "SURVEY_DELETEMESSAGEDATE2")
+    @DateTimeFormat(pattern = ConversionTools.DateTimeFormatSmall)
+    public Date getAutomaticDeletionMessage2Date() {
+        return automaticDeletionMessage2Date;
+    }
+
+    public void setAutomaticDeletionMessage2Date(Date automaticDeletionMessage2Date) {
+        this.automaticDeletionMessage2Date = automaticDeletionMessage2Date;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "SURVEY_DELETEMESSAGEDATE3")
+    @DateTimeFormat(pattern = ConversionTools.DateTimeFormatSmall)
+    public Date getAutomaticDeletionMessage3Date() {
+        return automaticDeletionMessage3Date;
+    }
+
+    public void setAutomaticDeletionMessage3Date(Date automaticDeletionMessage3Date) {
+        this.automaticDeletionMessage3Date = automaticDeletionMessage3Date;
+    }
 
 }

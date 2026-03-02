@@ -464,50 +464,9 @@ function update(input)
 			element.display(text);
 			_undoProcessor.addUndoStep(["DisplaySlider", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
-			adaptSliderDisplay(text === "Slider");
-			
-			if (text === "Slider")
-			{
-				element.optional(true);
-				element.readonly(false)
-				element.hidden(false)
 
+            numberSliderDisplayUpdate(element)
 
-				$('#idPropertyMandatory').removeAttr("checked");
-				$('#idPropertyReadOnly').removeAttr("checked");
-
-				element.unit("");
-				$('tr[data-label=Unit]').find("input[type=text]").val("");
-				
-				if (element.min() == null)
-				{
-					$("tr[data-label='Values']").find("input[data-type='min']").val("0");
-					element.min(0);
-					element.minString("0");									
-					element.initVal = null;
-				}
-				if (element.max() == null)
-				{
-					$("tr[data-label='Values']").find("input[data-type='max']").val("10");
-					element.max(10);
-					element.maxString("10");
-				}
-				
-				if (element.minLabel() == null)
-				{
-					element.minLabel("Very unlikely");
-					$("tr[data-label='MinLabel']").find("input[type='text']").val("Very unlikely");
-				}
-				if (element.maxLabel() == null)
-				{
-					element.maxLabel("Very likely");
-					$("tr[data-label='MaxLabel']").find("input[type='text']").val("Very likely");
-				}
-				
-				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
-				checkInputStates();
-			}
-			
 			break;
 		case "MinLabel":
 			var text = $(input).val();
@@ -806,6 +765,9 @@ function update(input)
 					element.minChoices(v);
 					_undoProcessor.addUndoStep(["NumberOfChoices", id, $(_elementProperties.selectedelement).index(), oldtext, text, "min"]);
 					removeValidationMarkup($("#btnRemovePossibleAnswers").closest("tr"));
+
+                    //In case of a change update the corresponding max too, maybe its input value is valid now
+                    update($(input).closest(".minmaxtable").find("[data-type=max]"))
 				}
 			} else if ($(input).attr("data-type") == "max")
 			{
@@ -813,6 +775,9 @@ function update(input)
 				{
 					element.maxChoices(v);
 					_undoProcessor.addUndoStep(["NumberOfChoices", id, $(_elementProperties.selectedelement).index(), oldtext, text, "max"]);
+
+                    //In case of a change update the corresponding min too, maybe its input value is valid now
+                    update($(input).closest(".minmaxtable").find("[data-type=min]"))
 				}
 			}
 			break;
@@ -1071,7 +1036,7 @@ function update(input)
 					removeValidationMarkup($("#idPropertyInterdependency").closest(".firstpropertyrow"));
 				}
 			}
-			
+
 			element.isInterdependent(checked);
 			if (checked) {
 			    $(_elementProperties.selectedelement).find(".matrixtable").addClass("interdependent");
@@ -2193,4 +2158,3 @@ function updateLogicOfQuestion(radio, selectedquestion) {
 		_undoProcessor.addUndoStep(["UseAndLogic", id, $(selectedquestion).index(), oldValue, newValue]);
 	}
 }
-

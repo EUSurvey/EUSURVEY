@@ -100,10 +100,10 @@ public class ManagementController extends BasicController {
 	@Autowired
 	protected PaginationMapper paginationMapper;
 
-	public @Value("${opc.users}") String opcusers;
-	public @Value("${opc.department:@null}") String opcdepartments;
-	public @Value("${opc.template}") String opctemplatesurvey;
-	public @Value("${ecf.template}") String ecfTemplateSurvey;
+	public @Value("${opc.users:#{null}}") String opcusers;
+	public @Value("${opc.department:#{null}}") String opcdepartments;
+	public @Value("${opc.template:#{null}}") String opctemplatesurvey;
+	public @Value("${ecf.template:#{null}}") String ecfTemplateSurvey;
 	public @Value("${codaCreateDashboardLink:#{null}}") String codaCreateDashboardLink;
 	public @Value("${codaApiKey:#{null}}") String codaApiKey;
 	public @Value("${evote.template-lux:#{null}}") String evoteLuxTemplate;
@@ -393,8 +393,7 @@ public class ManagementController extends BasicController {
 				throw new ForbiddenURLException();
 			}
 
-			String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
-			if (disabled.equalsIgnoreCase("true") && u.getType().equalsIgnoreCase(User.ECAS)
+			if (settingsService.isCreateSurveysForExternalsDisabled() && u.getType().equalsIgnoreCase(User.ECAS)
 					&& u.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
 				throw new ForbiddenURLException();
 			}
@@ -645,6 +644,9 @@ public class ManagementController extends BasicController {
 		form.setResources(resources);
 		form.setSurvey(survey);
 
+		List<ParticipationGroup> groups = participationService.getAll(survey.getId());
+		form.setSurveyHasEULoginContactList(groups.stream().anyMatch(g -> g.getType() == ParticipationGroupType.Static && g.getAuthenticationMethod() == 1));
+
 		User u = sessionService.getCurrentUser(request);
 		if (!sessionService.userIsFormManager(form.getSurvey(), u, request)) {
 			throw new ForbiddenURLException();
@@ -877,8 +879,7 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
-		if (disabled.equalsIgnoreCase("true") && u.getType().equalsIgnoreCase(User.ECAS)
+		if (settingsService.isCreateSurveysForExternalsDisabled() && u.getType().equalsIgnoreCase(User.ECAS)
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
 			throw new ForbiddenURLException();
 		}
@@ -910,6 +911,8 @@ public class ManagementController extends BasicController {
 				result.getSurvey().setContactLabel(Tools.escapeHTML(parameters.get("contactlabel")[0]));
 				result.getSurvey().setAudience(Tools.escapeHTML(parameters.get("audience")[0]));
 
+                result.getSurvey().setCollectSNC("true".equals(request.getParameter("collectsnc")));
+
 				if (result.getActiveSurvey() != null) {
 					result.getActiveSurvey().setShortname(Tools.escapeHTML(parameters.get(Constants.SHORTNAME)[0]));
 					result.getActiveSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
@@ -919,6 +922,7 @@ public class ManagementController extends BasicController {
 					result.getActiveSurvey().setContact(Tools.escapeHTML(parameters.get("contact")[0]));
 					result.getActiveSurvey().setContactLabel(Tools.escapeHTML(parameters.get("contactlabel")[0]));
 					result.getActiveSurvey().setAudience(Tools.escapeHTML(parameters.get("audience")[0]));
+                    result.getActiveSurvey().setCollectSNC("true".equals(request.getParameter("collectsnc")));
 				}
 
 				if (result != null && result.getSurvey() != null) {
@@ -1088,6 +1092,7 @@ public class ManagementController extends BasicController {
 					copy.setIsEVote(request.getParameter("evote") != null
 							&& request.getParameter("evote").equalsIgnoreCase("true"));
 					copy.setSaveAsDraft(copy.getSaveAsDraft() && !copy.getIsDelphi() && !copy.getIsEVote());
+                    copy.setCollectSNC("true".equals(request.getParameter("collectsnc")));
 
 					if (copy.getIsSelfAssessment() && original.getIsSelfAssessment()) {
 						selfassessmentService.copyData(original.getUniqueId(), copy);
@@ -1096,6 +1101,10 @@ public class ManagementController extends BasicController {
 					}
 
 					surveyService.copiedSurveyApplyTranslations(copy, original, oldToNewUniqueIds, convertedUIDs, newTitle, u.getId());
+
+					if (request.getParameter("userprivileges").equalsIgnoreCase("true")) {
+						surveyService.copiedSurveyApplyPrivileges(copy, original);
+					}
 
 					Form form = new Form(resources);
 					form.setSurvey(copy);
@@ -1364,6 +1373,8 @@ public class ManagementController extends BasicController {
 			}
 			
 			uploadedSurvey.setSaveAsDraft(!uploadedSurvey.getIsQuiz());
+
+            uploadedSurvey.setCollectSNC("true".equals(request.getParameter("collectsnc")));
 
 			if (uploadedSurvey.getTitle() != null
 					&& !XHTMLValidator.validate(uploadedSurvey.getTitle(), servletContext, null)) {
@@ -1667,6 +1678,9 @@ public class ManagementController extends BasicController {
 		survey.setIsDelphiShowStartPage(uploadedSurvey.getIsDelphiShowStartPage());
 		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
 		survey.setMinNumberDelphiStatistics(uploadedSurvey.getMinNumberDelphiStatistics());
+
+        survey.setCollectSNC(uploadedSurvey.getCollectSNC());
+
 		if (survey.getIsECF() && creation) {
 			if (ecfTemplateSurvey != null && ecfTemplateSurvey.length() > 0) {
 				Survey template = surveyService.getSurveyByAlias(ecfTemplateSurvey, true);
@@ -1865,6 +1879,7 @@ public class ManagementController extends BasicController {
 			survey.setSendReportEmail(uploadedSurvey.getSendReportEmail());
 			survey.setReportEmailFrequency(uploadedSurvey.getReportEmailFrequency());
 			survey.setReportEmails(uploadedSurvey.getReportEmails());
+            survey.setSendReportEmailOnlyWhenContributionsExist(uploadedSurvey.getSendReportEmailOnlyWhenContributionsExist());
 
 			survey.setAutomaticPublishing(uploadedSurvey.getAutomaticPublishing());
 			
@@ -2441,6 +2456,7 @@ public class ManagementController extends BasicController {
 				publishedSurvey.setShowResultsTestPage(survey.getShowResultsTestPage());
 
 				publishedSurvey.setDoNotDelete(survey.getDoNotDelete());
+                publishedSurvey.setCollectSNC(survey.getCollectSNC());
 				
 				Map<Integer, Element> originalElementsById = survey.getElementsById();
 				Map<String, Element> elementsByUniqueId = publishedSurvey.getElementsByUniqueId();
@@ -3366,10 +3382,9 @@ public class ManagementController extends BasicController {
 						|| (oldAllAnswers.equalsIgnoreCase("true") && !allanswers)
 						|| (oldAllAnswers.equalsIgnoreCase("false") && allanswers));
 
-		if (filter == null || filter.getSurveyId() != survey.getId()) {
+		if (filter == null || !survey.getId().equals(filter.getSurveyId())) {
 			filter = new ResultFilter();
-		} else if (filter == null || filter.getSurveyId() != survey.getId()
-				|| (request != null && request.getMethod().equalsIgnoreCase("POST") && !ignorePostParameters)
+		} else if ((request != null && request.getMethod().equalsIgnoreCase("POST") && !ignorePostParameters)
 				|| parameters.containsKey("reset")) {
 			filter.clearResultFilter();
 		}
@@ -4090,7 +4105,12 @@ public class ManagementController extends BasicController {
 			for (String id : filter.getVisibleQuestions()) {
 				try {
 					Element el = survey.getElementsById().get(Integer.parseInt(id));
-					if (el instanceof Matrix) {
+
+                    if (allanswers && el == null) {
+                        el = survey.getMissingElementsById().get(Integer.parseInt(id));
+                    }
+
+                    if (el instanceof Matrix) {
 						visibleQuestions.add(el);
 						visibleQuestions.addAll(((Matrix) el).getQuestions());
 					} else if (el.isUsedInResults()) {
@@ -4108,7 +4128,7 @@ public class ManagementController extends BasicController {
 				result.add(answerSet.getId().toString());
 
 				for (Question question : survey.getQuestions()) {
-					if (visibleQuestions.contains(question) || survey.getMissingElements().contains(question)) {
+					if (visibleQuestions.contains(question)) {
 						if (question instanceof Matrix) {
 							for (Element matrixQuestion : ((Matrix) question).getQuestions()) {
 								StringBuilder s = new StringBuilder();
@@ -4148,7 +4168,7 @@ public class ManagementController extends BasicController {
 									}
 									
 									if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
-										s.append(form.getStrippedAnswerTitle(answer));
+										s.append(form.getEscapedAnswerTitle(answer));
 										s.append("<span class='assignedValue hideme'>").append(form.getAnswerShortname(answer))
 												.append("</span>");
 									} else {
@@ -4229,11 +4249,17 @@ public class ManagementController extends BasicController {
 										s.append(dataset.getName());
 									} else if ("EVOTE-ALL".equals(answer.getValue())){
 										s.append(form.getMessage("label.EntireList"));
+									} else if (question instanceof RankingQuestion) {
+                                        var answerText = form.getEscapedAnswerTitle(answer);
+                                        answerText = SurveyHelper.insertRankingAnswerShortnames(
+                                                answerText,
+                                                (RankingQuestion) question,
+                                                "<span class='assignedValue hideme'>(",
+                                                ")</span>",
+                                                true);
+										s.append(answerText);
 									} else {
-										s.append(form.getStrippedAnswerTitle(answer, question instanceof RankingQuestion));
-									}
-
-									if (question instanceof ChoiceQuestion) {
+                                        s.append(form.getEscapedAnswerTitle(answer));
 										s.append("<span class='assignedValue hideme'>").append(form.getAnswerShortname(answer))
 												.append("</span>");
 									}
@@ -5116,6 +5142,7 @@ public class ManagementController extends BasicController {
 		Form form;
 		boolean isEcasUser = ecas != null && ecas.equalsIgnoreCase("true");
 		boolean resultsPrivilege = request.getParameter("resultMode") != null && request.getParameter("resultMode").equalsIgnoreCase("true");
+		boolean giveFullAccess = request.getParameter("givefullaccess") != null && request.getParameter("givefullaccess").equalsIgnoreCase("true");
 		
 		form = sessionService.getForm(request, shortname, false, false);
 
@@ -5203,6 +5230,16 @@ public class ManagementController extends BasicController {
 				Access access = new Access();
 				access.setSurvey(form.getSurvey());
 				access.setUser(user);
+
+				if (giveFullAccess) {
+					var privs = new HashMap<LocalPrivilege, Integer>();
+					privs.put(LocalPrivilege.AccessDraft, 2);
+					privs.put(LocalPrivilege.AccessResults, 2);
+					privs.put(LocalPrivilege.FormManagement, 2);
+					privs.put(LocalPrivilege.ManageInvitations, 2);
+					access.setLocalPrivileges(privs);
+				}
+
 				surveyService.saveAccess(access);
 				activityService.log(ActivityRegistry.ID_DELEGATE_MANAGER_ADD, null, user.getName() + " - no privileges",
 						sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());				
@@ -5230,6 +5267,7 @@ public class ManagementController extends BasicController {
 		List<User> usersToAdd = new ArrayList<>();
 		String[] splittedEmails = Arrays.stream(emails.split(",")).map(String::trim).toArray(String[]::new);
 		boolean resultsPrivilege = request.getParameter("resultMode") != null && request.getParameter("resultMode").equalsIgnoreCase("true");
+		boolean giveFullAccess = request.getParameter("emailgivefullaccess") != null && request.getParameter("emailgivefullaccess").equalsIgnoreCase("true");
 
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
@@ -5307,6 +5345,14 @@ public class ManagementController extends BasicController {
 				Access newAccess = new Access();
 				newAccess.setSurvey(form.getSurvey());
 				newAccess.setUser(user);
+				if (giveFullAccess) {
+					var privs = new HashMap<LocalPrivilege, Integer>();
+					privs.put(LocalPrivilege.AccessDraft, 2);
+					privs.put(LocalPrivilege.AccessResults, 2);
+					privs.put(LocalPrivilege.FormManagement, 2);
+					privs.put(LocalPrivilege.ManageInvitations, 2);
+					newAccess.setLocalPrivileges(privs);
+				}
 				surveyService.saveAccess(newAccess);
 				
 				activityService.log(ActivityRegistry.ID_DELEGATE_MANAGER_ADD, null, user.getName() + " - no privileges",
@@ -5334,6 +5380,8 @@ public class ManagementController extends BasicController {
 
 		List<String> ecasInternalDomains = ldapDBService.getDomainKeySufixes();
 
+		boolean giveFullAccess = request.getParameter("groupgivefullaccess") != null && request.getParameter("groupgivefullaccess").equalsIgnoreCase("true");
+
 		if (groupname.equalsIgnoreCase("ALL-COM") || (ecasInternalDomains.contains(groupname))) {
 			departments[0] = groupname;
 		} else {
@@ -5353,6 +5401,16 @@ public class ManagementController extends BasicController {
 			Access access = new Access();
 			access.setSurvey(form.getSurvey());
 			access.setDepartment(groupname);
+
+			if (giveFullAccess) {
+				var privs = new HashMap<LocalPrivilege, Integer>();
+				privs.put(LocalPrivilege.AccessDraft, 2);
+				privs.put(LocalPrivilege.AccessResults, 2);
+				privs.put(LocalPrivilege.FormManagement, 2);
+				privs.put(LocalPrivilege.ManageInvitations, 2);
+				access.setLocalPrivileges(privs);
+			}
+
 			surveyService.saveAccess(access);
 			activityService.log(ActivityRegistry.ID_DELEGATE_MANAGER_ADD, null, groupname + " - no privileges",
 					sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
@@ -5506,6 +5564,47 @@ public class ManagementController extends BasicController {
 		Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 		Map<Element, Integer> changes = surveyService.getPendingChanges(draft);
 		return !changes.isEmpty();
+	}
+
+	@GetMapping(value = "/verifyresults", headers = "Accept=*/*")
+	public @ResponseBody int[] verifyresults(@PathVariable String shortname, HttpServletRequest request,
+															 HttpServletResponse response) throws Exception {
+		User u = sessionService.getCurrentUser(request);
+		Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
+		sessionService.upgradePrivileges(draft, u, request);
+
+		if (!u.getId().equals(draft.getOwner().getId())
+				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+			throw new ForbiddenURLException();
+		}
+
+		Survey published = surveyService.getSurvey(shortname, false, false, false, false, null, true, false);
+		List<AnswerSet> answerSets = answerService.getAllAnswers(published.getId(), null);
+
+		List<String> correct = new ArrayList<>();
+		List<String> incorrect = new ArrayList<>();
+		List<String> nochecksum = new ArrayList<>();
+
+		for (AnswerSet as : answerSets) {
+			if (as.getChecksum() == null || as.getChecksum().isEmpty()) {
+				nochecksum.add(as.getUniqueCode());
+			} else {
+				String checksum = answerService.computeChecksum(as);
+				if (checksum.equals(as.getChecksum())) {
+					correct.add(as.getUniqueCode());
+				} else {
+					incorrect.add(as.getUniqueCode());
+				}
+			}
+		}
+
+		int[] result = new int[3];
+		result[0] = correct.size();
+		result[1] = incorrect.size();
+		result[2] = nochecksum.size();
+
+		return result;
 	}
 
 	@PostMapping(value = "/requestCodaDashboard")

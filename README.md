@@ -35,7 +35,7 @@ SET GLOBAL event_scheduler = ON;
 ```
 
 ### Download source code
-Either download EUSurvey's source code as a ZIP archive an extract its content or use git to clone the repository.
+Either download EUSurvey's source code as a ZIP archive and extract its content or use git to clone the repository.
 
 
 ### Spring properties modification

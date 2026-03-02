@@ -72,12 +72,13 @@ html, body {
 	top: 0;
 	width: 100%;
 	z-index: 20000;
+	left: 0;
 }
 
 #messages-box {
-	width: 800px;
-	margin-left: auto;
-	margin-right: auto;
+	width: min(90vw, 800px);
+	margin-left: calc((100vw - min(90vw, 800px)) / 2);
+	margin-right: calc((100vw - min(90vw, 800px)) / 2);
 	margin-top: 5px;
 	text-align: left;
 }
@@ -271,6 +272,14 @@ table {
 
 .internalcaptcha input[type=text] {
 	width: 100px;
+}
+
+#internal_captcha_response {
+	width: auto;
+}
+
+#internal_captcha_response::placeholder {
+	font-size: 12px;
 }
 
 .responsiveinfo {

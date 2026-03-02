@@ -42,7 +42,7 @@ public class SurveyUpdater implements Runnable {
 	public @Autowired ServletContext servletContext;
 	
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${sender}") String sender;
 	private @Value("${server.prefix}") String host;
 	

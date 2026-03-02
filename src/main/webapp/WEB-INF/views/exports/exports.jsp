@@ -92,8 +92,9 @@
 			deleteExport(deletionId);
 		}	
 		
-		function deleteExport(id) {
-			
+		function deleteExport(id, severalExports) {
+			let exportSuccessful = true;
+
 			$.ajax({
 	            type: "POST",
 	             url: '<c:url value="/exports/delete/" />' + id,
@@ -103,17 +104,19 @@
 				  success: function(data)
 				  {
 					  if (data == "success") {
-						showSuccess("<spring:message code="message.ExportsDeletedSuccessfully" />");
+						if (!severalExports)
+							showSuccess("<spring:message code="message.ExportsDeletedSuccessfully" />");
 						$('#Row' + id).hide();
 					} else {
-						showError('<spring:message code="message.ExportsDeleteFailed" />');
+						if (!severalExports)
+							showError('<spring:message code="message.ExportsDeleteFailed" />');
+						exportSuccessful = false;
 					}
 				  }
 				});
-			
-			
-			return false;			
-		}	
+
+			return exportSuccessful;
+		}
 		
 		function showDeleteSelectedDialog() {		
 			
@@ -134,12 +137,16 @@
 		}		
 		
 		function deleteSelectedExports() {
+			let allExportsSuccessful = true;
 			$('input[type="checkbox"]:checked').filter(":visible").each( function() {
 				if (this.id != "checkAllCheckBox") {
-					deleteExport(this.id);
+					allExportsSuccessful &&= deleteExport(this.id, true);
 				}
-			});			
-			showSuccess("<spring:message code="message.ExportsDeletedSuccessfully" />");
+			});
+			if (allExportsSuccessful)
+				showSuccess("<spring:message code="message.ExportsDeletedSuccessfully" />");
+			else
+				showError('<spring:message code="message.ExportsDeleteFailed" />');
 		}
 		
 		function recreateSelectedExports() {

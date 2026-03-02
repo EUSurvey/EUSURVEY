@@ -1481,14 +1481,14 @@ public class AddressBookController extends BasicController {
 					}					
 				}
 			} else if (entry.getKey().startsWith("key")) {
-				keysMap.put(entry.getKey().substring(3), Tools.escapeHTML(entry.getValue()[0]));
+				keysMap.put(entry.getKey().substring(3), entry.getValue()[0]);
 			} else if (entry.getKey().startsWith("value")) {
-				valuesMap.put(entry.getKey().substring(5), Tools.escapeHTML(entry.getValue()[0]));
+				valuesMap.put(entry.getKey().substring(5), entry.getValue()[0]);
 			} else if (entry.getKey().startsWith("attribute")) {
 				AttributeName attributeName = attendeeService.getAttributeName(Integer.parseInt(entry.getKey().substring(9)));
 				Attribute a = new Attribute();
 				a.setAttributeName(attributeName);
-				a.setValue(Tools.escapeHTML(entry.getValue()[0]));
+				a.setValue(entry.getValue()[0]);
 				attendee.getAttributes().add(a);
 			}
 		}

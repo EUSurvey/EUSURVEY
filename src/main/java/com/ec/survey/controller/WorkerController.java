@@ -39,8 +39,8 @@ public class WorkerController extends BasicController {
 	private TaskExecutor taskExecutor;
 	
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
-	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;		
+	private @Value("${smtp.port:25}") String smtpPort;
+	private @Value("${webservice.maxrequestsperday:100}") String maxrequestsperday;
 
 	@RequestMapping(value = "createanswerpdf/{code}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
 	public @ResponseBody String createanswerpdf(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {	

@@ -435,8 +435,8 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			status = schemaService.getStatus();
 		}
 		
-		logger.info("special update for OSS release start once again step 42");
-		schemaService.createAnswerFullTextForOss();
+		//logger.info("special update for OSS release start once again step 42");
+		//schemaService.createAnswerFullTextForOss();
 
 		if (status.getDbversion() < 57)
 		{
@@ -927,12 +927,87 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			status = schemaService.getStatus();
 		}
 
-		if (status.getDbversion() < 131){
-			logger.info("starting upgrade step 131");
-			schemaService.step131();
+        if (status.getDbversion() < 129){
+            logger.info("starting upgrade step 129");
+            schemaService.step129();
+            status = schemaService.getStatus();
+        }
+
+        if (status.getDbversion() < 130){
+            logger.info("starting upgrade step 130");
+            schemaService.step130();
+            status = schemaService.getStatus();
+        }
+
+        if (status.getDbversion() < 131){
+            logger.info("starting upgrade step 131");
+            schemaService.step131();
+            status = schemaService.getStatus();
+        }
+
+        if (status.getDbversion() < 132){
+            logger.info("starting upgrade step 132");
+            schemaService.step132();
+            status = schemaService.getStatus();
+        }
+
+		if (status.getDbversion() < 133){
+			logger.info("starting upgrade step 133");
+			schemaService.step133();
 			status = schemaService.getStatus();
 		}
 	}
+
+    private static Date getDateInPast(int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -1 * days);
+        return cal.getTime();
+    }
+
+    public static void createSurveysForDeletionTests(User user, Language objLang, SurveyService surveyService) {
+        // Survey that triggers the first email
+        Survey survey = SurveyCreator.createDummySurvey(user, objLang, false, 1);
+        survey.setTitle("Test 1");
+        survey.setCreated(getDateInPast(365 - 60));
+        survey.setUpdated(survey.getCreated());
+        surveyService.addSkipUpdateDate(survey, -1);
+
+        // Survey that triggers the second email
+        Survey survey2 = SurveyCreator.createDummySurvey(user, objLang, false, 1);
+        survey2.setTitle("Test 2");
+        survey2.setCreated(getDateInPast(365 - 60 + 45));
+        survey2.setUpdated(survey2.getCreated());
+        survey2.setAutomaticDeletionMessage1Date(getDateInPast(45));
+        surveyService.addSkipUpdateDate(survey2, -1);
+
+        // Survey that triggers the third email
+        Survey survey3 = SurveyCreator.createDummySurvey(user, objLang, false, 1);
+        survey3.setTitle("Test 3");
+        survey3.setCreated(getDateInPast(365 - 60 + 45 + 13));
+        survey3.setUpdated(survey3.getCreated());
+        survey3.setAutomaticDeletionMessage1Date(getDateInPast(58));
+        survey3.setAutomaticDeletionMessage2Date(getDateInPast(13));
+        surveyService.addSkipUpdateDate(survey3, -1);
+
+        // Survey that triggers deletion
+        Survey survey4 = SurveyCreator.createDummySurvey(user, objLang, false, 1);
+        survey4.setTitle("Test 4");
+        survey4.setCreated(getDateInPast(365));
+        survey4.setUpdated(survey4.getCreated());
+        survey4.setAutomaticDeletionMessage1Date(getDateInPast(60));
+        survey4.setAutomaticDeletionMessage2Date(getDateInPast(15));
+        survey4.setAutomaticDeletionMessage3Date(getDateInPast(2));
+        surveyService.addSkipUpdateDate(survey4, -1);
+
+        // Survey that triggers reactivation email
+        Survey survey5 = SurveyCreator.createDummySurvey(user, objLang, false, 1);
+        survey5.setTitle("Test 5");
+        survey5.setCreated(getDateInPast(365));
+        survey5.setUpdated(getDateInPast(1));
+        survey5.setAutomaticDeletionMessage1Date(getDateInPast(50));
+        survey5.setAutomaticDeletionMessage2Date(getDateInPast(5));
+        surveyService.addSkipUpdateDate(survey5, -1);
+    }
 
 	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {
 		Survey survey = SurveyCreator.createDummySurvey(user, objLang, init, questions);
@@ -941,16 +1016,16 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 		survey.getPublication().setShowStatistics(true);
 		survey.getPublication().setShowCharts(true);
 		survey.getPublication().setShowSearch(true);
-	
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, 2);
-		survey.setEnd(cal.getTime());
-		
-		survey = surveyService.add(survey, -1);		
-		
-		surveyService.publish(survey, -1, -1, false, user.getId(), false, false);			
-		createDummyAnswers(survey.getShortname(), answerCount, user, fileDir, answerService, surveyService, false, resources, locale, fileService);
-		
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, 2);
+        survey.setEnd(cal.getTime());
+
+        survey = surveyService.add(survey, -1);
+
+        surveyService.publish(survey, -1, -1, false, user.getId(), false, false);
+        createDummyAnswers(survey.getShortname(), answerCount, user, fileDir, answerService, surveyService, false, resources, locale, fileService);
+
 		return survey;
 	}
 	

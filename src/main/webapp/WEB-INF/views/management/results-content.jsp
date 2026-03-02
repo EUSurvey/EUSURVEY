@@ -34,10 +34,8 @@
 			<c:set var="count" value="0" scope="page" />
 			<thead style="background-position: initial initial; background-repeat: initial initial;">
 				<tr>
+                    <th class="topaligned checkDelete question-title"><span data-toggle="tooltip" class="glyphicon glyphicon-info-sign" style="color:white;" title="<spring:message code="info.LongQuestionNameShortened" />"></span></th>
 					<c:if test="${publication == null}">
-						<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-							<th class="topaligned checkDelete question-title"><span data-toggle="tooltip" class="glyphicon glyphicon-info-sign" style="color:white;" title="<spring:message code="info.LongQuestionNameShortened" />"></span></th>
-						</c:if>
 						<th class="topaligned question-title" style="width: 150px"><div style="width: 133px"><spring:message code="label.Actions" /></div></th>
 					</c:if>
 					<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
@@ -62,7 +60,7 @@
 									</c:when>
 									<c:when test="${question.getType() == 'RatingQuestion'}">
 										<c:forEach items="${question.getQuestions()}" var="childquestion">
-											<th class="topaligned cell${childquestion.id}" question-title><div class="headertitle" title="${question.getStrippedTitle()}&nbsp;:&nbsp;${childquestion.getStrippedTitle()}">${question.getStrippedTitle()}&nbsp;:&nbsp;${childquestion.getStrippedTitle()}&nbsp;<span class="assignedValue hideme">(${childquestion.shortname})</span></div></th>
+											<th class="topaligned cell${childquestion.id} question-title"><div class="headertitle" title="${question.getStrippedTitle()}&nbsp;:&nbsp;${childquestion.getStrippedTitle()}">${question.getStrippedTitle()}&nbsp;:&nbsp;${childquestion.getStrippedTitle()}&nbsp;<span class="assignedValue hideme">(${childquestion.shortname})</span></div></th>
 											<c:set var="count" value="${count + 1}" scope="page"/>
 										</c:forEach>
 									</c:when>
@@ -116,16 +114,18 @@
 				</tr>
 				
 				<tr class="table-styled-filter">
-					<c:if test="${publication == null}">
-						<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-							<th class="checkDelete"><span data-toggle="tooltip" data-trigger="hover" data-original-title="<spring:message code="label.SelectAll" />"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></span></th>
-						</c:if>
-						<th>
-							<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-								<a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" disabled="disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
-							</c:if>
-						</th>
-					</c:if>
+                    <th class="checkDelete">
+                        <c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
+                            <span data-toggle="tooltip" data-trigger="hover" data-original-title="<spring:message code="label.SelectAll" />"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></span>
+                        </c:if>
+                    </th>
+                    <c:if test="${publication == null}">
+                        <th>
+                            <c:if test="${sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1}">
+                                <a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" disabled="disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
+                            </c:if>
+                        </th>
+                    </c:if>
 					<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
 						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
 							<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
@@ -246,7 +246,7 @@
 														  
 														  <div class="overlaymenu hideme maxH">
 														  	<button type="button" style="margin-bottom: 5px;" onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></button>
-														  	 <c:forEach items="${child.possibleAnswers}" var="possibleanswer" varStatus="status">
+														  	 <c:forEach items="${child.allPossibleAnswers}" var="possibleanswer" varStatus="status">
 														    	<div>
 															    	<c:choose>
 																		<c:when test="${filter.contains(child.id, child.uniqueId, possibleanswer.id, possibleanswer.uniqueId) }">
@@ -1195,7 +1195,7 @@
 				  cache: false,
 
 				  error: function(jqXHR) {
-                  	 showError('<spring:message code="error.unexpected" />');
+                  	 showError(`<spring:message code="error.unexpected" />`);
                   	 endreached = true;
                      inloading = false;
 					 $("#tbllist-loading").hide();
@@ -1219,9 +1219,12 @@
 						  return;
 					  }
 
-					  if ('${resultType}' == 'content')
-						  $("#scrollareaheader").css({ 'overflow-x' : 'hidden'});
-					  
+					  if ('${resultType}' == 'content') {
+                          if ($("#selectedtab").length == 0 || $("#selectedtab").val() == 1) {
+                              $("#scrollareaheader").css({ 'overflow-x' : 'hidden'});
+                          }
+                      }
+
 					  $(".deactivatedexports").hide();
 					  $(".activatedexports").show();					  
 					  
@@ -1259,7 +1262,7 @@
 										$(inp).attr("checked", "checked");
 									}
 								} else {
-									$(td).addClass("hiddenTableCell");
+									$(inp).addClass("hidden");
 								}
 							 
 								td = document.createElement("td");
@@ -1301,7 +1304,7 @@
 										$(inp).attr("checked", "checked");
 									}
 								} else {
-									$(td).addClass("hiddenTableCell");
+									$(inp).addClass("hidden");
 								}
 							 								 	
 								td = document.createElement("td");
@@ -1322,6 +1325,11 @@
 								$(td).append(a);
 								$(tr).append(td);
 							</c:when>
+                            <c:otherwise>
+                                var td = document.createElement("td");
+                                $(td).addClass("checkDelete").css("min-width","13px");
+                                tr.append(td)
+                          </c:otherwise>
 						</c:choose>
 						
 						i++; //0 is unique code
@@ -1366,7 +1374,7 @@
 												$(td).addClass("cell${question.id}");
 												var div = document.createElement("div");
 												$(div).addClass("answercell");
-												$(div).append(list[i++]);
+												$(div).append(document.createTextNode(list[i++]));
 												$(td).append(div);
 												$(tr).append(td);											
 											</c:when>
@@ -1416,7 +1424,7 @@
 											<c:otherwise>
 															
 													var td = document.createElement("td");
-													$(td).addClass("cell${question.id}");															
+													$(td).addClass("cell${question.id}");
 													var div = document.createElement("div");
 													$(div).addClass("answercell");
 													$(div).append(list[i++]);

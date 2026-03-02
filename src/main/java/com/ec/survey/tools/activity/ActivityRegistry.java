@@ -14,6 +14,7 @@ public class ActivityRegistry {
             OBJ_ACTIVITIES = "Activities",
             OBJ_RESULTS = "Results",
             OBJ_CONTRIBUTION = "Contribution",
+            OBJ_DRAFT_CONTRIBUTION = "DraftContribution",
             OBJ_TEST_CONTRIBUTION = "TestContribution",
             OBJ_GUEST_LIST = "GuestList",
             OBJ_PRIVILEGES = "Privileges",
@@ -102,7 +103,8 @@ public class ActivityRegistry {
             EVT_SUBMITTED = "Submitted",
             EVT_ACCEPTED = "Accepted",
             EVT_REJECTED = "Rejected",
-            EVT_EXPIRED = "Expired";
+            EVT_EXPIRED = "Expired",
+            EVT_RESTORED = "Restored";
 
     /**
      * Add new activity ids here
@@ -142,6 +144,8 @@ public class ActivityRegistry {
             ID_CHANGE_OWNER_REQUEST_ACCEPTED = 135, //The request to change Survey Ownership was accepted
             ID_CHANGE_OWNER_REQUEST_REJECTED = 136, //The request to change Survey Ownership was rejected
             ID_CHANGE_OWNER_REQUEST_EXPIRED = 137, //The request to change Survey Ownership has expired
+            ID_DELETED_SURVEY_RESTORED = 138, //Deleted Survey restored
+            ID_ARCHIVED_SURVEY_RESTORED = 139, //Archived Survey restored
 
             ID_SURVEY_LOADED = 201, // Survey successfully loaded
             ID_PROPERTIES = 202, // Properties updated
@@ -183,7 +187,9 @@ public class ActivityRegistry {
             ID_CHART_EXPORT = 309, // Chart export started
             ID_EXPORT_FINISHED = 310, // Export task returned
             ID_EXPORT_DELETED = 311, // Existing export task deleted
+
             ID_ACTIVITY_EXPORT = 312, // Activity export started
+
             ID_UPLOADED_ELEMENTS_PUBLISH = 313, // Upload elements publication modified
             ID_UPLOADED_ELEMENTS_DOWNLOAD = 314, // Upload elements are downloaded from results
             ID_BLANK_ANSWERS = 315, // Blank answers from question in results
@@ -200,6 +206,8 @@ public class ActivityRegistry {
             ID_TEST_DELETE = 405, // Test contribution has been deleted
             ID_TEST_EDIT = 406, // Test contribution has been modified
             ID_DRAFT_CONTRIBUTION_SUBMIT = 407, // Draft Contribution has been submitted
+            ID_CONTRIBUTION_PDF_SENT = 408, // Contribution PDF has been sent by email
+            ID_DRAFT_CONTRIBUTION_PDF_SENT = 450, // Draft Contribution PDF has been sent by email
 
             ID_GUEST_LIST_CREATED = 501, // Guestlist created
             ID_GUEST_LIST_REMOVED = 502, // Guestlist removed
@@ -220,7 +228,7 @@ public class ActivityRegistry {
             ID_COMMENT_EDITED = 801, // Comment modified by form manager
             ID_COMMENT_DELETED = 802; // Comment deleted by form manager
 
-    private final static LinkedHashMap<String, Range<Integer>> objectsMap; //Linked Map because the order is important for OBJ_ACTIVITIES and OBJ_SURVEY_AND_DRAFT
+    private final static LinkedHashMap<String, List<Range<Integer>>> objectsMap; //Linked Map because the order is important for OBJ_SURVEY_AND_DRAFT
 
     private final static Map<Integer, ActivityRegistryEntry> idToEntryMap;
     private final static Map<String, List<Integer>> propertyToIdsMap;
@@ -248,10 +256,17 @@ public class ActivityRegistry {
         registerObject(OBJ_SURVEY, 100, 199);
         registerObject(OBJ_DRAFT_SURVEY, 200, 299);
         registerObject(OBJ_SURVEY_AND_DRAFT, 100, 299);
-        registerObject(OBJ_ACTIVITIES, 312, 312);
-        registerObject(OBJ_RESULTS, 300, 399);
+
+        registerObject(OBJ_RESULTS, 300, 311);
+        registerObject(OBJ_ACTIVITIES, 312);
+        registerObject(OBJ_RESULTS, 313, 399);
+
         registerObject(OBJ_CONTRIBUTION, 400, 403);
-        registerObject(OBJ_TEST_CONTRIBUTION, 405, 499);
+        registerObject(OBJ_TEST_CONTRIBUTION, 404, 406);
+        registerObject(OBJ_DRAFT_CONTRIBUTION, 407);
+        registerObject(OBJ_CONTRIBUTION, 408, 449);
+        registerObject(OBJ_DRAFT_CONTRIBUTION, 450, 499);
+
         registerObject(OBJ_GUEST_LIST, 500, 599);
         registerObject(OBJ_PRIVILEGES, 600, 699);
         registerObject(OBJ_MESSAGES, 700, 799);
@@ -301,6 +316,8 @@ public class ActivityRegistry {
         register(PROP_OWNER, EVT_ACCEPTED, ID_CHANGE_OWNER_REQUEST_ACCEPTED);
         register(PROP_OWNER, EVT_REJECTED, ID_CHANGE_OWNER_REQUEST_REJECTED);
         register(PROP_OWNER, EVT_EXPIRED, ID_CHANGE_OWNER_REQUEST_EXPIRED);
+
+        register(PROP_NA, EVT_RESTORED, ID_DELETED_SURVEY_RESTORED, ID_ARCHIVED_SURVEY_RESTORED);
 
         //Draft Survey 200
         register(PROP_NA, EVT_OPENED, ID_SURVEY_LOADED);
@@ -362,6 +379,7 @@ public class ActivityRegistry {
         register(PROP_NA, EVT_DELETED, ID_CONTRIBUTION_DELETE, ID_TEST_DELETE);
         register(PROP_NA, EVT_SUBMITTED, ID_CONTRIBUTION_SUBMIT, ID_TEST_SUBMIT, ID_DRAFT_CONTRIBUTION_SUBMIT);
         register(PROP_NA, EVT_MODIFIED, ID_CONTRIBUTION_EDIT, ID_TEST_EDIT);
+        register(PROP_EXPORT, EVT_SENT, ID_CONTRIBUTION_PDF_SENT, ID_DRAFT_CONTRIBUTION_PDF_SENT);
 
         //Guest Lists 500
         register(PROP_TOKEN_CONTACTS_DEPARTMENT, EVT_CREATED, ID_GUEST_LIST_CREATED);
@@ -390,19 +408,20 @@ public class ActivityRegistry {
 
 
     public static String getObjectFromId(int id){
-        for (Map.Entry<String,Range<Integer>> entry : objectsMap.entrySet()){
-            if (entry.getValue().contains(id)){
-                return entry.getKey();
+        for (var entry : objectsMap.entrySet()){
+            var ranges = entry.getValue();
+            for (var r: ranges) {
+                if (r.contains(id)) return entry.getKey();
             }
         }
         return "";
     }
 
-    public static Range<Integer> getObjectRange(String object){
+    public static List<Range<Integer>> getObjectRanges(String object){
         if (objectsMap.containsKey(object)){
             return objectsMap.get(object);
         }
-        return Range.between(0, 0);
+        return Collections.emptyList();
     }
 
     public static String[] getAllObjects(){
@@ -459,8 +478,21 @@ public class ActivityRegistry {
         return sortedActivityIds;
     }
 
+    private static void registerObject(String name, int bound) {
+        registerObject(name, bound, bound);
+    }
+
     private static void registerObject(String name, int lowerBound, int upperBound){
-        objectsMap.put(name, Range.between(lowerBound, upperBound));
+        List<Range<Integer>> ranges;
+
+        if (objectsMap.containsKey(name)) {
+            ranges = objectsMap.get(name);
+        } else {
+            ranges = new ArrayList<>();
+            objectsMap.put(name, ranges);
+        }
+
+        ranges.add(Range.between(lowerBound, upperBound));
     }
 
 

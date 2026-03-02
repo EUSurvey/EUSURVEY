@@ -221,9 +221,13 @@ function getElement() {
 	return element;
 }
 
-function updateChoice(element, answers)
+function updateChoice(element, answers, positionChange)
 {
-	//var element = getElement();
+	var selectedquestion = $(_elementProperties.selectedelement);
+
+    if (positionChange) {
+        selectedquestion = $(_elementProperties.selectedelement).closest(".survey-element");
+    }
 	
 	var scorings = [];
 	
@@ -248,20 +252,20 @@ function updateChoice(element, answers)
 	if ($(_elementProperties.selectedelement).hasClass("cell")) {
 		return;
 	}
-	
-	ko.cleanNode($(_elementProperties.selectedelement)[0]);
-	$(_elementProperties.selectedelement).empty();
-	addElementToContainer(element, $(_elementProperties.selectedelement)[0], true, false);
-	addElementHandler($(_elementProperties.selectedelement));
-	
+
+	ko.cleanNode(selectedquestion[0]);
+	$(selectedquestion).empty();
+	addElementToContainer(element, selectedquestion[0], true, false);
+	addElementHandler($(selectedquestion));
+
 	updateDependenciesView();
 	checkInputStates();
-	var id = $(_elementProperties.selectedelement).attr("data-id");
-	updateNavigation($(_elementProperties.selectedelement), id);
+	var id = $(selectedquestion).attr("data-id");
+	updateNavigation($(selectedquestion), id);
 
-	var element = _elementProperties.selectedelement;
+	//var element = _elementProperties.selectedelement;
 	_elementProperties.deselectAll();
-	if (element != null) _elementProperties.showProperties($(element), null, false);
+	if (selectedquestion != null) _elementProperties.showProperties($(selectedquestion), null, false);
 }
 
 function checkInputStates()
@@ -582,7 +586,7 @@ function updatePossibleAnswers(selectedelement, text, inundo, element)
 	    }
 	}
 
-	updateChoice(element, answers);
+	updateChoice(element, answers, false);
 
 	if (!inundo)
 	{
@@ -590,6 +594,32 @@ function updatePossibleAnswers(selectedelement, text, inundo, element)
 		if (dependenciesfound) showInfo(getPropertyLabel("checkVisibilities"));
 	}
 	return true;
+}
+
+function updatePossibleAnswersPosition(answerId, question, up)
+{
+	var answers = question.possibleAnswers().slice();
+	var index = answers.findIndex((a) => a.id() == answerId);
+
+	if (up) {
+        answers = moveElement(answers, index, index - 1);
+	} else {
+	    answers = moveElement(answers, index, index + 1);
+	}
+
+	updateChoice(question, answers, true);
+
+	var newelement = $('.answertext[data-id=' + answerId + ']');
+	_elementProperties.showProperties($(newelement), null, false);
+	return true;
+}
+
+function moveElement(arr, fromIndex, toIndex) {
+    return arr.map((item, index) => {
+        if (index === toIndex) return arr[fromIndex];
+        if (index === fromIndex) return arr[toIndex];
+        return item;
+    });
 }
 
 function updateText(selectedelement, text, fromundo)

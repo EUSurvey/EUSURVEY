@@ -131,7 +131,7 @@
 					</ul>
 				</p>
 				<p>
-					<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">Create an EU Login account</a> (if you don’t already have one)
+					<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">Create an EU Login account</a> (if you don’t already have one)
 				</p>
 				<p>
 					<a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">Register your mobile phone</a> (If you don't work for an EU institution)

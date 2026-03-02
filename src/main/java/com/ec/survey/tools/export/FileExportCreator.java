@@ -44,9 +44,9 @@ public class FileExportCreator implements Runnable {
 
 	private @Value("${sender}") String sender;
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${server.prefix}") String host;
-	private @Value("${export.fileDir}") String fileDir;
+	private @Value("${export.fileDir:}") String fileDir;
 	protected @Value("${filesystem.archive}") String archiveDir;
 
 	private FileFilter filter;

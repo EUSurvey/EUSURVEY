@@ -70,44 +70,52 @@ function checkSystemMessages()
 			  refreshTimeout();
 		  }
 	  },	  
-	  success: function(message)
+	  success: function(messages)
 	  {
 		  // refresh if available
 		  if (typeof refreshTimeout === "function") { 
 			  refreshTimeout();
 		  }
+
+		  for (let i = 0; i < messages.length; i++) {
+
+		      const message = messages[i];
 		  
-		  if (message != null)
-		  {
-			  retrievedmessageversion = message.version;
-			  currentmessageversion = retrievedmessageversion;
-			  
-			  usermessage = message.userId != null;
-			  			  
-			  if (usermessage)
-			  {
-				  if (usermessageid == message.id)
-				  {
-					  //the message was already shown
-					  return;
-				  }
-				  usermessageid = message.id;
-			  }
-			  
-			  if (usermessage || retrievedmessageversion != lastshownmessageversion)
-			  {
-				  const messageModel = showSystemMessage(message);
-				  lastshownmessageversion = retrievedmessageversion;
-				  messagedisplaydate = new Date();
-				  if (message.time > 0)
-				  {
-					  window.setTimeout(() => {
-						  removeSystemMessage(messageModel)
-						  deleteUserMessage()
-					  }, message.time * 1000);
-				  }		
-			  }			  
-		  }
+              if (message != null)
+              {
+                  usermessage = message.userId != null;
+
+                  if (usermessage)
+                  {
+                      if (usermessageid == message.id)
+                      {
+                          //the message was already shown
+                          continue;
+                      }
+                      usermessageid = message.id;
+                  } else {
+                    retrievedmessageversion = message.version;
+                    currentmessageversion = retrievedmessageversion;
+                  }
+
+                  if (usermessage || retrievedmessageversion != lastshownmessageversion)
+                  {
+                      const messageModel = showSystemMessage(message);
+                      if (!usermessage) {
+                        lastshownmessageversion = retrievedmessageversion;
+                      }
+                      messagedisplaydate = new Date();
+                      if (message.time > 0)
+                      {
+                          window.setTimeout(() => {
+                              removeSystemMessage(messageModel)
+                              deleteUserMessage()
+                          }, message.time * 1000);
+                      }
+                  }
+              }
+
+          }
 		  		  
 		  window.setTimeout("checkSystemMessages()", 5 * 60 * 1000);
 	  }

@@ -53,7 +53,8 @@
 	</div>
 	
 	<div id="text-template">
-		<div class="text" data-bind="html: title"></div>
+		<div class="text" data-bind="html: title() + '&nbsp;'"></div>
+
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'text', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
@@ -402,9 +403,9 @@
 				<ul role="listbox" data-bind="foreach: orderedPossibleAnswers(false), attr: {'class':css + ' multiple-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 					<li role="listitem" data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion($parent.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '') }">
 						<label for="defaultMCListBoxTemplateID" data-bind="attr: {for: id()}">
-							<button type="button" class="unstyledbutton" data-bind="disable: $parent.readonly(), attr: {'data-shortname': shortname(), 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
+							<button type="button" class="unstyledbutton" style="text-align: left" data-bind="disable: $parent.readonly(), attr: {'data-shortname': shortname(), 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
 								<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
-								<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
+								<div data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></div>
 							</button>
 						</label>
 						<input id="defaultMCListBoxTemplateID" data-bind="value: id(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id), attr: {'name': 'answer' + $parent.id(), 'id':id(), 'data-id': $parent.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />
@@ -1317,7 +1318,7 @@
 								<!-- ko if: $parents[1].numbering() -->
 								<span data-bind='html: ($parentContext.$index() * $parents[1].columns() + $index()+1) + "."'></span>
 								<!-- /ko -->
-								<span data-bind='html: name().replace("%20"," "), attr: {id: "answerlabel" + $parents[1].id() + $index(), class:"answerlabel"}'></span>
+								<span data-bind='text: name(), attr: {id: "answerlabel" + $parents[1].id() + $index(), class:"answerlabel"}'></span>
 							</div>
 							<a onclick="showGalleryBrowser($(this).parent())">																	
 								<img class="gallery-image" alt="${form.getMessage("form.GalleryImageItem")}" data-bind="attr: {'alt': (desc() != '' ? desc() : 'Gallery Image' + $index()) + (longdesc != '' ? '; URL ' + longdesc() : ''), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px'}"  style="max-width: 100%;" />
@@ -1906,9 +1907,9 @@
 										<ul role="listbox" data-bind="attr: {'class': child.css() + ' multiple-choice', 'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questioninfo' + child.id() + ' questionhelp' + child.id()}, foreach: child.orderedPossibleAnswers(false),">
 											<li role="listitem" data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion(child.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '')}">
 												<label for="defaultComplexMCListBoxTemplateID" data-bind="attr: {for: id()}">
-													<button type="button" class="unstyledbutton" data-bind="disable: child.readonly(), attr: {'data-shortname': shortname(), 'onclick' : child.readonly() || child.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
+													<button type="button" class="unstyledbutton" style="text-align: left" data-bind="disable: child.readonly(), attr: {'data-shortname': shortname(), 'onclick' : child.readonly() || child.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this)); propagateChange($(this)); event.stopImmediatePropagation();'}" >
 														<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
-														<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
+														<div data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></div>
 													</button>
 												</label>
 												<input id="defaultComplexMCListBoxTemplateID" data-bind="value: id(), checked: getPAByQuestion2(child.uniqueId(), uniqueId(), id, $element), attr: {'name': 'answer' + child.id(), 'id':id(), 'data-id': child.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />

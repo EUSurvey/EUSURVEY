@@ -83,7 +83,7 @@ public class ReportingService extends BasicService {
 	@Autowired
 	private SqlQueryService sqlQueryService;
 	
-	protected @Value("${contextpath}") String contextpath;	
+	protected @Value("${contextpath:/eusurvey}") String contextpath;
 	
 	public enum ToDo {
 		NEWSURVEY(0), NEWCONTRIBUTION(1), CHANGEDCONTRIBUTION(2), DELETEDCONTRIBUTION(3), CHANGEDSURVEY(4), DELETEDSURVEY(5), CHANGEDDRAFTSURVEY(6), NEWTESTCONTRIBUTION(7), CHANGEDTESTCONTRIBUTION(8), DELETEDTESTCONTRIBUTION(9);

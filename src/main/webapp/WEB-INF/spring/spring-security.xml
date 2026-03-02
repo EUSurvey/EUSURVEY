@@ -49,7 +49,7 @@
 		<security:intercept-url pattern="/*/management/selfassessment/results"	access="permitAll" />
 		<security:intercept-url pattern="/ecfResultJSON"	access="permitAll" />
 		<security:intercept-url pattern="/webservice/**" access="permitAll" />
-		<security:intercept-url pattern="/worker/**" access="${workerpermission}" />
+		<security:intercept-url pattern="/worker/**" access="${workerpermission:permitAll}" />
 		<security:intercept-url pattern="/pdf/**"	access="permitAll" />
 		<security:intercept-url pattern="/errors/**"	access="permitAll" />
 		<security:intercept-url pattern="/files/**"	access="permitAll" />

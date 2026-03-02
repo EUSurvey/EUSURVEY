@@ -41,7 +41,10 @@ public class SchedulerService extends BasicService {
 
 	@Resource(name = "fileWorker")
 	private FileUpdater fileWorker;
-	
+
+    @Resource(name = "automaticSurveyDeleteWorker")
+    private AutomaticSurveyDeleteWorker automaticSurveyDeleteWorker;
+
 	@Resource(name = "exportWorker")
 	private ExportUpdater exportWorker;
 	
@@ -84,7 +87,7 @@ public class SchedulerService extends BasicService {
 	@Resource(name = "schemaService")
 	private SchemaService schemaService;
 
-	public @Value("${showecas}") String showecas;	
+	public @Value("${showecas:false}") String showecas;
 	public @Value("${host.executing.task:#{null}}") String hostExecutingTask;
 	public @Value("${host.executing.todotask:#{null}}") String hostExecutingTODOTask;
 	public @Value("${host.executing.ldaptask:#{null}}") String hostExecutingLDAPTask;
@@ -524,7 +527,8 @@ public class SchedulerService extends BasicService {
 		if (seconds > 60) {
 			return;
 		}		
-	  
+
+        automaticSurveyDeleteWorker.run();
 		exportWorker.run();
 		validCodesRemover.run();
 		archiveFlagExecutor.run();

@@ -233,6 +233,7 @@
 						<option value="dataprotection" id="dataprotectionoption"><spring:message code="support.DataProtection" /></option>
 						<option value="highaudience" id="highaudienceoption"><spring:message code="support.HighAudience" /></option>
 						<option value="organisation" id="organisationoption"><spring:message code="support.Organisation" /></option>
+						<option value="automateddeletion" id="automateddeletionoption"><spring:message code="support.AutomatedDeletion" /></option>
 						<option value="otherreason"><spring:message code="support.otherreason" /></option>						
 					</select><br /><br />
 					<script>
@@ -246,6 +247,8 @@
 							document.getElementById("dataprotectionoption").setAttribute("selected", "selected")
 						} else if (window.location.search.toLowerCase().includes("organisation")) {
 							document.getElementById("organisationoption").setAttribute("selected", "selected")
+						} else if (window.location.search.toLowerCase().includes("automateddeletion")) {
+                        	document.getElementById("automateddeletionoption").setAttribute("selected", "selected")
 						} else {
 							document.getElementById("generaloption").setAttribute("selected", "selected")
 						}

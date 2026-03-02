@@ -17,6 +17,7 @@ import com.ec.survey.tools.RestoreExecutor;
 import com.ec.survey.tools.SurveyCreationLimitExceededException;
 import com.ec.survey.tools.WeakAuthenticationException;
 
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -794,6 +795,8 @@ public class SurveySearchController extends BasicController {
 
 		String alias = request.getParameter("alias");
 		surveyService.unmarkDeleted(survey.getId(), alias);
+
+		activityService.log(ActivityRegistry.ID_DELETED_SURVEY_RESTORED, null, null, u.getId(), survey.getUniqueId());
 
 		return new ModelAndView("redirect:/" + survey.getShortname() + "/management/overview");
 	}

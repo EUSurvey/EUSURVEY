@@ -39,12 +39,12 @@ public class SessionService extends BasicService {
 	@Resource(name = "ldapService")
 	private LdapService ldapService;
 
-	private @Value("${proxy.host}") String proxyHost;
-	private @Value("${proxy.port}") String proxyPort;
-	private @Value("${proxy.user}") String proxyUser;
-	private @Value("${proxy.password}") String proxyPassword;
+	private @Value("${proxy.host:#{null}}") String proxyHost;
+	private @Value("${proxy.port:#{null}}") String proxyPort;
+	private @Value("${proxy.user:#{null}}") String proxyUser;
+	private @Value("${proxy.password:#{null}}") String proxyPassword;
 	private @Value("${pdfserver.prefix}") String pdfServerPrefix;
-	private @Value("${proxy.nonProxyHosts}") String proxyNonProxyHosts;
+	private @Value("${proxy.nonProxyHosts:#{null}}") String proxyNonProxyHosts;
 
 
 	public void setCaptchaText(HttpServletRequest request, String text) {
@@ -84,8 +84,7 @@ public class SessionService extends BasicService {
 				throw new WeakAuthenticationException();
 			}
 
-			String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
-			if (disabled.equalsIgnoreCase("true") && user.isExternal()) {
+			if (settingsService.isCreateSurveysForExternalsDisabled() && user.isExternal()) {
 				user.setCanCreateSurveys(false);
 			}
 		}
@@ -818,31 +817,33 @@ public class SessionService extends BasicService {
 	}
 
 	public void initializeProxy() {
-		System.getProperties().setProperty("http.proxyHost", proxyHost);
-		System.getProperties().setProperty("http.proxyPort", proxyPort);
-		System.getProperties().setProperty("http.proxyUser", proxyUser);
-		System.getProperties().setProperty("http.proxyPassword", proxyPassword);
+        if (!StringUtils.isEmpty(proxyHost)) {
+            System.getProperties().setProperty("http.proxyHost", proxyHost);
+            System.getProperties().setProperty("http.proxyPort", proxyPort);
+            System.getProperties().setProperty("http.proxyUser", proxyUser);
+            System.getProperties().setProperty("http.proxyPassword", proxyPassword);
 
-		System.getProperties().setProperty("https.proxyHost", proxyHost);
-		System.getProperties().setProperty("https.proxyPort", proxyPort);
-		System.getProperties().setProperty("https.proxyUser", proxyUser);
-		System.getProperties().setProperty("https.proxyPassword", proxyPassword);
+            System.getProperties().setProperty("https.proxyHost", proxyHost);
+            System.getProperties().setProperty("https.proxyPort", proxyPort);
+            System.getProperties().setProperty("https.proxyUser", proxyUser);
+            System.getProperties().setProperty("https.proxyPassword", proxyPassword);
 
-		if (StringUtils.isEmpty(proxyNonProxyHosts)) {
-			proxyNonProxyHosts = "localhost";
-		}
+            if (StringUtils.isEmpty(proxyNonProxyHosts)) {
+                proxyNonProxyHosts = "localhost";
+            }
 
-		System.setProperty("nonProxyHosts", proxyNonProxyHosts);
-		
-		logger.info("SessionService set Non proxy Host " + proxyNonProxyHosts);
-		System.getProperties().setProperty("http.nonProxyHosts", proxyNonProxyHosts);
+            System.setProperty("nonProxyHosts", proxyNonProxyHosts);
 
-		Authenticator.setDefault(new Authenticator() {
-			@Override
-			public PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
-			}
-		});
+            logger.info("SessionService set non proxy host " + proxyNonProxyHosts);
+            System.getProperties().setProperty("http.nonProxyHosts", proxyNonProxyHosts);
+
+            Authenticator.setDefault(new Authenticator() {
+                @Override
+                public PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
+                }
+            });
+        }
 
 		CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
 	}

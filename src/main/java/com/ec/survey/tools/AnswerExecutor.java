@@ -5,6 +5,8 @@ import java.io.InputStream;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 
+import com.ec.survey.service.*;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,6 @@ import org.springframework.stereotype.Service;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.AnswerService;
-import com.ec.survey.service.AttendeeService;
-import com.ec.survey.service.MailService;
-import com.ec.survey.service.PDFService;
-import com.ec.survey.service.ParticipationService;
-import com.ec.survey.service.SurveyService;
 
 @Service("answerExecutor")
 @Scope("prototype")
@@ -30,6 +26,9 @@ public class AnswerExecutor implements Runnable {
 	
 	@Resource(name="mailService")
 	private MailService mailService;
+
+    @Resource(name = "activityService")
+    protected ActivityService activityService;
 	
 	@Resource(name="answerService")
 	private AnswerService answerService;
@@ -103,6 +102,9 @@ public class AnswerExecutor implements Runnable {
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 								
 				logger.info("finished creation of answer pdf for " + contributionordraft + " " + answerSet.getUniqueCode() + " to be sent to " + email);
+
+                activityService.log(answerSet.getIsDraft() ? ActivityRegistry.ID_DRAFT_CONTRIBUTION_PDF_SENT : ActivityRegistry.ID_CONTRIBUTION_PDF_SENT, null, answerSet.getUniqueCode() + ", " + email, -1, answerSet.getSurvey().getUniqueId());
+
 				mailService.SendHtmlMail(email, from, from, "Copy of your PDF " + contributionordraft, text, file, answerSet.getUniqueCode());
 			}
 		} catch (Exception e) {

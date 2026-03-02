@@ -17,6 +17,7 @@ import org.owasp.esapi.errors.ValidationException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -344,5 +345,10 @@ public class Tools {
 		}
 		return index <= list.size() -1 ? list.get(index) : defaultValue;
 	}
+
+    public static LocalDate DateToLocalDate(Date date) {
+        Instant instant = date.toInstant();
+        return instant.atZone(ZoneId.of("CET")).toLocalDate();
+    }
 
 }

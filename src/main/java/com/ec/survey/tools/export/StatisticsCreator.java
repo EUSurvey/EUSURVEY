@@ -178,7 +178,7 @@ public class StatisticsCreator implements Runnable {
 						numberOfAnswersMap);
 			} else if (element instanceof NumberQuestion) {
 				NumberQuestion number = (NumberQuestion) element;
-				if (number.showStatisticsForNumberQuestion()) {
+				if (number.showStatisticsForNumberQuestion(allanswers)) {
 					addStatistics4NumberQuestion(survey, number, statistics, numberOfNumberAnswersMap, numberOfAnswersMap);
 				}
 				if (survey.getIsQuiz() && number.getScoring() > 0) {
@@ -186,7 +186,7 @@ public class StatisticsCreator implements Runnable {
 				}
 			} else if (element instanceof FormulaQuestion) {
 				FormulaQuestion formula = (FormulaQuestion) element;
-				if (formula.showStatisticsForNumberQuestion()) {
+				if (formula.showStatisticsForNumberQuestion(allanswers)) {
 					addStatistics4NumberQuestion(survey, formula, statistics, numberOfNumberAnswersMap, numberOfAnswersMap);
 				}
 				if (survey.getIsQuiz() && formula.getScoring() > 0) {
@@ -485,8 +485,8 @@ public class StatisticsCreator implements Runnable {
 			
 		} else if (q instanceof NumberQuestion) {
 			NumberQuestion number = (NumberQuestion) q;
-			if (number.showStatisticsForNumberQuestion()) {
-				for (String answer : number.getAllPossibleAnswers()) {
+			if (number.showStatisticsForNumberQuestion(allanswers)) {
+				for (String answer : number.getAllPossibleAnswers(allanswers)) {
 					int count = reportingService.getCount(survey, number.getUniqueId(), answer, true, true, false, where, values);
 					mapNumberQuestion.put(number.getUniqueId() + answer, count);
 				}
@@ -495,8 +495,8 @@ public class StatisticsCreator implements Runnable {
 			map.put(q.getId(), count);
 		} else if (q instanceof FormulaQuestion) {
 			FormulaQuestion formula = (FormulaQuestion) q;
-			if (formula.showStatisticsForNumberQuestion()) {
-				for (String answer : formula.getAllPossibleAnswers()) {
+			if (formula.showStatisticsForNumberQuestion(allanswers)) {
+				for (String answer : formula.getAllPossibleAnswers(allanswers)) {
 					int count = reportingService.getCount(survey, formula.getUniqueId(), answer, true, true, false, where, values);
 					mapNumberQuestion.put(formula.getUniqueId() + answer, count);
 				}
@@ -679,7 +679,7 @@ public class StatisticsCreator implements Runnable {
 			ComplexTableItem child = (ComplexTableItem) q;
 			
 			if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
-				for (PossibleAnswer a : child.getPossibleAnswers()) {
+				for (PossibleAnswer a : child.getAllPossibleAnswers()) {
 					if (countsUID.containsKey(a.getUniqueId() + "#" + q.getUniqueId())) {
 						map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + q.getUniqueId()));
 					}
@@ -961,10 +961,7 @@ public class StatisticsCreator implements Runnable {
 		Set<String> numberQuestionUids = new HashSet<>();
 		Map<String, List<String>> rankingQuestionAnswers = new HashMap<>();
 		for (Question q : survey.getQuestions()) {
-			if (q instanceof NumberQuestion && ((NumberQuestion)q).showStatisticsForNumberQuestion()) {
-				numberQuestionUids.add(q.getUniqueId());
-			}
-			if (q instanceof FormulaQuestion && ((FormulaQuestion)q).showStatisticsForNumberQuestion()) {
+			if (q instanceof ICommonNumberQuestion && ((ICommonNumberQuestion)q).showStatisticsForNumberQuestion(allanswers)) {
 				numberQuestionUids.add(q.getUniqueId());
 			}
 			if (q instanceof RankingQuestion) {
@@ -1064,10 +1061,7 @@ public class StatisticsCreator implements Runnable {
 		
 		Set<String> numberQuestionUids = new HashSet<>();
 		for (Question q : survey.getQuestions()) {
-			if (q instanceof NumberQuestion && ((NumberQuestion)q).showStatisticsForNumberQuestion()) {
-				numberQuestionUids.add(q.getUniqueId());
-			}
-			if (q instanceof FormulaQuestion && ((FormulaQuestion)q).showStatisticsForNumberQuestion()) {
+			if (q instanceof ICommonNumberQuestion && ((ICommonNumberQuestion)q).showStatisticsForNumberQuestion(allanswers)) {
 				numberQuestionUids.add(q.getUniqueId());
 			}
 			if (q instanceof RankingQuestion) {
@@ -1379,10 +1373,8 @@ public class StatisticsCreator implements Runnable {
 		int total = survey.getNumberOfAnswerSets();
 
 		List<String> answers;
-		if (number instanceof NumberQuestion) {
-			answers = ((NumberQuestion)number).getAllPossibleAnswers();
-		} else if (number instanceof FormulaQuestion) {
-			answers = ((FormulaQuestion)number).getAllPossibleAnswers();
+		if (number instanceof ICommonNumberQuestion) {
+			answers = ((ICommonNumberQuestion)number).getAllPossibleAnswers(allanswers);
 		} else {
 			answers = ((ComplexTableItem)number).getPossibleNumberAnswers();
 		}

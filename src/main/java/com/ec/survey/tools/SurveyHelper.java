@@ -15,6 +15,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
+import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
@@ -278,7 +280,7 @@ public class SurveyHelper {
 	public static Map<Element, String>  validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
 			Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid,
 			HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService)
-			throws InterruptedException, IOException {
+            throws Exception {
 		return validateAnswerSet(answerSet, answerService,
 						invisibleElements, resources, locale, draftid,
 						request, skipDraftCreation, user, fileService, answerSet.getSurvey().getElements());
@@ -287,7 +289,7 @@ public class SurveyHelper {
 	public static Map<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
 			Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid,
 			HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService, List<Element> elements)
-			throws InterruptedException, IOException {
+            throws Exception {
 		Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 		HashMap<Element, String> result = new HashMap<>();
 
@@ -393,7 +395,7 @@ public class SurveyHelper {
 			if (draft != null) {
 				SurveyHelper.parseAndMergeAnswerSet(request, answerSet.getSurvey(),
 						answerSet.getUniqueCode(), draft.getAnswerSet(), answerSet.getLanguageCode(), user,
-						fileService);
+						fileService, true);
 				draft.getAnswerSet().setIsDraft(true); // this also sets the ISDRAFT flag of the answers inside the
 														// answerset
 				uid = draft.getUniqueId();
@@ -406,11 +408,16 @@ public class SurveyHelper {
 				draft.setAnswerSet(answerSet);
 			}
 
-			try {
-				answerService.saveDraft(draft, false);
-			} catch (Exception e) {
-				//ignore
+			//check that all readonly mandatory questions are answered
+			Question q = SurveyHelper.getFirstUnansweredMandatoryReadonlyQuestion(draft.getAnswerSet());
+			if (q != null) {
+				String errorMessage = "Save as draft rejected as the draft contribution would be missing a value for this mandatory read-only question: " + q.getUniqueId();
+				logger.error(errorMessage);
+				throw new Exception(errorMessage);
 			}
+
+
+			answerService.saveDraft(draft, false);
 
 			result.put(new DraftIDElement(), uid);
 		}
@@ -967,7 +974,7 @@ public class SurveyHelper {
 		
 	}
 
-	public static AnswerSet parseAndMergeAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
+	public static AnswerSet parseAndMergeAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService, boolean isSaveDraft) throws IOException {
 		if (user == null && survey.getIsOPC()) {
 			// edit contribution
 			user = new User();
@@ -976,6 +983,7 @@ public class SurveyHelper {
 		// keep passwords
 		Map<String, String> passwordValues = new HashMap<>();
 		Set<String> uploadedFiles = new HashSet<>();
+        Set<String> readonlyQuestionUIDs = new HashSet<>();
 		for (Element element : survey.getElements()) {
 			if (element instanceof FreeTextQuestion) {
 				FreeTextQuestion q = (FreeTextQuestion) element;
@@ -1011,7 +1019,45 @@ public class SurveyHelper {
 					}
 				}
 			}
+
+            if (isSaveDraft) {
+                if (element instanceof Question && ((Question) element).getReadonly()) {
+                    readonlyQuestionUIDs.add(element.getUniqueId());
+
+                    // if a matrix/table is readonly, all its children are readonly
+                    if (element instanceof MatrixOrTable) {
+                        MatrixOrTable parent = (MatrixOrTable) element;
+                        for (Element child : parent.getQuestions()) {
+                            readonlyQuestionUIDs.add(child.getUniqueId());
+                        }
+                    }
+                }
+
+                // elements inside a ComplexTable can also be readonly
+                if (element instanceof ComplexTable) {
+                    ComplexTable parent = (ComplexTable) element;
+                    for (Question child : parent.getQuestionChildElements()) {
+                        if (child.getReadonly()) {
+                            readonlyQuestionUIDs.add(child.getUniqueId());
+                        }
+                    }
+                }
+            }
 		}
+
+        Map<String, Map<String, Answer>> readonlyAnswers = new HashMap<>();
+        if (isSaveDraft) {
+            for (Answer answer : answerSet.getAnswers()) {
+                if (readonlyQuestionUIDs.contains(answer.getQuestionUniqueId())) {
+                    if (!readonlyAnswers.containsKey(answer.getQuestionUniqueId())) {
+                        readonlyAnswers.put(answer.getQuestionUniqueId(), new HashMap<>());
+                    }
+
+                    String pa =  answer.getPossibleAnswerUniqueId() == null ? "" : answer.getPossibleAnswerUniqueId();
+                    readonlyAnswers.get(answer.getQuestionUniqueId()).put(pa, answer);
+                }
+            }
+        }
 
 		answerSet.getAnswers().clear();
 
@@ -1021,6 +1067,15 @@ public class SurveyHelper {
 		for (Answer answer : parsedAnswerSet.getAnswers()) {
 			answer.setAnswerSet(answerSet);
 			try {
+                if (readonlyQuestionUIDs.contains(answer.getQuestionUniqueId())) {
+                    String pa =  answer.getPossibleAnswerUniqueId() == null ? "" : answer.getPossibleAnswerUniqueId();
+                    Answer originalAnswer = readonlyAnswers.get(answer.getQuestionUniqueId()).get(pa);
+                    if (originalAnswer != null) {
+                        answer.setValue(originalAnswer.getValue());
+                        answer.setPossibleAnswerUniqueId(originalAnswer.getPossibleAnswerUniqueId());
+                    }
+                }
+
 				if (answer.getValue() != null && answer.getValue().equalsIgnoreCase("********")
 						&& passwordValues.containsKey(answer.getQuestionUniqueId())) {
 					answer.setValue(passwordValues.get(answer.getQuestionUniqueId()));
@@ -5733,7 +5788,20 @@ public class SurveyHelper {
 		return false;
 	}
 
-	public static String getAnswerTitle(Survey survey, Answer answer, boolean publicationMode, boolean addAssignedValue) {
+    public static String insertRankingAnswerShortnames(String answer, RankingQuestion question, String prefix, String suffix, boolean isEscaped) {
+        for (RankingItem item : question.getChildElements()) {
+            var replaceName = item.getStrippedTitleNoEscape2();
+            if (isEscaped) {
+                replaceName = ConversionTools.escape(replaceName);
+            }
+            var nameWithId = replaceName + prefix + item.getShortname() + suffix;
+            answer = answer.replace(replaceName, nameWithId);
+        }
+        return answer;
+    }
+
+    //The output is unescaped, but with all HTML stylings removed
+	public static String getAnswerTitle(Survey survey, Answer answer, boolean publicationMode) {
 		String answerValue = answer.getValue();
 
 		try {
@@ -5790,7 +5858,7 @@ public class SurveyHelper {
 					return answerValue;
 				} else if (question instanceof RankingQuestion) {
 					RankingQuestion rankingQuestion = (RankingQuestion) question;
-					List<String> answerTitles = rankingQuestion.getAnswerWithStrippedTitleNoEscape(answerValue, addAssignedValue);
+					List<String> answerTitles = rankingQuestion.getAnswerWithStrippedTitleNoEscape(answerValue);
 					return String.join("; ", answerTitles);
 				} else if (question instanceof ChoiceQuestion) {
 					if (answerValue.equalsIgnoreCase("EVOTE-ALL")) {

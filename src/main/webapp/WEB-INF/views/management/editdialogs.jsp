@@ -384,7 +384,12 @@
 	 	}	 	
 	 	function getMinMaxChoice(min,max)
 	 	{
-	 		var s = '<spring:message code="limits.MinMaxChoicesNew" arguments="[min],[max]" />';
+            let s
+            if (min == max) {
+                s =  '<spring:message code="limits.MinMaxChoicesEqual" arguments="[min]" />';
+            } else {
+                s = '<spring:message code="limits.MinMaxChoicesNew" arguments="[min],[max]" />';
+            }
 	 		return s.replace("[min]", min).replace("[max]", max);
 	 	}
 	 	function getMinChoice(min)

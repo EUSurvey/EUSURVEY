@@ -377,6 +377,8 @@ function getCombinedAnswerText(useparagraphs)
 	}	
 	
 	var element = getElement();
+
+	if (element == null) return "";
 	
 	var result = "";
 	var arr = [];

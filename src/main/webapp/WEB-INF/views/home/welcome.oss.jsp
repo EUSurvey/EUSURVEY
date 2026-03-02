@@ -52,18 +52,18 @@
 					  cache: false,
 					  success: function( data ) {						  
 						  if (data == "success") {
-								$('#download-contribution-dialog').modal('hide');
-								showPublicationExportSuccessMessage2();
-						  	} else if (data == "errorcaptcha") {
-						  		$("#runner-captcha-error").show();
-						  		reloadCaptcha()
-						  	} else if (data == "errorcaseid") {
-						  		$("#download-contribution-dialog-caseid-error").show();
-						  		reloadCaptcha()
-							} else {
-								showError('<spring:message code="error.unexpected" />');
-								reloadCaptcha()
-							};
+							$('#download-contribution-dialog').modal('hide');
+							  $("#caseid").val("");
+							  $("#emailcontribution").val("");
+							showPublicationExportSuccessMessage2();
+						  } else if (data == "errorcaptcha") {
+							$("#runner-captcha-error").show();
+						  } else if (data == "errorcaseid") {
+							$("#download-contribution-dialog-caseid-error").show();
+						  } else {
+							showError('<spring:message code="error.unexpected" />');
+						  }
+						  reloadCaptcha();
 					}
 				});				
 			} else {

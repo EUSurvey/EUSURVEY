@@ -493,7 +493,7 @@
 				</li>
 			</ul>
 			<p>
-				<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">
+				<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">
 					Créez un compte EU Login
 				</a>
 				(si ce n’est déjà fait)
@@ -671,29 +671,6 @@
 						de l’enquête, à ses traductions, à ses propriétés, etc.
 					</li>
 				</ol>
-			</p>
-			<h2>
-				Comment exporter une enquête existante?
-			</h2>
-			<p>
-				Sur la page «Enquêtes», recherchez l’enquête à exporter. Vous pouvez:
-			</p>
-			<ul>
-				<li>
-					soit cliquer sur l’icône «Exporter»;
-				</li>
-				<li>
-					soit cliquer sur l’icône «Ouvrir» &#8594; puis, sur la page «Aperçu», cliquer
-					sur l’icône «Exporter».
-				</li>
-			</ul>
-			
-			<p>
-				Votre enquête sera sauvegardée sur votre ordinateur, ainsi que tous ses
-				paramètres.
-			</p>
-			<p>
-				Les fichiers des enquêtes EUSurvey portent l’extension «.eus».
 			</p>
 			<h2>
 				Comment copier une enquête existante?
@@ -1201,7 +1178,7 @@
 			<p>
 				Pour en savoir plus, voir également
 				<a
-						href="#_Toc_9_9"
+						href="#_Toc_9_8"
 						>
 					«Comment donner accès à mon enquête à d’autres utilisateurs?»
 				</a>
@@ -1663,7 +1640,7 @@
 			<p>
 				Pour en savoir plus, voir également
 				<a
-						href="#_Toc_9_9"
+						href="#_Toc_9_8"
 						>
 					«Comment donner accès à mon enquête à d’autres utilisateurs?»
 				</a>
@@ -2284,32 +2261,6 @@
 				sur «Appliquer les modifications».
 			</p>
 			<h2>
-				Est-il possible d’archiver une enquête?<u> </u>
-			</h2>
-			<p>
-				Oui, vous pouvez archiver votre enquête et la recharger ou la relancer plus
-				tard.
-			</p>
-			<p>
-				Pour archiver votre enquête &#8594; cliquez sur l’icône «Archiver» dans la barre
-				d’outils de la page «Aperçu».
-			</p>
-			<p>
-				Les questionnaires archivés ne peuvent ni être édités ni recevoir de
-				nouvelles réponses.
-			</p>
-			<p>
-				Toutefois, vous pouvez exporter les résultats ou télécharger une version
-				PDF de votre enquête.
-			</p>
-			<p>
-				Les questionnaires archivés sont disponibles dans le «Tableau de bord» d’où
-				ils peuvent être restaurés.
-			</p>
-			<p>
-				Les questionnaires restaurés peuvent être édités de nouveau.
-			</p>
-			<h2>
 				Comment donner accès à mon enquête à d’autres utilisateurs?
 			</h2>
 			<p>
@@ -2557,36 +2508,6 @@
 				</a>
 			</p>
 			<h2>
-				Comment télécharger les contributions reçues?
-			</h2>
-			<p>
-				<ol>
-					<li>
-						Ouvrez votre enquête et allez à la page «Résultats».
-					</li>
-					<li>
-						Cliquez sur «Exporter» dans le coin supérieur droit.
-					</li>
-					<li>
-						Sélectionnez un format parmi les formats de fichiers disponibles pour
-						l’exportation.
-					</li>
-					<li>
-						Indiquez un nom de fichier dans la fenêtre qui s’affiche; le fichier
-						d’exportation apparaîtra sous ce nom sur la page «Exports».
-					</li>
-				</ol>
-			</p>
-			<p>
-				Différents formats de fichier d’exportation sont disponibles, en fonction
-				du mode d’affichage (contenu intégral ou statistiques).
-			</p>
-			<p>
-				Remarque: le fichier d’exportation ne contiendra que l’ensemble de
-				questions définies comme exportables, ainsi que les résultats de recherche
-				correspondant au filtre utilisé.
-			</p>
-			<h2>
 				Comment extraire les brouillons de contributions?
 			</h2>
 			<p>
@@ -2637,8 +2558,10 @@
 				).
 			</p>
 			<p>
-				Pour exporter un sous-ensemble de contributions, voir «Comment télécharger
-				les contributions reçues?»
+				Pour exporter un sous-ensemble de contributions, voir
+				<a href="#_Toc_10_13">
+					«Comment exporter une enquête et ses données ?»
+				</a>.
 			</p>
 			<p>
 				Voir également
@@ -2698,7 +2621,7 @@
 			<p>
 				Pour en savoir plus, voir également
 				<a
-						href="#_Toc_9_9"
+						href="#_Toc_9_8"
 						>
 					«Comment donner accès à mon enquête à d’autres utilisateurs?»
 				</a>
@@ -2904,23 +2827,45 @@
 				Le score est calculé comme étant le poids moyen donné par les répondants à l'enquête.
 			</p>
 			<h2>
-				Exporter l'ensemble de données (c'est-à-dire les réponses à l'enquête)
+				Comment exporter une enquête et ses données ?
 			</h2>
 			<p>
-				Vous pouvez exporter les réponses de votre enquête à l'aide de la fonction d'exportation.
-				Cela peut s'avérer utile, par exemple, pour le traitement ultérieur des données dans Excel.
+				Vous pouvez exporter à la fois le questionnaire de votre enquête et les réponses que vous avez recueillies. Voici les étapes à suivre pour exporter les deux :
 			</p>
 			<p>
-				Pour exporter vos réponses :
+				<b>Exporter les réponses de l'enquête (c'est-à-dire ses données)</b><br>
+				Pour exporter les réponses à votre enquête, suivez ces étapes :
+				<ol>
+					<li>Accédez à l'onglet « Résultats » (le premier écran, qui affiche une vue tabulaire des résultats de votre enquête).</li>
+					<li>Cliquez sur le bouton « Exporter » (une fenêtre contextuelle apparaîtra).</li>
+					<li>Saisissez un nom pour votre fichier d’exportation.</li>
+					<li>
+						Sélectionnez votre format de fichier préféré pour l’exportation (vous serez averti lorsque le fichier sera prêt).
+						<ul>
+							<li>Remarque : les données exportées peuvent être enregistrées au format XLSX, qui offre une sécurité accrue. Par exemple, vous pouvez chiffrer le fichier avec AES-256 pour garantir la protection des données sensibles.</li>
+						</ul>
+					</li>
+					<li>Naviguez vers l’onglet « Exports ».</li>
+					<li>Téléchargez votre fichier une fois l’exportation terminée.</li>
+				</ol>
+				Cette fonctionnalité est utile si vous souhaitez analyser plus en détail les réponses à l’enquête dans des programmes comme Excel, tout en garantissant la sécurité des données. Le fichier exporté tient compte de tous les filtres appliqués ainsi que des paramètres d’affichage des questions.
 			</p>
-			<ol>
-				<li>Allez dans l'onglet «Résultats» (premier écran, la vue tabulaire).</li>
-				<li>Cliquez sur le bouton «Exporter» (une fenêtre contextuelle s'ouvre).</li>
-				<li>Saisissez un nom pour votre export.</li>
-				<li>Sélectionnez le format de fichier (lorsque le fichier d'export est généré, vous recevez une notification).</li>
-				<li>Accédez à l'onglet «Exports».</li>
-				<li>Téléchargez votre fichier.</li>
-			</ol>
+			<p>
+				<b>Exporter une enquête existante (c’est-à-dire le questionnaire)</b><br>
+				Pour exporter l’enquête complète, y compris tous vos paramètres et sa structure, suivez ces étapes :
+				<ol>
+					<li>Sur la page « Enquêtes », recherchez l’enquête que vous souhaitez exporter.</li>
+					<li>
+						Cliquez sur l’icône « Exporter » située à côté de votre enquête.
+						<ul>
+							<li>Alternative : Cliquez sur l’icône « Ouvrir » pour accéder à la page « Aperçu », puis cliquez sur l’icône « Exporter » à partir de là.</li>
+						</ul>
+					</li>
+					<li>Le questionnaire de votre enquête (c’est-à-dire le formulaire web conçu via l’« Éditeur ») ainsi que les paramètres seront enregistrés sur votre ordinateur.</li>
+					<li>Le fichier exporté aura une extension .eus.</li>
+				</ol>
+				Cette méthode vous permet de sauvegarder votre enquête ou de la transférer vers une autre instance d’EUSurvey.
+			</p>
 			<h1>
 				Style et mise en page
 			</h1>

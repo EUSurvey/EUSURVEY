@@ -18,7 +18,7 @@ import java.util.List;
 @DiscriminatorValue("FORMULA")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class FormulaQuestion extends Question {
+public class FormulaQuestion extends Question implements ICommonNumberQuestion {
 	
 	/**
 	 * 
@@ -35,6 +35,7 @@ public class FormulaQuestion extends Question {
 	private int decimalPlaces;
 	private Double minD;
 	private Double maxD;
+    private DeletedMinMax deletedMinMax;
 	
 	@Column(name = "FORMULA")
 	public String getFormula() {
@@ -122,7 +123,16 @@ public class FormulaQuestion extends Question {
 		
 		return css;
 	}
-	
+
+    @Transient
+    public DeletedMinMax getDeletedMinMax() {
+        return deletedMinMax;
+    }
+
+    public void setDeletedMinMax(DeletedMinMax minMax) {
+        this.deletedMinMax = minMax;
+    }
+
 	@Override
 	public boolean differsFrom(Element element) {
 		if (basicDiffersFrom(element)) return true;
@@ -140,35 +150,6 @@ public class FormulaQuestion extends Question {
 		if (minD != null && !minD.equals(formula.minD)) return true;
 		
 		return false;
-	}
-
-	@Transient
-	public boolean showStatisticsForNumberQuestion() {
-		if (decimalPlaces > 0 || minD == null || maxD == null) {
-			return false;
-		}
-
-		return (maxD - minD) <= 10;
-	}
-
-	@Transient
-	public List<String> getAllPossibleAnswers() {
-		List<String> answers = new ArrayList<>();
-
-		if (!showStatisticsForNumberQuestion()) {
-			return answers;
-		}
-
-		NumberFormat nf = DecimalFormat.getInstance();
-		nf.setMaximumFractionDigits(0);
-
-		double v = minD;
-		while (v <= maxD) {
-			answers.add(nf.format(v));
-			v++;
-		}
-
-		return answers;
 	}
 
 	@Transient

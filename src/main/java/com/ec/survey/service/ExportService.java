@@ -44,9 +44,9 @@ import java.util.*;
 @Configurable
 public class ExportService extends BasicService {
 	
-	private @Value("${export.deleteexportstimeout}") String deleteexportstimeout;
+	private @Value("${export.deleteexportstimeout:30}") String deleteexportstimeout;
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${sender}") String sender;
 	
 	@Transactional(readOnly = false)

@@ -25,30 +25,30 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 
 	protected static final Logger logger = Logger.getLogger(ServerEnvironmentHandlerInterceptor.class);
 	
-	public @Value("${ui.enableresponsive}") String enableresponsive;	
+	public @Value("${ui.enableresponsive:true}") String enableresponsive;
 	
 	public @Value("${server.prefix}") String serverPrefix;
 	
 	public static final String APPLICATION_SERVER_ENVIRONMENT = "serverEnv";
-	public @Value("${app.server.env}") String serverEnv;	
+	public @Value("${app.server.env:}") String serverEnv;
 	
 	public static final String APPLICATION_CAPTCHA_BYPASS = "captchaBypass";
-	public @Value("${captcha.bypass:@null}") String captchaBypass;
+	public @Value("${captcha.bypass:false}") String captchaBypass;
 	
 	public static final String APPLICATION_CAPTCHA_KEY = "captchaKey";
-	public @Value("${captcha.key}") String captchakey;	
+	public @Value("${captcha.key:}") String captchakey;
 	
 	public static final String APPLICATION_CAPTCHA_SERVERPREFIX = "captchaServerPrefix";
-	public @Value("${captcha.serverprefix}") String captchaserverprefix;
+	public @Value("${captcha.serverprefix:/eusurvey/EuCaptchaApi/}") String captchaserverprefix;
 
 	public static final String APPLICATION_CAPTCHA_DYNATRACE_SRC = "captchaDynatraceSrc";
 	public @Value("${captcha.dynatracesrc:#{null}}") String captchaDynatraceSrc;
 	
 	public static final String APPLICATION_ARCHIVING = "enablearchiving";
-	public @Value("${ui.enablearchiving}") String enablearchiving;
+	public @Value("${ui.enablearchiving:true}") String enablearchiving;
 
 	public static final String APPLICATION_DELPHI = "enabledelphi";
-	public @Value("${ui.enabledelphi}") String enabledelphi;
+	public @Value("${ui.enabledelphi:true}") String enabledelphi;
 	
 	public static final String APPLICATION_EVOTE = "enableevote";
 	public static final String APPLICATION_EVOTE_LUX = "enableevotelux";
@@ -56,42 +56,42 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public static final String APPLICATION_EVOTE_ISPRA = "enableevoteispra";
 	public static final String APPLICATION_EVOTE_OUTSIDE = "enableevoteoutside";
 	public static final String APPLICATION_EVOTE_STANDARD = "enableevotestandard";
-	public @Value("${ui.enableevote:null}") String enableevote;
-	public @Value("${ui.enableevote-lux:null}") String enableevotelux;
-	public @Value("${ui.enableevote-bru:null}") String enableevotebru;
-	public @Value("${ui.enableevote-ispra:null}") String enableevoteispra;
-	public @Value("${ui.enableevote-outside:null}") String enableevoteoutside;
-	public @Value("${ui.enableevote-standard:null}") String enableevotestandard;
+	public @Value("${ui.enableevote:false}") String enableevote;
+	public @Value("${ui.enableevote-lux:false}") String enableevotelux;
+	public @Value("${ui.enableevote-bru:false}") String enableevotebru;
+	public @Value("${ui.enableevote-ispra:false}") String enableevoteispra;
+	public @Value("${ui.enableevote-outside:false}") String enableevoteoutside;
+	public @Value("${ui.enableevote-standard:false}") String enableevotestandard;
 	
 	public static final String APPLICATION_FILEMANAGEMENT = "enablefilemanagement";
-	public @Value("${ui.enablefilemanagement}") String enablefilemanagement;
+	public @Value("${ui.enablefilemanagement:true}") String enablefilemanagement;
 	
 	public static final String APPLICATION_OPC = "enableopc";
-	public @Value("${ui.enableopc}") String enableopc;
+	public @Value("${ui.enableopc:false}") String enableopc;
 	
 	public static final String APPLICATION_ECF = "enableecf";
-	public @Value("${ui.enableecf}") String enableecf;
+	public @Value("${ui.enableecf:false}") String enableecf;
 	
 	public static final String APPLICATION_SELFASSESSMENT = "enableselfassessment";
-	public @Value("${ui.enableselfassessment}") String enableselfassessment;
+	public @Value("${ui.enableselfassessment:false}") String enableselfassessment;
 	
 	public static final String APPLICATION_PUBLICSURVEYS = "enablepublicsurveys";
-	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
+	public @Value("${ui.enablepublicsurveys:false}") String enablepublicsurveys;
 	
 	public static final String APPLICATION_OSS = "oss";
-	public @Value("${oss}") String oss;
+	public @Value("${oss:true}") String oss;
 	
 	public static final String APPLICATION_PIWIK = "piwik";
-	public @Value("${piwik}") String piwik;
+	public @Value("${piwik:false}") String piwik;
 	
 	public static final String APPLICATION_SHOWPRIVACY = "showprivacy";
-	public @Value("${show.privacy}") String showPrivacy;
+	public @Value("${show.privacy:true}") String showPrivacy;
 	
-	private @Value("${monitoring.recipient}") String monitoringEmail;
-	private @Value("${enablereportingdatabase}") String enablereportingdatabase;
-	private @Value("${enablecookieconsentkit:@null}") String enablecookieconsentkit;
+	private @Value("${monitoring.recipient:#{null}}") String monitoringEmail;
+	private @Value("${enablereportingdatabase:false}") String enablereportingdatabase;
+	private @Value("${enablecookieconsentkit:false}") String enablecookieconsentkit;
 
-	private @Value("${contextpath}") String contextpath;	
+	private @Value("${contextpath:/eusurvey}") String contextpath;
 	private @Value("${googlesiteverification:#{null}}") String googlesiteverification;
 	
 	@Resource(name="settingsService")

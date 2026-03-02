@@ -700,7 +700,7 @@
 						<b><spring:message code="label.AutoDeactivateOn" />:</b>
 						<div class="input-prepend">
 							<span class="add-on"><i class="icon-calendar"></i></span>
-							<input class="small-form-control span2 datepicker date" id="autodeactivate" name="autodeactivate" placeholder="DD/MM/YYYY" type="text" value="${message.autoDeactivateDate}" style="width: 105px" />
+							<input class="small-form-control span2 datepicker dp-autopos date" id="autodeactivate" name="autodeactivate" placeholder="DD/MM/YYYY" type="text" value="${message.autoDeactivateDate}" style="width: 105px" />
 							<select id="autodeactivatetime" name="autodeactivatetime" class="small-form-control" style="width: auto">
 								<option value="0">00:00</option>
 								<option value="1">01:00</option>

@@ -31,6 +31,7 @@ import com.ec.survey.tools.WeakAuthenticationException;
 import com.ec.survey.tools.activity.ActivityRegistry;
 import com.ec.survey.tools.export.StatisticsCreator;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.Hibernate;
@@ -38,6 +39,7 @@ import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +52,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Files;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Service("answerService")
 public class AnswerService extends BasicService {
@@ -67,6 +71,8 @@ public class AnswerService extends BasicService {
 	
 	@Resource(name = "selfassessmentService")
 	protected SelfAssessmentService selfassessmentService;
+
+	private @Value("${checksumsecret:xyz}") String checksumsecret;
 	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void internalSaveAnswerSet(AnswerSet answerSet, String fileDir, String draftid,
@@ -184,9 +190,14 @@ public class AnswerService extends BasicService {
 			if (answerSet.getSurvey().getIsECF()) {
 				this.ecfService.setAnswerSetECFComponents(answerSet.getSurvey(), answerSet);
 			}
-			
-			session.saveOrUpdate(answerSet);
-			session.flush();
+
+            session.saveOrUpdate(answerSet);
+            session.flush();
+
+			if (newAnswer) {
+				answerSet.setChecksum(computeChecksum(answerSet));
+                session.saveOrUpdate(answerSet);
+			}
 			
 			if (answerSet.getSurvey().getIsDelphi()) {
 				answerExplanationService.deleteCommentsForDeletedAnswers(answerSet);
@@ -292,6 +303,33 @@ public class AnswerService extends BasicService {
 				attendeeService.add(attendee);
 			}
 		}
+	}
+
+	public String computeChecksum(AnswerSet answerSet) {
+		var s = new StringBuilder();
+
+		// add meta data
+		s.append(answerSet.getLanguageCode());
+		s.append(answerSet.getInvitationId());
+		s.append(ConversionTools.getFullString(answerSet.getDate()));
+		s.append(ConversionTools.getFullString(answerSet.getUpdateDate()));
+		s.append(answerSet.getUniqueCode());
+		s.append(answerSet.getResponderEmail());
+		s.append(checksumsecret);
+
+		// add answer data
+		// first we sort the answers by id so that they are always in the same order
+		List<Answer> sortedAnswers = answerSet.getAnswers().stream()
+				.sorted(Comparator.comparing(Answer::getId))
+				.collect(Collectors.toList());
+		for (Answer answer : sortedAnswers) {
+			s.append(answer.getPossibleAnswerUniqueId());
+			s.append(answer.getQuestionUniqueId());
+			s.append(answer.getValue());
+		}
+
+		String shaHex = DigestUtils.sha256Hex(s.toString());
+		return shaHex;
 	}
 
 	@Transactional(readOnly = true)
@@ -975,7 +1013,7 @@ public class AnswerService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 
 		String answersetsql = getSql(null, surveyId, filter, parameters, true);
-		String sql = "select a1.AS_ID, a1.QUESTION_UID, a1.VALUE, a1.ANSWER_COL, a1.ANSWER_ID, a1.ANSWER_ROW, a1.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a1 JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID WHERE ans.ANSWER_SET_ID IN ("
+		String sql = "select a1.AS_ID, a1.QUESTION_UID, a1.VALUE, a1.ANSWER_COL, a1.ANSWER_ID, a1.ANSWER_ROW, a1.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.ANSWER_SET_CHECKSUM FROM ANSWERS a1 JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID WHERE ans.ANSWER_SET_ID IN ("
 				+ answersetsql + ")";
 
 		NativeQuery query = session.createSQLQuery(sql);
@@ -1009,6 +1047,7 @@ public class AnswerService extends BasicService {
 				answerSet.setInvitationId((String) a[10]);
 				answerSet.setResponderEmail((String) a[11]);
 				answerSet.setLanguageCode((String) a[12]);
+				answerSet.setChecksum((String) a[13]);
 				result.put(answerSet.getId(), answerSet);
 			}
 		}
@@ -2544,7 +2583,7 @@ public class AnswerService extends BasicService {
 		if (survey.getIsDelphi() && surveyService.answerSetExists(uniqueCode, false, true))
 		{
 			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
-			answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, existingAnswerSet, lang, user, fileService);
+			answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, existingAnswerSet, lang, user, fileService, false);
 		}
 
 		if (answerSet == null)
@@ -3011,5 +3050,15 @@ public class AnswerService extends BasicService {
 		sc.setSubmitted(new Date());
 		sc.setOrganisation(answerSet.getSurvey().getOrganisation());
 		session.save(sc);
+	}
+
+	public int getNumberOfAnswersetsForParticipant(String email, String uniqueId) {
+		Session session = sessionFactory.getCurrentSession();
+
+		String queryString = "SELECT count(ans.ANSWER_SET_ID) from ANSWERS_SET ans inner join SURVEYS s on ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID = :uid AND s.ISDRAFT = 0 AND ans.ISDRAFT = 0 AND (ans.RESPONDER_EMAIL = :mail1 OR ans.RESPONDER_EMAIL = :mail2)";
+		NativeQuery query = session.createSQLQuery(queryString);
+		query.setString("uid", uniqueId).setString("mail1", email).setString("mail2",	Tools.md5hash(email));
+
+		return ConversionTools.getValue(query.uniqueResult());
 	}
 }

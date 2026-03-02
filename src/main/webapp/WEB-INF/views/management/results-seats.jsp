@@ -19,6 +19,7 @@
 		<a class="btn btn-primary" id="btnAllocateSeats" data-bind="visible: showResults() && loaded(), click: function() {toggleSeats('${form.survey.uniqueId}')}"><spring:message code="label.AllocateSeats" /></a>
 		<a class="btn btn-primary" id="btnExportSeats" data-bind="visible: showResults() && showSeats(), attr: {href: '${contextpath}/${form.survey.shortname}/management/seatExport' + (useTestData() ? '?testdata=true&surveyuid=${form.survey.uniqueId}' : '?surveyuid=${form.survey.uniqueId}')}"><spring:message code="label.Export" /></a>
 	<!-- /ko -->
+	<a class="btn btn-default" onclick="verifyResults('${form.survey.uniqueId}')"><spring:message code="label.VerifyDataIntegrity" /></a>
 
 	<div id="results-seats-counting" data-bind="visible: showResults()">
 		<h1><spring:message code="label.seats.Counting" /></h1>
@@ -588,6 +589,35 @@
 	
 </div>
 
+<div class="modal" id="result-verification-dialog" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+    <div class="modal-header" style="font-weight: bold;">
+        <spring:message code="label.VerifyDataIntegrity" />
+    </div>
+    <div class="modal-body">
+        <table id="result-verification-table" class="table table-bordered">
+            <tr>
+                <th><spring:message code="label.ContributionsChecksumValid" /></th>
+                <td id="result-verification-valid"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+            </tr>
+            <tr>
+                <th><spring:message code="label.ContributionsChecksumInvalid" /></th>
+                <td id="result-verification-invalid"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+            </tr>
+            <tr>
+                <th><spring:message code="label.ContributionsNoChecksum" /></th>
+                <td id="result-verification-nochecksum"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Close" /></a>
+    </div>
+    </div>
+    </div>
+</div>
+
 <script src="${contextpath}/resources/js/chartjs-plugin-labels.js"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/results-seats.js?version=<%@include file="../version.txt" %>"></script>
 
@@ -625,6 +655,24 @@
 		}
 
 		return "";
+	}
+
+	function verifyResults(surveyuid) {
+	    $('#result-verification-dialog').modal("show");
+	    $.ajax({
+            type:'GET',
+            url: "${contextpath}/" + surveyuid + "/management/verifyresults",
+            cache: false,
+            dataType: "json",
+            success: function( data ) {
+                $('#result-verification-valid').text(data[0]);
+                $('#result-verification-invalid').text(data[1]);
+                $('#result-verification-nochecksum').text(data[2]);
+            },
+            error: function(jqXHR) {
+                  showAjaxError(jqXHR.status);
+            }
+        });
 	}
 </script>
 		

@@ -25,12 +25,12 @@ import java.util.Base64;
 @Service("eTranslationService")
 public class ETranslationService extends BasicService {
 
-	private @Value("${mt.rest.url}") String url;
-	private @Value("${mt.rest.username}") String username;
-	private @Value("${mt.rest.password}") String password;
+	private @Value("${mt.rest.url:#{null}}") String url;
+	private @Value("${mt.rest.username:#{null}}") String username;
+	private @Value("${mt.rest.password:#{null}}") String password;
 
-	private @Value("${mt.applicationname}") String applicationName;
-	private @Value("${server.mt.response.callback}") String serverResponseCallBack;
+	private @Value("${mt.applicationname:#{null}}") String applicationName;
+	private @Value("${server.mt.response.callback:#{null}}") String serverResponseCallBack;
 
 	private static final String REQUEST_ID = "?requestId=";
 	private static final String NOTIFY_SUCCESS_PATH = "home/notifySuccess";

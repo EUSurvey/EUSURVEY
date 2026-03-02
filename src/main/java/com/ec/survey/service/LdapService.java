@@ -46,33 +46,33 @@ public class LdapService extends BasicService {
     
     private static final Logger logger = Logger.getLogger(LdapService.class);
     
-    private @Value("${LdapUrl}") String url;
-    private @Value("${LdapContextFactory}") String contextFactory;
-    private @Value("${LdapSecurityPrincipal}") String securityPrincipal;
-    private @Value("${LdapSecurityCredentials}") String securityCredentials;
-    private @Value("${LdapSecurityAuthentication}") String securityAuthentication;
-    private @Value("${ldap.search.user.format:@null}") String ldapSearchUserFormat;
-    private @Value("${ldap.search.mail.format:@null}") String ldapSearchMailFormat;
-    private @Value("${ldap.search.format:@null}") String ldapSearchFormat;
+    private @Value("${LdapUrl:}") String url;
+    private @Value("${LdapContextFactory:}") String contextFactory;
+    private @Value("${LdapSecurityPrincipal:}") String securityPrincipal;
+    private @Value("${LdapSecurityCredentials:}") String securityCredentials;
+    private @Value("${LdapSecurityAuthentication:}") String securityAuthentication;
+    private @Value("${ldap.search.user.format:uid\\=%s, ou\\=People}") String ldapSearchUserFormat;
+    private @Value("${ldap.search.mail.format:mail\\=%s, ou\\=People}") String ldapSearchMailFormat;
+    private @Value("${ldap.search.format:ou\\=People}") String ldapSearchFormat;
    
-    private @Value("${ldap.mapping.user.departmentNumber:@null}") String ldapMappingUserDepartmentNumber;
-    private @Value("${ldap.mapping.user.sn:@null}") String ldapMappingUserSn;
-    private @Value("${ldap.mapping.user.uid:@null}") String ldapMappingUserUid;
-    private @Value("${ldap.mapping.user.ecMoniker:@null}") String ldapMappingUserEcMoniker;
-    private @Value("${ldap.mapping.user.o:@null}") String ldapMappingUserO;
-    private @Value("${ldap.mapping.user.dg:@null}") String ldapMappingUserDg;
-    private @Value("${ldap.mapping.user.givenName:@null}") String ldapMappingUserGivenName;
-    private @Value("${ldap.mapping.user.mail:@null}") String ldapMappingUserMail;
-    private @Value("${ldap.mapping.user.telephoneNumber:@null}") String ldapMappingUserTelephoneNumber;
-    private @Value("${ldap.mapping.user.employeeType:@null}") String ldapMappingUserEmployeeType;
-    private @Value("${ldap.mapping.user.recordStatus:@null}") String ldapMappingUserRecordStatus;
-    private @Value("${ldap.mapping.user.modifyTimstamp:@null}") String ldapMappingUserModifyTimstamp;
+    private @Value("${ldap.mapping.user.departmentNumber:departmentNumber}") String ldapMappingUserDepartmentNumber;
+    private @Value("${ldap.mapping.user.sn:sn:sn}") String ldapMappingUserSn;
+    private @Value("${ldap.mapping.user.uid:uid}") String ldapMappingUserUid;
+    private @Value("${ldap.mapping.user.ecMoniker:ecMoniker}") String ldapMappingUserEcMoniker;
+    private @Value("${ldap.mapping.user.o:o}") String ldapMappingUserO;
+    private @Value("${ldap.mapping.user.dg:dg}") String ldapMappingUserDg;
+    private @Value("${ldap.mapping.user.givenName:givenName}") String ldapMappingUserGivenName;
+    private @Value("${ldap.mapping.user.mail:mail}") String ldapMappingUserMail;
+    private @Value("${ldap.mapping.user.telephoneNumber:telephoneNumber}") String ldapMappingUserTelephoneNumber;
+    private @Value("${ldap.mapping.user.employeeType:employeeType}") String ldapMappingUserEmployeeType;
+    private @Value("${ldap.mapping.user.recordStatus:recordStatus}") String ldapMappingUserRecordStatus;
+    private @Value("${ldap.mapping.user.modifyTimstamp:modifyTimstamp}") String ldapMappingUserModifyTimstamp;
     
-    private @Value("${ldap.mapping.domain.o:@null}") String ldapMappingDomainO;
-    private @Value("${ldap.mapping.domain.description:@null}") String ldapMappingDomainDescription;
+    private @Value("${ldap.mapping.domain.o:o}") String ldapMappingDomainO;
+    private @Value("${ldap.mapping.domain.description:description}") String ldapMappingDomainDescription;
     private @Value("${ldap.search.domains.format:@null}") String ldapSearchDomainFormat;
         
-    public @Value("${casoss}") String cassOss;
+    public @Value("${casoss:false}") String cassOss;
 
 	public boolean isCasOss()
 	{

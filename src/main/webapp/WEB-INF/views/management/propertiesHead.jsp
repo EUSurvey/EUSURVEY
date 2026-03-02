@@ -27,6 +27,7 @@
 			this.showBackgroundDocs = ko.observable(${form.survey.getBackgroundDocumentsAlphabetical().size() > 0});
 			this.secured = ko.observable(${!(form.survey.security.equals("open") || form.survey.security.equals("openanonymous"))});
 			this.ecasSecurity = ko.observable(${form.survey.ecasSecurity});
+			this.ecasMode = ko.observable("${form.survey.ecasMode}");
 			this.publishResults = ko.observable(${form.survey.publication.showContent || form.survey.publication.showStatistics});
 			this.selectedQuestions = ko.observable(${!form.survey.publication.allQuestions});
 			this.selectedContributions = ko.observable(${!form.survey.publication.allContributions});
@@ -43,6 +44,7 @@
 			this.isUseMaxNumberContributionLink = ko.observable(${form.survey.isUseMaxNumberContributionLink});
 			this.sendConfirmationEmail = ko.observable(${form.survey.sendConfirmationEmail});
 			this.sendReportEmail = ko.observable(${form.survey.sendReportEmail});
+            this.sendReportEmailOnlyWhenContributionsExist = ko.observable(${form.survey.sendReportEmailOnlyWhenContributionsExist});
 			this.reportEmailFrequency = ko.observable("${form.survey.reportEmailFrequency}");
 			this.reportEmails = ko.observable("${form.survey.reportEmails}");
 			this.changeContribution = ko.observable(${form.survey.changeContribution});
@@ -56,6 +58,7 @@
 			this.progressDisplay = ko.observable(${form.survey.progressDisplay});
 			this.tags = ko.observableArray(${form.survey.tagsAsArray()});
 			this.doNotDelete = ko.observable(${form.survey.doNotDelete});
+            this.collectSNC = ko.observable(${form.survey.collectSNC})
 			this.tagsLoading = ko.observable(false);
 			
 			this.addLinksRow = function()
@@ -818,38 +821,7 @@
             });
         }
 
-		var noMailsFound = '<spring:message code="label.NoMailsFound" />';
-		var atLeastOneMail = '<spring:message code="label.AtLeastOneMail" />';
-		var noEmptySearch = '<spring:message code="label.NoEmptySearch" />';
-		var invalidEmail = '<spring:message code="label.InvalidEmail" />';
-		var notFoundEmail = '<spring:message code="label.NotFoundEmail" />';
-		let changeRequestJustSent = '<spring:message code="message.OwnerChangeRequestJustSent" />';
-		function showChangeOwnerDialog() {
-			resetEmailFeedback();
 
-			// select european commision if exists
-			var exists = false;
-			$('#change-owner-type-ecas option').each(function(){
-				if (this.value == "eu.europa.ec") {
-					exists = true;
-					return false;
-				}
-			});
-			if (exists)
-			{
-				$("#change-owner-type-ecas").val("eu.europa.ec");
-			}
-
-			checkUserType();
-			$('#change-department-name').val('');
-			$('#change-owner-name').val('');
-			$('#change-first-name').val('');
-			$('#change-last-name').val('');
-			$('#change-owner-email').val('');
-			$("#search-results-more").hide();
-			$("#btnOkChangeOwnerFromAccess").attr("disabled", true);
-			$('#change-owner-dialog').modal();
-		}
 
 		function searchEmailUser(order) {
 			let mailInput = $("#change-owner-email").val();
@@ -882,14 +854,6 @@
 				}});
 		}
 
-		function resetEmailFeedback() {
-			$("#foundEmailUsers").text("");
-			$("#invalidEmailsText").text("");
-			$("#invalidEmailsIcon").hide();
-			$("#notFoundEmailsIcon").hide();
-			$("#notFoundEmailsText").text("");
-		}
-
 		function setEmailCheckFeedback(foundCount, invalidMails, notFoundMails) {
 			resetEmailFeedback();
 
@@ -904,121 +868,6 @@
 				$("#notFoundEmailsIcon").show();
 				$("#notFoundEmailsText").html(notFoundEmail);
 			}
-		}
-
-		function checkUserType()
-		{
-			$("#noEmptySearchIcon").hide();
-			$("#noEmptySearchText").text('');
-
-			$("#search-results").find("tbody").empty();
-
-			if ($("#change-owner-type-ecas").val() != "system" && $("#change-owner-type-ecas").val() != "external")
-			{
-				$("#change-owner-department-div").show();
-				$("#change-owner-firstname-div").show();
-				$("#change-owner-lastname-div").show();
-				$("#eulogin-span").show();
-			} else if ($("#change-owner-type-ecas").val() == "external")
-			{
-				$("#change-owner-department-div").hide();
-				$("#change-owner-firstname-div").show();
-				$("#change-owner-lastname-div").show();
-				$("#eulogin-span").show();
-			} else {
-				$("#change-owner-department-div").hide();
-				$("#change-owner-firstname-div").hide();
-				$("#change-owner-lastname-div").hide();
-				$("#eulogin-span").hide();
-			}
-		}
-
-		function searchUser(order)
-		{
-			$("#btnOkChangeOwnerFromAccess").attr("disabled", true);
-			$("#noEmptySearchIcon").hide();
-			$("#noEmptySearchText").text("");
-
-			var name = $("#change-owner-name").val();
-			var first = $("#change-first-name").val();
-			var last = $("#change-last-name").val();
-			var email = $("#change-owner-email").val();
-			var department = $("#change-department-name").val();
-			var type = $("#change-owner-type-ecas").val();
-
-            $('#change-owner-dialog').find(".validation-error").remove();
-
-			if (email != '' && !validateEmail(email)) {
-			    addValidationError.afterElementAndFocus($("#change-owner-email"), $("#change-owner-email"), invalidEmail);
-			    return;
-			}
-
-			if (type != "system" && type != "external")
-			{
-				//case eu.europa.ec: Admin and form manager EC
-				if (!(email != '' || department != '' || first != '' || last != '' || name != '')) {
-					$("#noEmptySearchIcon").show();
-					$("#noEmptySearchText").text(noEmptySearch);
-					return;
-				}
-			} else if (type == "system")
-			{
-				//case system
-				if (!(email != '' || name != '')) {
-					$("#noEmptySearchIcon").show();
-					$("#noEmptySearchText").text(noEmptySearch);
-					return;
-				}
-			}
-
-			var s = "name=" + name + "&type=" + type + "&department=" + department+ "&email=" + email + "&first=" + first + "&last=" + last + "&order=" + order;
-
-			$("#change-owner-dialog").modal('hide');
-			$("#busydialog").modal('show');
-
-			$("#search-results-more").hide();
-
-			$.ajax({
-				type:'GET',
-				url: contextpath + "/logins/usersJSON",
-				data: s,
-				dataType: 'json',
-				cache: false,
-				success: function( users ) {
-					$("#search-results").find("tbody").empty();
-					var body = $("#search-results").find("tbody").first();
-
-					for (var i = 0; i < users.length; i++ )
-					{
-						$(body).append(users[i]);
-					}
-
-					var hiddenTableHeaders = $("#search-results th.hideme");
-					for (var i = 0; i < hiddenTableHeaders.length; i++ )
-					{
-						$('#search-results td:nth-child(' + hiddenTableHeaders[i].cellIndex + ')').hide();
-					}
-
-					if (type != "system" && users.length >= 100)
-					{
-						$("#search-results-more").show();
-					}
-
-					$(body).find("tr").click(function() {
-						$("#search-results").find(".success").removeClass("success");
-						$(this).addClass("success");
-						$("#btnOkChangeOwnerFromAccess").removeAttr("disabled");
-					});
-
-					$("#busydialog").modal('hide');
-					$("#change-owner-dialog").modal('show');
-				}, error: function() {
-					$("#busydialog").modal('hide');
-					$("#change-owner-dialog").modal('show');
-				}});
-
-			$("#search-results-none").hide();
-
 		}
 
 		$(function() {
@@ -1238,7 +1087,7 @@
 		}
 		
 		.navbar-default {
-			max-width: 900px;
+			width: auto;
 			margin-left: auto;
 			margin-right: auto;
 		}

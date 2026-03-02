@@ -32,9 +32,9 @@ public class FsCheckWorker implements Runnable {
 	protected static final Logger logger = Logger.getLogger(FsCheckWorker.class);
 
 	private @Value("${filesystem.surveys}") String surveysDir;
-	private @Value("${monitoring.recipient}") String monitoringEmail;
-	private @Value("${monitoring.warnFSUsageThreshold:#{null}}") String warnFSUsageThreshold;
-	private @Value("${monitoring.warnFSUsageThreshold2:#{null}}") String warnFSUsageThreshold2;
+	private @Value("${monitoring.recipient:#{null}}") String monitoringEmail;
+	private @Value("${monitoring.warnFSUsageThreshold:80}") String warnFSUsageThreshold;
+	private @Value("${monitoring.warnFSUsageThreshold2:90}") String warnFSUsageThreshold2;
 	private @Value("${server.prefix}") String host;
 	private @Value("${sender}") String sender;
 

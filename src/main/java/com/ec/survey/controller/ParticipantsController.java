@@ -52,9 +52,8 @@ public class ParticipantsController extends BasicController {
 
 	private @Value("${server.prefix}") String host;
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
-	private @Value("${participant.default.domain:@null}") String defaultDomain;
-	private @Value("${monitoring.recipient}") String monitoringEmail;
+	private @Value("${smtp.port:25}") String smtpPort;
+	private @Value("${monitoring.recipient:#{null}}") String monitoringEmail;
 
 	private @Value("${participants.warning.size:500}") int warningSizeGuestList;
 	private @Value("${participants.warning.count:10}") int warningCountGuestLists;
@@ -71,8 +70,8 @@ public class ParticipantsController extends BasicController {
 	private List<AttributeName> escapeAttributeNameList(List<AttributeName> list) {
 		List<AttributeName> escapedList = new ArrayList<>();
 		for (AttributeName attributeName : list) {
-			attributeName.setName(escapeEcmaScript(attributeName.getName()));
-			escapedList.add(attributeName);
+			var newAttributeName = new AttributeName(attributeName.getOwnerId(), escapeEcmaScript(attributeName.getName()));
+			escapedList.add(newAttributeName);
 		}
 		return escapedList;
 	}
@@ -273,6 +272,13 @@ public class ParticipantsController extends BasicController {
 						attendee.setReminded(invitation.getReminded());
 						attendee.setAnswers(invitation.getAnswers());
 					}
+
+					if (g.getAuthenticationMethod() == 1 && attendee.getAnswers() == 0) {
+						// this is a EULogin-Contact-Guestlist and the form manager could have invited the participant outside EUSurvey
+						// in this case there is no invitation and we check if there are contributions for that user
+						attendee.setAnswers(answerService.getNumberOfAnswersetsForParticipant(attendee.getEmail(), survey.getUniqueId()));
+					}
+
 					result.add(attendee);
 					if (result.size() == itemsPerPage)
 						break;
@@ -415,6 +421,30 @@ public class ParticipantsController extends BasicController {
 			}
 			participationGroup.setOwnerId(user.getId());
 			participationGroup.setInCreation(true);
+
+			int authenticationMethod = participationGroup.getType() == ParticipationGroupType.Static && json.get("authenticationMethod") != null && json.get("authenticationMethod").toString().length() > 0 ? (int) json.get("authenticationMethod") : 0;
+			participationGroup.setAuthenticationMethod(authenticationMethod);
+			if (authenticationMethod == 1) {
+				if (form.getSurvey().getSecurity().startsWith("open") || !form.getSurvey().getEcasSecurity() || !form.getSurvey().getEcasMode().equals("listmembers")) {
+					if (form.getSurvey().getSecurity().contains("anonymous")) {
+						form.getSurvey().setSecurity("securedanonymous");
+					} else {
+						form.getSurvey().setSecurity("secured");
+					}
+					form.getSurvey().setEcasSecurity(true);
+					form.getSurvey().setEcasMode("listmembers");
+					activityService.log(ActivityRegistry.ID_PROPERTIES,null, null, user.getId(), form.getSurvey().getUniqueId());
+					surveyService.update(form.getSurvey(), true);
+
+					Survey published = surveyService.getSurveyByUniqueId(form.getSurvey().getUniqueId(),false,false);
+					if (published != null) {
+						published.setSecurity(form.getSurvey().getSecurity());
+						published.setEcasSecurity(true);
+						published.setEcasMode("listmembers");
+						surveyService.update(published, false);
+					}
+				}
+			}
 
 			participationService.save(participationGroup);
 			if (participationGroup.getType() == ParticipationGroupType.Static) {

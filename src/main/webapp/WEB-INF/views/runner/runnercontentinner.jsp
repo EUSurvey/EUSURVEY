@@ -133,8 +133,8 @@
 										</div>
 									</div>
 									<div class="modal-footer">
-										<a class="btn btn-primary" style="tabindex: 0" onclick="eVoteConfirmResolve(true)">${form.getMessage("label.Imsure")}</a>
-										<a class="btn btn-default" style="tabindex: 0" onclick="hideModalDialog('.evote-confirm-modal'); eVoteConfirmResolve(false);">${form.getMessage("label.Cancel")}</a>
+										<button class="btn btn-primary" onclick="eVoteConfirmResolve(true)">${form.getMessage("label.Imsure")}</button>
+										<button class="btn btn-default" onclick="hideModalDialog('.evote-confirm-modal'); eVoteConfirmResolve(false);">${form.getMessage("label.Cancel")}</button>
 									</div>
 								</div>
 							</div>
@@ -668,8 +668,13 @@
 	 	}	 	
 	 	function getMinMaxChoice(min,max)
 	 	{
-	 		var s = '${form.getMessage("limits.MinMaxChoicesNew", "[min]","[max]")}';
-	 		return s.replace("[min]", min).replace("[max]", max);
+            let s
+            if (min == max) {
+                s = '${form.getMessage("limits.MinMaxChoicesEqual", "[min]")}';
+            } else {
+                s = '${form.getMessage("limits.MinMaxChoicesNew", "[min]","[max]")}';
+            }
+            return s.replace("[min]", min).replace("[max]", max);
 	 	}
 	 	function getMinChoice(min)
 	 	{

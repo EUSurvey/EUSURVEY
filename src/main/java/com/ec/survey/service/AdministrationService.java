@@ -38,11 +38,11 @@ public class AdministrationService extends BasicService {
 
 	private @Value("${admin.user}") String adminuser;
 	private @Value("${admin.password}") String adminpassword;
-	private @Value("${stress.user}") String stressuser;
-	private @Value("${stress.password}") String stresspassword;
+	private @Value("${stress.user:#{null}}") String stressuser;
+	private @Value("${stress.password:#{null}}") String stresspassword;
 
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${sender}") String sender;
 	private @Value("${server.prefix}") String host;
 
@@ -191,8 +191,7 @@ public class AdministrationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		user = (User) session.merge(user);
 
-		String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
-		if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
+		if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
 			user.setCanCreateSurveys(false);
 		}
 
@@ -784,7 +783,7 @@ public class AdministrationService extends BasicService {
 		SurveyFilter filter = new SurveyFilter();
 		filter.setUser(getUser(1));
 		SqlPagination sqlPagination = new SqlPagination(0, 5000);
-		List<Survey> surveys = surveyService.getSurveys(filter, sqlPagination);
+		List<Survey> surveys = surveyService.getSurveys(filter, sqlPagination, false);
 
 		for (Survey survey : surveys) {
 			Access a = new Access();
@@ -804,8 +803,7 @@ public class AdministrationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		user = (User) session.merge(user);
 
-		String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
-		if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
+		if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
 			user.setCanCreateSurveys(false);
 		}
 

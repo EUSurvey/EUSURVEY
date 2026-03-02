@@ -59,7 +59,7 @@ public class InvitationMailCreator implements Runnable {
 	private @Value("${server.prefix}") String host;
 	private @Value("${sender}") String sender;
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	
 	private MailTask task;
 	
@@ -255,6 +255,10 @@ public class InvitationMailCreator implements Runnable {
 		}
 			
 		String middleText = host + "runner/invited/" + participationGroup.getId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
+
+		if (participationGroup.getAuthenticationMethod() == 1) {
+			middleText = host + "runner/" + survey.getShortname();
+		}
 
 		String body = text1;
 		if (!text1.endsWith("</p>")) {

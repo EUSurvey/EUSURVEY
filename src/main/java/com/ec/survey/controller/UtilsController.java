@@ -327,8 +327,6 @@ public class UtilsController extends BasicController {
 		dgList.put("COMM",resources.getMessage("label.dgnew.COMM",null,locale));
 		dgList.put("CNECT",resources.getMessage("label.dgnew.CNECT",null,locale));
 		dgList.put("COMP",resources.getMessage("label.dgnew.COMP",null,locale));
-		dgList.put("CHAFEA",resources.getMessage("label.dgnew.CHAFEA",null,locale));
-		dgList.put("DPO",resources.getMessage("label.dgnew.DPO",null,locale));
 		dgList.put("DEFIS",resources.getMessage("label.dgnew.DEFIS",null,locale));
 		dgList.put("ECFIN",resources.getMessage("label.dgnew.ECFIN",null,locale));
 		dgList.put("EACEA",resources.getMessage("label.dgnew.EACEA",null,locale));
@@ -338,14 +336,11 @@ public class UtilsController extends BasicController {
 		dgList.put("ENV",resources.getMessage("label.dgnew.ENV",null,locale));
 		dgList.put("OLAF",resources.getMessage("label.dgnew.OLAF",null,locale));
 		dgList.put("ECHO",resources.getMessage("label.dgnew.ECHO",null,locale));
-		dgList.put("NEAR",resources.getMessage("label.dgnew.NEAR",null,locale));
 		dgList.put("EPSO",resources.getMessage("label.dgnew.EPSO",null,locale));
-		dgList.put("ESOA",resources.getMessage("label.dgnew.ESOA",null,locale));
-		dgList.put("ESTAT",resources.getMessage("label.dgnew.ESTAT",null,locale));
+		dgList.put("ESTAT",resources.getMessage("label.dgnew2.ESTAT",null,locale));
 		dgList.put("FISMA",resources.getMessage("label.dgnew.FISMA",null,locale));
 		dgList.put("FPI",resources.getMessage("label.dg.FPI",null,locale));
 		dgList.put("SANTE",resources.getMessage("label.dgnew.SANTE",null,locale));
-		dgList.put("HAS",resources.getMessage("label.dgnew.HAS",null,locale));
 		dgList.put("HR",resources.getMessage("label.dgnew.HR",null,locale));
 		dgList.put("DIGIT",resources.getMessage("label.dgnew.DIGIT",null,locale));
 		dgList.put("OIB",resources.getMessage("label.dgnew.OIB",null,locale));
@@ -359,7 +354,6 @@ public class UtilsController extends BasicController {
 		dgList.put("JRC",resources.getMessage("label.dgnew.JRC",null,locale));
 		dgList.put("JUST",resources.getMessage("label.dgnew.JUST",null,locale));
 		dgList.put("SJ",resources.getMessage("label.dgnew.SJ",null,locale));
-		dgList.put("LERC",resources.getMessage("label.dgnew.LERC",null,locale));
 		dgList.put("MARE",resources.getMessage("label.dgnew.MARE",null,locale));
 		dgList.put("HOME",resources.getMessage("label.dgnew.HOME",null,locale));
 		dgList.put("MOVE",resources.getMessage("label.dgnew.MOVE",null,locale));
@@ -368,16 +362,20 @@ public class UtilsController extends BasicController {
 		dgList.put("RTD",resources.getMessage("label.dgnew.RTD",null,locale));
 		dgList.put("REA",resources.getMessage("label.dgnew.REA",null,locale));
 		dgList.put("SG",resources.getMessage("label.dgnew.SG",null,locale));
-		dgList.put("REFORM",resources.getMessage("label.dgnew.REFORM",null,locale));
-		dgList.put("UKTF",resources.getMessage("label.dgnew.UKTF",null,locale));
 		dgList.put("TAXUD",resources.getMessage("label.dgnew.TAXUD",null,locale));
-		dgList.put("TRADE",resources.getMessage("label.dgnew.TRADE",null,locale));
+		dgList.put("TRADE",resources.getMessage("label.dgnew2.TRADE",null,locale));
 		dgList.put("DGT",resources.getMessage("label.dgnew.DGT",null,locale));
-		dgList.put("HERA",resources.getMessage("label.dgnew.HERA",null,locale));
+		dgList.put("HERA",resources.getMessage("label.dgnew2.HERA",null,locale));
 		dgList.put("EISMEA",resources.getMessage("label.dgnew.EISMEA",null,locale));
 		dgList.put("ERC",resources.getMessage("label.dgnew.ERC",null,locale));
-		dgList.put("HADEA",resources.getMessage("label.dgnew.HADEA",null,locale));
-			
+		dgList.put("HADEA",resources.getMessage("label.dgnew2.HADEA",null,locale));
+
+		dgList.put("SG-REFORM",resources.getMessage("label.dgnew.SG-REFORM",null,locale));
+		dgList.put("CDP-OSP",resources.getMessage("label.dgnew.CDP-OSP",null,locale));
+		dgList.put("MENA",resources.getMessage("label.dgnew.MENA",null,locale));
+		dgList.put("COLLEGE",resources.getMessage("label.dgnew.COLLEGE",null,locale));
+		dgList.put("ENEST",resources.getMessage("label.dgnew.ENEST",null,locale));
+
 		dgList = Tools.sortByComparator(dgList);
 		return dgList;
 	}

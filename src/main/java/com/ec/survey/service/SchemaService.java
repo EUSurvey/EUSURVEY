@@ -36,12 +36,12 @@ import java.util.Set;
 @Service("schemaService")
 public class SchemaService extends BasicService {
 
-	private @Value("${showecas}") String showecas;
+	private @Value("${showecas:false}") String showecas;
 
 	// OCAS
-	public @Value("${casoss}") String cassOss;
+	public @Value("${casoss:false}") String cassOss;
 
-	public @Value("${ecf.template}") String ecfSurveyAlias;
+	public @Value("${ecf.template:@null}") String ecfSurveyAlias;
 
 	public boolean isCasOss() {
 		return cassOss != null && cassOss.equalsIgnoreCase("true");
@@ -71,27 +71,113 @@ public class SchemaService extends BasicService {
 			s.setFormat("Integer");
 			session.saveOrUpdate(s);
 		}
-
 	}
 
 	@Transactional
-	public void step131() {
+	public void step133() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		Role contributorECRole = administrationService.getRole("Contributor (EC)");
-		if (contributorECRole == null) {
-			contributorECRole = new Role();
-			contributorECRole.setName("Contributor (EC)");
-			contributorECRole.getGlobalPrivileges().put(GlobalPrivilege.ECAccess, 1);
-			administrationService.createRole(contributorECRole);
-		}
+		ensureActivities(session, ActivityRegistry.ID_DELETED_SURVEY_RESTORED, ActivityRegistry.ID_ARCHIVED_SURVEY_RESTORED);
 
-		//status.setDbversion(131); TODO: enable again in sprint 37
+		status.setDbversion(133);
 		session.saveOrUpdate(status);
 	}
 
-	@Transactional
+    @Transactional
+    public void step132() {
+        Session session = sessionFactory.getCurrentSession();
+        Status status = getStatus();
+
+        ensureActivity(ActivityRegistry.ID_DRAFT_CONTRIBUTION_PDF_SENT, session);
+
+        status.setDbversion(132);
+        session.saveOrUpdate(status);
+    }
+
+
+    @Transactional
+    public void step131() {
+        Session session = sessionFactory.getCurrentSession();
+        Status status = getStatus();
+
+        Role contributorECRole = administrationService.getRole("Contributor (EC)");
+        if (contributorECRole == null) {
+            contributorECRole = new Role();
+            contributorECRole.setName("Contributor (EC)");
+            contributorECRole.getGlobalPrivileges().put(GlobalPrivilege.ECAccess, 1);
+            administrationService.createRole(contributorECRole);
+        }
+
+        status.setDbversion(131);
+        session.saveOrUpdate(status);
+    }
+
+    @Transactional
+    public void step130() {
+        Session session = sessionFactory.getCurrentSession();
+        Status status = getStatus();
+        String existing = settingsService.get(Setting.InactiveSurveysDays);
+        if (existing == null) {
+            Setting s = new Setting();
+            s.setKey(Setting.InactiveSurveysDays);
+            s.setValue("365");
+            s.setFormat("days");
+            session.saveOrUpdate(s);
+        }
+
+        existing = settingsService.get(Setting.InactiveSurveysNotification1Days);
+        if (existing == null) {
+            Setting s = new Setting();
+            s.setKey(Setting.InactiveSurveysNotification1Days);
+            s.setValue("60");
+            s.setFormat("days");
+            session.saveOrUpdate(s);
+        }
+
+        existing = settingsService.get(Setting.InactiveSurveysNotification2Days);
+        if (existing == null) {
+            Setting s = new Setting();
+            s.setKey(Setting.InactiveSurveysNotification2Days);
+            s.setValue("15");
+            s.setFormat("days");
+            session.saveOrUpdate(s);
+        }
+
+        existing = settingsService.get(Setting.InactiveSurveysNotification3Days);
+        if (existing == null) {
+            Setting s = new Setting();
+            s.setKey(Setting.InactiveSurveysNotification3Days);
+            s.setValue("2");
+            s.setFormat("days");
+            session.saveOrUpdate(s);
+        }
+
+        existing = settingsService.get(Setting.InactiveSurveysSender);
+        if (existing == null) {
+            Setting s = new Setting();
+            s.setKey(Setting.InactiveSurveysSender);
+            s.setValue("EU-SURVEY-AUTODELETE@nomail.ec.europa.eu");
+            s.setFormat("e-mail address");
+            session.saveOrUpdate(s);
+        }
+
+        status.setDbversion(130);
+        session.saveOrUpdate(status);
+    }
+
+    @Transactional
+    public void step129() {
+        Session session = sessionFactory.getCurrentSession();
+        Status status = getStatus();
+
+        ensureActivity(ActivityRegistry.ID_CONTRIBUTION_PDF_SENT, session);
+
+        status.setDbversion(129);
+        session.saveOrUpdate(status);
+    }
+
+    @Transactional
     public void step128() {
         Session session = sessionFactory.getCurrentSession();
         ensureActivities(session,
@@ -2783,24 +2869,23 @@ public class SchemaService extends BasicService {
 		return result.toString();
 	}
 
-	@Transactional
-	public void createAnswerFullTextForOss() {
-
-		if (!showecas.equalsIgnoreCase("true")) {
-			logger.error("STARTING UPDATE FULL TEXT INDEX FOR ANSWER");
-			Session session = sessionFactory.getCurrentSession();
-
-			final String checkIndexExists = "show index from ANSWERS where Key_name = 'v_ft_idx'";
-			final String createIndex = "ALTER TABLE ANSWERS ADD FULLTEXT INDEX v_ft_idx (VALUE);";
-
-			NativeQuery query = session.createSQLQuery(checkIndexExists);
-			if (query.list().isEmpty()) {
-				logger.error("Special update full text not existing create them");
-				session.createSQLQuery(createIndex).executeUpdate();
-			}
-
-		}
-	}
+//	@Transactional
+//	public void createAnswerFullTextForOss() {
+//
+//		if (oss.equalsIgnoreCase("true")) {
+//			logger.info("STARTING UPDATE FULL TEXT INDEX FOR ANSWER");
+//			Session session = sessionFactory.getCurrentSession();
+//
+//			final String checkIndexExists = "show index from ANSWERS where Key_name = 'v_ft_idx'";
+//			final String createIndex = "ALTER TABLE ANSWERS ADD FULLTEXT INDEX v_ft_idx (VALUE);";
+//
+//			NativeQuery query = session.createSQLQuery(checkIndexExists);
+//			if (query.list().isEmpty()) {
+//				logger.info("Special update full text not existing create them");
+//				session.createSQLQuery(createIndex).executeUpdate();
+//			}
+//		}
+//	}
 
 	@Transactional
 	public boolean tableExists(String tableName) {

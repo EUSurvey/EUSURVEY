@@ -90,7 +90,10 @@ public class QuizHelper {
 								Answer answer = answers.get(0);
 								if (result.getPositionForAnswerUID() != null && result.getPositionForAnswerUID().containsKey(answer.getPossibleAnswerUniqueId())) {
 									int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
-									ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
+                                    ScoringItem scoringItem = null;
+                                    if (matrixQuestion.getScoringItems().size() > pos) {
+                                        scoringItem = matrixQuestion.getScoringItems().get(pos);
+                                    }
 									if (scoringItem != null && scoringItem.isCorrect()) {
 										score += matrixQuestion.getQuizPoints();
 										currentSectionScore += matrixQuestion.getQuizPoints();
@@ -148,14 +151,19 @@ public class QuizHelper {
 								{
 									Answer answer = answers.get(0);
 									int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
-									ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
-								
-									if (scoringItem != null)
-									{
-										score += scoringItem.getPoints();
-										currentSectionScore += scoringItem.getPoints();
-										result.getQuestionScores().put(matrixQuestion.getUniqueId(), scoringItem.getPoints());
-									}
+                                    try {
+                                        ScoringItem scoringItem = null;
+                                        if (matrixQuestion.getScoringItems().size() > pos) {
+                                            scoringItem = matrixQuestion.getScoringItems().get(pos);
+                                        }
+                                        if (scoringItem != null) {
+                                            score += scoringItem.getPoints();
+                                            currentSectionScore += scoringItem.getPoints();
+                                            result.getQuestionScores().put(matrixQuestion.getUniqueId(), scoringItem.getPoints());
+                                        }
+                                    } catch (Exception e) {
+                                        result.getQuestionScores().put(matrixQuestion.getUniqueId(), 0);
+                                    }
 								}
 							} else {
 								for (ScoringItem scoringItem : matrixQuestion.getScoringItems()) {
@@ -177,11 +185,19 @@ public class QuizHelper {
 								for (Answer answer : answers)
 								{
 									int pos = result.getPositionForAnswerUID().get(answer.getPossibleAnswerUniqueId());
-									ScoringItem scoringItem = matrixQuestion.getScoringItems().get(pos);
-									if (scoringItem != null)
-									{
-										qscore += scoringItem.getPoints();
-									}
+                                    try {
+                                        ScoringItem scoringItem = null;
+                                        if (matrixQuestion.getScoringItems().size() > pos) {
+                                            scoringItem = matrixQuestion.getScoringItems().get(pos);
+                                        }
+
+                                        if (scoringItem != null)
+                                        {
+                                            qscore += scoringItem.getPoints();
+                                        }
+                                    } catch (Exception e) {
+                                        result.getQuestionScores().put(matrixQuestion.getUniqueId(), 0);
+                                    }
 								}
 								
 								if (matrixQuestion.getNoNegativeScore() != null && matrixQuestion.getNoNegativeScore() && qscore < 0)

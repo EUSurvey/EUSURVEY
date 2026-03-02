@@ -842,11 +842,11 @@
 					<table class="minmaxtable">
 						<tr>
 							<td><spring:message code="label.min" />&nbsp;</td>
-							<td><input class="spinner" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChoices(), attr: {id: Cell().id() + 'minC', 'data-to' : Cell().id() + 'maxC'}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
+							<td><input class="spinner" min="0" max="500" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="min" data-bind="value: Cell().minChoicesStr(), attr: {id: Cell().id() + 'minC', 'data-to' : Cell().id() + 'maxC'}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 						<tr>
 							<td><spring:message code="label.max" />&nbsp;</td>
-							<td><input class="spinner" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChoices(), attr: {id: Cell().id() + 'maxC', 'data-from' : Cell().id() + 'minC'}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
+							<td><input class="spinner" min="0" max="500" data-forcell="true" data-label="NumberOfChoices" style="min-width:60px" type="number" data-type="max" data-bind="value: Cell().maxChoicesStr(), attr: {id: Cell().id() + 'maxC', 'data-from' : Cell().id() + 'minC'}" onfocus='markActiveProperty(this)' onblur='update(this)'/></td>
 						</tr>
 					</table>
 				</form>

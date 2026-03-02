@@ -64,7 +64,7 @@ public class LoginLogoutController extends BasicController {
 	protected CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 	
 	private @Value("${smtpserver}") String smtpServer;
-	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${smtp.port:25}") String smtpPort;
 	private @Value("${server.prefix}") String host;
 	
 	@RequestMapping(value = "/auth/login/runner", method = {RequestMethod.GET, RequestMethod.HEAD})

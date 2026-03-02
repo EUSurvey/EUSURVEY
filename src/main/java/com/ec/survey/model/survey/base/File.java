@@ -61,7 +61,7 @@ public class File implements java.io.Serializable {
 	@Transient
 	public String getCleanComment()
 	{
-		return ConversionTools.removeHTML(comment, false);
+		return ConversionTools.removeHTML(comment, false, false);
 	}
 	
 	@Column(name = "FILE_UID", nullable = false)

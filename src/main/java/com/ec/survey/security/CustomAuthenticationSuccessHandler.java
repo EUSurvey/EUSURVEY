@@ -105,8 +105,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 					user.setType(User.ECAS);				
 				}
 				
-				String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
-				if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
+				if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
 	    		{
 	    			user.setCanCreateSurveys(false);
 	    		}

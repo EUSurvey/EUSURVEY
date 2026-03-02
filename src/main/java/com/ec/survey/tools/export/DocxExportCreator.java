@@ -166,7 +166,7 @@ public class DocxExportCreator extends ExportCreator {
 					for (com.ec.survey.model.survey.base.File file : galleryQuestion.getAllFiles()) {
 						XWPFTableRow row = table.createRow();				
 						
-						cellValue = ConversionTools.removeHTMLNoEscape(file.getName());
+						cellValue = file.getName();
 						
 						row.getCell(0).setText(cellValue);
 						
@@ -472,7 +472,7 @@ public class DocxExportCreator extends ExportCreator {
 					document.createParagraph();
 				} else if (question instanceof NumberQuestion) {
 					NumberQuestion numberQuestion = (NumberQuestion)question;
-					if (numberQuestion.showStatisticsForNumberQuestion()) {
+					if (numberQuestion.showStatisticsForNumberQuestion(export.isAllAnswers())) {
 					
 						cellValue = question.getTitle();
 						if (export.getShowShortnames())
@@ -482,7 +482,7 @@ public class DocxExportCreator extends ExportCreator {
 						
 						XWPFTable table = createTableForAnswer(cellValue);
 						
-						for (String answer : numberQuestion.getAllPossibleAnswers()) {
+						for (String answer : numberQuestion.getAllPossibleAnswers(export.isAllAnswers())) {
 							XWPFTableRow row = table.createRow();				
 							
 							cellValue = answer;
@@ -516,7 +516,7 @@ public class DocxExportCreator extends ExportCreator {
 					}
 				} else if (question instanceof FormulaQuestion) {
 					FormulaQuestion formulaQuestion = (FormulaQuestion)question;
-					if (formulaQuestion.showStatisticsForNumberQuestion()) {
+					if (formulaQuestion.showStatisticsForNumberQuestion(export.isAllAnswers())) {
 
 						cellValue = question.getTitle();
 						if (export.getShowShortnames())
@@ -526,7 +526,7 @@ public class DocxExportCreator extends ExportCreator {
 
 						XWPFTable table = createTableForAnswer(cellValue);
 
-						for (String answer : formulaQuestion.getAllPossibleAnswers()) {
+						for (String answer : formulaQuestion.getAllPossibleAnswers(export.isAllAnswers())) {
 							XWPFTableRow row = table.createRow();
 
 							cellValue = answer;
@@ -610,7 +610,7 @@ public class DocxExportCreator extends ExportCreator {
 		paragraph.getCTP().getPPr().addNewKeepNext().setVal(STOnOff.ON);
 		
 		XWPFRun run = paragraph.createRun();
-		run.setText(ConversionTools.removeHTMLNoEscape(title));	
+		run.setText(title);
 		run.setBold(true);
 		
 		XWPFTable table = document.createTable();

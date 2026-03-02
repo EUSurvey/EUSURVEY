@@ -84,23 +84,22 @@
 					  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 					  success: function( data ) {						  
 						  if (data == "success") {
-							  	hideModalDialog($('#download-contribution-dialog'));
-								showSuccess(message_PublicationExportSuccess2.replace('{0}', val));
+							  hideModalDialog($('#download-contribution-dialog'));
+							  $("#caseid").val("");
+							  $("#emailcontribution").val("");
+							  showSuccess(message_PublicationExportSuccess2.replace('{0}', val));
 						  	} else if (data == "errorcaptcha") {
 						  		$("#runner-captcha-error").show();
-						  		reloadCaptcha();
 						  	} else if (data == "errorcaseid") {
 						  		$("#download-contribution-dialog-caseid-error").show();
-						  		reloadCaptcha();
 							} else if (data == "errorcaseidforbidden") {
 								window.location = window.location.href = "${contextpath}/errors/403.html";
 							} else if (data == "errorcaseidinvitation") {
 								$("#download-contribution-dialog-caseidinvitation-error").show();
-						  		reloadCaptcha();
 							} else {
 								showError('<spring:message code="error.unexpected" />');
-								reloadCaptcha();
 							};
+						  reloadCaptcha();
 					}
 				});				
 			} else {
@@ -301,7 +300,7 @@
 					</span>
 					<br />
 					
-					<spring:message code="question.EmailForPDF" />
+					<spring:message code="label.EnterEmail" />
 					<input type="text" maxlength="255" name="email" id="emailcontribution" />
 					<span id="download-contribution-dialog-error" class="validation-error hideme">
 						<spring:message code="message.ProvideEmail" />
@@ -313,6 +312,8 @@
 				       		<spring:message code="message.captchawrongnew" />
 				       	</span>
 			       	</div>
+
+			       	<spring:message code="info.PDFPerEmail" />
 					
 				</div>
 				<div class="modal-footer">

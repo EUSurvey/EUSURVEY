@@ -35,17 +35,20 @@ public class SystemController extends BasicController {
 
 	@RequestMapping(value = "/message", method = { RequestMethod.GET, RequestMethod.HEAD })
 
-	public @ResponseBody Message getSystemMessage(HttpServletRequest request)
+	public @ResponseBody Message[] getSystemMessage(HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 
 		User user = sessionService.getCurrentUser(request, false, false);
+
+        List<Message> messages = new ArrayList<>();
 
 		Message message;
 
 		if (user != null && user.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) > 0) {
 			message = systemService.getAdminMessage();
-			if (message != null)
-				return message;
+			if (message != null) {
+                messages.add(message);
+            }
 		}
 
 		message = systemService.getMessage();
@@ -54,25 +57,26 @@ public class SystemController extends BasicController {
 				&& request.getParameter("runnermode").equalsIgnoreCase("true");
 
 		if (message.isActive() && message.getText().length() > 0) {
-			if (message.getType() == 0) {
+			if (message.getType() == 0 && user == null) {
 				// form managers only
-				if (user == null)
-					return null;
-			} else if (message.getType() == 1) {
+			} else if (message.getType() == 1 && !runnermode) {
 				// participants only
-				if (!runnermode)
-					return null;
 			} else if (message.getType() == 2 && !runnermode && user == null) {
 				// participants and form managers
-				return null;
-			}
-
-			request.getSession().setAttribute("lastmessageversion", String.valueOf(message.getVersion()));
-
-			return message;
+			} else {
+                messages.add(message);
+                request.getSession().setAttribute("lastmessageversion", String.valueOf(message.getVersion()));
+            }
 		}
 
-		return user == null ? null : systemService.getUserMessage(user.getId());
+        if (user != null) {
+            message = systemService.getUserMessage(user.getId());
+            if (message != null) {
+                messages.add(message);
+            }
+        }
+
+		return messages.toArray(new Message[0]);
 	}
 
 	@RequestMapping(value = "/deletemessage", method = { RequestMethod.GET, RequestMethod.HEAD })

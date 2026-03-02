@@ -83,6 +83,12 @@ public class Setting {
 	public static final String ContactGuestlistLimitForExternals = "ContactGuestlistLimitForExternals";
 	public static final String ContactGuestlistSizeLimitForExternals = "ContactGuestlistSizeLimitForExternals";
 
+    public static final String InactiveSurveysDays = "InactiveSurveysDays";
+    public static final String InactiveSurveysNotification1Days = "InactiveSurveysNotification1Days";
+    public static final String InactiveSurveysNotification2Days = "InactiveSurveysNotification2Days";
+    public static final String InactiveSurveysNotification3Days = "InactiveSurveysNotification3Days";
+    public static final String InactiveSurveysSender = "InactiveSurveysSender";
+
 	@Id
 	@Column(name = "SETTINGS_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
