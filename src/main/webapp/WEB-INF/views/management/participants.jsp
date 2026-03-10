@@ -20,8 +20,8 @@
 		var attributeNames = new Array();
 
 		<c:forEach items="${attributeNamesForTableHead}" var="attributeName" varStatus="rowCounter">
-		attributeIDs.push(${attributeName.id});
-		attributeNames.push("${attributeName.name}");
+	    attributeIDs.push(${attributeName.key});
+		attributeNames.push("${attributeName.value}");
 		</c:forEach>
 
 		var errorMaxTokenNumberExceeded = "<spring:message code="error.MaxTokenNumberExceeded" />";
