@@ -202,6 +202,19 @@ public class AnswerSet implements java.io.Serializable {
 	}
 
 	@Transient
+	public Answer getAnswer(String questionUniqueId, String possibleAnswerUniqueId) {
+		for (Answer answer : answers) {
+			if (answer.getQuestionUniqueId() != null && answer.getPossibleAnswerUniqueId() != null
+					&& answer.getQuestionUniqueId().equals(questionUniqueId)
+					&& answer.getPossibleAnswerUniqueId().equals(possibleAnswerUniqueId)) {
+				return answer;
+			}
+		}
+
+		return null;
+	}
+
+	@Transient
 	public List<Answer> getMatrixAnswers(Matrix matrix) {
 		List<Answer> result = new ArrayList<>();
 		Set<String> questionUids = new HashSet<>();

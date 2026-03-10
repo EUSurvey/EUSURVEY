@@ -120,7 +120,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private Survey getSurvey(String alias, User user, HttpServletRequest request, HttpServletResponse response,
-			boolean draft, boolean readonly) {
+							 boolean draft, boolean readonly) {
 		Survey survey;
 
 		try {
@@ -161,7 +161,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/deleteOldExports", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String deleteOldExports(HttpServletRequest request, HttpServletResponse response,
-			Locale locale) throws InterruptedException {
+												 Locale locale) throws InterruptedException {
 		User user = getUser(request, response, false);
 		if (user != null) {
 			if (user.getFormPrivilege() < 2) {
@@ -184,7 +184,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/createNewTokenList/{shortname}/{active}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String createNewTokenList(@PathVariable String shortname, @PathVariable String active,
-			HttpServletRequest request, HttpServletResponse response) {
+												   HttpServletRequest request, HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createNewTokenList(credentials.getKey(), credentials.getValue(), shortname, active, request,
@@ -194,8 +194,8 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String createNewTokenList(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String shortname, @PathVariable String active, HttpServletRequest request,
-			HttpServletResponse response) {
+													@PathVariable String shortname, @PathVariable String active, HttpServletRequest request,
+													HttpServletResponse response) {
 
 		try {
 
@@ -240,7 +240,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/createTokens/{groupid}/{number}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String createTokens(@PathVariable String groupid, @PathVariable String number,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) {
+											 HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createTokens(credentials.getKey(), credentials.getValue(), groupid, number, request, response,
@@ -250,8 +250,8 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String createTokens(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String groupid, @PathVariable String number, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+											  @PathVariable String groupid, @PathVariable String number, HttpServletRequest request,
+											  HttpServletResponse response, Locale locale) {
 
 		try {
 
@@ -336,7 +336,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/deactivateToken/{groupid}/{token}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String deactivateToken(@PathVariable String groupid, @PathVariable String token,
-			HttpServletRequest request, HttpServletResponse response) {
+												HttpServletRequest request, HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return deactivateToken(credentials.getKey(), credentials.getValue(), groupid, token, request, response);
@@ -345,8 +345,8 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String deactivateToken(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String groupid, @PathVariable String token, HttpServletRequest request,
-			HttpServletResponse response) {
+												 @PathVariable String groupid, @PathVariable String token, HttpServletRequest request,
+												 HttpServletResponse response) {
 
 		try {
 
@@ -422,7 +422,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/activateToken/{groupid}/{token}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String activateToken(@PathVariable String groupid, @PathVariable String token,
-			HttpServletRequest request, HttpServletResponse response) {
+											  HttpServletRequest request, HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return activateToken(credentials.getKey(), credentials.getValue(), groupid, token, request, response);
@@ -431,8 +431,8 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String activateToken(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String groupid, @PathVariable String token, HttpServletRequest request,
-			HttpServletResponse response) {
+											   @PathVariable String groupid, @PathVariable String token, HttpServletRequest request,
+											   HttpServletResponse response) {
 
 		try {
 
@@ -503,7 +503,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/deleteToken/{groupid}/{token}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String deleteToken(@PathVariable String groupid, @PathVariable String token,
-			HttpServletRequest request, HttpServletResponse response) {
+											HttpServletRequest request, HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return deleteToken(credentials.getKey(), credentials.getValue(), groupid, token, request, response);
@@ -512,8 +512,8 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String deleteToken(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String groupid, @PathVariable String token, HttpServletRequest request,
-			HttpServletResponse response) {
+											 @PathVariable String groupid, @PathVariable String token, HttpServletRequest request,
+											 HttpServletResponse response) {
 
 		try {
 
@@ -583,7 +583,7 @@ public class WebServiceController extends BasicController {
 
 	@RequestMapping(value = "/getResults/{taskid}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public @ResponseBody String getResults(@PathVariable String taskid, HttpServletRequest request,
-			HttpServletResponse response) {
+										   HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return getResults(credentials.getKey(), credentials.getValue(), taskid, request, response);
@@ -593,7 +593,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String getResults(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String taskid, HttpServletRequest request, HttpServletResponse response) {
+											@PathVariable String taskid, HttpServletRequest request, HttpServletResponse response) {
 
 		try {
 			response.setContentType("application/xml");
@@ -674,15 +674,15 @@ public class WebServiceController extends BasicController {
 	// no dates
 
 	private @ResponseBody String createResultsNoDates(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String showids, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+													  @PathVariable String formid, @PathVariable String showids, HttpServletRequest request,
+													  HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, showids, "0", "0", request, response, locale);
 	}
 
 	@RequestMapping(value = "/prepareResults/{formid}/{showids}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsNoDates(@PathVariable String formid, @PathVariable String showids,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) {
+													  HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultsNoDates(credentials.getKey(), credentials.getValue(), formid, showids, request,
@@ -694,15 +694,15 @@ public class WebServiceController extends BasicController {
 	// only start date
 
 	private @ResponseBody String createResultsStartOnly(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String showids, @PathVariable String start,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) {
+														@PathVariable String formid, @PathVariable String showids, @PathVariable String start,
+														HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, showids, start, "0", request, response, locale);
 	}
 
 	@RequestMapping(value = "/prepareResults/{formid}/{showids}/{start}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsStartOnly(@PathVariable String formid, @PathVariable String showids,
-			@PathVariable String start, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+														@PathVariable String start, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultsStartOnly(credentials.getKey(), credentials.getValue(), formid, showids, start, request,
@@ -714,16 +714,16 @@ public class WebServiceController extends BasicController {
 	// complete
 
 	private @ResponseBody String createResults(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String showids, @PathVariable String start,
-			@PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+											   @PathVariable String formid, @PathVariable String showids, @PathVariable String start,
+											   @PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, showids, start, end, request, response, locale, 0, "N", "");
 	}
 
 	@RequestMapping(value = "/prepareResults/{formid}/{showids}/{start}/{end}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResults(@PathVariable String formid, @PathVariable String showids,
-			@PathVariable String start, @PathVariable String end, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+											   @PathVariable String start, @PathVariable String end, HttpServletRequest request,
+											   HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResults(credentials.getKey(), credentials.getValue(), formid, showids, start, end, request,
@@ -737,8 +737,8 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/prepareResults/{formid}/{showids}/{start}/{end}/{type}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResults(@PathVariable String formid, @PathVariable String showids,
-			@PathVariable String start, @PathVariable String end, @PathVariable String type, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+											   @PathVariable String start, @PathVariable String end, @PathVariable String type, HttpServletRequest request,
+											   HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResults(credentials.getKey(), credentials.getValue(), formid, showids, start, end, request,
@@ -751,15 +751,15 @@ public class WebServiceController extends BasicController {
 
 	// no dates
 	private @ResponseBody String createResultsXMLNoDates(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String showids, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+														 @PathVariable String formid, @PathVariable String showids, HttpServletRequest request,
+														 HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, showids, "0", "0", request, response, locale);
 	}
 
 	@RequestMapping(value = "/prepareResultsXML/{formid}/{showids}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsXMLNoDates(@PathVariable String formid, @PathVariable String showids,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) {
+														 HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultsXML(credentials.getKey(), credentials.getValue(), formid, showids, "0", "0", request,
@@ -771,15 +771,15 @@ public class WebServiceController extends BasicController {
 	// only start date
 
 	private @ResponseBody String createResultsXMLStart(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String showids, @PathVariable String start,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) {
+													   @PathVariable String formid, @PathVariable String showids, @PathVariable String start,
+													   HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, showids, start, "0", request, response, locale, 1, "N", "");
 	}
 
 	@RequestMapping(value = "/prepareResultsXML/{formid}/{showids}/{start}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsXMLStart(@PathVariable String formid, @PathVariable String showids,
-			@PathVariable String start, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+													   @PathVariable String start, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultsXML(credentials.getKey(), credentials.getValue(), formid, showids, start, "0", request,
@@ -791,16 +791,16 @@ public class WebServiceController extends BasicController {
 	// complete
 
 	private @ResponseBody String createResultsXML(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String showids, @PathVariable String start,
-			@PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+												  @PathVariable String formid, @PathVariable String showids, @PathVariable String start,
+												  @PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, showids, start, end, request, response, locale, 1, "N", "");
 	}
 
 	@RequestMapping(value = "/prepareResultsXML/{formid}/{showids}/{start}/{end}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsXML(@PathVariable String formid, @PathVariable String showids,
-			@PathVariable String start, @PathVariable String end, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+												  @PathVariable String start, @PathVariable String end, HttpServletRequest request,
+												  HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultsXML(credentials.getKey(), credentials.getValue(), formid, showids, start, end, request,
@@ -814,8 +814,8 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/prepareResultsXML/{formid}/{showids}/{start}/{end}/{type}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsXML(@PathVariable String formid, @PathVariable String showids,
-			@PathVariable String start, @PathVariable String end, @PathVariable String type, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+												  @PathVariable String start, @PathVariable String end, @PathVariable String type, HttpServletRequest request,
+												  HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResults(credentials.getKey(), credentials.getValue(), formid, showids, start, end, request,
@@ -829,14 +829,14 @@ public class WebServiceController extends BasicController {
 	// no dates
 
 	private @ResponseBody String createResultsPDFNoDates(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+														 @PathVariable String formid, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, "false", "0", "0", request, response, locale, 2, "N", "");
 	}
 
 	@RequestMapping(value = "/prepareResultsPDF/{formid}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsPDFNoDates(@PathVariable String formid, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+														 HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultsPDF(credentials.getKey(), credentials.getValue(), formid, "0", "0", request, response,
@@ -848,15 +848,15 @@ public class WebServiceController extends BasicController {
 	// only start date
 
 	private @ResponseBody String createResultsPDFNoStart(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String start, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+														 @PathVariable String formid, @PathVariable String start, HttpServletRequest request,
+														 HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, "false", start, "0", request, response, locale, 2, "N", "");
 	}
 
 	@RequestMapping(value = "/prepareResultsPDF/{formid}/{start}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsPDFNoStart(@PathVariable String formid, @PathVariable String start,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) {
+														 HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultsPDF(credentials.getKey(), credentials.getValue(), formid, start, "0", request, response,
@@ -868,15 +868,15 @@ public class WebServiceController extends BasicController {
 	// complete
 
 	private @ResponseBody String createResultsPDF(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String start, @PathVariable String end,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) {
+												  @PathVariable String formid, @PathVariable String start, @PathVariable String end,
+												  HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		return createResults(login, pass, formid, "false", start, end, request, response, locale, 2, "N", "");
 	}
 
 	@RequestMapping(value = "/prepareResultsPDF/{formid}/{start}/{end}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsPDF(@PathVariable String formid, @PathVariable String start,
-			@PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+												  @PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultsPDF(credentials.getKey(), credentials.getValue(), formid, start, end, request, response,
@@ -890,8 +890,8 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/prepareResultsPDF/{formid}/{start}/{end}/{type}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultsPDF(@PathVariable String formid, @PathVariable String start,
-			@PathVariable String end, @PathVariable String type, HttpServletRequest request,
-			HttpServletResponse response, Locale locale) {
+												  @PathVariable String end, @PathVariable String type, HttpServletRequest request,
+												  HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResults(credentials.getKey(), credentials.getValue(), formid, "false", start, end, request,
@@ -900,12 +900,12 @@ public class WebServiceController extends BasicController {
 		return "";
 	}
 
-///////createAllResults///////////
+	///////createAllResults///////////
 
 	private @ResponseBody String createAllResults(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String formid, @PathVariable String start, @PathVariable String end,
-			@PathVariable String type, @PathVariable String xml, @PathVariable String pdf,
-			@PathVariable String uploaded, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+												  @PathVariable String formid, @PathVariable String start, @PathVariable String end,
+												  @PathVariable String type, @PathVariable String xml, @PathVariable String pdf,
+												  @PathVariable String uploaded, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		String filetypes = "";
 		if (xml != null && xml.equalsIgnoreCase("true")) {
 			filetypes += "x";
@@ -922,8 +922,8 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/prepareAllResults/{formid}/{start}/{end}/{type}/{xml}/{pdf}/{uploaded}", method = {
 			RequestMethod.GET, RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareAllResults(@PathVariable String formid, @PathVariable String start,
-			@PathVariable String end, @PathVariable String type, @PathVariable String xml, @PathVariable String pdf,
-			@PathVariable String uploaded, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+												  @PathVariable String end, @PathVariable String type, @PathVariable String xml, @PathVariable String pdf,
+												  @PathVariable String uploaded, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createAllResults(credentials.getKey(), credentials.getValue(), formid, start, end, type, xml, pdf,
@@ -933,8 +933,8 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String createResults(String login, String pass, String formid, String showids, String start,
-			String end, HttpServletRequest request, HttpServletResponse response, Locale locale, int type,
-			String contributionType, String filetypes) {
+											   String end, HttpServletRequest request, HttpServletResponse response, Locale locale, int type,
+											   String contributionType, String filetypes) {
 
 		try {
 
@@ -950,7 +950,7 @@ public class WebServiceController extends BasicController {
 				response.setStatus(412);
 				return "";
 			}
-			
+
 			if (survey.getIsEVote()){
 				response.setStatus(403);
 				return "";
@@ -980,10 +980,10 @@ public class WebServiceController extends BasicController {
 
 			boolean addMeta = request.getParameter("meta") != null
 					&& request.getParameter("meta").equalsIgnoreCase("true");
-			
+
 			boolean xmlonly = request.getParameter("xmlonly") != null
 					&& request.getParameter("xmlonly").equalsIgnoreCase("true");
-			
+
 			String webhook = request.getParameter("hook");
 
 			WebserviceTask task = new WebserviceTask(WebserviceTaskType.CreateResults);
@@ -994,11 +994,11 @@ public class WebServiceController extends BasicController {
 			task.setContributionType(contributionType);
 			if (webhook != null && webhook.length() > 0) {
 				UrlValidator validator = new UrlValidator();
-			    if (!validator.isValid(webhook)) {
-			    	response.setStatus(412);
+				if (!validator.isValid(webhook)) {
+					response.setStatus(412);
 					return "";
-			    }
-				
+				}
+
 				task.setHook(webhook);
 			}
 
@@ -1068,7 +1068,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/prepareResultFromToken/{formid}/{token}/{showids}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultFromToken(@PathVariable String formid, @PathVariable String token,
-			@PathVariable String showids, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+													   @PathVariable String showids, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultFromTokenOrContributionId(true, formid, token, showids, request,
@@ -1078,7 +1078,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String createResultFromTokenOrContributionId(boolean isToken, @PathVariable String formid, @PathVariable String tokenOrUniqueId, @PathVariable String showids,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) {
+																	   HttpServletRequest request, HttpServletResponse response, Locale locale) {
 
 		try {
 
@@ -1153,7 +1153,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/prepareResultFromContributionId/{formid}/{contributionid}/{showids}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prepareResultFromContributionId(@PathVariable String formid, @PathVariable String contributionid,
-													   @PathVariable String showids, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+																@PathVariable String showids, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return createResultFromTokenOrContributionId(false, formid, contributionid, showids, request,	response, locale);
@@ -1165,6 +1165,13 @@ public class WebServiceController extends BasicController {
 		draft.setUniqueId(token);
 
 		AnswerSet answerSet = new AnswerSet();
+
+		if (draft.getAnswerSet() == null) {
+			draft.setAnswerSet(answerSet);
+		} else {
+			answerSet = draft.getAnswerSet();
+		}
+
 		answerSet.setUpdateDate(new Date());
 		answerSet.setLanguageCode(survey.getLanguage().getCode());
 		answerSet.setDate(answerSet.getUpdateDate());
@@ -1172,7 +1179,7 @@ public class WebServiceController extends BasicController {
 		answerSet.setSurveyId(survey.getId());
 		answerSet.setUniqueCode(token);
 		answerSet.setIsDraft(true);
-		draft.setAnswerSet(answerSet);
+
 		if (invitation != null) {
 			draft.getAnswerSet().setInvitationId(invitation.getUniqueId());
 		}
@@ -1186,31 +1193,46 @@ public class WebServiceController extends BasicController {
 			if (elementsByAlias.containsKey(questionalias)) {
 				Element question = elementsByAlias.get(questionalias);
 
+				List<Answer> existingAnswers = answerSet.getAnswers(question.getUniqueId());
+
 				if (question instanceof FreeTextQuestion || question instanceof EmailQuestion
 						|| question instanceof NumberQuestion || question instanceof RegExQuestion) {
 					Answer answer = new Answer();
-					answer.setAnswerSet(answerSet);
-					answer.setQuestionUniqueId(question.getUniqueId());
+
+					if (existingAnswers.isEmpty()) {
+						answer.setAnswerSet(answerSet);
+						answerSet.addAnswer(answer);
+						answer.setQuestionUniqueId(question.getUniqueId());
+					} else {
+						answer = existingAnswers.get(0);
+					}
+
 					answer.setValue(entry.getValue());
-					answerSet.addAnswer(answer);
+
 				} else if (question instanceof DateQuestion) {
 
 					String dateval = entry.getValue();
-						Date date = null;
+					Date date = null;
 
-						try {
-							date = Tools.parseDateString(dateval, ConversionTools.DateFormat);
-						} catch (DateTimeParseException dpe) {}
+					try {
+						date = Tools.parseDateString(dateval, ConversionTools.DateFormat);
+					} catch (DateTimeParseException dpe) {}
 
 					if (date == null) {
 						return "invalid date: " + dateval;
 					}
 
 					Answer answer = new Answer();
-					answer.setAnswerSet(answerSet);
-					answer.setQuestionUniqueId(question.getUniqueId());
+
+					if (existingAnswers.isEmpty()) {
+						answer.setAnswerSet(answerSet);
+						answerSet.addAnswer(answer);
+						answer.setQuestionUniqueId(question.getUniqueId());
+					} else {
+						answer = existingAnswers.get(0);
+					}
+
 					answer.setValue(dateval);
-					answerSet.addAnswer(answer);
 				} else if (question instanceof TimeQuestion) {
 
 					String timeval = values.get(questionalias);
@@ -1220,12 +1242,23 @@ public class WebServiceController extends BasicController {
 					}
 
 					Answer answer = new Answer();
-					answer.setAnswerSet(answerSet);
-					answer.setQuestionUniqueId(question.getUniqueId());
+
+					if (existingAnswers.isEmpty()) {
+						answer.setAnswerSet(answerSet);
+						answerSet.addAnswer(answer);
+						answer.setQuestionUniqueId(question.getUniqueId());
+					} else {
+						answer = existingAnswers.get(0);
+					}
+
 					answer.setValue(timeval);
-					answerSet.addAnswer(answer);
 				} else if (question instanceof ChoiceQuestion) {
 					String[] arrvalues = entry.getValue().split(",");
+
+					if (!existingAnswers.isEmpty()) {
+						answerSet.getAnswers().removeAll(existingAnswers);
+					}
+
 					for (String alias : arrvalues) {
 						ChoiceQuestion cq = (ChoiceQuestion) question;
 						PossibleAnswer pa = cq.getPossibleAnswerByAlias(alias);
@@ -1242,6 +1275,11 @@ public class WebServiceController extends BasicController {
 						answerSet.addAnswer(answer);
 					}
 				} else if (question instanceof GalleryQuestion) {
+
+					if (!existingAnswers.isEmpty()) {
+						answerSet.getAnswers().removeAll(existingAnswers);
+					}
+
 					String[] arrvalues = entry.getValue().split(",");
 					for (String value : arrvalues) {
 						Answer answer = new Answer();
@@ -1256,8 +1294,11 @@ public class WebServiceController extends BasicController {
 						// a matrix question
 						String[] arrvalues = entry.getValue().split(",");
 
-						for (String alias : arrvalues) {
+						if (!existingAnswers.isEmpty()) {
+							answerSet.getAnswers().removeAll(existingAnswers);
+						}
 
+						for (String alias : arrvalues) {
 							if (!elementsByAlias.containsKey(alias)) {
 								return "invalid option " + alias + " for question " + questionalias;
 							}
@@ -1295,15 +1336,22 @@ public class WebServiceController extends BasicController {
 				}
 
 				var answer = new Answer();
-				answer.setAnswerSet(answerSet);
-				answer.setQuestionUniqueId(table.getUniqueId());
 
-				answer.setPossibleAnswerUniqueId(row.getUniqueId() + "#" + col.getUniqueId());
+				Answer existingAnswer = answerSet.getAnswer(table.getUniqueId(), row.getUniqueId() + "#" + col.getUniqueId());
+
+				if (existingAnswer == null) {
+					answer.setAnswerSet(answerSet);
+					answerSet.addAnswer(answer);
+					answer.setQuestionUniqueId(table.getUniqueId());
+					answer.setPossibleAnswerUniqueId(row.getUniqueId() + "#" + col.getUniqueId());
+				} else {
+					answer = existingAnswer;
+				}
 
 				answer.setValue(entry.getValue());
 				answer.setRow(rowNum);
 				answer.setColumn(colNum);
-				answerSet.addAnswer(answer);
+
 			} else {
 				if (!ignoreUnknownParameters) {
 					return "unknown question: " + questionalias;
@@ -1317,7 +1365,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/prefill/{shortname}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String prefill(@PathVariable String shortname, HttpServletRequest request,
-			HttpServletResponse response) {
+										HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials == null)
 			return "";
@@ -1361,31 +1409,30 @@ public class WebServiceController extends BasicController {
 
 		if (invitation != null) {
 			Draft draft = answerService.getDraftByAnswerUID(token);
-			if (draft != null) {
-				response.setStatus(412);
-				return "there is already a draft for the given token";
+
+			if (draft == null) {
+				draft = new Draft();
 			}
 
-			draft = new Draft();
 			var message = initDraftForURLParameters(draft, token, survey, invitation, values, false);
 			if (message != null) {
 				response.setStatus(412);
 				return message;
 			}
-			
+
 			if (draft.getAnswerSet().getAnswers().isEmpty()) {
 				logger.error("prefill call rejected as the draft contribution would be empty: " + getFullURL(request));
 				response.setStatus(412);
 				return "prefill call rejected as the draft contribution would be empty";
 			}
-			
+
 			//check that all readonly mandatory questions are answered
 			Question q = SurveyHelper.getFirstUnansweredMandatoryReadonlyQuestion(draft.getAnswerSet());
 			if (q != null) {
 				logger.error("prefill call rejected as the draft contribution would be missing a value for this mandatory read-only question: " + q.getUniqueId());
 				response.setStatus(412);
 				return "missing mandatory value for question " + q.getShortname();
-			}					
+			}
 
 			try {
 				answerService.saveDraft(draft, true);
@@ -1406,16 +1453,16 @@ public class WebServiceController extends BasicController {
 			return "no invitation found";
 		}
 	}
-	
-	private static String getFullURL(HttpServletRequest request) {
-	    StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
-	    String queryString = request.getQueryString();
 
-	    if (queryString == null) {
-	        return requestURL.toString();
-	    } else {
-	        return requestURL.append('?').append(queryString).toString();
-	    }
+	private static String getFullURL(HttpServletRequest request) {
+		StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
+		String queryString = request.getQueryString();
+
+		if (queryString == null) {
+			return requestURL.toString();
+		} else {
+			return requestURL.append('?').append(queryString).toString();
+		}
 	}
 
 	/// survey API
@@ -1423,7 +1470,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/getSurveyPublicationStatus/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getSurveyPublicationStatus(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+														   HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return getSurveyInfo("SurveyPublicationStatus", credentials.getKey(), credentials.getValue(), alias,
@@ -1435,7 +1482,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/getSurveyMetadata/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/xml;charset=UTF-8")
 	public @ResponseBody String getSurveyMetadata(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+												  HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return getSurveyInfo("SurveyMetaData", credentials.getKey(), credentials.getValue(), alias, request,
@@ -1447,7 +1494,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/getDeletedContributions/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/xml;charset=UTF-8")
 	public @ResponseBody String getDeletedContributions(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+														HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return getSurveyInfo("DeletedContributions", credentials.getKey(), credentials.getValue(), alias, request,
@@ -1455,11 +1502,11 @@ public class WebServiceController extends BasicController {
 		}
 		return "";
 	}
-	
+
 	@RequestMapping(value = "/getPrivilegedUsers/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/xml;charset=UTF-8")
 	public @ResponseBody String getPrivilegedUsers(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+												   HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return getSurveyInfo("PrivilegedUsers", credentials.getKey(), credentials.getValue(), alias, request,
@@ -1467,11 +1514,11 @@ public class WebServiceController extends BasicController {
 		}
 		return "";
 	}
-	
+
 	@RequestMapping(value = "/publishSurvey/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String publishSurvey(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+											  HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return publishSurvey(credentials.getKey(), credentials.getValue(), alias, request, response, null, null);
@@ -1482,7 +1529,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/publishSurvey/{alias}/{start}/{end}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String publishSurveyStart(@PathVariable String alias, @PathVariable String start,
-			@PathVariable String end, HttpServletRequest request, HttpServletResponse response) {
+												   @PathVariable String end, HttpServletRequest request, HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return publishSurvey(credentials.getKey(), credentials.getValue(), alias, request, response, start, end);
@@ -1491,8 +1538,8 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String publishSurvey(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response, String start,
-			String end) {
+											   @PathVariable String alias, HttpServletRequest request, HttpServletResponse response, String start,
+											   String end) {
 		try {
 
 			User user = getUser(request, response, true);
@@ -1603,7 +1650,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/unpublishSurvey/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String unpublishSurvey(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+												HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return unpublishSurvey(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -1612,7 +1659,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String unpublishSurvey(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+												 @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 
 		try {
 
@@ -1646,7 +1693,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String getSurveyInfo(String type, @PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+											   @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 
 			User user = getUser(request, response, true);
@@ -1658,25 +1705,25 @@ public class WebServiceController extends BasicController {
 				return "";
 
 			switch (type) {
-			case "SurveyPublicationStatus":
-				response.setStatus(200);
-				webserviceService.increaseServiceRequest(user.getId());
-				return survey.getIsPublished() && survey.getIsActive() ? "1" : "0";
-			case "SurveyMetaData":
-				response.setStatus(200);
-				webserviceService.increaseServiceRequest(user.getId());
-				return surveyService.getSurveyMetaDataXML(survey);
-			case "DeletedContributions":
-				response.setStatus(200);
-				webserviceService.increaseServiceRequest(user.getId());
-				return answerService.getDeletedContributionsXML(survey.getUniqueId(), survey.getShortname());
-			case "PrivilegedUsers":
-				response.setStatus(200);
-				webserviceService.increaseServiceRequest(user.getId());
-				return surveyService.getPrivilegedUsersXML(survey.getUniqueId(), survey.getShortname());
-			default:
-				response.setStatus(412);
-				break;
+				case "SurveyPublicationStatus":
+					response.setStatus(200);
+					webserviceService.increaseServiceRequest(user.getId());
+					return survey.getIsPublished() && survey.getIsActive() ? "1" : "0";
+				case "SurveyMetaData":
+					response.setStatus(200);
+					webserviceService.increaseServiceRequest(user.getId());
+					return surveyService.getSurveyMetaDataXML(survey);
+				case "DeletedContributions":
+					response.setStatus(200);
+					webserviceService.increaseServiceRequest(user.getId());
+					return answerService.getDeletedContributionsXML(survey.getUniqueId(), survey.getShortname());
+				case "PrivilegedUsers":
+					response.setStatus(200);
+					webserviceService.increaseServiceRequest(user.getId());
+					return surveyService.getPrivilegedUsersXML(survey.getUniqueId(), survey.getShortname());
+				default:
+					response.setStatus(412);
+					break;
 			}
 
 			return "";
@@ -1695,7 +1742,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/archiveSurvey/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String archiveSurvey(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+											  HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return archiveSurvey(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -1704,7 +1751,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String archiveSurvey(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+											   @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -1737,7 +1784,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/restoreSurvey/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String restoreSurvey(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+											  HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return restoreSurvey(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -1746,7 +1793,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String restoreSurvey(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+											   @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -1783,7 +1830,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/deleteSurvey/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String deleteSurvey(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+											 HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return deleteSurvey(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -1792,7 +1839,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String deleteSurvey(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+											  @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -1821,7 +1868,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/getSurveyPDF/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String getSurveyPDF(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+											 HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return getSurveyPDF(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -1830,7 +1877,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String getSurveyPDF(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+											  @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -1890,7 +1937,7 @@ public class WebServiceController extends BasicController {
 
 	@PatchMapping(value = "/changeSurveyTitle/{alias}", produces = "text/html")
 	public @ResponseBody String changeSurveyTitle(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+												  HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return changeSurveyTitle(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -1899,7 +1946,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String changeSurveyTitle(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+												   @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -1938,7 +1985,7 @@ public class WebServiceController extends BasicController {
 
 	@PatchMapping(value = "/changeContact/{alias}", produces = "text/html")
 	public @ResponseBody String changeContact(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+											  HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return changeContact(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -1947,7 +1994,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String changeContact(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+											   @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -1980,7 +2027,7 @@ public class WebServiceController extends BasicController {
 
 	@PutMapping(value = "/uploadBackgroundDocument/{alias}", produces = "text/html")
 	public @ResponseBody String uploadBackgroundDocument(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+														 HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return uploadBackgroundDocument(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -1989,7 +2036,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String uploadBackgroundDocument(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+														  @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -2042,7 +2089,7 @@ public class WebServiceController extends BasicController {
 
 	@DeleteMapping(value = "/removeBackgroundDocument/{alias}", produces = "text/html")
 	public @ResponseBody String removeBackgroundDocument(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+														 HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return removeBackgroundDocument(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -2051,7 +2098,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String removeBackgroundDocument(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+														  @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -2098,7 +2145,7 @@ public class WebServiceController extends BasicController {
 
 	@PutMapping(value = "/addUsefulLink/{alias}", produces = "text/html")
 	public @ResponseBody String addUsefulLink(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+											  HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return addUsefulLink(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -2107,7 +2154,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String addUsefulLink(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+											   @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -2128,7 +2175,7 @@ public class WebServiceController extends BasicController {
 				response.setStatus(412);
 				return "";
 			}
-			
+
 			survey.getUsefulLinks().put(survey.getUsefulLinks().size() + "#" + label, url);
 			surveyService.update(survey, true, true, user.getId());
 
@@ -2144,7 +2191,7 @@ public class WebServiceController extends BasicController {
 
 	@DeleteMapping(value = "/removeUsefulLink/{alias}", produces = "text/html")
 	public @ResponseBody String removeUsefulLink(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+												 HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return removeUsefulLink(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -2153,7 +2200,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String removeUsefulLink(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+												  @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -2168,7 +2215,7 @@ public class WebServiceController extends BasicController {
 				response.setStatus(412);
 				return "";
 			}
-			
+
 			for (String key : survey.getUsefulLinks().keySet())
 			{
 				if (key.endsWith("#" + label)) {
@@ -2185,14 +2232,14 @@ public class WebServiceController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 			response.setStatus(500);
 		}
-		
+
 		return "";
 	}
 
 	@RequestMapping(value = "/applyChanges/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String applyChanges(@PathVariable String alias, HttpServletRequest request,
-			HttpServletResponse response) {
+											 HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return applyChanges(credentials.getKey(), credentials.getValue(), alias, request, response);
@@ -2201,7 +2248,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String applyChanges(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
+											  @PathVariable String alias, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -2231,7 +2278,7 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/contributionToDraft/{code}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String contributionToDraft(@PathVariable String code, HttpServletRequest request,
-			HttpServletResponse response) {
+													HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return contributionToDraft(credentials.getKey(), credentials.getValue(), code, request, response);
@@ -2240,7 +2287,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String contributionToDraft(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
+													 @PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -2289,27 +2336,27 @@ public class WebServiceController extends BasicController {
 	@RequestMapping(value = "/getMySurveys", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = MediaType.APPLICATION_XML_VALUE)
 	public @ResponseBody String getMySurveys(@RequestParam(required = false, value = "surveyType") String surveyType,
-			@RequestParam(required = false, value = "published") String published,
-			@RequestParam(required = false, value = "department") String department,
-			@RequestParam(required = false, value = "creator") String creator,
-			@RequestParam(required = false, value = "privileged") String privileged,
-			@RequestParam(required = false, value = "firstPublicationFrom") String firstPublicationFrom,
-			@RequestParam(required = false, value = "firstPublicationTo") String firstPublicationTo,
-			@RequestParam(required = false, value = "createdFrom") String createdFrom,
-			@RequestParam(required = false, value = "createdTo") String createdTo,
-			@RequestParam(required = false, value = "endFrom") String endFrom,
-			@RequestParam(required = false, value = "endTo") String endTo,
-			@RequestParam(required = false, value = "archived") String archived,
-			@RequestParam(required = false, value = "archivedFrom") String archivedFrom,
-			@RequestParam(required = false, value = "archivedTo") String archivedTo,
-			@RequestParam(required = false, value = Constants.DELETED) String deleted,
-			@RequestParam(required = false, value = "deletedFrom") String deletedFrom,
-			@RequestParam(required = false, value = "deletedTo") String deletedTo,
-			@RequestParam(required = false, value = "frozen") String frozen,
-			@RequestParam(required = false, value = "minReported") String minReported,
-			@RequestParam(required = false, value = "minContributions") String minContributions,
-			@RequestParam(required = false, value = "title") String title, HttpServletRequest request,
-			HttpServletResponse response) {
+											 @RequestParam(required = false, value = "published") String published,
+											 @RequestParam(required = false, value = "department") String department,
+											 @RequestParam(required = false, value = "creator") String creator,
+											 @RequestParam(required = false, value = "privileged") String privileged,
+											 @RequestParam(required = false, value = "firstPublicationFrom") String firstPublicationFrom,
+											 @RequestParam(required = false, value = "firstPublicationTo") String firstPublicationTo,
+											 @RequestParam(required = false, value = "createdFrom") String createdFrom,
+											 @RequestParam(required = false, value = "createdTo") String createdTo,
+											 @RequestParam(required = false, value = "endFrom") String endFrom,
+											 @RequestParam(required = false, value = "endTo") String endTo,
+											 @RequestParam(required = false, value = "archived") String archived,
+											 @RequestParam(required = false, value = "archivedFrom") String archivedFrom,
+											 @RequestParam(required = false, value = "archivedTo") String archivedTo,
+											 @RequestParam(required = false, value = Constants.DELETED) String deleted,
+											 @RequestParam(required = false, value = "deletedFrom") String deletedFrom,
+											 @RequestParam(required = false, value = "deletedTo") String deletedTo,
+											 @RequestParam(required = false, value = "frozen") String frozen,
+											 @RequestParam(required = false, value = "minReported") String minReported,
+											 @RequestParam(required = false, value = "minContributions") String minContributions,
+											 @RequestParam(required = false, value = "title") String title, HttpServletRequest request,
+											 HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return getMySurveysXml(surveyType, published, department, creator, privileged, firstPublicationFrom,
@@ -2345,10 +2392,10 @@ public class WebServiceController extends BasicController {
 	}
 
 	private String getMySurveysXml(String surveyType, String published, String department, String creator,
-			String privileged, String firstPublicationFrom, String firstPublicationTo, String createdFrom,
-			String createdTo, String endFrom, String endTo, String archived, String archivedFrom, String archivedTo,
-			String deleted, String deletedFrom, String deletedTo, String frozen, String minReported,
-			String minContributions, String title, HttpServletRequest request, HttpServletResponse response) {
+								   String privileged, String firstPublicationFrom, String firstPublicationTo, String createdFrom,
+								   String createdTo, String endFrom, String endTo, String archived, String archivedFrom, String archivedTo,
+								   String deleted, String deletedFrom, String deletedTo, String frozen, String minReported,
+								   String minContributions, String title, HttpServletRequest request, HttpServletResponse response) {
 
 		User user = getUser(request, response, true);
 		if (user == null)
@@ -2356,17 +2403,17 @@ public class WebServiceController extends BasicController {
 
 		if (surveyType != null && surveyType.length() > 0) {
 			switch (surveyType) {
-			case "all":
-				break;
-			case "standard":
-				break;
-			case "quiz":
-				break;
-			case "brp":
-				break;
-			default:
-				response.setStatus(412);
-				return "";
+				case "all":
+					break;
+				case "standard":
+					break;
+				case "quiz":
+					break;
+				case "brp":
+					break;
+				default:
+					response.setStatus(412);
+					return "";
 			}
 		}
 
@@ -2471,7 +2518,7 @@ public class WebServiceController extends BasicController {
 
 	@PutMapping(value = "/SetDashboardLink/{shortname}", produces = "text/plain")
 	public @ResponseBody String putDashboardLink(@PathVariable String shortname,
-												   HttpServletRequest request, HttpServletResponse response) {
+												 HttpServletRequest request, HttpServletResponse response) {
 
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
@@ -2522,11 +2569,11 @@ public class WebServiceController extends BasicController {
 
 		return "";
 	}
-	
+
 	@RequestMapping(value = "/deleteContribution/{code}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
 	public @ResponseBody String deleteContribution(@PathVariable String code, HttpServletRequest request,
-			HttpServletResponse response) {
+												   HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
 			return deleteContribution(credentials.getKey(), credentials.getValue(), code, request, response);
@@ -2535,7 +2582,7 @@ public class WebServiceController extends BasicController {
 	}
 
 	private @ResponseBody String deleteContribution(@PathVariable String login, @PathVariable String pass,
-			@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
+													@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			User user = getUser(request, response, true);
 			if (user == null)
@@ -2575,7 +2622,7 @@ public class WebServiceController extends BasicController {
 			return "";
 		}
 	}
-	
+
 	@RequestMapping(value = "/getOrganisationsReport", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody String getOrganisationsReport(
@@ -2590,14 +2637,14 @@ public class WebServiceController extends BasicController {
 			if (code == null || code.length() == 0) code = "all";
 			if (month == null || month.length() == 0) month = "0";
 			if (monthEnd == null || monthEnd.length() == 0) monthEnd = "0";
-			if (minPublishedSurveys == null || minPublishedSurveys.length() == 0) minPublishedSurveys = "0";			
+			if (minPublishedSurveys == null || minPublishedSurveys.length() == 0) minPublishedSurveys = "0";
 			return getOrganisationsReportInner(code, year, month, monthEnd, minPublishedSurveys, request, response);
 		}
 		return "";
-	}	
+	}
 
 	private String getOrganisationsReportInner(String code, String year, String month, String monthEnd, String minPublishedSurveys,
-			 HttpServletRequest request, HttpServletResponse response) {
+											   HttpServletRequest request, HttpServletResponse response) {
 
 		User user = getUser(request, response, true);
 		if (user == null)
@@ -2607,21 +2654,21 @@ public class WebServiceController extends BasicController {
 			response.setStatus(404);
 			return "";
 		}
-		
+
 		if (month != null && !Tools.isInteger(month)) {
 			response.setStatus(412);
 			return "";
 		}
-		
+
 		if (monthEnd != null && !Tools.isInteger(monthEnd)) {
 			response.setStatus(412);
 			return "";
 		}
-		
+
 		if (minPublishedSurveys != null && !Tools.isInteger(minPublishedSurveys)) {
 			response.setStatus(412);
 			return "";
-		}	
+		}
 
 		webserviceService.increaseServiceRequest(user.getId());
 		response.setStatus(200);
@@ -2637,5 +2684,5 @@ public class WebServiceController extends BasicController {
 			return "";
 		}
 	}
-	
+
 }
