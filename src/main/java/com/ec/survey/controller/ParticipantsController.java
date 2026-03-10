@@ -67,11 +67,10 @@ public class ParticipantsController extends BasicController {
 	@Resource(name = "eVoteService")
 	private EVoteService eVoteService;
 
-	private List<AttributeName> escapeAttributeNameList(List<AttributeName> list) {
-		List<AttributeName> escapedList = new ArrayList<>();
+	private List<KeyValue> escapeAttributeNameList(List<AttributeName> list) {
+		List<KeyValue> escapedList = new ArrayList<>();
 		for (AttributeName attributeName : list) {
-			var newAttributeName = new AttributeName(attributeName.getOwnerId(), escapeEcmaScript(attributeName.getName()));
-			escapedList.add(newAttributeName);
+			escapedList.add(new KeyValue(attributeName.getId().toString(), escapeEcmaScript(attributeName.getName())));
 		}
 		return escapedList;
 	}
