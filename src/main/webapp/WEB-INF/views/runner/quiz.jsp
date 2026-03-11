@@ -30,7 +30,8 @@
 		<%@ include file="../runner/quizinner.jsp" %>
 	</div>
 	<%@ include file="../footerNoLanguages.jsp" %>
-	
+	<%@ include file="../generic-messages.jsp" %>
+
 	<c:if test="${message != null}">
 		<script type="text/javascript">
 			showError('${message}');

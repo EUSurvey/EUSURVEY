@@ -711,7 +711,7 @@
         }
     }
 
-    function addEntryToBulkChangeDetails(name, isUser, isEcas) {
+    function addEntryToBulkChangeDetails(name, isUser, isEcas, fullAccess) {
         const tr = document.createElement("tr");
         let td = document.createElement("td");
 
@@ -767,6 +767,12 @@
         $(b).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Remove"/>").addClass("iconbutton").attr("onclick", "removePrivilege(this)").append("<span class='glyphicon glyphicon-remove'></span>");
         $(td).append(b);
         $(tr).append(td);
+
+        if (fullAccess) {
+            for (const img of $(tr).find("img.roleBulletRed")) {
+                updatePrivilegeInBulkChangeDetails(img, 2)
+            }
+        }
 
         $('#tblPrivilegesFromAccess').find("tbody").append(tr);
         $('#add-user-dialog').modal("hide");

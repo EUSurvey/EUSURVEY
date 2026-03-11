@@ -346,7 +346,7 @@ function updateProgress() {
 	// motivationprogress
 	if(!$("#motivationPopup").data("type") && $("#motivationPopup").data("popup") && $("#motivationPopup").hasClass("not-shown")){
 		if(percent == null) percent = calculateProgressPercentage(); //only calculate percent again when it hasnt been for the progressbar;
-		if(percent >= $("#motivationPopup").data("progress")){
+		if(percent >= $("#motivationPopup").data("progress") && getMode() !== 'editcontribution'){
 			showPopup();
 		}
 	}
@@ -495,7 +495,12 @@ $(function() {
 			 window.addEventListener("beforeunload", checkLocalBackup)
 		 }
 	}
-	
+
+	const lastVisitedSection = $('#lastVisitedSection').val();
+	if (lastVisitedSection !== "") {
+		$("#tab" + lastVisitedSection).find("a").click();
+	}
+
 	$(".file-uploader").each(function() {
 		if (!$(this).hasClass("importsurveyuploader"))
 		{
@@ -890,6 +895,8 @@ function selectPage(val) {
 				return false;
 			}
 		}
+
+		$("#lastVisitedSection").val(page);
 	}
 }
 
@@ -1988,6 +1995,35 @@ function eVoteEntireListClick(checkbox) {
 			$(".evote-ispra .entire-list, .evote-ispra .evote-candidate").prop("disabled", false);
 		}
 
+
+	} else if (table.is(".evote-eeas")){
+		if (checkbox.checked) {
+			//Uncheck all other lists
+			$(".evote-eeas .entire-list:checked").not(checkbox).click();
+			//Disable all other lists
+			$(".evote-eeas .entire-list").not(checkbox).prop("disabled", true);
+			//And uncheck + disable all candidates
+			$(".evote-eeas .evote-candidate").prop("checked", false).prop("disabled", true);
+
+			//Adjust first 5 checkboxes of this list
+			let counter = 0;
+            table.find(".evote-candidate").each(function () {
+                if (counter < 5) {
+                    this.checked = checkbox.checked;
+                    this.setAttribute("previousValue", this.checked ? false : "checked");
+                    singleClick(this);
+                    counter++;
+                }
+            })
+            checkbox.indeterminate = false;
+		} else {
+			//Reenable all lists and candidates
+			$(".evote-candidate, .entire-list")
+            		.attr('previousValue', "checked").prop("checked", false).prop("disabled", false)
+            		.each(function (){ singleClick(this); } );
+			$(".evote-eeas .evote-candidate").prop("disabled", false).prop("checked", false);
+		}
+
 	} else {
 		//Adjust all candidate checkboxes of this list
 		table.find(".evote-candidate").each(function () {
@@ -2007,6 +2043,7 @@ function clearEVoteVotes() {
 		.each(function (){ singleClick(this); } );
 	$(".entire-list").prop('indeterminate', false);
 	$(".evote-brussels .entire-list, .evote-brussels .evote-candidate").prop("disabled", false);
+	$(".evote-eeas .entire-list, .evote-eeas .evote-candidate").prop("disabled", false);
 	$(".evote-ispra .entire-list, .evote-ispra .evote-candidate").prop("disabled", false);
 	$(".evote-validation").remove();
 
@@ -2019,7 +2056,7 @@ function clearEVoteVotes() {
 //And updates statistics
 function updateEVoteList(element) {
 	let table = $(element).closest(".evote-table");
-	if (!(table.is(".evote-brussels") || table.is(".evote-ispra"))) {
+	if (!(table.is(".evote-brussels") || table.is(".evote-ispra") || table.is(".evote-eeas"))) {
 		let checkedCount = table.find(".evote-candidate:checked").length;
 		let entireListCheckbox = table.find(".entire-list")
 		if (checkedCount == 0) { //Decide whether to show the Entire List as checked or indeterminate
@@ -2051,16 +2088,17 @@ function updateEVoteStatus() {
 		$("#evoteVoterOverview").css("display", "none")
 	}
 
-	if ($(".evote-brussels, .evote-ispra, .evote-luxembourg").length <= 0){
+	if ($(".evote-brussels, .evote-ispra, .evote-luxembourg, .evote-eeas").length <= 0){
 		$("#votedListsWrapper").css("display", "none")
 	} else {
 		$("#votedListsWrapper").css("display", "")
 	}
 
 	votedLists = 0;
-	//list votes for brussels and ispra
+	//list votes for brussels, ispra, eeas
 	votedLists += $(".evote-brussels .entire-list:checked").length;
 	votedLists += $(".evote-ispra .entire-list:checked").length;
+	votedLists += $(".evote-eeas .entire-list:checked").length;
 
 	//no list votes for outside, luxembourg and standard
 	votedCandidates = 0;

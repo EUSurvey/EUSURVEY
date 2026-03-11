@@ -98,18 +98,18 @@
 											<span>${form.getMessage("label.VotedCandidates")}:</span>
 										</c:otherwise>
 									</c:choose>
-										<span id="overviewVotes">
-											<span id="votedCandidates"></span>
-											/
-											<span id="allCandidates">${form.survey.maxPrefVotes}</span>
-										</span>
+                                    <span id="overviewVotes">
+                                        <span id="votedCandidates"></span>
+                                        /
+                                        <span id="allCandidates">${form.survey.maxPrefVotes}</span>
+                                    </span>
 
-										<c:if test="${form.survey.geteVoteTemplate() != 'l'}">
-											<span id="votedListsWrapper" style="display: none">
-												<span style="margin-left: 24px;">${form.getMessage("label.VotedLists")}:</span>
-												<span id="votedLists"></span>
-											</span>
-										</c:if>
+                                    <c:if test="${form.survey.geteVoteTemplate() != 'l'}">
+                                        <span id="votedListsWrapper" style="display: none">
+                                            <span style="margin-left: 24px;">${form.getMessage("label.VotedLists")}:</span>
+                                            <span id="votedLists"></span>
+                                        </span>
+                                    </c:if>
 								</span>
 								<span style="color: black">
 									<a style="margin-left: 24px; float: right" href="javascript:;" class="btn btn-default" onclick="clearEVoteVotes()">${form.getMessage("label.ClearVotes")}</a>
@@ -133,8 +133,8 @@
 										</div>
 									</div>
 									<div class="modal-footer">
-										<button class="btn btn-primary" onclick="eVoteConfirmResolve(true)">${form.getMessage("label.Imsure")}</button>
-										<button class="btn btn-default" onclick="hideModalDialog('.evote-confirm-modal'); eVoteConfirmResolve(false);">${form.getMessage("label.Cancel")}</button>
+										<button type="button" class="btn btn-primary" onclick="eVoteConfirmResolve(true)">${form.getMessage("label.Imsure")}</button>
+										<button type="button" class="btn btn-default" onclick="hideModalDialog('.evote-confirm-modal'); eVoteConfirmResolve(false);">${form.getMessage("label.Cancel")}</button>
 									</div>
 								</div>
 							</div>
@@ -757,6 +757,9 @@
 	 		var s = '${form.getMessage("limits.MaxRows", "[max]")}';	 		
 	 		return "<div class='limits'>" + s.replace("[max]", max) + "</div>";
 	 	}
+		function getMode() {
+			return "${mode}";
+		}
 	 	
 	 	var idsforuids = null;
 	 	function initializeTriggers()
@@ -1114,8 +1117,14 @@
 		
 		var backupLoaded = false;
 
-	 	initializeAnswerData();
-	 	initializeTriggers();
+		<c:if test="${form.survey.multiPaging}">
+			if ($('#lastVisitedSection').val() === "") {
+				$("#lastVisitedSection").val(0);
+			}
+		</c:if>
+		
+		initializeAnswerData();
+		initializeTriggers();
 
 		<c:if test="${form.survey.timeLimit.length() > 0 || (form.survey.motivationPopup && form.survey.motivationType)}">
 
@@ -1171,7 +1180,7 @@
 
 				// Motivationtimer
 				if (${form.survey.motivationPopup} && ${form.survey.motivationType}) {
-					if($("#motivationPopup").hasClass("not-shown")){
+					if($("#motivationPopup").hasClass("not-shown") && getMode() !== 'editcontribution'){
 						var countdownTimerSeconds = ${form.survey.motivationTriggerTime} * 60;
 						var rest = countdownTimerSeconds - passedSeconds - Math.floor((currentTime - startDateJS) / 1000);
 

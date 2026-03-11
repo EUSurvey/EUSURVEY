@@ -251,8 +251,7 @@ public class DocxExportCreator extends ExportCreator {
 					ComplexTable complexTable = (ComplexTable)question;
 					
 					for (ComplexTableItem childQuestion: complexTable.getQuestionChildElements()) {
-						boolean isChoice = childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice;
-						boolean hasStatistics = isChoice;
+						boolean hasStatistics = childQuestion.isChoice();
 						if (!hasStatistics) {
 							if (childQuestion.getCellType() == ComplexTableItem.CellType.Number || childQuestion.getCellType() == ComplexTableItem.CellType.Formula) {
 								hasStatistics = childQuestion.showStatisticsForNumberQuestion();
@@ -269,7 +268,7 @@ public class DocxExportCreator extends ExportCreator {
 							
 							XWPFTable table = createTableForAnswer(cellValue);
 							
-							if (isChoice) {
+							if (childQuestion.isChoice()) {
 								for (PossibleAnswer possibleAnswer : childQuestion.getPossibleAnswers()) {
 									XWPFTableRow row = table.createRow();				
 									

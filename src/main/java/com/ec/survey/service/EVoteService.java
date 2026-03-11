@@ -385,7 +385,7 @@ public class EVoteService extends BasicService {
 				}
 			}			
 		}
-		if (config.firstSingle == null || config.vote == null || config.blank == null || config.spoilt == null) {
+		if (config.firstSingle == null || config.vote == null || config.blank == null || (config.spoilt == null && !config.survey.geteVoteTemplate().equalsIgnoreCase("e") )) {
 			throw new MessageException("invalid survey");
 		}		
 	}
@@ -484,6 +484,7 @@ public class EVoteService extends BasicService {
 		// if not, we treat it as preferential vote
 		Set<Integer> voteAnswerIds = new HashSet<>();
 		Set<Integer> foundAnswerIds = new HashSet<>();
+		Set<Integer> listVoteAnswerIds = new HashSet<>();
 		
 		try {
 			session.flush();
@@ -503,7 +504,7 @@ public class EVoteService extends BasicService {
 				
 				if (config.blank.getUniqueId().equals(pauid)) {
 					evoteResults.setBlankVotes(evoteResults.getBlankVotes() + 1);
-				} else if (config.spoilt.getUniqueId().equals(pauid)) {
+				} else if (config.spoilt != null && config.spoilt.getUniqueId().equals(pauid)) {
 					evoteResults.setSpoiltVotes(evoteResults.getSpoiltVotes() + 1);
 				} else if (config.vote.getUniqueId().equals(pauid)) {
 					voteAnswerIds.add(answerSetId);
@@ -516,11 +517,14 @@ public class EVoteService extends BasicService {
 					
 					if (!config.useLuxembourgProcedure && value != null && value.equalsIgnoreCase("EVOTE-ALL")) {
 						listResult.setListVotes(listResult.getListVotes() + 1);
+						listVoteAnswerIds.add(answerSetId);
 					} else if (listResult.getCandidateVotes().containsKey(pauid)) {
 						listResult.getCandidateVotes().put(pauid, listResult.getCandidateVotes().get(pauid) + 1);
 						
 						if (!preferentialVoteAnswerIds.contains(answerSetId)) {
-							preferentialVoteAnswerIds.add(answerSetId);
+							if (!(config.survey.geteVoteTemplate().equals("e") && listVoteAnswerIds.contains(answerSetId))) {
+								preferentialVoteAnswerIds.add(answerSetId);
+							}
 						}
 						
 						if (config.useLuxembourgProcedure) {
@@ -577,7 +581,8 @@ public class EVoteService extends BasicService {
 		
 		result.setBlankVotes(evoteResults.getBlankVotes());
 		result.setSpoiltVotes(evoteResults.getSpoiltVotes());
-		
+
+		//int votes = config.survey.geteVoteTemplate().equalsIgnoreCase("e") ? result.getPreferentialVotes() : result.getListVotes() + result.getPreferentialVotes();
 		int votes = result.getListVotes() + result.getPreferentialVotes();
 		int total = votes + result.getBlankVotes() + result.getSpoiltVotes();
 		
@@ -1135,6 +1140,34 @@ public class EVoteService extends BasicService {
 				}
 			}
 			result.setCandidatesFromPreferentialVotes(allCandidatesOrdered);
+		} else if (survey.geteVoteTemplate().equals("e")) {
+			MultipleChoiceQuestion[] mcs = config.listSeatDistributions.keySet().toArray(new MultipleChoiceQuestion[config.listSeatDistributions.size()]);
+
+			int totalCandidateVoteCounter = 0;
+
+			// combine vote counts for all candidates in all lists
+			for (int i = 0; i < result.getMaxCandidatesInLists(); i++) {
+				List<ElectedCandidate> candidateList = new ArrayList<>();
+
+				for (int q = 0; q < mcs.length; q++) {
+					MultipleChoiceQuestion mc = mcs[q];
+
+					if (mc.getPossibleAnswers().size() > i) {
+						PossibleAnswer pa = mc.getPossibleAnswers().get(i);
+						ElectedCandidate candidateVote = config.candidateVotes.get(pa);
+						candidateList.add(candidateVote);
+						totalCandidateVoteCounter += candidateVote.getVotes();
+					} else {
+						ElectedCandidate ec = new ElectedCandidate();
+						ec.setVotes(-1);
+						candidateList.add(ec); // the list does not have enough candidates -> add empty one
+					}
+				}
+
+				result.getCandidateVotes().add(candidateList);
+			}
+
+			result.setTotalPreferentialVotes(totalCandidateVoteCounter);
 		}
 			
 		return result;

@@ -7,7 +7,6 @@
 	<title>EUSurvey - <spring:message code="label.Survey" /></title>
 	
 	<%@ include file="../includesrunner.jsp" %>
-	<%@ include file="../generic-messages.jsp" %>
 
 	<link id="runnerCss" href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
@@ -24,7 +23,8 @@
 		<%@ include file="../runner/delphiinner.jsp" %>
 	</div>
 	<%@ include file="../footerNoLanguages.jsp" %>
-	
+	<%@ include file="../generic-messages.jsp" %>
+
 	<c:if test="${message != null}">
 		<script type="text/javascript">
 			showError('${message}');

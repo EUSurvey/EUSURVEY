@@ -1,125 +1,152 @@
 package com.ec.survey.service;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.ec.survey.model.Property;
 import org.springframework.stereotype.Service;
 
 import com.ec.survey.model.KeyValue;
 
-import edu.emory.mathcs.backport.java.util.Collections;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.annotation.Resource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 @Service("ecService")
 public class ECService extends BasicService {
-	
-	private List<String> linesDGS = null;
-	private List<String> linesAEX = null;
-	
-	private void parse() {
-		InputStream inputStream = servletContext
-				.getResourceAsStream("/WEB-INF/Content/EC/dgs.txt");
-				
-		linesDGS = new ArrayList<>();
-        linesAEX = new ArrayList<>();
 
-        if (inputStream == null) return;
-		
+	@Resource(name = "propertiesService")
+	protected PropertiesService propertiesService;
+
+	private List<DepartmentNode> departmentNodes = null;
+
+	private static class DepartmentNode {
+		public String name;
+		public List<DepartmentNode> children = new ArrayList<>();
+	}
+
+	private void parse() {
+		String departmentsXML = propertiesService.get(Property.DEPARTMENTS);
+
 		try {
-			String text = IOUtils.toString(inputStream, "UTF-8");
-			
-			Scanner scanner = new Scanner(text);
-			while (scanner.hasNextLine()) {
-			  String line = scanner.nextLine();
-			  linesDGS.add(line);			 
+
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(new InputSource(new StringReader(departmentsXML)));
+
+			NodeList nodeList = document.getDocumentElement().getChildNodes();
+
+			this.departmentNodes = new ArrayList<>();
+
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				new DepartmentNode();
+				Node node = nodeList.item(i);
+				this.departmentNodes.add(recursiveLoadNodes(node));
 			}
-			scanner.close();		
-			
+
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
+			logger.error(e.getMessage(), e);
 		}
-		
-		inputStream = servletContext
-				.getResourceAsStream("/WEB-INF/Content/EC/aex.txt");
-		
-		try {
-			String text = IOUtils.toString(inputStream, "UTF-8");
-			
-			Scanner scanner = new Scanner(text);
-			while (scanner.hasNextLine()) {
-			  String line = scanner.nextLine();
-			  linesAEX.add(line);			 
-			}
-			scanner.close();		
-			
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-		}	
+	}
+
+	private DepartmentNode recursiveLoadNodes(Node node) {
+		DepartmentNode departmentNode = new DepartmentNode();
+		departmentNode.name = node.getAttributes().getNamedItem("name").getNodeValue();
+
+		for (int j = 0; j < node.getChildNodes().getLength(); j++) {
+			departmentNode.children.add(recursiveLoadNodes(node.getChildNodes().item(j)));
+		}
+
+		return departmentNode;
 	}
 	
-	public List<KeyValue> GetEntities(String term, Boolean isDGs) {
+	public List<KeyValue> GetEntities(String term, Boolean isDGs)  {
 		
-		if (linesDGS == null) {
+		if (this.departmentNodes == null) {
 			parse();
 		}
-		
-		List<String> lines = isDGs ? linesDGS : linesAEX;
 		
 		List<KeyValue> dgs = new ArrayList<>();
 		
 		boolean topEntities = "dgs".equals(term) || "aex".equals(term);
-		String prefix = term + ".";
-		
-		KeyValue last = null;
-		
-		for (String line : lines) {
-		  
-		  if (topEntities && !line.contains(".")) {
-			  last = new KeyValue(line, "0");
-			  dgs.add(last);
-		  }
-		  
-		  if (last != null && line.contains(last.getKey() + ".")) {
-			  //we are a child -> flag parent as having children
-			  last.setValue("0");
-		  }
-		  
-		  if (!topEntities && line.startsWith(prefix)) {
-			  if (StringUtils.countMatches(line, ".") == StringUtils.countMatches(prefix, ".")) {					 
-				  last = new KeyValue(line, "1");
-				  dgs.add(last);
-			  } else {
-				  // there might be a child without a direct parent					  
-				  String parent = line.substring(0, line.lastIndexOf("."));
-				  
-				  if (!lines.contains(parent)) {
-					  last = new KeyValue(line, "1");
-					  dgs.add(last);
-				  }  
-			  }
-		  }
-		}	
-		
+
+		if (topEntities) {
+			DepartmentNode node = isDGs ? this.departmentNodes.get(1) : this.departmentNodes.get(0).children.get(0);
+			for (DepartmentNode child : node.children) {
+				dgs.add(new KeyValue(child.name, "0"));
+			}
+			return dgs;
+		}
+
+		DepartmentNode found = findDepartmentNode(term,isDGs ? this.departmentNodes.get(1) : this.departmentNodes.get(0));
+		if (found != null) {
+			for (DepartmentNode child : found.children) {
+				dgs.add(new KeyValue(child.name, child.children.isEmpty() ? "1" : "0"));
+			}
+		}
+
 		return dgs;
 	}
 
-	public String[] getDepartments(boolean dgs, boolean aex) {
-		if (linesDGS == null) {
+	private DepartmentNode findDepartmentNode(String name, DepartmentNode node) {
+		if (node.name.equals(name)) {
+
+			// special case: for executive agencies, there is sometimes a child with the same name
+			// -> use child instead
+			for (DepartmentNode child : node.children) {
+				if (child.name.equals(name)) {
+					return child;
+				}
+			}
+
+			return node;
+		}
+
+		for (DepartmentNode child : node.children) {
+			DepartmentNode found = findDepartmentNode(name, child);
+			if (found != null) {
+				return found;
+			}
+		}
+
+		return null;
+	}
+
+	public String[] getDepartments(boolean dgs, boolean aex)  {
+		if (this.departmentNodes == null) {
 			parse();
 		}
 		
 		List<String> result = new ArrayList<>();
-		if (dgs) Collections.addAll(result, linesDGS.toArray());
-		if (aex) Collections.addAll(result, linesAEX.toArray());
-		
+
+		if (dgs) {
+			recursiveAddDepartments(this.departmentNodes.get(1), result);
+		}
+
+		if (aex) {
+			recursiveAddDepartments(this.departmentNodes.get(0), result);
+		}
+
 		return result.toArray(new String[0]);
 	}
+
+	private void recursiveAddDepartments(DepartmentNode node, List<String> result ) {
+		result.add(node.name);
+		for (DepartmentNode child : node.children) {
+			recursiveAddDepartments(child, result);
+		}
+	}
 	
-	public String[] getDepartments() {
+	public String[] getDepartments() throws ParserConfigurationException, IOException, SAXException {
 		return getDepartments(true, true);
 	}
 }

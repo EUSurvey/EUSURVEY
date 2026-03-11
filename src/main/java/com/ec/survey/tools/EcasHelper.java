@@ -90,4 +90,9 @@ public class EcasHelper {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 	}
+
+	public static boolean isEmployeeTypePrivileged(String type) {
+		if (type == null) return false;
+		return type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q");
+	}
 }

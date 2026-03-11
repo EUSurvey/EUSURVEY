@@ -7,7 +7,6 @@ import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.PossibleAnswer;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.tools.DomainUpdater;
 import com.ec.survey.tools.SkinCreator;
 import com.ec.survey.tools.SurveyCreator;
 import com.ec.survey.tools.activity.ActivityRegistry;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 import javax.servlet.ServletContext;
 import java.io.FileOutputStream;
@@ -47,9 +45,6 @@ public class SchemaService extends BasicService {
 		return cassOss != null && cassOss.equalsIgnoreCase("true");
 	}
 
-	@Resource(name = "domainWorker")
-	private DomainUpdater domainWorker;
-
 	@Transactional
 	public void CreateLimitsForExternals() {
 		Session session = sessionFactory.getCurrentSession();
@@ -71,6 +66,56 @@ public class SchemaService extends BasicService {
 			s.setFormat("Integer");
 			session.saveOrUpdate(s);
 		}
+	}
+
+	@Transactional
+	public void step135() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		Setting s = settingsService.getSetting(Setting.LDAPsync2Enabled);
+		session.delete(s);
+
+		s = settingsService.getSetting(Setting.LDAPsync2Frequency);
+		session.delete(s);
+
+		s = settingsService.getSetting(Setting.LDAPsync2Start);
+		session.delete(s);
+
+		s = settingsService.getSetting(Setting.LDAPsync2Time);
+		session.delete(s);
+
+		s = settingsService.getSetting(Setting.LDAPsyncEnabled);
+		session.delete(s);
+
+		s = settingsService.getSetting(Setting.LDAPsyncFrequency);
+		session.delete(s);
+
+		s = settingsService.getSetting(Setting.LDAPsyncStart);
+		session.delete(s);
+
+		s = settingsService.getSetting(Setting.LDAPsyncTime);
+		session.delete(s);
+
+		status.setDbversion(135);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step134() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = propertiesService.get(Property.DEPARTMENTS);
+		if (existing == null) {
+			Property p = new Property();
+			p.setKey(Property.DEPARTMENTS);
+			p.setValue("");
+			session.saveOrUpdate(p);
+		}
+
+		status.setDbversion(134);
+		session.saveOrUpdate(status);
 	}
 
 	@Transactional
@@ -2062,7 +2107,7 @@ public class SchemaService extends BasicService {
 		queryCreateIndex.executeUpdate();
 
 		if (showecas.equalsIgnoreCase("true") && !isCasOss()) {
-			domainWorker.run();
+			//domainWorker.run();
 			copyEcasData();
 		}
 		// delete duplicates
@@ -2597,68 +2642,6 @@ public class SchemaService extends BasicService {
 				"INSERT INTO  ECASGROUPS SELECT ECASUSERS.USER_ID, REPLACE(ECASUSERS.USER_ORGANISATION,'eu.europa.','') FROM ECASUSERS WHERE ECASUSERS.USER_ORGANISATION <> 'external'");
 		insertEcasGroupQuery.executeUpdate();
 
-	}
-
-	@Transactional
-	public Date getLastLDAPSynchronizationDate() {
-		Session session = sessionFactory.getCurrentSession();
-
-		Query statusQuery = session.createQuery("FROM Status");
-		@SuppressWarnings("unchecked")
-		List<Status> states = statusQuery.setReadOnly(true).list();
-
-		if (!states.isEmpty()) {
-			return states.get(0).getLastLDAPSynchronizationDate();
-		}
-
-		return null;
-	}
-
-	@Transactional
-	public void saveLastLDAPSynchronizationDate(Date syncDate) {
-		Session session = sessionFactory.getCurrentSession();
-
-		Query statusQuery = session.createQuery("FROM Status");
-		@SuppressWarnings("unchecked")
-		List<Status> states = statusQuery.list();
-
-		if (!states.isEmpty()) {
-			Status status = states.get(0);
-			session.setReadOnly(status, false);
-			status.setLastLDAPSynchronizationDate(syncDate);
-			session.saveOrUpdate(status);
-		}
-	}
-
-	@Transactional
-	public Date getLastLDAPSynchronization2Date() {
-		Session session = sessionFactory.getCurrentSession();
-
-		Query statusQuery = session.createQuery("FROM Status");
-		@SuppressWarnings("unchecked")
-		List<Status> states = statusQuery.setReadOnly(true).list();
-
-		if (!states.isEmpty()) {
-			return states.get(0).getLastLDAPSynchronization2Date();
-		}
-
-		return null;
-	}
-
-	@Transactional
-	public void saveLastLDAPSynchronization2Date(Date syncDate) {
-		Session session = sessionFactory.getCurrentSession();
-
-		Query statusQuery = session.createQuery("FROM Status");
-		@SuppressWarnings("unchecked")
-		List<Status> states = statusQuery.list();
-
-		if (!states.isEmpty()) {
-			Status status = states.get(0);
-			session.setReadOnly(status, false);
-			status.setLastLDAPSynchronization2Date(syncDate);
-			session.saveOrUpdate(status);
-		}
 	}
 
 	@Transactional

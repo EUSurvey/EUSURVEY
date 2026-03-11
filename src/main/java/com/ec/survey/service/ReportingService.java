@@ -755,7 +755,7 @@ public class ReportingService extends BasicService {
 								}
 							} else if (question instanceof ComplexTableItem) {
 								ComplexTableItem child = (ComplexTableItem) question;
-								if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+								if (child.isChoice()) {
 									String[] answerids = item.toString().split(";");
 									String v = "";
 									for (String answerid : answerids) {
@@ -1617,7 +1617,7 @@ public class ReportingService extends BasicService {
 						columns.add(child.getUniqueId());
 						values.add(":value" + parameters.size());
 						parameters.put("value" + parameters.size(), num);			
-					} else if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+					} else if (child.isChoice()) {
 						List<Answer> answers = answerSet.getAnswers(child.getUniqueId());				
 						columns.add(child.getUniqueId());
 						String v = null;

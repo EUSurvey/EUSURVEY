@@ -495,7 +495,7 @@
 																	<c:when test="${child.getCellType() == 'FreeText'}">
 																		${form.getValueStripInvalidXML(child)}
 																	</c:when>
-																	<c:when test="${child.getCellType() == 'SingleChoice'}">
+																	<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'PredefinedChoice'}">
 																		<c:choose>
 																			<c:when test="${child.getUseRadioButtons() == false && form.getValues(child).size() > 0}">
 																				<div class="answer-columns">

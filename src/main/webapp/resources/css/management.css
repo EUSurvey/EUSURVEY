@@ -1,0 +1,27 @@
+.survey-qr-code {
+    float: right;
+    text-align: center;
+    padding: 6px 6px 0 6px;
+    border-radius: 4px;
+    background-color: black;
+    cursor: pointer;
+}
+
+.survey-qr-code:focus-within {
+    outline: 2px solid #FFD617 !important;
+}
+
+.survey-qr-code button {
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 32px;
+    border: none;
+    outline: none;
+    background: none;
+    width: 100%;
+}
+
+.survey-qr-code img {
+    outline: white 4px solid;
+}

@@ -1794,6 +1794,8 @@ final public class Survey implements java.io.Serializable {
 					return "label.Luxembourg";
 				case "o":
 					return "label.OutsideCommunity";
+				case "e":
+					return "label.EEAS";
 			}
 		}
 		return "label.Standard";
@@ -3004,6 +3006,8 @@ final public class Survey implements java.io.Serializable {
 			if (eVoteTemplate != null) {
 				if (eVoteTemplate.equals("b") || eVoteTemplate.equals("i")) {
 					maxPrefVotes = 27;
+				} else if (eVoteTemplate.equals("e")) {
+					maxPrefVotes = 5;
 				} else {
 					maxPrefVotes = 20;
 				}

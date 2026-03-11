@@ -171,6 +171,7 @@ $force_used.Add("label.IspraSeville")
 $force_used.Add("label.Luxembourg")
 $force_used.Add("label.OutsideCommunity")
 $force_used.Add("label.Standard")
+$force_used.Add("label.EEAS")
 
 ECHO "List unused labels"
 $unused_labels = New-Object Collections.Generic.List[String]

@@ -126,6 +126,7 @@ public class GuestListCreator implements Runnable {
 					if (!attendeeIDs.contains(existingAttendee.getId()))
 					{
 						Invitation invitation = attendeeService.getInvitationForParticipationGroupAndAttendee(g.getId(), existingAttendee.getId());
+
 						if (invitation != null) {
 							invitation.setDeactivated(true);
 							attendeeService.update(invitation);
@@ -137,13 +138,14 @@ public class GuestListCreator implements Runnable {
 				{
 					Attendee attendee = attendeeService.get(intKey);
 					attendees.add(attendee);
-					
 				}
 				
 				for (Invitation invitation : existingInvitations) {
 					if (!attendeeIDs.contains(invitation.getAttendeeId()))
 					{
 						invitationsToDeactivate.add(invitation.getId());
+					} else if (invitation.getDeactivated() != null && invitation.getDeactivated()) {
+						invitationsToActivate.add(invitation.getId());
 					}
 				}
 				

@@ -1,0 +1,129 @@
+
+# Define pipeline stages (order matters: build → test → package)  
+stages:  
+  - build  
+  - test  
+  - package  
+
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+
+sast:
+  tags:
+    - eusurvey-docker
+
+dependency_scanning:
+  tags:
+    - eusurvey-docker
+ 
+# Job 1: Build the project (compile source code)  
+build:  
+  stage: build
+  image: maven:3.9.3-eclipse-temurin-17
+  environment: DEV
+  tags:
+    - eusurvey-docker
+  script:  
+    - echo "Building the project..."  
+    - mvn clean compile -U -Denvironment=oss -Dmaven.test.skip=true  # Clean previous builds and compile Java code  
+  cache:  
+    paths:  
+      - .m2/repository/  # Cache Maven dependencies to speed up future runs  
+ 
+test:  
+  stage: test
+  image: maven:3.9.3-eclipse-temurin-17
+  environment: DEV
+  tags:
+    - eusurvey-docker
+  script:  
+    - echo "Running unit tests..."  
+    - mvn test -U -Denvironment=oss -Dmaven.test.skip=true # Run all unit tests (fails if tests fail)  
+  cache:  
+    paths:  
+      - .m2/repository/  
+
+.test_sonarqube:
+  stage: test
+  environment: DEV
+  image: maven:3.9.3-eclipse-temurin-17
+  tags:
+    - eusurvey-docker
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${SONAR_PROJECT}"
+    paths:
+      - .sonar/cache
+  script:
+    - echo ${SONAR_HOST_URL}
+    - mvn -Denvironment=oss verify sonar:sonar -Dsonar.qualitygate.wait=true -Dsonar.projectKey=ESURVEY-SONARQUBE
+  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_REF_NAME == 'master' || $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+# Job 3: Package the project (create JAR file)  
+.package_DEV:  
+  stage: package 
+  environment: DEV
+  tags:
+    - eusurvey
+  script:  
+    - echo "Packaging the project into a WAR..."
+    - mkdir -p src/main/webapp/WEB-INF/Content/EC/
+    - cp /tmp/config/devOursondo/spring.properties src/main/webapp/WEB-INF/spring.properties
+    - cp /tmp/config/createIncidentExternal.json src/main/webapp/WEB-INF/Content/EC/createIncidentExternal.json
+    - cp /tmp/config/createIncident.json src/main/webapp/WEB-INF/Content/EC/createIncident.json
+    - cp /tmp/config/createIncident.xml src/main/webapp/WEB-INF/Content/EC/createIncident.xml
+    - cp /tmp/config/createIncidentExternal.json src/main/webapp/WEB-INF/Content/EC/createIncidentExternal.json
+    - mvn package -U -Denvironment=oss -Dmaven.test.skip=true # Creates WAR in target/  
+  artifacts:  
+    paths:  
+      - target/*.war  # Save the WAR as an artifact for later use (e.g., deployment)  
+  cache:  
+    paths:  
+      - .m2/repository/  
+
+.package_ACC_celimaire:  
+  stage: package 
+  environment: ACC
+  tags:
+    - eusurvey
+  script:  
+    - echo "Packaging the project into a WAR..."
+    - mkdir -p src/main/webapp/WEB-INF/Content/EC/
+    - cp /tmp/config/accCelimaire/spring.properties src/main/webapp/WEB-INF/spring.properties
+    - cp /tmp/config/createIncidentExternal.json src/main/webapp/WEB-INF/Content/EC/createIncidentExternal.json
+    - cp /tmp/config/createIncident.json src/main/webapp/WEB-INF/Content/EC/createIncident.json
+    - cp /tmp/config/createIncident.xml src/main/webapp/WEB-INF/Content/EC/createIncident.xml
+    - cp /tmp/config/createIncidentExternal.json src/main/webapp/WEB-INF/Content/EC/createIncidentExternal.json
+    - mvn package -U -Denvironment=oss -Dmaven.test.skip=true # Creates WAR in target/  
+  artifacts:  
+    paths:  
+      - target/*.war  # Save the WAR as an artifact for later use (e.g., deployment)  
+  cache:  
+    paths:  
+      - .m2/repository/  
+
+.package_ACC_Ovishime:  
+  stage: package 
+  environment: ACC
+  tags:
+    - eusurvey
+  script:  
+    - echo "Packaging the project into a WAR..."
+    - mkdir -p src/main/webapp/WEB-INF/Content/EC/
+    - cp /tmp/config/accOvishime/spring.properties src/main/webapp/WEB-INF/spring.properties
+    - cp /tmp/config/createIncidentExternal.json src/main/webapp/WEB-INF/Content/EC/createIncidentExternal.json
+    - cp /tmp/config/createIncident.json src/main/webapp/WEB-INF/Content/EC/createIncident.json
+    - cp /tmp/config/createIncident.xml src/main/webapp/WEB-INF/Content/EC/createIncident.xml
+    - cp /tmp/config/createIncidentExternal.json src/main/webapp/WEB-INF/Content/EC/createIncidentExternal.json
+    - mvn package -U -Denvironment=oss -Dmaven.test.skip=true # Creates WAR in target/  
+  artifacts:  
+    paths:  
+      - target/*.war  # Save the WAR as an artifact for later use (e.g., deployment)  
+  cache:  
+    paths:  
+      - .m2/repository/  

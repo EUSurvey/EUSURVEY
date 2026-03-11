@@ -175,7 +175,7 @@ public class SurveyHelper {
 									}
 								} else if (question instanceof ComplexTableItem) {
 									ComplexTableItem item = (ComplexTableItem) question;
-									if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+									if (item.isChoice()) {
 										int paid = Integer.parseInt(value);
 										answer.setPossibleAnswerUniqueId(item.getPossibleAnswer(paid).getUniqueId());
 									}
@@ -3374,6 +3374,14 @@ public class SurveyHelper {
 			newValues += " formula: " + formula;
 		}
 		item.setFormula(formula);
+
+		ComplexTableItem.PredefinedList predefinedList = ComplexTableItem.PredefinedList.values()[getInteger(parameterMap, "predefinedList", id)];
+		if (log220 && item.getPredefinedList() != null && !item.getPredefinedList().equals(predefinedList)) {
+			oldValues += " predefinedList: " + item.getPredefinedList();
+			newValues += " predefinedList: " + predefinedList;
+		}
+		item.setPredefinedList(predefinedList);
+
 		
 		Boolean isReadonly = getBoolean(parameterMap, "readonly", id);
 		if (log220 && !isReadonly.equals(item.getReadonly())) {
@@ -3389,7 +3397,7 @@ public class SurveyHelper {
 		}
 		item.setHidden(isHidden);
 
-		if (item.getCellType() == CellType.SingleChoice || item.getCellType() == CellType.MultipleChoice) {
+		if (item.isChoice()) {
 			String[] answers = getAnswers(parameterMap, id);
 			String[] originalAnswers = getOriginalAnswers(parameterMap, id);
 			String[] uniqueIDs = getUniqueIDs(parameterMap, id);
@@ -3876,6 +3884,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		multiplechoice.setIsAttribute(attribute);
+
+		Boolean listVote = getBoolean(parameterMap, "listvote", id);
+		if (log220 && !listVote.equals(multiplechoice.getIsListVote())) {
+			oldValues += " listVote: " + multiplechoice.getIsListVote();
+			newValues += " listVote: " + listVote;
+		}
+		multiplechoice.setIsListVote(listVote);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
 		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? multiplechoice.getDefaultDelphiChartType() : DelphiChartType.valueOf(delphiChartTypeString);
@@ -5866,12 +5881,16 @@ public class SurveyHelper {
 					}
 					int possibleAnswerId = Integer.parseInt(answerValue);
 					ChoiceQuestion choicequestion = (ChoiceQuestion) question;
-					if (choicequestion.getPossibleAnswer(possibleAnswerId) != null) {
-						return choicequestion.getPossibleAnswer(possibleAnswerId).getStrippedTitleNoEscape2();
-					} else {
+					if (survey.isMissingElementsChecked()) {
 						if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
 							return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitleNoEscape2();
 						}
+						if (survey.getMissingElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
+							return survey.getMissingElementsByUniqueId().get(answer.getPossibleAnswerUniqueId()).getStrippedTitleNoEscape2();
+						}
+					}
+					if (choicequestion.getPossibleAnswer(possibleAnswerId) != null) {
+						return choicequestion.getPossibleAnswer(possibleAnswerId).getStrippedTitleNoEscape2();
 					}
 
 					if (choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null) {
@@ -5882,7 +5901,7 @@ public class SurveyHelper {
 					return "";
 				} else if (question instanceof ComplexTableItem) {
 					ComplexTableItem item = (ComplexTableItem) question;
-					if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+					if (item.isChoice()) {
 						for (PossibleAnswer a : item.getAllPossibleAnswers()) {
 							if (a.getUniqueId().equals(answer.getPossibleAnswerUniqueId())) {
 								return a.getStrippedTitleNoEscape2();

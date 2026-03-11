@@ -1,7 +1,6 @@
 package com.ec.survey.security;
 
 import com.ec.survey.exception.AccessDeniedException;
-import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.Role;
@@ -29,13 +28,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class CustomAuthenticationManager implements AuthenticationManager {
 
@@ -171,7 +168,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					organisationSet = true;
 					user.setOrganisation(organisation);
 
-					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q"))
+					if (EcasHelper.isEmployeeTypePrivileged(type))
 					{
                         // internal user
                         if (surveyLoginMode) {
@@ -221,7 +218,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 						throw new Bad2faCredentialsException();
 					}
 									
-					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c") || type.equalsIgnoreCase("xf") || type.equalsIgnoreCase("q")) 
+					if (EcasHelper.isEmployeeTypePrivileged(type))
 					{
 						// internal EC users
 						if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().startsWith("Contributor")) {

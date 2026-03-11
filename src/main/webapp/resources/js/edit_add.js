@@ -235,21 +235,34 @@ function getNewElement(item)
 		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");	
 	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem") || item.hasClass("agenciesitem")) {
-		item.addClass("singlechoiceitem");
+		if (item.hasClass("countriesitemMC")) {
+			item.addClass("multiplechoiceitem");
 
-		// use original title for "Predefined" elements and make sure that special characters don't break anything; otherwise, use "Single Choice Question"
-		let questionTitle = $('<span>').text(item.attr("data-original-text")).html().trim() || "Single Choice Question";
-		
-		element = getBasicElement("SingleChoiceQuestion", true, questionTitle, item.attr("id"), true);
+			// use original title for "Predefined" elements and make sure that special characters don't break anything; otherwise, use "Single Choice Question"
+			let questionTitle = $('<span>').text(item.attr("data-original-text")).html().trim() || "Multiple Choice Question";
+
+			element = getBasicElement("MultipleChoiceQuestion", true, questionTitle, item.attr("id"), true);
+			element.useCheckboxes = true;
+			element.choiceType = "checkbox";
+		} else {
+			item.addClass("singlechoiceitem");
+
+			// use original title for "Predefined" elements and make sure that special characters don't break anything; otherwise, use "Single Choice Question"
+			let questionTitle = $('<span>').text(item.attr("data-original-text")).html().trim() || "Single Choice Question";
+
+			element = getBasicElement("SingleChoiceQuestion", true, questionTitle, item.attr("id"), true);
+			element.useRadioButtons = true;
+			element.choiceType = "radio";
+
+		}
+
 		element.maxChoices = 0;
 		element.minChoices = 0;
-		element.useRadioButtons = true;
-		element.choiceType = "radio";
 		element.numColumns = 1;
 		element.order = 1;
-		element.isDelphiQuestion = isDelphi;	
+		element.isDelphiQuestion = isDelphi;
 		element.possibleAnswers = [];
-		
+
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(updateListSummary,"init", 32);	
 		
@@ -579,6 +592,7 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 			element.optional = true;
 		}
 		element.isAttribute = false;
+		element.isListVote = true;
 		element.isUnique = false;
 		element.attributeName = element.shortname;
 		element.readonly = false;

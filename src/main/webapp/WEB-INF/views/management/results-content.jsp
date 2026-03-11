@@ -238,7 +238,7 @@
 										<c:forEach items="${question.getQuestionChildElements()}" var="child">
 											<th class="filtercell cell${child.id}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
 												<c:choose>
-													<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'MultipleChoice'}">
+													<c:when test="${child.isChoice()}">
 														  <button type="button" class="btn btn-default dropdownFilter" onclick="showOverlayMenu(this)" >
 														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
 														    <span class="caret"></span>
@@ -1199,6 +1199,7 @@
                   	 endreached = true;
                      inloading = false;
 					 $("#tbllist-loading").hide();
+					 enableAllResultFilters();
 					 $("#tbllist-empty").show();
                      $( "#wheel" ).hide();
                   },
@@ -1210,6 +1211,8 @@
 						  endreached = true;
 						  inloading = false;
 						  $("#tbllist-loading").hide();
+						  enableAllResultFilters();
+
 						  if (thisPage === 1) {
 							  $("#tbllist-empty").show();
 						  } else {
@@ -1482,6 +1485,7 @@
 						</c:if>
 
 						$("#tbllist-loading").hide();
+						enableAllResultFilters();
 						$( "#contentstablebody").append(tr);
 					  }
 
@@ -1508,6 +1512,40 @@
 						    trigger : 'hover'
 					 });
 				}});
+		}
+
+		function enableAllResultFilters() {
+			const filtercells = $(".filtercell");
+			if (filtercells.length === 0) {
+				return;
+			}
+
+			let filterCount =  calculateSelectedFilters(filtercells.first());
+
+			let selector = ".filtercell";
+			if (filterCount > 2) {
+				selector += ".yellowfilter";
+			}
+
+			$(selector).each(function() {
+				$(this).find("input[type=text]").each(function(){
+					$(this).prop("disabled", false);
+				});
+
+				$(this).find("a").each(function(){
+					$(this).removeClass("disabled");
+				});
+
+				$(this).find("button").each(function(){
+					$(this).removeClass("disabled");
+				});
+			});
+
+			$(".checkDelete").each(function() {
+				$(this).find("input[type=checkbox]").each(function(){
+					$(this).removeAttr("disabled");
+				});
+			});
 		}
 
 		function addDelphiCommentActions() {

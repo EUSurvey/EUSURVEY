@@ -1697,6 +1697,10 @@ public class RunnerController extends BasicController {
 					draft.setAnswerSet(answerSet);
 				}
 
+				if (request.getParameter("lastVisitedSection") != null && !request.getParameter("lastVisitedSection").isEmpty()) {
+					draft.getAnswerSet().setLastVisitedSection(Integer.parseInt(request.getParameter("lastVisitedSection")));
+				}
+
 				if (invitationId != null && invitationId.trim().length() > 0) {
 					Invitation invitation = attendeeService.getInvitation(Integer.parseInt(invitationId));
 					uid = invitation.getUniqueId();

@@ -63,6 +63,7 @@
 		<security:intercept-url pattern="/auth/**" access="permitAll" />
 		<security:intercept-url pattern="/resources/**" access="permitAll" />
 		<security:intercept-url pattern="/info/**" access="permitAll" />
+		<security:intercept-url pattern="/chatbot/**" access="permitAll" />
 		<security:intercept-url pattern="/addressbook/**" access="hasAnyRole('ROLE_CONTACT_MANAGER','ROLE_CONTACT_ADMIN')" />
 		<security:intercept-url pattern="/administration" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN','ROLE_RIGHT_MANAGER')" />
 		<security:intercept-url pattern="/monitoring" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
@@ -72,8 +73,6 @@
 		<security:intercept-url pattern="/administration/roles"	access="hasAnyRole('ROLE_RIGHT_ADMIN','ROLE_ROLE_MANAGER')" />
 		<security:intercept-url pattern="/administration/languages" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
 		<security:intercept-url pattern="/administration/departments" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
-		<security:intercept-url pattern="/administration/synchronizeLDAP" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
-		<security:intercept-url pattern="/administration/synchronizeDomains" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
 		<security:intercept-url pattern="/administration/checkPasswordNotWeak" access="permitAll" />
 		<security:intercept-url pattern="/administration/system/complexity" access="permitAll" />
 		<security:intercept-url pattern="/administration/system/message" access="permitAll" />

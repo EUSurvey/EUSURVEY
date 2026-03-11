@@ -497,10 +497,18 @@ var ElementProperties = function() {
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))", editenabled);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getChoosePropertiesRow("Style", (isEVote ? "EVoteList" : "CheckBox,ListBox"), false, false,  (isEVote ? "EVoteList" : element.styleType()), true);
+				var subType = $(e).find("input[name^='subType']").val()
+				if (subType === "euCountries")
+				{
+					getChoosePropertiesRow("Display", "CountryOnly,ISOOnly,ISO+Country,Country+ISO", false, false, parseInt($(e).find("input[name^='displayMode']").val()));
+				}
 				if (!element.isEVoteList()) {
 					getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
 				}
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
+				if (element.isEVoteList() && showListVoteProperty) {
+                    getCheckPropertiesRow("ListVote", $(e).find("input[name^='listvote']").val() == 'true', isDelphiQuestion);
+                }
 				getMinMaxPropertiesRow("NumberOfChoices", 0, 500, $(e).find("input[name^='choicemin']").val(), $(e).find("input[name^='choicemax']").val())
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
 				getVisibilityRow(false, !isDelphiQuestion);
@@ -817,6 +825,16 @@ var ElementProperties = function() {
 			} else if ($(e).hasClass("complextableitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+
+				const canBeMandatory = $(e).find(".can-be-mandatory").length
+
+				if (canBeMandatory > 0) {
+					const areMandatory = $(e).find(".mandatory").length
+					const allMandatory = canBeMandatory === areMandatory
+
+					getCheckPropertiesRow("Mandatory", allMandatory);
+				}
+
 				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)");
 				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
 				getChoosePropertiesRow("Size", "fitToContent,fitToPage", false, true, parseInt($(e).find("input[name^='size']").val()));

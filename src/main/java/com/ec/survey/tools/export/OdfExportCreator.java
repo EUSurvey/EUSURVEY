@@ -24,6 +24,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.formula.functions.Rank;
 import org.hibernate.*;
 import org.hibernate.query.Query;
@@ -412,7 +413,7 @@ public class OdfExportCreator extends ExportCreator {
 
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, parameters, true)
-					+ ") ORDER BY ans.ANSWER_SET_ID";
+					+ ") ORDER BY ans.ANSWER_SET_DATE DESC";
 
 			NativeQuery query = session.createSQLQuery(sql);
 
@@ -826,7 +827,7 @@ public class OdfExportCreator extends ExportCreator {
 
 							if (answerSet == null) {
 								String v = answerrow.get(answerrowcounter++);
-								if (v != null && v.length() > 0) {
+								if (NumberUtils.isParsable(v)) {
 									double cellValue = Double.parseDouble(v);
 									cell.setDoubleValue(cellValue);
 									cell.setValueType("float");
@@ -838,10 +839,13 @@ public class OdfExportCreator extends ExportCreator {
 								double cellValue;
 
 								if (!answers.isEmpty()) {
-									cellValue = Double.parseDouble(answers.get(0).getValue());
-									cell.setDoubleValue(cellValue);
-									cell.setValueType("float");
-									cell.setFormatString(format);
+									var answer = answers.get(0).getValue();
+									if (NumberUtils.isParsable(answer)) {
+										cellValue = Double.parseDouble(answer);
+										cell.setDoubleValue(cellValue);
+										cell.setValueType("float");
+										cell.setFormatString(format);
+									}
 								}
 							}
 						} else if (question instanceof DateQuestion
@@ -994,6 +998,8 @@ public class OdfExportCreator extends ExportCreator {
 					} else if (discussions.containsKey(answerSet.getId())
 							&& discussions.get(answerSet.getId()).containsKey(question.getUniqueId())) {
 						discussion = discussions.get(answerSet.getId()).get(question.getUniqueId());
+						String likesText = resources.getMessage("label.Likes", null, "likes", locale);
+						discussion = discussion.replace("{0}", likesText);
 					}
 
 					if (!discussion.isEmpty()) {
@@ -1475,9 +1481,7 @@ public class OdfExportCreator extends ExportCreator {
 					ComplexTable table = (ComplexTable) question;
 
 					for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
-						boolean isChoice = childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice
-								|| childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice;
-						boolean hasStatistics = isChoice;
+						boolean hasStatistics = childQuestion.isChoice();
 						if (!hasStatistics) {
 							if (childQuestion.getCellType() == ComplexTableItem.CellType.Number
 									|| childQuestion.getCellType() == ComplexTableItem.CellType.Formula) {
@@ -1493,7 +1497,7 @@ public class OdfExportCreator extends ExportCreator {
 
 							CreateTableForAnswerStat(cellValue);
 
-							if (isChoice) {
+							if (childQuestion.isChoice()) {
 								for (PossibleAnswer possibleAnswer : childQuestion.getPossibleAnswers()) {
 									rowIndex++;
 
@@ -1890,6 +1894,16 @@ public class OdfExportCreator extends ExportCreator {
 				}
 			}
 		}
+		for (int x = 0; x < sheet.getColumnCount(); x++) {
+			for (int y = 0; y < sheet.getRowCount(); y++) {
+				var cell = sheet.getCellByPosition(x, y);
+				if (cell.getDisplayText().isEmpty() && cell.getImage() == null) {
+					cell.setStringValue("");
+					cell.setDisplayText("");
+					cell.setValueType("void");
+				}
+			}
+		}
 		spreadsheet.save(outputStream);
 	}
 
@@ -2150,9 +2164,7 @@ public class OdfExportCreator extends ExportCreator {
 					ComplexTable complexTable = (ComplexTable) question;
 
 					for (ComplexTableItem childQuestion : complexTable.getQuestionChildElements()) {
-						boolean isChoice = childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice
-								|| childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice;
-						boolean hasStatistics = isChoice;
+						boolean hasStatistics = childQuestion.isChoice();
 						if (!hasStatistics) {
 							if (childQuestion.getCellType() == ComplexTableItem.CellType.Number
 									|| childQuestion.getCellType() == ComplexTableItem.CellType.Formula) {
@@ -2168,7 +2180,7 @@ public class OdfExportCreator extends ExportCreator {
 
 							org.odftoolkit.simple.table.Table table = CreateTableForAnswer(document, cellValue);
 
-							if (isChoice) {
+							if (childQuestion.isChoice()) {
 								for (PossibleAnswer possibleAnswer : childQuestion.getPossibleAnswers()) {
 									Row row = table.appendRow();
 

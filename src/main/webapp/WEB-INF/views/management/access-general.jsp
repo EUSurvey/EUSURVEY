@@ -229,13 +229,8 @@
 
             checkUserTypeAccess();
 
-            if (results || $("#add-form").length == 0) {
-                $("#add-user-div-GiveFullAccess").hide();
-            } else {
-                $("#add-user-div-GiveFullAccess").show();
-            }
-
-            $('#add-department-name').val('');
+			$("#chkGiveFullAccess").prop("checked", false)
+			$('#add-department-name').val('');
             $('#add-user-name').val('');
             $('#add-first-name').val('');
             $('#add-last-name').val('');
@@ -246,12 +241,7 @@
 
         function showAddDepartmentDialog()
         {
-            if ($("#add-form").length == 0) {
-                $("#add-department-div-GiveFullAccess").hide();
-            } else {
-                $("#add-department-div-GiveFullAccess").show();
-            }
-
+			$("#chkGiveFullAccessGroup").prop("checked", false)
             $('#add-group-dialog').modal();
             $("#add-group-type-ecas").val("eu.europa.ec");
 
@@ -377,8 +367,11 @@
                 return;
             }
 
-            var login = $("#search-results-access").find(".success").first().attr("id");
+			const user = $("#search-results-access").find(".success").first()
+            var login = user.attr("id");
             var ecas = $("#add-user-type-ecas").val() != "system";
+			const external = user.hasClass("externaluser")
+
             var chkGiveFullAccess = $("#chkGiveFullAccess").is(":checked");
 
             $("#search-results-access-none").hide();
@@ -389,10 +382,20 @@
                 $("#add-form-login").val(login);
                 $("#add-form-ecas").val(ecas);
                 $("#add-form-givefullaccess").val(chkGiveFullAccess);
-                $("#add-form").submit();
+				if (chkGiveFullAccess && external) {
+					$('#add-user-dialog').modal("hide");
+					$("#FullAccess4Externals-dialog").modal("show");
+				} else {
+					$("#add-form").submit();
+				}
             } else {
-                // in bulk change dialog
-                addEntryToBulkChangeDetails(login, true, ecas);
+				// in bulk change dialog
+				if (chkGiveFullAccess && external) {
+					$('#add-user-dialog').modal("hide");
+					$("#FullAccess4Externals-dialog").modal("show");
+				} else {
+					addEntryToBulkChangeDetails(login, true, ecas, chkGiveFullAccess);
+				}
             }
         }
 
@@ -435,7 +438,7 @@
               $("#add-form-group").submit();
            } else {
               // in bulk change dialog
-              addEntryToBulkChangeDetails(department, false);
+              addEntryToBulkChangeDetails(department, false, undefined, chkGiveFullAccess);
            }
         }
 
@@ -690,13 +693,24 @@
     {
         $("#ManageInvitations4Externals-dialog").modal("hide");
         if ($("#update-form-privilege").length > 0) {
-            $("#wait-animation").show();
-            $("#update-form-id").val(selectedId);
-            $("#update-form-privilege").val(selectedPrivilege);
-            $("#update-form").submit();
+			$("#wait-animation").show();
+			$("#update-form-id").val(selectedId);
+			$("#update-form-privilege").val(selectedPrivilege);
+			$("#update-form").submit();
         } else {
             updatePrivilegeInBulkChangeDetails(selectedId, selectedPrivilegeValue);
             $("#user-dialog").modal("hide");
         }
     }
+
+	function confirmFullAccess() {
+		$("#FullAccess4Externals-dialog").modal("hide");
+		if ($("#update-form-privilege").length > 0) {
+			$("#add-form").submit();
+		} else {
+			var login = $("#search-results-access").find(".success").first().attr("id");
+			var ecas = $("#add-user-type-ecas").val() != "system";
+			addEntryToBulkChangeDetails(login, true, ecas, true);
+		}
+	}
 </script>

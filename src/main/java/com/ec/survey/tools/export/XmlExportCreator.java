@@ -233,7 +233,7 @@ public class XmlExportCreator extends ExportCreator {
 						writer.writeCharacters(child.getResultTitle(table));
 						writer.writeEndElement(); // ResultText
 
-						if (child.getCellType() == CellType.SingleChoice || child.getCellType() == CellType.MultipleChoice) {
+						if (child.isChoice()) {
 							for (PossibleAnswer answer : child.getPossibleAnswers()) {
 								writer.writeStartElement(ANSWER);
 								writer.writeAttribute("id", answer.getUniqueId());
@@ -529,7 +529,7 @@ public class XmlExportCreator extends ExportCreator {
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(),
 							export == null ? null : export.getResultFilter(), values, true)
-					+ ") ORDER BY ans.ANSWER_SET_ID";
+					+ ") ORDER BY ans.ANSWER_SET_DATE DESC";
 
 			NativeQuery query = makeQuery(sql, session, values);
 			ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
@@ -724,7 +724,7 @@ public class XmlExportCreator extends ExportCreator {
 			String sql = "select ans.ANSWER_SET_ID, ans.UNIQUECODE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), export == null ? null : export.getResultFilter(),
 							values, true)
-					+ ") ORDER BY ans.ANSWER_SET_ID";
+					+ ") ORDER BY ans.ANSWER_SET_DATE DESC";
 
 			NativeQuery query = makeQuery(sql, session, values);
 			ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
@@ -820,6 +820,10 @@ public class XmlExportCreator extends ExportCreator {
 		}
 
 		int answerrowcounter = 2;
+
+		//Which explaination files this user added
+		var explainFilesByQuestion = new FilesByType<String>();
+
 		for (Element question : questions) {
 			if ((filter == null || filter.exported(question.getId().toString())) && question.isUsedInResults()) {
 				if (question instanceof Matrix) {
@@ -868,7 +872,7 @@ public class XmlExportCreator extends ExportCreator {
 						if (answerSet == null) {
 							String sanswers = row.get(answerrowcounter++);
 							if (sanswers != null) {								
-								if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice)
+								if (childQuestion.isChoice())
 								{
 									String[] answers = sanswers.split(";");
 									for (String answer : answers) {
@@ -888,7 +892,7 @@ public class XmlExportCreator extends ExportCreator {
 							}
 						} else {
 							List<Answer> answers = answerSet.getAnswers(childQuestion.getUniqueId());
-							if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice)
+							if (childQuestion.isChoice())
 							{
 								for (Answer answer : answers) {
 									writer.writeStartElement(ANSWER);
@@ -1143,6 +1147,7 @@ public class XmlExportCreator extends ExportCreator {
 								file.setUid(fileUid);
 								file.setName(fileName);
 								explanationFilesToExport.addFile(questionUid, file);
+								explainFilesByQuestion.addFile(questionUid, file);
 							}
 						}
 					} else {
@@ -1154,10 +1159,13 @@ public class XmlExportCreator extends ExportCreator {
 						}
 
 						explanationFilesOfSurvey.getFiles(answerSetId, questionUid)
-								.forEach(file -> explanationFilesToExport.addFile(questionUid, file));
+								.forEach(file -> {
+									explanationFilesToExport.addFile(questionUid, file);
+									explainFilesByQuestion.addFile(questionUid, file);
+								});
 					}
 					
-					if (!explanation.isEmpty() || explanationFilesToExport.hasFiles())
+					if (!explanation.isEmpty() || explainFilesByQuestion.hasFiles())
 					{
 						writer.writeStartElement(EXPLANATION);
 						writer.writeAttribute("qid", questionUid);
@@ -1166,10 +1174,10 @@ public class XmlExportCreator extends ExportCreator {
 							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(explanation));
 							writer.writeEndElement(); // EXPLANATION_TEXT
 						}
-						for (final File file : explanationFilesToExport.getFiles(questionUid)) {
+						for (final File file : explainFilesByQuestion.getFiles(questionUid)) {
 							writer.writeStartElement(EXPLANATION_FILE);
 							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(file.getNameForExport()));
-							writer.writeEndElement(); // EXPLANATION_FILE
+							writer.writeEndElement();
 						}
 						
 						int likes = Integer.MAX_VALUE;
@@ -1204,6 +1212,7 @@ public class XmlExportCreator extends ExportCreator {
 							if (discussions.containsKey(answerSet.getId()) && discussions.get(answerSet.getId()).containsKey(question.getUniqueId()))
 							{
 								discussion = discussions.get(answerSet.getId()).get(question.getUniqueId());
+								discussion = discussion.replace("{0}", "Likes");
 							}
 						} catch (NoSuchElementException ex) {
 							//ignore

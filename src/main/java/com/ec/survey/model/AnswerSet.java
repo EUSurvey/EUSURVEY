@@ -46,6 +46,7 @@ public class AnswerSet implements java.io.Serializable {
 	private String IP;
 	private List<Answer> answers = new ArrayList<>();
 	private boolean isDraft = false;
+	private int lastVisitedSection = 0;
 	private String draftId;
 	private Boolean disclaimerMinimized;
 	private Boolean wcagMode;
@@ -171,6 +172,12 @@ public class AnswerSet implements java.io.Serializable {
 
 	public void setIsDraft(boolean isDraft) {
 		this.isDraft = isDraft;
+	}
+
+	@Column(name = "LASTVISITEDSECTION")
+	public int getLastVisitedSection() { return lastVisitedSection; }
+	public void setLastVisitedSection(Integer lastVisitedSection) {
+		this.lastVisitedSection = lastVisitedSection == null ? 0 : lastVisitedSection;
 	}
 
 	@OneToMany(targetEntity = Answer.class, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "answerSet")

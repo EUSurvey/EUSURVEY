@@ -198,8 +198,7 @@
 			<p>
 				<strong>Advanced privacy</strong>
 				<br/>
-				You can guarantee the participant's privacy by creating an anonymous form. Connection details will then
-				not be available to you as the author of the form.
+				You can ensure that participants remain anonymous by activating the 'Anonymous survey mode'. When this option is enabled, all contributions are recorded anonymously. No user-related data will be collected or stored.
 			</p>
 			<p>
 				<strong>Customise the look and feel</strong>
@@ -2673,18 +2672,23 @@
 				).
 			</p>
 			<p>
-				<strong>Creating an anonymous survey:</strong>
+				<b>Creating an anonymous survey:</b>
 			</p>
 			<p>
-				You can choose to create an anonymous survey by using the 'Anonymous survey mode'
-				option in the survey properties. If activated, contributions to your survey will
-				be anonymous as EUSurvey will not save any personal data such as IP addresses.
-				If you want your survey to be fully anonymous, do not include questions
-				collecting personal data in your survey design.
+				You can create an anonymous survey by activating the 'Anonymous survey mode' in the Survey Properties.
 			</p>
 			<p>
 				<img alt="screenshot anonymity option" src="${contextpath}/resources/images/documentation/anonymity.png" />
 			</p>
+			<p>
+				To do so, go to <b>Survey Properties > Security</b> and enable 'Anonymous survey mode'. When this option is activated, no user-related data (including IP addresses) will be collected or stored.
+			</p>
+			<p>
+				To ensure your survey remains fully anonymous, you must also avoid including any questions that request personal data within the questionnaire itself.
+			</p>
+			<p>
+				Please note that once your anonymous survey has been launched and responses have been collected, the anonymous mode cannot be deactivated. It is not possible to revert the survey back to a non-anonymous mode after responses have been submitted.
+ 			</p>
 			<h2>
 				Do I need to include a privacy statement?    
 			</h2>

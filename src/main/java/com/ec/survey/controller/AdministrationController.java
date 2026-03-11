@@ -5,17 +5,7 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
-import com.ec.survey.tools.ArchiveExecutor;
-import com.ec.survey.tools.ArchiveFlagExecutor;
-import com.ec.survey.tools.Constants;
-import com.ec.survey.tools.CreateAllOLAPTablesExecutor;
-import com.ec.survey.tools.FileUpdater;
-import com.ec.survey.tools.NotAgreedToPsException;
-import com.ec.survey.tools.NotAgreedToTosException;
-import com.ec.survey.tools.RecreateAllOLAPTablesExecutor;
-import com.ec.survey.tools.Tools;
-import com.ec.survey.tools.UpdateAllOLAPTablesExecutor;
-import com.ec.survey.tools.WeakAuthenticationException;
+import com.ec.survey.tools.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -52,6 +42,9 @@ public class AdministrationController extends BasicController {
 	
 	@Resource(name = "fileWorker")
 	private FileUpdater fileWorker;
+
+	@Resource(name = "departmentWorker")
+	private DepartmentUpdater departmentWorker;
 	
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
@@ -116,18 +109,11 @@ public class AdministrationController extends BasicController {
 		
 		return "ok";
 	}
-	
-	@RequestMapping(value = "/synchronizeLDAP", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView synchronizeLDAP(HttpServletRequest request) {
-		ldapService.reloadDepartments();
-		ldapService.reloadEcasUser();
-		return new ModelAndView("error/info", Constants.MESSAGE, "synchronization started");
-	}
-	
-	@RequestMapping(value = "/synchronizeDomains", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView synchronizeDomains(HttpServletRequest request) {
-		ldapService.reloadDomains();
-		return new ModelAndView("error/info", Constants.MESSAGE, "synchronization started");
+
+	@RequestMapping(value = "/synchronizeDepartments", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView synchronizeDepartments(HttpServletRequest request) {
+		departmentWorker.run();
+		return new ModelAndView("error/info", Constants.MESSAGE, "synchronization succeeded");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForSurvey/{survey}", method = {RequestMethod.GET, RequestMethod.HEAD})

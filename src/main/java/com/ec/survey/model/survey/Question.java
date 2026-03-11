@@ -40,6 +40,7 @@ public abstract class Question extends Element {
 	private DelphiChartType delphiChartType;
 	private boolean showExplanationBox;
 	private boolean noNegativeScore;
+	private boolean listVote;
 
 	private boolean hidden;
 
@@ -233,6 +234,14 @@ public abstract class Question extends Element {
 		this.noNegativeScore = noNegativeScore != null && noNegativeScore;
 	}
 
+	@Column(name = "LISTVOTE", columnDefinition = "boolean default true", nullable = false)
+	public Boolean getIsListVote() {
+		return listVote;
+	}
+	public void setIsListVote(Boolean listVote) {
+		this.listVote = listVote != null && listVote;
+	}
+
 	protected void baseCopy(Question copy)
 	{
 		copy.setIsAttribute(getIsAttribute());
@@ -257,6 +266,7 @@ public abstract class Question extends Element {
 		copy.setDelphiChartType(getDelphiChartType());
 		copy.setNoNegativeScore(getNoNegativeScore());
 		copy.setHidden(getHidden());
+		copy.setIsListVote(getIsListVote());
 
 		if (ecfCompetency != null) {
 			copy.setEcfCompetency(this.getEcfCompetency());
@@ -347,6 +357,7 @@ public abstract class Question extends Element {
 			if (!(Objects.equals(getShowExplanationBox(), question.getShowExplanationBox()))) return true;
 			if (!(Objects.equals(getDelphiChartType(), question.getDelphiChartType()))) return true;
 			if (!(Objects.equals(getNoNegativeScore(), question.getNoNegativeScore()))) return true;
+			if (!(Objects.equals(getIsListVote(), question.getIsListVote()))) return true;
 
 			if (!(Objects.equals(getHidden(), question.getHidden()))) return true;
 		} else {

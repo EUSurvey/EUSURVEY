@@ -30,6 +30,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -1014,18 +1015,20 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 
 					if (answerSet == null) {
 						String v = answerrow.get(answerrowcounter++);
-						if (v != null && v.length() > 0) {
+						if (NumberUtils.isParsable(v)) {
 							double cellValue = Double.parseDouble(v);
 							cell.setCellValue(cellValue);
 							cell.setCellStyle(numberCellStyle);
 						}
 					} else {
 						List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
-						double cellValue;
 						if (!answers.isEmpty()) {
-							cellValue = Double.parseDouble(answers.get(0).getValue());
-							cell.setCellValue(cellValue);
-							cell.setCellStyle(numberCellStyle);
+							var answer = answers.get(0).getValue();
+							if (NumberUtils.isParsable(answer)) {
+								double cellValue = Double.parseDouble(answer);
+								cell.setCellValue(cellValue);
+								cell.setCellStyle(numberCellStyle);
+							}
 						}
 					}
 				} else if (question instanceof DateQuestion && (export == null || !export.getShowShortnames())) {
@@ -1213,6 +1216,8 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					} else if (discussions.containsKey(answerSet.getId())
 							&& discussions.get(answerSet.getId()).containsKey(question.getUniqueId())) {
 						discussion = discussions.get(answerSet.getId()).get(question.getUniqueId());
+						String likesText = resources.getMessage("label.Likes", null, "likes", locale);
+						discussion = discussion.replace("{0}", likesText);
 					}
 
 					if (!discussion.isEmpty()) {
@@ -1630,9 +1635,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					ComplexTable table = (ComplexTable) question;
 
 					for (ComplexTableItem childQuestion : table.getQuestionChildElements()) {
-						boolean isChoice = childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice
-								|| childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice;
-						boolean hasStatistics = isChoice;
+						boolean hasStatistics = childQuestion.isChoice();
 						if (!hasStatistics) {
 							if (childQuestion.getCellType() == ComplexTableItem.CellType.Number
 									|| childQuestion.getCellType() == ComplexTableItem.CellType.Formula) {
@@ -1647,7 +1650,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 							}
 
 							CreateTableForAnswer(cellValue, boldstyle);
-							if (isChoice) {
+							if (childQuestion.isChoice()) {
 								for (PossibleAnswer possibleAnswer : childQuestion.getPossibleAnswers()) {
 									row = sheet.createRow(rowIndex++);
 

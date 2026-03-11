@@ -90,6 +90,9 @@ public class BasicService implements BeanFactoryAware {
 	
 	@Resource(name = "selfassessmentService")
 	protected SelfAssessmentService selfassessmentService;
+
+	@Resource(name = "propertiesService")
+	protected PropertiesService propertiesService;
 	
 	@Autowired
 	protected MessageSource resources;

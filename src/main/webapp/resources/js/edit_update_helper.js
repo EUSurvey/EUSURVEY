@@ -72,10 +72,31 @@ function setMandatoryInner(element, checked, checkbox)
 			element.childElements()[i].optional(!checked);
 			element.childElements()[i].title(titleprefix + element.childElements()[i].originalTitle());
 		}
-	} else {		
-		element.optional(!checked);
+	} else if (element.type === "ComplexTableItem") {
+		if (element.canBeMandatory()) {
+			element.optional(!checked);
+		} else {
+			element.optional(true)
+		}
 		element.title(titleprefix + element.originalTitle());
-	}	
+	} else if (element.type === "ComplexTable") {
+		for (const child of element.childElements()) {
+			if (child.canBeMandatory()) {
+				child.optional(!checked)
+			} else {
+				child.optional(true)
+			}
+		}
+	} else {
+        element.optional(!checked);
+        element.title(titleprefix + element.originalTitle());
+    }
+}
+
+function complexCellMandatoryChecks(cell) {
+	if (!cell.canBeMandatory()) {
+		cell.optional(true);
+	}
 }
 
 function updateConfirmationText(element, text)
@@ -238,15 +259,14 @@ function updateChoice(element, answers, positionChange)
 			scorings[element.possibleAnswers()[i].id()] = element.possibleAnswers()[i].scoring;
 		}
 		
-		element.possibleAnswers.removeAll();
 		for (var i = 0; i < answers.length; i++)
 		{
 			if (scorings.hasOwnProperty(answers[i].id()))
 			{
 				answers[i].scoring =scorings[answers[i].id()];
 			}
-			element.possibleAnswers.push(answers[i]);
 		}
+		element.possibleAnswers(answers)
 	}
 	
 	if ($(_elementProperties.selectedelement).hasClass("cell")) {

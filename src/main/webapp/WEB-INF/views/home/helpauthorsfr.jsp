@@ -245,7 +245,7 @@
 			<p>
 				<b>Confidentialité avancée</b>
 				<br/>
-				Vous pouvez garantir à vos participants de rester anonymes en activant le "mode enquête anonyme". Si cette option est activée, toutes les contributions seront anonymes. Cela signifie qu'aucune donnée relative à l'utilisateur ne sera enregistrée par le système.
+				Vous pouvez garantir l’anonymat de vos participants en activant le « mode enquête anonyme ». Lorsque cette option est activée, toutes les contributions sont enregistrées de manière anonyme. Aucune donnée liée à l’utilisateur n’est collectée ni enregistrée.
 			</p>
 			<p>
 				<b>Personnalisation de l’apparence</b>
@@ -3623,10 +3623,22 @@
 				).
 			</p>
 			<p>
-				<b>Créer une enquête anonyme:</b>
+				<b>Création d’une enquête anonyme :</b>
 			</p>
 			<p>
-				Vous pouvez choisir de créer une enquête anonyme en utilisant l'option "Mode enquête anonyme" dans les propriétés de l'enquête. Si cette option est activée, les contributions à votre enquête seront anonymes car EUSurvey n'enregistrera pas de données personnelles telles que les adresses IP. Si vous souhaitez que votre enquête soit totalement anonyme, n'incluez pas de questions collectant des données personnelles dans la conception de votre enquête.
+				Vous pouvez créer une enquête anonyme en activant le « mode enquête anonyme » dans les propriétés de l’enquête.
+			</p>
+			<p>
+				<img alt="screenshot anonymity option" src="${contextpath}/resources/images/documentation/anonymity.png" />
+			</p>
+			<p>
+				Pour ce faire, accédez à <b>Propriétés de l’enquête → Sécurité</b> et activez le « mode enquête anonyme ». Lorsque cette option est activée, aucune donnée liée à l’utilisateur (y compris les adresses IP) n’est collectée ni enregistrée.
+			</p>
+			<p>
+				Afin de garantir que votre enquête reste entièrement anonyme, vous devez également éviter d’inclure dans le questionnaire des questions demandant des données à caractère personnel.
+			</p>
+			<p>
+				Veuillez noter qu’une fois votre enquête anonyme lancée et des réponses collectées, le mode anonyme ne peut plus être désactivé. Il n’est pas possible de revenir à une enquête non anonyme après la soumission de réponses.
 			</p>
 			<h2>
 				Les enquêtes doivent-elles inclure une déclaration relative à la protection

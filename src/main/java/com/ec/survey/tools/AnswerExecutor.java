@@ -103,7 +103,8 @@ public class AnswerExecutor implements Runnable {
 								
 				logger.info("finished creation of answer pdf for " + contributionordraft + " " + answerSet.getUniqueCode() + " to be sent to " + email);
 
-                activityService.log(answerSet.getIsDraft() ? ActivityRegistry.ID_DRAFT_CONTRIBUTION_PDF_SENT : ActivityRegistry.ID_CONTRIBUTION_PDF_SENT, null, answerSet.getUniqueCode() + ", " + email, -1, answerSet.getSurvey().getUniqueId());
+				String logtext = answerSet.getUniqueCode() + ", " + (answerSet.getSurvey().isAnonymous() ? "[email]" : email);
+                activityService.log(answerSet.getIsDraft() ? ActivityRegistry.ID_DRAFT_CONTRIBUTION_PDF_SENT : ActivityRegistry.ID_CONTRIBUTION_PDF_SENT, null, logtext, -1, answerSet.getSurvey().getUniqueId());
 
 				mailService.SendHtmlMail(email, from, from, "Copy of your PDF " + contributionordraft, text, file, answerSet.getUniqueCode());
 			}

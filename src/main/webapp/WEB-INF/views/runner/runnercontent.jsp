@@ -34,6 +34,7 @@
 				<input type="hidden" name="uniqueCode" id="uniqueCode" value="<esapi:encodeForHTMLAttribute>${uniqueCode}</esapi:encodeForHTMLAttribute>" />
 				<input type="hidden" name="IdAnswerSet" id="IdAnswerSet" value="<esapi:encodeForHTMLAttribute>${answerSet}</esapi:encodeForHTMLAttribute>" />
 				<input type="hidden" name="invitation" id="invitation" value="<esapi:encodeForHTMLAttribute>${invitation}</esapi:encodeForHTMLAttribute>" />
+				<input type="hidden" name="lastVisitedSection" id="lastVisitedSection" value="<esapi:encodeForHTMLAttribute>${form.answerSets[0].lastVisitedSection}</esapi:encodeForHTMLAttribute>" />
 				<input type="hidden" name="participationGroup" value="<esapi:encodeForHTMLAttribute>${participationGroup}</esapi:encodeForHTMLAttribute>" />
 				<input type="hidden" id="hfsubmit" value="<esapi:encodeForHTMLAttribute>${submit}</esapi:encodeForHTMLAttribute>" />
 				<input type="hidden" id="mode" name="mode" value="<esapi:encodeForHTMLAttribute>${mode}</esapi:encodeForHTMLAttribute>" />

@@ -84,21 +84,26 @@ var SeatResults = function() {
 		
 		let graphColors = ['rgb(91, 155, 213)', 'rgb(237, 125, 49)', 'rgb(165, 165, 165)'];
 
+
+
 		const countData = {
 			labels: [
 				labelEVoteCountVotes,
-				labelEVoteCountBlankVotes,
-				labelEVoteCountSpoiltVotes
+				labelEVoteCountBlankVotes
 			],
 			datasets: [{
 				data: [
 					this.counting().votes,
-					this.counting().blankVotes,
-					this.counting().spoiltVotes,
+					this.counting().blankVotes
 				],
 				backgroundColor: graphColors,
 			}]
 		};
+
+		if (this.counting().spoiltVotes > 0 || this.counting().template != 'e') {
+            countData.labels.push(labelEVoteCountSpoiltVotes);
+            countData.datasets[0].data.push(this.counting().spoiltVotes);
+        }
 
 		let config = {
 			type: 'pie',

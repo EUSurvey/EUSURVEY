@@ -75,17 +75,19 @@ function updateChildren(input, headerCell, children, tableId) {
 	switch (label) {
 		case "CellType":
 			const type = parseInt($(input).val());
+			let canBeMandatory = false
 			for (let child of children) {
 				setOldUndo(child, child.cellType())
 				setNewUndo(child, type)
 				child.cellType(type);
-
-				if (type === 1 || type === 3) { // set optional for static text cells and formula cells
-					child.optional(true);
+				complexCellMandatoryChecks(child)
+				if (child.canBeMandatory()) {
+					canBeMandatory = true
 				}
 			}
 			undoOldValues.header = headerCell.cellTypeChildren()
 			headerCell.cellTypeChildren(type);
+			headerCell.canChildrenBeMandatory(canBeMandatory)
 			undoNewValues.header = type
 
 			// update navigation (changes if empty cell is involved)
@@ -120,9 +122,17 @@ function updateChildren(input, headerCell, children, tableId) {
 			const checked = $(input).is(":checked");
 			for (let child of children) {
 				setOldUndo(child, child.optional())
-				child.optional(!checked);
+				if (child.canBeMandatory()) {
+					child.optional(!checked);
+				} else {
+					child.optional(true)
+				}
 				setNewUndo(child, child.optional())
 			}
+			headerCell.areChildrenMandatory(checked)
+
+			undoNewValues.header = checked
+			undoOldValues.header = !checked
 			break;
 		case "Rows":
 			var text = $(input).val();
@@ -161,7 +171,7 @@ function updateChildren(input, headerCell, children, tableId) {
 
 			if (headerCell.cellTypeChildren() == 2){
 				useKey = isMin ? "minCharacters" : "maxCharacters";
-			} else if (headerCell.cellTypeChildren() == 4 || headerCell.cellTypeChildren() == 5){
+			} else if (headerCell.cellTypeChildren() == 4 || headerCell.cellTypeChildren() == 5 || headerCell.cellTypeChildren() == 7){
 				useKey = isMin ? "minChoices" : "maxChoices";
 			} else {
 				useKey = isMin ? "min" : "max";
@@ -410,6 +420,12 @@ function update(input)
 			element.isAttribute(checked);
 			_undoProcessor.addUndoStep(["Attribute", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;
+		case "ListVote":
+            var checked = $(input).is(":checked");
+            var oldtext = element.isListVote();
+            element.isListVote(checked);
+            _undoProcessor.addUndoStep(["ListVote", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
+            break;
 		case "DelphiQuestion":
 			var checked = $(input).is(":checked");
 			var oldtext = element.isDelphiQuestion();
@@ -542,7 +558,7 @@ function update(input)
 			} else if ($(_elementProperties.selectedelement).hasClass("cell")) {
 				var text = $(input).val();
 				var oldtext = "";
-				if (element.cellType() == 4) //Single Choice 
+				if (element.isSingleChoiceType()) //Single Choice
 				{
 					oldtext = element.useRadioButtons() ? 'RadioButton' : 'SelectBox';
 					element.useRadioButtons(text == "RadioButton");
@@ -1402,12 +1418,9 @@ function update(input)
 			element.cellType(type);			
 			
 			if (type != oldType) {
-				if (type == 1) { // set optional for static text cells
-					element.optional(true);
-				} else if (type == 3) { //set "readonly" for formula cells
+				if (type == 3) { //set "readonly" for formula cells
 					element.readonly(true);
-					element.optional(true);
-				} else if (type == 4) { //set "useRadioButtons" for single choice cells
+				} else if (type == 4 || type == 7) { //set "useRadioButtons" for single choice cells
 					element.useRadioButtons(false);
 					if (element.possibleAnswers() == null || element.possibleAnswers().length == 0) {
 						addPossibleAnswer(true);
@@ -1425,12 +1438,67 @@ function update(input)
 					selectedElement = $(_elementProperties.selectedelement).closest(".survey-element");
 					updateNavigation(selectedElement, selectedElement.attr("data-id"));
 				}
+				complexCellMandatoryChecks(element)
 			}
 			
 			_undoProcessor.addUndoStep(["CellType", id, $(_elementProperties.selectedelement).index(), oldType, type]);			
 			
 			break;
-		case "ResultText":			
+		case "PredefinedList": {
+			const list = parseInt($(input).val());
+			const oldList = element.predefinedList();
+
+			if (list === oldList) break;
+
+			element.predefinedList(list)
+
+			const oldState = {
+				answers: element.possibleAnswers(),
+				list: oldList
+			}
+
+			const newState = {
+				answers: element.possibleAnswers(),
+				list: list
+			}
+
+			if (list > 0) {
+
+				const urlMap = {
+					1: "/utils/euAgencies",
+					2: "/utils/euCountries",
+					3: "/utils/euLanguages",
+					4: "/utils/euDGs",
+					5: "/utils/unCountries",
+				}
+
+				const url = urlMap[list]
+
+				if (url == null) {
+					throw "Invalid Predefined List"
+				}
+
+				$.ajax({
+					type: "GET",
+					url: contextpath + url,
+					data: {lang: surveyLanguage},
+					async: false,
+					success: function (result) {
+						const pas = []
+						$.each(result, function (key, data) {
+							const pa = newPossibleAnswerViewModel(getNewId(), getNewId(), key, "", data, false);
+							pas.push(pa)
+						});
+						newState.answers = pas
+						updateChoice(element, pas, false)
+					}
+				});
+			}
+
+			_undoProcessor.addUndoStep(["PredefinedList", id, $(_elementProperties.selectedelement).index(), oldState, newState]);
+			break;
+		}
+		case "ResultText":
 			var text = $(input).val();
 			var oldtext = element.resultText();
 			

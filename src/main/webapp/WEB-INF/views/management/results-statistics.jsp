@@ -686,7 +686,7 @@
 						<c:when test="${question.getType() == 'ComplexTable'}">
 							<c:forEach items="${question.getQuestionChildElements()}" var="child">
 								<c:choose>										
-									<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'MultipleChoice'}">
+									<c:when test="${child.isChoice()}">
 										<div class="cell${child.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
 											<div class="statelement cell${child.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
 						

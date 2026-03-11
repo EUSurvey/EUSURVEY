@@ -1,0 +1,413 @@
+EUSurvey
+========
+
+Copyright (c) European Union, 2012–2026
+
+Licensed under the European Union Public Licence (EUPL) v1.2.
+You may obtain a copy of the Licence at:
+https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+
+
+1. Ownership
+------------
+
+EUSurvey has been developed by or on behalf of the European Commission.
+
+© European Union, 2012–2026
+
+Development may have been supported by external contractors under
+European Commission framework contracts.
+
+
+2. Open-Source Distribution Scope
+----------------------------------
+
+This repository contains the open-source core of EUSurvey.
+
+Certain configuration elements, integrations, environment-specific
+parameters, and infrastructure components used in the European
+Commission production environment are not included in this repository.
+
+
+3. Third-Party Components
+-------------------------
+
+EUSurvey includes third-party open-source components subject to their
+respective licenses.
+
+These components are distributed in compliance with their license terms.
+Where required, attribution is provided below.
+
+Used components are:
+
+- almende/vis - 4.20.1 - MIT, Apache 2.0
+- antlr/antlr - 2.7.7 - BSD-3-Clause
+- backport-util-concurrent/backport-util-concurrent - 3.1 - CC-PDDC (Creative Commons Public Domain Dedication and Certification)
+- bgrins/spectrum - 1.8.0 - MIT
+- Bootstrap - 3.3.6 - MIT
+- Chart.js - 2.9.4 - MIT
+- classworlds/classworlds - 1.1-alpha-2 - unknown
+- com.esotericsoftware/minlog - 1.3.1 - BSD-3-Clause
+- com.fasterxml.jackson.core/jackson-annotations - 2.12.6 - Apache-2.0
+- com.fasterxml.jackson.core/jackson-core - 2.12.6 - Apache-2.0
+- com.fasterxml.jackson.core/jackson-databind - 2.12.6.1 - Apache-2.0
+- com.fasterxml/classmate - 1.5.1 - Apache-2.0
+- com.github.davidmoten/guava-mini - 0.1.1 - Apache-2.0
+- com.github.davidmoten/rtree - 0.8.6 - Apache-2.0
+- com.github.package-url/packageurl-java - 1.1.1 - MIT
+- com.github.spullara.mustache.java/compiler - 0.9.6 - Apache-2.0
+- com.github.virtuald/curvesapi - 1.04 - BSD-3-Clause
+- com.google.code.findbugs/jsr305 - 3.0.2 - Apache-2.0
+- com.google.code.gson/gson - 2.8.9 - Apache-2.0
+- com.google.code.maven-scm-provider-svnjava/maven-scm-provider-svnjava - 2.1.2 - Apache-2.0
+- com.google.errorprone/error_prone_annotations - 2.3.4 - Apache-2.0
+- com.google.guava/failureaccess - 1.0.1 - Apache-2.0
+- com.google.guava/guava - 28.2-jre - Apache-2.0
+- com.google.guava/listenablefuture - 9999.0-empty-to-avoid-conflict-with-guava - Apache-2.0
+- com.google.j2objc/j2objc-annotations - 1.3 - Apache-2.0
+- com.google.protobuf/protobuf-java - 3.11.4 - BSD-3-Clause
+- com.googlecode.json-simple/json-simple - 1.1 - Apache-2.0
+- com.h2database/h2 - 1.4.199 - EPL-1.0; MPL-2.0; MPL-2.0-no-copyleft-exception
+- com.h3xstream.retirejs/retirejs-core - 3.0.2 - LGPL-3.0
+- com.jcraft/jsch - 0.1.54 - BSD-3-Clause
+- com.jcraft/jsch.agentproxy.connector-factory - 0.0.7 - Revised BSD
+- com.jcraft/jsch.agentproxy.core - 0.0.7 - Revised BSD
+- com.jcraft/jsch.agentproxy.pageant - 0.0.7 - Revised BSD
+- com.jcraft/jsch.agentproxy.sshagent - 0.0.7 - Revised BSD
+- com.jcraft/jsch.agentproxy.svnkit-trilead-ssh2 - 0.0.7 - Revised BSD
+- com.jcraft/jsch.agentproxy.usocket-jna - 0.0.7 - Revised BSD
+- com.jcraft/jsch.agentproxy.usocket-nc - 0.0.7 - Revised BSD
+- com.kennycason/kumo-api - 1.28 - MIT
+- com.kennycason/kumo-core - 1.28 - MIT
+- com.lowagie/itext - 2.1.7 - Mozilla Public License
+- com.mchange/c3p0 - 0.9.5.5 - EPL-1.0; LGPL-2.1; LGPL-2.1+; LGPL-2.1-only; LGPL-2.1-or-later
+- com.mchange/mchange-commons-java - 0.2.19 - EPL-1.0; LGPL-2.1; LGPL-2.1+; LGPL-2.1-only; LGPL-2.1-or-later
+- com.memetix/microsoft-translator-java-api - 0.6.2 - Apache-2.0
+- com.moandjiezana.toml/toml4j - 0.7.2 - MIT
+- com.octo.captcha/jcaptcha - 1.0 - LGPL-3.0
+- com.octo.captcha/jcaptcha-api - 1.0 - LGPL-3.0
+- com.sun.activation/jakarta.activation - 1.2.1 - BSD-3-Clause
+- com.sun.istack/istack-commons-runtime - 3.0.7 - CDDL-1.1; GPL-2.0-with-classpath-exception
+- com.sun.mail/javax.mail - 1.5.5 - CDDL-1.1; GPL-2.0-with-classpath-exception
+- com.sun.mail/mailapi - 1.6.5 - BSD-3-Clause; EPL-2.0; GPL-2.0-with-classpath-exception
+- com.sun.xml.bind/jaxb-core - 2.2.11 - GPL-1.0-or-later, CDDL 1.1
+- com.sun.xml.bind/jaxb-impl - 2.2.11 - GPL-1.0-or-later, CDDL 1.1
+- com.sun.xml.fastinfoset/FastInfoset - 1.2.15 - Apache-2.0
+- com.thoughtworks.xstream/xstream - 1.4.9 - BSD-3-Clause
+- com.trilead/trilead-ssh2 - 1.0.0-build222 - Trilead Library License (BSD-Like)
+- com.vdurmont/semver4j - 3.1.0 - MIT
+- commons-beanutils/commons-beanutils - 1.9.2 - Apache-2.0
+- commons-beanutils/commons-beanutils-core - 1.8.3 - Apache-2.0
+- commons-cli/commons-cli - 1.2 - Apache-2.0
+- commons-codec/commons-codec - 1.9 - Apache-2.0
+- commons-collections/commons-collections - 3.2 - Apache-2.0
+- commons-configuration/commons-configuration - 1.10 - Apache-2.0
+- commons-digester/commons-digester - 1.8.1 - Apache-2.0
+- commons-discovery/commons-discovery - 0.5 - Apache-2.0
+- commons-fileupload/commons-fileupload - 1.5 - Apache-2.0
+- commons-httpclient/commons-httpclient - 3.1 - Apache-2.0
+- commons-io/commons-io - 2.7 - Apache-2.0
+- commons-lang/commons-lang - 2.6 - Apache-2.0
+- commons-logging/commons-logging - 1.2 - Apache-2.0
+- commons-net/commons-net - 3.6 - Apache-2.0
+- commons-validator/commons-validator - 1.5.0 - Apache-2.0
+- d3 -  - ISC
+- de.regnis.q.sequence/sequence-library - 1.0.4 - Sequence Library License (BSD-like)
+- edu.vt.middleware/vt-crypt - 2.1.4 - Apache-2.0; LGPL-3.0
+- edu.vt.middleware/vt-dictionary - 3.0 - Apache-2.0; LGPL-3.0
+- edu.vt.middleware/vt-password - 3.1.2 - Apache-2.0; LGPL-3.0
+- io.lettuce/lettuce-core - 6.3.2.RELEASE - Apache-2.0
+- io.netty/netty-buffer - 4.1.107.Final - Apache-2.0
+- io.netty/netty-codec - 4.1.107.Final - Apache-2.0
+- io.netty/netty-common - 4.1.107.Final - Apache-2.0
+- io.netty/netty-handler - 4.1.107.Final - Apache-2.0
+- io.netty/netty-resolver - 4.1.107.Final - Apache-2.0
+- io.netty/netty-transport - 4.1.107.Final - Apache-2.0
+- io.netty/netty-transport-native-unix-common - 4.1.107.Final - Apache-2.0
+- io.projectreactor/reactor-core - 3.6.4 - Apache-2.0
+- io.reactivex/rxjava - 1.3.8 - Apache-2.0
+- javax.activation/activation - 1.1.1 - CDDL-1.0
+- javax.activation/javax.activation-api - 1.2.0 - GPL-2.0, CDDL 1.1
+- javax.el/el-api - 2.2 - CDDL + GPLv2 with classpath exception
+- javax.el/javax.el-api - 3.0.0 - CDDL-1.1; GPL-2.0-with-classpath-exception
+- javax.inject/javax.inject - 1 - Apache-2.0
+- javax.mail/javax.mail-api - 1.5.5 - CDDL-1.1; GPL-2.0-with-classpath-exception
+- javax.persistence/javax.persistence-api - 2.2 - BSD-3-Clause; EPL-1.0
+- javax.servlet.jsp/jsp-api - 2.2 - CDDL-1.1; GPL-2.0-with-classpath-exception
+- javax.servlet/javax.servlet-api - 3.1.0 - CDDL-1.1; GPL-2.0-with-classpath-exception
+- javax.servlet/jstl - 1.2 - CDDL
+- javax.ws.rs/javax.ws.rs-api - 2.0.1 - CDDL-1.1; GPL-2.0-with-classpath-exception
+- javax.xml.bind/jaxb-api - 2.3.1 - GPL-2.0, CDDL 1.1
+- javax.xml/jaxrpc-api - 1.1 - Part of hibernate-core-5.6.8 which is GNU Library General Public License v2.1 or later
+- jfree/jcommon - 1.0.16 - LGPL
+- jfree/jfreechart - 1.0.13 - LGPL
+- joda-time/joda-time - 2.9.2 - Apache-2.0
+- josdejong/mathjs - 10.1.1 - Apache 2.0
+- Jquery - 1.12.3 - MIT
+- Jquery UI -  - MIT
+- jQuery UI Position - 1.8.13 - MIT, GPL 2
+- jQuery UI Spinner - 1.20 - MIT, GPL 2
+- jQuery UI Touch Punch - 0.2.3 - MIT, GPL 2
+- jQuery Validation Plugin - 1.15.0 - MIT
+- jquery.hotkeys -  - MIT, GPL 2
+- jquery-placeholder - 2.3.1 - MIT
+- junit/junit - 3.8.1 - CPL-1.0
+- Knockout - 3.5.1 - MIT
+- log4j/log4j - 1.2.17 - Apache-2.0
+- moment.js - 2.19.1 - MIT
+- mysql/mysql-connector-java - 8.0.28 - GPL, FOSS
+- net.bull.javamelody/javamelody-core - 1.74.0 - Apache-2.0
+- net.bytebuddy/byte-buddy - 1.12.9 - Apache-2.0
+- net.java.dev.jna/jna - 3.5.2 - LGPL-2.1
+- net.java.dev.jna/jna-platform - 5.6.0 - Apache-2.0; LGPL-2.1
+- net.java.dev.jna/platform - 3.4.0 - LGPL-2.1
+- net.rootdev/java-rdfa - 0.4.2 - BSD
+- net.sf.ehcache/ehcache - 2.10.6 - Apache-2.0
+- net.sf.ehcache/ehcache-core - 2.5.2 - Apache-2.0
+- net.sf.ehcache/ehcache-jgroupsreplication - 1.7 - Apache-2.0
+- net.sf.jmimemagic/jmimemagic - 0.1.4 - Apache-2.0
+- net.sf.supercsv/super-csv - 2.4.0 - Apache-2.0
+- net.sourceforge.nekohtml/nekohtml - 1.9.16 - Apache-2.0
+- org.antlr/antlr-runtime - 3.4 - BSD
+- org.apache.camel/camel-core - 2.22.3 - Apache-2.0
+- org.apache.camel/camel-ftp - 2.22.3 - Apache-2.0
+- org.apache.camel/camel-spring - 2.22.3 - Apache-2.0
+- org.apache.commons/commons-collections4 - 4.1 - Apache-2.0
+- org.apache.commons/commons-compress - 1.19 - Apache-2.0
+- org.apache.commons/commons-jcs-core - 2.2.1 - Apache-2.0
+- org.apache.commons/commons-lang3 - 3.4 - Apache-2.0
+- org.apache.commons/commons-text - 1.8 - Apache-2.0
+- org.apache.httpcomponents/httpclient - 4.5.13 - Apache-2.0
+- org.apache.httpcomponents/httpcore - 4.4.13 - Apache-2.0
+- org.apache.jena/jena-core - 2.11.2 - Apache-2.0
+- org.apache.jena/jena-iri - 1.0.2 - Apache-2.0
+- org.apache.lucene/lucene-analyzers-common - 8.5.0 - Apache-2.0
+- org.apache.lucene/lucene-core - 8.5.0 - Apache-2.0
+- org.apache.lucene/lucene-queries - 8.5.0 - Apache-2.0
+- org.apache.lucene/lucene-queryparser - 8.5.0 - Apache-2.0
+- org.apache.lucene/lucene-sandbox - 8.5.0 - Apache-2.0
+- org.apache.maven.doxia/doxia-core - 1.1.2 - Apache-2.0
+- org.apache.maven.doxia/doxia-decoration-model - 1.1.2 - Apache-2.0
+- org.apache.maven.doxia/doxia-logging-api - 1.1.2 - Apache-2.0
+- org.apache.maven.doxia/doxia-module-fml - 1.1.2 - Apache-2.0
+- org.apache.maven.doxia/doxia-module-xhtml - 1.1.2 - Apache-2.0
+- org.apache.maven.doxia/doxia-sink-api - 1.0 - Apache-2.0
+- org.apache.maven.doxia/doxia-site-renderer - 1.1.2 - Apache-2.0
+- org.apache.maven.plugins/maven-failsafe-plugin - 2.19.1 - Apache-2.0
+- org.apache.maven.plugins/maven-surefire-plugin - 2.19.1 - Apache-2.0
+- org.apache.maven.plugin-tools/maven-plugin-annotations - 3.3 - Apache-2.0
+- org.apache.maven.reporting/maven-reporting-api - 3.0 - Apache-2.0
+- org.apache.maven.reporting/maven-reporting-impl - 2.1 - Apache-2.0
+- org.apache.maven.scm/maven-scm-api - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-manager-plexus - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-bazaar - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-clearcase - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-cvs-commons - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-cvsexe - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-git-commons - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-gitexe - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-hg - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-perforce - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-starteam - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-svn-commons - 1.12.0 - Apache-2.0
+- org.apache.maven.scm/maven-scm-provider-svnexe - 1.12.0 - Apache-2.0
+- org.apache.maven.shared/file-management - 3.0.0 - Apache-2.0
+- org.apache.maven.shared/maven-artifact-transfer - 0.12.0 - Apache-2.0
+- org.apache.maven.shared/maven-common-artifact-filters - 3.0.1 - Apache-2.0
+- org.apache.maven.shared/maven-dependency-tree - 3.0.1 - Apache-2.0
+- org.apache.maven.shared/maven-filtering - 1.0 - Apache-2.0
+- org.apache.maven.shared/maven-shared-io - 3.0.0 - Apache-2.0
+- org.apache.maven.shared/maven-shared-utils - 3.0.0 - Apache-2.0
+- org.apache.maven.surefire/maven-surefire-common - 2.19.1 - Apache-2.0
+- org.apache.maven.surefire/surefire-api - 2.19.1 - Apache-2.0
+- org.apache.maven.surefire/surefire-booter - 2.19.1 - Apache-2.0
+- org.apache.maven.wagon/wagon-provider-api - 2.10 - Apache-2.0
+- org.apache.maven/maven-aether-provider - 3.0 - Apache-2.0
+- org.apache.maven/maven-archiver - 2.4.2 - Apache-2.0
+- org.apache.maven/maven-artifact - 3.0 - Apache-2.0
+- org.apache.maven/maven-artifact-manager - 2.2.1 - Apache-2.0
+- org.apache.maven/maven-compat - 3.0 - Apache-2.0
+- org.apache.maven/maven-core - 3.0 - Apache-2.0
+- org.apache.maven/maven-model - 2.2.1 - Apache-2.0
+- org.apache.maven/maven-model-builder - 3.0 - Apache-2.0
+- org.apache.maven/maven-monitor - 2.0.6 - Apache-2.0
+- org.apache.maven/maven-plugin-api - 2.2.1 - Apache-2.0
+- org.apache.maven/maven-plugin-descriptor - 2.2.1 - Apache-2.0
+- org.apache.maven/maven-plugin-registry - 2.2.1 - Apache-2.0
+- org.apache.maven/maven-profile - 2.2.1 - Apache-2.0
+- org.apache.maven/maven-project - 2.2.1 - Apache-2.0
+- org.apache.maven/maven-repository-metadata - 3.0 - Apache-2.0
+- org.apache.maven/maven-settings - 3.0 - Apache-2.0
+- org.apache.maven/maven-settings-builder - 3.0 - Apache-2.0
+- org.apache.maven/maven-toolchain - 2.2.1 - Apache-2.0
+- org.apache.odftoolkit/odfdom-java - 0.8.11-incubating - Apache-2.0
+- org.apache.odftoolkit/simple-odf - 0.8.2-incubating - Apache-2.0
+- org.apache.odftoolkit/taglets - 0.8.11-incubating - Apache-2.0
+- org.apache.poi/poi - 3.17 - Apache-2.0
+- org.apache.poi/poi-ooxml - 3.17 - Apache-2.0
+- org.apache.poi/poi-ooxml-schemas - 3.17 - Apache-2.0
+- org.apache.tomcat.embed/tomcat-embed-core - 7.0.47 - Apache-2.0
+- org.apache.tomcat.embed/tomcat-embed-logging-juli - 7.0.47 - Apache-2.0
+- org.apache.tomcat.embed/tomcat-embed-logging-log4j - 7.0.47 - Apache-2.0
+- org.apache.tomcat.maven/common-tomcat-maven-plugin - 2.2 - Apache-2.0
+- org.apache.tomcat.maven/tomcat7-maven-plugin - 2.2 - Apache-2.0
+- org.apache.tomcat.maven/tomcat7-war-runner - 2.2 - Apache-2.0
+- org.apache.tomcat/tomcat-annotations-api - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-api - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-catalina - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-catalina-ha - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-coyote - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-dbcp - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-el-api - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-jasper - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-jasper-el - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-jdbc - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-jsp-api - 7.0.47 - Apache 2.0, CDDL 1.0
+- org.apache.tomcat/tomcat-juli - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-servlet-api - 7.0.47 - Apache 2.0, CDDL 1.0
+- org.apache.tomcat/tomcat-tribes - 7.0.47 - Apache-2.0
+- org.apache.tomcat/tomcat-util - 7.0.47 - Apache-2.0
+- org.apache.velocity/velocity - 1.5 - Apache-2.0
+- org.apache.velocity/velocity-engine-core - 2.2 - Apache-2.0
+- org.apache.xmlbeans/xmlbeans - 2.6.0 - Apache-2.0
+- org.apache.xmlgraphics/batik-css - 1.8 - Apache-2.0
+- org.apache.xmlgraphics/batik-ext - 1.8 - Apache-2.0
+- org.apache.xmlgraphics/batik-util - 1.8 - Apache-2.0
+- org.aspectj/aspectjrt - 1.8.8 - EPL-1.0
+- org.aspectj/aspectjweaver - 1.8.8 - EPL-1.0
+- org.beanshell/bsh-core - 2.0b4 - LGPL-3.0
+- org.bouncycastle/bcprov-jdk15on - 1.66 - MIT
+- org.bouncycastle/bctsp-jdk14 - 1.46 - MIT
+- org.checkerframework/checker-qual - 2.10.0 - MIT
+- org.codehaus.jackson/jackson-core-asl - 1.5.2 - Apache-2.0
+- org.codehaus.jackson/jackson-jaxrs - 1.5.2 - Apache-2.0; LGPL-2.1-only
+- org.codehaus.jackson/jackson-mapper-asl - 1.5.2 - Apache-2.0
+- org.codehaus.jackson/jackson-xc - 1.5.2 - Apache-2.0; LGPL-2.1-only
+- org.codehaus.mojo/buildnumber-maven-plugin - 3.0.0 - MIT
+- org.codehaus.plexus/plexus-archiver - 2.1.1 - Apache-2.0
+- org.codehaus.plexus/plexus-classworlds - 2.2.2 - Apache-2.0
+- org.codehaus.plexus/plexus-component-annotations - 1.6 - Apache-2.0
+- org.codehaus.plexus/plexus-container-default - 1.0-alpha-9-stable-1 - Apache
+- org.codehaus.plexus/plexus-i18n - 1.0-beta-7 - Apache
+- org.codehaus.plexus/plexus-interpolation - 1.11 - Apache-2.0
+- org.codehaus.plexus/plexus-io - 2.0.3 - Apache-2.0
+- org.codehaus.plexus/plexus-utils - 3.3.0 - Apache-2.0
+- org.codehaus.plexus/plexus-velocity - 1.1.7 - Apache
+- org.eclipse.aether/aether-util - 0.9.0.M2 - EPL-1.0
+- org.eclipse.jdt.core.compiler/ecj - 4.2.2 - EPL-1.0
+- org.glassfish.jaxb/jaxb-runtime - 2.3.1 - GPL-1.0-or-later, CDDL 1.1
+- org.glassfish.jaxb/txw2 - 2.3.1 - GPL-1.0-or-later, CDDL 1.1
+- org.glassfish.web/el-impl - 2.2 - CDDL, GPL 1.1
+- org.glassfish/javax.json - 1.0.4 - CDDL 1.1, GPL 2.0
+- org.hibernate.common/hibernate-commons-annotations - 5.1.2.Final - LGPL-2.1
+- org.hibernate/hibernate-c3p0 - 5.6.8.Final - LGPL-2.1
+- org.hibernate/hibernate-core - 5.6.8.Final - LGPL-2.1
+- org.hibernate/hibernate-ehcache - 5.6.8.Final - LGPL-2.1
+- org.jacoco/jacoco-maven-plugin - 0.7.9 - EPL-1.0
+- org.jacoco/org.jacoco.agent - 0.7.9 - EPL-1.0
+- org.jacoco/org.jacoco.core - 0.7.9 - EPL-1.0
+- org.jacoco/org.jacoco.report - 0.7.9 - EPL-1.0
+- org.jasypt/jasypt - 1.9.3 - Apache-2.0
+- org.javassist/javassist - 3.20.0-GA - Apache-2.0; LGPL-2.1; LGPL-2.1+; LGPL-2.1-only; LGPL-2.1-or-later; MPL-1.1
+- org.jboss.logging/jboss-logging - 3.4.3.Final - Apache-2.0
+- org.jboss.spec.javax.transaction/jboss-transaction-api_1.2_spec - 1.1.1.Final - CDDL-1.0; GPL-2.0-with-classpath-exception
+- org.jboss/jandex - 2.4.2.Final - Apache-2.0
+- org.jfree/jcommon - 1.0.23 - LGPL-3.0
+- org.jfree/jfreechart - 1.0.19 - LGPL-3.0
+- org.jgroups/jgroups - 3.6.12.Final - Apache-2.0
+- org.jrobin/jrobin - 1.5.9 - LGPL-3.0-only
+- org.json/json - 20230227 - CC-PDDC
+- org.jsoup/jsoup - 1.14.2 - MIT
+- org.jvnet.staxex/stax-ex - 1.8 - Eclipse Distribution License - v 1.0
+- org.lz4/lz4-java - 1.4.1 - Apache-2.0
+- org.ow2.asm/asm-debug-all - 5.2 - BSD
+- org.owasp.antisamy/antisamy - 1.5.3 - BSD-2-Clause
+- org.owasp.esapi/esapi - 2.1.0.1 - BSD-2-Clause; unknown
+- org.owasp/dependency-check-core - 5.3.2 - Apache-2.0
+- org.owasp/dependency-check-maven - 5.3.2 - Apache-2.0
+- org.owasp/dependency-check-utils - 5.3.2 - Apache-2.0
+- org.reactivestreams/reactive-streams - 1.0.4 - MIT-0
+- org.slf4j/jcl-over-slf4j - 1.7.5 - MIT
+- org.slf4j/slf4j-api - 1.7.5 - MIT
+- org.slf4j/slf4j-log4j12 - 1.7.5 - MIT
+- org.sonarsource.scanner.api/sonar-scanner-api - 2.10.0.1189 - LGPL-3.0
+- org.sonarsource.scanner.maven/sonar-maven-plugin - 3.5.0.1254 - LGPL-3.0
+- org.sonatype.aether/aether-api - 1.7 - Apache-2.0
+- org.sonatype.aether/aether-impl - 1.7 - Apache-2.0
+- org.sonatype.aether/aether-spi - 1.7 - Apache-2.0
+- org.sonatype.aether/aether-util - 1.7 - Apache-2.0
+- org.sonatype.goodies/package-url-java - 1.1.1 - Apache-2.0
+- org.sonatype.ossindex/ossindex-service-api - 1.3.0 - Apache-2.0
+- org.sonatype.ossindex/ossindex-service-client - 1.3.0 - Apache-2.0
+- org.sonatype.plexus/plexus-build-api - 0.0.4 - Apache 2.0
+- org.sonatype.plexus/plexus-cipher - 1.4 - Apache-2.0
+- org.sonatype.plexus/plexus-sec-dispatcher - 1.4 - Apache-2.0
+- org.sonatype.sisu/sisu-guice - 2.1.7 - Apache-2.0
+- org.sonatype.sisu/sisu-inject-bean - 1.4.2 - Apache-2.0
+- org.sonatype.sisu/sisu-inject-plexus - 1.4.2 - Apache-2.0
+- org.springframework.data/spring-data-commons - 2.5.1 - Apache-2.0
+- org.springframework.data/spring-data-keyvalue - 2.5.1 - Apache-2.0
+- org.springframework.data/spring-data-redis - 2.5.1 - Apache-2.0
+- org.springframework.mobile/spring-mobile-device - 1.1.5.RELEASE - Apache-2.0
+- org.springframework.retry/spring-retry - 1.3.3 - Apache-2.0
+- org.springframework.security/spring-security-config - 5.7.5 - Apache-2.0
+- org.springframework.security/spring-security-core - 5.7.5 - Apache-2.0
+- org.springframework.security/spring-security-crypto - 5.7.5 - Apache-2.0
+- org.springframework.security/spring-security-web - 5.7.5 - Apache-2.0
+- org.springframework.session/spring-session-core - 2.5.0 - Apache-2.0
+- org.springframework.session/spring-session-data-redis - 2.5.0 - Apache-2.0
+- org.springframework/spring-aop - 5.3.20 - Apache-2.0
+- org.springframework/spring-beans - 5.3.20 - Apache-2.0
+- org.springframework/spring-context - 5.3.20 - Apache-2.0
+- org.springframework/spring-context-support - 5.3.20 - Apache-2.0
+- org.springframework/spring-core - 5.3.20 - Apache-2.0
+- org.springframework/spring-expression - 5.3.20 - Apache-2.0
+- org.springframework/spring-jcl - 5.3.20 - Apache-2.0
+- org.springframework/spring-jdbc - 5.3.20 - Apache-2.0
+- org.springframework/spring-orm - 5.3.20 - Apache-2.0
+- org.springframework/spring-oxm - 5.3.7 - Apache-2.0
+- org.springframework/spring-tx - 5.3.20 - Apache-2.0
+- org.springframework/spring-web - 5.3.20 - Apache-2.0
+- org.springframework/spring-webmvc - 5.3.20 - Apache-2.0
+- org.whitesource/pecoff4j - 0.0.2.1 - CPL-1.0
+- org.xhtmlrenderer/flying-saucer-core - 9.1.21 - LGPL-3.0
+- org.xhtmlrenderer/flying-saucer-pdf - 9.1.21 - LGPL-3.0
+- oro/oro - 2.0.8 - Apache
+- pickadate - 3.5.6 - MIT
+- QRCode -  - MIT
+- scroll-sneak -  - MIT
+- spin.js - 2.3.2 - MIT
+- stax/stax-api - 1.0.1 - Apache-2.0
+- StickyTableHeaders -  - MIT
+- TextAreaExpander - 1.0 - no license
+- tinymce - 4.7.4 - LGPL
+- us.springett/cpe-parser - 2.0.2 - Apache-2.0
+- utf8js - 2.1.1 - MIT
+- Valums-File-Uploader - 2.0 - MIT, GPL 2, LGPL 2
+- wsdl4j/wsdl4j - 1.6.3 - CPL-1.0
+- xalan/xalan - 2.7.0 - Apache
+- xerces/xercesImpl - 2.9.1 - Apache-2.0
+- xml-apis/xml-apis - 1.0.b2 - Apache-2.0
+- xml-apis/xml-apis-ext - 1.3.04 - Apache-2.0
+- xml-apis/xmlParserAPIs - 2.0.2 - Apache, W3C
+- xmlpull/xmlpull - 1.1.3.1 - CC-PDDC
+- xom/xom - 1.2.5 - LGPL-2.1; LGPL-2.1+; LGPL-2.1-only; LGPL-2.1-or-later
+- xpp3/xpp3_min - 1.1.4c - CC-PDDC
+
+
+4. Disclaimer
+-------------
+
+This software is provided "as is", without warranties or conditions
+of any kind, as set out in the EUPL v1.2.
+
+
+5. Trademarks
+-------------
+
+“European Union”, “European Commission”, and related names and logos
+are trademarks of the European Union.
+
+Use of such trademarks is subject to applicable European Union rules
+and does not grant permission to use them outside the context of
+lawful and authorised use.

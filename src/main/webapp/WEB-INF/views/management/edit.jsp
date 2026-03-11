@@ -264,6 +264,7 @@
 						<ul>
 							<li title="<spring:message code="form.predefined.euagencies.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem agenciesitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.predefined.euagencies" /></li>
 							<li title="<spring:message code="form.predefined.eucountries.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem countriesitem draggable"><span class="glyphicon glyphicon-globe"></span> <spring:message code="form.predefined.eucountries" /></li>
+							<li title="<spring:message code="form.predefined.eucountriesMC.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem countriesitem countriesitemMC draggable"><span class="glyphicon glyphicon-globe"></span> <spring:message code="form.predefined.eucountriesMC" /></li>
 							<li title="<spring:message code="form.predefined.eulanguages.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem languagesitem draggable"><span class="glyphicon glyphicon-flag"></span> <spring:message code="form.predefined.eulanguages" /></li>
 							<c:if test="${!oss}">
 								<li title="<spring:message code="form.predefined.dgsnew.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem dgsitem draggable"><span class="glyphicon glyphicon-home"></span> <spring:message code="form.predefined.dgsnew" /></li>
@@ -431,6 +432,8 @@
 			var SACriteria = ${SACriteria};
 			var SADatasets = ${SADatasets};
 		</c:if>
+
+		var showListVoteProperty = ${!form.survey.geteVoteTemplate().equals('l') && !form.survey.geteVoteTemplate().equals('p')};
 	</script>
 
 </body>

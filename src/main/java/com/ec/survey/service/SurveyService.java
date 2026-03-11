@@ -3630,7 +3630,15 @@ public class SurveyService extends BasicService {
 		if (accesses.isEmpty()) {
 			return null;
 		}
-		return accesses.get(0);
+
+		ResultAccess access = accesses.get(0);
+		if (access != null) {
+			Hibernate.initialize(access.getResultFilter());
+			if (access.getResultFilter() != null) {
+			Hibernate.initialize(access.getResultFilter().getFilterValues());
+			}
+		}
+		return access;
 	}
 	
 	@Transactional

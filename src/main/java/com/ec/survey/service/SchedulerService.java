@@ -29,15 +29,6 @@ public class SchedulerService extends BasicService {
 	
 	@Resource(name = "departmentWorker")
 	private DepartmentUpdater departmentWorker;
-	
-	@Resource(name = "domainWorker")
-	private DomainUpdater domaintWorker;
-	
-	@Resource(name = "ecasWorker")
-	private EcasUserUpdater ecasWorker;
-	
-	@Resource(name = "ecasDeactivator")
-	private EcasUserDeactivator ecasDeactivator;
 
 	@Resource(name = "fileWorker")
 	private FileUpdater fileWorker;
@@ -83,20 +74,12 @@ public class SchedulerService extends BasicService {
 
 	@Resource(name= "answerSetAnonymWorker")
 	private AnswerSetAnonymWorker answerSetAnonymWorker;
-	
-	@Resource(name = "schemaService")
-	private SchemaService schemaService;
 
 	public @Value("${showecas:false}") String showecas;
 	public @Value("${host.executing.task:#{null}}") String hostExecutingTask;
 	public @Value("${host.executing.todotask:#{null}}") String hostExecutingTODOTask;
 	public @Value("${host.executing.ldaptask:#{null}}") String hostExecutingLDAPTask;
-		
-	public boolean isShowEcas()
-	{
-		return showecas != null && showecas.equalsIgnoreCase("true");
-	}
-	
+
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void migrateFSSchedule() {	
 		if(!isHost2ExecuteStandardTask())
@@ -252,152 +235,14 @@ public class SchedulerService extends BasicService {
 		}
 	}
 
-	@Scheduled(fixedDelay=600000) //every 10 minutes
-	public void doLDAPRemoveDeletedUsersSyncSchedule() {
-		
-		if(!isHost2ExecuteLDAPTask())
+	@Scheduled(cron="0 0 2 * * *") //every night at 2 a.m.
+	public void synchronizeCOMREF() {
+		if(!isHost2ExecuteStandardTask())
 			return;
 
-		if (!isShowEcas()) return;	
-		
-		try {
-			
-			String enabled = settingsService.get(Setting.LDAPsync2Enabled);
-			
-			//check if feature is enabled
-			if (StringUtils.isNotEmpty(enabled) && enabled.equalsIgnoreCase("true"))
-			{
-				String frequency = settingsService.get(Setting.LDAPsync2Frequency);
-				String start = settingsService.get(Setting.LDAPsync2Start);
-				String time = settingsService.get(Setting.LDAPsync2Time);
-				
-				Date lastSyncDate = schemaService.getLastLDAPSynchronization2Date();
-				Date startDate = Tools.parseDateString(start,"dd/MM/yyyy HH:mm:ss");
-				Date currentDate = new Date();
-				
-				//check if global start date is over
-				if  (currentDate.after(startDate))
-				{
-					Calendar c = Calendar.getInstance();
-					
-					//compute next sync date
-					if (lastSyncDate != null)
-					{
-						int days = 0;
-						int prefix = Integer.parseInt(frequency.substring(0, frequency.length() -1));
-						if (frequency.toLowerCase().endsWith("w"))
-						{
-							days = 7 * prefix;
-						} else {
-							days = prefix;
-						}
-						c.setTime(lastSyncDate);
-						c.add(Calendar.DAY_OF_MONTH, days);
-					} else {
-						//if there was no sync before, do it today
-						c.setTime(currentDate);
-					}
-					
-					//set time
-					int hours = Integer.parseInt(time.substring(0,2));
-					int minutes = Integer.parseInt(time.substring(3,5));
-					
-					c.set(Calendar.HOUR_OF_DAY, hours);
-					c.set(Calendar.MINUTE, minutes);
-					c.set(Calendar.SECOND, 0);
-					
-					Date nextSyncDate = c.getTime();
-					
-					//skip if we have to wait
-					if (nextSyncDate.after(currentDate))
-					{
-						return;
-					}				
-					
-					ecasDeactivator.run();
-					logger.info("Finished ldap deleted users sync schedule");
-				}	
-			}
-		
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-		}
+		departmentWorker.run();
 	}
-	
-	@Scheduled(fixedDelay=600000) //every 10 minutes
-	public void doLDAPSyncSchedule() {
-		
-		if(!isHost2ExecuteLDAPTask())
-			return;
-		 
-		//|| !isCasOss()
-		if (!isShowEcas() ) return;
-		
-		try {
-		
-			String enabled = settingsService.get(Setting.LDAPsyncEnabled);
-			
-			//check if feature is enabled
-			if (StringUtils.isNotEmpty(enabled) && enabled.equalsIgnoreCase("true"))
-			{
-				String frequency = settingsService.get(Setting.LDAPsyncFrequency);
-				String start = settingsService.get(Setting.LDAPsyncStart);
-				String time = settingsService.get(Setting.LDAPsyncTime);
-				
-				Date lastSyncDate = schemaService.getLastLDAPSynchronizationDate();
-				
-				Date startDate = Tools.parseDateString(start, "dd/MM/yyyy HH:mm:ss");
-				Date currentDate = new Date();
-				
-				//check if global start date is over
-				if  (currentDate.after(startDate))
-				{
-					Calendar c = Calendar.getInstance();
-					
-					//compute next sync date
-					if (lastSyncDate != null)
-					{
-						int days = 0;
-						int prefix = Integer.parseInt(frequency.substring(0, frequency.length() -1));
-						if (frequency.toLowerCase().endsWith("w"))
-						{
-							days = 7 * prefix;
-						} else {
-							days = prefix;
-						}
-						c.setTime(lastSyncDate);
-						c.add(Calendar.DAY_OF_MONTH, days);
-					} else {
-						//if there was no sync before, do it today
-						c.setTime(currentDate);
-					}
-					
-					//set time
-					int hours = Integer.parseInt(time.substring(0,2));
-					int minutes = Integer.parseInt(time.substring(3,5));
-					
-					c.set(Calendar.HOUR_OF_DAY, hours);
-					c.set(Calendar.MINUTE, minutes);
-					c.set(Calendar.SECOND, 0);
-					
-					Date nextSyncDate = c.getTime();
-					
-					//skip if we have to wait
-					if (nextSyncDate.after(currentDate))
-					{
-						return;
-					}				
-					
-					domaintWorker.run();
-					departmentWorker.run();
-					ecasWorker.run();				  
-				}	
-			}
-		
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-		}
-	 }
+
 	
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void migrateReportingSchedule() {	
@@ -575,10 +420,6 @@ public class SchedulerService extends BasicService {
 		logger.info("Finished sendStatisticalEmails");
 	}
 	
-	public boolean isHost2ExecuteLDAPTask() {
-		return isHost2ExecuteTask(true, false);
-	}
-
 	public boolean isHost2ExecuteTODOTask() {
 		return isHost2ExecuteTask(false, true);
 	}

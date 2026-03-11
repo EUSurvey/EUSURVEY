@@ -399,7 +399,7 @@ public class PublicationController extends BasicController {
 						} else if (question instanceof ComplexTableItem) {
 							ComplexTableItem item = (ComplexTableItem) question;
 							
-							if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+							if (item.isChoice()) {
 								String title = item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null
 												? item.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
 												.getStrippedTitle()

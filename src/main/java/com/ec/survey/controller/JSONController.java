@@ -37,14 +37,7 @@ public class JSONController extends BasicController {
 		String query = request.getParameter("term");
 		return ldapDBService.getECASLoginsForPrefix(query);
 	}
-	
-	@RequestMapping(value = "/departments", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String[] getDepartmentsJSON(HttpServletRequest request) {
- 
-		String query = request.getParameter("term");
-		return ldapDBService.getDepartments(null,query, true, false);
-	}
-	
+
 	@GetMapping(value = "/usersJSON", headers="Accept=*/*")
 	public @ResponseBody String[] participantsSearch(HttpServletRequest request, HttpServletResponse response ) throws NamingException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException, MessageException {
 		

@@ -111,6 +111,7 @@ public class ManagementController extends BasicController {
 	public @Value("${evote.template-ispra:#{null}}") String evoteIspraTemplate;
 	public @Value("${evote.template-outside:#{null}}") String evoteOutsideTemplate;
 	public @Value("${evote.template-president:#{null}}") String evotePresidenTemplate;
+	public @Value("${evote.template-eeas:#{null}}") String evoteEEASTemplate;
 	
 	private final String LastEVoteTestResult = "LastEVoteTestResult";
 	
@@ -913,7 +914,11 @@ public class ManagementController extends BasicController {
 
                 result.getSurvey().setCollectSNC("true".equals(request.getParameter("collectsnc")));
 
+				var org = Tools.filterHTML(parameters.get("organisation")[0]);
+				if (org.isEmpty()) org = "OTHER";
+
 				if (result.getActiveSurvey() != null) {
+					result.getActiveSurvey().setOrganisation(org);
 					result.getActiveSurvey().setShortname(Tools.escapeHTML(parameters.get(Constants.SHORTNAME)[0]));
 					result.getActiveSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
 					result.getActiveSurvey().setLanguage(objLang);
@@ -927,7 +932,7 @@ public class ManagementController extends BasicController {
 
 				if (result != null && result.getSurvey() != null) {
 
-					result.getSurvey().setOrganisation(Tools.filterHTML(parameters.get("organisation")[0]));
+					result.getSurvey().setOrganisation(org);
 					result.getSurvey().setValidator(Tools.filterHTML(parameters.get("validator")[0]));
 					boolean sendOrganisationValidationEmail = checkSendOrganisationValidationEmail(result.getSurvey(), u);
 					
@@ -1198,6 +1203,9 @@ public class ManagementController extends BasicController {
 						break;
 					case "p":
 						templateUid = evotePresidenTemplate;
+						break;
+					case "e":
+						templateUid = evoteEEASTemplate;
 						break;
 					default:
 						templateUid = null;
@@ -4167,7 +4175,7 @@ public class ManagementController extends BasicController {
 										s.append("; ");
 									}
 									
-									if (childQuestion.getCellType() == ComplexTableItem.CellType.SingleChoice || childQuestion.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+									if (childQuestion.isChoice()) {
 										s.append(form.getEscapedAnswerTitle(answer));
 										s.append("<span class='assignedValue hideme'>").append(form.getAnswerShortname(answer))
 												.append("</span>");

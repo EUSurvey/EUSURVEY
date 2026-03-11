@@ -235,7 +235,7 @@
 			<p>
 				<b>Umfassender Datenschutz</b>
 				<br/>
-				Sie können Ihren Teilnehmern garantieren, anonym zu bleiben, indem Sie den Modus 'Anonyme Umfrage' aktivieren. Wenn aktiviert, werden alle Beiträge anonymisiert. Das bedeutet, dass keine benutzerbezogenen Daten vom System gespeichert werden.
+				Sie können die Anonymität der Teilnehmer gewährleisten, indem Sie den Modus „Anonyme Umfrage“ aktivieren. Wenn aktiviert, werden alle Beiträge anonymisiert. Es werden keine benutzerbezogenen Daten gesammelt oder gespeichert.
 			</p>
 			<p>
 				<b>Erscheinungsbild individuell anpassen</b>
@@ -3560,7 +3560,19 @@
 				<b>Erstellen einer anonymen Umfrage:</b>
 			</p>
 			<p>
-				Sie können eine anonyme Umfrage erstellen, indem Sie den Modus „Anonyme Umfrage“ in den Umfrageeigenschaften verwenden. Wenn diese Option aktiviert ist, werden die Beiträge zu Ihrer Umfrage anonym sein, da EUSurvey keine persönlichen Daten wie IP-Adressen speichert. Wenn Sie möchten, dass Ihre Umfrage vollständig anonym ist, sollten Sie keine Fragen in Ihren Umfrageentwurf aufnehmen, die persönliche Daten erfassen.
+				Sie können eine anonyme Umfrage erstellen, indem Sie den anonymen Umfragemodus in den Umfrageeigenschaften aktivieren.
+			</p>
+			<p>
+				<img alt="screenshot anonymity option" src="${contextpath}/resources/images/documentation/anonymity.png" />
+			</p>
+			<p>
+				Hierfür gehen Sie zu <b>Eigenschaften der Umfrage → Sicherheit</b> und aktivieren den Modus „Anonyme Umfrage“. Wenn diese Option aktiviert ist, werden keine personenbezogenen Daten (einschließlich IP-Adressen) gesammelt oder gespeichert.
+			</p>
+			<p>
+				Um sicherzustellen, dass Ihre Umfrage vollständig anonym bleibt, sollten Sie keine Fragen in Ihre Umfrage integrieren, die personenbezogene Daten abfragen.
+			</p>
+			<p>
+				Bitte beachten Sie, dass der Modus nach dem Veröffentlichen Ihrer anonymen Umfrage und dem Eingang von Antworten nicht mehr deaktiviert werden kann. Es ist nicht möglich die Umfrage in einen nicht-anonymen Modus zurückzuversetzen, sobald Antworten abgegeben wurden.
 			</p>
 			<h2>
 				Muss ich eine Datenschutzerklärung in meine Umfrage aufnehmen?

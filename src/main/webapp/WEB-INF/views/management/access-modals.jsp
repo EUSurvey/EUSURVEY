@@ -100,6 +100,22 @@
 		</div>
 	</div>
 
+
+	<div class="modal" id="FullAccess4Externals-dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header"><spring:message code="label.Warning" /></div>
+				<div class="modal-body">
+					<spring:message code="question.ManageInvitations4Externals" />
+				</div>
+				<div class="modal-footer">
+					<a onclick="confirmFullAccess();" class="btn btn-primary"><spring:message code="label.Yes" /></a>
+					<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="modal" id="add-user-dialog" data-backdrop="static">
     		<div class="modal-dialog modal-lg">
         	<div class="modal-content">

@@ -116,6 +116,23 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public Map<String, Integer> getAllLikesForDiscussion(Survey survey) {
+		Map<String, Integer> result = new HashMap<>();
+
+		List<AnswerComment> comments = getCommentsOfSurvey(survey.getUniqueId(), survey.getIsDraft());
+
+		for (AnswerComment comment: comments) {
+			if (comment.getParent() == null) {
+				//only comments can have likes
+				List<DelphiCommentLike> likes = answerExplanationService.loadCommentLikes(comment.getId());
+				result.put(comment.getUniqueCode() + "-" + comment.getQuestionUid(), likes.size());
+			}
+		}
+
+		return result;
+	}
+
+	@Transactional(readOnly = true)
 	public List<DelphiExplanationLike> getAllLikesForExplanations(List<AnswerExplanation> explanations) {
 
 		var session = sessionFactory.getCurrentSession();
@@ -807,6 +824,7 @@ public class AnswerExplanationService extends BasicService {
 				.setBoolean("draft", survey.getIsDraft()).setString("surveyUid", survey.getUniqueId());
 
 		Map<Integer, Map<String, String>> result = new HashMap<>();
+		Map<String, Integer> likesForDiscussions = getAllLikesForDiscussion(survey);
 
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
@@ -836,6 +854,12 @@ public class AnswerExplanationService extends BasicService {
 				text += usersByUid.get(code) + ": ";
 			}
 			text += explanation;
+
+			String key = code + "-" + questionUid;
+			if (parent == 0 && likesForDiscussions.containsKey(key)) {
+				int likes = likesForDiscussions.get(key);
+				text += "\n {0}: " + likes;
+			}
 
 			if (!result.get(answerSetId).containsKey(questionUid)) {
 				result.get(answerSetId).put(questionUid, text);

@@ -347,7 +347,8 @@
 				<option value="4"><spring:message code="form.SingleChoice" /></option>
 				<option value="5"><spring:message code="form.MultipleChoice" /></option>
 				<option value="6"><spring:message code="form.Number" /></option>
-			</select>	
+				<option value="7"><spring:message code="form.PredefinedList" /></option>
+			</select>
 		</td>
 	</tr>
 
@@ -382,12 +383,12 @@
 	</tr>
 
 	<!-- Mandatory -->
-	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() > 1 && Cell().cellTypeChildren() != 3 ? '' : 'display: none;'}">
+	<tr class="propertyrow" data-bind="if: Cell().canChildrenBeMandatory()">
 		<td class="propertylabel" data-label="Mandatory">
 			<spring:message code="label.Mandatory" />
 		</td>
 		<td class="propertycontent">
-			<input data-label="Mandatory" data-bind="checked: !Cell().optionalChildren(), indeterminateValue: Cell().optionalIndeterminate()" type='checkbox' onclick='changeChildren(this, null)' />
+			<input data-label="Mandatory" data-bind="checked: Cell().areChildrenMandatory()" type='checkbox' onclick='changeChildren(this, null)' />
 		</td>
 	</tr>
 
@@ -525,7 +526,7 @@
 
 
 	<!-- Choice -->
-	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 4 || Cell().cellTypeChildren() == 5 ? '' : 'display: none;'}">
+	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellTypeChildren() == 4 || Cell().cellTypeChildren() == 5 || Cell().cellTypeChildren() == 7 ? '' : 'display: none;'}">
 		<td class="propertylabel" data-label="PossibleAnswers">
 			<spring:message code="label.PossibleAnswers" />
 			<!-- ko if: !Cell().possibleAnswersMatch() -->
@@ -562,7 +563,7 @@
 			</div>
 		</td>
 	</tr>
-	<tr class="propertyrow hideme">
+	<tr class="propertyrow hideme noshow">
 		<td class="propertycontent" colspan='2'>
 			<table class="table table-bordered propertiessubtable"></table>
 			<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button></div>
@@ -586,7 +587,8 @@
 				<option value="4"><spring:message code="form.SingleChoice" /></option>
 				<option value="5"><spring:message code="form.MultipleChoice" /></option>
 				<option value="6"><spring:message code="form.Number" /></option>
-			</select>	
+				<option value="7"><spring:message code="form.PredefinedList" /></option>
+			</select>
 		</td>
 	</tr>
 
@@ -621,7 +623,7 @@
 	</tr>
 
 	<!-- Exclude Empty, Static Text and Formula from Mandatory -->
-	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() > 1 && Cell().cellType() != 3 ? '' : 'display: none;'}">
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().canBeMandatory() ? '' : 'display: none;'}">
 		<td class="propertylabel" data-label="Mandatory">
 			<spring:message code="label.Mandatory" />
 		</td>
@@ -646,7 +648,7 @@
 		</td>
 	</tr>
 
-	<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 4 ? '' : 'display: none;'}">
+	<tr class="propertyrow" data-bind="attr: {'style': Cell().isSingleChoiceType() ? '' : 'display: none;'}">
 		<td class="propertylabel" data-label="Style">
 			<spring:message code="label.Style" />
 		</td>
@@ -769,8 +771,24 @@
 	</tr>
 	<!-- Number And Formula Properties / -->
 
+	<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 7 ? '' : 'display: none;'}">
+		<td class="propertylabel" data-label="PredefinedList">
+			<spring:message code="form.PredefinedList" />
+		</td>
+		<td class="propertycontent">
+			<select data-label="PredefinedList" onchange="change(this, event)" data-bind="value: Cell().predefinedList(), attr: {'data-value': Cell().predefinedList()}">
+				<option value="0"><spring:message code="message.PleaseSelect" /></option>
+				<option value="1"><spring:message code="form.predefined.euagencies" /></option>
+				<option value="2"><spring:message code="form.predefined.eucountries" /></option>
+				<option value="3"><spring:message code="form.predefined.eulanguages" /></option>
+				<option value="4"><spring:message code="form.predefined.dgsnew" /></option>
+				<option value="5"><spring:message code="form.predefined.uns" /></option>
+			</select>
+		</td>
+	</tr>
+
 	<!-- Choice Properties -->
-		<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 4 || Cell().cellType() == 5 ? '' : 'display: none;'}">
+		<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().isChoice() ? '' : 'display: none;'}">
 			<td class="propertylabel" data-label="PossibleAnswers">
 				<spring:message code="label.PossibleAnswers" />
 			</td>
@@ -801,14 +819,14 @@
 				</div>
 			</td>
 		</tr>
-		<tr class="propertyrow hideme">
+		<tr class="propertyrow hideme noshow">
 			<td class="propertycontent" colspan='2'>
 				<table class="table table-bordered propertiessubtable"></table>
 				<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button></div>
 			</td>
 		</tr>
 
-		<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().cellType() == 4 || Cell().cellType() == 5 ? '' : 'display: none;'}">
+		<tr class="firstpropertyrow" data-bind="attr: {'style': Cell().isChoice() ? '' : 'display: none;'}">
 			<td class="propertylabel" data-label="Order">
 				<spring:message code="label.Order" />
 				<a style='margin-left: 2px'><span data-toggle='tooltip' data-html="true" data-original-title='<spring:message code="info.Order" />' class='glyphicon glyphicon glyphicon-question-sign'></span></a>
@@ -823,12 +841,12 @@
 			</td>
 		</tr>
 
-		<tr class="propertyrow" data-bind="attr: {'style': Cell().cellType() == 4 || Cell().cellType() == 5 ? '' : 'display: none;'}">
+		<tr class="propertyrow" data-bind="attr: {'style': Cell().isChoice() ? '' : 'display: none;'}">
 			<td class="propertylabel" data-label="Text">
 				<spring:message code="label.Columns" />
 			</td>
 			<td class="propertycontent">
-				<select data-label="Columns" onchange="change(this, event)" data-bind="options: [1, 2, 3, 4], value: Cell().numColumns(), disable: (Cell().cellType() === 4 && !Cell().useRadioButtons()) || (Cell().cellType() === 5 && !Cell().useCheckboxes())">
+				<select data-label="Columns" onchange="change(this, event)" data-bind="options: [1, 2, 3, 4], value: Cell().numColumns(), disable: (Cell().isSingleChoiceType() && !Cell().useRadioButtons()) || (Cell().cellType() === 5 && !Cell().useCheckboxes())">
 				</select>
 			</td>
 		</tr>

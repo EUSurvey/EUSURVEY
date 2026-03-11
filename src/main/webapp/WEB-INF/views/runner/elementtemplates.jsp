@@ -388,7 +388,7 @@
 							<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>			
 						
 							<!-- ko ifnot: id() == 'dummy' -->
-							<div class="answertext" data-bind="html: title, attr: {'data-id' : id()}"></div>
+							<div class="answertext" data-bind="html: titleForDisplayMode($parents[1].displayMode()), attr: {'data-id' : id()}"></div>
 							<!-- /ko -->	
 						</label>						
 						<!-- /ko -->
@@ -415,7 +415,7 @@
 				<!-- ko if: foreditor -->
 					<!-- ko foreach: possibleAnswers() -->
 					<div class="possibleanswerrow hidden">
-						<div class="answertext" data-bind="html: title, attr: {'id' : id(), 'data-id' : id()}"></div>
+						<div class="answertext" data-bind="html: titleForDisplayMode($parent.displayMode()), attr: {'id' : id(), 'data-id' : id()}"></div>
 					</div>
 					<!-- /ko -->
 				<!-- /ko -->		
@@ -426,17 +426,23 @@
 			<table role="list" collapsed data-bind="attr: {class:'answers-table evote-table ' + choiceTypeWithEVote('${form.survey.geteVoteTemplate()}'), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 				<tr>
 					<th style="width: 20px">
+					    <!-- ko if: isListVote -->
 						<c:if test="${form.survey.geteVoteTemplate() == 'b' ||form.survey.geteVoteTemplate() == 'i'}">
 							<input id="defaultMCEVoteTemplateID" data-bind="enable: !readonly() && !foreditor, attr: {'data-id': id() + 'evote-all', 'id': id() + 'evote-all', onclick: readonly() ? 'return false;' : 'eVoteEntireListClick(this)', class: css + ' trigger check entire-list', name: 'answer' + id(), value: 'EVOTE-ALL'}" type="checkbox" />
 						</c:if>
 						<c:if test="${form.survey.geteVoteTemplate() == 'o'}">
 							<input id="defaultMCEVoteTemplateID" data-bind="enable: !readonly() && !foreditor, attr: {'id': id() + 'evote-all', onclick: readonly() ? 'return false;' : 'eVoteEntireListClick(this)', class: css + ' trigger check entire-list'}" type="checkbox" />
 						</c:if>
+						<c:if test="${form.survey.geteVoteTemplate() == 'e'}">
+                            <input id="defaultMCEVoteTemplateID" data-bind="enable: !readonly() && !foreditor, attr: {'data-id': id() + 'evote-all', 'id': id() + 'evote-all', onclick: readonly() ? 'return false;' : 'eVoteEntireListClick(this)', class: css + ' trigger check entire-list', name: 'answer' + id(), value: 'EVOTE-ALL'}" type="checkbox" />
+                        </c:if>
+                          <!-- /ko -->
 						<span class="sr-only">Checkbox</span>
 					</th>
 					<th style="display: flex; flex-flow: row nowrap; justify-content: space-between; height: inherit; min-width: 155px;">
 						<div style="padding-right: 24px; align-self: center">
-							<c:if test="${form.survey.geteVoteTemplate() == 'b' || form.survey.geteVoteTemplate() == 'i' || form.survey.geteVoteTemplate() == 'o'}">
+							<c:if test="${form.survey.geteVoteTemplate() == 'b' || form.survey.geteVoteTemplate() == 'i' || form.survey.geteVoteTemplate() == 'o' || form.survey.geteVoteTemplate() == 'e'}">
+							    <!-- ko if: isListVote -->
 								<label for="defaultMCEVoteTemplateID" data-bind="attr: {'for': id() + 'evote-all'}">
 									<c:if test="${form.survey.geteVoteTemplate() == 'b' || form.survey.geteVoteTemplate() == 'i'}">
 										${form.getMessage("label.EntireList")}
@@ -444,7 +450,11 @@
 									<c:if test="${form.survey.geteVoteTemplate() == 'o'}">
 										${form.getMessage("label.eVoteSelectAll")}
 									</c:if>
+									<c:if test="${form.survey.geteVoteTemplate() == 'e'}">
+                                        ${form.getMessage("label.ListVote")}
+                                    </c:if>
 								</label>
+								<!-- /ko -->
 							</c:if>
 						</div>
 						<div class="evote-collapse" tabindex="0" onclick="$(this).closest('.evote-table').attr('collapsed', (_, val) => val == null ? '' : null); event.stopImmediatePropagation(); event.preventDefault()" onkeypress="$(this).closest('.evote-table').attr('collapsed', (_, val) => val == null ? '' : null); event.stopImmediatePropagation(); event.preventDefault()">
@@ -490,6 +500,7 @@
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 				<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
+				<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 				<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 				<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 				<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
@@ -633,6 +644,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
+			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
@@ -711,6 +723,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
+			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
@@ -991,6 +1004,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
+			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
@@ -1049,6 +1063,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
+			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
@@ -1105,6 +1120,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
+			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />	
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
@@ -1170,6 +1186,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
+			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
@@ -1399,6 +1416,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
+			<!--input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" / -->
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
@@ -1746,7 +1764,7 @@
 				<tr data-bind="if: showHeadersAndBorders() || foreditor">
 					<!-- ko foreach: answers() -->
 						<!-- ko if: $index() == 0-->
-							<td class="headercell cell" data-bind="html: title, attr:{'data-id': id(), colspan: columnSpan()}">placeholder</td>
+							<td class="headercell cell" data-bind="html: title, attr:{'data-id': id()}">placeholder</td>
 						<!-- /ko -->
 						<!-- ko ifnot: $index() == 0-->
 							<th class="headercell cell" data-bind="html: title, attr:{'data-id': id(), colspan: columnSpan()}">placeholder</th>
@@ -1774,7 +1792,12 @@
 								<!-- ko if: child.optional() == false -->
 									<span class="mandatory">*</span>
 								<!-- /ko -->
-						
+
+
+								<!-- ko if: child.canBeMandatory() -->
+									<span class="can-be-mandatory hidden"></span>
+								<!-- /ko -->
+
 								<!-- ko if: child.title() -->
 									<span id="defaultComplextableChildTemplateID" class='questiontitle' data-bind="attr: {id: 'questiontitle' + child.id()}">
 										<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
@@ -1852,7 +1875,7 @@
 									<!-- /ko -->							
 								<!-- /ko -->
 		
-								<!-- ko if: child && child.cellType() == 4 -->
+								<!-- ko if: child && child.isSingleChoiceType() -->
 									<!-- ko if: child && child.useRadioButtons() -->
 										<div style="display: table" role="radiogroup" data-bind="attr: {'aria-labelledby':'questiontitle' + child.id(), 'aria-describedby':'questionhelp' + child.id()}">
 											<div style="display: table-row">
@@ -1991,6 +2014,7 @@
 					<input type="hidden" data-bind="value: min, attr: {'name': 'min' + id()}" />
 					<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
 					<input type="hidden" data-bind="value: formula, attr: {'name': 'formula' + id()}" />
+					<input type="hidden" data-bind="value: predefinedList, attr: {'name': 'predefinedList' + id()}" />
 					<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 					<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 

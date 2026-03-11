@@ -517,7 +517,7 @@ var Actions = function() {
     	$($("#content").find(".selectedquestion").get().reverse()).each(function(){  
 
             if ($(this).hasClass("answertext")) {
-                var answerId = parseInt($(this).attr("data-id"));
+                var answerId = $(this).attr("data-id");
                 var parent = _elements[$(this).closest(".survey-element").attr("data-id")];
                 var oldindex = parent.possibleAnswers().findIndex((a) => a.id() == answerId);
 
@@ -553,7 +553,7 @@ var Actions = function() {
     	$("#content").find(".selectedquestion").each(function(){    	
 
     	    if ($(this).hasClass("answertext")) {
-    	        var answerId = parseInt($(this).attr("data-id"));
+    	        var answerId = $(this).attr("data-id"); // can be int or uuid
     	        var parent = _elements[$(this).closest(".survey-element").attr("data-id")];
     	        var oldindex = parent.possibleAnswers().findIndex((a) => a.id() == answerId);
 
@@ -890,8 +890,11 @@ var Actions = function() {
     	_undoProcessor.clear();
     	_elementProperties.deselectAll();
     	_actions.SaveEnabled(true);
-		createNavigation(false)
-    	
+
+		//If the wait image is still visible, restore was clicked early -> We need to init the Knockout Model for the navigation
+		const initNavModel = $("#navigationwaitimage").is(":visible")
+		createNavigation(initNavModel)
+
     	checkContent();
     }
 }

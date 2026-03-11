@@ -973,22 +973,6 @@ public class ParticipantsController extends BasicController {
 
 		return paging;
 	}
-	
-	@GetMapping(value = "/topDepartmentsJSON", headers="Accept=*/*")
-	public @ResponseBody List<KeyValue> topDepartments(HttpServletRequest request, HttpServletResponse response ) throws InvalidURLException {
-		
-		if (!isAjax(request))
-		{
-			throw new InvalidURLException();
-		}
-		
-		String domain = request.getParameter("domain");
-		if (domain == null) {
-			domain = "eu.europa.ec";
-		}
-		
-		return ldapService.getTopDepartments(domain);		
-	}
 
 	@GetMapping(value = "/departmentsJSON", headers = "Accept=*/*")
 	public @ResponseBody List<KeyValue> departments(HttpServletRequest request, HttpServletResponse response) {

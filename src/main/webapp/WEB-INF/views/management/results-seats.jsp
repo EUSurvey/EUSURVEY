@@ -16,8 +16,13 @@
 <div id="results-seats" style="display: none; width: 730px; max-width:100%; margin-left: auto; margin-right:auto;">
 	<a class="btn btn-primary" data-bind="click: function() {toggleResults('${form.survey.uniqueId}')}"><spring:message code="label.DisplayResults" /></a>
 	<!-- ko if: counting() != null && counting().template != 'p' -->
-		<a class="btn btn-primary" id="btnAllocateSeats" data-bind="visible: showResults() && loaded(), click: function() {toggleSeats('${form.survey.uniqueId}')}"><spring:message code="label.AllocateSeats" /></a>
-		<a class="btn btn-primary" id="btnExportSeats" data-bind="visible: showResults() && showSeats(), attr: {href: '${contextpath}/${form.survey.shortname}/management/seatExport' + (useTestData() ? '?testdata=true&surveyuid=${form.survey.uniqueId}' : '?surveyuid=${form.survey.uniqueId}')}"><spring:message code="label.Export" /></a>
+	    <!-- ko if: counting().template != 'e' -->
+		    <a class="btn btn-primary" id="btnAllocateSeats" data-bind="visible: showResults() && loaded(), click: function() {toggleSeats('${form.survey.uniqueId}')}"><spring:message code="label.AllocateSeats" /></a>
+    		<a class="btn btn-primary" id="btnExportSeats" data-bind="visible: showResults() && showSeats(), attr: {href: '${contextpath}/${form.survey.shortname}/management/seatExport' + (useTestData() ? '?testdata=true&surveyuid=${form.survey.uniqueId}' : '?surveyuid=${form.survey.uniqueId}')}"><spring:message code="label.Export" /></a>
+		<!-- /ko -->
+		<!-- ko if: counting().template == 'e' -->
+  		    <a class="btn btn-primary" id="btnExportSeats" data-bind="visible: showResults(), attr: {href: '${contextpath}/${form.survey.shortname}/management/seatExport' + (useTestData() ? '?testdata=true&surveyuid=${form.survey.uniqueId}' : '?surveyuid=${form.survey.uniqueId}')}"><spring:message code="label.Export" /></a>
+		<!-- /ko -->
 	<!-- /ko -->
 	<a class="btn btn-default" onclick="verifyResults('${form.survey.uniqueId}')"><spring:message code="label.VerifyDataIntegrity" /></a>
 
@@ -54,7 +59,7 @@
 				<th><spring:message code="label.BlankVotes" /></th>
 				<td data-bind="text: counting().blankVotes"></td>
 			</tr>
-			<tr>
+			<tr data-bind="if: counting().template != 'e' || counting().spoiltVotes > 0">
 				<th><spring:message code="label.SpoiltVotes" /></th>
 				<td data-bind="text: counting().spoiltVotes"></td>
 			</tr>
@@ -64,6 +69,45 @@
 			</tr>
 		</table>
 	</div>
+
+    <!-- ko if: counting() != null && counting().template == 'e' -->
+	<div data-bind="visible: showResults()">
+	    <h1><spring:message code="label.seats.NumberVotesPerCandidate" /></h1>
+        <table data-bind="if: counting() != null" class="table table-condensed table-striped table-bordered" style="width: auto;">
+            <tr style="font-weight: bold">
+                <td></td>
+                <!-- ko foreach: counting().listSeatDistribution -->
+                    <td data-bind="html: name"></td>
+                <!-- /ko -->
+            </tr>
+            <tr data-bind="if: counting().template != 'l' && counting().template != 'o'" style="font-weight: bold">
+                <td><spring:message code="label.ListVotes" /></td>
+                <!-- ko foreach: counting().listSeatDistribution -->
+                    <td data-bind="text: listVotes"></td>
+                <!-- /ko -->
+            </tr>
+            <!-- ko foreach: counting().candidateVotes -->
+                <tr>
+                    <td><spring:message code="label.CandidatePair" />&nbsp;<span data-bind="text: $index()+1"></span></td>
+
+                    <!-- ko foreach: $data -->
+                    <td>
+                        <span data-toggle="tooltip" data-bind="text: votes > -1 ? votes : '', attr: {title: name}"></span>
+                    </td>
+                    <!-- /ko -->
+                </tr>
+           <!-- /ko -->
+           <tr style="font-weight: bold">
+                <td>
+                    <span><spring:message code="label.seats.Total" /></span>
+                </td>
+                <!-- ko foreach: counting().listSeatDistribution -->
+                    <td><span data-bind="text: preferentialVotes"></span>&nbsp;(<span data-bind="text: getSeatPercent(preferentialVotes, $parent.counting().totalPreferentialVotes)"></span>)</td>
+                <!-- /ko -->
+            </tr>
+        </table>
+	</div>
+    <!-- /ko -->
 
 	<!-- ko if: counting() != null && counting().template != 'p' -->
 		<img data-bind="visible: showResults() && showSeats() && (seatsLoaded() == false)" class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" />

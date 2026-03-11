@@ -480,6 +480,9 @@
 						<c:if test="${enableevoteoutside}">
 						    <input type="radio" name="new-survey-template" value="o" style="margin-left: 20px;" />&#160;<spring:message code="label.OutsideCommunity" />
 						</c:if>
+						<c:if test="${enableevoteeeas}">
+                            <input type="radio" name="new-survey-template" value="e" style="margin-left: 20px;" />&#160;<spring:message code="label.EEAS" />
+                        </c:if>
 						<c:if test="${enableevotestandard}">
 						    <input type="radio" name="new-survey-template" value="p" style="margin-left: 20px;" />&#160;<spring:message code="label.Standard" />
 						</c:if>

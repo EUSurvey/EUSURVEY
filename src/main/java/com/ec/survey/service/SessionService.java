@@ -74,6 +74,7 @@ public class SessionService extends BasicService {
 		Boolean weakAuthentication = (Boolean) request.getSession().getAttribute("WEAKAUTHENTICATION");
 
 		if (user != null) {
+
 			Session session = sessionFactory.getCurrentSession();
 			user = (User) session.merge(user);
 

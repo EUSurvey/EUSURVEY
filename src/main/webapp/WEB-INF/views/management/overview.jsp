@@ -10,7 +10,8 @@
 	
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/form.css" rel="stylesheet" type="text/css" />
-		
+	<script src="${contextpath}/resources/js/qrcode.min.js" ></script>
+
 	<script type="text/javascript">
 
 		$(function() {
@@ -204,12 +205,11 @@
 					<tr>
 						<td class="overview-label" style="vertical-align: top;"><spring:message code="label.PublishedSurveyLink" /></td>
 						<td colspan="2" style="padding-bottom: 20px; position: relative;">
-							<div class="shortname" style="max-width: 500px; padding-right: 30px;">
+							<div class="shortname" style="max-width: 500px; padding-right: 55px;">
 								<a id="lnkOverviewAccessSurvey" target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/<esapi:encodeForHTML>${form.survey.shortname}</esapi:encodeForHTML></a>
 							</div>
 							<a style="font-size: 20px; position: absolute; right: 40px; top:0px;" rel="tooltip"  data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />" onclick="navigator.clipboard.writeText('${serverprefix}runner/${form.survey.shortname}');"><i class="glyphicon glyphicon-copy"></i></a>
-							<a style="font-size: 20px; position: absolute; right: 10px; top:1px;" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ShowLinksInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');"><span class="glyphicon glyphicon-info-sign"></span></a>
-
+							<a style="font-size: 20px; position: absolute; right: 10px; top:1px;" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ShowLinksAndQrInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');$('#languageLinkDialog').find('[data-toggle]').tooltip(); "><span class="glyphicon glyphicon-qrcode"></span></a>
 						</td>
 					</tr>	
 					<tr>
@@ -387,8 +387,15 @@
 			<tr>
 				<td>${form.survey.language.code}</td>
 				<td>
-					<a target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/${form.survey.shortname}</a>
-					<a style="font-size: 20px; margin-left: 10px; position: absolute; margin-top: -3px;" rel="tooltip"  data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />" onclick="navigator.clipboard.writeText('${serverprefix}runner/${form.survey.shortname}');"><i class="glyphicon glyphicon-copy"></i></a>
+					<a target="_blank" style="margin-right: 30px" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/${form.survey.shortname}</a>
+					<a style="font-size: 20px; margin-left: -25px; position: absolute; margin-top: -3px;" rel="tooltip"  data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />" onclick="navigator.clipboard.writeText('${serverprefix}runner/${form.survey.shortname}');"><i class="glyphicon glyphicon-copy"></i></a>
+					<div class="survey-qr-code" >
+						<div class="qr-here"></div>
+						<button data-toggle="tooltip" data-placement="bottom" title="<esapi:encodeForHTMLAttribute><spring:message code="label.CopyQRCodeToClipboard" /></esapi:encodeForHTMLAttribute>">
+							<spring:message code="label.CopyMe" />&nbsp;
+							<i class="glyphicon glyphicon-copy"></i>
+						</button>
+					</div>
 				</td>
 			</tr>
 			
@@ -397,8 +404,15 @@
 		 			<tr>
 		 				<td>${lang}</td>
 			 			<td>
-							<a target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}">${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}</a>
-							<a style="font-size: 20px; margin-left: 10px; position: absolute; margin-top: -3px;" rel="tooltip"  data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />" onclick="navigator.clipboard.writeText('${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}');"><i class="glyphicon glyphicon-copy"></i></a>
+							<a target="_blank" style="margin-right: 30px" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}">${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}</a>
+							<a style="font-size: 20px; margin-left: -25px; position: absolute; margin-top: -3px;" rel="tooltip"  data-toggle="tooltip" title="<spring:message code="label.CopyToClipboard" />" onclick="navigator.clipboard.writeText('${serverprefix}runner/${form.survey.shortname}?surveylanguage=${lang}');"><i class="glyphicon glyphicon-copy"></i></a>
+							<div class="survey-qr-code" >
+								<div class="qr-here"></div>
+								<button data-toggle="tooltip" data-placement="bottom" title="<esapi:encodeForHTMLAttribute><spring:message code="label.CopyQRCodeToClipboard" /></esapi:encodeForHTMLAttribute>">
+									<spring:message code="label.CopyMe" />&nbsp;
+									<i class="glyphicon glyphicon-copy"></i>
+								</button>
+							</div>
 						</td>
 					</tr>
 		 		</c:if>
@@ -557,6 +571,33 @@
 	if (new URLSearchParams(location.search).has("isNewOwner", "true")) {
 		showSuccess("<spring:message code="message.OwnerAccepted" />")
 	}
+
+	function createQrCode(link, parentEl, size) {
+		return new QRCode(parentEl, {
+			text: link,
+			width: size,
+			height: size,
+			colorDark : "#000000",
+			colorLight : "#ffffff",
+			correctLevel : QRCode.CorrectLevel.L
+		});
+	}
+
+	$("#languageLinkDialog .survey-qr-code").each((i, div) => {
+		const link = $(div).siblings(".visiblelink").attr("href")
+		createQrCode(link, div.querySelector(".qr-here"), 300)
+		const img = div.querySelector("img")
+		img.width = 150
+		img.height = 150
+		img.alt = "<spring:message code="label.QrCodeAlt"/>"
+		div.onclick = function(el) {
+			const canvas = div.querySelector("canvas")
+			canvas.toBlob(function(blob) {
+				const item = new ClipboardItem({ "image/png": blob });
+				navigator.clipboard.write([item]);
+			});
+		}
+	})
 </script>
 </body>
 </html>

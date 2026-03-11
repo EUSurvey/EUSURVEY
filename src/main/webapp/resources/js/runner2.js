@@ -98,6 +98,11 @@ function addElement(element, foreditor, forskin)
 	var container = $(".emptyelement[data-id=" + id + "]");
 	$(container).removeClass("emptyelement");
 	$(container).find("img").remove();
+
+	//The container is no longer available -> Content was already restored using edit_actions.restore()
+	if (container.length === 0) {
+		return container
+	}
 	
 	addElementToContainer(element, container, foreditor, forskin);
 	
@@ -755,7 +760,8 @@ function addStatisticsToAnswerText(div, result) {
 		if (false === remove) {
 			for (var i = 0; (result.data.length > i) && (len > i); ++i) {
 				possibleAnswersArray()[i].delphiAnswerCount(result.data[i].value);
-				possibleAnswersArray()[i].useSavedDisplayMode(true);
+				if (viewModel.likert && viewModel.likert())
+					possibleAnswersArray()[i].useSavedDisplayMode(true);
 			}
 		} else {
 			for (var j = 0; len > j; ++j) {

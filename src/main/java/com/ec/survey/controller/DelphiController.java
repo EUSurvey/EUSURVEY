@@ -374,7 +374,7 @@ public class DelphiController extends BasicController {
 			
 			if (question instanceof ComplexTableItem) {
 				ComplexTableItem item = (ComplexTableItem) question;
-				if (item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.MultipleChoice) {
+				if (item.isChoice()) {
 					return handleDelphiGraphChoiceQuestion(survey, question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset, mapTargetDatasetQuestion);
 				}
 				if (item.getCellType() == ComplexTableItem.CellType.Number || item.getCellType() == ComplexTableItem.CellType.Formula) {
@@ -660,7 +660,7 @@ public class DelphiController extends BasicController {
 		
 		if (question instanceof ComplexTableItem) {
 			ComplexTableItem item = (ComplexTableItem) question;
-			single = item.getCellType() == ComplexTableItem.CellType.SingleChoice;
+			single = item.getCellType() == ComplexTableItem.CellType.SingleChoice || item.getCellType() == ComplexTableItem.CellType.PredefinedChoice;
 			multiple = item.getCellType() == ComplexTableItem.CellType.MultipleChoice;			
 		}
 

@@ -192,12 +192,13 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 
 		boolean luxTemplate = result.getTemplate().equals("l");
 		boolean outsideTemplate = result.getTemplate().equals("o");
+		boolean eeasTemplate = result.getTemplate().equals("e");
 		
 		int rowCounter = 0;
 		
 		initStyles(workbook);
 		
-		addCountingTable(resource, result, sheet, luxTemplate, outsideTemplate, 0);
+		addCountingTable(resource, result, sheet, luxTemplate, outsideTemplate, eeasTemplate, 0);
 		if (luxTemplate) {
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.DHondtSeatDistribution"));
 			rowCounter = addDHondtSeatDistribution(resource, result, sheet, 0, outsideTemplate);
@@ -207,7 +208,7 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.ElectedCandidates"));
 			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.NbVotesPerCandidate"));
-			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
+			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, eeasTemplate, 0);
 		} else if (outsideTemplate) {
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.AllocationFirstExport"));
 			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
@@ -217,7 +218,10 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.DHondtTable"));
 			addDHondtTable(resource, result, sheet, 0);
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.NbVotesPerCandidate"));
-			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
+			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, eeasTemplate, 0);
+		} else if (eeasTemplate) {
+			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.NbVotesPerCandidate"));
+			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, eeasTemplate, 0);
 		} else {
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.WeightingOfVotes"));
 			addWeightingOfVotes(resource, result, sheet, 0);
@@ -232,7 +236,7 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.ElectedCandidatesPreferentialVotesExport"));
 			addElectedCandidatesFromPreferentialVotes(resource, result, sheet, luxTemplate, outsideTemplate, 0);
 			sheet = createAutoSizingSheet(workbook, getMessage(resource, "label.seats.NbVotesPerCandidate"));
-			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, 0);
+			addNumberOfVotesPerCandidate(resource, result, sheet, luxTemplate, outsideTemplate, eeasTemplate, 0);
 		}
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -278,7 +282,7 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 		return ++rowCounter;
 	}
 	
-	private static int addCountingTable(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, boolean outsideTemplate, int rowCounter) {
+	private static int addCountingTable(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, boolean outsideTemplate, boolean eeasTemplate, int rowCounter) {
 		Row row = sheet.createRow(rowCounter++);
 		addStringCell(row, 0, getMessage(resource, "label.Quorum"), false);
 		addNumberCell(row, 1, result.getQuorum(), false);
@@ -304,10 +308,12 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 		row = sheet.createRow(rowCounter++);
 		addStringCell(row, 0, getMessage(resource, "label.BlankVotes"), false);
 		addNumberCell(row, 1, result.getBlankVotes(), false);
-		
-		row = sheet.createRow(rowCounter++);
-		addStringCell(row, 0, getMessage(resource, "label.SpoiltVotes"), false);
-		addNumberCell(row, 1, result.getSpoiltVotes(), false);
+
+		if (!eeasTemplate || result.getSpoiltVotes() > 0) {
+			row = sheet.createRow(rowCounter++);
+			addStringCell(row, 0, getMessage(resource, "label.SpoiltVotes"), false);
+			addNumberCell(row, 1, result.getSpoiltVotes(), false);
+		}
 		
 		row = sheet.createRow(rowCounter++);
 		addStringCell(row, 0, getMessage(resource, "label.seats.Total"),false);
@@ -529,30 +535,31 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 		return ++rowCounter;
 	}
 
-	private static int addNumberOfVotesPerCandidate(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, boolean outsideTemplate, int rowCounter) {
+	private static int addNumberOfVotesPerCandidate(MessageSource resource, SeatCounting result, Sheet sheet, boolean luxTemplate, boolean outsideTemplate, boolean eeasTemplate, int rowCounter) {
 		Row row = sheet.createRow(rowCounter++);
 
-		for (SeatDistribution list : result.getListSeatDistribution())
-		{
-			if (list.getListPercentWeighted() < result.getMinListPercent()) {
-				addMessageStringCell(row, 0, getMessage(resource, "help.EligibleLists"), false);
-				row.getCell(0).setCellStyle(greyStyle);
+		if (!eeasTemplate) {
+			for (SeatDistribution list : result.getListSeatDistribution()) {
+				if (list.getListPercentWeighted() < result.getMinListPercent()) {
+					addMessageStringCell(row, 0, getMessage(resource, "help.EligibleLists"), false);
+					row.getCell(0).setCellStyle(greyStyle);
 
-				sheet.createRow(rowCounter++);	//empty row
+					sheet.createRow(rowCounter++);    //empty row
 
-				row = sheet.createRow(rowCounter++);
-				break;
+					row = sheet.createRow(rowCounter++);
+					break;
+				}
 			}
-		}
 
-		if (result.isAmbiguous()) {
-			addMessageStringCell(row, 0, getMessage(resource, "info.seats.ambiguous"), true);
-			row.getCell(0).setCellStyle(redStyle);
-			rowCounter++;
-			row = sheet.createRow(rowCounter++);
+			if (result.isAmbiguous()) {
+				addMessageStringCell(row, 0, getMessage(resource, "info.seats.ambiguous"), true);
+				row.getCell(0).setCellStyle(redStyle);
+				rowCounter++;
+				row = sheet.createRow(rowCounter++);
+			}
+
+			addStringCell(row, 0, getMessage(resource, "label.seats.CandidateNumber"), true);
 		}
-	
-		addStringCell(row, 0, getMessage(resource, "label.seats.CandidateNumber"), true);
 		
 		int counter = 1;
 		for (SeatDistribution list : result.getListSeatDistribution())
@@ -565,26 +572,33 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 		{
 			if (list.getListPercentWeighted() < result.getMinListPercent()) {
 				addStringCell(row, counter, list.getName(), true);
-				row.getCell(counter).setCellStyle(boldgreyStyle);
+				if (!eeasTemplate) {
+					row.getCell(counter).setCellStyle(boldgreyStyle);
+				}
 				counter++;
 			}
 		}
-		
+
 		if (!luxTemplate && !outsideTemplate) {
 			row = sheet.createRow(rowCounter++);
-			addStringCell(row, 0, getMessage(resource, "label.seats.TotalListVotes"), true);
+			if (eeasTemplate) {
+				addStringCell(row, 0, getMessage(resource, "label.seats.ListVotes"), true);
+			} else {
+				addStringCell(row, 0, getMessage(resource, "label.seats.TotalListVotes"), true);
+			}
 			counter = 1;
-			for (SeatDistribution list : result.getListSeatDistribution())
-			{
+
+			for (SeatDistribution list : result.getListSeatDistribution()) {
 				if (list.getListPercentWeighted() >= result.getMinListPercent()) {
-					addNumberCell(row, counter++, list.getListVotes(), true);				
+					addNumberCell(row, counter++, list.getListVotes(), true);
 				}
 			}
-			for (SeatDistribution list : result.getListSeatDistribution())
-			{
+			for (SeatDistribution list : result.getListSeatDistribution()) {
 				if (list.getListPercentWeighted() < result.getMinListPercent()) {
 					addNumberCell(row, counter, list.getListVotes(), true);
-					row.getCell(counter).setCellStyle(boldgreyStyle);
+					if (!eeasTemplate) {
+						row.getCell(counter).setCellStyle(boldgreyStyle);
+					}
 					counter++;
 				}
 			}
@@ -598,38 +612,49 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 			counter = 1;
 			for (ElectedCandidate candidate : candidates) {
 				addNumberCell(row, counter, candidate.getVotes(), false);
-				if (candidate.isListNotAccepted()) {
-					row.getCell(counter).setCellStyle(greyStyle);
-				} else if (candidate.isAmbiguous()) {
-					row.getCell(counter).setCellStyle(purpleBackgroundStyle);
-				} else if (candidate.getSeats() > 0) {
-					if (candidate.isPreferentialSeat()) {
-						row.getCell(counter).setCellStyle(yellowBackgroundStyle);
-					} else {
-						row.getCell(counter).setCellStyle(greenBackgroundStyle);
+				if (!eeasTemplate) {
+					if (candidate.isListNotAccepted()) {
+						row.getCell(counter).setCellStyle(greyStyle);
+					} else if (candidate.isAmbiguous()) {
+						row.getCell(counter).setCellStyle(purpleBackgroundStyle);
+					} else if (candidate.getSeats() > 0) {
+						if (candidate.isPreferentialSeat()) {
+							row.getCell(counter).setCellStyle(yellowBackgroundStyle);
+						} else {
+							row.getCell(counter).setCellStyle(greenBackgroundStyle);
+						}
+					} else if (candidate.isReallocatedSeat()) {
+						row.getCell(counter).setCellStyle(redBackgroundStyle);
 					}
-				} else if (candidate.isReallocatedSeat()) {
-					row.getCell(counter).setCellStyle(redBackgroundStyle);
 				}
 				counter++;
 			}
 		}
 		
 		row = sheet.createRow(rowCounter++);
-		addStringCell(row, 0, (luxTemplate || outsideTemplate) ? getMessage(resource, "label.seats.Total") : getMessage(resource, "label.seats.TotalPreferentialVotes"), true);
+		addStringCell(row, 0, (luxTemplate || outsideTemplate || eeasTemplate) ? getMessage(resource, "label.seats.Total") : getMessage(resource, "label.seats.TotalPreferentialVotes"), true);
 		counter = 1;
-		for (SeatDistribution list : result.getListSeatDistribution())
-		{
-			if (list.getListPercentWeighted() >= result.getMinListPercent()) {
-				addNumberCell(row, counter++, luxTemplate ? list.getLuxListVotes() : list.getPreferentialVotes(), true);				
+
+		if (eeasTemplate) {
+			for (SeatDistribution list : result.getListSeatDistribution()) {
+				String percent = (Math.round((float) list.getPreferentialVotes() / result.getTotalPreferentialVotes() * 10000) / 100.0) + "%";
+				addStringCell(row, counter++, list.getPreferentialVotes() + " (" + percent + ")", true);
 			}
-		}
-		for (SeatDistribution list : result.getListSeatDistribution())
-		{
-			if (list.getListPercentWeighted() < result.getMinListPercent()) {
-				addNumberCell(row, counter, luxTemplate ? list.getLuxListVotes() : list.getPreferentialVotes(), true);
-				row.getCell(counter).setCellStyle(boldgreyStyle);
-				counter++;
+		} else {
+
+			for (SeatDistribution list : result.getListSeatDistribution()) {
+				if (list.getListPercentWeighted() >= result.getMinListPercent()) {
+					addNumberCell(row, counter++, luxTemplate ? list.getLuxListVotes() : list.getPreferentialVotes(), true);
+				}
+			}
+			for (SeatDistribution list : result.getListSeatDistribution()) {
+				if (list.getListPercentWeighted() < result.getMinListPercent()) {
+					addNumberCell(row, counter, luxTemplate ? list.getLuxListVotes() : list.getPreferentialVotes(), true);
+					if (!eeasTemplate) {
+						row.getCell(counter).setCellStyle(boldgreyStyle);
+					}
+					counter++;
+				}
 			}
 		}
 		
@@ -637,32 +662,35 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 			sheet.autoSizeColumn(i);
 		}
 
-		sheet.createRow(rowCounter++);	//empty row
+		if (!eeasTemplate) {
 
-		row = sheet.createRow(rowCounter++);
-		addEmptyCell(row, 0);
-		row.getCell(0).setCellStyle(greenBackgroundStyle);
-		addStringCell(row, 1, getMessage(resource, "label.seats.ElectedFromListVotes"), false);
+			sheet.createRow(rowCounter++);    //empty row
 
-		row = sheet.createRow(rowCounter++);
-		addEmptyCell(row, 0);
-		row.getCell(0).setCellStyle(yellowBackgroundStyle);
-		addStringCell(row, 1, outsideTemplate ? getMessage(resource, "label.seats.ElectedByHighest") : getMessage(resource, "label.seats.ElectedFromPreferentialVotes"), false);
-
-		row = sheet.createRow(rowCounter++);
-		addEmptyCell(row, 0);
-		row.getCell(0).setCellStyle(redBackgroundStyle);
-		addStringCell(row, 1, getMessage(resource, "label.seats.Reallocated"), false);
-
-		if (outsideTemplate) {
 			row = sheet.createRow(rowCounter++);
 			addEmptyCell(row, 0);
-			row.getCell(0).setCellStyle(purpleBackgroundStyle);
-			addStringCell(row, 1, getMessage(resource, "label.seats.Ambiguous"), false);
-		}
-		
-		for (int i = 0; i < counter; i++) {
-			sheet.autoSizeColumn(i);
+			row.getCell(0).setCellStyle(greenBackgroundStyle);
+			addStringCell(row, 1, getMessage(resource, "label.seats.ElectedFromListVotes"), false);
+
+			row = sheet.createRow(rowCounter++);
+			addEmptyCell(row, 0);
+			row.getCell(0).setCellStyle(yellowBackgroundStyle);
+			addStringCell(row, 1, outsideTemplate ? getMessage(resource, "label.seats.ElectedByHighest") : getMessage(resource, "label.seats.ElectedFromPreferentialVotes"), false);
+
+			row = sheet.createRow(rowCounter++);
+			addEmptyCell(row, 0);
+			row.getCell(0).setCellStyle(redBackgroundStyle);
+			addStringCell(row, 1, getMessage(resource, "label.seats.Reallocated"), false);
+
+			if (outsideTemplate) {
+				row = sheet.createRow(rowCounter++);
+				addEmptyCell(row, 0);
+				row.getCell(0).setCellStyle(purpleBackgroundStyle);
+				addStringCell(row, 1, getMessage(resource, "label.seats.Ambiguous"), false);
+			}
+
+			for (int i = 0; i < counter; i++) {
+				sheet.autoSizeColumn(i);
+			}
 		}
 
 		return ++rowCounter;

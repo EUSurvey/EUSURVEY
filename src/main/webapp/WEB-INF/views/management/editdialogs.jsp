@@ -757,7 +757,8 @@
 		strings["invalidRatingDeletion"] = "<spring:message code="validation.invalidRatingDeletion" />";
 		strings["Exclusive"] = "<spring:message code="label.Exclusive" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Exclusive" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 		strings["DisplayAllQuestions"] = "<spring:message code="label.DisplayAllQuestions" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.DisplayAllQuestions" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
-		strings["EvaluationCriteria"]= "<spring:message code="label.EvaluationCriteria" />";
+		strings["EvaluationCriteria"] = "<spring:message code="label.EvaluationCriteria" />";
+		strings["ListVote"] = "<spring:message code="label.ListVote" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.ListVote" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 
 		const hiddenInfo = '<spring:message code="info.Hidden" />'
 		strings["Hidden"] = "<spring:message code="label.Hidden" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + hiddenInfo + "'><span class='glyphicon glyphicon-question-sign'></span></a>";

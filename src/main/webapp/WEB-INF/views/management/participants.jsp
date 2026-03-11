@@ -20,7 +20,7 @@
 		var attributeNames = new Array();
 
 		<c:forEach items="${attributeNamesForTableHead}" var="attributeName" varStatus="rowCounter">
-	    attributeIDs.push(${attributeName.key});
+		attributeIDs.push(${attributeName.key});
 		attributeNames.push("${attributeName.value}");
 		</c:forEach>
 

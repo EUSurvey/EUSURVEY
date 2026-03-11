@@ -524,7 +524,7 @@
 															<c:when test="${child.getCellType() == 'FreeText'}">
 																<pre style="white-space: pre-wrap; font-family: FreeMono, 'Courier New', Courier, monospace"><div style="word-wrap: break-word; margin-left: 0px;"><esapi:encodeForHTML>${form.getValue(child)}</esapi:encodeForHTML></div></pre>
 															</c:when>
-															<c:when test="${child.getCellType() == 'SingleChoice'}">
+															<c:when test="${child.getCellType() == 'SingleChoice' || child.getCellType() == 'PredefinedChoice'}">
 																<div class="answer-columns">
 																	<c:choose>
 																		<c:when test="${child.getUseRadioButtons() == false && form.getValues(child).size() > 0}">

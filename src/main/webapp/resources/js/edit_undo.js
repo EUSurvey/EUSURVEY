@@ -307,7 +307,8 @@ var UndoProcessor = function() {
 							{
 								$("#content").prepend(selectedelement);
 							} else {
-								$($("#content").find("li")[elemposition-1]).after(selectedelement);
+								//Find li elements that are direct descendants of c#ontent
+								$($("#content").find("> li")[elemposition-1]).after(selectedelement);
 							}
 							addElementHandler(selectedelement);
 							_actions.deletedModels.pop();
@@ -589,6 +590,9 @@ var UndoProcessor = function() {
 			case "Attribute":
 				element.isAttribute(step[3]);
 				break;
+			case "ListVote":
+                element.isListVote(step[3]);
+                break;
 			case "DelphiQuestion":
 				element.isDelphiQuestion(step[3]);
 				$('#' + id).toggleClass("delphi");
@@ -896,10 +900,15 @@ var UndoProcessor = function() {
 			case "CellTypeComplexChildren": {
 				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step)
 
+				let canBeMandatory = false
 				for (const child of children) {
 					child.cellType(getValue(child))
+					if (child.canBeMandatory()) {
+						canBeMandatory = true
+					}
 				}
 				header.cellTypeChildren(headerValue)
+				header.canChildrenBeMandatory(canBeMandatory)
 
 				break;
 			}
@@ -915,11 +924,12 @@ var UndoProcessor = function() {
 				break;
 			}
 			case "MandatoryComplexChildren": {
-				const { children, getValue } = this.complexChildrenStepHelper(step)
+				const { children, getValue, headerValue, header } = this.complexChildrenStepHelper(step)
 
 				for (const child of children) {
 					child.optional(getValue(child))
 				}
+				header.areChildrenMandatory(headerValue)
 
 				break;
 			}
@@ -971,6 +981,12 @@ var UndoProcessor = function() {
 				header.unitChildren(headerValue)
 
 				break;
+			}
+			case "PredefinedList": {
+				const state = step[3]
+				element.predefinedList(state.list)
+				updateChoice(element, state.answers, false)
+				break
 			}
 		}
 		
@@ -1312,6 +1328,9 @@ var UndoProcessor = function() {
 			case "Attribute":
 				element.isAttribute(step[4]);
 				break;
+			case "ListVote":
+                element.isListVote(step[4]);
+                break;
 			case "DelphiQuestion":
 				element.isDelphiQuestion(step[4]);
 				$('#' + id).toggleClass("delphi");
@@ -1597,10 +1616,15 @@ var UndoProcessor = function() {
 			case "CellTypeComplexChildren": {
 				const { children, header, getValue, headerValue } = this.complexChildrenStepHelper(step, true)
 
+				let canBeMandatory = false
 				for (const child of children) {
 					child.cellType(getValue(child))
+					if (child.canBeMandatory()) {
+						canBeMandatory = true
+					}
 				}
 				header.cellTypeChildren(headerValue)
+				header.canChildrenBeMandatory(canBeMandatory)
 
 				break;
 			}
@@ -1616,11 +1640,12 @@ var UndoProcessor = function() {
 				break;
 			}
 			case "MandatoryComplexChildren": {
-				const { children, getValue } = this.complexChildrenStepHelper(step, true)
+				const { children, getValue, headerValue, header } = this.complexChildrenStepHelper(step, true)
 
 				for (const child of children) {
 					child.optional(getValue(child))
 				}
+				header.areChildrenMandatory(headerValue)
 
 				break;
 			}
@@ -1672,6 +1697,12 @@ var UndoProcessor = function() {
 				header.unitChildren(headerValue)
 
 				break;
+			}
+			case "PredefinedList": {
+				const state = step[4]
+				element.predefinedList(state.list)
+				updateChoice(element, state.answers, false)
+				break
 			}
 		}
 		

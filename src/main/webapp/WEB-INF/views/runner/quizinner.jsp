@@ -66,6 +66,9 @@
 				<div>
 			</c:otherwise>
 		</c:choose>
+
+			<input type="hidden" id="mode" value="start" />
+
 			<c:if test="${form.survey.logo != null && !form.survey.logoInInfo}">
 				<div style="max-width: 900px">
 					<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" style="max-width: 900px;" />

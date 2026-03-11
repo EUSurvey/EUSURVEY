@@ -173,7 +173,7 @@ function toggleCellProperties(button)
 		$(button).closest("tr").nextUntil(".collapsiblerow").addClass("hideme");
 	} else {
 		$(button).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
-		$(button).closest("tr").nextAll(":not(.tinymcerow)").removeClass("hideme");
+		$(button).closest("tr").nextAll(":not(.tinymcerow, .noshow)").removeClass("hideme");
 	}
 }
 
@@ -401,8 +401,9 @@ function getCellHeaderPropertiesRow(cellID, isRow) {
 	const types = [];
 	const titles = [];
 	const numRows = [];
-	let allMandatorySame = true;
-	let lastOptional = null;
+
+	let canAnyChildBeMandatory = false;
+	let areAllChildrenMandatory = true
 
 	const formulas = [];
 	const minValues = [];
@@ -425,11 +426,11 @@ function getCellHeaderPropertiesRow(cellID, isRow) {
 		if (titles.indexOf(title) < 0) {
 			titles.push(title);
 		}
-		if (child != null) {
-			if (lastOptional != null && child.optional() !== lastOptional){
-				allMandatorySame = false
+		if (child != null && child.canBeMandatory()) {
+			canAnyChildBeMandatory = true
+			if (child.optional()) {
+				areAllChildrenMandatory = false
 			}
-			lastOptional = child.optional()
 		}
 		const rows = child == null ? "" : child.numRows();
 		if (numRows.indexOf(rows) < 0) {
@@ -450,7 +451,7 @@ function getCellHeaderPropertiesRow(cellID, isRow) {
 			if (maxValues.indexOf(child.maxCharacters()) < 0) {
 				maxValues.push(child.maxCharacters());
 			}
-		} else if (type == 4 || type == 5){
+		} else if (type == 4 || type == 5 || type == 7){
 			if (minValues.indexOf(child.minChoices()) < 0) {
 				minValues.push(child.minChoices());
 			}
@@ -507,13 +508,8 @@ function getCellHeaderPropertiesRow(cellID, isRow) {
 	}
 	cell.titleChildrenMatch(titles.length <= 1)
 
-	if (allMandatorySame) {
-		cell.optionalChildren(lastOptional !== false); //!== false removes null case
-		cell.optionalIndeterminate(false)
-	} else {
-		cell.optionalChildren(false);
-		cell.optionalIndeterminate(true)
-	}
+	cell.canChildrenBeMandatory(canAnyChildBeMandatory)
+	cell.areChildrenMandatory(areAllChildrenMandatory)
 
 	if (numRows.length > 1) {
 		cell.numRowsChildren("");

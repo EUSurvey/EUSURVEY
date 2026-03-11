@@ -580,22 +580,28 @@ function initModals(item)
 		
 		checkFilterCell($(picker).closest(".filtercell"), false);
 	}
-			
+
+	function calculateSelectedFilters(cell) {
+		const row = $(cell).closest("tr");
+		let filterCount =  getNumberOfPredefinedFilters();
+
+		//Active Filters, excluding Date
+		filterCount += $(row).find(".yellowfilter:not(:has(.datefilter))").length
+
+		//Active Date Filters
+		filterCount += $(row).find(".yellowfilter .datefilter .hiddendate").filter((_, el) => $(el).val()).length
+
+		return filterCount;
+	}
+
 	function checkFilterCell(cell, background)
 	{
 		checkFilterCell2(cell, true, background);
 
         if ($("#ResultFilterLimit").length > 0)
 		{
-            var row = $(cell).closest("tr");
-            let filterCount =  getNumberOfPredefinedFilters();
-
-            //Active Filters, excluding Date
-            filterCount += $(row).find(".yellowfilter:not(:has(.datefilter))").length
-
-            //Active Date Filters
-            filterCount += $(row).find(".yellowfilter .datefilter .hiddendate").filter((_, el) => $(el).val()).length
-
+            const filterCount = calculateSelectedFilters(cell);
+			var row = $(cell).closest("tr");
             if (filterCount > 2)
             {
                 $(row).find("input[type=text]").each(function(){
@@ -634,6 +640,29 @@ function initModals(item)
                 $(row).find("button:not(#btnDeleteSelected)").removeClass("disabled");
                 //$('#ResultFilterLimit').hide();
             }
+
+			const filterDisplayed = window.getComputedStyle(document.getElementById("tbllist-loading"), null).display;
+			if (filterDisplayed !== "none")
+			{
+				$(".filtercell").each(function() {
+					$(this).find("input[type=text]").each(function(){
+						$(this).prop("disabled", true);
+					});
+
+					$(this).find("a").each(function(){
+						$(this).addClass("disabled");
+					});
+
+					$(this).find("button").each(function(){
+						$(this).addClass("disabled");
+					});
+				});
+				$(".checkDelete").each(function() {
+					$(this).find("input[type=checkbox]").each(function(){
+						$(this).attr("disabled","disabled");
+					});
+				});
+			}
         }
 	}
 	
@@ -3077,10 +3106,3 @@ function initModals(item)
 			});
 		}
 	}(jQuery));
-
-ko.bindingHandlers.indeterminateValue = { //This knockout binding, makes checkboxes show as indeterminate
-	update: function (element, valueAccessor) {
-		let value = ko.utils.unwrapObservable(valueAccessor());
-		element.indeterminate = value;
-	}
-};

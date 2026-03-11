@@ -20,8 +20,6 @@ public class Status {
 	private Integer id;
 	private int dbversion;
 	private Date updateDate;
-	private Date lastLDAPSynchronizationDate;
-	private Date lastLDAPSynchronization2Date;
 	private Date lastAnswerSetAnonymDate;
 	private FSCheckStates fsCheckState = FSCheckStates.Unset;
 	
@@ -50,25 +48,7 @@ public class Status {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}	
-	
-	@Column(name = "LDAPSYNCDATE")
-	@DateTimeFormat(pattern=ConversionTools.DateTimeFormat)
-	public Date getLastLDAPSynchronizationDate() {
-		return lastLDAPSynchronizationDate;
-	}	
-	public void setLastLDAPSynchronizationDate(Date lastLDAPSynchronizationDate) {
-		this.lastLDAPSynchronizationDate = lastLDAPSynchronizationDate;
-	}	
-	
-	@Column(name = "LDAPSYNC2DATE")
-	@DateTimeFormat(pattern=ConversionTools.DateTimeFormat)
-	public Date getLastLDAPSynchronization2Date() {
-		return lastLDAPSynchronization2Date;
-	}	
-	public void setLastLDAPSynchronization2Date(Date lastLDAPSynchronization2Date) {
-		this.lastLDAPSynchronization2Date = lastLDAPSynchronization2Date;
-	}
-	
+
 	/**
 	 * Gets the time of the last answer set that was anonymised
 	 */

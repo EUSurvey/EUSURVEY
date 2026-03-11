@@ -232,7 +232,8 @@
 			<input type="hidden" id="uniqueCode" name="originalUniqueCode" value="${uniqueCode}" />
 			<input type="hidden" id="survey.id" value="${form.survey.id}" />
 			<input type="hidden" id="language.code" value="${form.survey.language.code}" />
-			
+			<input type="hidden" id="mode" value="start" />
+
 			<div id="sections">
 				<div style="text-align: center; margin-bottom: 20px;">
 					<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}">${form.getMessage("label.Start")}</a>

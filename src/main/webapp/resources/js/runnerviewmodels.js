@@ -608,7 +608,8 @@ function newChoiceViewModel(element)
 	});
 	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
-	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.isListVote = ko.observable(element.isListVote);
+	viewModel.attributeName = ko.observable(element.attributeName);
 	viewModel.readonly = ko.observable(element.readonly);
 	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.numColumns = ko.observable(element.numColumns);
@@ -822,6 +823,7 @@ function newMultipleChoiceViewModel(element)
 				case "l": return "evote-luxembourg";
 				case "o": return "evote-outside";
 				case "p": return "evote-standard";
+				case "e": return "evote-eeas";
 			}
 		} else {
 			return viewModel.choiceType()
@@ -1107,7 +1109,8 @@ function newFreeTextViewModel(element)
 	viewModel.readonly = ko.observable(element.readonly);
 	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
-	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.isListVote = ko.observable(element.isListVote);
+	viewModel.attributeName = ko.observable(element.attributeName);
 	viewModel.numRows = ko.observable(element.numRows);	
 	viewModel.minCharacters = ko.observable(element.minCharacters);	
 	viewModel.maxCharacters = ko.observable(element.maxCharacters);	
@@ -1318,7 +1321,8 @@ function newNumberViewModel(element)
 	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isUnique = ko.observable(element.isUnique);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
-	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.isListVote = ko.observable(element.isListVote);
+	viewModel.attributeName = ko.observable(element.attributeName);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);	
@@ -1489,7 +1493,8 @@ function newEmailViewModel(element)
 	viewModel.readonly = ko.observable(element.readonly);
 	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
-	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.isListVote = ko.observable(element.isListVote);
+	viewModel.attributeName = ko.observable(element.attributeName);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);
@@ -1507,7 +1512,8 @@ function newDateViewModel(element)
 	viewModel.readonly = ko.observable(element.readonly);
 	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
-	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.isListVote = ko.observable(element.isListVote);
+	viewModel.attributeName = ko.observable(element.attributeName);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);	
@@ -1531,7 +1537,8 @@ function newTimeViewModel(element)
 	viewModel.readonly = ko.observable(element.readonly);
 	viewModel.hidden = ko.observable(element.hidden);
 	viewModel.isAttribute = ko.observable(element.isAttribute);
-	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.isListVote = ko.observable(element.isListVote);
+	viewModel.attributeName = ko.observable(element.attributeName);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);	
@@ -1972,6 +1979,8 @@ function newComplexTableItemViewModel(element)
             viewModel.maxChoices = ko.observable(element.maxChoices() == null ? 0 : element.maxChoices());
             viewModel.numRows = ko.observable(element.numRows() == null ? 1 : element.numRows());
 
+			viewModel.predefinedList = ko.observable(element.predefinedList());
+
             viewModel.possibleAnswers = newComplexPossibleAnswersViewModel(element.possibleAnswers());
 
             viewModel.useRadioButtons = ko.observable(element.useRadioButtons());
@@ -2002,6 +2011,8 @@ function newComplexTableItemViewModel(element)
             viewModel.maxChoices = ko.observable(element.maxChoices == null ? 0 : element.maxChoices);
             viewModel.numRows = ko.observable(element.numRows == null || element.numRows < 1 ? 1 : element.numRows);
 
+			viewModel.predefinedList = ko.observable(element.predefinedList);
+
             viewModel.possibleAnswers = newComplexPossibleAnswersViewModel(element.possibleAnswers);
 
             viewModel.useRadioButtons = ko.observable(element.useRadioButtons);
@@ -2020,10 +2031,6 @@ function newComplexTableItemViewModel(element)
             viewModel.hidden = ko.observable(element.hidden);
         }
 
-        if (viewModel.cellType() == 3 || viewModel.cellType() == 1) {
-            viewModel.optional(true)
-        }
-
         viewModel.variables = [];
         viewModel.result = ko.observable("");
 
@@ -2033,6 +2040,15 @@ function newComplexTableItemViewModel(element)
             })
         })
     }
+
+	viewModel.canBeMandatory = function() {
+		//Not empty cell, not static text and not formula
+		return viewModel.cellType() > 1 && viewModel.cellType() !== 3
+	}
+
+	if (!viewModel.canBeMandatory()) {
+		viewModel.optional(true)
+	}
 
 	viewModel.orderedPossibleAnswers = function(mobile, responsive){
 		if (this.order() != null && this.order() === 1){
@@ -2119,12 +2135,22 @@ function newComplexTableItemViewModel(element)
         return max.toString()
     }
 
+	viewModel.isSingleChoiceType = function () {
+		/* SC or Predefined */
+		return viewModel.cellType() === 4 || viewModel.cellType() === 7
+	}
+
+	viewModel.isChoice = function () {
+		/* SC Type or MC */
+		return viewModel.isSingleChoiceType() || viewModel.cellType() === 5
+	}
+
     //properties for rows / columns
     viewModel.cellTypeChildren = ko.observable("");
     viewModel.titleChildren = ko.observable("");
     viewModel.titleChildrenMatch = ko.observable(false);
-    viewModel.optionalChildren = ko.observable(true);
-    viewModel.optionalIndeterminate = ko.observable(false); //Visual Checkbox indicator for different values
+	viewModel.canChildrenBeMandatory = ko.observable(false)
+	viewModel.areChildrenMandatory = ko.observable(false)
     viewModel.numRowsChildren = ko.observable("");
     viewModel.minChildren = ko.observable(""); //minCharacters, minChoices or min depending on child type
     viewModel.maxChildren = ko.observable("");
@@ -2157,7 +2183,7 @@ function newComplexTableItemViewModel(element)
 	}
 	
 	viewModel.cellStyle = function(newValue) {
-		if (viewModel.cellType() == 4) {
+		if (viewModel.isSingleChoiceType()) {
 			if (newValue != undefined) {
 				viewModel.useRadioButtons(newValue === 'RadioButton')
 			}

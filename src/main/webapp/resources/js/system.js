@@ -47,8 +47,10 @@ function checkSystemMessages()
 	}
 	
 	var d = "runnermode=false";
-	
-	if ($("#mode").length > 0 && $("#mode").val() == 'runner')
+
+	const mode = $("#mode").val()
+
+	if (mode === "runner" || mode === "start")
 	{
 		d = "runnermode=true";
 	}

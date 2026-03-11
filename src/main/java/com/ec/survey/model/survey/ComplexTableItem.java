@@ -34,7 +34,23 @@ public class ComplexTableItem extends Question {
         Formula,
         SingleChoice,
         MultipleChoice,
-        Number;
+        Number,
+        PredefinedChoice;
+
+        @JsonValue
+        public int toValue() {
+            return ordinal();
+        }
+    }
+
+
+    public enum PredefinedList {
+        None,
+        EUAgencies,
+        EUCountries,
+        EULanguages,
+        EUDigits,
+        UNStates;
 
         @JsonValue
         public int toValue() {
@@ -64,6 +80,7 @@ public class ComplexTableItem extends Question {
     private Double minD; //used in number and formula cells
     private Double maxD;
     private String formula;
+    private PredefinedList predefinedList;
 
     public ComplexTableItem(String title, String originaltitle, String shortname, String uid) {
         setTitle(title);
@@ -334,6 +351,15 @@ public class ComplexTableItem extends Question {
         this.formula = formula;
     }
 
+    @Column(name="PREDEFINED_LIST")
+    public PredefinedList getPredefinedList() {
+        return predefinedList;
+    }
+
+    public void setPredefinedList(PredefinedList predefinedList) {
+        this.predefinedList = predefinedList;
+    }
+
     @Transient
     public String getResultTitle(ComplexTable parent) {
         if (!StringUtils.isNullOrEmpty(this.resultText)) {
@@ -380,6 +406,7 @@ public class ComplexTableItem extends Question {
         copy.setMin(minD);
         copy.setUnit(unit);
         copy.setFormula(formula);
+        copy.setPredefinedList(predefinedList);
 
         for (PossibleAnswer possibleAnswer : getPossibleAnswers()) {
             PossibleAnswer answerCopy = possibleAnswer.copy(fileDir);
@@ -418,6 +445,7 @@ public class ComplexTableItem extends Question {
         if (!Tools.isEqual(minD, other.minD)) return true;
         if (!Tools.isEqual(unit, other.unit)) return true;
         if (!Tools.isEqual(formula, other.formula)) return true;
+        if (predefinedList != other.predefinedList) return true;
         
         if (getPossibleAnswers().size() != other.getPossibleAnswers().size()) {
         	return true;
@@ -467,6 +495,7 @@ public class ComplexTableItem extends Question {
 
                 break;
             case SingleChoice:
+            case PredefinedChoice:
                 css += " single-choice";
                 break;
             case MultipleChoice:
@@ -549,7 +578,7 @@ public class ComplexTableItem extends Question {
 
     @Transient
     public boolean isChoice() {
-        return cellType == CellType.MultipleChoice || cellType == CellType.SingleChoice;
+        return cellType == CellType.MultipleChoice || cellType == CellType.SingleChoice || cellType == CellType.PredefinedChoice;
     }
 
     @Transient

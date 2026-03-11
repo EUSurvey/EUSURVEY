@@ -326,7 +326,7 @@ public class AdministrationService extends BasicService {
 		int counter = 0;
 		for (User user : list) {
 			if (forPrivileges) {
-				result[counter++] = "<tr data-id='" + user.getId() + "' id='" + user.getLogin() + "'><td>" + user.getEmail() + "</td><td>" + user.getLogin() + "</td><td>"
+				result[counter++] = "<tr data-id='" + user.getId() + "' id='" + user.getLogin() + "' " + (user.isExternal() ? "class='externaluser'" : "") + "><td>" + user.getEmail() + "</td><td>" + user.getLogin() + "</td><td>"
 						+ (user.getGivenName() == null ? "&nbsp;" : user.getGivenName()) + "</td><td>" + (user.getSurName() == null ? "&nbsp;" : user.getSurName()) + "</td><td>&nbsp;</td></tr>";
 			} else {
 				result[counter++] = user.getLogin();

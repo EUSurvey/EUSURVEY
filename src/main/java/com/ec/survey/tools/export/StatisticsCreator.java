@@ -506,7 +506,7 @@ public class StatisticsCreator implements Runnable {
 		} else if (q instanceof ComplexTable) {
 			ComplexTable table = (ComplexTable) q;
 			for (ComplexTableItem child : table.getQuestionChildElements()) {
-				if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
+				if (child.isChoice()) {
 					for (PossibleAnswer a : child.getAllPossibleAnswers()) {
 						int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, false, where,
 								values);
@@ -528,7 +528,7 @@ public class StatisticsCreator implements Runnable {
 			
 		} else if (q instanceof ComplexTableItem) {
 			ComplexTableItem child = (ComplexTableItem) q;			
-			if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
+			if (child.isChoice()) {
 				for (PossibleAnswer a : child.getPossibleAnswers()) {
 					int count = reportingService.getCount(survey, child.getUniqueId(), a.getUniqueId(), false, false, false, where,
 							values);
@@ -664,7 +664,7 @@ public class StatisticsCreator implements Runnable {
 			ComplexTable table = (ComplexTable) q;
 			for (ComplexTableItem child : table.getQuestionChildElements()) {
 				
-				if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
+				if (child.isChoice()) {
 					for (PossibleAnswer a : child.getAllPossibleAnswers()) {
 						if (countsUID.containsKey(a.getUniqueId() + "#" + child.getUniqueId())) {
 							map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + child.getUniqueId()));
@@ -678,7 +678,7 @@ public class StatisticsCreator implements Runnable {
 		} else if (q instanceof ComplexTableItem) {
 			ComplexTableItem child = (ComplexTableItem) q;
 			
-			if (child.getCellType() == ComplexTableItem.CellType.SingleChoice || child.getCellType() == ComplexTableItem.CellType.MultipleChoice) {					
+			if (child.isChoice()) {
 				for (PossibleAnswer a : child.getAllPossibleAnswers()) {
 					if (countsUID.containsKey(a.getUniqueId() + "#" + q.getUniqueId())) {
 						map.put(a.getId(), countsUID.get(a.getUniqueId() + "#" + q.getUniqueId()));
