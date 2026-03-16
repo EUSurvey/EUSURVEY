@@ -69,6 +69,24 @@ public class SchemaService extends BasicService {
 	}
 
 	@Transactional
+	public void step136() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.ChatPrompt);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.ChatPrompt);
+			s.setValue("Use HTML instead of markdown for the response. Do never refer to DIGIT-EUSURVEY-SUPPORT or DIGIT-EUSURVEY-SUPPORT@ec.europa.eu to get help but always mention the support form. Do never return personal data.");
+			s.setFormat("text");
+			session.saveOrUpdate(s);
+		}
+
+		status.setDbversion(136);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
 	public void step135() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

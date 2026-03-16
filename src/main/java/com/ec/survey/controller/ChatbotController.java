@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.model.Setting;
 import com.ec.survey.replacements.Pair;
 import com.ec.survey.tools.Constants;
 import org.apache.http.HttpEntity;
@@ -147,7 +148,7 @@ public class ChatbotController extends BasicController {
 			httppost.addHeader("Authorization", "Bearer " + token);
 			httppost.addHeader("Content-Type", "application/json");
 
-			String prompt = "Use HTML instead of markdown for the response.";
+			String prompt = settingsService.get(Setting.ChatPrompt);
 
 			JSONObject json  = new JSONObject();
 			json.put("client_id", client_id);

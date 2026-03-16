@@ -89,6 +89,8 @@ public class Setting {
     public static final String InactiveSurveysNotification3Days = "InactiveSurveysNotification3Days";
     public static final String InactiveSurveysSender = "InactiveSurveysSender";
 
+	public static final String ChatPrompt = "ChatPrompt";
+
 	@Id
 	@Column(name = "SETTINGS_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
