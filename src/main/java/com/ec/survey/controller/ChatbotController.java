@@ -1,12 +1,12 @@
 package com.ec.survey.controller;
 
-import com.ec.survey.model.Setting;
 import com.ec.survey.replacements.Pair;
 import com.ec.survey.tools.Constants;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -32,10 +32,12 @@ import java.util.List;
 public class ChatbotController extends BasicController {
 
 	private @Value("${chat.tokenHost:#{null}}") String tokenHost;
+	private @Value("${chat.sessionHost:#{null}}") String sessionHost;
+	private @Value("${chat.pipelineHost:#{null}}") String pipelineHost;
 	private @Value("${chat.client_id:#{null}}") String client_id;
 	private @Value("${chat.client_secret:#{null}}") String client_secret;
 	private @Value("${chat.ragHost:#{null}}") String ragHost;
-	private @Value("${chat.model_id:#{null}}") String model_id;
+	private @Value("${chat.APIKey:#{null}}") String APIKey;
 
 	@PostMapping(value = "/send")
 	public @ResponseBody String sendChatMessage(HttpServletRequest request) {
@@ -44,12 +46,15 @@ public class ChatbotController extends BasicController {
 
 		try {
 
-			if (tokenHost == null || client_id == null || client_secret == null) {
+			if (tokenHost == null || pipelineHost == null || sessionHost == null || client_id == null || client_secret == null) {
 				logger.error("invalid chat configuration");
 				return Constants.ERROR;
 			}
 
 			String token = (String)request.getSession().getAttribute("chattoken");
+			String sessionId = (String)request.getSession().getAttribute("chatsessionid");
+
+			String pipelineId = getPipelineId();
 
 			if (token != null) {
 				Date chattokenend = (Date)request.getSession().getAttribute("chattokenend");
@@ -65,15 +70,11 @@ public class ChatbotController extends BasicController {
 				request.getSession().setAttribute("chattokenend", tokenAndDate.getValue());
 			}
 
-			List<String[]> history = (List<String[]>)request.getSession().getAttribute("chathistory");
-			if (history == null || firstChatMessage) {
-				history = new ArrayList<>();
+			if (sessionId == null || firstChatMessage) {
+				sessionId = getSessionId(pipelineId);
 			}
 
-			var reply = callRAG(token, message, history);
-			history.add(new String[]{message, reply});
-			request.getSession().setAttribute("chathistory", history);
-
+			var reply = callRAG(token, message, sessionId);
 			return reply != null ? reply : Constants.ERROR;
 
 		} catch (Exception e) {
@@ -124,51 +125,98 @@ public class ChatbotController extends BasicController {
 		return null;
 	}
 
-	private JSONArray makeHistory(List<String[]> history) {
-		JSONArray historyArray = new JSONArray();
-		for (String[] historyItem : history) {
-			JSONArray a = new JSONArray();
-			a.put("user");
-			a.put(historyItem[0]);
-			historyArray.put(a);
-			a = new JSONArray();
-			a.put("assistant");
-			a.put(historyItem[1]);
-			historyArray.put(a);
+	private String getPipelineId() {
+		try (CloseableHttpClient httpclient = HttpClients.createSystem()) {
+			sessionService.initializeProxy();
+
+			HttpGet httpget = new HttpGet(pipelineHost);
+			httpget.addHeader("Authorization", "Bearer " + APIKey);
+			httpget.addHeader("Accept", "application/json");
+
+			try (CloseableHttpResponse response = httpclient.execute(httpget)) {
+				HttpEntity entity = response.getEntity();
+				int statusCode = response.getStatusLine().getStatusCode();
+
+				if (statusCode != 200) return null;
+				String responseString = EntityUtils.toString(entity);
+				JSONObject responseObject = new JSONObject(responseString);
+
+				return responseObject.getString("pipeline_id");
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
 		}
-		return historyArray;
+
+		return null;
 	}
 
-	private String callRAG(String token, String query, List<String[]> history) {
+	private String getSessionId(String pipelineId) {
+		try (CloseableHttpClient httpclient = HttpClients.createSystem()) {
+			sessionService.initializeProxy();
+
+			HttpPost httppost = new HttpPost(sessionHost);
+			httppost.addHeader("Authorization", "Bearer " + APIKey);
+			httppost.addHeader("Accept", "application/json");
+			httppost.addHeader("Content-Type", "application/json");
+
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("pipeline_id", pipelineId);
+			String jsonString = jsonObject.toString();
+
+			httppost.setEntity(new StringEntity(jsonString));
+
+			try (CloseableHttpResponse response = httpclient.execute(httppost)) {
+				HttpEntity entity = response.getEntity();
+				int statusCode = response.getStatusLine().getStatusCode();
+
+				if (statusCode != 200 && statusCode != 201) return null;
+				String responseString = EntityUtils.toString(entity);
+				JSONObject responseObject = new JSONObject(responseString);
+
+				return responseObject.getString("search_session_id");
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return null;
+	}
+
+	private String callRAG(String token, String query, String sessionId) {
 		try (CloseableHttpClient httpclient = HttpClients.createSystem()) {
 			sessionService.initializeProxy();
 
 			HttpPost httppost = new HttpPost(ragHost);
 
-			httppost.addHeader("Authorization", "Bearer " + token);
+			httppost.addHeader("Authorization", "Bearer " + APIKey);
 			httppost.addHeader("Content-Type", "application/json");
-
-			String prompt = settingsService.get(Setting.ChatPrompt);
+			httppost.addHeader("Accept", "application/json");
 
 			JSONObject json  = new JSONObject();
-			json.put("client_id", client_id);
-			json.put("query", query);
-			json.put("system_prompt", prompt);
-			json.put("model_id", model_id);
-			json.put("temperature", 0);
-			json.put("top_k", 5);
-
-			JSONArray ja = new JSONArray();
-			ja.put("a4_eusurvey");
-
-			json.put("datasources", ja);
-			json.put("streaming", false);
-			json.put("relevance_threshold", 0.2);
-			json.put("include_metadata", false);
-			json.put("snc", false);
-			if (!history.isEmpty()) {
-				json.put("chat_history", makeHistory(history));
-			}
+			JSONArray queries = new JSONArray();
+			queries.put(query);
+			json.put("search_session_id", sessionId);
+			json.put("queries", queries);
+			JSONObject params  = new JSONObject();
+			JSONObject rag = new JSONObject();
+			JSONObject ragParams  = new JSONObject();
+			JSONObject userProfileAPIComponent = new JSONObject();
+			userProfileAPIComponent.put("user_token", token);
+			ragParams.put("UserProfileAPIComponent", userProfileAPIComponent);
+			JSONObject multiOpenSearchHybridRetriever = new JSONObject();
+			JSONArray activeStores = new JSONArray();
+			activeStores.put("DIGIT_A4_EUS");
+			multiOpenSearchHybridRetriever.put("active_stores", activeStores);
+			multiOpenSearchHybridRetriever.put("top_k", 5);
+			ragParams.put("MultiOpenSearchHybridRetriever", multiOpenSearchHybridRetriever);
+			JSONObject ranker = new JSONObject();
+			ranker.put("top_k", 5);
+			ragParams.put("ranker", ranker);
+			rag.put("params", ragParams);
+			params.put("RAG@ECPipelineCaller", rag);
+			json.put("params", params);
 
 			String jsons = json.toString();
 
@@ -177,10 +225,15 @@ public class ChatbotController extends BasicController {
 			try (CloseableHttpResponse response = httpclient.execute(httppost)) {
 				HttpEntity entity = response.getEntity();
 				int statusCode = response.getStatusLine().getStatusCode();
+
 				if (statusCode != 200 && statusCode != 202) return null;
 				String responseString = EntityUtils.toString(entity);
 				JSONObject responseObject = new JSONObject(responseString);
-				return responseObject.getString("answer");
+				JSONArray resultsArray = responseObject.getJSONArray("results");
+				JSONObject firstResultObject = resultsArray.getJSONObject(0);
+				JSONArray answersArray = firstResultObject.getJSONArray("answers");
+				JSONObject firstAnswerObject = answersArray.getJSONObject(0);
+				return firstAnswerObject.getString("answer");
 			}
 
 		} catch (Exception e) {
