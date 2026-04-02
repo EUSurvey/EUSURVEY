@@ -64,15 +64,23 @@
 				<xsl:apply-templates select="Element"/>
 				
 				<h2>Confirmation Page Text</h2>
-				<xsl:value-of select="ConfirmationPage"/>
+				<xsl:apply-templates select="ConfirmationPage"/>
 				
 				<h2>Escape Page Text</h2>
-				<xsl:value-of select="EscapePage"/>
+				<xsl:apply-templates select="EscapePage"/>
 
 			</body>
 		</html>
 	</xsl:template>
 	
+	<xsl:template match="ConfirmationPage">
+       <xsl:copy-of select="node()"/>
+	</xsl:template>
+	
+	<xsl:template match="EscapePage">
+       <xsl:copy-of select="node()"/>
+	</xsl:template>
+
 	<xsl:template match="Label">
        <xsl:copy-of select="node()"/>
     </xsl:template>

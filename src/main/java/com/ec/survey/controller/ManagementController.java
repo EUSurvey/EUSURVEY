@@ -2584,43 +2584,30 @@ public class ManagementController extends BasicController {
 		}
 		
 		if (form.getSurvey().getIsSelfAssessment()) {
-			List<SACriterion> criteria = selfassessmentService.getCriteria(form.getSurvey().getUniqueId());
-			StringBuilder builder = new StringBuilder();
-			builder.append("[");
-			boolean first = true;
-			for (SACriterion saCriterion : criteria) {
-				if (first) {
-					first = false;
-				} else {
-					builder.append(",");
-				}
-				builder.append("{");
-				builder.append("'id': '").append(saCriterion.getId()).append("',");
-				builder.append("'name': '").append(ConversionTools.escape(saCriterion.getName())).append("'");
-				builder.append("}");
-			}
-			builder.append("]");
+
+
+			var criteria = selfassessmentService.getCriteria(form.getSurvey().getUniqueId());
+
+			var criteriaMaps = criteria.stream().map((saCriterion -> {
+				var criteriaMap = new HashMap<String, Object>(4);
+				criteriaMap.put("id", saCriterion.getId());
+				criteriaMap.put("name", saCriterion.getName());
+				return criteriaMap;
+			})).collect(Collectors.toUnmodifiableList());
+
+			var objectMapper = new ObjectMapper();
+			result.addObject("SACriteriaJSON", objectMapper.writeValueAsString(criteriaMaps));
 			
-			result.addObject("SACriteria", builder.toString());
-			
-			List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(form.getSurvey().getUniqueId());
-			builder = new StringBuilder();
-			builder.append("[");
-			first = true;
-			for (SATargetDataset dataset : datasets) {
-				if (first) {
-					first = false;
-				} else {
-					builder.append(",");
-				}
-				builder.append("{");
-				builder.append("'id': '").append(dataset.getId()).append("',");
-				builder.append("'name': '").append(ConversionTools.escape(dataset.getName())).append("'");
-				builder.append("}");
-			}
-			builder.append("]");
-			
-			result.addObject("SADatasets", builder.toString());
+			var datasets = selfassessmentService.getTargetDatasets(form.getSurvey().getUniqueId());
+
+			var datasetMaps = datasets.stream().map(dataset -> {
+				var datasetMap = new HashMap<String, Object>(4);
+				datasetMap.put("id", dataset.getId());
+				datasetMap.put("name", dataset.getName());
+				return datasetMap;
+			}).collect(Collectors.toUnmodifiableList());
+
+			result.addObject("SADatasetsJSON", objectMapper.writeValueAsString(datasetMaps));
 		}
 
 		return result;

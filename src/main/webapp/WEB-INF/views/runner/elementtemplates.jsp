@@ -239,7 +239,7 @@
 					<select id="defaultSCSelectTemplateID" data-bind="value: getTargetDatasetByQuestion(uniqueId()), attr: {'id': 'dataset' + id(), 'oninput': !foreditor ? 'checkTargetDataset(this);' : '', 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-value': getTargetDatasetByQuestion(uniqueId()), 'class': css + ' single-choice targetdatasetselect', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questionhelp' + id()}" >
 						<option value=''></option>
 						<!-- ko foreach: targetDatasets() -->
-						<option data-bind="html: strip_tags(name), attr: {value: id}"></option>
+						<option data-bind="text: name, attr: {value: id}"></option>
 						<!-- /ko -->
 					</select>					
 					<!-- /ko -->

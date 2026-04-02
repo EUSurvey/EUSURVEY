@@ -4,14 +4,14 @@ function getNewElement(item)
 	
 	if (item.hasClass("sectionitem"))
 	{
-		element = getBasicElement("Section", false, "Section Title", item.attr("id"), false);
+		element = getBasicElement("Section", false, editLabels.section, item.attr("id"), false);
 		element.level = 1;
 		element.tabTitle = "[Section]";
 		element.order = 0;
 		updateComplexityScore("addSectionItem");
 	} else if (item.hasClass("freetextitem"))
 	{
-		element = getBasicElement("FreeTextQuestion", true, "Free Text Question", item.attr("id"), true);
+		element = getBasicElement("FreeTextQuestion", true, editLabels.freeText, item.attr("id"), true);
 		element.isPassword = false;
 		element.maxCharacters = "";
 		element.minCharacters = "";
@@ -22,13 +22,13 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("singlechoiceitem"))
 	{
-		element = getBasicElement("SingleChoiceQuestion", true, "Single Choice Question", item.attr("id"), true);
+		element = getBasicElement("SingleChoiceQuestion", true, editLabels.singleChoice, item.attr("id"), true);
 		element.maxChoices = 0;
 		element.minChoices = 0;
 		element.choiceType = "radio";
 		element.numColumns = 1;
 		element.order = 0;
-		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
+		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, editLabels.answerNumbered(1), null, false), getBasicElement("PossibleAnswer", false, editLabels.answerNumbered(2), null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
 		element.isDelphiQuestion = isDelphi;
 		element.isTargetDatasetQuestion = false;
@@ -36,32 +36,32 @@ function getNewElement(item)
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("rankingitem"))
 	{
-		element = getBasicElement("RankingQuestion", true, "Ranking Question", item.attr("id"), true);
+		element = getBasicElement("RankingQuestion", true, editLabels.ranking, item.attr("id"), true);
 		element.childElements = [
-			getBasicElement("RankingItem", false, "Ranking Item 1", null, false),
-			getBasicElement("RankingItem", false, "Ranking Item 2", null, false),
-			getBasicElement("RankingItem", false, "Ranking Item 3", null, false),
+			getBasicElement("RankingItem", false, editLabels.rankingItemNumbered(1), null, false),
+			getBasicElement("RankingItem", false, editLabels.rankingItemNumbered(2), null, false),
+			getBasicElement("RankingItem", false, editLabels.rankingItemNumbered(3), null, false),
 			];
 		element.isDelphiQuestion = isDelphi;
 		element.order = 0;
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
-		element = getBasicElement("MultipleChoiceQuestion", true, "Multiple Choice Question", item.attr("id"), true);
+		element = getBasicElement("MultipleChoiceQuestion", true, editLabels.multipleChoice, item.attr("id"), true);
 		element.maxChoices = 0;
 		element.minChoices = 0;
 		element.choiceType = isEVote ? "evote" : "checkbox";
 		element.noNegativeScore = false;
 		element.numColumns = 1;
 		element.order = 0;
-		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
+		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, editLabels.answerNumbered(1), null, false), getBasicElement("PossibleAnswer", false, editLabels.answerNumbered(2), null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
 		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("numberitem"))
 	{
-		element = getBasicElement("NumberQuestion", true, "Number-Slider Question", item.attr("id"), true);
+		element = getBasicElement("NumberQuestion", true, editLabels.numberSlider, item.attr("id"), true);
 		element.decimalPlaces = 0;
 		element.unit = "";
 		element.min = null;
@@ -71,7 +71,7 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("matrixitem"))
 	{
-		element = getBasicElement("Matrix", true, "Matrix", item.attr("id"), true);
+		element = getBasicElement("Matrix", true, editLabels.matrix, item.attr("id"), true);
 		element.tableType = 0;
 		element.isSingleChoice = true;
 		element.isInterdependent = false;
@@ -84,12 +84,12 @@ function getNewElement(item)
 		element.columns = 4;
 		element.childElements = [
 		                         getBasicElement("Text", true, "empty", null, false),
-		                         getBasicElement("Text", true, "Answer 1", null, false),
-		                         getBasicElement("Text", true, "Answer 2", null, false),
-		                         getBasicElement("Text", true, "Answer 3", null, false),
-		                         getBasicElement("Text", true, "Question 1", null, true),
-		                         getBasicElement("Text", true, "Question 2", null, true),
-		                         getBasicElement("Text", true, "Question 3", null, true)
+		                         getBasicElement("Text", true, editLabels.answerNumbered(1), null, false),
+		                         getBasicElement("Text", true, editLabels.answerNumbered(2), null, false),
+		                         getBasicElement("Text", true, editLabels.answerNumbered(3), null, false),
+		                         getBasicElement("Text", true, editLabels.questionNumbered(1), null, true),
+		                         getBasicElement("Text", true, editLabels.questionNumbered(2), null, true),
+		                         getBasicElement("Text", true, editLabels.questionNumbered(3), null, true)
 		                        ];
 		element.answers = getMatrixAnswers(element);
 		element.questions = getMatrixQuestions(element);
@@ -99,7 +99,7 @@ function getNewElement(item)
 		updateComplexityScore("addTableOrMatrixQuestion");
 	} else if (item.hasClass("mytableitem"))
 	{
-		element = getBasicElement("Table", true, "Table", item.attr("id"), true);
+		element = getBasicElement("Table", true, editLabels.table, item.attr("id"), true);
 		element.tableType = 0;
 		element.order = 0;
 		element.widths = "";
@@ -122,7 +122,7 @@ function getNewElement(item)
 		updateComplexityScore("addTableOrMatrixQuestion");
 	} else if (item.hasClass("dateitem"))
 	{
-		element = getBasicElement("DateQuestion", true, "Date", item.attr("id"), true);
+		element = getBasicElement("DateQuestion", true, editLabels.date, item.attr("id"), true);
 		element.min = null;
 		element.minString = null;
 		element.max = null;
@@ -132,7 +132,7 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("timeitem"))
 	{
-		element = getBasicElement("TimeQuestion", true, "Time", item.attr("id"), true);
+		element = getBasicElement("TimeQuestion", true, editLabels.time, item.attr("id"), true);
 		element.min = null;
 		element.minString = null;
 		element.max = null;
@@ -142,11 +142,11 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("textitem"))
 	{
-		element = getBasicElement("Text", false, "Text", item.attr("id"), false);
+		element = getBasicElement("Text", false, editLabels.text, item.attr("id"), false);
 		updateComplexityScore("addSimpleItem");
 	} else if (item.hasClass("imageitem"))
 	{
-		element = getBasicElement("Image", false, "Image", item.attr("id"), false);
+		element = getBasicElement("Image", false, editLabels.image, item.attr("id"), false);
 		element.title = ""
 		element.optional = true;
 		element.scale = 100;
@@ -158,14 +158,14 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleItem");
 	} else if (item.hasClass("ruleritem"))
 	{
-		element = getBasicElement("Ruler", false, "Ruler", item.attr("id"), false);
+		element = getBasicElement("Ruler", false, editLabels.ruler, item.attr("id"), false);
 		element.color = "#004F98";
 		element.style = "solid";
 		element.height = 1;
 		updateComplexityScore("addSimpleItem");
 	} else if (item.hasClass("uploaditem"))
 	{
-		element = getBasicElement("Upload", true, "Please upload your file(s)", item.attr("id"), true);
+		element = getBasicElement("Upload", true, editLabels.upload, item.attr("id"), true);
 		//element.help = "The maximum file size is 1 MB";
 		
 		if (isOPC)
@@ -176,16 +176,16 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("downloaditem"))
 	{
-		element = getBasicElement("Download", true, "Download", item.attr("id"), true);
+		element = getBasicElement("Download", true, editLabels.download, item.attr("id"), true);
 		element.files = [];
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("emailitem"))
 	{
-		element = getBasicElement("EmailQuestion", true, "Email", item.attr("id"), true);
+		element = getBasicElement("EmailQuestion", true, editLabels.email, item.attr("id"), true);
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("regexitem"))
 	{
-		element = getBasicElement("RegExQuestion", true, "RegEx Question", item.attr("id"), true);
+		element = getBasicElement("RegExQuestion", true, editLabels.regex, item.attr("id"), true);
 		element.isPassword = false;
 		element.maxCharacters = 0;
 		element.minCharacters = 0;
@@ -197,7 +197,7 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("formulaitem"))
 	{
-		element = getBasicElement("FormulaQuestion", true, "Calculated field", item.attr("id"), true);
+		element = getBasicElement("FormulaQuestion", true, editLabels.formula, item.attr("id"), true);
 		element.css = "formula";
 		element.formula = "";
 		element.min = null;
@@ -208,7 +208,7 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("galleryitem"))
 	{
-		element = getBasicElement("GalleryQuestion", true, "Gallery", item.attr("id"), true);
+		element = getBasicElement("GalleryQuestion", true, editLabels.gallery, item.attr("id"), true);
 		element.columns = 3;
 		element.selection = false;
 		element.limit = "";
@@ -218,7 +218,7 @@ function getNewElement(item)
 		updateComplexityScore("addGalleryQuestion");
 	} else if (item.hasClass("confirmationitem"))
 	{
-		element = getBasicElement("Confirmation", true, "I accept your Terms", item.attr("id"), true);
+		element = getBasicElement("Confirmation", true, editLabels.confirmation, item.attr("id"), true);
 		element.optional = false;
 		element.confirmationtext = "";
 		element.confirmationlabel = "Show";
@@ -227,21 +227,18 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleQuestion");	
 	} else if (item.hasClass("ratingitem"))
 	{
-		element = getBasicElement("RatingQuestion", true, "Rating", item.attr("id"), true);
+		element = getBasicElement("RatingQuestion", true, editLabels.rating, item.attr("id"), true);
 		element.numIcons = 5;
 		element.iconType = 0;
 		element.confirmationlabel = "Show";
-		element.childElements = [getBasicElement("Text", false, "Question 1", null, false), getBasicElement("Text", false, "Question 2", null, false)];
+		element.childElements = [getBasicElement("Text", false, editLabels.questionNumbered(1), null, false), getBasicElement("Text", false, editLabels.questionNumbered(2), null, false)];
 		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");	
 	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem") || item.hasClass("agenciesitem")) {
 		if (item.hasClass("countriesitemMC")) {
 			item.addClass("multiplechoiceitem");
 
-			// use original title for "Predefined" elements and make sure that special characters don't break anything; otherwise, use "Single Choice Question"
-			let questionTitle = $('<span>').text(item.attr("data-original-text")).html().trim() || "Multiple Choice Question";
-
-			element = getBasicElement("MultipleChoiceQuestion", true, questionTitle, item.attr("id"), true);
+			element = getBasicElement("MultipleChoiceQuestion", true, editLabels.multipleChoice, item.attr("id"), true);
 			element.useCheckboxes = true;
 			element.choiceType = "checkbox";
 		} else {
@@ -250,7 +247,7 @@ function getNewElement(item)
 			// use original title for "Predefined" elements and make sure that special characters don't break anything; otherwise, use "Single Choice Question"
 			let questionTitle = $('<span>').text(item.attr("data-original-text")).html().trim() || "Single Choice Question";
 
-			element = getBasicElement("SingleChoiceQuestion", true, questionTitle, item.attr("id"), true);
+			element = getBasicElement("SingleChoiceQuestion", true, editLabels.singleChoice, item.attr("id"), true);
 			element.useRadioButtons = true;
 			element.choiceType = "radio";
 
@@ -266,25 +263,36 @@ function getNewElement(item)
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(updateListSummary,"init", 32);	
 		
-		var url = "/utils/euCountries";
-		if (item.hasClass("languagesitem"))
+		let url = "//";
+		if (item.hasClass("countriesitem")) {
+			url = "/utils/euCountries"
+			element.subType = "euCountries";
+			element.displayMode = 2;
+			element.title = editLabels.euCountries
+			element.originalTitle = editLabels.euCountries
+		} else if (item.hasClass("languagesitem"))
 		{
 			url = "/utils/euLanguages";
+			element.title = editLabels.euLanguages
+			element.originalTitle = editLabels.euLanguages
 		} else if (item.hasClass("dgsitem"))
 		{
 			url = "/utils/euDGs";
+			element.title = editLabels.euDGs
+			element.originalTitle = editLabels.euDGs
 		} else if (item.hasClass("agenciesitem"))
 		{
 			url = "/utils/euAgencies";
+			element.title = editLabels.euAgencies
+			element.originalTitle = editLabels.euAgencies
 		} else if (item.hasClass("unsitem"))
 		{
 			url = "/utils/unCountries";
 			element.useRadioButtons = false;
 			element.subType = "unCountries";
 			element.displayMode = 2;
-		} else {
-			element.subType = "euCountries";
-			element.displayMode = 2;
+			element.title = editLabels.unCountries
+			element.originalTitle = editLabels.unCountries
 		}
 		
 		$.ajax({type: "GET",
@@ -302,7 +310,7 @@ function getNewElement(item)
 		 });		
 	} else if (item.hasClass("complextableitem"))
 	{
-		element = getBasicElement("ComplexTable", true, "Complex Table", item.attr("id"), true);
+		element = getBasicElement("ComplexTable", true, editLabels.complexTable, item.attr("id"), true);
 		element.rows = 3;
 		element.columns = 3;
 		element.size = 0;
@@ -354,7 +362,7 @@ function getNewElement(item)
 		});
 		if (problemFound) return;		
 		
-		element = getBasicElement("SingleChoiceQuestion", true, "Target Dataset - Profiles Selection", item.attr("id"), true);
+		element = getBasicElement("SingleChoiceQuestion", true, editLabels.targetDataset, item.attr("id"), true);
 		element.maxChoices = 0;
 		element.minChoices = 0;
 		element.choiceType = "select";
@@ -373,13 +381,13 @@ function getNewElement(item)
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("saquestiontitem")) {
-		element = getBasicElement("SingleChoiceQuestion", true, "SA Single Choice", item.attr("id"), true);
+		element = getBasicElement("SingleChoiceQuestion", true, editLabels.saQuestion, item.attr("id"), true);
 		element.maxChoices = 0;
 		element.minChoices = 0;
 		element.choiceType = "radio";
 		element.numColumns = 1;
 		element.order = 0;
-		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
+		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, editLabels.answerNumbered(1), null, false), getBasicElement("PossibleAnswer", false, editLabels.answerNumbered(2), null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
 		element.isTargetDatasetQuestion = false;
 		element.isSAQuestion = true;

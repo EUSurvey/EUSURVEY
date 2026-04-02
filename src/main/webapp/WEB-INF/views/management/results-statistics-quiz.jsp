@@ -65,7 +65,7 @@
 			<c:set var="tableOpen" value="false"/>
 
 			<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="element" varStatus="loop">
-				<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">
+				<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id) || publication.isSectionSelected(form.getSurvey(), element.id)}">
 					<c:choose>
 						<c:when test="${element.getType() == 'Section'}">
 

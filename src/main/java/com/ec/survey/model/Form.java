@@ -763,6 +763,18 @@ public class Form implements java.io.Serializable {
 		return resources.getMessage(key, args, key, new Locale(locale));
 	}
 
+	public String getMessageInSurveyLang(String key, Object... args) {
+		if (resources == null) return key;
+
+		var lang = "en";
+
+		if (this.survey != null && this.survey.getLanguage() != null) {
+			lang = this.survey.getLanguage().getCode().toLowerCase();
+		}
+
+		return resources.getMessage(key, args, key, new Locale(lang));
+	}
+
 	public MessageSource getResources() {
 		return resources;
 	}

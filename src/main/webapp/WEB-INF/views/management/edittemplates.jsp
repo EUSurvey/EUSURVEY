@@ -221,7 +221,7 @@
 <script type="text/html" id="registration-template">
 	<tr class="firstpropertyrow collapsiblerow">
 		<td colspan='2' style="text-align: left">
-			<a onclick='toggleRegistrationFormProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.RegistrationForm" /></a>
+			<a onclick='toggleAdvancedProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.RegistrationForm" /></a>
 		</td>
 	</tr>
 	<tr class="firstpropertyrow">
@@ -329,7 +329,7 @@
 
 	<tr class="collapsiblerow" data-bind="attr: {'style': Cell().cellType() > 0 ? '' : 'display: none;'}">
 		<td colspan='2' style="text-align: left">
-			<a onclick='toggleCellProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.CellProperties" /></a>
+			<a onclick='toggleAdvancedProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.CellProperties" /></a>
 		</td>
 	</tr>
 
@@ -594,7 +594,7 @@
 
 	<tr class="collapsiblerow" data-bind="attr: {'style': Cell().cellType() == 0 ? 'display: none;' : ''}">
 		<td colspan='2' style="text-align: left">
-			<a onclick='toggleCellProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.CellProperties" /></a>
+			<a onclick='toggleAdvancedProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.CellProperties" /></a>
 		</td>
 	</tr>
 
@@ -1205,7 +1205,7 @@
 </script>
 
 <script type="text/html" id="targetdataset-template2">	
-	<tr class="selfassessment">
+	<tr class="firstpropertyrow collapsiblerow selfassessment">
 		<td colspan="2">
 			<div class="toolboxheader">
 				<a>

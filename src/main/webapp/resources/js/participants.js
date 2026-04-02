@@ -941,6 +941,20 @@ $(function() {
 		 });
 });
 
+function noVisibleAttendeesInSelectedGroup() {
+    if (_participants.selectedGroup() == null || _participants.selectedGroup().attendees().length == 0) return false;
+
+    for (var j = 0; j < _participants.selectedGroup().attendees().length; j++)
+    {
+        if (!_participants.selectedGroup().attendees()[j].hidden())
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function loadMore()
 {
 	if ($("#details").is(":visible"))

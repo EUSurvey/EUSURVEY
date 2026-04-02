@@ -68,7 +68,11 @@
 		
 		#faqcontent a {
 			text-decoration: underline;
-		}		
+		}
+
+		#faqcontent h3 {
+			font-size: 19px !important;
+		}
 
 	</style>
 
@@ -1378,6 +1382,127 @@
 			<p>Dans l'exemple ci-dessous, la ligne 5 affiche le total de chaque colonne.
 				Ces champs utilisent l'option « En lecture seule », de sorte que le total ne peut être modifié par l'utilisateur.</p>
 			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_9_FR.png" style="margin-bottom: 1em" />
+
+			<h2>Expressions régulières</h2>
+
+			<h3>Qu’est-ce qu’une expression régulière ?</h3>
+			<p>Une expression régulière (ou « regex ») est une suite de caractères qui définit un motif de recherche. Dans EUSurvey, les regex sont utilisées pour <b>contrôler et valider</b> ce que les utilisateurs peuvent saisir dans les champs du questionnaire, afin de garantir que les réponses respectent le format attendu.</p>
+
+			<h3>Comment utiliser les regex dans EUSurvey</h3>
+			<p>Dans EUSurvey, les regex sont le plus souvent utilisées pour :</p>
+			<ul>
+				<li><b>Valider les entrées de texte</b> (par ex. e-mails, numéros de téléphone, identifiants)</li>
+				<li><b>Imposer des formats spécifiques</b> (par ex. dates, codes de projet)</li>
+			</ul>
+
+			<h3>Fonctionnement des regex</h3>
+			<p>Un motif regex décrit ce que vous souhaitez faire correspondre. Le système vérifie la saisie de l’utilisateur par rapport à ce motif et ne l’accepte que s’il y a correspondance.</p>
+			<p><b>Exemple :</b></p>
+			<ul>
+				<li>Le motif <code>^[A-Za-z]+$</code> n’accepte que des lettres (pas de chiffres ni de symboles).</li>
+				<li>Le motif <code>^[0-9]+$</code> n’accepte que des chiffres.</li>
+			</ul>
+
+			<h3>Éléments courants des regex</h3>
+
+			<p><b>Classes de caractères :</b></p>
+			<ul>
+				<li><code>\d</code> : n’importe quel chiffre (0-9)</li>
+				<li><code>\w</code> : caractère alphanumérique</li>
+				<li><code>\s</code> : caractère d’espacement</li>
+			</ul>
+
+			<p><b>Quantificateurs :</b></p>
+			<ul>
+				<li><code>+</code> : un ou plusieurs</li>
+				<li><code>*</code> : zéro ou plusieurs</li>
+				<li><code>?</code> : zéro ou un</li>
+				<li><code>{n}</code> : exactement n occurrences</li>
+			</ul>
+
+			<p><b>Ancres :</b></p>
+			<ul>
+				<li><code>^</code> : début de la chaîne</li>
+				<li><code>$</code> : fin de la chaîne</li>
+			</ul>
+
+			<p><b>Groupes et alternatives :</b></p>
+			<ul>
+				<li><code>(abc)</code> : regroupe des caractères</li>
+				<li><code>a|b</code> : correspond à a ou b</li>
+			</ul>
+
+			<h3>Exemples pratiques de regex pour EUSurvey</h3>
+
+			<ol>
+				<li>
+					<p><b>Validation des 24 codes de langues officielles de l’UE</b></p>
+					<p><i>Regex :</i> <code>^(BG|ES|CS|DA|DE|ET|EL|EN|FR|GA|HR|IT|LV|LT|HU|MT|NL|PL|PT|RO|SK|SL|FI|SV)$</code></p>
+					<p><i>Correspond :</i> à l’un des 24 codes de langue officiels de l’UE.</p>
+					<p><i>Exemples :</i> EN, FR, DE</p>
+				</li>
+				<li>
+					<p><b>Numéro de téléphone interne de la Commission européenne</b></p>
+					<p><i>Regex :</i> <code>^[+]\d{3}\s\d{4}\s\d{5}$</code></p>
+					<p><i>Format :</i> <code>+XXX XXXX XXXXX</code></p>
+					<p><i>Exemple :</i> <code>+322 3456 78901</code></p>
+				</li>
+				<li>
+					<p><b>Validation des codes de projet / subvention de l’UE</b></p>
+					<p><i>Regex :</i> <code>^[A-Z0-9]+(-[A-Z0-9]+)*$</code></p>
+					<p><i>Valide :</i> les codes typiques de projets ou subventions de l’UE, composés de lettres et de chiffres séparés par des tirets.</p>
+					<p><i>Exemples :</i> <code>H2020-ICT-2020-1</code>, <code>FP7-ENV-2018-2</code></p>
+				</li>
+				<li>
+					<p><b>Validation d’une UNITÉ ou d’une DG de la Commission européenne</b></p>
+					<p><i>Regex :</i> <code>^[A-Za-z]+.[A-Za-z0-9-]+(?:.[A-Za-z0-9]+)?$</code></p>
+					<p><i>Valide :</i> des identifiants tels que DG (par ex. <code>DIGIT</code>), direction (par ex. <code>DIGIT.A</code>) ou unité (par ex. <code>DIGIT.A.4</code>).</p>
+					<p><i>Exemples :</i> <code>DIGIT.A.4</code>, <code>ENV.B.2</code></p>
+				</li>
+				<li>
+					<p><b>Validation d’une adresse e-mail</b></p>
+					<p><i>Regex :</i> <code>^[^\s@]+@[^\s@]+\.[^\s@]+$</code></p>
+					<p><i>Vérifie :</i> que la saisie respecte un format standard d’adresse e-mail.</p>
+					<p><i>Exemple :</i> <code>john.doe@example.eu</code></p>
+				</li>
+				<li>
+					<p><b>Date au format AAAA-MM-JJ</b></p>
+					<p><i>Regex :</i> <code>^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$</code></p>
+					<p><i>Valide :</i> des dates entre 1900 et 2099 avec des séparateurs comme <code>-</code>, <code>/</code>, <code>.</code> ou un espace.</p>
+					<p><i>Exemple :</i> <code>2025-12-04</code></p>
+				</li>
+				<li>
+					<p><b>Chiffres uniquement</b></p>
+					<p><i>Regex :</i> <code>^[0-9]+$</code></p>
+					<p><i>Autorise :</i> uniquement des chiffres (0-9).</p>
+					<p><i>Exemple :</i> <code>12345</code></p>
+				</li>
+				<li>
+					<p><b>Validation de l’âge</b></p>
+					<p><i>Regex pour un âge entre 20 et 99 :</i> <code>([2-9][0-9])</code></p>
+					<p><i>Regex pour un âge entre 18 et 35 :</i> <code>(1[8-9]|2[0-9]|3[0-5])</code></p>
+					<p><b>Exemple :</b> <code>27</code></p>
+				</li>
+				<li>
+					<p><b>Numéros de téléphone luxembourgeois</b></p>
+					<p><i>Regex :</i> <code>^((+|00\s?)352)?(\s?\d{2}){3,4}$</code></p>
+					<p><i>Valide :</i> les numéros fixes luxembourgeois avec indicatif facultatif.</p>
+					<p><i>Exemple :</i> <code>+352 26 12 34 56</code></p>
+				</li>
+				<li>
+					<p><b>Numéros de téléphone mobile luxembourgeois</b></p>
+					<p><i>Regex :</i> <code>^((+|00\s?)352)?\s?6[269]1(\s?\d{3}){2}$</code></p>
+					<p><i>Valide :</i> les numéros mobiles luxembourgeois commençant par des préfixes courants.</p>
+					<p><i>Exemple :</i> <code>+352 621 123 456</code></p>
+				</li>
+
+			</ol>
+
+			<h3>Pourquoi utiliser les regex dans EUSurvey ?</h3>
+			<p>Les expressions régulières vous aident à <b>automatiser la validation</b> et à <b>réduire les erreurs</b> dans les réponses aux questionnaires. En définissant des règles claires, vous garantissez que les données collectées sont cohérentes et exploitables.</p>
+
+			<p>Pour plus d’informations sur les regex, consultez <a href="https://www.w3schools.com/js/js_regexp.asp">https://www.w3schools.com/js/js_regexp.asp</a></p>
+
 			<h2>Tableau Complexe</h2>
 			<p>Le tableau complexe est un élément d'enquête semblable à un tableau qui vous permet de composer d'autres éléments d'enquête de manière plus complexe.
 				Il permet la liaison visuelle des différentes questions et la mise en page de texte (par exemple, l'affichage du texte en colonnes).</p>
@@ -3632,7 +3757,7 @@
 				<img alt="screenshot anonymity option" src="${contextpath}/resources/images/documentation/anonymity.png" />
 			</p>
 			<p>
-				Pour ce faire, accédez à <b>Propriétés de l’enquête → Sécurité</b> et activez le « mode enquête anonyme ». Lorsque cette option est activée, aucune donnée liée à l’utilisateur (y compris les adresses IP) n’est collectée ni enregistrée.
+				Pour ce faire, accédez à <b>Propriétés → Sécurité de l’enquête</b> et activez le « mode enquête anonyme ». Lorsque cette option est activée, aucune donnée liée à l’utilisateur (y compris les adresses IP) n’est collectée ni enregistrée.
 			</p>
 			<p>
 				Afin de garantir que votre enquête reste entièrement anonyme, vous devez également éviter d’inclure dans le questionnaire des questions demandant des données à caractère personnel.
@@ -3756,7 +3881,90 @@
 			<p>
 				Toutes les réponses collectées pour la question correspondante seront définitivement supprimées.
 			</p>
-
+			<h2>
+				Suppression automatique des enquêtes inactives
+			</h2>
+			<h4>
+				1. Qu’est-ce qu’une enquête inactive ?
+			</h4>
+			<p>
+				Dans <b>EUSurvey</b>, une enquête est considérée comme inactive lorsqu’<b>elle ne reçoit plus de nouvelles contributions</b>.
+			</p>
+			<p>
+				Si une enquête ne reçoit aucune nouvelle contribution pendant <b>une période d’un an (365 jours)</b>, elle peut être marquée comme inactive et devenir éligible au processus de suppression automatique.
+			</p>
+			<h4>
+				2. Pourquoi les enquêtes inactives sont-elles supprimées ?
+			</h4>
+			<p>
+				Afin de maintenir un service de haute qualité et d’optimiser les performances du système, <b>EUSurvey</b> peut supprimer automatiquement les enquêtes qui sont restées inactives pendant une longue période.
+			</p>
+			<p>
+				Ce processus contribue également à garantir le respect du règlement général sur la protection des données (RGPD) et du règlement (UE) 2018/1725 (EUDPR), ainsi que de leurs exigences respectives en matière de conservation des données.
+			</p>
+			<p>
+				Avant toute suppression, le propriétaire de l’enquête ainsi que les utilisateurs disposant de droits privilégiés reçoivent plusieurs notifications par courrier électronique leur permettant d’examiner l’enquête et de prendre les mesures nécessaires.
+			</p>
+			<h4>
+				3. Comment fonctionne le processus de suppression des enquêtes inactives ?
+			</h4>
+			<p>
+				Lorsqu’une enquête n’a reçu aucune nouvelle contribution pendant un an, <b>EUSurvey</b> lance un processus de notification avant la suppression.
+			</p>
+			<p>
+				Le processus se déroule comme suit:
+			</p>
+			<p>
+				<ol>
+					<li>Le propriétaire de l’enquête et tous les utilisateurs disposant de droits privilégiés reçoivent une <b>première notification par courrier électronique</b> les informant que l’enquête est inactive et susceptible d’être supprimée.</li>
+					<li>Un <b> deuxième courrier électronique de rappel</b> est envoyé si aucune action n’est entreprise.</li>
+					<li>Une <b>troisième et dernière notification</b> est envoyée avant la suppression.</li>
+					<li>Si l’enquête reste inactive après ces notifications, elle est <b>automatiquement supprimée</b> du système.</li>
+				</ol>
+			</p>
+			<p>
+				Ce processus progressif de notification permet aux utilisateurs de disposer de suffisamment de temps pour examiner l’enquête et sauvegarder leurs données si nécessaire. Le calendrier des notifications peut être ajusté via la configuration du système. Initialement, les notifications sont envoyées 60 jours, 45 jours et 3 jours avant la suppression.
+			</p>
+			<h4>
+				4. Qui reçoit les notifications d’inactivité ?
+			</h4>
+			<p>
+				Les notifications sont envoyées à :
+			</p>
+			<p>
+				<ul>
+					<li>le <b>propriétaire de l’enquête</b></li>
+					<li>tous les <b>utilisateurs</b> disposant de droits <b>privilégiés</b> pour la gestion de l’enquête.</li>
+				</ul>
+			</p>
+			<h4>
+				5. Que dois-je faire si je reçois une notification d’inactivité ?
+			</h4>
+			<p>
+				Si vous recevez une notification d’inactivité de la part d’ <b>EUSurvey</b>, vous devez vérifier si l’enquête est toujours nécessaire.
+			</p>
+			<p>
+				Plusieurs actions sont possibles :
+			</p>
+			<p>
+				<ul>
+					<li>exporter les résultats de l’enquête (par exemple au format .XLSX) pour archivage – veuillez consulter l’article FAQ correspondant</li>
+					<li>exporter le questionnaire de l’enquête au <b>format .EUS</b></li>
+					<li>examiner ou mettre à jour l’enquête, ou collecter de nouvelles contributions si l’enquête est toujours utilisée afin qu’elle soit retirée du processus de suppression</li>
+				</ul>
+			</p>
+			<p>
+				L’exportation du questionnaire au <b>format .EUS</b> vous permet de <b>conserver la structure de l’enquête et de l’importer à nouveau ultérieurement si nécessaire</b>.
+			</p>
+			<p>
+				Si aucune action n’est entreprise et que l’enquête reste inactive, elle sera automatiquement supprimée à l’issue du processus de notification.
+			</p>
+			<h4>
+				6. Que faire si j’ai encore besoin d’aide ?
+			</h4>
+			<p>
+				Si vous avez toujours besoin d’assistance, veuillez soumettre une demande de support via le lien suivant : <a href="${contextpath}/home/support?automateddeletion=1" target="_blank">Nous contacter</a>. Sélectionnez l’option « I have a question about the automated deletion of my survey ».
+			</p>
 		</div>
 	
 	

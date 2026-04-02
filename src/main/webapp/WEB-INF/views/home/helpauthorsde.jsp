@@ -70,6 +70,10 @@
 			text-decoration: underline;
 		}
 
+		#faqcontent h3 {
+			font-size: 19px !important;
+		}
+
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -1346,6 +1350,125 @@
 			<p>Im folgenden Beispiel wird in Zeile 5 die Summe für jede Spalte angezeigt.
 				Diese Felder verwenden die Option "Schreibgeschützt", so dass die Summe vom Benutzer nicht geändert werden kann.</p>
 			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/formular_field_9_DE.png" style="margin-bottom: 1em" />
+
+			<h2>Reguläre Ausdrücke</h2>
+
+			<h3>Was ist ein regulärer Ausdruck?</h3>
+			<p>Ein regulärer Ausdruck (oder „Regex“) ist eine Zeichenfolge, die ein Suchmuster definiert. In EUSurvey wird Regex verwendet, um <b>Eingaben zu steuern und zu validieren</b>, sodass sichergestellt wird, dass Antworten dem gewünschten Format entsprechen.</p>
+
+			<h3>Wie man Regex in EUSurvey verwendet</h3>
+			<p>Regex wird in EUSurvey am häufigsten verwendet, um:</p>
+			<ul>
+				<li><b>Texteingaben zu validieren</b> (z. B. E-Mails, Telefonnummern, IDs)</li>
+				<li><b>Bestimmte Formate durchzusetzen</b> (z. B. Daten, Projektcodes)</li>
+			</ul>
+
+			<h3>Wie Regex funktioniert</h3>
+			<p>Ein Regex-Muster beschreibt, was übereinstimmen soll. Das System prüft die Benutzereingabe anhand dieses Musters und akzeptiert sie nur, wenn eine Übereinstimmung vorliegt.</p>
+			<p><b>Beispiel:</b></p>
+			<ul>
+				<li>Das Muster <code>^[A-Za-z]+$</code> akzeptiert nur Buchstaben (keine Zahlen oder Symbole).</li>
+				<li>Das Muster <code>^[0-9]+$</code> akzeptiert nur Zahlen.</li>
+			</ul>
+
+			<h3>Häufige Regex-Elemente</h3>
+
+			<p><b>Zeichenklassen:</b></p>
+			<ul>
+				<li><code>\d</code>: Eine Ziffer (0–9)</li>
+				<li><code>\w</code>: Alphanumerisches Zeichen</li>
+				<li><code>\s</code>: Leerraumzeichen</li>
+			</ul>
+
+			<p><b>Quantifizierer:</b></p>
+			<ul>
+				<li><code>+</code>: Eins oder mehr</li>
+				<li><code>*</code>: Null oder mehr</li>
+				<li><code>?</code>: Null oder eins</li>
+				<li><code>{n}</code>: Genau n Vorkommen</li>
+			</ul>
+
+			<p><b>Anker:</b></p>
+			<ul>
+				<li><code>^</code>: Anfang der Zeichenkette</li>
+				<li><code>$</code>: Ende der Zeichenkette</li>
+			</ul>
+
+			<p><b>Gruppen und Alternativen:</b></p>
+			<ul>
+				<li><code>(abc)</code>: Gruppiert Zeichen</li>
+				<li><code>a|b</code>: Entspricht a oder b</li>
+			</ul>
+
+			<h3>Praktische Regex-Beispiele für EUSurvey</h3>
+			<ol>
+				<li>
+					<p><b>Validierung der 24 offiziellen EU-Sprachcodes</b></p>
+					<p><i>Regex:</i> <code>^(BG|ES|CS|DA|DE|ET|EL|EN|FR|GA|HR|IT|LV|LT|HU|MT|NL|PL|PT|RO|SK|SL|FI|SV)$</code></p>
+					<p><i>Erfasst:</i> Einen der 24 offiziellen EU-Sprachcodes.</p>
+					<p><i>Beispiele:</i> EN, FR, DE</p>
+				</li>
+				<li>
+					<p><b>Interne Telefonnummer der Europäischen Kommission</b></p>
+					<p><i>Regex:</i> <code>^[+]\d{3}\s\d{4}\s\d{5}$</code></p>
+					<p><i>Format:</i> <code>+XXX XXXX XXXXX</code></p>
+					<p><i>Beispiel:</i> <code>+322 3456 78901</code></p>
+				</li>
+				<li>
+					<p><b>Validierung von EU-Projekt-/Fördercodes</b></p>
+					<p><i>Regex:</i> <code>^[A-Z0-9]+(-[A-Z0-9]+)*$</code></p>
+					<p><i>Validiert:</i> Typische EU-Projekt- oder Fördercodes, bestehend aus Buchstaben und Zahlen, die durch Bindestriche getrennt sind.</p>
+					<p><i>Beispiele:</i> <code>H2020-ICT-2020-1</code>, <code>FP7-ENV-2018-2</code></p>
+				</li>
+				<li>
+					<p><b>Validierung einer UNIT oder DG der Europäischen Kommission</b></p>
+					<p><i>Regex:</i> <code>^[A-Za-z]+.[A-Za-z0-9-]+(?:.[A-Za-z0-9]+)?$</code></p>
+					<p><i>Validiert:</i> Bezeichner wie DG (z. B. <code>DIGIT</code>), Direktion (z. B. <code>DIGIT.A</code>) oder Unit (z. B. <code>DIGIT.A.4</code>).</p>
+					<p><i>Beispiele:</i> <code>DIGIT.A.4</code>, <code>ENV.B.2</code></p>
+				</li>
+				<li>
+					<p><b>Validierung von E-Mail-Adressen</b></p>
+					<p><i>Regex:</i> <code>^[^\s@]+@[^\s@]+\.[^\s@]+$</code></p>
+					<p><i>Prüft:</i> Ob die Eingabe einem Standard-E-Mail-Format entspricht.</p>
+					<p><i>Beispiel:</i> <code>john.doe@example.eu</code></p>
+				</li>
+				<li>
+					<p><b>Datum im Format YYYY-MM-DD</b></p>
+					<p><i>Regex:</i> <code>^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$</code></p>
+					<p><i>Validiert:</i> Daten zwischen 1900 und 2099 mit Trennzeichen wie <code>-</code>, <code>/</code>, <code>.</code> oder Leerzeichen.</p>
+					<p><i>Beispiel:</i> <code>2025-12-04</code></p>
+				</li>
+				<li>
+					<p><b>Nur Zahlen</b></p>
+					<p><i>Regex:</i> <code>^[0-9]+$</code></p>
+					<p><i>Erlaubt:</i> Nur Ziffern (0–9).</p>
+					<p><i>Beispiel:</i> <code>12345</code></p>
+				</li>
+				<li>
+					<p><b>Altersvalidierung</b></p>
+					<p><i>Regex für Alter zwischen 20 und 99:</i> <code>([2-9][0-9])</code></p>
+					<p><i>Regex für Alter zwischen 18 und 35:</i> <code>(1[8-9]|2[0-9]|3[0-5])</code></p>
+					<p><b>Beispiel:</b> <code>27</code></p>
+				</li>
+				<li>
+					<p><b>Luxemburgische Telefonnummern</b></p>
+					<p><i>Regex:</i> <code>^((+|00\s?)352)?(\s?\d{2}){3,4}$</code></p>
+					<p><i>Validiert:</i> Luxemburgische Festnetznummern mit optionaler Landesvorwahl.</p>
+					<p><i>Beispiel:</i> <code>+352 26 12 34 56</code></p>
+				</li>
+				<li>
+					<p><b>Luxemburgische Mobiltelefonnummern</b></p>
+					<p><i>Regex:</i> <code>^((+|00\s?)352)?\s?6[269]1(\s?\d{3}){2}$</code></p>
+					<p><i>Validiert:</i> Luxemburgische Mobilnummern mit gängigen Präfixen.</p>
+					<p><i>Beispiel:</i> <code>+352 621 123 456</code></p>
+				</li>
+			</ol>
+
+			<h3>Warum Regex in EUSurvey verwenden?</h3>
+			<p>Reguläre Ausdrücke helfen dabei, die <b>Validierung zu automatisieren</b> und <b>Fehler zu reduzieren</b>. Durch klare Regeln stellen Sie sicher, dass die gesammelten Daten konsistent und nutzbar sind.</p>
+
+			<p>Weitere Informationen zu Regex finden Sie unter <a href="https://www.w3schools.com/js/js_regexp.asp">https://www.w3schools.com/js/js_regexp.asp</a></p>
+
 			<h2>Komplexe Tabelle</h2>
 			<p>Die "Komplexe Tabelle" ist ein tabellenähnliches Umfrageelement, mit dem andere Umfrageelemente auf komplexe Weise miteinander kombiniert werden können.
 				Sie ermöglicht die visuelle Verknüpfung verschiedener Fragen und die Gestaltung von Textpassagen (z.B. die Darstellung von Text in mehreren Spalten).</p>
@@ -3566,7 +3689,7 @@
 				<img alt="screenshot anonymity option" src="${contextpath}/resources/images/documentation/anonymity.png" />
 			</p>
 			<p>
-				Hierfür gehen Sie zu <b>Eigenschaften der Umfrage → Sicherheit</b> und aktivieren den Modus „Anonyme Umfrage“. Wenn diese Option aktiviert ist, werden keine personenbezogenen Daten (einschließlich IP-Adressen) gesammelt oder gespeichert.
+				Hierfür gehen Sie zu <b>Eigenschaften → Umfragesicherheit</b> und aktivieren den Modus „Anonyme Umfrage“. Wenn diese Option aktiviert ist, werden keine personenbezogenen Daten (einschließlich IP-Adressen) gesammelt oder gespeichert.
 			</p>
 			<p>
 				Um sicherzustellen, dass Ihre Umfrage vollständig anonym bleibt, sollten Sie keine Fragen in Ihre Umfrage integrieren, die personenbezogene Daten abfragen.
@@ -3686,7 +3809,90 @@
 			<p>
 				Alle Antworten der ausgewählten Frage werden endgültig gelöscht.
 			</p>
-
+			<h2>
+				Automatische Löschung inaktiver Umfragen
+			</h2>
+			<h4>
+				1. Was ist eine inaktive Umfrage?
+			</h4>
+			<p>
+				In <b>EUSurvey</b> gilt eine Umfrage als inaktiv, wenn <b>keine neuen Beiträge mehr eingehen</b>.
+			</p>
+			<p>
+				Erhält eine Umfrage innerhalb <b>eines Jahres (365 Tage)</b> keine neuen Beiträge, kann sie als inaktiv markiert und zur automatischen Löschung vorgemerkt werden.
+			</p>
+			<h4>
+				2. Warum werden inaktive Umfragen gelöscht?
+			</h4>
+			<p>
+				Um einen hochwertigen Service zu gewährleisten und die Systemleistung zu optimieren, kann <b>EUSurvey</b> Umfragen automatisch löschen, die über einen längeren Zeitraum inaktiv waren.
+			</p>
+			<p>
+				Dieser Vorgang trägt zudem dazu bei, die Einhaltung der Datenschutz-Grundverordnung (DSGVO) und der Verordnung (EU) 2018/1725 (EUPDR) sowie der jeweiligen Aufbewahrungsfristen sicherzustellen.
+			</p>
+			<p>
+				Vor der Löschung erhalten der Eigentümer der Umfrage und berechtigte Nutzer mehrere E-Mail-Benachrichtigungen, die ihnen Zeit geben, die Umfrage zu überprüfen und gegebenenfalls Maßnahmen zu ergreifen.
+			</p>
+			<h4>
+				3. Wie funktioniert der Löschvorgang für inaktive Umfragen?
+			</h4>
+			<p>
+				Wenn eine Umfrage ein Jahr lang keine neuen Beiträge erhalten hat, startet <b>EUSurvey</b> vor der Löschung einen Benachrichtigungsprozess.
+			</p>
+			<p>
+				Der Prozess läuft wie folgt ab:
+			</p>
+			<p>
+				<ol>
+					<li>Der Umfragebesitzer und alle berechtigten Nutzer erhalten eine <b>erste E-Mail-Benachrichtigung</b>, die sie darüber informiert, dass die Umfrage inaktiv ist und gelöscht werden soll.</li>
+					<li>Eine <b>zweite Erinnerungs-E-Mail</b> wird versendet, falls keine Maßnahmen ergriffen werden.</li>
+					<li>Eine <b>dritte und letzte Benachrichtigung</b> wird vor der Löschung versendet.</li>
+					<li>Falls die Umfrage nach diesen Benachrichtigungen weiterhin inaktiv bleibt, wird sie <b>automatisch</b> aus dem System <b>gelöscht</b>.</li>
+				</ol>
+			</p>
+			<p>
+				Dieser mehrstufige Benachrichtigungsprozess stellt sicher, dass Nutzer genügend Zeit haben, die Umfrage zu überprüfen und ihre Daten bei Bedarf zu sichern. Der zeitliche Ablauf kann angepasst werden, ist jedoch standardmäßig auf 60 Tage, 45 Tage und 3 Tage vor der Löschung eingestellt.
+			</p>
+			<h4>
+				4. Wer erhält die Benachrichtigungen wegen Inaktivität?
+			</h4>
+			<p>
+				Benachrichtigungen werden gesendet an:
+			</p>
+			<p>
+				<ul>
+					<li>den <b>Eigentümer der Umfrage</b></li>
+					<li>alle <b>berechtigten Nutzer</b>, die Verwaltungsrechte für die Umfrage besitzen. Zum Beispiel erhalten Nutzer mit der Rolle <b>Form Manager</b> ebenfalls diese Benachrichtigungen.</li>
+				</ul>
+			</p>
+			<h4>
+				5. Was soll ich tun, wenn ich eine Benachrichtigung wegen Inaktivität erhalte?
+			</h4>
+			<p>
+				Wenn Sie eine Benachrichtigung wegen Inaktivität von <b>EUSurvey</b> erhalten, sollten Sie prüfen, ob die Umfrage noch benötigt wird.
+			</p>
+			<p>
+				Mögliche Maßnahmen sind:
+			</p>
+			<p>
+				<ul>
+					<li>Exportieren der Umfrageergebnisse (z. B. als .XLSX-Datei) zur Archivierung - weitere Informationen finden Sie im entsprechenden FAQ-Artikel</li>
+					<li>Exportieren des leeren Fragebogens als <b>.EUS-Datei</b></li>
+					<li>Falls die Umfrage noch in Verwendung ist, kann diese reaktiviert werden, indem der Fragebogen oder dessen Eigenschaften bearbeitet werden oder neue Beiträge eingehen, damit sie nicht gelöscht wird.</li>
+				</ul>
+			</p>
+			<p>
+				Durch das Exportieren des Fragebogens als <b>.EUS-Datei</b> können Sie <b>den leeren Fragebogen der Umfrage speichern und bei Bedarf später wieder importieren</b>.
+			</p>
+			<p>
+				Falls keine Maßnahmen ergriffen werden und die Umfrage weiterhin inaktiv bleibt, wird sie nach dem Benachrichtigungsprozess automatisch gelöscht.
+			</p>
+			<h4>
+				6. Was kann ich tun, wenn ich weitere Hilfe benötige?
+			</h4>
+			<p>
+				In diesem Fall bitten wir Sie, hier eine offizielle Support-Anfrage zu stellen: <a href="${contextpath}/home/support?automateddeletion=1" target="_blank">Kontaktieren Sie uns</a>. Wählen Sie dabei die Option „I have a question about the automated deletion of my survey“ aus.
+			</p>
 			</div>
 			</div>
 			</div>

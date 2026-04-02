@@ -782,7 +782,7 @@
 												<spring:message code="info.SelectContacts" />
 											</div>
 										</div>
-										<div id="contactshead" style="overflow-y: scroll; overflow-x: hidden;">
+										<div id="contactshead" data-bind="attr: {style: Attendees().length == 0 ? 'overflow-y: scroll;' : 'overflow-y: scroll; overflow-x: hidden;'}">
 											<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden">
 												<thead>
 													<tr>
@@ -815,7 +815,7 @@
 												<!-- ko if: Attendees().length == 0 -->
 												<tbody>
 													<tr>
-														<td class="text-center" data-bind="attr: {colspan: attributeNames().length + 3}"><spring:message code="label.NoData" /></td>
+														<td class="text-center"><spring:message code="label.NoData" /></td>
 													</tr>
 												</tbody>
 												<!-- /ko -->
@@ -847,7 +847,7 @@
 												<spring:message code="info.CollectContacts" />
 											</div>	
 										</div>
-										<div id="selectedcontactshead" style="overflow-y: scroll; overflow-x: hidden;">
+										<div id="selectedcontactshead" data-bind="attr: {style: noVisibleAttendeesInSelectedGroup() ? 'overflow-y: scroll;' : 'overflow-y: scroll; overflow-x: hidden;'}">
 											<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden;">
 												<thead>
 													<tr>
@@ -880,7 +880,7 @@
 												<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
 												<tbody>
 													<tr>
-														<td class="text-center" data-bind="attr: {colspan: attributeNames().length + 3}"><spring:message code="label.NoContactsSelected" /></td>
+														<td class="text-center"><spring:message code="label.NoContactsSelected" /></td>
 													</tr>
 												</tbody>
 												<!-- /ko -->

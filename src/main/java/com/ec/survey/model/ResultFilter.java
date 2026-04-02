@@ -1,16 +1,6 @@
 package com.ec.survey.model;
 
-import com.ec.survey.model.survey.ChoiceQuestion;
-import com.ec.survey.model.survey.DelphiChartType;
-import com.ec.survey.model.survey.Element;
-import com.ec.survey.model.survey.GalleryQuestion;
-import com.ec.survey.model.survey.Matrix;
-import com.ec.survey.model.survey.NumberQuestion;
-import com.ec.survey.model.survey.PossibleAnswer;
-import com.ec.survey.model.survey.Question;
-import com.ec.survey.model.survey.RatingQuestion;
-import com.ec.survey.model.survey.Section;
-import com.ec.survey.model.survey.Survey;
+import com.ec.survey.model.survey.*;
 import com.ec.survey.tools.Tools;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
@@ -20,6 +10,7 @@ import org.hibernate.annotations.CascadeType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.persistence.Table;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -533,6 +524,7 @@ public class ResultFilter implements java.io.Serializable {
 		for (Element element : survey.getElements())
 		{
 			if (element.getId().equals(sectionId)) {
+				if (!(element instanceof Section)) return false;
 				correctSection = true;
 				sectionLevel = ((Section)element).getLevel();
 			} else if (correctSection) {
@@ -543,7 +535,7 @@ public class ResultFilter implements java.io.Serializable {
 				} else {
 					if (visibleQuestions.contains(element.getId().toString())) {
 						Element question = elementsById.get(element.getId());
-						if (question instanceof ChoiceQuestion || question instanceof Matrix || question instanceof RatingQuestion) {
+						if (question instanceof ChoiceQuestion || question instanceof Matrix || question instanceof RatingQuestion || question instanceof FreeTextQuestion) {
 							return true;
 						} else if (question instanceof GalleryQuestion) {
 							GalleryQuestion g = (GalleryQuestion)question;

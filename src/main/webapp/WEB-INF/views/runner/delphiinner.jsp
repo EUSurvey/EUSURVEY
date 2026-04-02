@@ -348,7 +348,7 @@
 					<%@ include file="delphiAnswersTable.jsp" %>
 				</div>
 				<div class="modal-footer">
-					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Close" /></a>
+					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal')); destroyAllTooltips()"><spring:message code="label.Close" /></a>
 				</div>
 			</div>
 		</div>
@@ -376,12 +376,14 @@
 		
 		function openAnswersDialog(element) {
 			$('.answers-table-modal-error').hide();
-			$('[data-toggle="tooltip"]').tooltip("hide");
 			showModalDialog($('.answers-table-modal'), element);
 
 			const languageCode = "${form.language.code}";
 			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
 			const uniqueCode = $('#uniqueCode').val();
+
+			destroyAllTooltips()
+
 			loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel, false);
 			if (answersTableViewModel.delphiTableEntries().length > 0) {
 				$('.answers-table-modal').find(".overlaymenu-sortingOptions").first().focus();

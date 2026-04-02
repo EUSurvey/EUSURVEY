@@ -690,15 +690,15 @@
 							     <include>ehcache.xml</include>
 							</includes>
 						</resource>
-						<resource>
+						<!--<resource-->
 						<!-- Copies src/main/config/environment/spring.properties to  -->
                         <!-- war/WEB-INF/spring.properties -->
-                        <directory>src/main/config/${environment}</directory>
+                        <!--directory>src/main/config/${environment}</directory>
                             <targetPath>WEB-INF</targetPath>
                             <includes>
                                  <include>spring.properties</include>
                             </includes>
-                        </resource>
+                        </resource-->
 						<!-- Copy Fonts -->
 						<resource>
 							<directory>src/main/java/Fonts</directory>
@@ -715,7 +715,7 @@
 							</includes>
 						</resource>
 					</webResources>
-					<warSourceExcludes>/WEB-INF/spring.properties</warSourceExcludes>
+					<!--<warSourceExcludes>/WEB-INF/spring.properties</warSourceExcludes>-->
 					<warName>eusurvey</warName>
 				</configuration>
 			</plugin>

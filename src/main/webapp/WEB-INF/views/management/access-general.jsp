@@ -678,7 +678,7 @@
                 row = $(selectedId).closest("tr")
             }
 
-            if (row.find(".externaluser").length > 0)
+            if (${!USER.isExternal()} && row.find(".externaluser").length > 0)
             {
                 $("#user-dialog").modal("hide");
                 $("#ManageInvitations4Externals-dialog").modal("show");

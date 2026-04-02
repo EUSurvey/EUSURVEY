@@ -8,6 +8,7 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
+import com.google.common.primitives.Ints;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
@@ -159,7 +160,26 @@ public class PublicationController extends BasicController {
 					request.getSession().setAttribute("lastPublishedFilter" + shortname, userFilter);
 
 					String selectedtab = request.getParameter("selectedtab");
-					result.addObject("selectedtab", selectedtab == null ? 1 : Integer.parseInt(selectedtab));
+
+					var tab = selectedtab == null ? 1 : Integer.parseInt(selectedtab);
+
+					/*
+					 * 1: Results
+					 * 2: Individual Results
+					 * 3: Statistics
+					 * 4: Quiz Statistics
+					 */
+
+					if (tab < 0 || tab > 4) //Invalid Tab
+						tab = 1;
+					if (!survey.getIsQuiz() && tab == 4) //No Quiz but on Quiz Tab
+						tab = 1;
+					if (!publication.isShowContent() && tab < 3) //Can't show results but on results tab
+						tab = 3;
+					if (!publication.isShowStatistics() && tab > 2) //Can't show statistics but on statistics tab
+						tab = 1;
+
+					result.addObject("selectedtab", tab);
 
 					if (survey.getIsSelfAssessment()) {
 						List<SATargetDataset> datasets = selfassessmentService.getTargetDatasets(survey.getUniqueId());

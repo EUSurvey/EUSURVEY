@@ -2,6 +2,7 @@ package com.ec.survey.model;
 
 import javax.persistence.*;
 
+import com.ec.survey.model.survey.Survey;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -97,6 +98,11 @@ public class Publication implements java.io.Serializable {
 	public boolean isSelected(int questionId)
 	{
 		return filter!= null && filter.getVisibleQuestions().contains(Integer.toString(questionId));
+	}
+
+	@Transient
+	public boolean isSectionSelected(Survey survey, int sectionId) {
+		return filter != null && filter.visibleSection(sectionId, survey);
 	}
 	
 	@Transient

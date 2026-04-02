@@ -198,6 +198,11 @@ public class AdministrationController extends BasicController {
 		int deletedfiles = fileService.deleteOldTempFiles(new Date());
 		return new ModelAndView("error/info", Constants.MESSAGE, deletedfiles +  " files deleted");
 	}
+
+	@RequestMapping(value = "/ai", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView ai(HttpServletRequest request) {
+		return new ModelAndView("administration/ai");
+	}
 	
 	@RequestMapping(value = "/languages", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView languages(HttpServletRequest request) {

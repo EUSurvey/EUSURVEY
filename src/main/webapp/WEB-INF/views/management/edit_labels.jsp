@@ -1,0 +1,45 @@
+<script>
+var editLabels = {
+    section: "${form.getMessageInSurveyLang("label.SectionText")}",
+    freeText: "${form.getMessageInSurveyLang("form.FreeTextQuestion")}",
+    singleChoice: "${form.getMessageInSurveyLang("form.SingleChoiceQuestion")}",
+    multipleChoice: "${form.getMessageInSurveyLang("form.MultipleChoiceQuestion")}",
+    ranking: "${form.getMessageInSurveyLang("form.RankingQuestionQ")}",
+    numberSlider: "${form.getMessageInSurveyLang("form.NumberSliderQuestion")}",
+    matrix: "${form.getMessageInSurveyLang("form.Matrix")}",
+    table: "${form.getMessageInSurveyLang("form.Table")}",
+    date: "${form.getMessageInSurveyLang("form.Date")}",
+    time: "${form.getMessageInSurveyLang("form.Time")}",
+    text: "${form.getMessageInSurveyLang("form.Text")}",
+    image: "${form.getMessageInSurveyLang("form.Image")}",
+    ruler: "${form.getMessageInSurveyLang("form.Ruler")}",
+    upload: "${form.getMessageInSurveyLang("form.FileUploadTitle")}",
+    download: "${form.getMessageInSurveyLang("label.Download")}",
+    email: "${form.getMessageInSurveyLang("label.Email")}",
+    regex: "${form.getMessageInSurveyLang("form.RegExQuestion")}",
+    formula: "${form.getMessageInSurveyLang("form.FormulaTitle")}",
+    gallery: "${form.getMessageInSurveyLang("form.Gallery")}",
+    confirmation: "${form.getMessageInSurveyLang("form.ConfirmationTitle")}",
+    rating: "${form.getMessageInSurveyLang("form.Rating")}",
+    complexTable: "${form.getMessageInSurveyLang("form.ComplexTable")}",
+    targetDataset: "${form.getMessageInSurveyLang("form.TargetDatasetTitle")}",
+    saQuestion: "${form.getMessageInSurveyLang("label.SAQuestion")}",
+    veryUnlikely: "${form.getMessageInSurveyLang("form.VeryUnlikely")}",
+    veryLikely: "${form.getMessageInSurveyLang("form.VeryLikely")}",
+
+    euCountries: "${form.getMessageInSurveyLang("form.predefined.eucountries")}",
+    euLanguages: "${form.getMessageInSurveyLang("form.predefined.eulanguages")}",
+    euDGs: "${form.getMessageInSurveyLang("form.predefined.dgsnew")}",
+    euAgencies: "${form.getMessageInSurveyLang("form.predefined.euagencies")}",
+    unCountries: "${form.getMessageInSurveyLang("form.predefined.uns")}",
+
+    questionNum: "${form.getMessageInSurveyLang("form.QuestionNum", "#")}",
+    questionNumbered: (num) => editLabels.questionNum.replace("#", String(num)),
+
+    answerNum: "${form.getMessageInSurveyLang("form.AnswerNum", "#")}",
+    answerNumbered: (num) => editLabels.answerNum.replace("#", String(num)),
+
+    rankingItemNum: "${form.getMessageInSurveyLang("form.RankingItemNum", "#")}",
+    rankingItemNumbered: (num) => editLabels.rankingItemNum.replace("#", String(num)),
+}
+</script>

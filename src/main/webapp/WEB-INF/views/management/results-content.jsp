@@ -166,7 +166,7 @@
 															<div class="resultoverlaymenu overlaymenu hideme">
 																<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+                                                 					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 																</c:if>
 														   </div>
 													   </div>
@@ -183,9 +183,9 @@
 													    	<span class="glyphicon glyphicon-option-vertical"></span>
 														</button>
 														<div class="resultoverlaymenu overlaymenu hideme">
-															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></><br />
+															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+                                                					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 															</c:if>
 													   </div>
 												   </div>
@@ -224,7 +224,7 @@
 														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+                                                					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 															</c:if>
 													   </div>
 												   </div>
@@ -267,7 +267,7 @@
 																<div class="resultoverlaymenu overlaymenu hideme">
 																	<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-	                                                 					<a onclick="showDeleteColumnDialog('${child.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+	                                                 					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${child.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 																	</c:if>
 															   </div>
 														   </div>
@@ -281,7 +281,7 @@
 															<div class="resultoverlaymenu overlaymenu hideme">
 																<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-	                                                					<a onclick="showDeleteColumnDialog('${child.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+	                                                					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${child.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 																</c:if>
 														   </div>
 													   </div>
@@ -322,7 +322,7 @@
 														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+                                                					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 															</c:if>
 													   </div>
 													  </div>
@@ -335,7 +335,7 @@
 														    	<span class="glyphicon glyphicon-option-vertical"></span>
 															</button>
 															<div class="resultoverlaymenu overlaymenu hideme">
-																<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+																<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 														   </div>
 															</c:if>
 													   </div>		
@@ -392,7 +392,7 @@
 															<div class="resultoverlaymenu overlaymenu hideme">
 																<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+                                                 					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 																</c:if>
 														   </div>
 													   </div>
@@ -427,7 +427,7 @@
 															<div class="resultoverlaymenu overlaymenu hideme">
 																<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 																<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+                                                 					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 																</c:if>
 														   </div>
 													   </div>
@@ -476,7 +476,7 @@
 														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+                                                					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 															</c:if>
 													   </div>
 												   </div>
@@ -490,7 +490,7 @@
 														<div class="resultoverlaymenu overlaymenu hideme">
 															<button type="button" class="unstyledbuttonBlack" onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></button><br />
 															<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+                                                					<button type="button" class="unstyledbuttonBlack" onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></button>
 															</c:if>
 													   </div>
 												   </div>
@@ -1205,7 +1205,13 @@
                   },
 
 				  success: function( list ) {
-				  
+
+				      if ('${resultType}' == 'content') {
+                          if ($("#selectedtab").length == 0 || $("#selectedtab").val() == 1) {
+                              $("#scrollareaheader").css({ 'overflow-x' : 'hidden'});
+                          }
+                      }
+
 					  if (list.length <= 1)
 					  {
 						  endreached = true;
@@ -1221,12 +1227,6 @@
 						  $( "#wheel" ).hide();
 						  return;
 					  }
-
-					  if ('${resultType}' == 'content') {
-                          if ($("#selectedtab").length == 0 || $("#selectedtab").val() == 1) {
-                              $("#scrollareaheader").css({ 'overflow-x' : 'hidden'});
-                          }
-                      }
 
 					  $(".deactivatedexports").hide();
 					  $(".activatedexports").show();					  

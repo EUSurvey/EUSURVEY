@@ -959,8 +959,25 @@ function getDelphiQuestionUid(element)
 	}
 }
 
+function destroyAllTooltips() {
+	//$('[data-toggle="tooltip"]').tooltip("dispose");
+	//Bootstrap 3 has a bug with tooltip dispose. We need to manually implement it
+
+	//All open tooltips
+	$('[id^=tooltip][role=tooltip].tooltip').each((i, el) => {
+		//Remove aria link
+		const describedElement = document.querySelector(`[aria-describedby=${el.id}]`)
+		if (describedElement != null) {
+			describedElement.removeAttribute("aria-describedby")
+		}
+		//Remove tooltip element from dom
+		el.remove()
+	})
+}
+
 function sortDelphiTable(element, direction) {
-	$('[data-toggle="tooltip"]').tooltip("hide");
+	destroyAllTooltips()
+
 	var surveyElement = $(element).closest(".survey-element");
 	var uid = $(surveyElement).attr("data-uid");
 	var viewModel = modelsForDelphiQuestions[uid];

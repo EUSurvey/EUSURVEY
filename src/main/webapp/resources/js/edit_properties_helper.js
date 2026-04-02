@@ -15,19 +15,13 @@ function checkGalleryProperties(doupdate)
 
 function toggleAdvancedProperties(button)
 {
-	var classUntil = ".quiz"
-	if ($("#properties").find(".selfassessment").length > 0) {
-		classUntil = ".selfassessment"
-	}
 	if ($(button).parent().find(".glyphicon-minus-sign").length > 0)
 	{
 		$(button).parent().find(".glyphicon-minus-sign").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
-		$(button).closest("tr").nextUntil(classUntil).addClass("hideme");
+		$(button).closest("tr").nextUntil(".collapsiblerow:visible").addClass("hideme");
 	} else {
 		$(button).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
-		$(button).closest("tr").nextAll(":not(.tinymcerow, .quiz, .selfassessment)").removeClass("hideme");
-		//registration form area
-		$(button).closest("tr").nextUntil(classUntil).find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
+		$(button).closest("tr").nextUntil(".collapsiblerow:visible").filter(":not(.tinymcerow, .noshow)").removeClass("hideme");
 	}
 }
 
@@ -151,30 +145,6 @@ function getSliderPropertiesRow()
 	var row = new PropertyRow();
 	row.Type("slider");
 	_elementProperties.propertyRows.push(row);
-}
-
-function toggleRegistrationFormProperties(button)
-{
-	if ($(button).parent().find(".glyphicon-minus-sign").length > 0)
-	{
-		$(button).parent().find(".glyphicon-minus-sign").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
-		$(button).closest("tr").nextUntil(".collapsiblerow").addClass("hideme");
-	} else {
-		$(button).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
-		$(button).closest("tr").nextUntil(".collapsiblerow").removeClass("hideme");
-	}
-}
-
-function toggleCellProperties(button)
-{
-	if ($(button).parent().find(".glyphicon-minus-sign").length > 0)
-	{
-		$(button).parent().find(".glyphicon-minus-sign").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
-		$(button).closest("tr").nextUntil(".collapsiblerow").addClass("hideme");
-	} else {
-		$(button).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
-		$(button).closest("tr").nextAll(":not(.tinymcerow, .noshow)").removeClass("hideme");
-	}
 }
 
 function markActiveProperty(input) {
@@ -1246,7 +1216,7 @@ function getSAQuestionRow(element) {
 	{
 		item = new ContentItem();
 		item.Value(SACriteria[i].id);
-		item.Label(SACriteria[i].name);
+		item.Label(escapeForHtml(SACriteria[i].name));
 				
 		if (SACriteria[i].id == element.evaluationCriterion())
 		{
@@ -1276,6 +1246,12 @@ function getSAQuestionRow(element) {
 	  		update(input);
 		});
 	})
+}
+
+function escapeForHtml(text) {
+	const span = document.createElement("span")
+	span.innerText = text
+	return span.innerHTML
 }
 
 function createDatePickerForEditor(instance, othervalue)
@@ -1985,7 +1961,7 @@ function addPossibleAnswer(noundo)
 		answerNum = possAns.length + 1
 	}
 
-	text = "Answer " + answerNum
+	text = editLabels.answerNumbered(answerNum)
 
 	var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text, false);
 	element.possibleAnswers.push(newanswer);	
@@ -2080,7 +2056,7 @@ function addPossibleAnswerChildren(){
 	const parentId = $(_elementProperties.selectedelement).closest("li.complextableitem").attr("data-id");
 	const table = _elements[parentId];
 
-	let text = "Answer " + (headerCell.possibleAnswersChildren().length + 1);
+	let text = editLabels.answerNumbered(headerCell.possibleAnswersChildren().length + 1);
 
 	function nextAnswer(){
 		return newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text, false);
@@ -2124,7 +2100,7 @@ function addRankingEntry()
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
-	var text = "Ranking Item " + (element.rankingItems().length + 1);
+	var text = editLabels.rankingItemNumbered(element.rankingItems().length + 1);
 
 	var newrankingitem = newRankingItemViewModel(getNewId(), getNewId(), getNewShortname(), text);
 	element.rankingItems.push(newrankingitem);
@@ -2183,7 +2159,7 @@ function addColumn(noundo)
 	var element = _elements[id];
 	
 	if (element.type == "Matrix") {
-		text = "Answer " + (element.answers().length + 1);
+		text = editLabels.answerNumbered(element.answers().length + 1);
 	} else if (element.type == "ComplexTable") {
 		text = getBigLetter(element.answers().length);
 	} else {
@@ -2286,7 +2262,7 @@ function addRow(noundo)
 	
 	if (element.type == "Matrix")
 	{
-		text = "Question " + (element.questionsOrdered().length + 1);	
+		text = editLabels.questionNumbered(element.questionsOrdered().length + 1);
 		for (var i = 0; i < element.questionsOrdered().length; i++)
 		{
 			if (element.questionsOrdered()[i].optional())
@@ -2302,7 +2278,7 @@ function addRow(noundo)
 		}
 	} else if (element.type == "RatingQuestion")
 	{
-		text = "Question " + (element.childElements().length + 1);
+		text = editLabels.questionNumbered(element.childElements().length + 1);
 		for (var i = 0; i < element.childElements().length; i++)
 		{
 			if (element.childElements()[i].optional())
@@ -2934,13 +2910,13 @@ function numberSliderDisplayUpdate(element) {
 
         if (element.minLabel() == null)
         {
-            element.minLabel("Very unlikely");
-            $("tr[data-label='MinLabel']").find("input[type='text']").val("Very unlikely");
+            element.minLabel(editLabels.veryUnlikely);
+            $("tr[data-label='MinLabel']").find("input[type='text']").val(editLabels.veryUnlikely);
         }
         if (element.maxLabel() == null)
         {
-            element.maxLabel("Very likely");
-            $("tr[data-label='MaxLabel']").find("input[type='text']").val("Very likely");
+            element.maxLabel(editLabels.veryLikely);
+            $("tr[data-label='MaxLabel']").find("input[type='text']").val(editLabels.veryLikely);
         }
 
         initSlider($("#" + element.id()).find(".sliderbox").first(), true, element);

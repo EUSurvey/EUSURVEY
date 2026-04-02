@@ -9,6 +9,8 @@
 	<title>EUSurvey - <spring:message code="label.Edit" /></title>
 
 	<%@ include file="../includes.jsp" %>
+
+	<%@include file="edit_labels.jsp"%>
 	
 	<link href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
   	<link href="${contextpath}/resources/css/edit.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
@@ -429,8 +431,8 @@
 		SurveyRuleEvaluator.recalculate()
 		
 		<c:if test="${form.survey.isSelfAssessment}">
-			var SACriteria = ${SACriteria};
-			var SADatasets = ${SADatasets};
+			var SACriteria = (${SACriteriaJSON});
+			var SADatasets = (${SADatasetsJSON});
 		</c:if>
 
 		var showListVoteProperty = ${!form.survey.geteVoteTemplate().equals('l') && !form.survey.geteVoteTemplate().equals('p')};

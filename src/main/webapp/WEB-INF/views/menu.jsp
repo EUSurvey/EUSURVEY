@@ -513,11 +513,11 @@
 								
 								<c:choose>
 									<c:when test="${USER.isExternal() || USER.type == 'SYSTEM'}">
-										<select class="form-control new-survey-organisation" id="new-survey-organisation" style="width: auto; min-width: 200px" onchange="checkValidator()">
+										<select class="form-control new-survey-organisation" id="new-survey-organisation" style="width: auto; min-width: 200px; max-width: 690px;" onchange="checkValidator()">
 									</c:when>
 									<c:otherwise>
 										<input type="hidden" id="new-survey-organisation" class="new-survey-organisation" />
-										<select class="form-control new-survey-organisation" style="width: auto; min-width: 200px" disabled="disabled" onchange="checkValidator()">
+										<select class="form-control new-survey-organisation" style="width: auto; min-width: 200px; max-width: 690px;" disabled="disabled" onchange="checkValidator()">
 									</c:otherwise>
 								</c:choose>							
 								
@@ -828,37 +828,61 @@
 		    {		    	
 		    	$.each(result.dgs, function(key, data){
 		    		var option = document.createElement("option");
-		    		$(option).attr("value", key).append(data);
+		    		$(option).attr("value", key);
+					if (data.length > 95) {
+						$(option).append(data.substring(0, 95) + "...");
+					} else {
+						$(option).append(data);
+					}
 		    		if (userOrganisation == key) {
 		    			$(option).attr("selected", "selected");
 		    		}
+					$(option).attr("title", data);
 		    		$('#new-survey-organisation-dgs').append(option);
-		    	});	
+		    	});
 		    	
 		    	$.each(result.executiveAgencies, function(key, data){
 		    		var option = document.createElement("option");
-		    		$(option).attr("value", key).append(data);
+		    		$(option).attr("value", key);
+					if (data.length > 95) {
+						$(option).append(data.substring(0, 95) + "...");
+					} else {
+						$(option).append(data);
+					}
 		    		if (userOrganisation == key) {
 		    			$(option).attr("selected", "selected");
 		    		}
+					$(option).attr("title", data);
 		    		$('#new-survey-organisation-aex').append(option);
 		    	});	
 		    	
 		    	$.each(result.otherEUIs, function(key, data){
 		    		var option = document.createElement("option");
-		    		$(option).attr("value", key).append(data);
+		    		$(option).attr("value", key);
+					if (data.length > 95) {
+						$(option).append(data.substring(0, 95) + "...");
+					} else {
+						$(option).append(data);
+					}
 		    		if (userOrganisation == key) {
 		    			$(option).attr("selected", "selected");
 		    		}
+					$(option).attr("title", data);
 		    		$('#new-survey-organisation-euis').append(option);
 		    	});	
 		    	
 		    	$.each(result.nonEUIs, function(key, data){
 		    		var option = document.createElement("option");
-		    		$(option).attr("value", key).append(data);
+		    		$(option).attr("value", key);
+					if (data.length > 95) {
+						$(option).append(data.substring(0, 95) + "...");
+					} else {
+						$(option).append(data);
+					}
 		    		if (userOrganisation == key) {
 		    			$(option).attr("selected", "selected");
 		    		}
+					$(option).attr("title", data);
 		    		$('#new-survey-organisation-noneuis').append(option);
 		    	});	
 		    	

@@ -49,7 +49,7 @@
 		{
 			 color:#333;
 		}
-	
+
 	</style>
 	
 	<script type="text/javascript">
@@ -116,6 +116,7 @@
 			$('.statisticsQuizExportIcons').hide();
 
 			$("#scrollareaheader").css("overflow-x", "hidden");
+
 			if ($('#scrollarea').hasScrollBar())
 			{
 				$("#scrollareaheader").css("overflow-y","scroll");
@@ -144,6 +145,7 @@
 			$('.statisticsQuizExportIcons').hide();
 
 			$("#scrollareaheader").css("overflow-x", "auto");
+
 			if ($('#scrollarea').hasScrollBar())
 			{
 				$("#scrollareaheader").css("overflow-y","scroll");
@@ -226,7 +228,6 @@
 				  }
 				  
 				  $(".add-wait-animation-individual").hide();
-                  $("#scrollareaheader").css({ 'overflow-x' : 'auto'});
 
 				}});
 		}

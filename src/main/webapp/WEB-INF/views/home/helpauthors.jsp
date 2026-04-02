@@ -69,6 +69,10 @@
 			text-decoration: underline;
 		}
 
+		#faqcontent h3 {
+			font-size: 19px !important;
+		}
+
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -1096,6 +1100,125 @@
 			<p>In the example below, line 5 is showing the total for each column.
 				Those fields use the 'Read only' option, so that, the total cannot be modified by the user.</p>
 			<img alt="screenshot formular element" src="${contextpath}/resources/images/documentation/formular_field_9.png" style="margin-bottom: 1em" />
+
+			<h2>Regular Expressions</h2>
+
+			<h3>What is a Regular Expression?</h3>
+			<p>A Regular Expression (or "regex") is a sequence of characters that defines a search pattern. In EUSurvey, regex is used to <b>control and validate</b> what users can enter in survey fields, ensuring responses match the format you need.</p>
+
+			<h3>How to Use Regex in EUSurvey</h3>
+			<p>Regex in EUSurvey is most commonly used to:</p>
+			<ul>
+				<li><b>Validate text input</b> (e.g., emails, phone numbers, IDs)</li>
+				<li><b>Enforce specific formats</b> (e.g., dates, project codes)</li>
+			</ul>
+
+			<h3>How Regex Works</h3>
+			<p>A regex pattern describes what you want to match. The system checks user input against this pattern and only accepts it if there's a match.</p>
+			<p><b>Example:</b></p>
+			<ul>
+				<li>The pattern <code>^[A-Za-z]+$</code> only accepts letters (no numbers or symbols).</li>
+				<li>The pattern <code>^[0-9]+$</code> only accepts numbers.</li>
+			</ul>
+
+			<h3>Common Regex Elements</h3>
+
+			<p><b>Character classes:</b></p>
+			<ul>
+				<li><code>\d</code>: Any Digit (0-9)</li>
+				<li><code>\w</code>: Alphanumeric character</li>
+				<li><code>\s</code>: Whitespace character</li>
+			</ul>
+
+			<p><b>Quantifiers:</b></p>
+			<ul>
+				<li><code>+</code>: One or more</li>
+				<li><code>*</code>: Zero or more</li>
+				<li><code>?</code>: Zero or one</li>
+				<li><code>{n}</code>: Exactly n occurrences</li>
+			</ul>
+
+			<p><b>Anchors:</b></p>
+			<ul>
+				<li><code>^</code>: Start of the string</li>
+				<li><code>$</code>: End of the string</li>
+			</ul>
+
+			<p><b>Groups and alternation:</b></p>
+			<ul>
+				<li><code>(abc)</code>: Groups Characters</li>
+				<li><code>a|b</code>: Matches a or b</li>
+			</ul>
+
+			<h3>Practical Regex Examples for EUSurvey</h3>
+			<ol>
+				<li>
+					<p><b>Validation of the 24 EU Official Language Codes</b></p>
+					<p><i>Regex:</i> <code>^(BG|ES|CS|DA|DE|ET|EL|EN|FR|GA|HR|IT|LV|LT|HU|MT|NL|PL|PT|RO|SK|SL|FI|SV)$</code></p>
+					<p><i>Matches:</i> Any of the 24 official EU language codes.</p>
+					<p><i>Examples:</i> EN, FR, DE</p>
+				</li>
+				<li>
+					<p><b>European Commission Internal Telephone Number</b></p>
+					<p><i>Regex:</i> <code>^[+]\d{3}\s\d{4}\s\d{5}$</code></p>
+					<p><i>Format:</i> <code>+XXX XXXX XXXXX</code></p>
+					<p><i>Example:</i> <code>+322 3456 78901</code></p>
+				</li>
+				<li>
+					<p><b>EU Project / Grant Code Validation</b></p>
+					<p><i>Regex:</i> <code>^[A-Z0-9]+(-[A-Z0-9]+)*$</code></p>
+					<p><i>Validates:</i> Typical EU project or grant codes, consisting of letters and numbers separated by dashes.</p>
+					<p><i>Examples:</i> <code>H2020-ICT-2020-1</code>, <code>FP7-ENV-2018-2</code></p>
+				</li>
+				<li>
+					<p><b>Validation of a UNIT or DG of the European Commission</b></p>
+					<p><i>Regex:</i> <code>^[A-Za-z]+.[A-Za-z0-9-]+(?:.[A-Za-z0-9]+)?$</code></p>
+					<p><i>Validates:</i> Identifiers such as DG (e.g., <code>DIGIT</code>), Directorate (e.g., <code>DIGIT.A</code>), or Unit (e.g., <code>DIGIT.A.4</code>).</p>
+					<p><i>Examples:</i> <code>DIGIT.A.4</code>, <code>ENV.B.2</code></p>
+				</li>
+				<li>
+					<p><b>Email Address Validation</b></p>
+					<p><i>Regex:</i> <code>^[^\s@]+@[^\s@]+\.[^\s@]+$</code></p>
+					<p><i>Checks:</i> That the input follows a standard email format.</p>
+					<p><i>Example:</i> <code>john.doe@example.eu</code></p>
+				</li>
+				<li>
+					<p><b>Date in Format YYYY-MM-DD</b></p>
+					<p><i>Regex:</i> <code>^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$</code></p>
+					<p><i>Validates:</i> Dates between 1900-2099 with separators like <code>-</code>, <code>/</code>, <code>.</code>, or space.</p>
+					<p><i>Example:</i> <code>2025-12-04</code></p>
+				</li>
+				<li>
+					<p><b>Numbers Only</b></p>
+					<p><i>Regex:</i> <code>^[0-9]+$</code></p>
+					<p><i>Allows:</i> Only digits (0-9).</p>
+					<p><i>Example:</i> <code>12345</code></p>
+				</li>
+				<li>
+					<p><b>Age Validation</b></p>
+					<p><i>Regex for age between 20 and 99:</i> <code>([2-9][0-9])</code></p>
+					<p><i>Regex for age between 18 and 35:</i> <code>(1[8-9]|2[0-9]|3[0-5])</code></p>
+					<p><b>Example:</b> <code>27</code></p>
+				</li>
+				<li>
+					<p><b>Luxembourg Phone Numbers</b></p>
+					<p><i>Regex:</i> <code>^((+|00\s?)352)?(\s?\d{2}){3,4}$</code></p>
+					<p><i>Validates:</i> Luxembourg landline numbers with optional country code.</p>
+					<p><i>Example:</i> <code>+352 26 12 34 56</code></p>
+				</li>
+				<li>
+					<p><b> Luxembourg Mobile Phone Numbers</b></p>
+					<p><i>Regex:</i> <code>^((+|00\s?)352)?\s?6[269]1(\s?\d{3}){2}$</code></p>
+					<p><i>Validates:</i> Luxembourgish mobile numbers starting with common prefixes.</p>
+					<p><i>Example:</i> <code>+352 621 123 456</code></p>
+				</li>
+			</ol>
+
+			<h3>Why Use Regex in EUSurvey?</h3>
+			<p>Regular expressions help you <b>automate validation</b> and <b>reduce errors</b> in survey responses. By setting clear rules, you ensure that the data you collect is consistent and usable.</p>
+
+			<p>For more information on regex, visit <a href="https://www.w3schools.com/js/js_regexp.asp">https://www.w3schools.com/js/js_regexp.asp</a></p>
+
 			<h2>Complex Table</h2>
 			<p>'Complex Table' is a table-like survey element that allows you to compose other survey items in a more complex way.
 				It enables visual linking of different questions and layout of text passages (e.g. displaying text in columns).</p>
@@ -2681,7 +2804,7 @@
 				<img alt="screenshot anonymity option" src="${contextpath}/resources/images/documentation/anonymity.png" />
 			</p>
 			<p>
-				To do so, go to <b>Survey Properties > Security</b> and enable 'Anonymous survey mode'. When this option is activated, no user-related data (including IP addresses) will be collected or stored.
+				To do so, go to <b>Properties > Survey Security</b> and enable 'Anonymous survey mode'. When this option is activated, no user-related data (including IP addresses) will be collected or stored.
 			</p>
 			<p>
 				To ensure your survey remains fully anonymous, you must also avoid including any questions that request personal data within the questionnaire itself.
@@ -2792,6 +2915,90 @@
 			</ol>
 			<p>
 				All answers collected for the corresponding question will be permanently removed.
+			</p>
+			<h2>
+				Automatic deletion of inactive surveys
+			</h2>
+			<h4>
+				1. What is an inactive survey?
+			</h4>
+			<p>
+				In <b>EUSurvey</b>, a survey is considered inactive when <b>it no longer receives new contributions</b>.
+			</p>
+			<p>
+				If a survey does not receive any new contributions for <b>one year (365 days)</b>, it may be marked as inactive and become eligible for the automatic deletion process.
+			</p>
+			<h4>
+				2. Why are inactive surveys deleted?
+			</h4>
+			<p>
+                To maintain a high-quality service and optimise system performance, <b>EUSurvey</b> may automatically delete surveys that have been inactive for a long period.
+            </p>
+			<p>
+				This process also helps ensure compliance with the General Data Protection Regulation (GDPR) and the Regulation (EU) 2018/1725 (EUDPR) and their respective data retention requirements.
+			</p>
+			<p>
+				Before any deletion takes place, survey owners and privileged users receive several email notifications giving them time to review the survey and take action if necessary.
+			</p>
+			<h4>
+				3. How does the inactive survey deletion process work?
+			</h4>
+			<p>
+				When a survey has not received new contributions for one year, <b>EUSurvey</b> starts a notification process before deletion.
+			</p>
+			<p>
+				The process works as follows:
+			</p>
+			<p>
+				<ol>
+					<li>The survey owner and all privileged users receive a <b>first email notification</b> informing them that the survey is inactive and is subject to deletion.</li>
+					<li>A <b>second reminder email</b> is sent if no action is taken.</li>
+					<li>A <b> third and final notification</b> is sent before deletion.</li>
+					<li>If the survey remains inactive after these notifications, the survey is <b>automatically deleted</b> from the system.</li>
+				</ol>
+			</p>
+			<p>
+				This staged notification process ensures that users have sufficient time to review the survey and preserve their data if needed. The timing is subject to configuration changes but initially it has been set to 60 days, 45 days and 3 days before deletion.
+			</p>
+			<h4>
+				4. Who receives the inactivity notifications?
+			</h4>
+			<p>
+				Notifications are sent to:
+			</p>
+			<p>
+				<ul>
+					<li>the <b>survey owner</b></li>
+					<li>all <b>privileged users</b> who have management rights for the survey. For example, users with the role of <b>Form Manager</b> will also receive these notifications.</li>
+				</ul>
+			</p>
+			<h4>
+				5. What should I do if I receive an inactivity notification?
+			</h4>
+			<p>
+				If you receive an inactivity notification from <b>EUSurvey</b>, you should review whether the survey is still needed.
+			</p>
+			<p>
+				Possible actions include:
+			</p>
+			<p>
+				<ul>
+					<li>exporting the survey results (e.g. .XLSX file) for archiving - please refer to the relevant FAQ article</li>
+					<li>exporting the survey questionnaire as an <b>.EUS file</b></li>
+					<li>reviewing or updating the survey or collecting new contributions if the survey is still in use so that it will be out of the deletion process</li>
+				</ul>
+			</p>
+			<p>
+				Exporting the questionnaire as an <b>.EUS file</b> allows you to <b>store the survey questionnaire and import it again later if needed</b>.
+			</p>
+			<p>
+				If no action is taken and the survey remains inactive, it will be automatically deleted after the notification process.
+			</p>
+			<h4>
+				6. What if I still need help?
+			</h4>
+			<p>
+				In this case, please submit a formal support request here: <a href="${contextpath}/home/support?automateddeletion=1" target="_blank">Contact us</a> and select the option 'I have a question about the automated deletion of my survey'.
 			</p>
 	</div> <!-- faqcontent -->
 	</div>
