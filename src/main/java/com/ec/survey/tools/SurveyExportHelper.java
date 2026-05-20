@@ -812,11 +812,14 @@ public class SurveyExportHelper {
                 }
             }
         }
+
+		var filter = ObjectInputFilter.Config.createFilter("com.ec.survey.model.**;java.base/*;!*");
 		
 		Object result;
 		try (ObjectInputStream obj = new ObjectInputStream(new FileInputStream(destinationFile))) {
+			obj.setObjectInputFilter(filter);
 			result = obj.readObject();
-		}	
+		}
 		
 		return result;
 	}
