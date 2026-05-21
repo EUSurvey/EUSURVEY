@@ -1,8 +1,4 @@
-# This repository adheres to the publiccode.yml standard by including this 
-# metadata file that makes public software easily discoverable.
-# More info at https://github.com/italia/publiccode.yml
-
-publiccodeYmlVersion: '0.3'
+publiccodeYmlVersion: "0"
 categories:
   - survey
 description:
@@ -11,7 +7,6 @@ description:
       https://github.com/EUSurvey/EUSURVEY
     features:
       - Create survey, quiz, electronic votes
-    genericName: EU Survey Software
     longDescription: |
       EUSurvey is the official online survey management tool of the European
       Commission. Its development was started in 2013 under the supervision of
@@ -51,23 +46,13 @@ intendedAudience:
   scope:
     - government
     - local-authorities
-it:
-  conforme:
-    gdpr: true
-    lineeGuidaDesign: false
-    misureMinimeSicurezza: false
-    modelloInteroperabilita: false
-  countryExtensionVersion: '0.2'
-  piattaforme:
-    anpr: false
-    cie: false
-    pagopa: false
-    spid: false
-landingURL: 'https://ec.europa.eu/eusurvey/'
+landingURL: "https://ec.europa.eu/eusurvey/"
 legal:
   license: EUPL-1.2
   mainCopyrightOwner: European Commission
-  repoOwner: European Commission
+organisation:
+  uri: https://commission.europa.eu
+  name: European Commission
 localisation:
   availableLanguages:
     - en
@@ -77,7 +62,7 @@ maintenance:
 name: EUSurvery
 platforms:
   - web
-releaseDate: '2023-06-01'
+releaseDate: "2023-06-01"
 softwareType: standalone/web
 softwareVersion: 1.5.3
-url: 'https://github.com/EUSurvey/EUSURVEY'
+url: "https://github.com/EUSurvey/EUSURVEY"
