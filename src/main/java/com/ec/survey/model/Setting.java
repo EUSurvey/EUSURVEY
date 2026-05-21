@@ -90,6 +90,8 @@ public class Setting {
     public static final String InactiveSurveysSender = "InactiveSurveysSender";
 
 	public static final String Chatbot = "Chatbot";
+	public static final String ChatbotWidgetURL = "ChatbotWidgetURL";
+	public static final String ChatbotAPIURL = "ChatbotAPIURL";
 
 	@Id
 	@Column(name = "SETTINGS_ID")
