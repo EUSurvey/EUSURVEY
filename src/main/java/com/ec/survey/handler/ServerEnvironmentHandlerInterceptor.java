@@ -180,6 +180,10 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 
 			String enablechatbot = settingsService.get(Setting.Chatbot);
 			modelAndView.getModelMap().addAttribute(APPLICATION_SHOWCHATBOT, enablechatbot != null && enablechatbot.equalsIgnoreCase("true"));
+			String chat_widget_url = settingsService.get(Setting.ChatbotWidgetURL);
+			modelAndView.getModelMap().addAttribute("chat_widget_url", chat_widget_url);
+			String chat_api_url = settingsService.get(Setting.ChatbotAPIURL);
+			modelAndView.getModelMap().addAttribute("chat_api_url", chat_api_url);
             
             modelAndView.getModelMap().addAttribute("contextpath", contextpath);
             modelAndView.getModelMap().addAttribute("monitoringEmail", monitoringEmail);

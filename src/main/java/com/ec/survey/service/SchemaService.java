@@ -69,6 +69,33 @@ public class SchemaService extends BasicService {
 	}
 
 	@Transactional
+	public void step137() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.ChatbotWidgetURL);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.ChatbotWidgetURL);
+			s.setValue("http://ovishime.cc.cec.eu.int:8090/eusurvey/chatbot-demo/chat-widget.js");
+			s.setFormat("URL");
+			session.saveOrUpdate(s);
+		}
+
+		existing = settingsService.get(Setting.ChatbotAPIURL);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.ChatbotAPIURL);
+			s.setValue("http://ovishime.cc.cec.eu.int:8090/eusurvey/chatbot-api");
+			s.setFormat("URL");
+			session.saveOrUpdate(s);
+		}
+
+		status.setDbversion(137);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
 	public void step136() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
