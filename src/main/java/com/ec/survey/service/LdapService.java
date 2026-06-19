@@ -283,7 +283,7 @@ public class LdapService extends BasicService {
 			NamingEnumeration<SearchResult> ne = null; 
 			Attributes set_att;
 
-			String searchString = "(& (objectClass=*)";
+			String searchString = "(&";
 						
 			if (name != null && name.length() > 0){
 				searchString += getFilterContainsOr("uid", ldapMappingUserEcMoniker, name);			
