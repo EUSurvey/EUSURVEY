@@ -76,6 +76,7 @@ public class LdapService extends BasicService {
         env.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
         env.put(Context.SECURITY_PRINCIPAL, securityPrincipal);
         env.put(Context.SECURITY_CREDENTIALS, securityCredentials);
+		env.put(Context.SECURITY_PROTOCOL, "ssl");
             
         return new InitialDirContext(env);
     }
