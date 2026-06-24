@@ -69,6 +69,24 @@ public class SchemaService extends BasicService {
 	}
 
 	@Transactional
+	public void step138() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.InactiveSurveysBCC);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.InactiveSurveysBCC);
+			s.setValue("DIGIT-EUSURVEY-SUPPORT@ec.europa.eu");
+			s.setFormat("email");
+			session.saveOrUpdate(s);
+		}
+
+		status.setDbversion(138);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
 	public void step137() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

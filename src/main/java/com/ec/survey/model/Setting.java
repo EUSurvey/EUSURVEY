@@ -88,6 +88,7 @@ public class Setting {
     public static final String InactiveSurveysNotification2Days = "InactiveSurveysNotification2Days";
     public static final String InactiveSurveysNotification3Days = "InactiveSurveysNotification3Days";
     public static final String InactiveSurveysSender = "InactiveSurveysSender";
+	public static final String InactiveSurveysBCC = "InactiveSurveysBCC";
 
 	public static final String Chatbot = "Chatbot";
 	public static final String ChatbotWidgetURL = "ChatbotWidgetURL";

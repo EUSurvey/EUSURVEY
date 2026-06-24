@@ -34,6 +34,8 @@ public class MailSender implements Runnable {
 	
 	private String to;
 	private String from;
+	private String[] cc;
+	private String bcc;
 	private String subject;
 	private String reply;
 	private String body;
@@ -42,7 +44,7 @@ public class MailSender implements Runnable {
 	private String info;
 	private boolean deletefiles;
 	
-	public void init(String to, String from, String subject, String reply, String body, File attachment, File attachment2, String info, boolean deletefiles) throws MessageException
+	public void init(String to, String[] cc, String bcc, String from, String subject, String reply, String body, File attachment, File attachment2, String info, boolean deletefiles) throws MessageException
 	{
 		if (to == null || to.trim().length() == 0 || !MailService.isValidEmailAddress(to))
 		{
@@ -51,6 +53,8 @@ public class MailSender implements Runnable {
 		
 		this.to = to;
 		this.from = from;
+		this.cc = cc;
+		this.bcc = bcc;
 		this.subject = subject;
 		this.reply = reply;
 		this.body = body;
@@ -82,6 +86,15 @@ public class MailSender implements Runnable {
 			} else {			
 				helper.setTo(to);
 			}
+
+			if (cc != null) {
+				helper.setCc(cc);
+			}
+
+			if (bcc != null) {
+				helper.setBcc(bcc);
+			}
+
 			helper.setFrom(from);
 			helper.setSubject(subject);	
 			

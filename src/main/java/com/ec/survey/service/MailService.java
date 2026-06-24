@@ -26,19 +26,26 @@ public class MailService extends BasicService {
 
 	public void SendHtmlMail(String to, String from, String reply, String subject, String body, File attachment, File attachment2, String info, boolean deleteFiles) throws MessageException {
 		MailSender sender = (MailSender) context.getBean("mailSender");
-		sender.init(to, from, subject, reply, body, attachment, attachment2, info, deleteFiles);		
+		sender.init(to, null, null, from, subject, reply, body, attachment, attachment2, info, deleteFiles);
 		getMailPool().execute(sender);
 	}
-	
-	
-	public void SendHtmlMail(String to, String from, String reply, String subject, String body, File attachment, String info) throws MessageException {
+
+	public void SendHtmlMail(String to, String[] cc, String bcc, String from,  String reply, String subject, String body, File attachment, String info) throws MessageException {
 		MailSender sender = (MailSender) context.getBean("mailSender");
-		sender.init(to, from, subject, reply, body, attachment, null, info, false);		
+		sender.init(to, cc, bcc, from, subject, reply, body, attachment, null, info, false);
 		getMailPool().execute(sender);
+	}
+
+	public void SendHtmlMail(String to, String from,  String reply, String subject, String body, File attachment, String info) throws MessageException {
+		SendHtmlMail(to, null, null, from, reply, subject, body, attachment, info);
+	}
+
+	public void SendHtmlMail(String to, String[] cc, String bcc, String from, String reply, String subject, String body, String info) throws MessageException {
+		SendHtmlMail(to, cc, bcc, from, reply, subject, body, null, info);
 	}
 	
 	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String info) throws MessageException {
-		SendHtmlMail(to, from, reply, subject, body, null, info);
+		SendHtmlMail(to, null, null, from, reply, subject, body, null, info);
 	}
 	
 	public static boolean isNotEmptyAndValidEmailAddress(String email) {
