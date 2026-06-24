@@ -230,6 +230,24 @@
 <%@ include file="../management/change-ownership.jsp" %>
 <%@ include file="../management/access-modals.jsp" %>
 
+<div id="redtriangle" style="display: none">
+    <jsp:include page="../management/access-icon.jsp">
+        <jsp:param name="value" value="0" />
+    </jsp:include>
+</div>
+
+<div id="yellowsquare" style="display: none">
+    <jsp:include page="../management/access-icon.jsp">
+        <jsp:param name="value" value="1" />
+    </jsp:include>
+</div>
+
+<div id="greencycle" style="display: none">
+    <jsp:include page="../management/access-icon.jsp">
+        <jsp:param name="value" value="2" />
+    </jsp:include>
+</div>
+
 <script type="text/javascript">
     let selectedBulkEditWizardStep = 1;
     let showAllSurveysInBulkEditWizard = false;
@@ -697,15 +715,15 @@
     function updatePrivilegeInBulkChangeDetails(img, value) {
         switch(value) {
             case 0:
-                $(img).attr("src", "${contextpath}/resources/images/bullet_ball_glass_red.png").attr("alt","none");
+                $(img).html($('#redtriangle').html());
                 $(img).closest("td").attr("data-value", "0");
                 break;
             case 1:
-                $(img).attr("src", "${contextpath}/resources/images/bullet_ball_glass_yellow.png").attr("alt","read");
+                $(img).html($('#yellowsquare').html());
                 $(img).closest("td").attr("data-value", "1");
                 break;
             case 2:
-                $(img).attr("src", "${contextpath}/resources/images/bullet_ball_glass_green.png").attr("alt","read/write");
+                $(img).html($('#greencycle').html());
                 $(img).closest("td").attr("data-value", "2");
                 break;
         }
@@ -738,27 +756,29 @@
         $(td).append(img);
         $(tr).append(td);
 
+        const redtriangle = $('#redtriangle').html();
+
         td = document.createElement("td");
-        img = document.createElement("img");
-        $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.EditRights"/>").addClass("roleBulletRed").attr("onclick", "changePrivilege('AccessDraft', this)").attr("src", "${contextpath}/resources/images/bullet_ball_glass_red.png").attr("alt","none");
+        img = document.createElement("div");
+        $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.EditRights"/>").addClass("icon-wrapper").attr("onclick", "changePrivilege('AccessDraft', this)").html(redtriangle);
         $(td).append(img);
         $(tr).append(td);
 
         td = document.createElement("td");
-        img = document.createElement("img");
-        $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.EditRights"/>").addClass("roleBulletRed").attr("onclick", "changePrivilege('AccessResults', this)").attr("src", "${contextpath}/resources/images/bullet_ball_glass_red.png").attr("alt","none");
+        img = document.createElement("div");
+        $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.EditRights"/>").addClass("icon-wrapper").attr("onclick", "changePrivilege('AccessResults', this)").html(redtriangle);
         $(td).append(img);
         $(tr).append(td);
 
         td = document.createElement("td");
-        img = document.createElement("img");
-        $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.EditRights"/>").addClass("roleBulletRed").attr("onclick", "changePrivilege('FormManagement', this)").attr("src", "${contextpath}/resources/images/bullet_ball_glass_red.png").attr("alt","none");
+        img = document.createElement("div");
+        $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.EditRights"/>").addClass("icon-wrapper").attr("onclick", "changePrivilege('FormManagement', this)").html(redtriangle);
         $(td).append(img);
         $(tr).append(td);
 
         td = document.createElement("td");
-        img = document.createElement("img");
-        $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.EditRights"/>").addClass("roleBulletRed").attr("onclick", "changePrivilege('ManageInvitations', this)").attr("src", "${contextpath}/resources/images/bullet_ball_glass_red.png").attr("alt","none");
+        img = document.createElement("div");
+        $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.EditRights"/>").addClass("icon-wrapper").attr("onclick", "changePrivilege('ManageInvitations', this)").html(redtriangle);
         $(td).append(img);
         $(tr).append(td);
 

@@ -36,7 +36,11 @@
 			font-weight: normal;
 			text-decoration: none;
 			margin: 20px;
-		}			
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 3px;
+			padding-bottom: 2px;
+		}
 		
 		.anchorlink {
 			margin-left: 40px;
@@ -59,6 +63,14 @@
 
 		#ulContainer {
 			margin-bottom: 50px;
+		}
+
+		.pageheader a,
+		#ulContainer a {
+			display: inline-block;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 2px;
 		}
 	</style>
 	

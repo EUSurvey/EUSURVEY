@@ -43,6 +43,7 @@ public abstract class Question extends Element {
 	private boolean listVote;
 
 	private boolean hidden;
+	private int maxFreeTextLength;
 
 	public Question() {
 	}
@@ -366,5 +367,13 @@ public abstract class Question extends Element {
 
 		return false;
 	}
-		
+
+	@Transient
+    public int getMaxFreeTextLength() {
+        return maxFreeTextLength;
+    }
+
+    public void setMaxFreeTextLength(int maxFreeTextLength) {
+        this.maxFreeTextLength = maxFreeTextLength;
+    }
 }

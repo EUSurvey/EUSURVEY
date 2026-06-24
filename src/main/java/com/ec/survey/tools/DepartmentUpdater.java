@@ -11,7 +11,6 @@ import java.util.*;
 
 import javax.annotation.Resource;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.servlet.ServletContext;
@@ -24,14 +23,6 @@ import com.ec.survey.service.LdapDBService;
 import com.ec.survey.service.PropertiesService;
 import com.ec.survey.service.SessionService;
 import com.sun.source.util.Trees;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
-import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -97,6 +88,16 @@ public class DepartmentUpdater implements Runnable {
 		}
 	}
 
+	private String readData(HttpURLConnection conn) throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		StringBuilder sb = new StringBuilder();
+		for (int c; (c = in.read()) >= 0;) {
+			sb.append((char)c);
+		}
+		in.close();
+		return sb.toString();
+	}
+
 	private String getDepartments() throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -115,25 +116,23 @@ public class DepartmentUpdater implements Runnable {
 			throw new Exception("comref keypassword is null");
 		}
 
+		// Step 1: Load the PKCS12 keystore
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 		InputStream keyStoreInput = servletContext.getResourceAsStream(certificatepath);
 
 		keyStore.load(keyStoreInput, keystorepassword.toCharArray());
 
-		// Trust own CA and all self-signed certs
-		SSLContext sslcontext = SSLContexts.custom()
-				.loadKeyMaterial(keyStore, keypassword.toCharArray())
-				//.loadTrustMaterial(trustStore, new TrustSelfSignedStrategy())
-				.build();
-		// Allow TLSv1 protocol only
-		SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-				sslcontext,
-				SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-		CloseableHttpClient httpclient = HttpClients.custom()
-				.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER)
-				.setSSLSocketFactory(sslsf)
-				.build();
+		// Step 2: Initialize SSL Context with the keystore
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+		kmf.init(keyStore, keypassword.toCharArray());
 
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(kmf.getKeyManagers(), null, null);
+
+		// Step 3: Set the default SSL context
+		SSLContext.setDefault(sslContext);
+
+		// Step 4: Create a connection
 		int start = 0;
 		boolean stop = false;
 
@@ -141,88 +140,70 @@ public class DepartmentUpdater implements Runnable {
 		Set<DepartmentsEntry> roots = new HashSet<>();
 		Set<Long> handledIds = new HashSet<>();
 
-		try {
+		while (!stop) {
+			logger.info("calling comref, start = " + start);
 
-			while (!stop) {
-				logger.info("calling comref, start = " + start);
+			URL url = new URL(comrefURL + "&length=1000&start=" + start);
+			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+			connection.setRequestMethod("GET");
+			int responseCode = connection.getResponseCode();
 
-				String departments = "";
+			if (responseCode != 200) {
+				throw new Exception("responseCode "  + responseCode);
+			}
 
-				HttpGet httpget = new HttpGet(comrefURL + "&length=1000&start=" + start);
-				httpget.addHeader("Accept", "application/xml");
+			String departments = readData(connection);
 
-				CloseableHttpResponse response = httpclient.execute(httpget);
+			Document document = builder.parse(new InputSource(new StringReader(departments)));
 
-				try {
+			Node recordCount = document.getElementsByTagName("recordCount").item(0);
+			if (!recordCount.getTextContent().equals("1000")) {
+				stop = true; // we reached the last call
+			}
 
-					logger.info(response.getStatusLine());
+			NodeList nodeList = document.getElementsByTagName("_");
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node node = nodeList.item(i);
 
-					if (response.getStatusLine().getStatusCode() != 200) {
-						throw new Exception("responseCode " + response.getStatusLine().getStatusCode() );
-					}
+				DepartmentsEntry departmentsEntry = new DepartmentsEntry();
 
-					HttpEntity entity = response.getEntity();
-
-					departments = EntityUtils.toString(entity, "UTF-8");
-
-				} finally {
-					response.close();
-				}
-
-				Document document = builder.parse(new InputSource(new StringReader(departments)));
-
-				Node recordCount = document.getElementsByTagName("recordCount").item(0);
-				if (!recordCount.getTextContent().equals("1000")) {
-					stop = true; // we reached the last call
-				}
-
-				NodeList nodeList = document.getElementsByTagName("_");
-				for (int i = 0; i < nodeList.getLength(); i++) {
-					Node node = nodeList.item(i);
-
-					DepartmentsEntry departmentsEntry = new DepartmentsEntry();
-
-					for (int j = 0; j < node.getChildNodes().getLength(); j++) {
-						Node child = node.getChildNodes().item(j);
-						switch (child.getNodeName()) {
-							case "orgcd":
-								departmentsEntry.orgcd = child.getTextContent();
-								break;
-							case "orgid":
-								departmentsEntry.orgid = Long.parseLong(child.getTextContent());
-								break;
-							case "orgidparent":
-								departmentsEntry.orgidparent = Long.parseLong(child.getTextContent());
-								break;
-							case "dtfin":
-								if (!child.getTextContent().equals("31/12/9999 00:00:00")) {
-									departmentsEntry.deleted = true;
-								}
-						}
-					}
-
-					if (!departmentsEntry.deleted && departmentsEntry.orgcd != null && !departmentsEntry.orgcd.trim().isEmpty()) {
-						if (departmentsEntry.orgidparent == 0) {
-							roots.add(departmentsEntry);
-						}
-
-						if (!map.containsKey(departmentsEntry.orgidparent)) {
-							map.put(departmentsEntry.orgidparent, new HashSet<>());
-						}
-
-						map.get(departmentsEntry.orgidparent).add(departmentsEntry);
+				for (int j = 0; j < node.getChildNodes().getLength(); j++) {
+					Node child = node.getChildNodes().item(j);
+					switch (child.getNodeName()) {
+						case "orgcd":
+							departmentsEntry.orgcd = child.getTextContent();
+							break;
+						case "orgid":
+							departmentsEntry.orgid = Long.parseLong(child.getTextContent());
+							break;
+						case "orgidparent":
+							departmentsEntry.orgidparent = Long.parseLong(child.getTextContent());
+							break;
+						case "dtfin":
+							if (!child.getTextContent().equals("31/12/9999 00:00:00")) {
+								departmentsEntry.deleted = true;
+							}
 					}
 				}
 
-				start+=1000;
+				if (!departmentsEntry.deleted && departmentsEntry.orgcd != null && !departmentsEntry.orgcd.trim().isEmpty()) {
+					if (departmentsEntry.orgidparent == 0) {
+						roots.add(departmentsEntry);
+					}
 
-				if (start > 20000) {
-					throw new Exception("too many calls");
+					if (!map.containsKey(departmentsEntry.orgidparent)) {
+						map.put(departmentsEntry.orgidparent, new HashSet<>());
+					}
+
+					map.get(departmentsEntry.orgidparent).add(departmentsEntry);
 				}
 			}
 
-		} finally {
-			httpclient.close();
+			start+=1000;
+
+			if (start > 20000) {
+				throw new Exception("too many calls");
+			}
 		}
 
 		DepartmentsEntry main = new DepartmentsEntry();
@@ -284,59 +265,37 @@ public class DepartmentUpdater implements Runnable {
 			throw new Exception("comref keypassword is null");
 		}
 
+		// Step 1: Load the PKCS12 keystore
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 		InputStream keyStoreInput = servletContext.getResourceAsStream(certificatepath);
 
 		keyStore.load(keyStoreInput, keystorepassword.toCharArray());
 
-		// Trust own CA and all self-signed certs
-		SSLContext sslcontext = SSLContexts.custom()
-				.loadKeyMaterial(keyStore, keypassword.toCharArray())
-				//.loadTrustMaterial(trustStore, new TrustSelfSignedStrategy())
-				.build();
-		// Allow TLSv1 protocol only
-		SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-				sslcontext,
-				SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-		CloseableHttpClient httpclient = HttpClients.custom()
-				.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER)
-				.setSSLSocketFactory(sslsf)
-				.build();
+		// Step 2: Initialize SSL Context with the keystore
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+		kmf.init(keyStore, keypassword.toCharArray());
 
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(kmf.getKeyManagers(), null, null);
+
+		// Step 3: Set the default SSL context
+		SSLContext.setDefault(sslContext);
+
+		// Step 4: Create a connection
 		TreeMap<String, String> domains = new TreeMap<>();
 
 		logger.info("calling comref domains");
 
-		String sdomains = "";
+		URL url = new URL(comrefURLDomains);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		connection.setRequestMethod("GET");
+		int responseCode = connection.getResponseCode();
 
-		try {
-
-			HttpGet httpget = new HttpGet(comrefURLDomains);
-			httpget.addHeader("Accept", "application/xml");
-
-			CloseableHttpResponse response = httpclient.execute(httpget);
-
-			try {
-
-				logger.info(response.getStatusLine());
-
-				if (response.getStatusLine().getStatusCode() != 200) {
-					throw new Exception("responseCode " + response.getStatusLine().getStatusCode() );
-				}
-
-				HttpEntity entity = response.getEntity();
-
-				sdomains = EntityUtils.toString(entity, "UTF-8");
-
-			} finally {
-				response.close();
-			}
-
-		} finally {
-			httpclient.close();
+		if (responseCode != 200) {
+			throw new Exception("responseCode " + responseCode);
 		}
 
-		logger.info(sdomains);
+		String sdomains = readData(connection);
 
 		Document document = builder.parse(new InputSource(new StringReader(sdomains)));
 

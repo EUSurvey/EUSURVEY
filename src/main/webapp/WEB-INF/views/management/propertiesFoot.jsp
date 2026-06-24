@@ -58,7 +58,7 @@
 
 		$(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 		$(".qq-upload-list").hide();
-		$(".qq-upload-drop-area").css("margin-left", "-1000px");
+		$(".qq-upload-drop-area").css("margin-left", "-10000px");
 
 		$('.navbar-default li a').click(function(event) {
 		    event.preventDefault();

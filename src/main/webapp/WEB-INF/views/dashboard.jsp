@@ -562,7 +562,7 @@
 															<!-- /ko -->
 															
 														<!-- ko if: formManagementRights && canCreateSurveys -->
-														<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', isQuiz == null ? '' : isQuiz.toString(), isDelphi == null ? '' : isDelphi.toString(), isEVote == null ? '' : isEVote.toString(), isSelfAssessment == null ? '' : isSelfAssessment.toString()); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+														<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', isQuiz == null ? '' : isQuiz.toString(), isDelphi == null ? '' : isDelphi.toString(), isEVote == null ? '' : isEVote.toString(), eVoteTemplate, isSelfAssessment == null ? '' : isSelfAssessment.toString()); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 														<!-- /ko -->
 														
 															<!-- ko if: formManagementRights -->
@@ -1343,15 +1343,14 @@
 						  success: function( data ) {
 							  
 							  if (data == "success") {
-									$('#ask-export-dialog').modal('hide');
-									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
-							  	} else if (data == "errorcaptcha") {
-							  		$("#ask-export-dialog-error-captcha").show();
-							  		reloadCaptcha();
-								} else {
-									showError(message_PublicationExportFailed);
-									reloadCaptcha();
-								};
+								  $('#ask-export-dialog').modal('hide');
+								  showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
+							  } else if (data == "errorcaptcha") {
+								  $("#ask-export-dialog-error-captcha").show();
+							  } else {
+								  showError(message_PublicationExportFailed);
+							  }
+							  reloadCaptcha();
 						}
 					});							
 				</c:when>
@@ -1364,12 +1363,12 @@
 						  success: function( data ) {
 							  
 							  if (data == "success") {
-									$('#ask-export-dialog').modal('hide');
-									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
-								} else {
-									showError(message_PublicationExportFailed);
-									reloadCaptcha();
-								};
+								  $('#ask-export-dialog').modal('hide');
+								  showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
+							  } else {
+								  showError(message_PublicationExportFailed);
+							  }
+							  reloadCaptcha();
 						}
 					});							
 				</c:otherwise>

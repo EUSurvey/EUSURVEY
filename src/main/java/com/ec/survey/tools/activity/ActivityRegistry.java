@@ -218,6 +218,7 @@ public class ActivityRegistry {
             ID_GUEST_LIST_CONTACT_CHANGED = 507, // Contact has been changed in guestlist.
             ID_GUEST_LIST_VOTER_ADDED = 508, // A voter was added to the guestlist
             ID_GUEST_LIST_VOTER_REMOVED = 509, // A voter was removed from the guestlist
+            ID_GUEST_LIST_VOTER_FILE_EXPORT = 510, // Start voter file export
 
             ID_DELEGATE_MANAGER_ADD = 601, // Delegate manager added
             ID_PRIVILEGES_EDIT = 602, // Existing privilege settings modified
@@ -392,6 +393,8 @@ public class ActivityRegistry {
 
         register(PROP_TOKEN_CONTACTS_DEPARTMENT, EVT_ADDED, ID_GUEST_LIST_VOTER_ADDED);
         register(PROP_TOKEN_CONTACTS_DEPARTMENT, EVT_REMOVED, ID_GUEST_LIST_VOTER_REMOVED);
+
+        register(PROP_TOKEN_CONTACTS_DEPARTMENT, EVT_STARTED, ID_GUEST_LIST_VOTER_FILE_EXPORT);
 
         //Privileges 600
         register(PROP_NA, EVT_ADDED, ID_DELEGATE_MANAGER_ADD);

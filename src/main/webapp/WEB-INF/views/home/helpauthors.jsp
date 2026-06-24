@@ -34,6 +34,10 @@
 			font-size: 13px;
 			font-weight: normal;
 			text-decoration: none;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 3px;
+			padding-bottom: 2px;
 		}
 		
 		.anchorlink {
@@ -73,6 +77,13 @@
 			font-size: 19px !important;
 		}
 
+		.pageheader a,
+		#ulContainer a {
+			display: inline-block;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 2px;
+		}
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -1386,6 +1397,15 @@
 					</li>
 				</ol>
 				<img alt="screenshot change contribution" src="${contextpath}/resources/images/documentation/changecontribution.png" />
+			</p>
+			<h2>
+				How can respondents download a PDF version of the questionnaire?
+			</h2>
+			<p>
+				To make a blank PDF copy of the questionnaire available to respondents, first enable the option 'Enable PDF download of the survey questionnaire' in 'Properties' > 'Survey Security'.
+			</p>
+			<p>
+				Once this setting is activated, respondents will be able to access the 'Download PDF version' option from the right-hand panel of the survey.
 			</p>
 			<h1>
 				Testing a survey

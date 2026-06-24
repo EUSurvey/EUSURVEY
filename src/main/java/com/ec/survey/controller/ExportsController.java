@@ -128,6 +128,7 @@ public class ExportsController extends BasicController {
 					String last = (String) request.getSession().getAttribute("VotersLastFilter");
 					Boolean voted = (Boolean) request.getSession().getAttribute("VotersVotedFilter");
 
+
 					byte[] file = eVoteService.exportVoterFile(voterForm.getSurvey().getUniqueId(), user, first, last, voted);
 					export.setValid(true);
 					export.setState(ExportState.Finished);
@@ -139,6 +140,8 @@ public class ExportsController extends BasicController {
 						fos.write(file);
 					}
 					sessionService.setCheckExport(request, "true");
+
+					activityService.log(ActivityRegistry.ID_GUEST_LIST_VOTER_FILE_EXPORT, null, export.getId() != null ? export.getId().toString() : "", export.getUserId(), export.getSurvey().getUniqueId(), "VoterFile");
 
 					return "success";
 				}

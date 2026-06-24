@@ -61,15 +61,14 @@
 					  success: function( data ) {
 						  
 						  if (data == "success") {
-								$('#ask-export-dialog').modal('hide');
-								showSuccess(message_PublicationExportSuccess);
-						  	} else if (data == "errorcaptcha") {
-						  		$("#runner-captcha-error").show();
-						  		reloadCaptcha();
-							} else {
-								showExportFailureMessage();
-								reloadCaptcha();
-							};
+							  $('#ask-export-dialog').modal('hide');
+							  showSuccess(message_PublicationExportSuccess);
+						  } else if (data == "errorcaptcha") {
+							  $("#runner-captcha-error").show();
+						  } else {
+							  showExportFailureMessage();
+						  }
+						  reloadCaptcha();
 					}
 				});				
 				

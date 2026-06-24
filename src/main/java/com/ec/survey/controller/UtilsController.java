@@ -42,7 +42,7 @@ public class UtilsController extends BasicController {
 		countryList.put("DE", resources.getMessage("label.country.Germany", null, locale));
 		countryList.put("DK", resources.getMessage("label.country.Denmark", null, locale));
 		countryList.put("EE", resources.getMessage("label.country.Estonia", null, locale));
-		countryList.put("EL", resources.getMessage("label.country.Greece", null, locale));
+		countryList.put("GR", resources.getMessage("label.country.Greece", null, locale));
 		countryList.put("ES", resources.getMessage("label.country.Spain", null, locale));
 		countryList.put("FI", resources.getMessage("label.country.Finland", null, locale));
 		countryList.put("FR", resources.getMessage("label.country.France", null, locale));

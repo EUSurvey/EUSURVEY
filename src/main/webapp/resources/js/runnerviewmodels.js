@@ -101,7 +101,7 @@ function newMatrixItemsViewModel(items)
 	var viewModel = ko.observableArray();
 	for (var i = 0; i < items.length; i++)
 	{
-		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i, items[i].useAndLogic, items[i].scoring, items[i].quizPoints, items[i].noNegativeScore, items[i].hidden));
+		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i, items[i].useAndLogic, items[i].scoring, items[i].points ?? items[i].quizPoints, items[i].noNegativeScore, items[i].hidden));
 	}
 	return viewModel;
 }
@@ -131,7 +131,7 @@ function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsSt
 	viewModel.title = ko.observable(title);
 	viewModel.originalTitle = ko.observable(title);
 	viewModel.scoring = newScoringViewModel(scoring);
-	viewModel.ecfScore = ko.observable(ecfScore);
+	viewModel.ecfScore = ko.observable(ecfScore ?? 0);
 	viewModel.ecfProfile = ko.observable(ecfProfile);
 	viewModel.exclusive = ko.observable(exclusive);
 	viewModel.delphiAnswerCount = ko.observable(0);

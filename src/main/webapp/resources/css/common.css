@@ -561,6 +561,10 @@ select {
 	
 .footer-bottom a {
     color: #fff !important;
+	display: inline-block;
+	min-width: 24px;
+	min-height: 24px;
+	padding-bottom: 8px;
 }
 
 .footer2 {
@@ -571,6 +575,10 @@ select {
 
 .footer2 a {
 	color: #ccc !important;
+	display: inline-block;
+	min-width: 24px;
+	min-height: 24px;
+	padding-bottom: 8px;
 }
 	
 .footerlabel {
@@ -592,10 +600,21 @@ select {
 	cursor: pointer;
 	font-size: 13px;
 	text-decoration: none;
+	display: inline-block;
+	min-width: 24px;
+	min-height: 24px;
+	padding-bottom: 8px;
 }
 
 .footer a:hover {
 	text-decoration: underline;
+}
+
+#responsivefooter a {
+	display: inline-block;
+	min-width: 24px;
+	min-height: 24px;
+	padding-bottom: 8px;
 }
 
 .normal-content {
@@ -2206,26 +2225,7 @@ div.largeSeparator
 	margin-bottom:50px;
 }
 
-a.elearningWelcomeLink
-{
-	background-image: url(../images/elearning-banner-link.png);
-	width:836px;
-	height:72px;
-	color:#FFF; 
-	font-size: 16pt; 
-	font-weight:bold;
-	display:inline-block;
-	line-height:72px;
-}
-
-a.elearningWelcomeLink:hover
-{
-	text-decoration:none;
-	background-image: url(../images/elearning-banner-link-hover.png);
-	color:#FFF; 
-}
-
-#linkSelfRegA, #linkSelfRegA:hover 
+#linkSelfRegA, #linkSelfRegA:hover
 {
 	color:#555;
 }
@@ -2900,4 +2900,12 @@ input[type=radio]:checked + .choice-button-label:hover{
 
 #new-survey-table .btn-group label {
     height: 35px;
+}
+
+.icon-wrapper {
+	position: relative; margin-left: auto; margin-right: auto; width: 32px;
+}
+
+.icon-wrapper svg:nth-child(2) {
+	position: absolute; left: 8px; top: 8px;
 }

@@ -35,6 +35,8 @@
 			font-size: 13px;
 			font-weight: normal;
 			text-decoration: none;
+			padding-top: 3px;
+			padding-bottom: 2px;
 		}
 		
 		.anchorlink {
@@ -74,6 +76,13 @@
 			font-size: 19px !important;
 		}
 
+		.pageheader a,
+		#ulContainer a {
+			display: inline-block;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 2px;
+		}
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -1712,6 +1721,15 @@
 					</li>
 				</ol>
 				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/changecontributionFR.png" />
+			</p>
+			<h2>
+				Comment les participants peuvent-ils télécharger une version PDF du questionnaire ?
+			</h2>
+			<p>
+				Pour mettre à la disposition des participants une copie PDF vierge du questionnaire, activez d'abord l'option « Activer le téléchargement PDF du questionnaire » dans « Propriétés » → « Survey Security ».
+			</p>
+			<p>
+				Une fois ce parameter activé, les participants pourront accéder à l'option « Télécharger la version PDF » depuis le panneau de droite de l'enquête.
 			</p>
 			<h1>
 				Tester une enquête

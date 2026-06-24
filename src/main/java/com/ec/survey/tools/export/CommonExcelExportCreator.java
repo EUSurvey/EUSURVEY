@@ -1014,7 +1014,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					}
 
 					if (answerSet == null) {
-						String v = answerrow.get(answerrowcounter++);
+						String v = answerrow.get(answerrowcounter++).trim();
 						if (NumberUtils.isParsable(v)) {
 							double cellValue = Double.parseDouble(v);
 							cell.setCellValue(cellValue);
@@ -1023,7 +1023,7 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 					} else {
 						List<Answer> answers = answerSet.getAnswers(question.getUniqueId());
 						if (!answers.isEmpty()) {
-							var answer = answers.get(0).getValue();
+							var answer = answers.get(0).getValue().trim();
 							if (NumberUtils.isParsable(answer)) {
 								double cellValue = Double.parseDouble(answer);
 								cell.setCellValue(cellValue);

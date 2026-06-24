@@ -644,15 +644,14 @@
 							  success: function( data ) {
 								  
 								  if (data == "success") {
-										$('#ask-export-dialog').modal('hide');
-										showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
-								  	} else if (data == "errorcaptcha") {
-								  		$("#ask-export-dialog-error-captcha").show();
-								  		reloadCaptcha();
-									} else {
-										showError(message_PublicationExportFailed);
-										reloadCaptcha();
-									};
+									  $('#ask-export-dialog').modal('hide');
+									  showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
+								  } else if (data == "errorcaptcha") {
+									  $("#ask-export-dialog-error-captcha").show();
+								  } else {
+									  showError(message_PublicationExportFailed);
+								  }
+								  reloadCaptcha();
 							}
 						});							
 					</c:when>
@@ -666,12 +665,12 @@
 							  success: function( data ) {
 								  
 								  if (data == "success") {
-										$('#ask-export-dialog').modal('hide');
-										showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
-									} else {
-										showError(message_PublicationExportFailed);
-										reloadCaptcha();
-									};
+									  $('#ask-export-dialog').modal('hide');
+									  showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
+								  } else {
+									  showError(message_PublicationExportFailed);
+								  }
+								  reloadCaptcha();
 							}
 						});							
 					</c:otherwise>

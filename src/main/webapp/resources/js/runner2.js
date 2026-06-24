@@ -103,7 +103,7 @@ function addElement(element, foreditor, forskin)
 	if (container.length === 0) {
 		return container
 	}
-	
+
 	addElementToContainer(element, container, foreditor, forskin);
 	
 	if ($(container).hasClass("matrixitem"))
@@ -556,7 +556,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 					triggeringElement = $(".trigger[data-id='" + triggers[0] + "']");
 				}
 				
-				if (triggeringElement.length == 1 && $(triggeringElement).closest(".delphi")) {
+				if (triggeringElement.length == 1 && $(triggeringElement).closest(".delphi").length == 1) {
 					//move this question inside the delphi element that triggers it
 					var delphi = $(triggeringElement).closest(".delphi");
 					delphi.find(".delphichildren").append(container);

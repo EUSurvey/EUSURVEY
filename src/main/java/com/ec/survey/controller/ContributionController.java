@@ -233,28 +233,6 @@ public class ContributionController extends BasicController {
 		return result;
 	}
 
-	@RequestMapping(value = "/preparepublishedcontribution/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public ModelAndView showforpublishedpdf(@PathVariable String id, Locale locale, HttpServletRequest request)
-            throws Exception {
-		AnswerSet answerSet = answerService.get(Integer.parseInt(id));
-		ModelAndView result = editContributionInner(answerSet.getUniqueCode(), locale, request, false, false, false);
-		result.addObject("forpdf", "true");
-		result.addObject("submit", "false");
-
-		Form form = (Form) result.getModel().get("form");
-		form.setForPDF(true);
-
-		if (answerSet.getSurvey().getIsECF()) {
-			ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
-			List<String> base64SpiderCharts = ecfService.spiderChartsB64ByECFType(individualResult);
-			result.addObject("base64ECFSpiderCharts", base64SpiderCharts);
-			result.addObject("ecfIndividualResult", individualResult);
-		}
-
-		result.addObject("publication", form.getSurvey().getPublication());
-		return result;
-	}
-
 	@RequestMapping(value = "/editcontribution/{code}/back", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView editcontributionfrombackoffice(@PathVariable String code, Locale locale,
 			HttpServletRequest request) throws Exception {
@@ -317,7 +295,6 @@ public class ContributionController extends BasicController {
 			}
 			
 			boolean isPDF = request.getRequestURI().contains("preparecontribution")
-					|| request.getRequestURI().contains("preparepublishedcontribution")
 					|| request.getRequestURI().contains("preparedraft");
 
 			if (isPDF) {

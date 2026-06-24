@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.tools.ConversionTools;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
@@ -184,7 +185,10 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 			modelAndView.getModelMap().addAttribute("chat_widget_url", chat_widget_url);
 			String chat_api_url = settingsService.get(Setting.ChatbotAPIURL);
 			modelAndView.getModelMap().addAttribute("chat_api_url", chat_api_url);
-            
+			String maxFreeTextLengthString = settingsService.get(Setting.MaxFreeTextLength);
+			int maxFreeTextLength = maxFreeTextLengthString == null ? 10000 : ConversionTools.getInt(maxFreeTextLengthString, 10000);
+			modelAndView.getModelMap().addAttribute("maxFreeTextLength", maxFreeTextLength);
+
             modelAndView.getModelMap().addAttribute("contextpath", contextpath);
             modelAndView.getModelMap().addAttribute("monitoringEmail", monitoringEmail);
             modelAndView.getModelMap().addAttribute("enablereportingdatabase", enablereportingdatabase);

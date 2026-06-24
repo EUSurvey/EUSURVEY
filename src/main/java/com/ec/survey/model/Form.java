@@ -1043,4 +1043,11 @@ public class Form implements java.io.Serializable {
 		
 		return 0;
 	}
+
+	public String max190(String... values) {
+		String text = String.join("", values);
+		if (text.length() < 190) { return text; }
+
+		return text.substring(0, 190);
+	}
 }

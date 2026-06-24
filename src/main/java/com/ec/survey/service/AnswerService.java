@@ -2502,26 +2502,34 @@ public class AnswerService extends BasicService {
 		return url;
 	}
 	
-	private int clearAnswersForQuestionInMainDatabase(Survey survey, ResultFilter filter, String questionUID, String answerUID) throws Exception
+	private void clearAnswersForQuestionInMainDatabase(Survey survey, ResultFilter filter, String questionUID, String answerUID) throws Exception
 	{
 		Session session = sessionFactory.getCurrentSession();
 		
 		Map<String, Object> parameters = new HashMap<>();
-				
-		String sql = "UPDATE ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID SET a.VALUE = '' WHERE a.QUESTION_UID = :quid ";
-		
+
+		var sqlBlanking = "UPDATE ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID SET a.VALUE = '' WHERE ";
+		var sqlDeletion = "DELETE a FROM ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID INNER JOIN ELEMENTS q ON a.QUESTION_UID = q.ELEM_UID LEFT JOIN ELEMENTS p ON p.ID = q.childElements_ID WHERE ";
+
+		//Deletion Condition: (type is SC, MC, Gallery, Upload) or (parent is Matrix) or (type is ComplexItem SC, MC)
+		sqlDeletion += "(q.type in ('SINGLECHOICE', 'MULTIPLECHOICE', 'GALLERYQUESTION', 'UPLOAD') or p.type ='MATRIX' or (q.type = 'COMPLEXTABLEITEM' and q.CELLTYPE in (4, 5))) AND ";
+
+		String whereCondition;
+
 		if (answerUID != null)
-		{		
-			sql = "UPDATE ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID SET a.VALUE = '' WHERE a.PA_UID = :auid ";			
+		{
+			whereCondition = "a.PA_UID = :auid ";
+		} else {
+			whereCondition = "a.QUESTION_UID = :quid ";
 		}
 		
-		sql += " AND ans.SURVEY_ID";
+		whereCondition += " AND ans.SURVEY_ID";
 		
 		if (survey.getIsDraft()) {
-			sql += " = " + survey.getId();
+			whereCondition += " = " + survey.getId();
 		} else {
 			List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(survey.getUniqueId());
-			sql += " IN (" +StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
+			whereCondition += " IN (" +StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
 		}
 		
 		if (!filter.isEmpty()) {
@@ -2532,18 +2540,22 @@ public class AnswerService extends BasicService {
 			@SuppressWarnings("rawtypes")
 			List answersetIds = queryAnswerSets.list();		
 			
-			sql += " AND ans.ANSWER_SET_ID IN (" +StringUtils.collectionToCommaDelimitedString(answersetIds) + ")";
+			whereCondition += " AND ans.ANSWER_SET_ID IN (" +StringUtils.collectionToCommaDelimitedString(answersetIds) + ")";
 		}
 		
-		Query query = session.createSQLQuery(sql);
-		
+		Query blankingQuery = session.createSQLQuery(sqlBlanking + whereCondition);
+		Query deletionQuery = session.createSQLQuery(sqlDeletion + whereCondition);
+
 		if (answerUID != null) {
-			query.setString("auid", questionUID + "#" + answerUID);
+			blankingQuery.setString("auid", questionUID + "#" + answerUID);
+			deletionQuery.setString("auid", questionUID + "#" + answerUID);
 		} else {
-			query.setString("quid", questionUID);
+			blankingQuery.setString("quid", questionUID);
+			deletionQuery.setString("quid", questionUID);
 		}
 		
-		return query.executeUpdate();
+		blankingQuery.executeUpdate();
+		deletionQuery.executeUpdate();
 	}
 	
 	private void deleteContributionPDFs(Survey survey) throws Exception {
@@ -3012,6 +3024,8 @@ public class AnswerService extends BasicService {
 	}
 
 	public void addHiddenSAQuestions(AnswerSet answerSet, Set<String> invisibleElements, SingleChoiceQuestion targetDatasetQuestion) {
+		if (targetDatasetQuestion.getDisplayAllQuestions())
+			return;
 		List<Answer> answers = answerSet.getAnswers(targetDatasetQuestion.getUniqueId());
 		if (!answers.isEmpty()) {
 			int dataset = Integer.parseInt(answers.get(0).getValue());

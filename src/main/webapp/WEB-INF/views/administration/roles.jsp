@@ -78,27 +78,6 @@
 			$("#administration-menu-tab").addClass("active");
 			$("#roles-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
 			
-			$(".roleBulletGreen").hover(function(){
-				$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_green_hover.png");
-			},
-			function(){
-				$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_green.png");
-			});
-			
-			$(".roleBulletYellow").hover(function(){
-				$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_yellow_hover.png");
-			},
-			function(){
-				$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_yellow.png");
-			});
-			
-			$(".roleBulletRed").hover(function(){
-				$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_red_hover.png");
-			},
-			function(){
-				$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_red.png");
-			});
-			
 			$('[data-toggle="tooltip"]').tooltip();
 		})
 		
@@ -164,72 +143,48 @@
 						<tr>
 							<td class="overview-label" style="text-align: left"><esapi:encodeForHTML>${role.name}</esapi:encodeForHTML></td>
 							<td>
-								<c:if test="${role.getPrivilegeValue('RightManagement') == 2}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletGreen" onclick="changePrivilege('RightManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('RightManagement') == 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletYellow" onclick="changePrivilege('RightManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('RightManagement') == 0}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletRed" onclick="changePrivilege('RightManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-								</c:if>
+							     <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('RightManagement',${role.id});">
+                                    <jsp:include page="../management/access-icon.jsp">
+                                        <jsp:param name="value" value="${role.getPrivilegeValue('RightManagement')}" />
+                                    </jsp:include>
+                                 </div>
 							</td>
 							<td>
-								<c:if test="${role.getPrivilegeValue('UserManagement') == 2}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletGreen" onclick="changePrivilege('UserManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('UserManagement') == 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletYellow" onclick="changePrivilege('UserManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('UserManagement') == 0}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletRed" onclick="changePrivilege('UserManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-								</c:if>	
+							    <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('UserManagement',${role.id});">
+                                    <jsp:include page="../management/access-icon.jsp">
+                                        <jsp:param name="value" value="${role.getPrivilegeValue('UserManagement')}" />
+                                    </jsp:include>
+                                 </div>
 							</td>
 							<td>
-								<c:if test="${role.getPrivilegeValue('FormManagement') == 2}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletGreen" onclick="changePrivilege('FormManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('FormManagement') == 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletYellow" onclick="changePrivilege('FormManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('FormManagement') == 0}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletRed" onclick="changePrivilege('FormManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-								</c:if>	
+							    <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('FormManagement',${role.id});">
+                                    <jsp:include page="../management/access-icon.jsp">
+                                        <jsp:param name="value" value="${role.getPrivilegeValue('FormManagement')}" />
+                                    </jsp:include>
+                                 </div>
 							</td>
 							<td>
-								<c:if test="${role.getPrivilegeValue('ContactManagement') == 2}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletGreen" onclick="changePrivilege('ContactManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('ContactManagement') == 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletYellow" onclick="changePrivilege('ContactManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('ContactManagement') == 0}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletRed" onclick="changePrivilege('ContactManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-								</c:if>	
+							    <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('ContactManagement',${role.id});">
+                                    <jsp:include page="../management/access-icon.jsp">
+                                        <jsp:param name="value" value="${role.getPrivilegeValue('ContactManagement')}" />
+                                    </jsp:include>
+                                 </div>
 							</td>
 							<c:if test="${showecas != null}">		
 								<td>
-									<c:if test="${role.getPrivilegeValue('ECAccess') == 2}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletGreen" onclick="changePrivilege('ECAccess',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-									</c:if>
-									<c:if test="${role.getPrivilegeValue('ECAccess') == 1}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletYellow" onclick="changePrivilege('ECAccess',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-									</c:if>
-									<c:if test="${role.getPrivilegeValue('ECAccess') == 0}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletRed" onclick="changePrivilege('ECAccess',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-									</c:if>	
+								     <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('ECAccess',${role.id});">
+                                        <jsp:include page="../management/access-icon.jsp">
+                                            <jsp:param name="value" value="${role.getPrivilegeValue('ECAccess')}" />
+                                        </jsp:include>
+                                     </div>
 								</td>
 							</c:if>
 							<td>
-								<c:if test="${role.getPrivilegeValue('SystemManagement') == 2}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletGreen" onclick="changePrivilege('SystemManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('SystemManagement') == 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletYellow" onclick="changePrivilege('SystemManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-								</c:if>
-								<c:if test="${role.getPrivilegeValue('SystemManagement') == 0}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights" />" class="roleBulletRed" onclick="changePrivilege('SystemManagement',${role.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-								</c:if>	
+							     <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('SystemManagement',${role.id});">
+                                    <jsp:include page="../management/access-icon.jsp">
+                                        <jsp:param name="value" value="${role.getPrivilegeValue('SystemManagement')}" />
+                                    </jsp:include>
+                                 </div>
 							</td>
 							<c:if test="${USER.getGlobalPrivilegeValue('RightManagement') > 1}">
 								<td style="vertical-align: middle">
@@ -264,13 +219,21 @@
 	    	<div class="modal-content">
 			<div class="modal-body">
 				<a onclick="updatePrivilege(0);" class="btn btn-default" style="margin-right: 10px;">
-			  		<img src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="read/write" />
+				    <div class="icon-wrapper">
+                        <jsp:include page="../management/access-icon.jsp">
+                            <jsp:param name="value" value="0" />
+                        </jsp:include>
+                    </div>
 			  	</a>
 			  	<spring:message code="label.NoAccess" />		  	
 			  	<br />
 			  
 			  	<a onclick="updatePrivilege(1);" class="btn btn-default" style="margin-right: 10px;">
-			  		<img src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read/write" />
+			  	    <div class="icon-wrapper">
+                        <jsp:include page="../management/access-icon.jsp">
+                            <jsp:param name="value" value="1" />
+                        </jsp:include>
+                    </div>
 			  	</a>
 			  	<span class="nororw"><spring:message code="label.ReadingAccess" /></span>
 			  	<span class="noownall hideme"><spring:message code="label.Own" /></span>
@@ -278,7 +241,11 @@
 			  	<br />
 			  	<span id="greenArea">
 				  	<a onclick="updatePrivilege(2);" class="btn btn-default" style="margin-right: 10px;">
-				  		<img src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
+				  	    <div class="icon-wrapper">
+                            <jsp:include page="../management/access-icon.jsp">
+                                <jsp:param name="value" value="2" />
+                            </jsp:include>
+                        </div>
 				  	</a>
 				  	<span class="nororw"><spring:message code="label.ReadWriteAccess" /></span>
 				  	<span class="noownall hideme"><spring:message code="label.All" /></span>

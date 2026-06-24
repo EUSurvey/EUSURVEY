@@ -54,7 +54,7 @@
 							<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('FormManagement') > 1}">
 								<!-- ko if: $parent.criterionInEditMode() != null && $parent.criterionInEditMode().attr("data-id") == id() -->
 									<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Discard" />" data-bind="click: () => { $parent.discardChanges($data); }"><span class="glyphicon glyphicon-ban-circle"></span></a>
-									<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.SaveAndClose" />" data-bind="click: () => { $parent.checkValidation($parent.criterionInEditMode()); }"><span class="glyphicon glyphicon-ok"></span></a>
+									<a class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.SaveAndClose" />" data-bind="click: () => { $parent.saveAndClose(); }"><span class="glyphicon glyphicon-ok"></span></a>
 								<!-- /ko -->
 								<!-- ko if: $parent.criterionInEditMode() == null || ($parent.criterionInEditMode() != null && $parent.criterionInEditMode().attr("data-id") != id()) -->
 									<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: () => { $parent.enableCriteriaEditMode($data); }"><span class="glyphicon glyphicon-pencil"></span></a>
@@ -111,7 +111,8 @@
 		this.originalAcronym = ko.observable("");
 		this.originalType = ko.observable("");
 		this.criterionInEditMode = ko.observable(null);
-			
+		this.lastEditId = ko.observable("none");
+
 		this.myPostProcessingLogic = function() {
 			$('[data-toggle="tooltip"]').tooltip();
 		}
@@ -194,6 +195,12 @@
 			$('#delete-sacriterion-dialog').modal('show');
 		}
 
+		this.saveAndClose = function() {
+			if (this.checkValidation(this.criterionInEditMode())) {
+				this.lastEditId("")
+			}
+		}
+
 		this.discardChanges = function(data) {
 			let tr = $("#sacriteriatable").find("tr[data-id=" + data.id() + "]");
 			$(tr).find('.validation-error-already-exists').hide();
@@ -201,14 +208,9 @@
 			$(tr).find('.validation-error-empty-acronym').hide();
 			$(tr).find('.validation-error-empty-type').hide();
 
-			// reset changes and deactivate edit mode
-			let original = root.originalCriteria().find(obj => {
-				return obj.id() === data.id();
-			})
-
-			data.name(original.name());
-			data.acronym(original.acronym());
-			data.type(original.type());
+			data.name(root.originalName() ?? "");
+			data.acronym(root.originalAcronym() ?? "");
+			data.type(root.originalType() ?? "");
 			root.toggleCriteriaEditMode(data.id());
 		}
 
@@ -232,9 +234,12 @@
 			const tr = $("#sacriteriatable").find("tr[data-id=" + data.id() + "]");
 			td = tr.find("td")[index];
 
-			root.originalName(data.name());
-			root.originalAcronym(data.acronym());
-			root.originalType(data.type());
+			if (root.lastEditId() != data.id()) {
+				root.lastEditId(data.id())
+				root.originalName(data.name());
+				root.originalAcronym(data.acronym());
+				root.originalType(data.type());
+			}
 
 			$(tr).find(".content").hide();
 			$(tr).find("textarea").show();

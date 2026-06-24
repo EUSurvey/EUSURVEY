@@ -7,10 +7,10 @@
 	<artifactId>eusurvey</artifactId>
 	<name>eusurvey</name>
 	<packaging>war</packaging>
-	<version>1.6</version>
+	<version>1.6.0</version>
 	<properties>
 		<java-version>11</java-version>
-		<org.springframework-version>5.3.20</org.springframework-version>
+		<org.springframework-version>5.3.39</org.springframework-version>
 		<org.springframework.security-version>5.7.5</org.springframework.security-version>
 		<org.aspectj-version>1.8.8</org.aspectj-version>
 		<org.slf4j-version>1.7.5</org.slf4j-version>
@@ -32,18 +32,32 @@
 			<artifactId>dependency-check-maven</artifactId>
 			<version>5.3.2</version>
 			<type>maven-plugin</type>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-collections</artifactId>
+					<groupId>commons-collections</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>${jacoco.version}</version>
-			<scope>test</scope>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-collections</artifactId>
+					<groupId>commons-collections</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.sonarsource.scanner.maven</groupId>
 			<artifactId>sonar-maven-plugin</artifactId>
 			<version>${sonar.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -78,6 +92,10 @@
 					<groupId>javax.servlet</groupId>
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>commons-collections</artifactId>
+					<groupId>commons-collections</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -85,6 +103,12 @@
 			<groupId>org.owasp.esapi</groupId>
 			<artifactId>esapi</artifactId>
 			<version>2.1.0.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-collections</artifactId>
+					<groupId>commons-collections</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -177,7 +201,13 @@
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
-			<version>1.5.0</version>
+			<version>1.10.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-collections</artifactId>
+					<groupId>commons-collections</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -437,7 +467,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>5.6.8.Final</version>
+			<version>5.6.15.Final</version>
 			<type>jar</type>
 			<scope>compile</scope>
 			<exclusions>
@@ -457,7 +487,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
-			<version>5.6.8.Final</version>
+			<version>5.6.15.Final</version>
 		</dependency>
 
 		<dependency>
@@ -475,7 +505,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
-			<version>5.6.8.Final</version>
+			<version>5.6.15.Final</version>
 		</dependency>
 
 		<dependency>
@@ -501,11 +531,13 @@
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-surefire-plugin</artifactId>
 			<version>2.19.1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-failsafe-plugin</artifactId>
 			<version>2.19.1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat.maven</groupId>
@@ -530,6 +562,13 @@
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>buildnumber-maven-plugin</artifactId>
 			<version>3.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>3.3.0</version>
 		</dependency>
 
 		<dependency>
@@ -601,14 +640,6 @@
 
 	</dependencies>
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/java/Fonts</directory>
-				<includes>
-					<include>*.ttf</include>
-				</includes>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -690,15 +721,15 @@
 							     <include>ehcache.xml</include>
 							</includes>
 						</resource>
-						<resource>
+						<!--<resource-->
 						<!-- Copies src/main/config/environment/spring.properties to  -->
                         <!-- war/WEB-INF/spring.properties -->
-                        <directory>src/main/config/${environment}</directory>
+                        <!--directory>src/main/config/${environment}</directory>
                             <targetPath>WEB-INF</targetPath>
                             <includes>
                                  <include>spring.properties</include>
                             </includes>
-                        </resource>
+                        </resource-->
 						<!-- Copy Fonts -->
 						<resource>
 							<directory>src/main/java/Fonts</directory>
@@ -714,12 +745,27 @@
 								<include>log4j.xml</include>
 							</includes>
 						</resource>
+						<!-- Copy Fonts -->
+						<resource>
+							<directory>src/main/resources</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+								<include>log4j.xml</include>
+							</includes>
+						</resource>
 					</webResources>
 					<warSourceExcludes>/WEB-INF/spring.properties</warSourceExcludes>
 					<warName>eusurvey</warName>
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<scope>compile</scope>
+				</configuration>
+			</plugin>
+			<!--<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -731,7 +777,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 			<!--plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>

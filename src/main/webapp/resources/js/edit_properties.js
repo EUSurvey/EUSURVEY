@@ -393,7 +393,7 @@ var ElementProperties = function() {
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getChoosePropertiesRow("Rows", "1,2,3,4,5,10,20,30,40,50", false, false, $(e).find("input[name^='rows']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
-				getMinMaxPropertiesRow("AcceptedNumberOfCharacters", 0, 5000, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
+				getMinMaxPropertiesRow("AcceptedNumberOfCharacters", 0, maxFreeTextLength, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
 				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
@@ -853,6 +853,7 @@ var ElementProperties = function() {
 				_actions.MoveDownEnabled(false);
 				_actions.CopyEnabled(false);
 				_actions.CutEnabled(false);
+				_actions.ChildSelected(true)
 				if (row == 0 && column == 0) {
 					getFirstCellPropertiesRow(id);
 				} else if (row == 0) { // column header
@@ -887,6 +888,7 @@ var ElementProperties = function() {
 				_actions.MoveDownEnabled(false);
 				_actions.CopyEnabled(false);
 				_actions.CutEnabled(false);
+				_actions.ChildSelected(true)
 				getCellPropertiesRow(id);
 			} else if ($(e).hasClass("dateitem"))
 			{
@@ -1239,8 +1241,8 @@ var ElementProperties = function() {
 				_actions.MoveDownEnabled(false);
 			}
 			
-			if (!hidevisibility)
-			getVisibilityRow(true);
+			if (!hidevisibility && selection.length > 0)
+				getVisibilityRow(true);
 		}
 		
 		if (event != null)

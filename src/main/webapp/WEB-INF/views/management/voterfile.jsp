@@ -15,8 +15,12 @@
 				<!-- /ko -->
 			</div>
 			<div class="col-md-10" style="text-align: left">
-				
-				<!-- <button class="btn btn-primary" onclick="openAddVoterDialog()"><spring:message code="label.AddUser" /></button> -->
+
+
+				<c:if test="${form.survey.geteVoteTemplate() == 'e' || form.survey.geteVoteTemplate() == 'p'}">
+				    <button class="btn btn-primary" onclick="openAddVoterDialog()"><spring:message code="label.AddUser" /></button>
+				</c:if>
+
 				<a class="btn btn-primary" onclick="showVoterFileExportDialog()"><spring:message code="label.Export" /></a>
 				<span v-if="totalVoters > 0" style="margin-left: 20px">
 		      		<span data-bind="text: totalVoters"></span>&nbsp;<spring:message code="label.entries" />
@@ -161,7 +165,6 @@
 					<span class="mandatory" aria-label="Mandatory">*</span>
 					Domain
 					<select id="voters-domain" class="form-control" style="width: 100%; margin-bottom: 20px;" >
-						<option></option>
 						<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
 							<option value="${domain.key}">${domain.value} </option>
 						</c:forEach>
@@ -171,12 +174,21 @@
 					<a onclick="searchVoters(1)" class="btn btn-default"><spring:message code="label.Search" /></a>
 				</div>
 
+				<div style="clear: both"></div>
+				<div style="margin-top: 10px; margin-left: 20px;">
+                    <div id="noEmptySearch" style="margin-bottom: 0.8rem; display: inline-flex">
+                        <img id="noEmptySearchIconAccess" src="${contextpath}/resources/images/exclamation-triangle.svg" style="display: none; height: 2rem; margin-right: 8px;"></img>
+                        <div id="noEmptySearchTextAccess" style="display: none; color: red"><spring:message code="label.NoEmptySearch" /></div>
+                    </div>
+                </div>
+
 				<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden">
 					<thead>
 					<tr class="attribute-names">
 																									<!--Save checked in a variable as the v.selected observable will change the checkallvoters:checked state-->
 						<th class="checkcell"><input id="checkallvoters" type="checkbox" onclick="let checked = $(this).is(':checked'); _participants.EVoteUsers().forEach((v) => {v.selected(checked)});" /></th>
-						<th><spring:message code="label.Name" /></th>
+						<th><spring:message code="label.FirstName" /></th>
+						<th><spring:message code="label.Surname" /></th>
 						<th><spring:message code="label.Email" /></th>
 						<th><spring:message code="label.Login" /></th>
 						<th><spring:message code="label.Department" /></th>
@@ -184,8 +196,11 @@
 					<tr class="table-styled-filter">
 						<th class="checkcell">&nbsp;</th>
 						<th class="filtercell">
-							<input onkeyup="checkVoterSearchSubmit(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="voters-name" />
+							<input onkeyup="checkVoterSearchSubmit(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="voters-firstname" />
 						</th>
+						<th class="filtercell">
+                            <input onkeyup="checkVoterSearchSubmit(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="voters-surname" />
+                        </th>
 						<th class="filtercell">
 							<input onkeyup="checkVoterSearchSubmit(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="voters-email"  />
 						</th>
@@ -206,16 +221,17 @@
 							<td class="checkcell">
 								<input type="checkbox" data-bind="checked: selected">
 							</td>
-							<td data-bind="text: displayName"></td>
-							<td data-bind="text: email"></td>
-							<td data-bind="text: ecMoniker"></td>
-							<td data-bind="text: departmentNumber"></td>
+							<td data-bind="text: fname"></td>
+							<td data-bind="text: lname"></td>
+							<td data-bind="text: mail"></td>
+							<td data-bind="text: login"></td>
+							<td data-bind="text: group"></td>
 						</tr>
 						<!-- /ko -->
 					</tbody>
 					<tfoot>
 					<tr>
-						<td colspan="5" style="text-align: center">
+						<td colspan="6" style="text-align: center">
 							<a data-bind="attr:{style: VotersSearchPage() > 1 ? '' : 'color: #ccc'}" data-toggle="tooltip" title="<spring:message code="label.GoToFirstPage" />" onclick="if (_participants.VotersSearchPage() > 1) searchVoters(1)"><span class="glyphicon glyphicon-step-backward"></span></a>
 							<a data-bind="attr:{style: VotersSearchPage() > 1 ? '' : 'color: #ccc'}" data-toggle="tooltip" title="<spring:message code="label.GoToPreviousPage" />" onclick="if (_participants.VotersSearchPage() > 1) searchVoters(_participants.VotersSearchPage() - 1)"><span class="glyphicon glyphicon-chevron-left"></span></a>
 
@@ -442,7 +458,6 @@
 		checkAll.checked = false;
 		checkAll.indeterminate = false;
 		$('#add-voter-dialog').modal();
-		searchVoters(1)
 	}
 
 	function checkVoterSearchSubmit(event, element){
@@ -459,9 +474,18 @@
 			return;
 		}
 
+		if (!($("#voters-email").val() != '' || $("#voters-department").val() != '' || $("#voters-firstname").val() != '' || $("#voters-surname").val() != '')) {
+            $("#noEmptySearchIconAccess").show();
+            $("#noEmptySearchTextAccess").show();
+            return;
+        } else {
+            $("#noEmptySearchIconAccess").hide();
+            $("#noEmptySearchTextAccess").hide();
+        }
+
 		_participants.VotersSearchPage(page)
 
-		let s = "name=" + $("#voters-name").val() + "&login=" + $("#voters-login").val() +  "&domain=" + $("#voters-domain").val() + "&email=" + $("#voters-email").val() + "&department=" + $("#voters-department").val() + "&newPage=" + _participants.VotersSearchPage() + "&itemsPerPage=" + votersSearchPageSize;
+		let s = "name=" + $("#voters-login").val() + "&last=" + $("#voters-surname").val() + "&first=" + $("#voters-firstname").val() +  "&domain=" + $("#voters-domain").val() + "&email=" + $("#voters-email").val() + "&department=" + $("#voters-department").val() + "&newPage=" + _participants.VotersSearchPage() + "&itemsPerPage=" + votersSearchPageSize;
 
 		let checkAll = document.getElementById('checkallvoters');
 		checkAll.checked = false;
@@ -470,13 +494,13 @@
 		_participants.EVoteUsers.removeAll()
 		_participants.ShowWait(true)
 		$.ajax({
-			url: contextpath + "/noform/management/usersJSON",
+			url: contextpath + "/logins/usersJSONVoter",
 			data: s,
 			dataType: 'json',
 			cache: false,
-			success: function(paging){
-				for (let i = 0; i < paging.items.length; i++ ){
-					let user = paging.items[i];
+			success: function(users){
+				for (let i = 0; i < users.length; i++ ){
+					let user = users[i];
 					user.selected = ko.observable(false);
 					user.selected.subscribe(function (){
 						//Change 'SelectAllCheckbox' visuals
@@ -499,7 +523,7 @@
 	function addSelectedVoters(){
 
 		//Filter selected and create an array containing all ecas user ids of the selected ones
-		let voters = _participants.EVoteUsers().filter(v => v.selected()).map(v => v.id)
+		let voters = _participants.EVoteUsers().filter(v => v.selected()).map(v => v.login)
 
 		if (voters.length == 0){
 			return;
@@ -574,7 +598,7 @@
 		$(".qq-uploader").css("display", "inline");
 		$(".qq-upload-button").addClass("btn btn-primary").removeClass("qq-upload-button");
 		$(".qq-upload-list").hide();
-		$(".qq-upload-drop-area").css("margin-left", "-1000px");
+		$(".qq-upload-drop-area").css("margin-left", "-10000px");
 		$("input[type=file]").attr("aria-label", "<spring:message code="info.uploadbutton" />");
 		
 		$(".filtercell input").on('keyup', function (event) {

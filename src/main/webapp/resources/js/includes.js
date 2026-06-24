@@ -622,7 +622,8 @@ function initModals(item)
 
                     const dateFilter = jqEl.closest(".datefilter")
 
-                    if (!jqEl.closest("th").hasClass("yellowfilter"))
+					var optionVerticalButtonsOrInsideIt = jqEl.closest("div").hasClass("overlaymenu") || jqEl.find("span").hasClass("glyphicon-option-vertical");
+                    if (!jqEl.closest("th").hasClass("yellowfilter") && !optionVerticalButtonsOrInsideIt)
                     {
                         jqEl.addClass("disabled");
                     } else if (dateFilter.length > 0) {
@@ -654,7 +655,10 @@ function initModals(item)
 					});
 
 					$(this).find("button").each(function(){
-						$(this).addClass("disabled");
+						var optionVerticalButtonsOrInsideIt = $(this).closest("div").hasClass("overlaymenu") || $(this).find("span").hasClass("glyphicon-option-vertical");
+						if (!optionVerticalButtonsOrInsideIt) {
+							$(this).addClass("disabled");
+						}
 					});
 				});
 				$(".checkDelete").each(function() {
@@ -1562,10 +1566,11 @@ function initModals(item)
 
 			var count = getCharacterCount(this);
 
-			if (count > 5000)
+			let max = getMaxInputClassInt(this)
+			if (count > max)
 			{
 				validationinfo += $(this).attr("name") + " (MaxFT) ";
-				addValidationError.andFocus(this, texttoolong5000Text);
+				addValidationError.andFocus(this, textTooLongX.replace("#", max.toString()));
 
 				result = false;
 			}
@@ -1881,13 +1886,8 @@ function initModals(item)
 					 		if (count > parseInt(max))
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MaxFT) ";
-					 			if (max == "5000")
-					 			{
-					 				addValidationError.andFocus(this, texttoolong5000Text);
-						 		} else {
-						 			addValidationError.andFocus(this, texttoolongText);
-						 		}
-					 			
+								addValidationError.andFocus(this, textTooLongX.replace("#", max));
+
 					 			result = false;
 					 		};
 					 	};
@@ -2200,6 +2200,15 @@ function initModals(item)
 				enableDelphiSaveButtons(div);
 			}			
 		}
+	}
+
+	function getMaxInputClassInt(el) {
+		for (const cl of $(el).prop("classList").values()) {
+			if (/max\d+/.test(cl)) {
+				return parseInt(cl.substring(3))
+			}
+		}
+		return maxFreeTextLength ?? 10000
 	}
 	
 	function disableDelphiSaveButtons(parent) {

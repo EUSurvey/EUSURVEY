@@ -212,7 +212,8 @@ final public class Survey implements java.io.Serializable {
 	private boolean codaWaiting = false;
 	private String eVoteTemplate = "";
 	private Integer quorum = 6666;
-	private Integer minListPercent = 5;
+	private Double minListPercentD = 5.0;
+	private Integer minListPercent = 0; // needed for binary backward compatibility
 	private Integer maxPrefVotes;
 	private Integer seatsToAllocate;
 	private String organisation;
@@ -1967,7 +1968,7 @@ final public class Survey implements java.io.Serializable {
 		copy.isSelfAssessment = isSelfAssessment;
 		copy.eVoteTemplate = eVoteTemplate;
 		copy.quorum = quorum;
-		copy.minListPercent = minListPercent;
+		copy.minListPercentD = minListPercentD;
 		copy.maxPrefVotes = maxPrefVotes;
 		copy.seatsToAllocate = seatsToAllocate;
 		copy.showResultsTestPage = showResultsTestPage;
@@ -2948,12 +2949,12 @@ final public class Survey implements java.io.Serializable {
 	}
 
 	@Column(name = "MINLISTPER")
-	public Integer getMinListPercent() {
-		return minListPercent;
+	public Double getMinListPercent() {
+		return minListPercentD == null ? 5.0 : minListPercentD;
 	}
 
-	public void setMinListPercent(Integer minListPercent) {
-		this.minListPercent = minListPercent != null ? minListPercent : 5;
+	public void setMinListPercent(Double minListPercent) {
+		this.minListPercentD = minListPercent != null ? minListPercent : 5.0;
 	}
 
 	@Column(name = "VALIDATIONCODE")

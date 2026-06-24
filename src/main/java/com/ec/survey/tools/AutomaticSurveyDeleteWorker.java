@@ -23,7 +23,7 @@ import java.util.List;
 @Scope("singleton")
 public class AutomaticSurveyDeleteWorker implements Runnable {
 
-    protected static final Logger logger = Logger.getLogger(AutomaticSurveyDeleteWorker.class);
+	protected static final Logger logger = Logger.getLogger(AutomaticSurveyDeleteWorker.class);
 
     @Resource(name = "surveyService")
     private SurveyService surveyService;
@@ -44,9 +44,9 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
 
     private @Value("${server.prefix}") String host;
 
-    @Override
-    public void run() {
-        try {
+	@Override
+	public void run() {
+		try {
             logger.info("AutomaticSurveyDeleteWorker started");
             String sender = settingsService.get(Setting.InactiveSurveysSender);
             int inactiveSurveysDays = Integer.parseInt(settingsService.get(Setting.InactiveSurveysDays));
@@ -107,19 +107,21 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
             }
 
             logger.info("AutomaticSurveyDeleteWorker finished");
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-    }
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+	}
 
     private void sendNotificationEmail(Survey survey, String sender, int inactiveSurveysDays, int daysUntilDeletion, int type) {
         StringBuilder body = new StringBuilder();
-        List<User> users = new ArrayList<>();
+        List<String> users = new ArrayList<>();
+        String owner = null;
+        String bcc = settingsService.get(Setting.InactiveSurveysBCC);
 
         try {
 
             if (EmailValidator.getInstance().isValid(survey.getOwner().getEmail())) {
-                users.add(survey.getOwner());
+                owner = survey.getOwner().getEmail();
             } else {
                 logger.info("invalid email address for user " + survey.getOwner().getId());
             }
@@ -128,8 +130,8 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
             for (Access access : accesses) {
                 if (access.getUser() != null && EmailValidator.getInstance().isValid(access.getUser().getEmail())) {
                     managers.add(access.getUser().getFirstLastName());
-                    if (!users.contains(access.getUser())) {
-                        users.add(access.getUser());
+                    if (!users.contains(access.getUser().getEmail())) {
+                        users.add(access.getUser().getEmail());
                     }
                 } else {
                     logger.info("invalid user for access " + access.getId());
@@ -149,90 +151,93 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
             var url = host + survey.getUniqueId() + "/management/overview";
             var supportLink = host + "home/support?automateddeletion=1";
 
-            for (User user : users) {
+            body.append("Dear ").append(survey.getOwner().getFirstLastName()).append(",<br /><br />");
 
-                body.append("Dear ").append(user.getFirstLastName()).append(",<br /><br />");
+            if (type == 1) {
 
-                if (type == 1) {
+                body.append("You are listed as the owner/manager of the survey:<br />");
+                body.append(title).append("<br />");
 
-                    body.append("You are listed as the owner/manager of the survey:<br />");
-                    body.append(title).append("<br />");
+                body.append("<a href='").append(url).append("'>").append(url).append("</a><br /><br />");
 
-                    body.append("<a href='").append(url).append("'>").append(url).append("</a><br /><br />");
+                body.append("<ul>");
+                body.append("<li>Created on: ").append(surveyCreationTime).append("</li>");
+                body.append("<li>Current status: Inactive for ").append(inactiveSurveysDays).append(" days</li>");
+                body.append("<li>Scheduled deletion: ").append(deletionDate).append(" (end of day, CET)</li>");
+                body.append("</ul>");
 
-                    body.append("<ul>");
-                    body.append("<li>Created on: ").append(surveyCreationTime).append("</li>");
-                    body.append("<li>Current status: Inactive for ").append(inactiveSurveysDays).append(" days</li>");
-                    body.append("<li>Scheduled deletion: ").append(deletionDate).append(" (end of day, CET)</li>");
-                    body.append("</ul>");
+                body.append("According to our data retention policy (see <a href='").append(host).append("home/tos'>Terms of Service</a>), inactive surveys are automatically deleted after a defined period.");
 
-                    body.append("According to our data retention policy (see <a href='").append(host).append("home/tos'>Terms of Service</a>), inactive surveys are automatically deleted after a defined period.");
+                body.append("<br /><br /><b>What you can do</b><br /><br />");
+                body.append("Delete now (optional) <br />");
+                body.append("If you no longer need this survey, you can delete it immediately from the overview page: <br />");
+                body.append("<a href='").append(url).append("'>").append(url).append("</a>");
 
-                    body.append("<br /><br /><b>What you can do</b><br /><br />");
-                    body.append("Delete now (optional) <br />");
-                    body.append("If you no longer need this survey, you can delete it immediately from the overview page: <br />");
-                    body.append("<a href='").append(url).append("'>").append(url).append("</a>");
+                body.append("<br /><br />Keep your content (before deletion)<br />");
+                body.append("<ul>");
+                body.append("<li> Export the survey and its data: ").append("<a href='").append(host).append("home/helpauthors#_Toc_10_14").append("'>How to Export a Survey and its Data?</a></li>");
+                body.append("</ul>");
 
-                    body.append("<br /><br />Keep your content (before deletion)<br />");
-                    body.append("<ul>");
-                    body.append("<li> Export the survey and its data: ").append("<a href='").append(host).append("home/helpauthors#_Toc_10_14").append("'>How to Export a Survey and its Data?</a></li>");
-                    body.append("</ul>");
+                body.append("Reactivate the survey (prevents deletion)<br />");
+                body.append("A survey becomes active again, when one of the following happens:");
+                body.append("<ol>");
+                body.append("<li>You edit the questionnaire or its properties (any change).</li>");
+                body.append("<li>A new response is submitted.</li>");
+                body.append("</ol>");
+                body.append("Once reactivated, your survey will not be deleted automatically.");
 
-                    body.append("Reactivate the survey (prevents deletion)<br />");
-                    body.append("A survey becomes active again, when one of the following happens:");
-                    body.append("<ol>");
-                    body.append("<li>You edit the questionnaire or its properties (any change).</li>");
-                    body.append("<li>A new response is submitted.</li>");
-                    body.append("</ol>");
-                    body.append("Once reactivated, your survey will not be deleted automatically.");
+                body.append("<br /><br />Need help?");
 
-                    body.append("<br /><br />Need help?");
+                body.append("<ul><li>Support form: <a href='").append(supportLink).append("'>").append(supportLink).append("</a></li></ul>");
 
-                    body.append("<ul><li>Support form: <a href='").append(supportLink).append("'>").append(supportLink).append("</a></li></ul>");
+                title = "Action needed: Your EUSurvey \"" + title + "\" is scheduled for deletion on " + deletionDate;
 
-                    title = "Action needed: Your EUSurvey \"" + title + "\" is scheduled for deletion on " + deletionDate;
+            } else {
+                body.append("We are contacting you regarding the following survey, for which you are listed as the survey owner or manager:<br />");
+                body.append("<a href='").append(url).append("'>").append(url).append("</a><br /><br />");
+                body.append("Survey owner: ").append(survey.getOwner().getFirstLastName());
 
-                } else {
-                    body.append("We are contacting you regarding the following survey, for which you are listed as the survey owner or manager:<br />");
-                    body.append("<a href='").append(url).append("'>").append(url).append("</a><br /><br />");
-                    body.append("Survey owner: ").append(survey.getOwner().getFirstLastName());
-
-                    if (!managers.isEmpty()) {
-                        body.append("<br />Survey manager(s): ");
-                        boolean first = true;
-                        for (String manager : managers) {
-                            if (!first) body.append(", ");
-                            body.append(manager);
-                            first = false;
-                        }
+                if (!managers.isEmpty()) {
+                    body.append("<br />Survey manager(s): ");
+                    boolean first = true;
+                    for (String manager : managers) {
+                        if (!first) body.append(", ");
+                        body.append(manager);
+                        first = false;
                     }
-
-                    if (type == 2) {
-
-                        body.append("<br /><br />This survey was previously inactive and has now been <b>deleted</b> on ").append(Tools.formatDate(new Date(), ConversionTools.DateFormat));
-                        body.append(" as per our data retention policy (see <a href='").append(host).append("home/tos'>Terms of Service</a>).");
-
-                        title = "Your survey has been deleted: " + title;
-
-                    } else {
-
-                        body.append("<br /><br />This survey was previously inactive but has now been <b>reactivated</b> because a change has been made to the questionnaire or its properties or because a new contribution has been received.");
-                        body.append("<br /><br />The survey is now active again and will not be subject to automatic deletion.");
-
-                        title = "Your survey has been reactivated: " + title;
-
-                    }
-
-                    body.append("<br /><br />For any further questions, please contact us through the support form:<br />");
-                    body.append("<a href='").append(host).append("/home/support?automateddeletion=1'>Contact us</a>");
                 }
 
-                body.append("<br /><br />Kind regards,<br />EUSurvey team");
+                if (type == 2) {
 
-                String text = mailService.getEUSurveyMailTemplate(body.toString());
+                    body.append("<br /><br />This survey was previously inactive and has now been <b>deleted</b> on ").append(Tools.formatDate(new Date(), ConversionTools.DateFormat));
+                    body.append(" as per our data retention policy (see <a href='").append(host).append("home/tos'>Terms of Service</a>).");
 
-                mailService.SendHtmlMail(user.getEmail(), sender, sender, title, text, "Automatic Delete Message");
+                    title = "Your survey has been deleted: " + title;
+
+                } else {
+
+                    body.append("<br /><br />This survey was previously inactive but has now been <b>reactivated</b> because a change has been made to the questionnaire or its properties or because a new contribution has been received.");
+                    body.append("<br /><br />The survey is now active again and will not be subject to automatic deletion.");
+
+                    title = "Your survey has been reactivated: " + title;
+
+                }
+
+                body.append("<br /><br />For any further questions, please contact us through the support form:<br />");
+                body.append("<a href='").append(host).append("/home/support?automateddeletion=1'>Contact us</a>");
             }
+
+            body.append("<br /><br />Kind regards,<br />EUSurvey team");
+
+            String text = mailService.getEUSurveyMailTemplate(body.toString());
+
+            String[] cc = null;
+
+            if (!users.isEmpty()) {
+                cc = users.toArray(new String[0]);
+            }
+
+            mailService.SendHtmlMail(owner, cc, bcc, sender, sender, title, text, "Automatic Delete Message");
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
         }

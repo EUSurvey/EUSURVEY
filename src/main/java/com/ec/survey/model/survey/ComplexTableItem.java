@@ -476,7 +476,7 @@ public class ComplexTableItem extends Question {
                 if (maxCharacters > 0) {
                     css += " max" + maxCharacters;
                 } else {
-                    css += " max5000";
+                    css += " max" + getMaxFreeTextLength();
                 }
                 break;
             case Number:

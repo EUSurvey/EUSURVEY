@@ -118,7 +118,7 @@ public class FreeTextQuestion extends Question {
 		{
 			css += " max" + maxCharacters;
 		} else {
-			css += " max5000";
+			css += " max" + getMaxFreeTextLength();
 		}
 		
 		if (isComparable)

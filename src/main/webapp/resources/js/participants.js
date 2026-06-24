@@ -603,7 +603,7 @@ var Participants = function() {
 	var usersEndReached = false;
 	this.loadUsers = function(first) {
 		var model = this;
-		
+
 		if (model.Page() == 1)
 		{
 			return;

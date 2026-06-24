@@ -123,7 +123,7 @@
 			var textnotlongenoughText = "${form.getMessage("validation.textNotLongEnough")}";
 			var texttoolongText = "${form.getMessage("validation.textTooLong")}";
 			var bracketCountNotMatching = "${form.getMessage("validation.numberBracketsNotMatching")}";
-			var texttoolong5000Text = "${form.getMessage("validation.textTooLong5000")}";
+			var textTooLongX = "${form.getMessage("validation.textTooLongX", "#")}";
 			var invalidnumberText = "${form.getMessage("validation.invalidNumber")}";
 			var invalidCharacter = "${form.getMessage("validation.invalidCharacter")}";
 			var valuetoosmall = "${form.getMessage("validation.valueTooSmall")}";
@@ -227,7 +227,7 @@
 			var textnotlongenoughText = "<spring:message code='validation.textNotLongEnough' />";
 			var texttoolongText = "<spring:message code='validation.textTooLong' />";
 			var bracketCountNotMatching = "<spring:message code='validation.numberBracketsNotMatching' />";
-			var texttoolong5000Text = "<spring:message code='validation.textTooLong5000' />";
+			var textTooLongX = "<spring:message code='validation.textTooLongX' arguments="#" />";
 			var invalidnumberText = "<spring:message code='validation.invalidNumber' />";
 			var valuetoosmall = "<spring:message code='validation.valueTooSmall' />";
 			var valuetoolarge = "<spring:message code='validation.valueTooLarge' />";
@@ -322,7 +322,9 @@
 	var versionfootersource = "<%@include file="versionfooter.txt" %>";
 	var version = versionfootersource.substring(versionfootersource.indexOf("(")+1);
 	version = version.substring(0, version.indexOf(" "));
-	
+
+	var maxFreeTextLength = ${maxFreeTextLength};
+
 	<c:if test="${surveyeditorsaved != null}">
 	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");
 	</c:if>

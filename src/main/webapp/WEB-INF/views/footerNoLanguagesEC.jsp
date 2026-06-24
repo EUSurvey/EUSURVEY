@@ -47,10 +47,10 @@
            <a href="<c:url value="/home/download"/>">${form.getMessage("label.Download")}</a>
 		</li>
 		<li>
-           <a style="margin-riht: 10px;" href="<c:url value="/home/documentation"/>">${form.getMessage("label.Documentation")}</a>
+           <a href="<c:url value="/home/documentation"/>">${form.getMessage("label.Documentation")}</a>
 		</li>	
          <li>
-         	<a target="_blank" href="<c:url value="/home/helpparticipants"/>">${form.getMessage("label.FAQ")}
+         	<a target="_blank" href="<c:url value="/home/helpparticipants"/>">${form.getMessage("label.FAQ")}</a>
          </li>
          <li class="top-link">
              <a href="#top-page">Top</a>

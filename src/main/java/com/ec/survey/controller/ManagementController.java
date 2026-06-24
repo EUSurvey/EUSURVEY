@@ -2651,7 +2651,7 @@ public class ManagementController extends BasicController {
 			}
 
 			request.getSession().setAttribute("surveyeditorsaved", survey.getId());
-			return new ModelAndView("redirect:/" + editorredirect);
+			return new ModelAndView("redirect:" + (editorredirect.startsWith("http") ? editorredirect : "/" + editorredirect));
 		}
 
 		return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit?saved=true");
@@ -3461,6 +3461,8 @@ public class ManagementController extends BasicController {
 					}
 				}
 			}
+
+			filter.alignFilterWithVisible();
 		}
 		
 		if (user != null && user.getResultAccess() != null &&  user.getResultAccess().getResultFilter() != null)
@@ -3696,8 +3698,9 @@ public class ManagementController extends BasicController {
 			} catch (Exception e) {
 				logger.warn(e.getLocalizedMessage(), e);
 			}
-			
-			if (request.getMethod().equalsIgnoreCase("GET")) {
+
+			//Evote will have their own quorum page logged
+			if (request.getMethod().equalsIgnoreCase("GET") && !survey.getIsEVote()) {
 				activityService.log(ActivityRegistry.ID_RESULTS_ACCESS, null, "content", user.getId(), survey.getUniqueId());
 			}
 		}

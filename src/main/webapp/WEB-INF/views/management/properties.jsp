@@ -1393,18 +1393,21 @@
 								<div style="float: left">
 									<spring:message code="label.Publish" />
 									<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
-									<div class="help hideme"><spring:message code="info.Publish" /></div>	
+									<div class="help hideme"><spring:message code="info.PublishNew" /></div>
 								</div>
 								<div style="float: right; min-width: 150px;">	
-									<form:checkbox id="showContent" path="survey.publication.showContent" class="check" /><spring:message code="label.Contributions" /><br />
+									<form:checkbox id="showContent" path="survey.publication.showContent" class="check" onclick="_properties.checkUploadedDocuments(this)" /><spring:message code="label.Contributions" /><br />
 									<form:checkbox id="showStatistics" path="survey.publication.showStatistics" class="check" /><spring:message code="label.Statistics" /><br />
 									<form:checkbox path="survey.publication.showSearch" class="check hidden" /><!--<spring:message code="label.Search" /><br />-->
 									<c:choose>
 										<c:when test="${!form.survey.hasUploadElement}">
 											<form:checkbox path="survey.publication.showUploadedDocuments" class="check hideme" />										
 										</c:when>
+										<c:when test="${form.survey.publication.showContent}">
+											<form:checkbox id="showUploadedDocuments" path="survey.publication.showUploadedDocuments" class="check" /><spring:message code="label.UploadedDocuments" />
+										</c:when>
 										<c:otherwise>
-											<form:checkbox path="survey.publication.showUploadedDocuments" class="check" /><spring:message code="label.UploadedDocuments" />
+											<form:checkbox id="showUploadedDocuments" path="survey.publication.showUploadedDocuments" class="check" disabled="true" /><spring:message code="label.UploadedDocuments" />
 										</c:otherwise>
 									</c:choose>
 								</div>
@@ -1955,7 +1958,7 @@
 									</div>
 									<div style="float: right; text-align: right">
 										<div>
-											<input id='minListPercent' class="form-control number min0 max100" type='number' name='survey.minListPercent' min='0' max='100' value="<esapi:encodeForHTMLAttribute>${form.survey.minListPercent}</esapi:encodeForHTMLAttribute>">
+											<input id='minListPercent' class="form-control number min0 max100" type='number' name='survey.minListPercent' min='0' max='100' step="0.01" onchange="if (!isNaN(Number(this.value))) this.value = Math.round(this.value * 100) / 100.0" value="<esapi:encodeForHTMLAttribute>${form.survey.minListPercent}</esapi:encodeForHTMLAttribute>">
 										</div>
 									</div>
 									<div style="clear: both"></div>

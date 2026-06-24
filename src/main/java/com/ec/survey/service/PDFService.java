@@ -104,42 +104,6 @@ public class PDFService extends BasicService {
 		return null;
 	}
 
-	public java.io.File createPublishedAnswerPDF(AnswerSet answerSet) throws IOException {
-		sessionService.initializeProxy();
-		logger.info("Starting PDF creation for published answer set " + answerSet.getId());
-		FileOutputStream os = null;
-		PDFRenderer renderer = null;
-		try {
-			java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
-			java.io.File target = new java.io.File(String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
-
-			if (!target.exists() || target.length() < 1024) {
-				renderer = getRenderer();
-				if (renderer == null) {
-					throw new MessageException("Not possible to obtain PDFRenderer from pool");
-				}
-				os = new FileOutputStream(target);
-				renderer.createPDF(pdfhost + "preparepublishedcontribution/" + answerSet.getId(), os);
-			}
-
-			return target;
-		} catch (Exception ex) {
-			logger.error(String.format("PDF creation for published answer %s could not be started.", answerSet.getUniqueCode()));
-			logger.error(ex.getLocalizedMessage(), ex);
-		} finally {
-			if (os != null)
-				os.close();
-			if (renderer != null)
-				try {
-					PDFRendererPoolFactory.getInstance(max, sessionService).checkIn(renderer);
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage(), e);
-				}
-		}
-
-		return null;
-	}
-
 	public String createAnswerPDF(String code, String email) throws IOException {
 		logger.info("starting creation of answer pdf for contribution " + code + " to be sent to " + email);
 
@@ -264,32 +228,6 @@ public class PDFService extends BasicService {
 				}
 		}
 
-		return null;
-	}
-
-	public java.io.File createAllIndividualResultsPDF(Survey survey, ResultFilter filter, String uid) {
-		try {
-			Set<Integer> answerSets = answerService.getAllAnswerIds(survey.getId(), filter, 1, Integer.MAX_VALUE);
-
-			java.io.File folder = fileService.getSurveyExportsFolder(survey.getUniqueId());
-			java.io.File target = new java.io.File(String.format("%s/%s", folder.getPath(), uid));
-
-			final OutputStream out = new FileOutputStream(target);
-			final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("zip", out);
-
-			for (int answerSetId : answerSets) {
-				AnswerSet answerSet = answerService.get(answerSetId);
-				java.io.File result = createPublishedAnswerPDF(answerSet);
-
-				os.putArchiveEntry(new ZipArchiveEntry(answerSet.getId() + ".pdf"));
-				IOUtils.copy(new FileInputStream(result), os);
-				os.closeArchiveEntry();
-			}
-
-			os.close();
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-		}
 		return null;
 	}
 

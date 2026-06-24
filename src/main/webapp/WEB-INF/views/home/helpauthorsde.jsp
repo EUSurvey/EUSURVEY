@@ -35,6 +35,8 @@
 			font-size: 13px;
 			font-weight: normal;
 			text-decoration: none;
+			padding-top: 3px;
+			padding-bottom: 2px;
 		}
 		
 		.anchorlink {
@@ -74,6 +76,13 @@
 			font-size: 19px !important;
 		}
 
+		.pageheader a,
+		#ulContainer a {
+			display: inline-block;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 2px;
+		}
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -1681,6 +1690,15 @@
 					</li>
 				</ol>
 			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/changecontributionDE.png" />
+			</p>
+			<h2>
+				Wie können die Umfrageteilnehmer eine PDF-Version des Fragebogens herunterladen?
+			</h2>
+			<p>
+				Um den Umfrageteilnehmern eine leere PDF-Kopie des Fragebogens zur Verfügung zu stellen, aktivieren Sie zunächst die Option „Herunterladen des PDF Fragebogen aktivieren“ unter „Eigenschaften“ → „Survey Security“.
+			</p>
+			<p>
+				Sobald diese Einstellung aktiviert ist, können die Umfrageteilnehmer im rechten Bereich der Umfrage auf die Option „PDF-Version herunterladen“ zugreifen.
 			</p>
 			<h1>
 				Umfrage testen

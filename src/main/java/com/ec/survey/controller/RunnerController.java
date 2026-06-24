@@ -2527,8 +2527,15 @@ public class RunnerController extends BasicController {
 		Form form = new Form();
 		form.setSurvey(survey);
 
+		String maxFreeTextLengthString = settingsService.get(Setting.MaxFreeTextLength);
+		int maxFreeTextLength = maxFreeTextLengthString == null ? 10000 : ConversionTools.getInt(maxFreeTextLengthString, 10000);
+
 		for (Element element : result) {
 			element.setOriginalTitle(element.getTitle());
+
+			if (element instanceof  Question) {
+				((Question)element).setMaxFreeTextLength(maxFreeTextLength);
+			}
 
 			if (element instanceof Section) {
 				element.setTitle(form.getSectionTitle((Section) element));
@@ -2561,8 +2568,9 @@ public class RunnerController extends BasicController {
 					child.setOriginalTitle(child.getTitle());
 				}
 			} else if (element instanceof ComplexTable) {
-				for (Element child : ((ComplexTable) element).getChildElements()) {
+				for (ComplexTableItem child : ((ComplexTable) element).getChildElements()) {
 					child.setOriginalTitle(child.getTitle());
+					child.setMaxFreeTextLength(maxFreeTextLength);
 					//child.setTitle(form.getQuestionTitle(child));
 				}
 			} else if (element instanceof Image) {

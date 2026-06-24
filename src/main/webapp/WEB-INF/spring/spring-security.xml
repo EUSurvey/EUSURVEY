@@ -39,7 +39,6 @@
 		<security:intercept-url pattern="/preparesaresults/**"	access="permitAll" />
 		<security:intercept-url pattern="/graphics/**"	access="permitAll" />
 		<security:intercept-url pattern="/printcontribution/**"	access="permitAll" />
-		<security:intercept-url pattern="/preparepublishedcontribution/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/preparecharts/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/preparestatistics/**"	access="permitAll" />
 		<security:intercept-url pattern="/*/management/preparestatisticsquiz/**"	access="permitAll" />

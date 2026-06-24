@@ -125,9 +125,12 @@
 		this.loadScores = function() {
 			root.scoreCard(null)
 
+			const dataset = $("#scoredataset").val()
+			if (dataset == null) return
+
 			$.ajax({
 				type:'GET',
-				url: "${contextpath}/${form.survey.shortname}/management/selfassessment/scores?dataset=" + $("#scoredataset").val(),
+				url: "${contextpath}/${form.survey.shortname}/management/selfassessment/scores?dataset=" + dataset,
 				dataType: 'json',
 				cache: false,
 				success: function (scorecard) {

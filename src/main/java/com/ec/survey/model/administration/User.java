@@ -110,6 +110,7 @@ public class User implements java.io.Serializable {
 	}
 
 	@Column(name = "USER_PASSWORD")
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
@@ -119,6 +120,7 @@ public class User implements java.io.Serializable {
 	}
 
 	@Column(name = "USER_PWSALT")
+	@JsonIgnore
 	public String getPasswordSalt() {
 		return passwordSalt;
 	}

@@ -69,6 +69,54 @@ public class SchemaService extends BasicService {
 	}
 
 	@Transactional
+	public void step140() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		ensureActivities(session, ActivityRegistry.ID_GUEST_LIST_VOTER_FILE_EXPORT);
+
+		status.setDbversion(140);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step139() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		session.createNativeQuery("ALTER TABLE SURVEYS MODIFY COLUMN MINLISTPER DOUBLE").executeUpdate();
+
+		status.setDbversion(139);
+		session.saveOrUpdate(status);
+	}
+
+    @Transactional
+    public void step138() {
+        Session session = sessionFactory.getCurrentSession();
+        Status status = getStatus();
+
+        String existing = settingsService.get(Setting.MaxFreeTextLength);
+        if (existing == null) {
+            Setting s = new Setting();
+            s.setKey(Setting.MaxFreeTextLength);
+            s.setValue("10000");
+            s.setFormat("characters");
+            session.saveOrUpdate(s);
+        }
+
+		existing = settingsService.get(Setting.InactiveSurveysBCC);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.InactiveSurveysBCC);
+			s.setValue("DIGIT-EUSURVEY-SUPPORT@ec.europa.eu");
+			s.setFormat("email");
+			session.saveOrUpdate(s);
+		}
+		status.setDbversion(138);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
 	public void step137() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

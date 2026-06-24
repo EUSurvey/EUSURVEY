@@ -88,10 +88,12 @@ public class Setting {
     public static final String InactiveSurveysNotification2Days = "InactiveSurveysNotification2Days";
     public static final String InactiveSurveysNotification3Days = "InactiveSurveysNotification3Days";
     public static final String InactiveSurveysSender = "InactiveSurveysSender";
+	public static final String InactiveSurveysBCC = "InactiveSurveysBCC";
 
 	public static final String Chatbot = "Chatbot";
 	public static final String ChatbotWidgetURL = "ChatbotWidgetURL";
 	public static final String ChatbotAPIURL = "ChatbotAPIURL";
+	public static final String MaxFreeTextLength = "MaxFreeTextLength";
 
 	@Id
 	@Column(name = "SETTINGS_ID")

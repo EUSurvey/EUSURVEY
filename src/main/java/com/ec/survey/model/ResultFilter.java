@@ -13,6 +13,7 @@ import javax.persistence.*;
 import javax.persistence.Table;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Defines the results we want to extract from the database. Hence, gives options to filter but also to order by.
@@ -255,6 +256,16 @@ public class ResultFilter implements java.io.Serializable {
 		exportedExplanations.clear();
 		visibleDiscussions.clear();
 		exportedDiscussions.clear();
+	}
+
+	public void alignFilterWithVisible() {
+		if (filterValues == null || visibleQuestions == null) return;
+		//For all Filters that act on invisible elements -> remove the filter
+		var invisibleQuestionFilters = filterValues.keySet().stream().filter(fK -> !visibleQuestions.contains(fK.split("\\|")[0])).collect(Collectors.toList());
+
+		for (var qId: invisibleQuestionFilters) {
+			filterValues.remove(qId);
+		}
 	}
 
 	@Id

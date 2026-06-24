@@ -16,7 +16,7 @@ function getNewElement(item)
 		element.maxCharacters = "";
 		element.minCharacters = "";
 		element.isComparable = false;
-		element.css = "freetext";
+		element.css = "freetext max" + maxFreeTextLength;
 		element.numRows = 1;
 		element.isDelphiQuestion = isDelphi;
 		updateComplexityScore("addSimpleQuestion");
@@ -104,6 +104,7 @@ function getNewElement(item)
 		element.order = 0;
 		element.widths = "";
 		element.completeWidth = "auto";
+		element.css = "freetext max" + maxFreeTextLength;
 		element.rows = 4;
 		element.columns = 4;
 		element.childElements = [
@@ -190,7 +191,7 @@ function getNewElement(item)
 		element.maxCharacters = 0;
 		element.minCharacters = 0;
 		element.isComparable = false;
-		element.css = "regex";
+		element.css = "regex max" + maxFreeTextLength;
 		element.numRows = 1;
 		element.regex = "";
 		element.isDelphiQuestion = isDelphi;	

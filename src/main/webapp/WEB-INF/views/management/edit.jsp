@@ -436,6 +436,7 @@
 		</c:if>
 
 		var showListVoteProperty = ${!form.survey.geteVoteTemplate().equals('l') && !form.survey.geteVoteTemplate().equals('p')};
+		var maxFreeTextLength = ${maxFreeTextLength};
 	</script>
 
 </body>

@@ -628,7 +628,7 @@
 		strings["invalidMinMaxChoice"] = "<spring:message code="error.invalidMinMaxChoices" />";
 		strings["invalidMatrixRows2"] = "<spring:message code="error.invalidMatrixRows2" />";
 		strings["invalidNumber"] = "<spring:message code="validation.invalidNumber" />";
-		strings["invalidNumber5k"] = "<spring:message code="validation.textTooLong5000" />";
+		strings["invalidNumberX"] = "<spring:message code="validation.textTooLongX" arguments="#" />";
 		strings["invalidDate"] = "<spring:message code="validation.invalidDate" />";
 		strings["invalidTime"] = "<spring:message code="validation.invalidTime" />";
 		strings["invalidStartEnd"] = "<spring:message code="validation.invalidStartEnd" />";
@@ -655,6 +655,7 @@
 		strings["ConfirmationFileInfo"]= "&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.ConfirmationFileInfo" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 		strings["ConfirmationTextInfo"]= "&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.ConfirmationTextInfo" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 		strings["GallerySelections"] = "<spring:message code="validation.invalidGallerySelections" />";
+		strings["textTooLongAndLimit"] = "<spring:message code="validation.textTooLongAndLimit" />";
 		strings["xhtmlinvalid"] = "<spring:message code="label.InvalidXHTML" />";
 		strings["FileNameAlreadyExists"] = "<spring:message code="error.FileNameAlreadyExists" />";
 		strings["Save"] = "<spring:message code="label.Save" />";

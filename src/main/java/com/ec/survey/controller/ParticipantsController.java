@@ -2,11 +2,7 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.*;
 import com.ec.survey.model.*;
-import com.ec.survey.model.administration.EcasUser;
-import com.ec.survey.model.administration.GlobalPrivilege;
-import com.ec.survey.model.administration.LocalPrivilege;
-import com.ec.survey.model.administration.User;
-import com.ec.survey.model.administration.Voter;
+import com.ec.survey.model.administration.*;
 import com.ec.survey.model.attendees.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
@@ -135,7 +131,7 @@ public class ParticipantsController extends BasicController {
 
 		if (survey.getIsEVote()){
 			//Remove all domains that don't start with ec.europa
-			domains = domains.stream().filter(kV -> kV.getKey().startsWith("ec.europa")).collect(Collectors.toList());
+			domains = domains.stream().filter(kV -> kV.getKey().equals("eu.europa.ec")).collect(Collectors.toList());
 		}
 
 		result.addObject("domains", domains);
@@ -957,12 +953,6 @@ public class ParticipantsController extends BasicController {
 		newPage = newPage == null ? "1" : newPage;
 		Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 100);
 
-		if (domain.length() == 0)
-			return null;
-		if (form.getSurvey().getIsEVote() && !domain.startsWith("ec.europa")){
-			return null;
-		}
-
 		Paging<EcasUser> paging = new Paging<>();
 		paging.setItemsPerPage(itemsPerPage);
 		paging.setCurrentPage(Integer.parseInt(newPage));
@@ -1454,7 +1444,7 @@ public class ParticipantsController extends BasicController {
 	}
 
 	@PostMapping(value = "/addVoters")
-	public @ResponseBody List<Voter> addVoters(@PathVariable String shortname, @RequestParam(name = "voters[]") List<Integer> voters, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody List<Voter> addVoters(@PathVariable String shortname, @RequestParam(name = "voters[]") List<String> voters, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			Form form = sessionService.getForm(request, null, false, false);
 			User u = sessionService.getCurrentUser(request);
@@ -1467,26 +1457,54 @@ public class ParticipantsController extends BasicController {
 				throw new ForbiddenURLException();
 			}
 
-			if (voters.size() > 0) {
+			if (!voters.isEmpty()) {
 				String uid = form.getSurvey().getUniqueId();
 
-				List<EcasUser> users = ldapDBService.getExclusiveECASVoteUsersWithIds(uid, voters);
 				//The query already ignores duplicate voters
 				LinkedList<Voter> votersList = new LinkedList<>();
 
-				for (EcasUser user : users){
-					if (user.getOrganisation().startsWith("ec.europa")){
+				Role ecRole = null;
+				for (Role role : administrationService.getAllRoles()) {
+					if (role.getName().equalsIgnoreCase("Form Manager (EC)"))
+						ecRole = role;
+				}
+
+				for (String login : voters) {
+					User user = null;
+					try {
+						user = administrationService.getUserForLogin(login, true);
+					} catch (Exception e) {
+						// ignore
+					}
+
+					if (user == null) {
+						user = new User();
+						user.setLogin(login);
+						user.setDisplayName(ldapService.getMoniker(login));
+						user.setEmail(ldapService.getEmail(login));
+						user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));
+						user.setType(User.ECAS);
+						user.getRoles().add(ecRole);
+						try {
+							administrationService.createUser(user);
+						} catch (Exception e) {
+							logger.error(e.getLocalizedMessage(), e);
+							user = null;
+						}
+					}
+
+					if (user != null) {
 						Voter voter = new Voter();
-						voter.setEcMoniker(user.getEcMoniker());
+						voter.setEcMoniker(user.getLogin());
 						voter.setGivenName(user.getGivenName());
-						voter.setSurname(user.getSurname());
+						voter.setSurname(user.getSurName());
 						voter.setSurveyUid(uid);
 						voter.setCreated(new Date());
 						votersList.add(voter);
 					}
 				}
 
-				if (votersList.size() > 0) {
+				if (!votersList.isEmpty()) {
 					eVoteService.addMoreVoters(votersList, u);
 				}
 				List<Voter> firstVoterPage = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 20, null, null, null, null);

@@ -297,7 +297,7 @@ function getCellPropertiesRow(cellID) {
 	row.FormulaInputId(id)
 	
 	var input = $("#" + cellID + "min");
-	$(input).spinner({ decimals:2, min:0, max:5000, start:"", allowNull: true });
+	$(input).spinner({ decimals:2, min:0, max:maxFreeTextLength, start:"", allowNull: true });
 	$(input).parent().find('.ui-spinner-button').click(function() {
 		update($("#" + cellID + "min"));
 	});
@@ -306,7 +306,7 @@ function getCellPropertiesRow(cellID) {
 	});	
 	
 	input = $("#" + cellID + "max");
-	$(input).spinner({ decimals:2, min:0, max:5000, start:"", allowNull: true });
+	$(input).spinner({ decimals:2, min:0, max:maxFreeTextLength, start:"", allowNull: true });
 	$(input).parent().find('.ui-spinner-button').click(function() {
 		update($("#" + cellID + "max"));
 	});
@@ -1194,7 +1194,7 @@ function getTargetDatasetsRow2()
 	_elementProperties.propertyRows.push(row);
 }
 
-
+var saPropertyRow = null
 function getSAQuestionRow(element) {
 	var row = new PropertyRow();
 	row.Type("saquestion")
@@ -1238,14 +1238,19 @@ function getSAQuestionRow(element) {
 	}
 	
 	_elementProperties.propertyRows.push(row);
-	
-	$('.saspinner').each(function(){
-		var input = this;
-		$(input).spinner({ decimals:0, min:0, max:1000, start:"", allowNull: true });
-		$(input).parent().find('.ui-spinner-button').click(function() {
-	  		update(input);
-		});
-	})
+	saPropertyRow = row
+
+	function setSpinner() {
+		$('.saspinner:not(.ui-spinner-input)').each(function(){
+			const input = $(this);
+			input.spinner({ decimals:0, min:0, max:1000, start:"", allowNull: true });
+			input.parent().find('.ui-spinner-button').click(function() {
+				update(input);
+			});
+		})
+	}
+	row.ContentItems.subscribe(setSpinner)
+	setSpinner()
 }
 
 function escapeForHtml(text) {
@@ -1800,7 +1805,7 @@ function createImageUploader(instance)
 	
 	$(".qq-upload-button").addClass("btn btn-default btn-xs").removeClass("qq-upload-button");
 	$(".qq-upload-list").hide();
-	$(".qq-upload-drop-area").css("margin-left", "-1000px");
+	$(".qq-upload-drop-area").css("margin-left", "-10000px");
 }
 
 function createFileUploader(instance)
@@ -1923,7 +1928,7 @@ function createFileUploader(instance)
 	});
 	$(".qq-upload-button").addClass("btn btn-default btn-xs").removeClass("qq-upload-button");
 	$(".qq-upload-list").hide();
-	$(".qq-upload-drop-area").css("margin-left", "-1000px");
+	$(".qq-upload-drop-area").css("margin-left", "-10000px");
 }
 
 function showHideGalleryButtons()
@@ -1963,13 +1968,16 @@ function addPossibleAnswer(noundo)
 
 	text = editLabels.answerNumbered(answerNum)
 
-	var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text, false);
+	var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text, null);
 	element.possibleAnswers.push(newanswer);	
 	
 	if (isQuiz && quizanswersrow != null)
 	{
 		quizanswersrow.ContentItems.push(newanswer);
 		initQuizElements(element);
+	}
+	if (element.isSAQuestion && element.isSAQuestion() && saPropertyRow != null) {
+		saPropertyRow.ContentItems.push(newanswer);
 	}
 	if (!noundo) {
 		_undoProcessor.addUndoStep(["ADDANSWER", element.id(), newanswer]);
@@ -2003,6 +2011,8 @@ function removePossibleAnswer()
 	{
 		quizanswersrow.ContentItems.remove(answer);
 		initQuizElements(element);
+	} else if (element.isSAQuestion && element.isSAQuestion() && saPropertyRow != null) {
+		saPropertyRow.ContentItems.remove(answer)
 	}
 	
 	_undoProcessor.addUndoStep(["REMOVEANSWER", element.id(), answer]);
@@ -2029,6 +2039,9 @@ function removeSpecificPossibleAnswer(element, domElement, paid, noundo)
 	{
 		quizanswersrow.ContentItems.remove(answer);
 		initQuizElements(element);
+	}
+	else if (element.isSAQuestion && element.isSAQuestion() && saPropertyRow != null) {
+		saPropertyRow.ContentItems.remove(answer)
 	}
 
 	if (!noundo)
@@ -2059,7 +2072,7 @@ function addPossibleAnswerChildren(){
 	let text = editLabels.answerNumbered(headerCell.possibleAnswersChildren().length + 1);
 
 	function nextAnswer(){
-		return newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text, false);
+		return newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), "", text, null);
 	}
 
 	headerCell.possibleAnswersChildren.push(nextAnswer());

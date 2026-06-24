@@ -132,7 +132,7 @@
                                                                     <div class="quizquestion">
                                                                         <div class="fullcontent hideme">${element.getStrippedTitle()}: ${matrixQuestion.getStrippedTitle()}<a class='lessbutton' onclick='switchQuestionTitle(this);'>${form.getMessage("label.less")}</a>
                                                                         </div>
-                                                                        <div class='shortcontent'>${(element.getStrippedTitle() + ': ' + matrixQuestion.getStrippedTitle()).substring(0,190)}<a class="morebutton" onclick="switchQuestionTitle(this);">${form.getMessage("label.more")}</a>
+                                                                        <div class='shortcontent'>${form.max190(element.getStrippedTitle(), ": ", matrixQuestion.getStrippedTitle())}<a class="morebutton" onclick="switchQuestionTitle(this);">${form.getMessage("label.more")}</a>
                                                                         </div>
                                                                     </div>
                                                                 </c:otherwise>
@@ -559,15 +559,14 @@
 							  success: function( data ) {
 								  
 								  if (data == "success") {
-										$('#ask-export-dialog').modal('hide');
-										showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
-								  	} else if (data == "errorcaptcha") {
-								  		$("#ask-export-dialog-error-captcha").show();
-								  		reloadCaptcha();
-									} else {
-										showError(message_PublicationExportFailed);
-										reloadCaptcha();
-									};
+									  $('#ask-export-dialog').modal('hide');
+									  showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
+								  } else if (data == "errorcaptcha") {
+									  $("#ask-export-dialog-error-captcha").show();
+								  } else {
+									  showError(message_PublicationExportFailed);
+								  }
+								  reloadCaptcha();
 							}
 						});							
 					</c:when>
@@ -580,12 +579,12 @@
 							  success: function( data ) {
 								  
 								  if (data == "success") {
-										$('#ask-export-dialog').modal('hide');
-										showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
-									} else {
-										showError(message_PublicationExportFailed);
-										reloadCaptcha();
-									};
+									  $('#ask-export-dialog').modal('hide');
+								  	  showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
+								  } else {
+									  showError(message_PublicationExportFailed);
+								  }
+								  reloadCaptcha();
 							}
 						});							
 					</c:otherwise>

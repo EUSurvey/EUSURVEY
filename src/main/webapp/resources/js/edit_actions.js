@@ -411,14 +411,19 @@ var Actions = function() {
 				_elementProperties.selectedelement = $("#content").find(".selectedquestion").last();
 		}
 
+		let pasteTarget = $(_elementProperties.selectedelement)
+		if (!pasteTarget.is(".survey-element")) {
+			pasteTarget = pasteTarget.closest(".survey-element")
+		}
+
     	if (copiedtoolboxitem.is(":visible"))
     	{
     		var item = copiedtoolboxitem.clone();
-			$(_elementProperties.selectedelement).after(item);
+			pasteTarget.after(item);
     		this.copyElement($(item));	
     	} else {
     		var item = cuttoolboxitem.clone();
-			$(_elementProperties.selectedelement).after(item);
+			pasteTarget.after(item);
     		this.pasteElement($(item));
     	}
     	

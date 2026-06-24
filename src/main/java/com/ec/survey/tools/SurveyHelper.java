@@ -1879,7 +1879,7 @@ public class SurveyHelper {
 	}
 
 	private static Confirmation getConfirmation(Map<String, String[]> parameterMap, Element currentElement,
-			Survey survey, String id, FileService fileService, ServletContext servletContext, boolean log220)
+			Survey survey, String id, FileService fileService, ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID)
 			throws InvalidXHTMLException {
 		Confirmation confirmation;
 		String oldValues = "";
@@ -1956,10 +1956,10 @@ public class SurveyHelper {
 
 		int counter = 1;
 
-		if (files != null)
+		if (files != null) {
 			for (String uid : files) {
 				try {
-					File file = fileService.get(uid);
+					File file = fileService.get(uid, fileIDsByUID.get(uid));
 					file.setPosition(counter++);
 					confirmation.getFiles().add(file);
 					if (log220) {
@@ -1969,6 +1969,7 @@ public class SurveyHelper {
 					logger.error(e.getLocalizedMessage(), e);
 				}
 			}
+		}
 
 		if (log220 && !oldFiles.toString().equals(newFiles.toString())) {
 			oldValues += " files: " + oldFiles;
@@ -4719,7 +4720,7 @@ public class SurveyHelper {
 					log220 && currentElement != null, fileIDsByUID);
 		} else if (type.equalsIgnoreCase("confirmation")) {
 			element = getConfirmation(parameterMap, currentElement, survey, id, fileService, servletContext,
-					log220 && currentElement != null);
+					log220 && currentElement != null, fileIDsByUID);
 		} else if (type.equalsIgnoreCase("freetext")) {
 			element = getFreeText(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);

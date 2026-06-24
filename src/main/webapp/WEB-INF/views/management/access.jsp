@@ -71,38 +71,6 @@
 				$(this).find("img").removeAttr("onclick").css("cursor", "default");
 			})
 			
-			$("tr:not(.readonly)").each(function(){
-				
-				$(this).find(".roleBulletGrey").hover(function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_gray_hover.png");
-				},
-				function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_gray.png");
-				});
-				
-				$(this).find(".roleBulletGreen").hover(function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_green_hover.png");
-				},
-				function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_green.png");
-				});
-				
-				$(this).find(".roleBulletYellow").hover(function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_yellow_hover.png");
-				},
-				function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_yellow.png");
-				});
-				
-				$(this).find(".roleBulletRed").hover(function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_red_hover.png");
-				},
-				function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_red.png");
-				});
-				
-			})
-			
 			$('[data-toggle="tooltip"]').tooltip(); 
 			
 			<c:if test="${selectSecondTab != null}">
