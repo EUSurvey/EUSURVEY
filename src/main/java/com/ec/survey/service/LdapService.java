@@ -539,14 +539,14 @@ public class LdapService extends BasicService {
 			break;
 		}		
 		
-		SearchControls sc = new SearchControls(SearchControls.ONELEVEL_SCOPE,
+		SearchControls sc = new SearchControls(SearchControls.SUBTREE_SCOPE,
 				0,//1L, //count limit
 				0,  //time limit
 				lstAttr.toArray(new String[lstAttr.size()]),
 				//new String[] {"departmentNumber","o"},//null,//attributes (null = all)
 				false,// return object ?
 				false);// dereference links? 
-		sc.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+		sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
 		return sc;
 	}
