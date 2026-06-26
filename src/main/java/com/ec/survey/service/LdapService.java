@@ -37,8 +37,8 @@ public class LdapService extends BasicService {
     private @Value("${LdapSecurityPrincipal:}") String securityPrincipal;
     private @Value("${LdapSecurityCredentials:}") String securityCredentials;
     private @Value("${LdapSecurityAuthentication:}") String securityAuthentication;
-    private @Value("${ldap.search.user.format:uid\\=%s, ou\\=People}") String ldapSearchUserFormat;
-    private @Value("${ldap.search.mail.format:mail\\=%s, ou\\=People}") String ldapSearchMailFormat;
+    //private @Value("${ldap.search.user.format:uid\\=%s, ou\\=People}") String ldapSearchUserFormat;
+    //private @Value("${ldap.search.mail.format:mail\\=%s, ou\\=People}") String ldapSearchMailFormat;
     private @Value("${ldap.search.format:ou\\=People}") String ldapSearchFormat;
    
     private @Value("${ldap.mapping.user.departmentNumber:departmentNumber}") String ldapMappingUserDepartmentNumber;
@@ -79,38 +79,78 @@ public class LdapService extends BasicService {
             
         return new InitialDirContext(env);
     }
-      
-    public String getEmail(String userName) throws NamingException {
-    	
-    	userName = Tools.encodeForLDAP(userName);
-    	
-        String email = "";
-        DirContext ctx = initialize();
-        try {
-        	String searchValue= String.format(ldapSearchUserFormat, userName);
-            Attributes attrs = ctx.getAttributes(searchValue);
-            email = (String) attrs.get("mail").get();
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-        
-        ctx.close();
-        return email;
-    }
-    
+
+	public String getEmail(String userName) throws NamingException {
+
+		userName = Tools.encodeForLDAP(userName);
+
+		String email = "";
+		DirContext ctx = initialize();
+//        try {
+//        	String searchValue= String.format(ldapSearchUserFormat, userName);
+//            Attributes attrs = ctx.getAttributes(searchValue);
+//            email = (String) attrs.get("mail").get();
+//        } catch (Exception e) {
+//            logger.error(e.getLocalizedMessage(), e);
+//        }
+
+		SearchControls sc = getSearchControls(LdapSearchTypeEnum.LOGIN);
+		sc.setCountLimit(1);
+		sc.setTimeLimit(60000);
+		NamingEnumeration<SearchResult> ne = null;
+		Attributes userAttributes;
+		String searchString = "(uid=" + Tools.encodeForLDAP(userName) + ")";
+
+		try{
+			ne = ctx.search(ldapSearchFormat, searchString, sc);
+
+			while(ne.hasMore()){
+				SearchResult nextSearchResult = ne.next();
+				userAttributes = nextSearchResult.getAttributes();
+				email = (String) userAttributes.get(ldapMappingUserMail).get();
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		ctx.close();
+		return email;
+	}
+
 	public String getMoniker(String login) throws NamingException {
 		String moniker = "";
 		DirContext ctx = initialize();
-        try {
-        	login = Tools.encodeForLDAP(login);
-        	String searchValue= String.format(ldapSearchUserFormat, login);
-            Attributes attrs = ctx.getAttributes(searchValue);
-            moniker = (String) attrs.get(ldapMappingUserEcMoniker).get();
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-	    ctx.close();
-        return moniker;
+		try {
+//        	login = Tools.encodeForLDAP(login);
+//        	String searchValue= String.format(ldapSearchUserFormat, login);
+//            Attributes attrs = ctx.getAttributes(searchValue);
+//            moniker = (String) attrs.get(ldapMappingUserEcMoniker).get();
+
+			SearchControls sc = getSearchControls(LdapSearchTypeEnum.LOGIN);
+			sc.setCountLimit(1);
+			sc.setTimeLimit(60000);
+			NamingEnumeration<SearchResult> ne = null;
+			Attributes userAttributes;
+			String searchString = "(uid=" + Tools.encodeForLDAP(login) + ")";
+
+			try {
+				ne = ctx.search(ldapSearchFormat, searchString, sc);
+
+				while(ne.hasMore()){
+					SearchResult nextSearchResult = ne.next();
+					userAttributes = nextSearchResult.getAttributes();
+					moniker = (String) userAttributes.get(ldapMappingUserEcMoniker).get();
+				}
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		ctx.close();
+		return moniker;
 	}
 	
 	public String getLoginForEmail(String email) throws NamingException {
@@ -182,71 +222,90 @@ public class LdapService extends BasicService {
 		ctx.close();
 		return organisations;
 	}
-   
-    public List<String> getUserLDAPGroups(String username) {
 
-        List<String> groups = new ArrayList<>();
-        try {
-        	DirContext ctx = initialize();
-            username = Tools.encodeForLDAP(username);
-            String searchValue= String.format(ldapSearchUserFormat, username);
-            Attributes attrs = ctx.getAttributes(searchValue);
-            
-            // get the attributes
-            String department="";
-            
-            if (isAttributeEligible(ldapMappingUserDepartmentNumber)){
-            	department= getAttributeValue(attrs, ldapMappingUserDepartmentNumber,true);
-            }else if(!StringUtils.isEmpty(ldapMappingUserDepartmentNumber) && ldapMappingUserDepartmentNumber.startsWith(LDAP_CONSTANT_PREFIX)){
-            	department=ldapMappingUserDepartmentNumber.replace(LDAP_CONSTANT_PREFIX, "");
-            }
-            	            	            
-            String employeeType="";
-            if (!isCasOss())
-            	employeeType = getAttributeValue(attrs, ldapMappingUserEmployeeType,true);
-            
-            String o ="";
-            if(isAttributeEligible(ldapMappingUserO)){
-            	o=getAttributeValue(attrs, "o",false); 
-            }else if(!StringUtils.isEmpty(ldapMappingUserO)&& ldapMappingUserO.startsWith(LDAP_CONSTANT_PREFIX)){
-            	o= ldapMappingUserO.replace(LDAP_CONSTANT_PREFIX, "");
-            }
-            
-            if (o != null && !o.isEmpty()) {
-            	groups.add(o.replace("eu.europa.", ""));
-            }
-            if (department != null) {
-                String[] tabDep = department.split("\\.");
-                if (tabDep[0].equals("ECA"))
-                	groups.add("ecaroot");
-                else
-                	groups.add("ALL-COM");
-                
-                groups.add(tabDep[0]);
-                
-                String prefix = tabDep[0];
-                for (int i = 1; i < tabDep.length; i++)
-                {
-                	prefix += "." + tabDep[i];
-                	groups.add(prefix);
-                }
-                
-            } else if (Objects.equals(employeeType, "f") || Objects.equals(employeeType, "x") || Objects.equals(employeeType, "i") || Objects.equals(employeeType, "xf") || Objects.equals(employeeType, "q")) {
-                //internal                
-            } else {
-            	groups.add("external");
-            }
-            
-            ctx.close();
-           
-        } catch (javax.naming.NameNotFoundException e1)
-        {
-        	//ignore, this just means the user was not found
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-        return groups;
-    }
+	public List<String> getUserLDAPGroups(String username) {
+
+		List<String> groups = new ArrayList<>();
+		try {
+			DirContext ctx = initialize();
+			//username = Tools.encodeForLDAP(username);
+			//String searchValue= String.format(ldapSearchUserFormat, username);
+			//Attributes attrs = ctx.getAttributes(searchValue);
+
+			SearchControls sc = getSearchControls(LdapSearchTypeEnum.USER);
+			sc.setCountLimit(1);
+			sc.setTimeLimit(60000);
+			NamingEnumeration<SearchResult> ne = null;
+			Attributes attrs = null;
+			String searchString = "(uid=" + Tools.encodeForLDAP(username) + ")";
+
+			try {
+				ne = ctx.search(ldapSearchFormat, searchString, sc);
+
+				while(ne.hasMore()){
+					SearchResult nextSearchResult = ne.next();
+					attrs = nextSearchResult.getAttributes();
+					//moniker = (String) userAttributes.get(ldapMappingUserEcMoniker).get();
+				}
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
+
+			// get the attributes
+			String department="";
+
+			if (isAttributeEligible(ldapMappingUserDepartmentNumber)){
+				department= getAttributeValue(attrs, ldapMappingUserDepartmentNumber,true);
+			}else if(!StringUtils.isEmpty(ldapMappingUserDepartmentNumber) && ldapMappingUserDepartmentNumber.startsWith(LDAP_CONSTANT_PREFIX)){
+				department=ldapMappingUserDepartmentNumber.replace(LDAP_CONSTANT_PREFIX, "");
+			}
+
+			String employeeType="";
+			if (!isCasOss())
+				employeeType = getAttributeValue(attrs, ldapMappingUserEmployeeType,true);
+
+			String o ="";
+			if(isAttributeEligible(ldapMappingUserO)){
+				o=getAttributeValue(attrs, "o",false);
+			}else if(!StringUtils.isEmpty(ldapMappingUserO)&& ldapMappingUserO.startsWith(LDAP_CONSTANT_PREFIX)){
+				o= ldapMappingUserO.replace(LDAP_CONSTANT_PREFIX, "");
+			}
+
+			if (o != null && !o.isEmpty()) {
+				groups.add(o.replace("eu.europa.", ""));
+			}
+			if (department != null) {
+				String[] tabDep = department.split("\\.");
+				if (tabDep[0].equals("ECA"))
+					groups.add("ecaroot");
+				else
+					groups.add("ALL-COM");
+
+				groups.add(tabDep[0]);
+
+				String prefix = tabDep[0];
+				for (int i = 1; i < tabDep.length; i++)
+				{
+					prefix += "." + tabDep[i];
+					groups.add(prefix);
+				}
+
+			} else if (Objects.equals(employeeType, "f") || Objects.equals(employeeType, "x") || Objects.equals(employeeType, "i") || Objects.equals(employeeType, "xf") || Objects.equals(employeeType, "q")) {
+				//internal
+			} else {
+				groups.add("external");
+			}
+
+			ctx.close();
+
+		} catch (javax.naming.NameNotFoundException e1)
+		{
+			//ignore, this just means the user was not found
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		return groups;
+	}
     
     private static String getAttributeValue(Attributes attrs, String name , boolean convertToUpper ) throws NamingException {
     	
@@ -283,7 +342,7 @@ public class LdapService extends BasicService {
 			NamingEnumeration<SearchResult> ne = null; 
 			Attributes set_att;
 
-			String searchString = "(& (objectClass=*)";
+			String searchString = "(&";
 						
 			if (name != null && name.length() > 0){
 				searchString += getFilterContainsOr("uid", ldapMappingUserEcMoniker, name);			
@@ -532,14 +591,14 @@ public class LdapService extends BasicService {
 			break;
 		}		
 		
-		SearchControls sc = new SearchControls(SearchControls.ONELEVEL_SCOPE,
+		SearchControls sc = new SearchControls(SearchControls.SUBTREE_SCOPE,
 				0,//1L, //count limit
 				0,  //time limit
 				lstAttr.toArray(new String[lstAttr.size()]),
 				//new String[] {"departmentNumber","o"},//null,//attributes (null = all)
 				false,// return object ?
 				false);// dereference links? 
-		sc.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+		sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
 		return sc;
 	}
