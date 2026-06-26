@@ -37,8 +37,8 @@ public class LdapService extends BasicService {
     private @Value("${LdapSecurityPrincipal:}") String securityPrincipal;
     private @Value("${LdapSecurityCredentials:}") String securityCredentials;
     private @Value("${LdapSecurityAuthentication:}") String securityAuthentication;
-    private @Value("${ldap.search.user.format:uid\\=%s, ou\\=People}") String ldapSearchUserFormat;
-    private @Value("${ldap.search.mail.format:mail\\=%s, ou\\=People}") String ldapSearchMailFormat;
+    //private @Value("${ldap.search.user.format:uid\\=%s, ou\\=People}") String ldapSearchUserFormat;
+    //private @Value("${ldap.search.mail.format:mail\\=%s, ou\\=People}") String ldapSearchMailFormat;
     private @Value("${ldap.search.format:ou\\=People}") String ldapSearchFormat;
    
     private @Value("${ldap.mapping.user.departmentNumber:departmentNumber}") String ldapMappingUserDepartmentNumber;
@@ -54,9 +54,9 @@ public class LdapService extends BasicService {
     private @Value("${ldap.mapping.user.recordStatus:recordStatus}") String ldapMappingUserRecordStatus;
     private @Value("${ldap.mapping.user.modifyTimstamp:modifyTimstamp}") String ldapMappingUserModifyTimstamp;
     
-    private @Value("${ldap.mapping.domain.o:o}") String ldapMappingDomainO;
+    //private @Value("${ldap.mapping.domain.o:o}") String ldapMappingDomainO;
     private @Value("${ldap.mapping.domain.description:description}") String ldapMappingDomainDescription;
-    private @Value("${ldap.search.domains.format:@null}") String ldapSearchDomainFormat;
+    //private @Value("${ldap.search.domains.format:@null}") String ldapSearchDomainFormat;
         
     public @Value("${casoss:false}") String cassOss;
 
@@ -86,14 +86,34 @@ public class LdapService extends BasicService {
     	
         String email = "";
         DirContext ctx = initialize();
-        try {
-        	String searchValue= String.format(ldapSearchUserFormat, userName);
-            Attributes attrs = ctx.getAttributes(searchValue);
-            email = (String) attrs.get("mail").get();
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-        
+//        try {
+//        	String searchValue= String.format(ldapSearchUserFormat, userName);
+//            Attributes attrs = ctx.getAttributes(searchValue);
+//            email = (String) attrs.get("mail").get();
+//        } catch (Exception e) {
+//            logger.error(e.getLocalizedMessage(), e);
+//        }
+
+		SearchControls sc = getSearchControls(LdapSearchTypeEnum.LOGIN);
+		sc.setCountLimit(1);
+		sc.setTimeLimit(60000);
+		NamingEnumeration<SearchResult> ne = null;
+		Attributes userAttributes;
+		String searchString = "(uid=" + Tools.encodeForLDAP(userName) + ")";
+
+		try{
+			ne = ctx.search(ldapSearchFormat, searchString, sc);
+
+			while(ne.hasMore()){
+				SearchResult nextSearchResult = ne.next();
+				userAttributes = nextSearchResult.getAttributes();
+				email = (String) userAttributes.get(ldapMappingUserMail).get();
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
         ctx.close();
         return email;
     }
@@ -102,10 +122,30 @@ public class LdapService extends BasicService {
 		String moniker = "";
 		DirContext ctx = initialize();
         try {
-        	login = Tools.encodeForLDAP(login);
-        	String searchValue= String.format(ldapSearchUserFormat, login);
-            Attributes attrs = ctx.getAttributes(searchValue);
-            moniker = (String) attrs.get(ldapMappingUserEcMoniker).get();
+//        	login = Tools.encodeForLDAP(login);
+//        	String searchValue= String.format(ldapSearchUserFormat, login);
+//            Attributes attrs = ctx.getAttributes(searchValue);
+//            moniker = (String) attrs.get(ldapMappingUserEcMoniker).get();
+
+			SearchControls sc = getSearchControls(LdapSearchTypeEnum.LOGIN);
+			sc.setCountLimit(1);
+			sc.setTimeLimit(60000);
+			NamingEnumeration<SearchResult> ne = null;
+			Attributes userAttributes;
+			String searchString = "(uid=" + Tools.encodeForLDAP(login) + ")";
+
+			try {
+				ne = ctx.search(ldapSearchFormat, searchString, sc);
+
+				while(ne.hasMore()){
+					SearchResult nextSearchResult = ne.next();
+					userAttributes = nextSearchResult.getAttributes();
+					moniker = (String) userAttributes.get(ldapMappingUserEcMoniker).get();
+				}
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
+
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
         }
@@ -188,9 +228,28 @@ public class LdapService extends BasicService {
         List<String> groups = new ArrayList<>();
         try {
         	DirContext ctx = initialize();
-            username = Tools.encodeForLDAP(username);
-            String searchValue= String.format(ldapSearchUserFormat, username);
-            Attributes attrs = ctx.getAttributes(searchValue);
+            //username = Tools.encodeForLDAP(username);
+            //String searchValue= String.format(ldapSearchUserFormat, username);
+            //Attributes attrs = ctx.getAttributes(searchValue);
+
+			SearchControls sc = getSearchControls(LdapSearchTypeEnum.USER);
+			sc.setCountLimit(1);
+			sc.setTimeLimit(60000);
+			NamingEnumeration<SearchResult> ne = null;
+			Attributes attrs = null;
+			String searchString = "(uid=" + Tools.encodeForLDAP(username) + ")";
+
+			try {
+				ne = ctx.search(ldapSearchFormat, searchString, sc);
+
+				while(ne.hasMore()){
+					SearchResult nextSearchResult = ne.next();
+					attrs = nextSearchResult.getAttributes();
+					//moniker = (String) userAttributes.get(ldapMappingUserEcMoniker).get();
+				}
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
             
             // get the attributes
             String department="";
