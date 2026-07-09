@@ -252,6 +252,11 @@ public class LdapService extends BasicService {
 				logger.error(e.getLocalizedMessage(), e);
 			}
 
+			if (attrs == null) {
+				ctx.close();
+				return groups;
+			}
+
 			// get the attributes
 			String department="";
 
