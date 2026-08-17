@@ -1,0 +1,89 @@
+{
+  "canonical_id": "SM-23_creating_a_survey__08_how_do_i_remove_an_existing_survey",
+  "title": "23. How do I remove an existing survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-23_creating_a_survey__08_how_do_i_remove_an_existing_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/23_creating_a_survey__08_how_do_i_remove_an_existing_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I remove an existing survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Creating a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "On the 'Surveys' page, open the survey you want and click on the 'Delete' icon. Once you have confirmed, your survey will be removed from the list of surveys.",
+  "prerequisites": [],
+  "procedure": [
+    "Beware: deleting a survey removes every trace of your questions and your results from the EUSurvey system! This cannot be undone!"
+  ],
+  "important_conditions": [
+    "Beware: deleting a survey removes every trace of your questions and your results from the EUSurvey system! This cannot be undone!"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I create a new survey?",
+    "What type of surveys can I create?",
+    "How do I import an existing survey from my computer?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/23_creating_a_survey__08_how_do_i_remove_an_existing_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Creating a survey",
+    "eusurvey_area": "Creating a survey",
+    "feature": "",
+    "user_intent": "23. How do I remove an existing survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "creating",
+      "existing",
+      "remove",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I remove an existing survey?",
+      "How can I remove an existing survey?",
+      "How do I remove an existing survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I remove an existing survey?",
+      "How can I remove an existing survey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

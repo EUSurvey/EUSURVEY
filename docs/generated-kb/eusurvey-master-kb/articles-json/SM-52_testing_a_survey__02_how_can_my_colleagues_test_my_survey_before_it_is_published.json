@@ -1,0 +1,89 @@
+{
+  "canonical_id": "SM-52_testing_a_survey__02_how_can_my_colleagues_test_my_survey_before_it_is_published",
+  "title": "52. How can my colleagues test my survey before it is published?",
+  "original_ids": {
+    "document_derived": [
+      "SM-52_testing_a_survey__02_how_can_my_colleagues_test_my_survey_before_it_is_published"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/52_testing_a_survey__02_how_can_my_colleagues_test_my_survey_before_it_is_published.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How can my colleagues test my survey before it is published.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Testing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The 'Test'-page of your survey can also be tested by your colleagues. To give access to this page, open your survey in EUSurvey, go to the 'Privileges' tab and click on 'Add User' or 'Add Department'. A wizard will guide you through the process of adding your colleagues. To give them appropriate access rights for testing, change the colour of 'Access Form Preview' to 'Green'. Simply click on the colour to change the rights.",
+  "prerequisites": [],
+  "procedure": [
+    "The added users will automatically see the survey in their 'Surveys' page once they log into the EUSurvey application. Read more about this under ' How do I give other users access to my survey? '",
+    "External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button, therefore, they cannot provide access for these persons directly. Please contact us (https://ec.europa.eu/eusurvey/home/support) to request privileges for external users."
+  ],
+  "important_conditions": [
+    "External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button, therefore, they cannot provide access for these persons"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "Can I see how my survey will behave after it has been published?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/52_testing_a_survey__02_how_can_my_colleagues_test_my_survey_before_it_is_published.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Testing a survey",
+    "eusurvey_area": "Testing a survey",
+    "feature": "",
+    "user_intent": "52. How can my colleagues test my survey before it is published?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "before",
+      "colleagues",
+      "published",
+      "survey",
+      "test",
+      "testing"
+    ],
+    "synonyms": [
+      "How can my colleagues test my survey before it is published?",
+      "How can my colleagues test my survey before it is published in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can my colleagues test my survey before it is published?",
+      "How can my colleagues test my survey before it is published in EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

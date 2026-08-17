@@ -1,0 +1,84 @@
+{
+  "canonical_id": "SM-40_editing_a_survey__15_what_is_the_contribution_id",
+  "title": "40. What is the contribution ID?",
+  "original_ids": {
+    "document_derived": [
+      "SM-40_editing_a_survey__15_what_is_the_contribution_id"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/40_editing_a_survey__15_what_is_the_contribution_id.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: What is the contribution ID.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Contribution ID is a code used as unique identifier for a contribution made.",
+  "prerequisites": [],
+  "procedure": [
+    "It can be used by survey managers to find back a contribution from the 'Results' screen. It can also be used by a survey participant to submit his contribution and access it later."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/40_editing_a_survey__15_what_is_the_contribution_id.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "40. What is the contribution ID?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "contribution",
+      "editing",
+      "survey",
+      "what"
+    ],
+    "synonyms": [
+      "What is the contribution ID?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What is the contribution ID?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

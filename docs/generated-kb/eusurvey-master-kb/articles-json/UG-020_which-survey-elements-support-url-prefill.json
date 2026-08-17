@@ -1,0 +1,87 @@
+{
+  "canonical_id": "UG-020_which-survey-elements-support-url-prefill",
+  "title": "UG-020 \u2014 Which survey elements support URL prefill?",
+  "original_ids": {
+    "document_derived": [
+      "UG-020_which-survey-elements-support-url-prefill"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-020_which-survey-elements-support-url-prefill.docx"
+  ],
+  "source_files": [],
+  "intent": "List the question types and styles supported by URL prefill.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Reference",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "URL prefill supports free text, single choice, multiple choice, number-slider, date, time, matrix, table, email, RegEx and predefined questions.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Supported single choice styles include radio button, select box and button.",
+    "Supported multiple choice styles include check box and list box.",
+    "Supported number-slider styles include number and slider."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-021 \u2014 Build URL prefill links"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-020_which-survey-elements-support-url-prefill.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-020 \u2014 Which survey elements support URL prefill?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "supported elements",
+      "free text",
+      "single choice",
+      "matrix",
+      "table"
+    ],
+    "synonyms": [
+      "Which question types can be prefilled?",
+      "Can matrix and table questions be prefilled?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Which question types can be prefilled?",
+      "Can matrix and table questions be prefilled?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

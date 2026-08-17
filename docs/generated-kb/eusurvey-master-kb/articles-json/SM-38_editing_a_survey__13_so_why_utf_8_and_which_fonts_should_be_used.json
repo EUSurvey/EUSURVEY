@@ -1,0 +1,93 @@
+{
+  "canonical_id": "SM-38_editing_a_survey__13_so_why_utf_8_and_which_fonts_should_be_used",
+  "title": "38. So why UTF-8 and which fonts should be used?",
+  "original_ids": {
+    "document_derived": [
+      "SM-38_editing_a_survey__13_so_why_utf_8_and_which_fonts_should_be_used"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/38_editing_a_survey__13_so_why_utf_8_and_which_fonts_should_be_used.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: So why UTF-8 and which fonts should be used.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Keep in mind that the target group of participants can display the survey easily if the font you used is installed in their browser. UTF-8 is the most common encoding for the HTML pages. On the other hand, choosing non-supported fonts may affect the rendering of PDF export.",
+  "prerequisites": [],
+  "procedure": [
+    "We recommend using the supported character sets listed below:",
+    "Freesans ( https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt (https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt) ) Freemono ( https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt (https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt) ) Freeserif ( https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt (https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt) ) Commonly supported character-set ( https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey- SupportedCharacterSet(common).txt (https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey- SupportedCharacterSet(common).txt) )",
+    "'Freesans' is the default font used",
+    "In case of doubt, run a PDF export of your final survey to check if your survey is rendered correctly in PDF. Beware however that some contributions may not to be rendered correctly in PDF. Your participants, indeed, are free to choose any font among those which are supported by the application. Even though the application is unable to render the characters they have used, these are saved correctly on the EUSurvey's database. Thus they can be exported from the results page."
+  ],
+  "important_conditions": [
+    "We recommend using the supported character sets listed below:",
+    "In case of doubt, run a PDF export of your final survey to check if your survey is rendered correctly in PDF. Beware however that some contributions may not to"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/38_editing_a_survey__13_so_why_utf_8_and_which_fonts_should_be_used.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "38. So why UTF-8 and which fonts should be used?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "editing",
+      "fonts",
+      "should",
+      "survey",
+      "used",
+      "utf-",
+      "which"
+    ],
+    "synonyms": [
+      "So why UTF-8 and which fonts should be used?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "So why UTF-8 and which fonts should be used?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

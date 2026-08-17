@@ -1,0 +1,84 @@
+{
+  "canonical_id": "UG-038_inform-participants-about-privacy-and-personal-data",
+  "title": "UG-038 \u2014 Inform participants about privacy and personal data",
+  "original_ids": {
+    "document_derived": [
+      "UG-038_inform-participants-about-privacy-and-personal-data"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-038_inform-participants-about-privacy-and-personal-data.docx"
+  ],
+  "source_files": [],
+  "intent": "Convert an EUSurvey best-practice recommendation into a practical KB article.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Guidance",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "If the survey asks for personal information, tell participants about the personal data collection and include a privacy statement where necessary.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "This recommendation comes from the EUSurvey best-practices guidance."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-042 \u2014 Keep surveys short and simple",
+    "UG-051 \u2014 Test the survey before publishing"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-038_inform-participants-about-privacy-and-personal-data.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-038 \u2014 Inform participants about privacy and personal data",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "privacy",
+      "personal data",
+      "privacy statement"
+    ],
+    "synonyms": [
+      "Do I need to mention privacy in my survey?",
+      "When should I include a privacy statement?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Do I need to mention privacy in my survey?",
+      "When should I include a privacy statement?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

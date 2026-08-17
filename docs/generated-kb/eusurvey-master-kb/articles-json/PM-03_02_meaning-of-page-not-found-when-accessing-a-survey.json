@@ -1,0 +1,95 @@
+{
+  "canonical_id": "PM-03_02_meaning-of-page-not-found-when-accessing-a-survey",
+  "title": "03.02 - Meaning of Page not found when accessing a survey",
+  "original_ids": {
+    "document_derived": [
+      "PM-03_02_meaning-of-page-not-found-when-accessing-a-survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/03_02_meaning-of-page-not-found-when-accessing-a-survey.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain why a participant may see Page not found when opening a survey link.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Accessing a survey",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Page not found usually means that the link used to access the survey is incorrect, or that the survey has already been removed from EUSurvey.",
+  "prerequisites": [],
+  "procedure": [
+    "Check whether the survey link was copied completely and correctly.",
+    "If you think the link is valid, inform the author of the survey directly.",
+    "If the link was published by another body or website, inform the body responsible for publishing the link that it is incorrect."
+  ],
+  "important_conditions": [
+    "This article applies when the survey page itself cannot be found.",
+    "If the survey exists but you are not authorised to access it, a different access-related message may be displayed."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "03.01 - Meaning of The url you entered was not correct",
+    "03.03 - Meaning of This survey has not yet been published or has already been unpublished"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/03_02_meaning-of-page-not-found-when-accessing-a-survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Accessing a survey",
+    "eusurvey_area": "Accessing a survey",
+    "feature": "",
+    "user_intent": "03.02 - Meaning of Page not found when accessing a survey",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "03.02",
+      "meaning",
+      "page",
+      "not",
+      "found",
+      "when",
+      "accessing",
+      "survey"
+    ],
+    "synonyms": [
+      "What does Page not found mean?",
+      "Why does my EUSurvey link show Page not found?",
+      "What should I do when the survey page cannot be found?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What does Page not found mean?",
+      "Why does my EUSurvey link show Page not found?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

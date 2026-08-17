@@ -1,0 +1,114 @@
+{
+  "article_id": "ES-014",
+  "title": "How do I edit my contribution after submission?",
+  "intent": "This article explains how respondents can edit their submitted contribution.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Survey Runner",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Confirmation page",
+    "backend_location": "ContributionController.editcontribution"
+  },
+  "short_answer": "If the survey owner has enabled the 'Allow participants to change their contribution' setting, respondents can edit their submitted answers. Use the Contribution ID from the confirmation page or the edit link to access and modify your submission.",
+  "prerequisites": [
+    "The survey must have 'Change Contribution' enabled by the owner (Survey.changeContribution)",
+    "The respondent must have their Contribution ID or edit link",
+    "The survey must still be published and active"
+  ],
+  "procedure": [
+    "After submitting, note the Contribution ID from the confirmation page.",
+    "Navigate to the survey's edit contribution page.",
+    "Enter your Contribution ID.",
+    "The system loads your previous answers.",
+    "Modify your answers as needed.",
+    "Click Submit to save the changes."
+  ],
+  "important_conditions": [
+    "The feature must be explicitly enabled by the survey owner.",
+    "Delphi surveys always allow contribution changes (no separate setting needed).",
+    "For invitation-based surveys, the respondent must use the same invitation link.",
+    "The survey must still be active for editing to work.",
+    "eVote contributions cannot be edited after submission."
+  ],
+  "troubleshooting": [
+    "'This survey does not allow to change a contribution' error: The survey owner has not enabled this feature.",
+    "'The contribution could not be loaded' error: Verify the Contribution ID is correct.",
+    "'The survey has been closed' error: The survey end date has passed."
+  ],
+  "related_articles": [
+    "ES-012 \u2014 How do respondents submit a contribution?",
+    "ES-013 \u2014 How do I save a survey as draft?",
+    "ES-015 \u2014 How do I download my contribution as PDF?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ContributionController.java",
+      "src/main/java/com/ec/survey/controller/HomeController.java"
+    ],
+    "classes": [
+      "ContributionController",
+      "HomeController"
+    ],
+    "methods": [
+      "editcontribution",
+      "editContributionInner",
+      "checkValid"
+    ],
+    "routes": [
+      "/preparecontribution/{code}",
+      "GET /home/editcontribution"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.EditContribution",
+      "label.EditMyContribution",
+      "label.AllowChangeContributionNewNew",
+      "error.ContributionEditNotAllowed",
+      "error.ContributionNotLoaded",
+      "error.ContributionClosedSurvey",
+      "info.AllowChangeContribution"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Runner",
+    "feature": "Edit Contribution",
+    "user_intent": "How do I edit my contribution after submission?",
+    "user_type": "Respondent",
+    "required_permission": "Respondent",
+    "survey_status": "Published and Active",
+    "keywords": [
+      "edit",
+      "change",
+      "modify",
+      "update",
+      "contribution",
+      "answer"
+    ],
+    "synonyms": [
+      "change my answers",
+      "update submission",
+      "modify contribution"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "AnswerSet",
+      "Survey"
+    ],
+    "security_privacy_relevance": "Editing exposes previous answers",
+    "search_boost_terms": [
+      "edit contribution",
+      "change answers",
+      "modify submission"
+    ],
+    "duplicate_status": "New"
+  }
+}

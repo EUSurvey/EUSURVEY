@@ -1,0 +1,82 @@
+{
+  "canonical_id": "UG-044_how-to-use-the-navigation-pane-in-the-editor",
+  "title": "UG-044 \u2014 How to use the navigation pane in the editor",
+  "original_ids": {
+    "document_derived": [
+      "UG-044_how-to-use-the-navigation-pane-in-the-editor"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-044_how-to-use-the-navigation-pane-in-the-editor.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the purpose of the navigation pane.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The navigation pane provides a structured overview of the questionnaire. Selecting an item in the navigation pane moves the form area to that item and highlights it.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "All elements are represented by their text label in the questionnaire."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-043 \u2014 Editor workspace overview"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-044_how-to-use-the-navigation-pane-in-the-editor.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-044 \u2014 How to use the navigation pane in the editor",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "navigation pane",
+      "questionnaire structure"
+    ],
+    "synonyms": [
+      "What is the navigation pane?",
+      "How do I navigate through a long questionnaire?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What is the navigation pane?",
+      "How do I navigate through a long questionnaire?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

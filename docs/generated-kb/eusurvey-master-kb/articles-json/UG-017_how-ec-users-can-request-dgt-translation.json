@@ -1,0 +1,85 @@
+{
+  "canonical_id": "UG-017_how-ec-users-can-request-dgt-translation",
+  "title": "UG-017 \u2014 How EC users can request DGT translation",
+  "original_ids": {
+    "document_derived": [
+      "UG-017_how-ec-users-can-request-dgt-translation"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-017_how-ec-users-can-request-dgt-translation.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the DGT translation route for European Commission users.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "EC users can export the XML pivot file and send it to DGT via Poetry, using the required requester code, then upload the translated file back into EUSurvey.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "This route is for EC users only.",
+    "Follow current internal DGT and Poetry procedures where applicable."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-014 \u2014 Overview of translation options"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-017_how-ec-users-can-request-dgt-translation.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-017 \u2014 How EC users can request DGT translation",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "DGT",
+      "Poetry",
+      "XML pivot",
+      "EC users"
+    ],
+    "synonyms": [
+      "How can EC users get a survey translated by DGT?",
+      "What file do I send to DGT for translation?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can EC users get a survey translated by DGT?",
+      "What file do I send to DGT for translation?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

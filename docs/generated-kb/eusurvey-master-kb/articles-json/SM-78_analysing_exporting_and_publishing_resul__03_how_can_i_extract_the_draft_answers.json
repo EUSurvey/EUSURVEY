@@ -1,0 +1,87 @@
+{
+  "canonical_id": "SM-78_analysing_exporting_and_publishing_resul__03_how_can_i_extract_the_draft_answers",
+  "title": "78. How can I extract the Draft answers?",
+  "original_ids": {
+    "document_derived": [
+      "SM-78_analysing_exporting_and_publishing_resul__03_how_can_i_extract_the_draft_answers"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/78_analysing_exporting_and_publishing_resul__03_how_can_i_extract_the_draft_answers.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How can I extract the Draft answers.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "On your Dashboard you can see the number of the saved Draft contributions for your survey. Your participants have the option to save their work as a Draft and continue the filling in a later time. According with our privacy policy, as a form manager you are not allowed to extract the Draft answers.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "Where can I find the contributions submitted by my respondents?",
+    "How can I download submitted contributions?",
+    "How can I access and analyse a defined subset of all contributions?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/78_analysing_exporting_and_publishing_resul__03_how_can_i_extract_the_draft_answers.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Analysing, exporting and publishing results",
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "feature": "",
+    "user_intent": "78. How can I extract the Draft answers?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "analysing",
+      "answers",
+      "draft",
+      "exporting",
+      "extract",
+      "publishing",
+      "results"
+    ],
+    "synonyms": [
+      "How can I extract the Draft answers?",
+      "How do I extract the Draft answers?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I extract the Draft answers?",
+      "How do I extract the Draft answers?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "canonical_id": "SM-118_data_protection_and_privacy__06_how_do_i_bulk_delete_answers_from_survey_results",
+  "title": "118. How do I bulk delete answers from survey results?",
+  "original_ids": {
+    "document_derived": [
+      "SM-118_data_protection_and_privacy__06_how_do_i_bulk_delete_answers_from_survey_results"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/118_data_protection_and_privacy__06_how_do_i_bulk_delete_answers_from_survey_results.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I bulk delete answers from survey results.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Data Protection and Privacy",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "You can delete an entire column from your survey results. This will have the effect of 'emptying' (i.e. permanently deleting) all responses to the corresponding question. This can be useful for anonymizing results, for example in the context of GDPR compliance.",
+  "prerequisites": [],
+  "procedure": [
+    "To bulk delete answers:",
+    "1. Go to the 'Results' tab. 2. Find the column for which you want to delete the answers in bulk. 3. Click on the 3 dots icon. 4. Select 'Blank answers'. 5. Confirm the deletion.",
+    "All answers collected for the corresponding question will be permanently removed.",
+    "(https://digital-strategy.ec.europa.eu/en/activities/digital-programme) (DIGITAL) EUSurvey is fully open source and published under the EUPL (https://joinup.ec.europa.eu/collection/eupl) licence. You can download the source code from GitHub: https://github.com/EUSurvey (https://github.com/EUSurvey)",
+    "EUSurvey Privacy Statement (/eusurvey/home/privacystatement) Accessibility statement (/eusurvey/home/accessibilitystatement) Terms of Service (/eusurvey/home/tos) Cookies (https://commission.europa.eu/cookies-policy_en)",
+    "Languages policy (https://commission.europa.eu/languages-our-websites_en) Privacy policy (https://commission.europa.eu/privacy-policy-websites-managed-european-commission_en) Legal notice (https://commission.europa.eu/legal-notice_en)"
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "This system uses cookies. What information is saved there?",
+    "What information is stored by EUSurvey when participants submit a contribution?",
+    "Do I need to include a privacy statement?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/118_data_protection_and_privacy__06_how_do_i_bulk_delete_answers_from_survey_results.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Data Protection and Privacy",
+    "eusurvey_area": "Data Protection and Privacy",
+    "feature": "",
+    "user_intent": "118. How do I bulk delete answers from survey results?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "answers",
+      "bulk",
+      "data",
+      "delete",
+      "from",
+      "privacy",
+      "protection",
+      "results",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I bulk delete answers from survey results?",
+      "How can I bulk delete answers from survey results?",
+      "How do I bulk delete answers from survey results in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I bulk delete answers from survey results?",
+      "How can I bulk delete answers from survey results?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

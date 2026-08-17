@@ -1,0 +1,96 @@
+{
+  "canonical_id": "SM-09_13_what_to_do_when_receiving_an_inactive_survey_notification",
+  "title": "SM-09.13 - What to do when receiving an inactive survey notification",
+  "original_ids": {
+    "document_derived": [
+      "SM-09_13_what_to_do_when_receiving_an_inactive_survey_notification"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-09_13_what_to_do_when_receiving_an_inactive_survey_notification.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-09.13 - What to do when receiving an inactive survey notification",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "FAQ / policy / how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "If you receive an inactivity notification, review whether the survey is still needed. You can export the survey results, export the questionnaire as an .eus file, or update the survey and collect new contributions if it is still in use.",
+  "prerequisites": [],
+  "procedure": [
+    "Recommended actions",
+    "Export survey results, for example as an XLSX file, for archiving.",
+    "Export the survey questionnaire as an .eus file so it can be imported again later if needed.",
+    "Review or update the survey, or collect new contributions, if the survey is still in use.",
+    "If no action is taken and the survey remains inactive, it will be automatically deleted after the notification process."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-10.14 - How to export a survey and its data",
+    "SM-09.07 - Archiving feature",
+    "SM-09.11 - How the inactive survey deletion process works"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-09_13_what_to_do_when_receiving_an_inactive_survey_notification.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-09.13 - What to do when receiving an inactive survey notification",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "inactive survey",
+      "automatic deletion",
+      "deletion notification",
+      "inactivity",
+      "365 days",
+      "Form Manager",
+      "export",
+      ".eus",
+      "archive"
+    ],
+    "synonyms": [
+      "What to do when receiving an inactive survey notification?",
+      "Why did I receive an inactive survey notification?",
+      "How do I avoid losing an inactive survey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What to do when receiving an inactive survey notification?",
+      "Why did I receive an inactive survey notification?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

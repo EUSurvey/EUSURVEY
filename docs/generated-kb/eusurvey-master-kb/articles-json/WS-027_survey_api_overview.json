@@ -1,0 +1,94 @@
+{
+  "canonical_id": "WS-027_survey_api_overview",
+  "title": "WS-027 - Survey API overview",
+  "original_ids": {
+    "document_derived": [
+      "WS-027_survey_api_overview"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-027_survey_api_overview.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the Survey API endpoints for retrieving metadata and automating survey lifecycle and configuration operations.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The Survey API allows technical integrations to retrieve survey metadata, check publication status, publish or unpublish surveys, archive or restore surveys, delete surveys, retrieve an empty survey PDF, update title or contact information, manage background documents and useful links, apply changes, retrieve privileged users, delete contributions, retrieve deleted contributions, and generate organisation reports.",
+  "prerequisites": [],
+  "procedure": [
+    "Use read-only endpoints for inventory and monitoring, such as getMySurveys, getSurveyMetadata and getSurveyPublicationStatus.",
+    "Use lifecycle endpoints carefully for publish, unpublish, archive, restore and delete operations.",
+    "Use PATCH, PUT and DELETE endpoints only when the integration is explicitly responsible for configuration changes.",
+    "After changing published survey settings, call applyChanges when needed so pending changes become visible in the published survey."
+  ],
+  "important_conditions": [
+    "Many Survey API endpoints return \u201c1\u201d for success and an empty response in case of a problem.",
+    "Most Survey API calls require the authenticated system user to be the creator or otherwise allowed for the survey."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-028 - Retrieve the user\u2019s surveys",
+    "WS-031 - Publish a survey",
+    "WS-039 - Apply pending survey changes"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-027_survey_api_overview.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-027 - Survey API overview",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "Survey API",
+      "metadata",
+      "publish",
+      "archive",
+      "delete",
+      "lifecycle"
+    ],
+    "synonyms": [
+      "What can I do with the Survey API?",
+      "Which endpoints manage survey publication and metadata?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What can I do with the Survey API?",
+      "Which endpoints manage survey publication and metadata?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "article_id": "ES-050",
+  "title": "How do I set up dependencies/visibility rules?",
+  "intent": "This article explains how to configure visibility rules so that questions appear or hide based on respondent answers.",
+  "applies_to": {
+    "roles": ["Survey Owner", "Form Manager"],
+    "eusurvey_area": "Survey Editor",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Editor page - Element properties",
+    "backend_location": "Element.java (triggers), edit.js, runner.js"
+  },
+  "short_answer": "Dependencies allow you to show or hide survey elements based on respondent answers. Configure them by selecting the target element, opening its properties, and defining which answers trigger its visibility. Use OR logic (any trigger shows the element) or AND logic (all triggers must be selected).",
+  "prerequisites": [
+    "FormManagement privilege or survey ownership",
+    "At least one choice-based question to serve as a trigger",
+    "Dependent element must be positioned after triggering elements"
+  ],
+  "procedure": [
+    "Open the survey in the editor",
+    "Select the element to make conditionally visible",
+    "Open its properties panel",
+    "Find the Visibility/Dependencies section",
+    "Click to configure visibility rules",
+    "Select trigger answers from other questions",
+    "Choose OR or AND logic",
+    "Save the element properties"
+  ],
+  "important_conditions": [
+    "Works with choice-based questions (single/multiple choice, matrix)",
+    "Nested/chained dependencies are supported",
+    "Chained dependencies increase survey complexity",
+    "When triggering element is deleted, dependency is removed",
+    "Dependencies interact with multi-paging",
+    "Hidden elements have their answers NOT submitted",
+    "Progress bar is affected by dependencies"
+  ],
+  "troubleshooting": [
+    "Element not showing: Check dependency logic (OR/AND) and chained dependencies",
+    "Check visibility settings warning: Appears after editing answers that others depend on",
+    "Progress bar jumping: Expected with many dependencies"
+  ],
+  "related_articles": [
+    "ES-006 — How do I edit a survey?",
+    "ES-049 — How do I enable multi-paging?",
+    "ES-067 — How does the progress bar work?"
+  ],
+  "evidence": {
+    "frontend_files": ["src/main/webapp/resources/js/runner.js", "src/main/webapp/resources/js/edit.js", "src/main/webapp/resources/js/edit_complexity.js"],
+    "backend_files": ["src/main/java/com/ec/survey/model/survey/Element.java", "src/main/java/com/ec/survey/model/survey/Survey.java", "src/main/java/com/ec/survey/model/survey/PossibleAnswer.java"],
+    "classes": ["Element", "Survey", "PossibleAnswer"],
+    "methods": ["getIsTriggerOrDependent", "getIsDependent", "computeTriggers", "checkDependencies", "isTriggered"],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": ["info.visibility", "info.PleaseChooseLogic", "info.NoTriggersFound", "info.checkVisibilities"],
+    "configuration_keys": ["useAndLogic"],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Editor",
+    "feature": "Visibility Rules",
+    "user_intent": "How do I set up dependencies/visibility rules?",
+    "user_type": "Form Manager",
+    "required_permission": "FormManagement",
+    "survey_status": "Draft or Published (with pending changes)",
+    "keywords": ["dependency", "visibility", "conditional", "show", "hide", "trigger", "rules"],
+    "synonyms": ["conditional questions", "skip logic", "branching", "show/hide rules"],
+    "acronyms": [],
+    "related_entities": ["Element", "PossibleAnswer", "Survey"],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": ["conditional questions", "visibility rules", "skip logic", "dependencies"],
+    "duplicate_status": "New"
+  }
+}

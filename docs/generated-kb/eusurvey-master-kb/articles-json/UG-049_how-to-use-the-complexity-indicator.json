@@ -1,0 +1,84 @@
+{
+  "canonical_id": "UG-049_how-to-use-the-complexity-indicator",
+  "title": "UG-049 \u2014 How to use the complexity indicator",
+  "original_ids": {
+    "document_derived": [
+      "UG-049_how-to-use-the-complexity-indicator"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-049_how-to-use-the-complexity-indicator.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain what the complexity indicator shows and why it matters.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Guidance",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The complexity indicator shows how complex the questionnaire is. Adding many elements or visibility settings increases complexity. If complexity is too high, the published questionnaire can become slow for participants.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Reduce complexity by simplifying the questionnaire, limiting dependencies, and avoiding unnecessarily complex structures."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-042 \u2014 Keep surveys short and simple",
+    "UG-051 \u2014 Limit open-ended questions"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-049_how-to-use-the-complexity-indicator.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-049 \u2014 How to use the complexity indicator",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "complexity indicator",
+      "performance",
+      "slow survey"
+    ],
+    "synonyms": [
+      "What does the complexity indicator mean?",
+      "Why is my survey becoming slow?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What does the complexity indicator mean?",
+      "Why is my survey becoming slow?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

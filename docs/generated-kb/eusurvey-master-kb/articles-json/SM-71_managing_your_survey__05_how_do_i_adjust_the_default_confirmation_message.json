@@ -1,0 +1,87 @@
+{
+  "canonical_id": "SM-71_managing_your_survey__05_how_do_i_adjust_the_default_confirmation_message",
+  "title": "71. How do I adjust the default confirmation message?",
+  "original_ids": {
+    "document_derived": [
+      "SM-71_managing_your_survey__05_how_do_i_adjust_the_default_confirmation_message"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/71_managing_your_survey__05_how_do_i_adjust_the_default_confirmation_message.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I adjust the default confirmation message.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Managing your survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The confirmation message is what participants see when they have submitted their contribution. To change the default message, open the survey, go to the 'Properties' page and change the confirmation message under 'Special Pages'. If you have already published your survey, please remember to go to the 'Overview' page and click on 'Apply Changes'.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "If I discover an error in my survey, can I correct it?",
+    "Will I lose any submitted answers when I change my form?",
+    "How can I change the title of my survey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/71_managing_your_survey__05_how_do_i_adjust_the_default_confirmation_message.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Managing your survey",
+    "eusurvey_area": "Managing your survey",
+    "feature": "",
+    "user_intent": "71. How do I adjust the default confirmation message?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "adjust",
+      "confirmation",
+      "default",
+      "managing",
+      "message",
+      "survey",
+      "your"
+    ],
+    "synonyms": [
+      "How do I adjust the default confirmation message?",
+      "How can I adjust the default confirmation message?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I adjust the default confirmation message?",
+      "How can I adjust the default confirmation message?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

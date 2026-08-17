@@ -1,0 +1,84 @@
+{
+  "canonical_id": "UG-039_match-the-question-style-to-the-data-needed",
+  "title": "UG-039 \u2014 Match the question style to the data needed",
+  "original_ids": {
+    "document_derived": [
+      "UG-039_match-the-question-style-to-the-data-needed"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-039_match-the-question-style-to-the-data-needed.docx"
+  ],
+  "source_files": [],
+  "intent": "Convert an EUSurvey best-practice recommendation into a practical KB article.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Guidance",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Choose question types according to the data you need. Ask one thing per question, use balanced scales, provide answer options, and add text boxes for explanations such as Other.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "This recommendation comes from the EUSurvey best-practices guidance."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-042 \u2014 Keep surveys short and simple",
+    "UG-051 \u2014 Test the survey before publishing"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-039_match-the-question-style-to-the-data-needed.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-039 \u2014 Match the question style to the data needed",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "question type",
+      "scales",
+      "other option"
+    ],
+    "synonyms": [
+      "How do I choose the right question type?",
+      "How should I design scales and answer options?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I choose the right question type?",
+      "How should I design scales and answer options?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "canonical_id": "WS-047_interpret_formula_xml_in_result_exports",
+  "title": "WS-047 - Interpret formula XML in result exports",
+  "original_ids": {
+    "document_derived": [
+      "WS-047_interpret_formula_xml_in_result_exports"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-047_interpret_formula_xml_in_result_exports.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how formula and number-slider values are represented in XML result exports.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical reference",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Formula and number-slider elements are represented as Question elements in the XML definition section. Submitted values are represented as Answer elements that use qid to refer to the question. The calculated or entered value is contained as text inside the Answer element.",
+  "prerequisites": [],
+  "procedure": [
+    "Map the formula or number-slider Question element in the Survey/Elements section.",
+    "Find Answer entries with the corresponding qid in each AnswerSet.",
+    "Read the answer text value as the submitted or calculated result."
+  ],
+  "important_conditions": [
+    "The annex example shows a formula question referencing a number-slider question; both appear as Question elements and answers are text values linked by qid."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-021 - Understand XML results structure",
+    "WS-048 - Interpret complex table XML in result exports"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-047_interpret_formula_xml_in_result_exports.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-047 - Interpret formula XML in result exports",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "formula XML",
+      "number slider",
+      "calculated field",
+      "qid"
+    ],
+    "synonyms": [
+      "How are formula values represented in result XML?",
+      "How do I identify a calculated value in XML?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How are formula values represented in result XML?",
+      "How do I identify a calculated value in XML?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

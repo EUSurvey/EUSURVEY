@@ -1,0 +1,101 @@
+{
+  "canonical_id": "WS-021_understand_xml_results_structure",
+  "title": "WS-021 - Understand XML results structure",
+  "original_ids": {
+    "document_derived": [
+      "WS-021_understand_xml_results_structure"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-021_understand_xml_results_structure.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the main structure and fields of XML results returned by the Results API.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical reference",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The XML result file contains a definition section and an answer section. The Survey/Elements section describes survey elements in each language, including questions, answers, matrix rows, table rows and columns. The Answers section contains individual AnswerSet entries with metadata and submitted answers. Free-text and table answers contain text; choice, matrix and table selections reference question IDs and answer IDs.",
+  "prerequisites": [],
+  "procedure": [
+    "Read the Survey element to identify the survey alias, UID and element definitions.",
+    "Use Elements lang entries to map element IDs to labels in each language.",
+    "Read AnswerSet entries to process each submitted contribution.",
+    "Use qid to identify the question, matrix row, table row or cell-related question.",
+    "Use aid to identify selected answers, matrix columns or table columns.",
+    "Use Scores when processing quiz score by section and question."
+  ],
+  "important_conditions": [
+    "AnswerSet id corresponds to the token number or ual code returned in token-related flows.",
+    "The user attribute may contain the participant email address if known or Anonymous for anonymous surveys.",
+    "The userlogin attribute may contain the participant EU Login username if known or Anonymous for anonymous surveys.",
+    "The uid attribute is a unique UUID for the survey.",
+    "The type attribute contains a readable element type such as Section, Single Choice, Matrix Answer, Complex Table or File Upload."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-020 - Prepare XML result exports",
+    "WS-045 - Interpret table XML in result exports",
+    "WS-046 - Interpret matrix XML in result exports"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-021_understand_xml_results_structure.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-021 - Understand XML results structure",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "XML",
+      "AnswerSet",
+      "qid",
+      "aid",
+      "Survey UID",
+      "userlogin",
+      "scores"
+    ],
+    "synonyms": [
+      "What does the EUSurvey result XML contain?",
+      "How are answers represented in XML?",
+      "What do qid and aid mean?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What does the EUSurvey result XML contain?",
+      "How are answers represented in XML?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

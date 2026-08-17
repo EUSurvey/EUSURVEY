@@ -1,0 +1,83 @@
+{
+  "canonical_id": "UG-015_how-to-translate-a-survey-with-the-built-in-translation-editor",
+  "title": "UG-015 \u2014 How to translate a survey with the built-in translation editor",
+  "original_ids": {
+    "document_derived": [
+      "UG-015_how-to-translate-a-survey-with-the-built-in-translation-editor"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-015_how-to-translate-a-survey-with-the-built-in-translation-editor.docx"
+  ],
+  "source_files": [],
+  "intent": "Provide the online translation workflow.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use the Translations page to add a new translation, select it together with the pivot language, and edit labels row by row in the built-in translation editor.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Use the online editor when translations can be entered directly in EUSurvey."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-014 \u2014 Overview of translation options"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-015_how-to-translate-a-survey-with-the-built-in-translation-editor.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-015 \u2014 How to translate a survey with the built-in translation editor",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "online translation",
+      "translation editor",
+      "pivot language"
+    ],
+    "synonyms": [
+      "How do I translate a survey online?",
+      "How do I use the built-in translation editor?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I translate a survey online?",
+      "How do I use the built-in translation editor?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

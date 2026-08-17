@@ -1,0 +1,82 @@
+{
+  "canonical_id": "SM-01_general_questions__01_what_is_eusurvey",
+  "title": "01. What is EUSurvey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-01_general_questions__01_what_is_eusurvey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/01_general_questions__01_what_is_eusurvey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: What is EUSurvey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "General questions",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "EUSurvey is an online survey management tool to create, publish and manage questionnaires and other interactive forms in most web browsers.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "When do I use EUSurvey?",
+    "What are the limits of EUSurvey?",
+    "What are the features of EUSurvey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/01_general_questions__01_what_is_eusurvey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "General questions",
+    "eusurvey_area": "General questions",
+    "feature": "",
+    "user_intent": "01. What is EUSurvey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "eusurvey",
+      "general",
+      "questions",
+      "what"
+    ],
+    "synonyms": [
+      "What is EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What is EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

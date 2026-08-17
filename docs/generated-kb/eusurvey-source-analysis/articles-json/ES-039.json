@@ -1,0 +1,115 @@
+{
+  "article_id": "ES-039",
+  "title": "How do I change my account settings?",
+  "intent": "This article explains how to modify user account settings like password, email, and language.",
+  "applies_to": {
+    "roles": [
+      "Registered User"
+    ],
+    "eusurvey_area": "User Account",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Settings > My Account",
+    "backend_location": "SettingsController.myAccount"
+  },
+  "short_answer": "Navigate to Settings > My Account to change your password, email address, display language, and pivot language for translations. You can also request account deletion from this page.",
+  "prerequisites": [
+    "Authenticated user"
+  ],
+  "procedure": [
+    "Navigate to Settings > My Account.",
+    "Change desired settings: password, email, language, pivot language.",
+    "For password change: enter old password, new password, and confirmation.",
+    "For email change: enter new email and repeat.",
+    "Click Save."
+  ],
+  "important_conditions": [
+    "Password must be between 8 and 16 characters with at least one digit and one non-alphanumeric character.",
+    "Email change requires entering the new address twice for confirmation.",
+    "Language setting controls the interface language.",
+    "Pivot language controls the reference language shown during translation editing.",
+    "Account deletion can be requested (requires confirmation within a time limit)."
+  ],
+  "troubleshooting": [
+    "'The two passwords do not match': Ensure new password and confirmation are identical.",
+    "'Please choose a password between 8 and 16 characters...': Password does not meet complexity requirements.",
+    "'The e-mail addresses do not match': Re-enter the new email address identically in both fields.",
+    "'The password is wrong': The old password entered is incorrect."
+  ],
+  "related_articles": [
+    "ES-040 \u2014 How do I share my address book?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/WEB-INF/views/settings/myAccount.jsp"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/SettingsController.java",
+      "src/main/java/com/ec/survey/service/AdministrationService.java"
+    ],
+    "classes": [
+      "SettingsController",
+      "AdministrationService"
+    ],
+    "methods": [
+      "myAccount",
+      "myAccountPOST",
+      "changePassword",
+      "changeEmail",
+      "changeLanguage"
+    ],
+    "routes": [
+      "GET /settings/myAccount",
+      "POST /settings/myAccount"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.MyAccount",
+      "label.NewPassword",
+      "label.OldPassword",
+      "error.PasswordsDontMatch",
+      "error.PasswordWeak",
+      "error.EmailsDontMatch",
+      "error.WrongPassword",
+      "info.PasswordChanged",
+      "info.EmailChanged"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "User Account",
+    "feature": "Account Settings",
+    "user_intent": "How do I change my account settings?",
+    "user_type": "Registered User",
+    "required_permission": "Registered User",
+    "survey_status": "N/A",
+    "keywords": [
+      "account",
+      "password",
+      "email",
+      "language",
+      "settings",
+      "profile"
+    ],
+    "synonyms": [
+      "change password",
+      "update email",
+      "account settings"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "User"
+    ],
+    "security_privacy_relevance": "Contains personal account data",
+    "search_boost_terms": [
+      "account settings",
+      "change password",
+      "update email"
+    ],
+    "duplicate_status": "New"
+  }
+}

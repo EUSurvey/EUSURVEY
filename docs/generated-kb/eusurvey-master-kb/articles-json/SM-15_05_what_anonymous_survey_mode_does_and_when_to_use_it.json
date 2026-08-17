@@ -1,0 +1,100 @@
+{
+  "canonical_id": "SM-15_05_what_anonymous_survey_mode_does_and_when_to_use_it",
+  "title": "SM-15.05 - What anonymous survey mode does and when to use it",
+  "original_ids": {
+    "document_derived": [
+      "SM-15_05_what_anonymous_survey_mode_does_and_when_to_use_it"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-15_05_what_anonymous_survey_mode_does_and_when_to_use_it.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-15.05 - What anonymous survey mode does and when to use it",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "Concept + How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "When Anonymous survey mode is activated, contributions are recorded anonymously. EUSurvey does not collect or store user-related data for those contributions, including IP addresses. To keep the survey fully anonymous, the questionnaire itself must also avoid asking respondents for personal data.",
+  "prerequisites": [],
+  "procedure": [
+    "Activate anonymous survey mode",
+    "Open the survey.",
+    "Go to Survey Properties.",
+    "Open the Security section.",
+    "Enable Anonymous survey mode.",
+    "Review the survey questions to ensure that they do not request personal data if the survey is intended to be fully anonymous."
+  ],
+  "important_conditions": [
+    "Do not include questions asking for names, email addresses, phone numbers, identification numbers or other personal data if the survey must be fully anonymous.",
+    "Once the survey has been launched and at least one response has been collected, anonymous survey mode cannot be deactivated.",
+    "It is not possible to revert the survey to non-anonymous mode after responses have been submitted.",
+    "Anonymous mode does not anonymize personal data that the survey manager explicitly asks respondents to provide in the questionnaire."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-15.01 - What information is stored when participants submit a contribution",
+    "SM-15.03 - Do I need to include a privacy statement",
+    "SM-05.01 - How to restrict access to a survey"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-15_05_what_anonymous_survey_mode_does_and_when_to_use_it.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-15.05 - What anonymous survey mode does and when to use it",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "anonymous survey mode",
+      "anonymous contributions",
+      "privacy",
+      "IP address",
+      "personal data",
+      "security settings",
+      "deactivate anonymous mode"
+    ],
+    "synonyms": [
+      "What does Anonymous survey mode do?",
+      "How do I activate anonymous survey mode?",
+      "Can I deactivate anonymous survey mode later?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What does Anonymous survey mode do?",
+      "How do I activate anonymous survey mode?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

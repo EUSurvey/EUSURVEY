@@ -1,0 +1,125 @@
+{
+  "canonical_id": "SRC-007",
+  "title": "How do administrators search surveys?",
+  "original_ids": {
+    "document_derived": [],
+    "source_code_derived": [
+      "ES-042"
+    ]
+  },
+  "source_type": "source-code-derived",
+  "source_documents": [],
+  "source_files": [
+    "src/main/java/com/ec/survey/controller/SurveySearchController.java",
+    "src/main/java/com/ec/survey/service/SurveyService.java"
+  ],
+  "intent": "This article explains how administrators search and manage all surveys system-wide.",
+  "applies_to": {
+    "roles": [
+      "Administrator"
+    ],
+    "eusurvey_area": "Administration",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Administration > Surveys",
+    "backend_location": "SurveySearchController"
+  },
+  "short_answer": "Administrators can search all surveys in the system from Administration > Surveys. This includes published, unpublished, deleted, archived, frozen, and reported surveys. Administrators can perform actions like freeze, restore, delete permanently, and change ownership.",
+  "prerequisites": [
+    "RightManagement global privilege"
+  ],
+  "procedure": [
+    "Navigate to Administration > Surveys.",
+    "Use the search form to filter surveys by title, shortname, owner, status, dates, etc.",
+    "View survey details in the results table.",
+    "Perform administrative actions: freeze, unfreeze, restore deleted, permanently delete, change owner, export."
+  ],
+  "important_conditions": [
+    "Administrators can see all surveys regardless of ownership.",
+    "Surveys can be filtered by multiple criteria: title, UID, owner, dates, status, language, type.",
+    "Different tabs show: all surveys, deleted, archived, frozen, reported.",
+    "Administrators can export survey statistics in XLSX or DOCX format.",
+    "Administrators can change survey ownership.",
+    "Administrators can permanently delete soft-deleted surveys."
+  ],
+  "troubleshooting": [
+    "No surveys found: Adjust search criteria or check that the survey exists."
+  ],
+  "related_articles": [
+    "ES-043 \u2014 How do administrators freeze a survey?",
+    "ES-041 \u2014 How do administrators manage users?",
+    "ES-045 \u2014 How do administrators ban a user?"
+  ],
+  "support_escalation": "Contact the EUSurvey support team if the issue persists.",
+  "source_traceability": {
+    "document_sources": [],
+    "frontend_files": [
+      "src/main/webapp/WEB-INF/views/administration/surveysearch.jsp"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/SurveySearchController.java",
+      "src/main/java/com/ec/survey/service/SurveyService.java"
+    ],
+    "classes": [
+      "SurveySearchController",
+      "SurveyService"
+    ],
+    "methods": [
+      "surveysearch",
+      "surveysearchPOST",
+      "resultsJSON"
+    ],
+    "routes": [
+      "GET /administration/surveysearch",
+      "POST /administration/surveysearch"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.SurveySearch",
+      "label.DeletedSurveys",
+      "label.ArchivedSurveys",
+      "label.FrozenSurveys",
+      "label.ReportedSurveys"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Needs audience decision",
+  "ingestion_status": "Ingest with low confidence filter",
+  "metadata": {
+    "domain": "Administration",
+    "eusurvey_area": "Administration",
+    "feature": "Admin Survey Search",
+    "user_intent": "How do administrators search surveys?",
+    "user_type": "Administrator",
+    "required_permission": "Administrator",
+    "survey_status": "N/A",
+    "environment": "All",
+    "keywords": [
+      "admin",
+      "search",
+      "surveys",
+      "manage",
+      "all"
+    ],
+    "synonyms": [
+      "search all surveys",
+      "admin survey management",
+      "find surveys"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey",
+      "SurveyFilter"
+    ],
+    "security_privacy_relevance": "Admin access to all survey data",
+    "search_boost_terms": [
+      "admin survey search",
+      "find all surveys"
+    ],
+    "duplicate_status": "New",
+    "authority": "Source-code-derived"
+  }
+}

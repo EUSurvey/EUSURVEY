@@ -1,0 +1,118 @@
+{
+  "article_id": "ES-031",
+  "title": "How do I secure my survey?",
+  "intent": "This article explains how to restrict who can access and answer a survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Access Control",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Properties page",
+    "backend_location": "ManagementController.propertiesPost"
+  },
+  "short_answer": "EUSurvey offers multiple security options: open access (anyone), password protection, EU Login authentication, or invitation-only access via guest lists. Configure security in the survey Properties page under the Security section.",
+  "prerequisites": [
+    "The user must be the survey owner"
+  ],
+  "procedure": [
+    "Open the survey Properties page.",
+    "Navigate to the Security section.",
+    "Choose the security mode: Open, Password, EU Login (ECAS), or Guest List.",
+    "For password: enter the survey password.",
+    "For EU Login: choose who can access (all EU Login users, EU staff only, or contact list members only).",
+    "For guest lists: create and configure a guest list on the Participants page.",
+    "Save the properties."
+  ],
+  "important_conditions": [
+    "Open: No restrictions, anyone can answer.",
+    "Password: Respondents must enter a password to access the survey.",
+    "EU Login: Respondents must authenticate via EU Login (with optional restrictions).",
+    "Guest List (Invitation): Only participants with a valid invitation link can answer.",
+    "CAPTCHA can be additionally enabled to prevent bot submissions.",
+    "Security settings can be combined with guest lists for additional control.",
+    "EU Login mode options: all EU Login users, EU institution staff only, contact list members only."
+  ],
+  "troubleshooting": [
+    "Survey accessible despite security settings: Check if the survey has been re-published with the security changes applied.",
+    "EU Login not showing as option: The EU Login integration may not be configured on this server."
+  ],
+  "related_articles": [
+    "ES-030 \u2014 How do I manage access and privileges?",
+    "ES-025 \u2014 How do I create a guest list?",
+    "ES-026 \u2014 How do I send invitations to participants?",
+    "ES-034 \u2014 What is anonymous survey mode?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/controller/RunnerController.java",
+      "src/main/java/com/ec/survey/model/survey/Survey.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "RunnerController",
+      "Survey"
+    ],
+    "methods": [
+      "propertiesPost",
+      "loadSurvey"
+    ],
+    "routes": [
+      "POST /{shortname}/management/properties"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.SecureYourSurvey",
+      "label.SecureWithEULogin",
+      "label.SecureWithPassword",
+      "label.SurveySecurity",
+      "info.SecureYourSurveyNew",
+      "info.SecureYourSurveyUsers"
+    ],
+    "configuration_keys": [
+      "showecas",
+      "casoss"
+    ],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Access Control",
+    "feature": "Survey Security",
+    "user_intent": "How do I secure my survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Any",
+    "keywords": [
+      "security",
+      "password",
+      "EU Login",
+      "ECAS",
+      "access",
+      "restrict",
+      "protect"
+    ],
+    "synonyms": [
+      "protect survey",
+      "restrict access",
+      "password protect",
+      "EU Login security"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "Security settings control data access",
+    "search_boost_terms": [
+      "secure survey",
+      "restrict access",
+      "password protect"
+    ],
+    "duplicate_status": "New"
+  }
+}

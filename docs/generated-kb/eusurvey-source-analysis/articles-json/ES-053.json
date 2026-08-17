@@ -1,0 +1,103 @@
+{
+  "article_id": "ES-053",
+  "title": "How do I add background documents?",
+  "intent": "This article explains how to add background documents that appear alongside the survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Survey Management",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Properties page",
+    "backend_location": "ManagementController.propertiesPost"
+  },
+  "short_answer": "Background documents are files displayed to respondents on every page of the survey, typically in a sidebar. Add them through survey Properties. These can be reference documents, guidelines, or supporting materials.",
+  "prerequisites": [
+    "Survey owner",
+    "Documents must be in an uploadable format"
+  ],
+  "procedure": [
+    "Open survey Properties.",
+    "Navigate to the Background Documents section.",
+    "Click 'Add background document'.",
+    "Upload the file.",
+    "Save properties.",
+    "The document appears as a download link on every survey page."
+  ],
+  "important_conditions": [
+    "Background documents appear on every page of the survey.",
+    "Multiple documents can be added.",
+    "Documents can optionally remain visible on the unavailability page after unpublishing.",
+    "Documents are displayed alphabetically in the sidebar.",
+    "File uploads must meet size limitations."
+  ],
+  "troubleshooting": [
+    "Document not visible: Ensure properties were saved and changes applied if published."
+  ],
+  "related_articles": [
+    "ES-054 \u2014 How do I add useful links?",
+    "ES-007 \u2014 How do I configure survey properties?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/model/survey/Survey.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "Survey"
+    ],
+    "methods": [
+      "propertiesPost"
+    ],
+    "routes": [
+      "POST /{shortname}/management/properties"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.BackgroundDocuments",
+      "label.AddBackgroundDocument",
+      "label.RemoveBackgroundDocument",
+      "info.BackgroundDocuments",
+      "label.ShowDocsOnUnavailabilityPage"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Management",
+    "feature": "Background Documents",
+    "user_intent": "How do I add background documents?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Any",
+    "keywords": [
+      "background",
+      "documents",
+      "files",
+      "reference",
+      "sidebar"
+    ],
+    "synonyms": [
+      "add reference documents",
+      "attach files to survey",
+      "sidebar documents"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey",
+      "File"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "background documents",
+      "add files to survey"
+    ],
+    "duplicate_status": "New"
+  }
+}

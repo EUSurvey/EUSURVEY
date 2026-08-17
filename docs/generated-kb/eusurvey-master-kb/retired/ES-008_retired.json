@@ -1,0 +1,118 @@
+{
+  "article_id": "ES-008",
+  "title": "How do I publish a survey?",
+  "intent": "This article explains how a survey owner publishes a survey to make it available for respondents.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Survey Lifecycle",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Survey Overview page",
+    "backend_location": "ManagementController.publish()"
+  },
+  "short_answer": "To publish a survey, navigate to the survey's Overview page and click the 'Publish' button. Publishing creates a snapshot of the current draft as the live version. Once published, the survey URL becomes active and respondents can submit contributions. Only the survey owner can publish.",
+  "prerequisites": [
+    "The user must be the survey owner",
+    "The survey must be in Draft or Unpublished state",
+    "The survey must have at least one element",
+    "All mandatory translations must be complete",
+    "If a validator is configured, the survey must be validated first"
+  ],
+  "procedure": [
+    "Open the survey in the management area",
+    "Navigate to the Overview page",
+    "Review the survey for completeness",
+    "Click the 'Publish' button",
+    "The system creates a published version of the survey",
+    "The survey becomes accessible at its public URL",
+    "If start/end dates are configured, the survey will auto-activate/deactivate accordingly"
+  ],
+  "important_conditions": [
+    "Publishing creates a copy of the draft survey as the published version",
+    "Subsequent edits to the draft create pending changes that must be explicitly applied",
+    "If the survey has translations, all active translations must be complete",
+    "A survey can be configured for automatic publishing with a start date",
+    "The first publication triggers a notification email if configured",
+    "After first publication, the firstPublished date is recorded permanently"
+  ],
+  "troubleshooting": [
+    "Publish button not visible: Only the survey owner can publish",
+    "Translation is not complete error: Complete all active translations or deactivate incomplete ones",
+    "Survey not accessible after publishing: Check if start/end dates are set"
+  ],
+  "related_articles": [
+    "ES-009 \u2014 How do I unpublish a survey?",
+    "ES-010 \u2014 How do I apply changes after publication?",
+    "ES-032 \u2014 How do I set start and end dates?",
+    "ES-055 \u2014 How does automatic survey publishing work?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/service/SurveyService.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "SurveyService"
+    ],
+    "methods": [
+      "publish",
+      "activate",
+      "chargePublishedSurvey"
+    ],
+    "routes": [
+      "POST /{shortname}/management"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "error.MissingTranslation",
+      "error.SurveyNotValidated",
+      "label.Publish"
+    ],
+    "configuration_keys": [
+      "server.prefix"
+    ],
+    "tests": [],
+    "line_references": [
+      "ManagementController.java:511"
+    ]
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Lifecycle",
+    "feature": "Publish Survey",
+    "user_intent": "How do I publish a survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Draft or Unpublished",
+    "keywords": [
+      "publish",
+      "go live",
+      "make available",
+      "activate",
+      "launch"
+    ],
+    "synonyms": [
+      "put survey online",
+      "make survey accessible",
+      "launch survey",
+      "go live"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "Publishing makes survey publicly accessible",
+    "search_boost_terms": [
+      "publish survey",
+      "make survey live",
+      "activate survey"
+    ],
+    "duplicate_status": "New"
+  },
+  "ingestion_status": "Do not ingest - duplicate retired"
+}

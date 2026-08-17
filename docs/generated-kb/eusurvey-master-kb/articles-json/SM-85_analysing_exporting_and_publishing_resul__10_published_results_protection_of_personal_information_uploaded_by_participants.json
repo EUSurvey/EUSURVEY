@@ -1,0 +1,95 @@
+{
+  "canonical_id": "SM-85_analysing_exporting_and_publishing_resul__10_published_results_protection_of_personal_information_uploaded_by_participants",
+  "title": "85. Published results - protection of personal information uploaded by participants",
+  "original_ids": {
+    "document_derived": [
+      "SM-85_analysing_exporting_and_publishing_resul__10_published_results_protection_of_personal_information_uploaded_by_participants"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/85_analysing_exporting_and_publishing_resul__10_published_results_protection_of_personal_information_uploaded_by_participants.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: Published results - protection of personal information uploaded by participants.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "For data protection rules, the form manager has to actively make the choice to publish files uploaded to a contribution by the participant along with the other results. To do so, tick the 'Uploaded elements' check box in the corresponding section on the 'Properties' page under 'Publish Results' section. Please note that this check box will only appear if your survey contains an 'uploaded element'.",
+  "prerequisites": [],
+  "procedure": [
+    "How do I design a survey to publish the results with or without personal information?"
+  ],
+  "important_conditions": [
+    "results. To do so, tick the 'Uploaded elements' check box in the corresponding section on the 'Properties' page under 'Publish Results' section. Please note that"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "Where can I find the contributions submitted by my respondents?",
+    "How can I download submitted contributions?",
+    "How can I extract the Draft answers?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/85_analysing_exporting_and_publishing_resul__10_published_results_protection_of_personal_information_uploaded_by_participants.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Analysing, exporting and publishing results",
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "feature": "",
+    "user_intent": "85. Published results - protection of personal information uploaded by participants",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "analysing",
+      "exporting",
+      "information",
+      "participants",
+      "personal",
+      "protection",
+      "published",
+      "publishing",
+      "results",
+      "uploaded"
+    ],
+    "synonyms": [
+      "Published results - protection of personal information uploaded by participants",
+      "Where do I manage or export survey results?",
+      "How do I manage participants or invitations?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Published results - protection of personal information uploaded by participants",
+      "Where do I manage or export survey results?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

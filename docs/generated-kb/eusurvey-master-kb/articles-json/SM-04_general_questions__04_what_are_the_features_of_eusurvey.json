@@ -1,0 +1,97 @@
+{
+  "canonical_id": "SM-04_general_questions__04_what_are_the_features_of_eusurvey",
+  "title": "04. What are the features of EUSurvey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-04_general_questions__04_what_are_the_features_of_eusurvey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/04_general_questions__04_what_are_the_features_of_eusurvey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: What are the features of EUSurvey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "General questions",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Customizable forms In the easy-to-use editor you can choose from a variety of question types; from simple text and multiple-choice questions to spreadsheet questions or multimedia survey elements. Structure your survey using special structural elements.",
+  "prerequisites": [],
+  "procedure": [
+    "Dependent questions EUSurvey can display additional questions and fields, depending on the answers given by the participant, making the survey interactive.",
+    "Scheduled publishing Publish and unpublish your survey automatically at a specified point in time.",
+    "Modify your form after publication You can modify a published survey without losing any contributions.",
+    "Languages The user interface is available in 23 of the official EU languages, and you can translate your form into any of the 136 languages covered by ISO 639-1, from Abkhaz to Zulu.",
+    "Security EUSurvey has the infrastructure needed to secure the online forms.",
+    "Sending out invitations directly from the application Selected contacts can be managed in the 'Address Book' and used to send out individual emails to every single contact containing individual access links.",
+    "Advanced privacy You can guarantee the participant's privacy by creating an anonymous form. Connection details will then not be available to you as the author of the form.",
+    "Customise the look and feel With the built-in CSS style editor and embedded rich-text editors for all visible elements, you have full control over the form's layout. A large list of survey themes makes it easy to adapt the form to a project's identity. You can choose between single page and multi-page surveys",
+    "Save a contribution as draft You can allow participants to save their contribution as a draft on the server and continue later.",
+    "Offline answering With EUSurvey, you can answer a form offline before submitting a contribution to the server at a later point in time.",
+    "Automatic numbering To structure your survey, EUSurvey can number your form's elements for you.",
+    "Enhanced contrast Visually impaired participants can choose a high-contrast version of the survey. This is created automatically for each form.",
+    "Uploading supporting files You can add files to your survey by uploading them. These files can be downloaded by every participant in your survey."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "What is EUSurvey?",
+    "When do I use EUSurvey?",
+    "What are the limits of EUSurvey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/04_general_questions__04_what_are_the_features_of_eusurvey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "General questions",
+    "eusurvey_area": "General questions",
+    "feature": "",
+    "user_intent": "04. What are the features of EUSurvey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "eusurvey",
+      "features",
+      "general",
+      "questions",
+      "what"
+    ],
+    "synonyms": [
+      "What are the features of EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What are the features of EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "article_id": "ES-045",
+  "title": "How do administrators ban a user?",
+  "intent": "This article explains how administrators ban a user account to prevent login access.",
+  "applies_to": {
+    "roles": [
+      "Administrator"
+    ],
+    "eusurvey_area": "Administration",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Administration > Users",
+    "backend_location": "UserController.banuser"
+  },
+  "short_answer": "To ban a user, navigate to Administration > Users, find the user, and click 'Ban'. Banning prevents the user from logging in and shows them a notification message. Banned users can be unbanned later.",
+  "prerequisites": [
+    "UserManagement global privilege"
+  ],
+  "procedure": [
+    "Navigate to Administration > Users.",
+    "Find the user to ban.",
+    "Click 'Ban' or 'Ban/Unban'.",
+    "Confirm the ban action.",
+    "The user is immediately blocked from logging in."
+  ],
+  "important_conditions": [
+    "Banning immediately blocks the user's login access.",
+    "A configurable email message is sent to the banned user.",
+    "Banned users' email addresses cannot be used for new registrations.",
+    "Banning does not delete the user's surveys or contributions.",
+    "The ban can be reversed using the 'Unban' action.",
+    "Administrators can configure the ban/unban email messages from System settings."
+  ],
+  "troubleshooting": [
+    "Banned user still accessing system: The ban takes effect on next login attempt, not active sessions."
+  ],
+  "related_articles": [
+    "ES-041 \u2014 How do administrators manage users?",
+    "ES-043 \u2014 How do administrators freeze a survey?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/WEB-INF/views/administration/users.jsp"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/UserController.java",
+      "src/main/java/com/ec/survey/service/AdministrationService.java"
+    ],
+    "classes": [
+      "UserController",
+      "AdministrationService"
+    ],
+    "methods": [
+      "banuser",
+      "unbanuser"
+    ],
+    "routes": [
+      "POST /administration/users/banuser",
+      "POST /administration/users/unbanuser"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.BanUser",
+      "label.BanUnban",
+      "label.MessageBannedUser",
+      "label.MessageBanningUser",
+      "error.EmailBanned",
+      "label.confirmfreezeuser",
+      "label.ConfigureBanUserMessage"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Administration",
+    "feature": "Ban User",
+    "user_intent": "How do administrators ban a user?",
+    "user_type": "Administrator",
+    "required_permission": "Administrator",
+    "survey_status": "N/A",
+    "keywords": [
+      "ban",
+      "block",
+      "user",
+      "account",
+      "suspend"
+    ],
+    "synonyms": [
+      "block user",
+      "suspend account",
+      "ban login"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "User"
+    ],
+    "security_privacy_relevance": "Affects user access",
+    "search_boost_terms": [
+      "ban user",
+      "block account",
+      "suspend login"
+    ],
+    "duplicate_status": "New"
+  }
+}

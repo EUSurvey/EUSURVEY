@@ -1,0 +1,94 @@
+{
+  "canonical_id": "PM-05_08_pdf-viewer-error-insufficient-image-data",
+  "title": "05.08 - PDF viewer error Insufficient Image data",
+  "original_ids": {
+    "document_derived": [
+      "PM-05_08_pdf-viewer-error-insufficient-image-data"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/05_08_pdf-viewer-error-insufficient-image-data.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain why a PDF viewer may show an Insufficient Image data error for a contribution PDF.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "After contributing",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "This error can occur when corrupted images were uploaded. The PDF reader may not be able to display the image properly, causing an internal PDF reader error.",
+  "prerequisites": [],
+  "procedure": [
+    "Identify whether the contribution contains an uploaded image.",
+    "Repair the corrupted image if possible.",
+    "If the image cannot be repaired, remove it and submit or generate the PDF again where possible."
+  ],
+  "important_conditions": [
+    "The problem is related to how the PDF reader handles corrupted image data.",
+    "Repairing or removing the corrupted image is required to correct the problem."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "05.09 - Little boxes shown on the PDF export of a survey",
+    "05.02 - Save a PDF copy of a contribution"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/05_08_pdf-viewer-error-insufficient-image-data.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "After contributing",
+    "eusurvey_area": "After contributing",
+    "feature": "",
+    "user_intent": "05.08 - PDF viewer error Insufficient Image data",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "05.08",
+      "pdf",
+      "viewer",
+      "error",
+      "insufficient",
+      "image",
+      "data"
+    ],
+    "synonyms": [
+      "My PDF viewer gives me an error saying Insufficient Image data. What does it mean?",
+      "Why does my contribution PDF show an image error?",
+      "How do I fix Insufficient Image data in a PDF?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "My PDF viewer gives me an error saying Insufficient Image data. What does it mean?",
+      "Why does my contribution PDF show an image error?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

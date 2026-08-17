@@ -1,0 +1,93 @@
+{
+  "canonical_id": "SM-50_survey_security__07_how_can_i_allow_participants_to_change_edit_their_contribution",
+  "title": "50. How can I allow participants to change (edit) their contribution?",
+  "original_ids": {
+    "document_derived": [
+      "SM-50_survey_security__07_how_can_i_allow_participants_to_change_edit_their_contribution"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/50_survey_security__07_how_can_i_allow_participants_to_change_edit_their_contribution.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How can I allow participants to change (edit) their contribution.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Survey security",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "If activated, this feature allows participants to change/edit their answers after being submitted.",
+  "prerequisites": [],
+  "procedure": [
+    "To activate this feature:",
+    "1. Open your survey 2. Go to 'Properties' tab 3. Go to 'Security' tab 4. Enable 'Allows participants to change their contribution' option",
+    "Testing  a survey"
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I restrict access to my survey?",
+    "How do I set a password for my survey?",
+    "How do I ensure that a user does not submit more than a defined number of contributions to my survey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/50_survey_security__07_how_can_i_allow_participants_to_change_edit_their_contribution.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Survey security",
+    "eusurvey_area": "Survey security",
+    "feature": "",
+    "user_intent": "50. How can I allow participants to change (edit) their contribution?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "allow",
+      "change",
+      "contribution",
+      "edit",
+      "participants",
+      "security",
+      "survey",
+      "their"
+    ],
+    "synonyms": [
+      "How can I allow participants to change (edit) their contribution?",
+      "How do I allow participants to change (edit) their contribution?",
+      "How do I manage participants or invitations?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I allow participants to change (edit) their contribution?",
+      "How do I allow participants to change (edit) their contribution?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

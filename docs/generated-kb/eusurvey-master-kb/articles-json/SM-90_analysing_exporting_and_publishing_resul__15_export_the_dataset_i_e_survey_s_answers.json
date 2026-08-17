@@ -1,0 +1,91 @@
+{
+  "canonical_id": "SM-90_analysing_exporting_and_publishing_resul__15_export_the_dataset_i_e_survey_s_answers",
+  "title": "90. Export the dataset (i.e. survey's answers)",
+  "original_ids": {
+    "document_derived": [
+      "SM-90_analysing_exporting_and_publishing_resul__15_export_the_dataset_i_e_survey_s_answers"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/90_analysing_exporting_and_publishing_resul__15_export_the_dataset_i_e_survey_s_answers.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: Export the dataset (i.e. survey's answers).",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "You can export your survey's answers using the export feature. This can be useful for further data processing in Excel for example.",
+  "prerequisites": [],
+  "procedure": [
+    "To export your answers:",
+    "1. Go to the 'Results' tab (first screen, the tabular view). 2. Click on the 'Export' button (a popup opens). 3. Enter a name for your export. 4. Select the file format (when export file is generated, you will receive a notification). 5. Go to the 'Exports' tab. 6. Download your file."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "Where can I find the contributions submitted by my respondents?",
+    "How can I download submitted contributions?",
+    "How can I extract the Draft answers?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/90_analysing_exporting_and_publishing_resul__15_export_the_dataset_i_e_survey_s_answers.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Analysing, exporting and publishing results",
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "feature": "",
+    "user_intent": "90. Export the dataset (i.e. survey's answers)",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "analysing",
+      "answers",
+      "dataset",
+      "export",
+      "exporting",
+      "publishing",
+      "results",
+      "survey"
+    ],
+    "synonyms": [
+      "Export the dataset (i.e. survey's answers)",
+      "Export the dataset (i.e. survey's answers) in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Export the dataset (i.e. survey's answers)",
+      "Export the dataset (i.e. survey's answers) in EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

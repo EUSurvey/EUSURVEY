@@ -1,0 +1,90 @@
+{
+  "canonical_id": "SM-111_managing_your_personal_account__02_how_do_i_change_my_email_address",
+  "title": "111. How do I change my email address?",
+  "original_ids": {
+    "document_derived": [
+      "SM-111_managing_your_personal_account__02_how_do_i_change_my_email_address"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/111_managing_your_personal_account__02_how_do_i_change_my_email_address.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I change my email address.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Managing your personal account",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "If you access EUSurvey using an EU Login user account, you cannot change your email address in EUSurvey. Instead, connect to EU Login and after login, select 'Modify my personal data' from the 'Account information' tab.",
+  "prerequisites": [],
+  "procedure": [
+    "If you use the OSS version of EUSurvey or you're a business user of the API interface, please connect to the application. Under 'Settings' > 'My Account' > click on 'E-mail'."
+  ],
+  "important_conditions": [
+    "If you access EUSurvey using an EU Login user account, you cannot change your email address in EUSurvey. Instead, connect to EU Login and after login,"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I change my password?",
+    "How do I change my default language?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/111_managing_your_personal_account__02_how_do_i_change_my_email_address.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Managing your personal account",
+    "eusurvey_area": "Managing your personal account",
+    "feature": "",
+    "user_intent": "111. How do I change my email address?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "account",
+      "address",
+      "change",
+      "email",
+      "managing",
+      "personal",
+      "your"
+    ],
+    "synonyms": [
+      "How do I change my email address?",
+      "How can I change my email address?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I change my email address?",
+      "How can I change my email address?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

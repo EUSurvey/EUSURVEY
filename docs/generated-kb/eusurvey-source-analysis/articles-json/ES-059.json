@@ -1,0 +1,92 @@
+{
+  "article_id": "ES-059",
+  "title": "How do webhooks work?",
+  "intent": "This article explains how webhook notifications work when contributions are submitted.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Integration",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "Properties page",
+    "backend_location": "BasicService.java"
+  },
+  "short_answer": "A webhook URL is called each time a contribution is submitted, allowing external systems to be notified in real-time. Configure the URL in survey Properties.",
+  "prerequisites": [
+    "Survey owner",
+    "Valid webhook endpoint URL"
+  ],
+  "procedure": [
+    "Open survey Properties.",
+    "Enter the webhook URL.",
+    "Save.",
+    "Each submission triggers a request to the URL."
+  ],
+  "important_conditions": [
+    "URL called on each submission.",
+    "No retry logic identified in source.",
+    "Exact payload format requires functional validation.",
+    "Configured per survey."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "ES-012 \u2014 How do respondents submit a contribution?",
+    "ES-046 \u2014 How do I use the Web Service API?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/service/BasicService.java",
+      "src/main/java/com/ec/survey/model/survey/Survey.java"
+    ],
+    "classes": [
+      "BasicService",
+      "Survey"
+    ],
+    "methods": [
+      "callHook"
+    ],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [
+      "info.Webhook"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "Medium",
+  "review_status": "Needs review",
+  "metadata": {
+    "domain": "Integration",
+    "feature": "Webhook",
+    "user_intent": "How do webhooks work?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Published",
+    "keywords": [
+      "webhook",
+      "callback",
+      "notification",
+      "real-time",
+      "integration"
+    ],
+    "synonyms": [
+      "webhook notification",
+      "HTTP callback",
+      "real-time alert"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "Sends data to external URL",
+    "search_boost_terms": [
+      "webhook",
+      "HTTP callback",
+      "real-time notification"
+    ],
+    "duplicate_status": "New"
+  }
+}

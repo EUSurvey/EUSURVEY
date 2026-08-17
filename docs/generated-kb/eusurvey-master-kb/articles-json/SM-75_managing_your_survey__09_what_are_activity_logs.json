@@ -1,0 +1,84 @@
+{
+  "canonical_id": "SM-75_managing_your_survey__09_what_are_activity_logs",
+  "title": "75. What are Activity logs?",
+  "original_ids": {
+    "document_derived": [
+      "SM-75_managing_your_survey__09_what_are_activity_logs"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/75_managing_your_survey__09_what_are_activity_logs.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: What are Activity logs.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Managing your survey",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Activity logs monitor and log the activity on your survey. This way, you can check which user applied which change to your survey and at what time. You can also export the activity logs into several file formats such as xls, csv and ods. Enter the activity log of your survey by clicking on the 'Activity' page, next to 'Properties'. If the activity logs are empty, it may be that they are deactivated system-wide. Find here (https://ec.europa.eu/eusurvey/resources/documents/ActivityLogEvents.xlsx) a list of the logged events.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "If I discover an error in my survey, can I correct it?",
+    "Will I lose any submitted answers when I change my form?",
+    "How can I change the title of my survey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/75_managing_your_survey__09_what_are_activity_logs.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Managing your survey",
+    "eusurvey_area": "Managing your survey",
+    "feature": "",
+    "user_intent": "75. What are Activity logs?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "activity",
+      "logs",
+      "managing",
+      "survey",
+      "what",
+      "your"
+    ],
+    "synonyms": [
+      "What are Activity logs?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What are Activity logs?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

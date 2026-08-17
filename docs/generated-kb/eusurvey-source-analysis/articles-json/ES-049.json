@@ -1,0 +1,110 @@
+{
+  "article_id": "ES-049",
+  "title": "How do I enable multi-paging?",
+  "intent": "This article explains how to split a survey into multiple pages using sections.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Survey Editor",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Properties page",
+    "backend_location": "ManagementController.propertiesPost"
+  },
+  "short_answer": "To enable multi-paging, go to survey Properties and enable 'Multi-Paging'. Each Section element in your survey becomes a page break. Respondents navigate between pages using Next/Previous buttons.",
+  "prerequisites": [
+    "Survey owner or FormManagement privilege",
+    "Survey must contain Section elements for page breaks"
+  ],
+  "procedure": [
+    "Open survey Properties.",
+    "Enable 'Multi-Paging' option.",
+    "Save properties.",
+    "In the Editor, add Section elements where you want page breaks.",
+    "Each section becomes a separate page for respondents."
+  ],
+  "important_conditions": [
+    "Each Section element creates a page break.",
+    "Respondents navigate with Next/Previous buttons.",
+    "Page-wise validation can be enabled to validate each page before allowing navigation.",
+    "The 'Prevent going back' option disables the Previous button.",
+    "Dependencies across pages are evaluated when navigating.",
+    "Progress bar reflects page navigation.",
+    "Multi-paging requires at least one Section element."
+  ],
+  "troubleshooting": [
+    "Pages not splitting: Ensure Section elements are placed between questions.",
+    "Validation errors on page change: Enable or disable 'Page-wise Validation' in properties."
+  ],
+  "related_articles": [
+    "ES-006 \u2014 How do I edit a survey?",
+    "ES-050 \u2014 How do I set up dependencies/visibility rules?",
+    "ES-067 \u2014 How does the progress bar work?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/runner.js"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/model/survey/Survey.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "Survey"
+    ],
+    "methods": [
+      "propertiesPost",
+      "checkPages",
+      "selectPage"
+    ],
+    "routes": [
+      "POST /{shortname}/management/properties"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.MultiPaging",
+      "label.PageWiseValidation",
+      "label.PreventGoingBack",
+      "info.MultiPaging"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Editor",
+    "feature": "Multi-Paging",
+    "user_intent": "How do I enable multi-paging?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Any",
+    "keywords": [
+      "multi-paging",
+      "pages",
+      "sections",
+      "navigation",
+      "paginate"
+    ],
+    "synonyms": [
+      "split survey into pages",
+      "paginate survey",
+      "multi-page form"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey",
+      "Section"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "multi-paging",
+      "paginate survey",
+      "split into pages"
+    ],
+    "duplicate_status": "New"
+  }
+}

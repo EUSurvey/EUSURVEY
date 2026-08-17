@@ -1,0 +1,86 @@
+{
+  "canonical_id": "UG-009_how-to-configure-quiz-settings",
+  "title": "UG-009 \u2014 How to configure quiz settings",
+  "original_ids": {
+    "document_derived": [
+      "UG-009_how-to-configure-quiz-settings"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-009_how-to-configure-quiz-settings.docx"
+  ],
+  "source_files": [],
+  "intent": "Describe the quiz-level settings available in survey properties.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Quiz settings are configured from the survey Properties page under Quiz Settings. They control whether quiz functionality is enabled, whether participants see their total score or scores by question, and the messages shown on the quiz start and results pages.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "If Total Score is set to No, participants do not see their final score on the quiz results page.",
+    "If Scores by question is set to Yes, participants see points and feedback for individual questions."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-001 \u2014 What is a quiz survey and what do participants see?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-009_how-to-configure-quiz-settings.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-009 \u2014 How to configure quiz settings",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "quiz settings",
+      "show score",
+      "welcome message",
+      "results message"
+    ],
+    "synonyms": [
+      "Where do I configure quiz settings?",
+      "Can I hide the final quiz score?",
+      "Can I customize quiz welcome and result messages?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Where do I configure quiz settings?",
+      "Can I hide the final quiz score?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

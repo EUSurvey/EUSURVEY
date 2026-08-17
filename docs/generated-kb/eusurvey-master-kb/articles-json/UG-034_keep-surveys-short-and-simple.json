@@ -1,0 +1,84 @@
+{
+  "canonical_id": "UG-034_keep-surveys-short-and-simple",
+  "title": "UG-034 \u2014 Keep surveys short and simple",
+  "original_ids": {
+    "document_derived": [
+      "UG-034_keep-surveys-short-and-simple"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-034_keep-surveys-short-and-simple.docx"
+  ],
+  "source_files": [],
+  "intent": "Convert an EUSurvey best-practice recommendation into a practical KB article.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Guidance",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "A good survey should be short, simple and understandable. As a rule of thumb, aim for a completion time of about 5 to 10 minutes.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "This recommendation comes from the EUSurvey best-practices guidance."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-042 \u2014 Keep surveys short and simple",
+    "UG-051 \u2014 Test the survey before publishing"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-034_keep-surveys-short-and-simple.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-034 \u2014 Keep surveys short and simple",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "KISS",
+      "short survey",
+      "simple questions"
+    ],
+    "synonyms": [
+      "How long should my survey be?",
+      "How do I keep a survey easy to answer?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How long should my survey be?",
+      "How do I keep a survey easy to answer?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

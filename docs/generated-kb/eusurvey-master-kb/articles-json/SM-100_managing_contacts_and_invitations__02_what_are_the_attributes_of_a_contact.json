@@ -1,0 +1,86 @@
+{
+  "canonical_id": "SM-100_managing_contacts_and_invitations__02_what_are_the_attributes_of_a_contact",
+  "title": "100. What are the 'Attributes' of a contact?",
+  "original_ids": {
+    "document_derived": [
+      "SM-100_managing_contacts_and_invitations__02_what_are_the_attributes_of_a_contact"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/100_managing_contacts_and_invitations__02_what_are_the_attributes_of_a_contact.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: What are the 'Attributes' of a contact.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Managing contacts and invitations",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Each contact saved in the address book has a variable set of attributes such as 'Country', 'Phone', 'Remarks', etc. You can create a new attribute by editing a contact.",
+  "prerequisites": [],
+  "procedure": [
+    "1. In the 'Edit Contact' window, open the 'attributes' menu and select 'New...'. 2. A new window will pop up where you can define the name of the new attribute. 3. The newly created attribute will appear as a column in the address book and can also be added to a set of contacts."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "What is the 'Address Book'?",
+    "How do I add new contacts to my address book?",
+    "What is a 'Registration Form'?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/100_managing_contacts_and_invitations__02_what_are_the_attributes_of_a_contact.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Managing contacts and invitations",
+    "eusurvey_area": "Managing contacts and invitations",
+    "feature": "",
+    "user_intent": "100. What are the 'Attributes' of a contact?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "attributes",
+      "contact",
+      "contacts",
+      "invitations",
+      "managing",
+      "what"
+    ],
+    "synonyms": [
+      "What are the 'Attributes' of a contact?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What are the 'Attributes' of a contact?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

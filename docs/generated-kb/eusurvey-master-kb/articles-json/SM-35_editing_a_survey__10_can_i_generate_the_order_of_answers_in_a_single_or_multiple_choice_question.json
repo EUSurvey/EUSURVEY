@@ -1,0 +1,92 @@
+{
+  "canonical_id": "SM-35_editing_a_survey__10_can_i_generate_the_order_of_answers_in_a_single_or_multiple_choice_question",
+  "title": "35. Can I generate the order of answers in a single or multiple choice question?",
+  "original_ids": {
+    "document_derived": [
+      "SM-35_editing_a_survey__10_can_i_generate_the_order_of_answers_in_a_single_or_multiple_choice_question"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/35_editing_a_survey__10_can_i_generate_the_order_of_answers_in_a_single_or_multiple_choice_question.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: Can I generate the order of answers in a single or multiple choice question.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "When creating a single or multiple choice question, you will have the option to generate their answers in three different ways:",
+  "prerequisites": [],
+  "procedure": [
+    "Original Order Alphabetical Order Random Order",
+    "Original Order: This option will display the original order of your answers on the survey.",
+    "Alphabetical Order: You can select this option if the answers should be displayed alphabetically on the survey.",
+    "Random Order: You can choose this option if the answers should be randomly displayed on the survey."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/35_editing_a_survey__10_can_i_generate_the_order_of_answers_in_a_single_or_multiple_choice_question.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "35. Can I generate the order of answers in a single or multiple choice question?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "answers",
+      "choice",
+      "editing",
+      "generate",
+      "multiple",
+      "order",
+      "question",
+      "single",
+      "survey"
+    ],
+    "synonyms": [
+      "Can I generate the order of answers in a single or multiple choice question?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Can I generate the order of answers in a single or multiple choice question?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

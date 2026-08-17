@@ -1,0 +1,84 @@
+{
+  "canonical_id": "SM-16_creating_a_survey__01_how_do_i_create_a_new_survey",
+  "title": "16. How do I create a new survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-16_creating_a_survey__01_how_do_i_create_a_new_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/16_creating_a_survey__01_how_do_i_create_a_new_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I create a new survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Creating a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "On the 'Welcome' page or the 'Surveys' page, click on 'New Survey' 'Create new Survey' option and a dialogue box will open. Once you have entered all mandatory information, click on 'Create'. The application will load your new survey into the system and open the 'Editor' automatically, so you can start adding elements to your survey right away.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "What type of surveys can I create?",
+    "How do I import an existing survey from my computer?",
+    "Where can I find all surveys that I have created?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/16_creating_a_survey__01_how_do_i_create_a_new_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Creating a survey",
+    "eusurvey_area": "Creating a survey",
+    "feature": "",
+    "user_intent": "16. How do I create a new survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "create",
+      "creating",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I create a new survey?",
+      "How can I create a new survey?",
+      "How do I create a new survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I create a new survey?",
+      "How can I create a new survey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

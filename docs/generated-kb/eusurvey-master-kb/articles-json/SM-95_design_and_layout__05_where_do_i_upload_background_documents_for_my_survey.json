@@ -1,0 +1,87 @@
+{
+  "canonical_id": "SM-95_design_and_layout__05_where_do_i_upload_background_documents_for_my_survey",
+  "title": "95. Where do I upload background documents for my survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-95_design_and_layout__05_where_do_i_upload_background_documents_for_my_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/95_design_and_layout__05_where_do_i_upload_background_documents_for_my_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: Where do I upload background documents for my survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Design and layout",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Open your survey, go to the 'Properties' page and select 'Advanced' section. Upload a file under 'Background Documents'. These documents will appear on every page on the right-hand side of your survey. If you have already published your survey, please remember to go to the 'Overview' page and click on 'Apply Changes'.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I change the general look and feel of my survey?",
+    "How can I create my own survey themes?",
+    "How do I add a logo to my survey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/95_design_and_layout__05_where_do_i_upload_background_documents_for_my_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Design and layout",
+    "eusurvey_area": "Design and layout",
+    "feature": "",
+    "user_intent": "95. Where do I upload background documents for my survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "background",
+      "design",
+      "documents",
+      "layout",
+      "survey",
+      "upload",
+      "where"
+    ],
+    "synonyms": [
+      "Where do I upload background documents for my survey?",
+      "Where do I upload background documents for my survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Where do I upload background documents for my survey?",
+      "Where do I upload background documents for my survey in EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

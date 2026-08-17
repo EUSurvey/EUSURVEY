@@ -1,0 +1,85 @@
+{
+  "canonical_id": "UG-027_how-to-hide-prefilled-questions-from-participants",
+  "title": "UG-027 \u2014 How to hide prefilled questions from participants",
+  "original_ids": {
+    "document_derived": [
+      "UG-027_how-to-hide-prefilled-questions-from-participants"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-027_how-to-hide-prefilled-questions-from-participants.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to submit predefined values without showing them to participants.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "To hide a prefilled question, select it in the editor and enable both Read only and Hidden. The value remains visible to the form manager and is submitted with the contribution, but the participant cannot see or edit it.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Hidden questions are marked in the editor with a hatched background and a hidden-question icon in the survey preview.",
+    "Number-slider questions with the Slider style cannot be hidden."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-029 \u2014 Prevent participants from changing prefilled answers"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-027_how-to-hide-prefilled-questions-from-participants.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-027 \u2014 How to hide prefilled questions from participants",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "hidden question",
+      "read only",
+      "internal category",
+      "prefilled hidden"
+    ],
+    "synonyms": [
+      "Can I hide prefilled answers from participants?",
+      "How do I submit internal categories through a prefilled link?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Can I hide prefilled answers from participants?",
+      "How do I submit internal categories through a prefilled link?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

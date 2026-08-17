@@ -1,0 +1,84 @@
+{
+  "canonical_id": "UG-036_use-understandable-language",
+  "title": "UG-036 \u2014 Use understandable language",
+  "original_ids": {
+    "document_derived": [
+      "UG-036_use-understandable-language"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-036_use-understandable-language.docx"
+  ],
+  "source_files": [],
+  "intent": "Convert an EUSurvey best-practice recommendation into a practical KB article.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Guidance",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Avoid jargon, internal abbreviations and wording that the public may not understand. Use a clear and attractive survey title.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "This recommendation comes from the EUSurvey best-practices guidance."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-042 \u2014 Keep surveys short and simple",
+    "UG-051 \u2014 Test the survey before publishing"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-036_use-understandable-language.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-036 \u2014 Use understandable language",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "plain language",
+      "jargon",
+      "survey title"
+    ],
+    "synonyms": [
+      "How can I make survey wording clearer?",
+      "Should I use internal abbreviations?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I make survey wording clearer?",
+      "Should I use internal abbreviations?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

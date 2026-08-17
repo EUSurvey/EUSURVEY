@@ -1,0 +1,97 @@
+{
+  "canonical_id": "PM-03_01_meaning-of-the-url-you-entered-was-not-correct",
+  "title": "03.01 - Meaning of The url you entered was not correct",
+  "original_ids": {
+    "document_derived": [
+      "PM-03_01_meaning-of-the-url-you-entered-was-not-correct"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/03_01_meaning-of-the-url-you-entered-was-not-correct.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain why participants may see the message The url you entered was not correct.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Accessing a survey",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The message usually means that EUSurvey cannot authorise you to access the survey. This can happen when a previously active invitation has been deleted or deactivated, or when the invitation activation period has expired.",
+  "prerequisites": [],
+  "procedure": [
+    "Check that you used the exact access link you received.",
+    "If the link came from an invitation, verify that the invitation is still valid.",
+    "If you believe the link should still work, contact the author or owner of the survey."
+  ],
+  "important_conditions": [
+    "This message can appear even if the link was valid in the past.",
+    "The most common causes are a deleted invitation, a deactivated invitation, or an expired activation period."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "02.01 - How to contact the survey owner",
+    "03.02 - Meaning of Page not found",
+    "03.03 - Meaning of This survey has not yet been published or has already been unpublished"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/03_01_meaning-of-the-url-you-entered-was-not-correct.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Accessing a survey",
+    "eusurvey_area": "Accessing a survey",
+    "feature": "",
+    "user_intent": "03.01 - Meaning of The url you entered was not correct",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "03.01",
+      "meaning",
+      "the",
+      "url",
+      "you",
+      "entered",
+      "was",
+      "not",
+      "correct"
+    ],
+    "synonyms": [
+      "What does The url you entered was not correct mean?",
+      "Why does EUSurvey say the URL is not correct?",
+      "Why can I not access the survey invitation link?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What does The url you entered was not correct mean?",
+      "Why does EUSurvey say the URL is not correct?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

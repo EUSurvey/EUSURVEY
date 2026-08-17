@@ -1,0 +1,100 @@
+{
+  "article_id": "ES-054",
+  "title": "How do I add useful links?",
+  "intent": "This article explains how to add useful links that appear in the survey sidebar.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Survey Management",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Properties page",
+    "backend_location": "ManagementController.propertiesPost"
+  },
+  "short_answer": "Useful links are hyperlinks displayed on every page of the survey, typically in a sidebar alongside background documents. Add them through survey Properties.",
+  "prerequisites": [
+    "Survey owner"
+  ],
+  "procedure": [
+    "Open survey Properties.",
+    "Navigate to the Useful Links section.",
+    "Click 'Add useful link'.",
+    "Enter the link URL and display text.",
+    "Save properties.",
+    "The link appears on every survey page."
+  ],
+  "important_conditions": [
+    "Useful links appear in the survey sidebar on every page.",
+    "Multiple links can be added.",
+    "Links open in a new window/tab.",
+    "Links are displayed alongside background documents.",
+    "Advanced useful links can also be configured."
+  ],
+  "troubleshooting": [
+    "Link not appearing: Save properties and apply changes if published."
+  ],
+  "related_articles": [
+    "ES-053 \u2014 How do I add background documents?",
+    "ES-007 \u2014 How do I configure survey properties?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/model/survey/Survey.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "Survey"
+    ],
+    "methods": [
+      "propertiesPost"
+    ],
+    "routes": [
+      "POST /{shortname}/management/properties"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.AddUsefulLink",
+      "label.RemoveUsefulLink",
+      "info.UsefulLinks"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Management",
+    "feature": "Useful Links",
+    "user_intent": "How do I add useful links?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Any",
+    "keywords": [
+      "links",
+      "useful",
+      "sidebar",
+      "reference",
+      "URL"
+    ],
+    "synonyms": [
+      "add links to survey",
+      "sidebar links",
+      "reference URLs"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "useful links",
+      "add links to survey",
+      "sidebar links"
+    ],
+    "duplicate_status": "New"
+  }
+}

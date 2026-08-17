@@ -1,0 +1,93 @@
+{
+  "canonical_id": "PM-05_01_view-or-print-a-contribution-after-submission",
+  "title": "05.01 - View or print a contribution after submission",
+  "original_ids": {
+    "document_derived": [
+      "PM-05_01_view-or-print-a-contribution-after-submission"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/05_01_view-or-print-a-contribution-after-submission.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how participants can view or print their contribution immediately after submitting it.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "After contributing",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Yes. Right after submission, EUSurvey offers a print option on the Confirmation page.",
+  "prerequisites": [],
+  "procedure": [
+    "Submit your contribution.",
+    "Stay on the Confirmation page.",
+    "Use the print option offered on that page."
+  ],
+  "important_conditions": [
+    "The print option is available immediately after submission.",
+    "If you leave the Confirmation page without printing or saving a copy, you may need your contribution ID for later actions."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "05.02 - Save a PDF copy of a contribution",
+    "05.04 - What a contribution ID is"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/05_01_view-or-print-a-contribution-after-submission.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "After contributing",
+    "eusurvey_area": "After contributing",
+    "feature": "",
+    "user_intent": "05.01 - View or print a contribution after submission",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "05.01",
+      "view",
+      "print",
+      "contribution",
+      "after",
+      "submission"
+    ],
+    "synonyms": [
+      "Can I view my contribution after it has been submitted?",
+      "Can I print my contribution after submission?",
+      "Where can I print my submitted answers?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Can I view my contribution after it has been submitted?",
+      "Can I print my contribution after submission?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

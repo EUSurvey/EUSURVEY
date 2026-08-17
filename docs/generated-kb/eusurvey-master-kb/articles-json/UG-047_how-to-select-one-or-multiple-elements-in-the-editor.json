@@ -1,0 +1,83 @@
+{
+  "canonical_id": "UG-047_how-to-select-one-or-multiple-elements-in-the-editor",
+  "title": "UG-047 \u2014 How to select one or multiple elements in the editor",
+  "original_ids": {
+    "document_derived": [
+      "UG-047_how-to-select-one-or-multiple-elements-in-the-editor"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-047_how-to-select-one-or-multiple-elements-in-the-editor.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain selection options in the editor.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use the pointer to select elements in the form area. For multiple selections, use SHIFT, CTRL or the multiple-selection button. For matrix and table elements, individual rows, columns or sub-questions can also be selected.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "The Element properties pane adapts to the current selection."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-046 \u2014 Edit element properties"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-047_how-to-select-one-or-multiple-elements-in-the-editor.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-047 \u2014 How to select one or multiple elements in the editor",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "select elements",
+      "multiple selection",
+      "matrix row"
+    ],
+    "synonyms": [
+      "How do I select several elements at once?",
+      "Can I select one row in a matrix?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I select several elements at once?",
+      "Can I select one row in a matrix?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

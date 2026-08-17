@@ -1,0 +1,95 @@
+{
+  "canonical_id": "SM-36_editing_a_survey__11_how_do_i_give_other_users_permission_to_edit_my_survey",
+  "title": "36. How do I give other users permission to edit my survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-36_editing_a_survey__11_how_do_i_give_other_users_permission_to_edit_my_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/36_editing_a_survey__11_how_do_i_give_other_users_permission_to_edit_my_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I give other users permission to edit my survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Open your survey and open the 'Privileges' page. Click on 'Add new user' or 'Add department'. A wizard will pop up that guides you through the process of adding users. Next you can give them specific access rights. Simply click on the colour to change the rights.",
+  "prerequisites": [],
+  "procedure": [
+    "Green: Read and Write access Yellow: Read access Red: No access",
+    "Added users will automatically see your survey in their list of surveys next time they log into EUSurvey.",
+    "External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button, therefore, they cannot provide access for these persons directly. Please contact us (https://ec.europa.eu/eusurvey/home/support) to request privileges for external users.",
+    "Read more about this under 'How do I give other users access to my survey?'"
+  ],
+  "important_conditions": [
+    "External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button, therefore, they cannot provide access for these persons"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/36_editing_a_survey__11_how_do_i_give_other_users_permission_to_edit_my_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "36. How do I give other users permission to edit my survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "edit",
+      "editing",
+      "give",
+      "other",
+      "permission",
+      "survey",
+      "users"
+    ],
+    "synonyms": [
+      "How do I give other users permission to edit my survey?",
+      "How can I give other users permission to edit my survey?",
+      "How do I give other users permission to edit my survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I give other users permission to edit my survey?",
+      "How can I give other users permission to edit my survey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

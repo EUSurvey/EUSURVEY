@@ -1,0 +1,113 @@
+{
+  "article_id": "ES-020",
+  "title": "How do I publish results publicly?",
+  "intent": "This article explains how to make survey results publicly accessible via a web page.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Results",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Results page",
+    "backend_location": "PublicationController.publication"
+  },
+  "short_answer": "To publish results publicly, navigate to the Results page and use the 'Publish Results' option. You can publish individual contributions, statistics, charts, and uploaded documents. A public URL is generated where anyone (or password-protected access) can view the published results.",
+  "prerequisites": [
+    "The user must be the survey owner",
+    "The survey must have contributions"
+  ],
+  "procedure": [
+    "Navigate to the survey Results page.",
+    "Click 'Publish Results' or 'Edit Result Publication'.",
+    "Configure what to publish: contributions, statistics, charts, uploaded documents.",
+    "Select which questions to include.",
+    "Optionally select which contributions to publish.",
+    "Optionally set a password for the publication page.",
+    "Enable the publication.",
+    "Share the publication URL with stakeholders."
+  ],
+  "important_conditions": [
+    "You can publish all contributions or a filtered subset.",
+    "You can choose which questions are visible in the publication.",
+    "Publication can be password-protected.",
+    "Statistics and charts can be included.",
+    "Uploaded documents can be included.",
+    "The publication URL format is: /publication/{shortname}.",
+    "Publication can be enabled/disabled without deleting the configuration."
+  ],
+  "troubleshooting": [
+    "Results not visible on publication page: Ensure the publication is active and at least one contribution is selected."
+  ],
+  "related_articles": [
+    "ES-016 \u2014 How do I view survey results?",
+    "ES-017 \u2014 How do I export survey results?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/WEB-INF/views/publication/"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/PublicationController.java",
+      "src/main/java/com/ec/survey/model/Publication.java"
+    ],
+    "classes": [
+      "PublicationController",
+      "Publication"
+    ],
+    "methods": [
+      "publication",
+      "putParameterFilters"
+    ],
+    "routes": [
+      "GET /publication/{shortname}"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.PublishResults",
+      "label.PublishedResults",
+      "label.PublishStatistics",
+      "label.PublishCharts",
+      "label.PublishUploadedElements",
+      "label.PublishQuestionSelection",
+      "label.PublishAnswerSelection"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Results",
+    "feature": "Publish Results",
+    "user_intent": "How do I publish results publicly?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Published",
+    "keywords": [
+      "publish",
+      "results",
+      "public",
+      "share",
+      "URL"
+    ],
+    "synonyms": [
+      "share results publicly",
+      "make results visible",
+      "publish answers"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Publication",
+      "Survey"
+    ],
+    "security_privacy_relevance": "Published results are publicly accessible",
+    "search_boost_terms": [
+      "publish results",
+      "share results",
+      "public results page"
+    ],
+    "duplicate_status": "New"
+  }
+}

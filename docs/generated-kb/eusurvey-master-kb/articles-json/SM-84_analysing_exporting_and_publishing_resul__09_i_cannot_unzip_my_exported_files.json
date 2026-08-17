@@ -1,0 +1,88 @@
+{
+  "canonical_id": "SM-84_analysing_exporting_and_publishing_resul__09_i_cannot_unzip_my_exported_files",
+  "title": "84. I cannot unzip my exported files",
+  "original_ids": {
+    "document_derived": [
+      "SM-84_analysing_exporting_and_publishing_resul__09_i_cannot_unzip_my_exported_files"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/84_analysing_exporting_and_publishing_resul__09_i_cannot_unzip_my_exported_files.docx"
+  ],
+  "source_files": [],
+  "intent": "This troubleshooting article helps EUSurvey survey managers resolve or understand the issue: I cannot unzip my exported files.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "This might happen if the name of the files contained in your folder is too long. Windows has a maximum length of 260 characters for directory locations on the hard drive. Possible solutions for this are:",
+  "prerequisites": [],
+  "procedure": [
+    "Unzip the folder in the root directory of your operating system, e.g. unpack at 'C:' instead of 'C:\\Users\\USERNAME\\Desktop' Or when unpacking the files, rename the target folder to shorten the directory length."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "Where can I find the contributions submitted by my respondents?",
+    "How can I download submitted contributions?",
+    "How can I extract the Draft answers?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/84_analysing_exporting_and_publishing_resul__09_i_cannot_unzip_my_exported_files.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Analysing, exporting and publishing results",
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "feature": "",
+    "user_intent": "84. I cannot unzip my exported files",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "analysing",
+      "cannot",
+      "exported",
+      "exporting",
+      "files",
+      "publishing",
+      "results",
+      "unzip"
+    ],
+    "synonyms": [
+      "I cannot unzip my exported files"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "I cannot unzip my exported files"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

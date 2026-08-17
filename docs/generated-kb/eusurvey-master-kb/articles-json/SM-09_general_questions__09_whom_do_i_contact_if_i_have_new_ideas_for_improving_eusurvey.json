@@ -1,0 +1,86 @@
+{
+  "canonical_id": "SM-09_general_questions__09_whom_do_i_contact_if_i_have_new_ideas_for_improving_eusurvey",
+  "title": "09. Whom do I contact if I have new ideas for improving EUSurvey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-09_general_questions__09_whom_do_i_contact_if_i_have_new_ideas_for_improving_eusurvey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/09_general_questions__09_whom_do_i_contact_if_i_have_new_ideas_for_improving_eusurvey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: Whom do I contact if I have new ideas for improving EUSurvey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "General questions",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "We always welcome your comments and feedback! Please ask your IT helpdesk or the CENTRAL HELPDESK to forward your suggestions to the EUSurvey support team. The support team will get back to you as soon as possible to discuss the relevant use cases and whether your idea can be incorporated in a future version of the application.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "What is EUSurvey?",
+    "When do I use EUSurvey?",
+    "What are the limits of EUSurvey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/09_general_questions__09_whom_do_i_contact_if_i_have_new_ideas_for_improving_eusurvey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "General questions",
+    "eusurvey_area": "General questions",
+    "feature": "",
+    "user_intent": "09. Whom do I contact if I have new ideas for improving EUSurvey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "contact",
+      "eusurvey",
+      "general",
+      "have",
+      "ideas",
+      "improving",
+      "questions",
+      "whom"
+    ],
+    "synonyms": [
+      "Whom do I contact if I have new ideas for improving EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Whom do I contact if I have new ideas for improving EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

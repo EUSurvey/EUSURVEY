@@ -1,0 +1,131 @@
+{
+  "canonical_id": "SRC-009",
+  "title": "How do administrators configure system messages?",
+  "original_ids": {
+    "document_derived": [],
+    "source_code_derived": [
+      "ES-044"
+    ]
+  },
+  "source_type": "source-code-derived",
+  "source_documents": [],
+  "source_files": [
+    "src/main/java/com/ec/survey/controller/SystemController.java",
+    "src/main/java/com/ec/survey/service/SystemService.java",
+    "src/main/java/com/ec/survey/model/Message.java"
+  ],
+  "intent": "This article explains how administrators configure system-wide messages displayed to users.",
+  "applies_to": {
+    "roles": [
+      "Administrator"
+    ],
+    "eusurvey_area": "Administration",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Administration > System",
+    "backend_location": "SystemController"
+  },
+  "short_answer": "Administrators can configure system-wide messages from Administration > System. These messages appear as banners to all users or specific user groups. Messages can be used for maintenance notices, announcements, or warnings.",
+  "prerequisites": [
+    "SystemManagement global privilege"
+  ],
+  "procedure": [
+    "Navigate to Administration > System.",
+    "Click 'Configure System Message'.",
+    "Set the message text.",
+    "Select the message type and criticality.",
+    "Choose the target audience (all users, runners, admins).",
+    "Set auto-deactivation if desired.",
+    "Activate the message."
+  ],
+  "important_conditions": [
+    "Messages can target different user groups: all users, survey participants (runners), administrators.",
+    "Messages have criticality levels that affect visual appearance.",
+    "Messages can be set to auto-deactivate after a specified time.",
+    "Multiple messages can be active simultaneously.",
+    "Messages can be edited, deactivated, or deleted.",
+    "Static system messages persist until manually removed."
+  ],
+  "troubleshooting": [
+    "Message not appearing: Check that the message is activated and targets the correct audience."
+  ],
+  "related_articles": [
+    "ES-041 \u2014 How do administrators manage users?",
+    "ES-042 \u2014 How do administrators search surveys?"
+  ],
+  "support_escalation": "Contact the EUSurvey support team if the issue persists.",
+  "source_traceability": {
+    "document_sources": [],
+    "frontend_files": [
+      "src/main/webapp/WEB-INF/views/administration/system.jsp"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/SystemController.java",
+      "src/main/java/com/ec/survey/service/SystemService.java",
+      "src/main/java/com/ec/survey/model/Message.java"
+    ],
+    "classes": [
+      "SystemController",
+      "SystemService",
+      "Message"
+    ],
+    "methods": [
+      "configureMessage",
+      "disableMessage",
+      "getSystemMessages",
+      "deleteMessage"
+    ],
+    "routes": [
+      "GET /administration/system/messages",
+      "GET /administration/system/message"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.Messages",
+      "label.ConfigureSystemMessage",
+      "label.MessageText",
+      "label.MessageType",
+      "label.Criticality",
+      "label.AutoDeactivateOn"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Needs audience decision",
+  "ingestion_status": "Ingest with low confidence filter",
+  "metadata": {
+    "domain": "Administration",
+    "eusurvey_area": "Administration",
+    "feature": "System Messages",
+    "user_intent": "How do administrators configure system messages?",
+    "user_type": "Administrator",
+    "required_permission": "Administrator",
+    "survey_status": "N/A",
+    "environment": "All",
+    "keywords": [
+      "message",
+      "system",
+      "announcement",
+      "notice",
+      "banner"
+    ],
+    "synonyms": [
+      "system announcement",
+      "maintenance notice",
+      "user notification"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Message"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "system messages",
+      "admin announcements"
+    ],
+    "duplicate_status": "New",
+    "authority": "Source-code-derived"
+  }
+}

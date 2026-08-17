@@ -1,0 +1,106 @@
+{
+  "article_id": "ES-004",
+  "title": "How do I export a survey structure?",
+  "intent": "This article explains how to export a survey's structure as a file for backup or transfer.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner",
+      "Form Manager"
+    ],
+    "eusurvey_area": "Survey Management",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Overview page",
+    "backend_location": "ManagementController.exportSurvey"
+  },
+  "short_answer": "To export a survey structure, navigate to the survey Overview page and select 'Export Survey'. The system creates a .eus archive file containing the survey structure, questions, settings, and optionally answers. This file can be imported later to recreate the survey.",
+  "prerequisites": [
+    "The user must be the survey owner or have FormManagement privilege",
+    "The survey must be loaded in the session"
+  ],
+  "procedure": [
+    "Open the survey in the management area.",
+    "Navigate to the Overview page.",
+    "Click 'Export Survey'.",
+    "Optionally select 'Export with answers' to include contributions.",
+    "The system generates the .eus export file.",
+    "Download the file when ready."
+  ],
+  "important_conditions": [
+    "The export creates a proprietary .eus archive format.",
+    "The export includes survey structure, questions, properties, and translations.",
+    "Including answers makes the export file significantly larger.",
+    "Export files can be used for backup purposes or to transfer surveys between EUSurvey instances.",
+    "The export does not include generated statistics or PDF files."
+  ],
+  "troubleshooting": [
+    "Export file too large: Exclude answers to reduce file size.",
+    "Export fails: Check that the survey is properly loaded in your session."
+  ],
+  "related_articles": [
+    "ES-003 \u2014 How do I import a survey?",
+    "ES-002 \u2014 How do I copy an existing survey?",
+    "ES-017 \u2014 How do I export survey results?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/tools/SurveyExportHelper.java",
+      "src/main/java/com/ec/survey/service/SurveyService.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "SurveyExportHelper",
+      "SurveyService"
+    ],
+    "methods": [
+      "exportSurvey",
+      "addSurveyData"
+    ],
+    "routes": [
+      "/{shortname}/management/overview"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.ExportWithAnswers"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Management",
+    "feature": "Export Survey",
+    "user_intent": "How do I export a survey structure?",
+    "user_type": "Survey Owner, Form Manager",
+    "required_permission": "Survey Owner, Form Manager",
+    "survey_status": "Any",
+    "keywords": [
+      "export",
+      "download",
+      "backup",
+      "structure",
+      "archive",
+      "eus"
+    ],
+    "synonyms": [
+      "download survey",
+      "backup survey",
+      "save survey file"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "Export with answers may contain personal data",
+    "search_boost_terms": [
+      "export survey structure",
+      "download survey backup",
+      "save survey as file"
+    ],
+    "duplicate_status": "New"
+  }
+}

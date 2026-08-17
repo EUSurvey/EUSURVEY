@@ -1,0 +1,84 @@
+{
+  "canonical_id": "UG-040_limit-open-ended-questions",
+  "title": "UG-040 \u2014 Limit open-ended questions",
+  "original_ids": {
+    "document_derived": [
+      "UG-040_limit-open-ended-questions"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-040_limit-open-ended-questions.docx"
+  ],
+  "source_files": [],
+  "intent": "Convert an EUSurvey best-practice recommendation into a practical KB article.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Guidance",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Limit open-ended questions because they are harder to analyse. Use list or choice questions where possible to speed up analysis.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "This recommendation comes from the EUSurvey best-practices guidance."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-042 \u2014 Keep surveys short and simple",
+    "UG-051 \u2014 Test the survey before publishing"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-040_limit-open-ended-questions.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-040 \u2014 Limit open-ended questions",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "open-ended questions",
+      "analysis",
+      "choice questions"
+    ],
+    "synonyms": [
+      "Should I use many open-ended questions?",
+      "How can I make survey results easier to analyse?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Should I use many open-ended questions?",
+      "How can I make survey results easier to analyse?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

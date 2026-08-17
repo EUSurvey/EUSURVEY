@@ -1,0 +1,86 @@
+{
+  "canonical_id": "UG-019_what-is-the-url-prefill-feature",
+  "title": "UG-019 \u2014 What is the URL prefill feature?",
+  "original_ids": {
+    "document_derived": [
+      "UG-019_what-is-the-url-prefill-feature"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-019_what-is-the-url-prefill-feature.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the purpose and main use cases of URL prefill.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "URL prefill lets a form manager send personalized survey links where selected answers are already filled in, such as name, email address or internal categories. It can be used with open surveys, secured surveys, test pages and individual invitation links.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "The feature works similarly to the Prefilling API Webservice but can be used through URL parameters.",
+    "Prefilled questions can be hidden so that values are submitted without being visible to the participant."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-021 \u2014 Build URL prefill links",
+    "UG-027 \u2014 Hide prefilled questions"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-019_what-is-the-url-prefill-feature.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-019 \u2014 What is the URL prefill feature?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "prefill",
+      "URL parameters",
+      "personalized links"
+    ],
+    "synonyms": [
+      "What is URL prefill?",
+      "Can I prefill answers using survey links?",
+      "Can URL prefill work with secured surveys?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What is URL prefill?",
+      "Can I prefill answers using survey links?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

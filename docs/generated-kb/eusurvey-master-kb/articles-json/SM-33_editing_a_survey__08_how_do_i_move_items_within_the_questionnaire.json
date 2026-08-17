@@ -1,0 +1,90 @@
+{
+  "canonical_id": "SM-33_editing_a_survey__08_how_do_i_move_items_within_the_questionnaire",
+  "title": "33. How do I move items within the questionnaire?",
+  "original_ids": {
+    "document_derived": [
+      "SM-33_editing_a_survey__08_how_do_i_move_items_within_the_questionnaire"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/33_editing_a_survey__08_how_do_i_move_items_within_the_questionnaire.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I move items within the questionnaire.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "In the editor, you can change the position of an element in your questionnaire by using one of the following options:",
+  "prerequisites": [],
+  "procedure": [
+    "Drag-and-drop: Select the element in the Form area and drag it to where you want in the questionnaire.",
+    "Move buttons: Select the element you want to move and use the move up/move down buttons in the Toolbar on top of the Form Area to move it up or down.",
+    "Cut-and-paste: Cut the element you want to move and use the drag-and-drop feature to move the placeholder to where you want to put it."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/33_editing_a_survey__08_how_do_i_move_items_within_the_questionnaire.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "33. How do I move items within the questionnaire?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "editing",
+      "items",
+      "move",
+      "questionnaire",
+      "survey",
+      "within"
+    ],
+    "synonyms": [
+      "How do I move items within the questionnaire?",
+      "How can I move items within the questionnaire?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I move items within the questionnaire?",
+      "How can I move items within the questionnaire?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

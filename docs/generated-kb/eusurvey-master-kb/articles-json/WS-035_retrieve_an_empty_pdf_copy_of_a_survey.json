@@ -1,0 +1,84 @@
+{
+  "canonical_id": "WS-035_retrieve_an_empty_pdf_copy_of_a_survey",
+  "title": "WS-035 - Retrieve an empty PDF copy of a survey",
+  "original_ids": {
+    "document_derived": [
+      "WS-035_retrieve_an_empty_pdf_copy_of_a_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-035_retrieve_an_empty_pdf_copy_of_a_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to obtain a blank PDF version of a questionnaire through the API.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use getSurveyPDF to return an empty PDF copy of the last published version of the questionnaire. If the survey was not published, the PDF of the draft survey is returned. API summary Status Active Endpoint <base_url>/webservice/getSurveyPDF/[Alias] Supported method(s) GET Required privilege Authenticated system user allowed for the survey Parameters and input Alias Survey alias. Expected output Returns the PDF file of the published survey, or the PDF of the draft survey if not published. Main HTTP responses 200 OK Survey PDF returned. 412 Precondition Failed Survey does not exist. 403 Forbidden Wrong username/password, missing required privilege, or user not allowed to perform the operation. 404 Not Found Unknown service or missing parameters. 412 Precondition Failed A prerequisite is not met, such as missing survey, wrong parameter format, archived survey, or invalid identifier. 429 Too Many Requests Daily API request limit exceeded.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-029 - Retrieve survey metadata"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-035_retrieve_an_empty_pdf_copy_of_a_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-035 - Retrieve an empty PDF copy of a survey",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "ws-035",
+      "retrieve",
+      "empty",
+      "pdf",
+      "copy",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I download a blank questionnaire PDF through the API?",
+      "Does getSurveyPDF return the published or draft survey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I download a blank questionnaire PDF through the API?",
+      "Does getSurveyPDF return the published or draft survey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

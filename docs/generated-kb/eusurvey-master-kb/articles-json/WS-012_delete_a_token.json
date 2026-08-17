@@ -1,0 +1,85 @@
+{
+  "canonical_id": "WS-012_delete_a_token",
+  "title": "WS-012 - Delete a token",
+  "original_ids": {
+    "document_derived": [
+      "WS-012_delete_a_token"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-012_delete_a_token.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to delete a token from a token list and the effect of deletion on submitted contributions.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use deleteToken to delete a token from a token list. Deleting a token that has already been used to submit a contribution does not invalidate or remove the submitted answer. Deleting an unused token prevents access through that token. API summary Status Active Endpoint <base_url>/webservice/deleteToken/[List ID]/[Token] Supported method(s) GET Required privilege Form Management RW Parameters and input List ID ID of the token list. Token Individual token to delete. Expected output No content is returned on successful deletion. Main HTTP responses 204 No Content Token deleted successfully. 412 Precondition Failed List ID or token does not exist, token is not in the list, or survey is archived. 403 Forbidden Wrong username/password, missing required privilege, or user not allowed to perform the operation. 404 Not Found Unknown service or missing parameters. 412 Precondition Failed A prerequisite is not met, such as missing survey, wrong parameter format, archived survey, or invalid identifier. 429 Too Many Requests Daily API request limit exceeded.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Deleting a token is not the same as deleting a contribution.",
+    "Use deleteContribution for contribution deletion when the required result privilege exists."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-042 - Delete a contribution",
+    "WS-010 - Deactivate a token"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-012_delete_a_token.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-012 - Delete a token",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "ws-012",
+      "delete",
+      "token"
+    ],
+    "synonyms": [
+      "How do I delete an invitation token?",
+      "Does deleting a token delete the submitted contribution?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I delete an invitation token?",
+      "Does deleting a token delete the submitted contribution?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

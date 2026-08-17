@@ -1,0 +1,93 @@
+{
+  "canonical_id": "WS-007_invitations_api_overview",
+  "title": "WS-007 - Invitations API overview",
+  "original_ids": {
+    "document_derived": [
+      "WS-007_invitations_api_overview"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-007_invitations_api_overview.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain what the Invitations API is used for and which privilege it requires.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The Invitations API allows an authenticated system user to create token lists, generate tokens, activate or deactivate tokens, delete tokens, retrieve asynchronous token-generation results, and turn a submitted contribution back into draft state. These operations require Form Management read/write access on the survey.",
+  "prerequisites": [],
+  "procedure": [
+    "Grant the system user Form Management RW on the survey.",
+    "Create a token list with createNewTokenList.",
+    "Generate tokens with createTokens and retrieve them with getResults.",
+    "Use activateToken, deactivateToken, or deleteToken for token lifecycle management."
+  ],
+  "important_conditions": [
+    "Token generation is asynchronous because it can be computationally demanding.",
+    "Generated token data can only be downloaded by the user that requested it."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-008 - Create a new token list",
+    "WS-009 - Create tokens asynchronously",
+    "WS-006 - Use asynchronous tickets and getResults"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-007_invitations_api_overview.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-007 - Invitations API overview",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "Invitations API",
+      "guest list",
+      "token list",
+      "tokens",
+      "Form Management"
+    ],
+    "synonyms": [
+      "How can I manage invitation tokens through the API?",
+      "What privilege is required for token list operations?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I manage invitation tokens through the API?",
+      "What privilege is required for token list operations?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

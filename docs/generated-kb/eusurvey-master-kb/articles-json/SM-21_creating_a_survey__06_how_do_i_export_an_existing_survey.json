@@ -1,0 +1,88 @@
+{
+  "canonical_id": "SM-21_creating_a_survey__06_how_do_i_export_an_existing_survey",
+  "title": "21. How do I export an existing survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-21_creating_a_survey__06_how_do_i_export_an_existing_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/21_creating_a_survey__06_how_do_i_export_an_existing_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I export an existing survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Creating a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "On the 'Surveys' page, search for the survey you want to export. You can either",
+  "prerequisites": [],
+  "procedure": [
+    "click on the 'Export' icon, OR click on the 'Open' icon, and from the 'Overview' page, click on the 'Export' icon.",
+    "Your survey, together with all your settings, will be saved to your computer. The file extension of an EUSurvey form file is '.eus'."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I create a new survey?",
+    "What type of surveys can I create?",
+    "How do I import an existing survey from my computer?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/21_creating_a_survey__06_how_do_i_export_an_existing_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Creating a survey",
+    "eusurvey_area": "Creating a survey",
+    "feature": "",
+    "user_intent": "21. How do I export an existing survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "creating",
+      "existing",
+      "export",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I export an existing survey?",
+      "How can I export an existing survey?",
+      "How do I export an existing survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I export an existing survey?",
+      "How can I export an existing survey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "canonical_id": "UG-025_how-to-prefill-table-cells-with-url-parameters",
+  "title": "UG-025 \u2014 How to prefill table cells with URL parameters",
+  "original_ids": {
+    "document_derived": [
+      "UG-025_how-to-prefill-table-cells-with-url-parameters"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-025_how-to-prefill-table-cells-with-url-parameters.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the special syntax for prefilled table cells.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "For tables, the URL parameter must include the table question identifier, row identifier and column identifier. The three identifiers are combined in the parameter name, followed by the cell value.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Table prefill requires cell-level targeting; a table question identifier alone is not enough.",
+    "Special characters in values must be URL-encoded."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-028 \u2014 Find identifiers for URL prefill"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-025_how-to-prefill-table-cells-with-url-parameters.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-025 \u2014 How to prefill table cells with URL parameters",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "table prefill",
+      "row ID",
+      "column ID",
+      "cell value"
+    ],
+    "synonyms": [
+      "How do I prefill a table cell?",
+      "Which identifiers are needed for table prefill?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I prefill a table cell?",
+      "Which identifiers are needed for table prefill?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

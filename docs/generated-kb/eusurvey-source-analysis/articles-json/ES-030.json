@@ -1,0 +1,123 @@
+{
+  "article_id": "ES-030",
+  "title": "How do I manage access and privileges?",
+  "intent": "This article explains how to grant other users access to manage a survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Access Control",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Access page",
+    "backend_location": "ManagementController.access"
+  },
+  "short_answer": "To manage access, navigate to the survey's Access page. Here you can add users or departments and assign specific privileges: Form Management, Access Results, Manage Invitations, or Access Draft. Each privilege level controls what the user can do with the survey.",
+  "prerequisites": [
+    "The user must be the survey owner"
+  ],
+  "procedure": [
+    "Navigate to the survey management area.",
+    "Go to the Access/Privileges page.",
+    "Click 'Add User' to grant access.",
+    "Search for the user by login or email.",
+    "Select the user from search results.",
+    "Assign privilege levels: Form Management, Access Results, Manage Invitations, Access Draft.",
+    "Click OK to save.",
+    "The user now has the assigned access to the survey."
+  ],
+  "important_conditions": [
+    "Four local privilege types: AccessDraft, AccessResults, FormManagement, ManageInvitations.",
+    "Privileges can be set to No access, Read, or Read/Write.",
+    "Users can be added individually or by department.",
+    "The survey owner always has full access.",
+    "Privileges can be updated or removed at any time.",
+    "Adding a user as Form Manager gives them edit access to the survey structure.",
+    "Result Access can be read-only (view only) or read/write (view and delete contributions)."
+  ],
+  "troubleshooting": [
+    "User not found in search: Ensure you are searching in the correct domain (EU Login vs External).",
+    "'Please select a user': Make sure to select a result from the search before confirming."
+  ],
+  "related_articles": [
+    "ES-031 \u2014 How do I secure my survey?",
+    "ES-006 \u2014 How do I edit a survey?",
+    "ES-016 \u2014 How do I view survey results?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/access.js"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/model/Access.java",
+      "src/main/java/com/ec/survey/service/SurveyService.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "Access",
+      "SurveyService"
+    ],
+    "methods": [
+      "access",
+      "accessPOST",
+      "addUser",
+      "addUserEmail",
+      "removeUser"
+    ],
+    "routes": [
+      "GET /{shortname}/management/access",
+      "POST /{shortname}/management/access"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.Privileges",
+      "label.AddUser",
+      "label.FormManagement",
+      "label.ManageInvitations",
+      "label.ReadingAccess",
+      "label.ReadWriteAccess",
+      "info.AddUserAccess"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Access Control",
+    "feature": "Manage Privileges",
+    "user_intent": "How do I manage access and privileges?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Any",
+    "keywords": [
+      "access",
+      "privileges",
+      "permissions",
+      "users",
+      "share",
+      "grant"
+    ],
+    "synonyms": [
+      "grant access",
+      "add user",
+      "manage permissions",
+      "share survey"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Access",
+      "User",
+      "LocalPrivilege"
+    ],
+    "security_privacy_relevance": "Controls who can access survey data",
+    "search_boost_terms": [
+      "manage access",
+      "grant privileges",
+      "add users to survey"
+    ],
+    "duplicate_status": "New"
+  }
+}

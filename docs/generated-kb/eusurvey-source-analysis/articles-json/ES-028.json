@@ -1,0 +1,114 @@
+{
+  "article_id": "ES-028",
+  "title": "How do I manage the address book?",
+  "intent": "This article explains how to manage contacts in the EUSurvey address book.",
+  "applies_to": {
+    "roles": [
+      "Registered User"
+    ],
+    "eusurvey_area": "Contacts",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Address Book page",
+    "backend_location": "AddressBookController"
+  },
+  "short_answer": "The address book stores contacts that can be used in guest lists for survey invitations. Navigate to Address Book from the main menu to add, edit, delete, search, and organize contacts. Contacts have a name, email, and optional custom attributes.",
+  "prerequisites": [
+    "Authenticated user"
+  ],
+  "procedure": [
+    "Navigate to the Address Book page.",
+    "View existing contacts in the table.",
+    "Click 'Create new Contact' to add a contact.",
+    "Enter name and email (required) and optional attributes.",
+    "Click Save.",
+    "Use search to find specific contacts.",
+    "Select contacts to edit or delete in batch."
+  ],
+  "important_conditions": [
+    "Contacts require at least a name and a valid email address.",
+    "Custom attributes can be added to contacts.",
+    "Contacts can be shared with other users via Shares.",
+    "The address book is personal to each user.",
+    "Contacts can be imported in bulk from files.",
+    "Contact email addresses must be valid.",
+    "Editing contacts in the address book can optionally update them in guest lists."
+  ],
+  "troubleshooting": [
+    "'A contact with this e-mail address already exists': The email is already in use. Choose to create anyway or skip.",
+    "'There is a contact without valid e-mail address': Ensure all contacts have a valid email."
+  ],
+  "related_articles": [
+    "ES-029 \u2014 How do I import contacts?",
+    "ES-025 \u2014 How do I create a guest list?",
+    "ES-040 \u2014 How do I share my address book?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/addressbook.js",
+      "src/main/webapp/WEB-INF/views/addressbook/addressbook.jsp"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/AddressBookController.java",
+      "src/main/java/com/ec/survey/service/AttendeeService.java"
+    ],
+    "classes": [
+      "AddressBookController",
+      "AttendeeService"
+    ],
+    "methods": [
+      "attendees",
+      "add",
+      "delete",
+      "edit"
+    ],
+    "routes": [
+      "GET /addressbook"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.AddressBook",
+      "label.CreateNewContact",
+      "error.AttendeeExists",
+      "error.ContactWithoutEmail",
+      "error.ContactWithoutName",
+      "info.UpdateGuestlists"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Contacts",
+    "feature": "Manage Contacts",
+    "user_intent": "How do I manage the address book?",
+    "user_type": "Registered User",
+    "required_permission": "Registered User",
+    "survey_status": "N/A",
+    "keywords": [
+      "address book",
+      "contacts",
+      "email",
+      "manage",
+      "add"
+    ],
+    "synonyms": [
+      "manage contacts",
+      "contact list",
+      "email addresses"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Attendee"
+    ],
+    "security_privacy_relevance": "Contains personal data (names, emails)",
+    "search_boost_terms": [
+      "address book",
+      "manage contacts",
+      "contact list"
+    ],
+    "duplicate_status": "New"
+  }
+}

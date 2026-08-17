@@ -1,0 +1,84 @@
+{
+  "canonical_id": "WS-042_delete_a_contribution",
+  "title": "WS-042 - Delete a contribution",
+  "original_ids": {
+    "document_derived": [
+      "WS-042_delete_a_contribution"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-042_delete_a_contribution.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to delete a submitted contribution through the API.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use deleteContribution with the contribution ID, also referred to as the token number or ual code in the specification. The operation requires read/write results access for the survey to which the contribution belongs. API summary Status Active Endpoint <base_url>/webservice/deleteContribution/[ID] Supported method(s) GET Required privilege Read-write results access for the survey containing the contribution Parameters and input ID Contribution ID, token number, or ual code. Expected output Returns 1 if the contribution was deleted successfully. Returns empty output in case of a problem. Main HTTP responses 200 OK Contribution deleted successfully. 403 Forbidden Contribution does not belong to a survey for which the user has read/write results access. 412 Precondition Failed Contribution does not exist. 403 Forbidden Wrong username/password, missing required privilege, or user not allowed to perform the operation. 404 Not Found Unknown service or missing parameters. 412 Precondition Failed A prerequisite is not met, such as missing survey, wrong parameter format, archived survey, or invalid identifier. 429 Too Many Requests Daily API request limit exceeded.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Deleting a contribution is not the same as deleting a token or deleting the whole survey."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-043 - Retrieve deleted contributions",
+    "WS-012 - Delete a token"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-042_delete_a_contribution.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-042 - Delete a contribution",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "ws-042",
+      "delete",
+      "contribution"
+    ],
+    "synonyms": [
+      "How do I delete a contribution through the API?",
+      "What permission is required to delete a contribution?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I delete a contribution through the API?",
+      "What permission is required to delete a contribution?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

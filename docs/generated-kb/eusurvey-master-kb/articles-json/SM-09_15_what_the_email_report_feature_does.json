@@ -1,0 +1,92 @@
+{
+  "canonical_id": "SM-09_15_what_the_email_report_feature_does",
+  "title": "SM-09.15 - What the Email Report feature does",
+  "original_ids": {
+    "document_derived": [
+      "SM-09_15_what_the_email_report_feature_does"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-09_15_what_the_email_report_feature_does.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-09.15 - What the Email Report feature does",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "FAQ / how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The Email Report feature allows survey managers to receive automated reports on the number of contributions received by a survey. Reports can be sent daily, weekly or monthly to a designated list of recipients.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Reports are sent only while the survey is published.",
+    "Reports stop automatically if the survey is unpublished, archived, frozen or deleted.",
+    "Reports can be sent only when at least one contribution was received during the selected period."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-10.01 - Where to find submitted contributions",
+    "SM-08.05 - End notification reminder",
+    "SM-09.15 - What the Email Report feature does"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-09_15_what_the_email_report_feature_does.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-09.15 - What the Email Report feature does",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "email report",
+      "automatic report per email",
+      "contribution count",
+      "daily report",
+      "weekly report",
+      "monthly report",
+      "recipients"
+    ],
+    "synonyms": [
+      "What the Email Report feature does?",
+      "How do automated contribution reports work?",
+      "How do I configure automatic report per email?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What the Email Report feature does?",
+      "How do automated contribution reports work?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "article_id": "ES-067",
+  "title": "How does the progress bar work?",
+  "intent": "This article explains how the progress bar shows respondents their completion status.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Survey Runner",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "Runner page",
+    "backend_location": "runner.js"
+  },
+  "short_answer": "The progress bar shows how far respondents have progressed. Displays as percentage, ratio, or both. Dependencies can cause progress to jump as questions appear/hide.",
+  "prerequisites": [
+    "progressBar must be enabled by survey owner"
+  ],
+  "procedure": [],
+  "important_conditions": [
+    "Display modes: percentage, ratio, or both.",
+    "Calculated based on answered vs visible questions.",
+    "Dependencies affect calculation dynamically.",
+    "Not recommended with many dependencies.",
+    "Multi-paging affects display."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "ES-049 \u2014 How do I enable multi-paging?",
+    "ES-050 \u2014 How do I set up dependencies/visibility rules?",
+    "ES-012 \u2014 How do respondents submit a contribution?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/runner.js"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/model/survey/Survey.java"
+    ],
+    "classes": [
+      "Survey",
+      "runner.js"
+    ],
+    "methods": [
+      "calculateProgressPercentage",
+      "updateProgress"
+    ],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [
+      "label.ProgressBar",
+      "info.ProgressBar",
+      "label.DisplayProgress"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Runner",
+    "feature": "Progress Bar",
+    "user_intent": "How does the progress bar work?",
+    "user_type": "Respondent",
+    "required_permission": "Respondent",
+    "survey_status": "Published",
+    "keywords": [
+      "progress",
+      "bar",
+      "completion",
+      "status",
+      "percentage"
+    ],
+    "synonyms": [
+      "completion indicator",
+      "progress display"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "progress bar",
+      "completion status",
+      "survey progress"
+    ],
+    "duplicate_status": "New"
+  }
+}

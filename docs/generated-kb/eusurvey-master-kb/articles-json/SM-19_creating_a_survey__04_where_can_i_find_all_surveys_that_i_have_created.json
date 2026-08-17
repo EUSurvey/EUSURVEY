@@ -1,0 +1,88 @@
+{
+  "canonical_id": "SM-19_creating_a_survey__04_where_can_i_find_all_surveys_that_i_have_created",
+  "title": "19. Where can I find all surveys that I have created?",
+  "original_ids": {
+    "document_derived": [
+      "SM-19_creating_a_survey__04_where_can_i_find_all_surveys_that_i_have_created"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/19_creating_a_survey__04_where_can_i_find_all_surveys_that_i_have_created.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: Where can I find all surveys that I have created.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Creating a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "There are two ways to find them. First, on the dashboard page, you will find a list of all the surveys you have created. The second way is to go to the 'Surveys' page and select the 'My Surveys' option in the search panel.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I create a new survey?",
+    "What type of surveys can I create?",
+    "How do I import an existing survey from my computer?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/19_creating_a_survey__04_where_can_i_find_all_surveys_that_i_have_created.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Creating a survey",
+    "eusurvey_area": "Creating a survey",
+    "feature": "",
+    "user_intent": "19. Where can I find all surveys that I have created?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "created",
+      "creating",
+      "find",
+      "have",
+      "survey",
+      "surveys",
+      "that",
+      "where"
+    ],
+    "synonyms": [
+      "Where can I find all surveys that I have created?",
+      "Where can I find all surveys that I have created in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Where can I find all surveys that I have created?",
+      "Where can I find all surveys that I have created in EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "canonical_id": "SM-47_survey_security__04_what_do_i_do_to_prevent_robots_from_submitting_multiple_contributions_to_my_surv",
+  "title": "47. What do I do to prevent robots from submitting multiple contributions to my survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-47_survey_security__04_what_do_i_do_to_prevent_robots_from_submitting_multiple_contributions_to_my_surv"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/47_survey_security__04_what_do_i_do_to_prevent_robots_from_submitting_multiple_contributions_to_my_surv.docx"
+  ],
+  "source_files": [],
+  "intent": "This troubleshooting article helps EUSurvey survey managers resolve or understand the issue: What do I do to prevent robots from submitting multiple contributions to my survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Survey security",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Automatic scripts can falsify the outcome of an online survey by submitting a high number of contributions. To prevent this, you can use EUSurvey to make participants solve a CAPTCHA (https://en.wikipedia.org/wiki/CAPTCHA) challenge before submitting a contribution.",
+  "prerequisites": [],
+  "procedure": [
+    "You can enable/disable the CAPTCHA in the 'Security' settings under 'Properties'.",
+    "N.B. Although this won't make fraud impossible, it might discourage people from continuing to try to falsify survey results."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I restrict access to my survey?",
+    "How do I set a password for my survey?",
+    "How do I ensure that a user does not submit more than a defined number of contributions to my survey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/47_survey_security__04_what_do_i_do_to_prevent_robots_from_submitting_multiple_contributions_to_my_surv.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Survey security",
+    "eusurvey_area": "Survey security",
+    "feature": "",
+    "user_intent": "47. What do I do to prevent robots from submitting multiple contributions to my survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "contributions",
+      "from",
+      "multiple",
+      "prevent",
+      "robots",
+      "security",
+      "submitting",
+      "survey",
+      "what"
+    ],
+    "synonyms": [
+      "What do I do to prevent robots from submitting multiple contributions to my survey?",
+      "What do I do to prevent robots from submitting multiple contributions to my survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What do I do to prevent robots from submitting multiple contributions to my survey?",
+      "What do I do to prevent robots from submitting multiple contributions to my survey in EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

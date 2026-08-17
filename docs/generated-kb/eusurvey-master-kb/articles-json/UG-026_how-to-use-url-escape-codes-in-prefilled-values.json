@@ -1,0 +1,84 @@
+{
+  "canonical_id": "UG-026_how-to-use-url-escape-codes-in-prefilled-values",
+  "title": "UG-026 \u2014 How to use URL escape codes in prefilled values",
+  "original_ids": {
+    "document_derived": [
+      "UG-026_how-to-use-url-escape-codes-in-prefilled-values"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-026_how-to-use-url-escape-codes-in-prefilled-values.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain why and when URL encoding is needed.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Reference",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use UTF-8 URL escape codes when a prefilled value contains special characters such as spaces, #, +, &, or other characters that have a special meaning in URLs.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "The ampersand character separates parameters, so it must be encoded when it is part of a value."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-021 \u2014 Build URL prefill links"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-026_how-to-use-url-escape-codes-in-prefilled-values.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-026 \u2014 How to use URL escape codes in prefilled values",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "URL encoding",
+      "UTF-8",
+      "escape code",
+      "special characters"
+    ],
+    "synonyms": [
+      "Why does my prefilled value break the link?",
+      "How do I include spaces or special characters in URL prefill?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Why does my prefilled value break the link?",
+      "How do I include spaces or special characters in URL prefill?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

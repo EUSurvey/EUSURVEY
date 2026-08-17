@@ -1,0 +1,87 @@
+{
+  "canonical_id": "SM-39_editing_a_survey__14_complexity_indicator",
+  "title": "39. Complexity indicator",
+  "original_ids": {
+    "document_derived": [
+      "SM-39_editing_a_survey__14_complexity_indicator"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/39_editing_a_survey__14_complexity_indicator.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: Complexity indicator.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Keeping your survey short and simple will ease the filling of your survey by the respondents and lead to a better user experience. Of course, sometimes you need to add branch logic using dependencies (i.e. dependent questions that are hidden/displayed depending on the previous answers given). This is fine, but please bear in mind that adding too many items or dependencies to your survey makes it too 'complex'. This can lead to the system slowing down for participants when filling out your questionnaire.",
+  "prerequisites": [],
+  "procedure": [
+    "This is why there is a little indicator at the top-right corner of the form editor:",
+    "Your survey could have a high level of complexity for several reasons:",
+    "too many dependencies too many cascading dependencies too many table/matrix items",
+    "For more information, see our best practices guide (https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf) and do not hesitate to contact the EUSurvey support team (/eusurvey/home/support?assistance=1) for assistance in re-designing your form if needed."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/39_editing_a_survey__14_complexity_indicator.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "39. Complexity indicator",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "complexity",
+      "editing",
+      "indicator",
+      "survey"
+    ],
+    "synonyms": [
+      "Complexity indicator"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Complexity indicator"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

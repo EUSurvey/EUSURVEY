@@ -1,0 +1,102 @@
+{
+  "canonical_id": "WS-050_integration_best_practices_for_the_eusurvey_web_services_api",
+  "title": "WS-050 - Integration best practices for the EUSurvey Web-services API",
+  "original_ids": {
+    "document_derived": [
+      "WS-050_integration_best_practices_for_the_eusurvey_web_services_api"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-050_integration_best_practices_for_the_eusurvey_web_services_api.docx"
+  ],
+  "source_files": [],
+  "intent": "Provide practical implementation recommendations for developers integrating with the EUSurvey Web-services API.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical guidance",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "A robust EUSurvey integration should use a system user, validate privileges before running automated jobs, build complete documented URLs, handle asynchronous tickets safely, throttle polling to stay below request limits, log all HTTP responses, treat destructive operations carefully, and use current endpoints instead of deprecated ones.",
+  "prerequisites": [],
+  "procedure": [
+    "Create a dedicated system user for the integration and assign only the required survey privileges.",
+    "Centralize Basic Authentication and protect credentials.",
+    "Build API requests from templates and validate required parameters before sending.",
+    "Use controlled polling or webhooks for asynchronous exports and token creation.",
+    "Store ticket IDs and correlate them with the original request.",
+    "Retry only safe operations and avoid blind retries for destructive calls such as deleteSurvey or deleteContribution.",
+    "Log HTTP status, endpoint, alias, ticket and correlation ID for support investigations.",
+    "Prefer prepareResultsXML instead of deprecated prepareResults.",
+    "Validate XML/JSON output schemas before importing data into downstream systems.",
+    "Monitor 429 errors and adjust scheduling or polling intervals."
+  ],
+  "important_conditions": [
+    "Do not use normal EU Login credentials for API integrations.",
+    "Handle personal data in exported results according to the applicable data protection rules and the survey configuration.",
+    "Check for archived survey status when troubleshooting 412 errors."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-002 - Authenticate to the EUSurvey Web-services API",
+    "WS-005 - Handle API limits and common HTTP errors",
+    "WS-018 - Results API overview"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-050_integration_best_practices_for_the_eusurvey_web_services_api.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-050 - Integration best practices for the EUSurvey Web-services API",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "best practices",
+      "polling",
+      "webhook",
+      "credentials",
+      "logging",
+      "safe retries"
+    ],
+    "synonyms": [
+      "What are best practices for integrating with the EUSurvey API?",
+      "How should I design polling and error handling?",
+      "How do I avoid duplicate or unsafe API operations?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What are best practices for integrating with the EUSurvey API?",
+      "How should I design polling and error handling?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

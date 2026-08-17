@@ -1,0 +1,95 @@
+{
+  "canonical_id": "PM-05_09_little-boxes-shown-on-the-pdf-export-of-a-survey",
+  "title": "05.09 - Little boxes shown on the PDF export of a survey",
+  "original_ids": {
+    "document_derived": [
+      "PM-05_09_little-boxes-shown-on-the-pdf-export-of-a-survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/05_09_little-boxes-shown-on-the-pdf-export-of-a-survey.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain why unsupported characters may appear as little boxes in a PDF export.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "After contributing",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Little boxes may appear when fonts used by the survey authors or participants are not supported by the application. If a character cannot be found on the system, the PDF rendering engine replaces it with a little box.",
+  "prerequisites": [],
+  "procedure": [
+    "Check whether the issue concerns the PDF display only.",
+    "Report the unsupported character to the contact information shown in the survey information area.",
+    "Keep in mind that the saved contribution itself is not affected if it was submitted correctly."
+  ],
+  "important_conditions": [
+    "This does not affect your contribution once it has been saved correctly.",
+    "The responsible authority for the survey can still visualise and export the contribution even if the PDF rendering engine could not render the PDF correctly."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "05.08 - PDF viewer error Insufficient Image data",
+    "05.02 - Save a PDF copy of a contribution"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/05_09_little-boxes-shown-on-the-pdf-export-of-a-survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "After contributing",
+    "eusurvey_area": "After contributing",
+    "feature": "",
+    "user_intent": "05.09 - Little boxes shown on the PDF export of a survey",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "05.09",
+      "little",
+      "boxes",
+      "shown",
+      "the",
+      "pdf",
+      "export",
+      "survey"
+    ],
+    "synonyms": [
+      "Why are little boxes shown on the PDF export of the survey?",
+      "Why are some characters missing in my EUSurvey PDF?",
+      "Does a PDF rendering issue affect my submitted contribution?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Why are little boxes shown on the PDF export of the survey?",
+      "Why are some characters missing in my EUSurvey PDF?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

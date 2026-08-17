@@ -1,0 +1,109 @@
+{
+  "article_id": "ES-015",
+  "title": "How do I download my contribution as PDF?",
+  "intent": "This article explains how respondents can download their submitted contribution as a PDF file.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Survey Runner",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Confirmation page",
+    "backend_location": "RunnerController.createanswerpdf, PDFService"
+  },
+  "short_answer": "If the survey owner has enabled the 'Allow participants to print their contribution' setting, respondents can download a PDF of their submitted answers from the confirmation page. The PDF is generated asynchronously and a download link is provided when ready.",
+  "prerequisites": [
+    "The survey must have 'Download Contribution' enabled (Survey.downloadContribution)",
+    "The respondent must have just submitted or have access to their contribution"
+  ],
+  "procedure": [
+    "Submit your contribution to the survey.",
+    "On the confirmation page, click the PDF download option.",
+    "Wait for the PDF to be generated (asynchronous process).",
+    "Download the PDF when the link appears.",
+    "Alternatively, request to receive the PDF by email."
+  ],
+  "important_conditions": [
+    "PDF generation is asynchronous and may take a moment.",
+    "The feature must be enabled by the survey owner.",
+    "Delphi surveys do not allow participants to download their contribution as PDF.",
+    "The PDF contains all answers as submitted.",
+    "The PDF can also be sent by email to the respondent."
+  ],
+  "troubleshooting": [
+    "PDF not ready: Generation is asynchronous. Wait and check again.",
+    "Download button not visible: The survey owner has not enabled this feature."
+  ],
+  "related_articles": [
+    "ES-012 \u2014 How do respondents submit a contribution?",
+    "ES-014 \u2014 How do I edit my contribution after submission?",
+    "ES-061 \u2014 How do respondents download the survey as PDF?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/menu.js"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/RunnerController.java",
+      "src/main/java/com/ec/survey/service/PDFService.java",
+      "src/main/java/com/ec/survey/controller/WorkerController.java"
+    ],
+    "classes": [
+      "RunnerController",
+      "PDFService",
+      "WorkerController"
+    ],
+    "methods": [
+      "createanswerpdf",
+      "createAnswerPDF"
+    ],
+    "routes": [
+      "/worker/createanswerpdf/{code}",
+      "/pdf/answer/{id}"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.DownloadContribution",
+      "label.AllowDownloadContributionPDFnewnew",
+      "info.AllowDownloadContributionPDFnew",
+      "info.AllowDownloadContributionPDFDelphi"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Runner",
+    "feature": "Download PDF",
+    "user_intent": "How do I download my contribution as PDF?",
+    "user_type": "Respondent",
+    "required_permission": "Respondent",
+    "survey_status": "Published and Active",
+    "keywords": [
+      "PDF",
+      "download",
+      "print",
+      "contribution",
+      "answers"
+    ],
+    "synonyms": [
+      "print contribution",
+      "get PDF",
+      "download answers as PDF"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "AnswerSet",
+      "Survey"
+    ],
+    "security_privacy_relevance": "PDF contains respondent answers",
+    "search_boost_terms": [
+      "download contribution PDF",
+      "print answers"
+    ],
+    "duplicate_status": "New"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "canonical_id": "WS-032_unpublish_a_survey",
+  "title": "WS-032 - Unpublish a survey",
+  "original_ids": {
+    "document_derived": [
+      "WS-032_unpublish_a_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-032_unpublish_a_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to unpublish a survey through the Survey API.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use unpublishSurvey to unpublish a survey. The endpoint returns 1 if the survey was successfully unpublished and 0 if it was already unpublished. API summary Status Active Endpoint <base_url>/webservice/unpublishSurvey/[Alias] Supported method(s) GET Required privilege Authenticated system user allowed for the survey Parameters and input Alias Survey alias. Expected output Returns 1 if successfully unpublished. Returns 0 if already unpublished. Main HTTP responses 200 OK Unpublish operation completed. 412 Precondition Failed Survey does not exist or survey is already unpublished. 403 Forbidden Wrong username/password, missing required privilege, or user not allowed to perform the operation. 404 Not Found Unknown service or missing parameters. 412 Precondition Failed A prerequisite is not met, such as missing survey, wrong parameter format, archived survey, or invalid identifier. 429 Too Many Requests Daily API request limit exceeded.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-031 - Publish a survey",
+    "WS-033 - Archive or restore a survey"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-032_unpublish_a_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-032 - Unpublish a survey",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "ws-032",
+      "unpublish",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I unpublish a survey through the API?",
+      "What does unpublishSurvey return?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I unpublish a survey through the API?",
+      "What does unpublishSurvey return?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

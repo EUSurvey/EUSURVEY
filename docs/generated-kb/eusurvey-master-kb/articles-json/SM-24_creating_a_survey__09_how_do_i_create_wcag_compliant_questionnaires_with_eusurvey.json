@@ -1,0 +1,91 @@
+{
+  "canonical_id": "SM-24_creating_a_survey__09_how_do_i_create_wcag_compliant_questionnaires_with_eusurvey",
+  "title": "24. How do I create WCAG compliant questionnaires with EUSurvey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-24_creating_a_survey__09_how_do_i_create_wcag_compliant_questionnaires_with_eusurvey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/24_creating_a_survey__09_how_do_i_create_wcag_compliant_questionnaires_with_eusurvey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I create WCAG compliant questionnaires with EUSurvey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Creating a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The Web Content Accessibility Guidelines (WCAG) consist of a set of guidelines for making content accessible, primarily for people with disabilities, but also for software such as mobile phones.",
+  "prerequisites": [],
+  "procedure": [
+    "If you wish to make your survey WCAG compliant, please follow the instructions explained in this document (https://circabc.europa.eu/d/a/workspace/SpacesStore/78b03213-5cf4-4aab-8e90-ada7e2eb1101/WCAG_tutorial%20.pdf) .",
+    "the 'Motivation popup' and how to use it?"
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I create a new survey?",
+    "What type of surveys can I create?",
+    "How do I import an existing survey from my computer?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/24_creating_a_survey__09_how_do_i_create_wcag_compliant_questionnaires_with_eusurvey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Creating a survey",
+    "eusurvey_area": "Creating a survey",
+    "feature": "",
+    "user_intent": "24. How do I create WCAG compliant questionnaires with EUSurvey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "compliant",
+      "create",
+      "creating",
+      "eusurvey",
+      "questionnaires",
+      "survey",
+      "wcag",
+      "with"
+    ],
+    "synonyms": [
+      "How do I create WCAG compliant questionnaires with EUSurvey?",
+      "How can I create WCAG compliant questionnaires with EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I create WCAG compliant questionnaires with EUSurvey?",
+      "How can I create WCAG compliant questionnaires with EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "canonical_id": "SM-63_publishing_a_survey__03_can_i_link_directly_to_a_translation_of_my_survey",
+  "title": "63. Can I link directly to a translation of my survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-63_publishing_a_survey__03_can_i_link_directly_to_a_translation_of_my_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/63_publishing_a_survey__03_can_i_link_directly_to_a_translation_of_my_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: Can I link directly to a translation of my survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Publishing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "When you send out invitations containing the link or use the link to the published form on the 'Overview' page, by default the link points to the form in the main language.",
+  "prerequisites": [],
+  "procedure": [
+    "You can also redirect respondents directly to a specific translation by using this link:",
+    "https://ec.europa.eu/eusurvey/runner/SurveyAlias?surveylanguage=LC",
+    "Just replace:",
+    "SurveyAlias with the alias of your survey LC with the appropriate ISO 639-1 language code (e.g. FR for French, DE for German, etc.)"
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I publish my survey?",
+    "Can I customise the URL to my survey?",
+    "How do I make my survey publish itself while I am on holiday?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/63_publishing_a_survey__03_can_i_link_directly_to_a_translation_of_my_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Publishing a survey",
+    "eusurvey_area": "Publishing a survey",
+    "feature": "",
+    "user_intent": "63. Can I link directly to a translation of my survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "directly",
+      "link",
+      "publishing",
+      "survey",
+      "translation"
+    ],
+    "synonyms": [
+      "Can I link directly to a translation of my survey?",
+      "Can I link directly to a translation of my survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Can I link directly to a translation of my survey?",
+      "Can I link directly to a translation of my survey in EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

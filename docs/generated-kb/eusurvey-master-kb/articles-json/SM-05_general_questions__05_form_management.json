@@ -1,0 +1,82 @@
+{
+  "canonical_id": "SM-05_general_questions__05_form_management",
+  "title": "05. Form management",
+  "original_ids": {
+    "document_derived": [
+      "SM-05_general_questions__05_form_management"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/05_general_questions__05_form_management.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: Form management.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "General questions",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Working together For surveys that are managed by multiple users, EUSurvey lets you define advanced permissions for other users to test a survey or to analyse the results.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "What is EUSurvey?",
+    "When do I use EUSurvey?",
+    "What are the limits of EUSurvey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/05_general_questions__05_form_management.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "General questions",
+    "eusurvey_area": "General questions",
+    "feature": "",
+    "user_intent": "05. Form management",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "form",
+      "general",
+      "management",
+      "questions"
+    ],
+    "synonyms": [
+      "Form management"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Form management"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

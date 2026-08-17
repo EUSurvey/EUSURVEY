@@ -1,0 +1,99 @@
+{
+  "canonical_id": "SM-05_08_how_to_allow_respondents_to_download_a_pdf_version_of_the_questionnaire",
+  "title": "SM-05.08 - How to allow respondents to download a PDF version of the questionnaire",
+  "original_ids": {
+    "document_derived": [
+      "SM-05_08_how_to_allow_respondents_to_download_a_pdf_version_of_the_questionnaire"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-05_08_how_to_allow_respondents_to_download_a_pdf_version_of_the_questionnaire.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-05.08 - How to allow respondents to download a PDF version of the questionnaire",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "To make a blank PDF version of the questionnaire available to respondents, enable the PDF download option in the survey security settings. After the setting is enabled, respondents can use the Download PDF version option from the right-hand panel of the published survey.",
+  "prerequisites": [],
+  "procedure": [
+    "Enable the PDF questionnaire download",
+    "Open the survey.",
+    "Go to Properties.",
+    "Open the Survey Security or Security section.",
+    "Enable the option Enable PDF download of the survey questionnaire.",
+    "Save the change.",
+    "If the survey is already published, apply the changes so they are visible in the published survey."
+  ],
+  "important_conditions": [
+    "This option provides a blank PDF copy of the questionnaire, not a PDF of a respondent\u2019s submitted answers.",
+    "The respondent accesses the option from the right-hand panel of the survey.",
+    "If the option is not visible to respondents, check that the setting has been enabled and that changes have been applied to the published survey."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-05.06 - How to allow participants to print or download their contribution",
+    "SM-08.01 - How to publish a survey",
+    "SM-10.14 - How to export a survey and its data"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-05_08_how_to_allow_respondents_to_download_a_pdf_version_of_the_questionnaire.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-05.08 - How to allow respondents to download a PDF version of the questionnaire",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "PDF questionnaire",
+      "download PDF version",
+      "blank questionnaire",
+      "right-hand panel",
+      "survey security",
+      "respondents"
+    ],
+    "synonyms": [
+      "How can respondents download a PDF version of the questionnaire?",
+      "How do I enable PDF download of the survey questionnaire?",
+      "Where is the Download PDF version option shown?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can respondents download a PDF version of the questionnaire?",
+      "How do I enable PDF download of the survey questionnaire?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

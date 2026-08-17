@@ -1,0 +1,104 @@
+{
+  "article_id": "ES-055",
+  "title": "How does automatic survey publishing work?",
+  "intent": "This article explains how automatic survey publishing activates and deactivates surveys based on configured dates.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Survey Lifecycle",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "Properties page",
+    "backend_location": "SchedulerService.java"
+  },
+  "short_answer": "If automatic publishing is enabled and a start date is set, EUSurvey automatically activates the survey when the start date is reached. Similarly, if an end date is set, the survey automatically stops accepting contributions. The scheduler checks hourly.",
+  "prerequisites": [
+    "Survey owner",
+    "automaticPublishing must be enabled",
+    "Start/end dates must be configured"
+  ],
+  "procedure": [
+    "Open survey Properties.",
+    "Enable Automatic survey publishing.",
+    "Set a Start date.",
+    "Optionally set an End date.",
+    "Publish the survey.",
+    "The system activates/deactivates at the specified dates."
+  ],
+  "important_conditions": [
+    "Requires automaticPublishing=true AND dates configured.",
+    "Scheduler runs hourly to check dates.",
+    "Survey must be published first for auto-activation.",
+    "End date enforcement works independently."
+  ],
+  "troubleshooting": [
+    "Survey not activating: Ensure automatic publishing is enabled AND the survey is published."
+  ],
+  "related_articles": [
+    "ES-008 \u2014 How do I publish a survey?",
+    "ES-032 \u2014 How do I set start and end dates?",
+    "ES-009 \u2014 How do I unpublish a survey?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/runner.js"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/service/SchedulerService.java",
+      "src/main/java/com/ec/survey/service/SurveyService.java"
+    ],
+    "classes": [
+      "SchedulerService",
+      "SurveyService"
+    ],
+    "methods": [
+      "doHourlySchedule",
+      "getSurveysToStart",
+      "getSurveysToStop"
+    ],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [
+      "label.AutomaticSurveyPublishing",
+      "label.Autopublish"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Lifecycle",
+    "feature": "Auto-Publish",
+    "user_intent": "How does automatic survey publishing work?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Any",
+    "keywords": [
+      "automatic",
+      "publish",
+      "schedule",
+      "start",
+      "end",
+      "activate"
+    ],
+    "synonyms": [
+      "auto-publish",
+      "scheduled activation",
+      "timed survey"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "automatic publishing",
+      "scheduled survey",
+      "auto-activate"
+    ],
+    "duplicate_status": "New"
+  }
+}

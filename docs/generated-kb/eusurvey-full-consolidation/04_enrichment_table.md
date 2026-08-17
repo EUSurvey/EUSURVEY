@@ -1,0 +1,42 @@
+# Enrichment Table
+
+Articles where document-derived content should be enriched with source-code evidence.
+
+| Master Article (DOC) | Source (SRC) | Content to Add | Evidence to Add | Metadata to Add | Permission/Limitation to Add | Priority |
+|---------------------|-------------|---------------|----------------|----------------|---------------------------|----------|
+| SM-16 (create survey) | ES-001 | Survey creation limit, external user restriction | ManagementController.createNewSurvey, SurveyService.checkSurveyCreationLimit | error.surveylimit, error.NameInvalid | Authenticated user required; creation limit per time period | P1 |
+| SM-23 (delete survey) | ES-005 | Soft-delete mechanism, admin restore capability | SurveyService.markDeleted, unmarkDeleted | info.OnlyUnpublishedSurveys | Only unpublished surveys deletable by owner; soft-delete first | P1 |
+| SM-61 (publish survey) | ES-008 | Translation completeness check, OLAP table update, first-publish notification | SurveyService.publish, ManagementController.publish | error.MissingTranslation | All active translations must be complete | P1 |
+| SM-77 (download contributions) | ES-017 | Async export behavior, 1-month auto-delete, timeout, max 3 filters | ExportsController.startExport, ExportService | info.ExportsDeletedAutomatically1, error.TooManyFilters | export.timeout config; max 3 filters | P1 |
+| SM-108 (send invitations) | ES-026 | Async mail sending, SMTP requirement, 1M token limit | ParticipantsController.sendInvitations, InvitationMailCreator | error.MaxTokenNumberExceeded, error.SmtpServerNotConfigured | ManageInvitations privilege; SMTP must be configured | P1 |
+| SM-15_05 (anonymous mode) | ES-034 | IP address not stored, technical scope vs legal scope | Survey.isAnonymous() | info.AnonymousMode, form.Privacy.Anonymous | System metadata only; does not affect question content | P1 |
+| SM-74 (give access) | ES-030 | Four privilege types (enum), privilege levels 0/1/2, department-level access | Access.java, LocalPrivilege enum | label.FormManagement, label.ManageInvitations, label.ReadWriteAccess | Survey owner only can manage; 4 local privilege types | P1 |
+| SM-59 (machine translation) | ES-024 | eTranslation vs Microsoft, async callback, cancellation | MachineTranslationService, ETranslationService | error.RequestTranslation, mt.use.ec.mt config | Requires server configuration; async process | P1 |
+| SM-22 (copy survey) | ES-002 | DoNotDelete flag reset, translations/privileges copy options | SurveyService.copiedSurveyApplyTranslations | label.CopyUsersAndPrivileges | Copy always creates draft; contributions not copied | P2 |
+| SM-18 (import survey) | ES-003 | HTML escape warning, file validation | SurveyExportHelper.importSurvey | error.FileImportFailed, info.invalidCodeFound | Only .eus format accepted | P2 |
+| SM-67 (correct errors) | ES-010 | Pending changes mechanism, 5-minute warning | SurveyService.applyChanges, makeDirty | info.ApplyChanges, label.PendingChanges | Only owner can apply; wait ≥5 minutes | P2 |
+| SM-106 (guest lists) | ES-025 | 3 types (Contact/EU/Token), 1M limit, activation/deactivation | ParticipantsController, GuestListCreator | error.MaxTokenNumberExceeded, label.CreateNewTokenGuestlist | ManageInvitations privilege | P2 |
+| SM-54 (upload translation) | ES-023 | File format validation, language matching | TranslationsHelper.importXLS/importODS/importXML | error.TranslationFileInvalid, error.TranslationWrongSurvey | XLS, ODS, XML formats supported | P2 |
+| SM-44 (restrict access) | ES-031 | Security modes enum, ECAS options | Survey.security, ecasMode | label.SecureWithEULogin, label.SecureWithPassword | showecas config flag | P2 |
+| SM-64 (auto-publish) | ES-055, ES-032 | Hourly scheduler check, requires publish first | SchedulerService.doHourlySchedule | label.AutomaticSurveyPublishing | automaticPublishing + dates required | P2 |
+| SM-42 (formula) | ES-051 | min/max/mean functions, error validation messages | FormulaQuestion.java | error.invalidFormula, error.invalidFormulaBrackets, error.invalidformulaUnknownID | Reference other questions by ID; result is read-only | P2 |
+| SM-96 (multi-page) | ES-049 | Page-wise validation, prevent-going-back option | Survey.multiPaging, validatedPerPage, preventGoingBack | label.MultiPaging, label.PageWiseValidation, label.PreventGoingBack | Requires Section elements | P2 |
+| SM-34 (visibility/dependencies) | ES-050 | OR/AND logic, chained dependencies, complexity impact | Element.triggers, useAndLogic | info.PleaseChooseLogic, info.NoTriggersFound | Choice-based questions as triggers only | P2 |
+| SM-71 (confirmation message) | ES-052 | Available placeholders list, data inclusion syntax | Survey confirmation fields | info.ConfirmationMarkUpPage | {ContributionID}, {UserName}, {IDxx} placeholders | P2 |
+| SM-46 (contribution limit) | ES-058 | Per-user vs total limit distinction, custom message | Survey.maxNumberContribution, allowedContributionsPerUser | info.MaxNumberContributions, label.ContributionsPerUser | Two separate limit types | P2 |
+| SM-73 (archiving) | ES-036 | File missing warning, feature flag requirement | ArchiveService.archiveSurvey | info.missingFilesDuringArchiving | ui.enablearchiving must be true | P2 |
+| SM-51 (testing) | ES-035 | Test contributions marked, filterable from results | ManagementController.test | label.Preview | Test data excluded via filter | P2 |
+| SM-103 (import contacts) | ES-029 | File format support, header row detection, validation | AddressBookController.importAttendees | error.invalidContacts, error.ContactEmailTooLong | XLS, XLSX, ODS, CSV; 255 char limits | P2 |
+| SM-76 (find contributions) | ES-016 | Max 3 filter limit, test answer exclusion | AnswerService, ManagementController.results | error.TooManyFilters, info.ResultFilterLimit | AccessResults privilege required | P2 |
+| SM-81 (publish results) | ES-020 | Password protection, question/answer selection filters | PublicationController.publication, Publication entity | label.PublishResults, label.PublishStatistics | Survey owner only | P2 |
+| PM-05_03 (edit contribution) | ES-014 | Feature flag check, error conditions | ContributionController, Survey.changeContribution | error.ContributionEditNotAllowed, error.ContributionClosedSurvey | Must be enabled by owner; survey must be active | P2 |
+| PM-07_01 (cookies/storage) | ES-065 | Backup/restore logic, file limitation | runner.js local storage functions | info.LocalStorageDisabled, info.LocalBackupFiles | Files cannot be restored from backup | P3 |
+| SM-25 (motivation popup) | ES-066 | Two trigger types, configurable title/text | Survey.motivationPopup fields | info.MotivationPopup, label.MotivationPopupTrigger | Progress % or time (minutes) | P3 |
+| SM-92/98 (themes/skins) | ES-038 | File format (.euss), in-use protection, public name uniqueness | SkinController, SkinService | error.SkinInUse, error.SkinUploadFailedInvalidFileType | Must not be in use to delete | P3 |
+| SM-110-112 (account) | ES-039 | Password complexity rules, validation code | SettingsController, Tools.isPasswordWeak | error.PasswordWeak, error.PasswordsDontMatch | 8-16 chars, digit + non-alphanumeric | P3 |
+| SM-102 (registration form) | ES-060 | Auto contact creation in address book | Survey.registrationForm, checkRegistrationFormElements | info.ContactsCreated | Adds mandatory Name + Email fields | P3 |
+| SM-05_08 (PDF questionnaire) | ES-061 | Async generation, unavailability page option | PDFController, PDFService.createSurveyPDF | label.AllowQuestionnaireDownloadNew | Must be enabled by owner | P3 |
+| PM-02_01 (contact owner) | ES-062 | Contact email requirement, form endpoint | HomeController.contactform | label.ContactForm, info.ContactForm | Survey must have contact configured | P3 |
+| SM-09_09-14 (deletion series) | ES-069 | 3 notification emails, DoNotDelete flag, scheduler | AutomaticSurveyDeleteWorker | label.DoNotDelete, info.DoNotDelete | Flag auto-deactivated on copy/export | P2 |
+| SM-109 (tokens) | ES-070 | 1M limit, individual activation, single-use | TokenCreator, ParticipantsController | error.MaxTokenNumberExceeded, label.ActivateSelectedTokens | ManageInvitations privilege | P2 |
+| SM-75 (activity logs) | ES-047 | Enable/disable per survey, system-wide config | ActivityService, ActivityController | label.EnableActivityLogging, label.DisableActivityLogging | Must be enabled; configurable by admin | P3 |

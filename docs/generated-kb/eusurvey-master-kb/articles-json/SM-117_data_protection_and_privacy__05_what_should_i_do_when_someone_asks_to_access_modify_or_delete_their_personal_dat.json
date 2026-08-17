@@ -1,0 +1,97 @@
+{
+  "canonical_id": "SM-117_data_protection_and_privacy__05_what_should_i_do_when_someone_asks_to_access_modify_or_delete_their_personal_dat",
+  "title": "117. What should I do when someone asks to access, modify, or delete their personal data?",
+  "original_ids": {
+    "document_derived": [
+      "SM-117_data_protection_and_privacy__05_what_should_i_do_when_someone_asks_to_access_modify_or_delete_their_personal_dat"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/117_data_protection_and_privacy__05_what_should_i_do_when_someone_asks_to_access_modify_or_delete_their_personal_dat.docx"
+  ],
+  "source_files": [],
+  "intent": "This troubleshooting article helps EUSurvey survey managers resolve or understand the issue: What should I do when someone asks to access, modify, or delete their personal data.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Data Protection and Privacy",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "REGULATION (EU) 2018/1725 Right of access by the data subject - Article 17 Right to rectification - Article 18 Right to erasure ('right to be forgotten') - Article 19",
+  "prerequisites": [],
+  "procedure": [
+    "Survey managers are responsible for managing the personal data collected as part of the survey. As a survey manager, you must respond to requests received from your survey participants in relation to data protection.",
+    "In order to access, rectify or delete personal data collected as part of your survey, you can go to the results screen and search for the personal data in question using the available filters. You can then delete or modify them either by editing the contribution or by deleting the contribution entirely.",
+    "Regarding email addresses as well as first and last names, the other parts of the system where this data may be saved are the guest lists ('Participants' tab) or your 'Address Book'."
+  ],
+  "important_conditions": [
+    "Survey managers are responsible for managing the personal data collected as part of the survey. As a survey manager, you must respond to requests received"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "This system uses cookies. What information is saved there?",
+    "What information is stored by EUSurvey when participants submit a contribution?",
+    "Do I need to include a privacy statement?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/117_data_protection_and_privacy__05_what_should_i_do_when_someone_asks_to_access_modify_or_delete_their_personal_dat.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Data Protection and Privacy",
+    "eusurvey_area": "Data Protection and Privacy",
+    "feature": "",
+    "user_intent": "117. What should I do when someone asks to access, modify, or delete their personal data?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "access",
+      "asks",
+      "data",
+      "delete",
+      "modify",
+      "personal",
+      "privacy",
+      "protection",
+      "should",
+      "someone",
+      "their",
+      "what",
+      "when"
+    ],
+    "synonyms": [
+      "What should I do when someone asks to access, modify, or delete their personal data?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What should I do when someone asks to access, modify, or delete their personal data?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

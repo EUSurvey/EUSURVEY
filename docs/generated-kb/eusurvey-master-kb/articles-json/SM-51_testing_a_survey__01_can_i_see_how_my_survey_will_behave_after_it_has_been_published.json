@@ -1,0 +1,85 @@
+{
+  "canonical_id": "SM-51_testing_a_survey__01_can_i_see_how_my_survey_will_behave_after_it_has_been_published",
+  "title": "51. Can I see how my survey will behave after it has been published?",
+  "original_ids": {
+    "document_derived": [
+      "SM-51_testing_a_survey__01_can_i_see_how_my_survey_will_behave_after_it_has_been_published"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/51_testing_a_survey__01_can_i_see_how_my_survey_will_behave_after_it_has_been_published.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: Can I see how my survey will behave after it has been published.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Testing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Yes. Please open the survey in EUSurvey and click on 'Test'. You will see the current draft of your survey, and you can access every feature of the published form. You can save the test as a draft or directly submit it as your contribution.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How can my colleagues test my survey before it is published?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/51_testing_a_survey__01_can_i_see_how_my_survey_will_behave_after_it_has_been_published.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Testing a survey",
+    "eusurvey_area": "Testing a survey",
+    "feature": "",
+    "user_intent": "51. Can I see how my survey will behave after it has been published?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "after",
+      "been",
+      "behave",
+      "published",
+      "survey",
+      "testing",
+      "will"
+    ],
+    "synonyms": [
+      "Can I see how my survey will behave after it has been published?",
+      "Can I see how my survey will behave after it has been published in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Can I see how my survey will behave after it has been published?",
+      "Can I see how my survey will behave after it has been published in EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

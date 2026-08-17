@@ -1,0 +1,105 @@
+{
+  "canonical_id": "SM-43_editing_a_survey__18_complex_table",
+  "title": "43. Complex Table",
+  "original_ids": {
+    "document_derived": [
+      "SM-43_editing_a_survey__18_complex_table"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/43_editing_a_survey__18_complex_table.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: Complex Table.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "'Complex Table' is a table-like survey element that allows you to compose other survey items in a more complex way. It enables visual linking of different questions and layout of text passages (e.g. displaying text in columns).",
+  "prerequisites": [],
+  "procedure": [
+    "How do I configure a 'Complex Table'?",
+    "In the survey 'Editor' add a 'Complex Table' element and select it. The 'Element Properties' provide the same setting options as the regular 'Table' element.",
+    "How do I configure the 'Complex Table' single cells?",
+    "Select a single cell in the survey preview section.",
+    "You can specify different question types into different cells. Those types correspond to the standard question types.",
+    "'Static Text' can be displayed in columns by using the 'Column Span' property. Note that it can only span subsequent cells, thereby removing the contents of those cells if they were already configured.",
+    "The other available cell types ('Free Text', 'Formula', 'Single Choice', 'Multiple Choice', 'Number') are basically the same as their regular counterparts outside a 'Complex Table' and can be edited in the same way.",
+    "How to display text in columns?",
+    "Text passages can be displayed in columns by splitting the text over several 'Complex Table' cells. Configure the type of the respective cells to 'Static Text'. Under 'Element Properties > Text' the desired text can now be entered for each cell individually.",
+    "How can cells be configured so that they are not editable?",
+    "The cell types of the 'Complex Table' that cannot be edited are 'Static Text' and 'Empty'.",
+    "For other cell types, the 'Element Properties > Read only' can be used to prevent direct user input.",
+    "How can a cell be configured so that its text spans multiple columns?",
+    "Text in 'Complex Tables' can be configured to span across multiple columns. Select a cell with the 'Cell Type > Static Text'. Under 'Element Properties', the 'Column Span' option is responsible for how many columns are covered. Note that this function covers subsequent cells, thereby removing the contents of those cells if they were already configured.",
+    "How can I delete a question in a 'Complex Table' cell?",
+    "The content of cells in a 'Complex Table' cannot be removed individually using the editor's delete function. Instead, the 'Cell Type' of the cell must be reset to 'Empty'.",
+    "How can I get a chart in the statistics screen?",
+    "Min and Max values must be set; At most 10 values are possible."
+  ],
+  "important_conditions": [
+    "The cell types of the 'Complex Table' that cannot be edited are 'Static Text' and 'Empty'.",
+    "The content of cells in a 'Complex Table' cannot be removed individually using the editor's delete function. Instead, the 'Cell Type' of the cell must be reset to",
+    "Min and Max values must be set; At most 10 values are possible."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/43_editing_a_survey__18_complex_table.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "43. Complex Table",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "complex",
+      "editing",
+      "survey",
+      "table"
+    ],
+    "synonyms": [
+      "Complex Table"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Complex Table"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "article_id": "ES-017",
+  "title": "How do I export survey results?",
+  "intent": "This article explains how to export contributions (results) from a survey.",
+  "applies_to": {
+    "roles": ["Survey Owner", "Results Viewer"],
+    "eusurvey_area": "Results and Export",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Exports page (/exports/list)",
+    "backend_location": "ExportsController.startExport()"
+  },
+  "short_answer": "Navigate to the Exports page, select the export type (Content, Statistics, or Uploaded Files), choose a format (XLS, XLSX, ODS, CSV, XML, PDF, or ZIP), optionally apply filters, and click Start. The export runs asynchronously and a download link appears when complete.",
+  "prerequisites": [
+    "The user must have AccessResults privilege or be the survey owner",
+    "The survey must have been published at least once",
+    "The survey must have at least one contribution"
+  ],
+  "procedure": [
+    "Open the survey in the management area",
+    "Navigate to the Exports page",
+    "Select the export type",
+    "Select the output format",
+    "Optionally apply result filters",
+    "Optionally give the export a name",
+    "Click Start to begin the export",
+    "Wait for completion (check page or wait for email)",
+    "Download the file when ready"
+  ],
+  "important_conditions": [
+    "Exports run asynchronously and may take time for large datasets",
+    "Exports are automatically deleted after 1 month",
+    "Export timeout is configurable (default 5 minutes)",
+    "Maximum 3 filters can be active simultaneously",
+    "The Split MCQ option creates separate columns for each multiple-choice answer"
+  ],
+  "troubleshooting": [
+    "Export stays in Pending/Started state: Wait for timeout or contact support",
+    "No Form Loaded error: Navigate to survey management first",
+    "Export file is empty: Check that contributions exist and filter settings",
+    "Export link expired: Exports are deleted after 1 month, start a new one"
+  ],
+  "related_articles": [
+    "ES-016 — How do I view results?",
+    "ES-018 — How do I export statistics?",
+    "ES-019 — How do I export uploaded files?",
+    "ES-020 — How do I publish results?"
+  ],
+  "evidence": {
+    "frontend_files": ["src/main/webapp/WEB-INF/views/exports/"],
+    "backend_files": ["src/main/java/com/ec/survey/controller/ExportsController.java", "src/main/java/com/ec/survey/service/ExportService.java", "src/main/java/com/ec/survey/tools/export/"],
+    "classes": ["ExportsController", "ExportService", "CommonExcelExportCreator", "OdfExportCreator", "CsvExportCreator", "XmlExportCreator"],
+    "methods": ["startExport", "prepareExport", "exportContent"],
+    "routes": ["POST /exports/start/{type}/{format}"],
+    "endpoints": [],
+    "message_keys": ["info.ExportsDeletedAutomatically1", "info.ExportUpToDate", "error.TooManyFilters"],
+    "configuration_keys": ["export.timeout", "export.deleteexportstimeout", "export.fileDir"],
+    "tests": [],
+    "line_references": ["ExportsController.java:45"]
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Results and Export",
+    "feature": "Export Results",
+    "user_intent": "How do I export survey results?",
+    "user_type": "Survey Owner, Results Viewer",
+    "required_permission": "AccessResults",
+    "survey_status": "Published (current or previously)",
+    "keywords": ["export", "download", "results", "contributions", "XLS", "CSV", "XML", "ODS"],
+    "synonyms": ["download results", "get data", "extract answers", "export contributions"],
+    "acronyms": ["XLS", "XLSX", "ODS", "CSV", "XML", "PDF"],
+    "related_entities": ["Export", "AnswerSet", "Survey"],
+    "security_privacy_relevance": "Exported data may contain personal information",
+    "search_boost_terms": ["export results", "download contributions", "export data"],
+    "duplicate_status": "New"
+  }
+}

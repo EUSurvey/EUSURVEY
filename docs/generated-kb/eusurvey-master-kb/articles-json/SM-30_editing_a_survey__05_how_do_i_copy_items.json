@@ -1,0 +1,88 @@
+{
+  "canonical_id": "SM-30_editing_a_survey__05_how_do_i_copy_items",
+  "title": "30. How do I copy items?",
+  "original_ids": {
+    "document_derived": [
+      "SM-30_editing_a_survey__05_how_do_i_copy_items"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/30_editing_a_survey__05_how_do_i_copy_items.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I copy items.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "To copy elements in your form, first open the Editor.",
+  "prerequisites": [],
+  "procedure": [
+    "Any elements that have been copied or cut are depicted by a placeholder at the top of the Toolbox pane. You can add them to the questionnaire again using the drag-and-drop feature. You can also use the button next to the element to cancel this operation.",
+    "1. Select the element(s). 2. Click 'Copy'. 3. Move the placeholder from the Toolbox to the Form area as described above or select the element in the Form area and click 'Paste after'.",
+    "See also 'How do I create a questionnaire via the EUSurvey editor?'"
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/30_editing_a_survey__05_how_do_i_copy_items.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "30. How do I copy items?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "copy",
+      "editing",
+      "items",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I copy items?",
+      "How can I copy items?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I copy items?",
+      "How can I copy items?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

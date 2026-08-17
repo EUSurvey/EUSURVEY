@@ -1,0 +1,89 @@
+{
+  "canonical_id": "SM-11_general_questions__11_eusurvey_disclaimer_for_non_eu_users_only",
+  "title": "11. EUSurvey disclaimer (for non-EU users only)",
+  "original_ids": {
+    "document_derived": [
+      "SM-11_general_questions__11_eusurvey_disclaimer_for_non_eu_users_only"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/11_general_questions__11_eusurvey_disclaimer_for_non_eu_users_only.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains the EUSurvey concept or feature: EUSurvey disclaimer (for non-EU users only).",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "General questions",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "For all questionnaires and invitation mails coming from a survey that has been created by a user not working officially for the EU institutions, the following disclaimer will be displayed in the survey and email message:",
+  "prerequisites": [],
+  "procedure": [
+    "Disclaimer The European Commission is not responsible for the content of questionnaires created using the EUSurvey service - it remains the sole responsibility of the form creator and manager. The use of EUSurvey service does not imply a recommendation or endorsement, by the European Commission, of the views expressed within them."
+  ],
+  "important_conditions": [
+    "form creator and manager. The use of EUSurvey service does not imply a recommendation or endorsement, by the European Commission, of the views"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "What is EUSurvey?",
+    "When do I use EUSurvey?",
+    "What are the limits of EUSurvey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/11_general_questions__11_eusurvey_disclaimer_for_non_eu_users_only.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "General questions",
+    "eusurvey_area": "General questions",
+    "feature": "",
+    "user_intent": "11. EUSurvey disclaimer (for non-EU users only)",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "disclaimer",
+      "eusurvey",
+      "general",
+      "non-eu",
+      "only",
+      "questions",
+      "users"
+    ],
+    "synonyms": [
+      "EUSurvey disclaimer (for non-EU users only)"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "EUSurvey disclaimer (for non-EU users only)"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

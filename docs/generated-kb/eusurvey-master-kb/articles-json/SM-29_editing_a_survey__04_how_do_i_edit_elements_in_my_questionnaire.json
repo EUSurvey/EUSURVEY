@@ -1,0 +1,91 @@
+{
+  "canonical_id": "SM-29_editing_a_survey__04_how_do_i_edit_elements_in_my_questionnaire",
+  "title": "29. How do I edit elements in my questionnaire?",
+  "original_ids": {
+    "document_derived": [
+      "SM-29_editing_a_survey__04_how_do_i_edit_elements_in_my_questionnaire"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/29_editing_a_survey__04_how_do_i_edit_elements_in_my_questionnaire.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I edit elements in my questionnaire.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Editing a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The elements in your questionnaire will be selected for editing in the Form area and edited in the Element properties pane of the Editor. See 'How do I create a questionnaire via the EUSurvey editor?'",
+  "prerequisites": [],
+  "procedure": [
+    "You can click an element in the Form area to select it. The selected element appears in blue, with the respective options visible in the Element properties pane. You can edit the elements there, e.g. changing the question text, adding help messages and changing all relevant settings to adapt the question to your needs.",
+    "To edit a text:",
+    "1. Click on the text or the pen icon. 2. Modify the text. 3. Click 'Apply' to see the changes in the Form area.",
+    "By default, the Element properties pane displays all the basic options. To display more options, click 'Advanced'.",
+    "For matrix and text questions, you can also choose the individual questions/answers/rows/columns of the element by clicking the respective label text as indicated below. This way, you can e.g. select individual questions of a matrix or table element and make them mandatory."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I start the Editor?",
+    "How do I create a questionnaire via the EUSurvey editor?",
+    "How do I add or remove questions to my questionnaire?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/29_editing_a_survey__04_how_do_i_edit_elements_in_my_questionnaire.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Editing a survey",
+    "eusurvey_area": "Editing a survey",
+    "feature": "",
+    "user_intent": "29. How do I edit elements in my questionnaire?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "edit",
+      "editing",
+      "elements",
+      "questionnaire",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I edit elements in my questionnaire?",
+      "How can I edit elements in my questionnaire?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I edit elements in my questionnaire?",
+      "How can I edit elements in my questionnaire?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

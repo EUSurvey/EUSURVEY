@@ -1,0 +1,108 @@
+{
+  "article_id": "ES-070",
+  "title": "How do token guest lists work?",
+  "intent": "This article explains how token-based guest lists provide anonymous access control.",
+  "applies_to": {
+    "roles": [
+      "Invitation Manager"
+    ],
+    "eusurvey_area": "Participants",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "Participants page",
+    "backend_location": "ParticipantsController.java"
+  },
+  "short_answer": "Token guest lists generate unique codes as anonymous invitation links. Each token creates a unique URL. Tokens can be activated, deactivated, or deleted. They provide access control without requiring contact information.",
+  "prerequisites": [
+    "ManageInvitations privilege or survey ownership"
+  ],
+  "procedure": [],
+  "important_conditions": [
+    "Each token generates a unique URL.",
+    "Maximum 1 million tokens per list.",
+    "Tokens individually activatable/deactivatable.",
+    "Anonymous - no email required.",
+    "Single-use (one submission per token).",
+    "Can be exported for distribution.",
+    "New tokens can be added to existing lists."
+  ],
+  "troubleshooting": [
+    "Token limit exceeded: Reduce count or create new list.",
+    "Token link not working: May be deactivated or already used."
+  ],
+  "related_articles": [
+    "ES-025 \u2014 How do I create a guest list?",
+    "ES-026 \u2014 How do I send invitations to participants?",
+    "ES-031 \u2014 How do I secure my survey?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ParticipantsController.java",
+      "src/main/java/com/ec/survey/tools/TokenCreator.java",
+      "src/main/java/com/ec/survey/service/ParticipationService.java"
+    ],
+    "classes": [
+      "ParticipantsController",
+      "TokenCreator",
+      "ParticipationService"
+    ],
+    "methods": [
+      "createTokens",
+      "participantsActivate",
+      "participantsDeactive"
+    ],
+    "routes": [
+      "POST /{shortname}/management/participants"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.CreateNewTokenGuestlist",
+      "label.CreateTokens",
+      "label.AddTokens",
+      "info.AddTokens",
+      "info.TokenList",
+      "label.ActivateSelectedTokens",
+      "label.DeactivateSelectedTokens",
+      "error.MaxTokenNumberExceeded"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Participants",
+    "feature": "Token Lists",
+    "user_intent": "How do token guest lists work?",
+    "user_type": "Invitation Manager",
+    "required_permission": "Invitation Manager",
+    "survey_status": "Any",
+    "keywords": [
+      "token",
+      "guest list",
+      "anonymous",
+      "unique",
+      "code",
+      "link"
+    ],
+    "synonyms": [
+      "token links",
+      "anonymous invitations",
+      "unique access codes"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "ParticipationGroup",
+      "Invitation"
+    ],
+    "security_privacy_relevance": "Tokens enable anonymous access",
+    "search_boost_terms": [
+      "token guest lists",
+      "anonymous invitations",
+      "unique links"
+    ],
+    "duplicate_status": "New"
+  }
+}

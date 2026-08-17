@@ -1,0 +1,86 @@
+{
+  "canonical_id": "UG-053_how-to-use-visibility-settings-and-dependencies",
+  "title": "UG-053 \u2014 How to use visibility settings and dependencies",
+  "original_ids": {
+    "document_derived": [
+      "UG-053_how-to-use-visibility-settings-and-dependencies"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-053_how-to-use-visibility-settings-and-dependencies.docx"
+  ],
+  "source_files": [],
+  "intent": "Provide detailed guidance for skip logic and dependent questions.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Visibility settings let you show or hide elements depending on answers given to earlier single choice, multiple choice or matrix questions. This keeps the participant experience relevant and avoids unnecessary questions.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Visibility settings affect the Test page and published mode; all elements remain visible in the editor.",
+    "Elements with dependencies remain hidden to participants until at least one configured triggering answer is selected."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-041 \u2014 Use dependencies to show only relevant questions",
+    "UG-049 \u2014 Use the complexity indicator"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-053_how-to-use-visibility-settings-and-dependencies.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-053 \u2014 How to use visibility settings and dependencies",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "visibility",
+      "dependencies",
+      "skip logic",
+      "conditional question"
+    ],
+    "synonyms": [
+      "How do I create dependencies?",
+      "How do I show a question only after a specific answer?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I create dependencies?",
+      "How do I show a question only after a specific answer?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

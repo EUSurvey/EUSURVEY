@@ -1,0 +1,93 @@
+{
+  "canonical_id": "SM-09_09_what_is_an_inactive_survey_in_eusurvey",
+  "title": "SM-09.09 - What is an inactive survey in EUSurvey",
+  "original_ids": {
+    "document_derived": [
+      "SM-09_09_what_is_an_inactive_survey_in_eusurvey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-09_09_what_is_an_inactive_survey_in_eusurvey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-09.09 - What is an inactive survey in EUSurvey",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "A survey is considered inactive when it no longer receives new contributions. If a survey receives no new contributions for one year, or 365 days, it may be marked as inactive and become eligible for automatic deletion.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "The inactivity trigger is based on new contributions.",
+    "The survey may become eligible for deletion after one year without new contributions."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-10.14 - How to export a survey and its data",
+    "SM-09.07 - Archiving feature",
+    "SM-09.11 - How the inactive survey deletion process works"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-09_09_what_is_an_inactive_survey_in_eusurvey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-09.09 - What is an inactive survey in EUSurvey",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "inactive survey",
+      "automatic deletion",
+      "deletion notification",
+      "inactivity",
+      "365 days",
+      "Form Manager",
+      "export",
+      ".eus",
+      "archive"
+    ],
+    "synonyms": [
+      "What is an inactive survey in EUSurvey?",
+      "Why did I receive an inactive survey notification?",
+      "How do I avoid losing an inactive survey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What is an inactive survey in EUSurvey?",
+      "Why did I receive an inactive survey notification?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

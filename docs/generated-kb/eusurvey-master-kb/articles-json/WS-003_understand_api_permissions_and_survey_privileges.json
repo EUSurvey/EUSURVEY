@@ -1,0 +1,94 @@
+{
+  "canonical_id": "WS-003_understand_api_permissions_and_survey_privileges",
+  "title": "WS-003 - Understand API permissions and survey privileges",
+  "original_ids": {
+    "document_derived": [
+      "WS-003_understand_api_permissions_and_survey_privileges"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-003_understand_api_permissions_and_survey_privileges.docx"
+  ],
+  "source_files": [],
+  "intent": "Clarify which application privileges are required to call EUSurvey Web-services API endpoints.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "A valid system user can access the API in general, but individual survey operations require survey-level privileges. For example, invitation management requires Form Management read/write access, result export requires Results read-only access, and contribution deletion requires read/write result access on the relevant survey.",
+  "prerequisites": [],
+  "procedure": [
+    "Identify the API family you want to call.",
+    "Check the required privilege in the corresponding endpoint article.",
+    "Ask the survey owner or delegated manager to grant the system user the required local privilege in EUSurvey.",
+    "Retry the call after the privilege has been granted."
+  ],
+  "important_conditions": [
+    "Authentication and authorization are separate. Correct credentials do not guarantee access to a specific survey.",
+    "Privileges are checked when asynchronous jobs are created; only the original requesting user can download the prepared result."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-007 - Invitations API overview",
+    "WS-018 - Results API overview",
+    "WS-027 - Survey API overview"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-003_understand_api_permissions_and_survey_privileges.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-003 - Understand API permissions and survey privileges",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "permissions",
+      "privileges",
+      "Form Management",
+      "Results RO",
+      "access rights"
+    ],
+    "synonyms": [
+      "Which permissions are required to use the API?",
+      "Why does an authenticated API call return forbidden?",
+      "What privileges are needed for result exports or invitation management?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Which permissions are required to use the API?",
+      "Why does an authenticated API call return forbidden?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

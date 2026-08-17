@@ -1,0 +1,86 @@
+{
+  "canonical_id": "SM-15_login_and_eu_login_registration__02_how_do_i_connect_to_eusurvey",
+  "title": "15. How do I connect to EUSurvey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-15_login_and_eu_login_registration__02_how_do_i_connect_to_eusurvey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/15_login_and_eu_login_registration__02_how_do_i_connect_to_eusurvey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I connect to EUSurvey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Login and EU Login registration",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Please click on the login button on the EUSurvey homepage (https://ec.europa.eu/eusurvey/home/welcome) . You will be redirected to the EUSurvey login screen.",
+  "prerequisites": [],
+  "procedure": [
+    "Once you arrived on the login screen, you have to choose the option corresponding to your personal case: If you work for an EU institution, choose the second option to connect to the EUSurvey application. Your EU Login username and password will then be sufficient. If you don't work for an EU institution (Externals), choose the first option to connect to the EUSurvey application. You will need to have previously registered your mobile phone to pass the two-factor authentication (https://en.wikipedia.org/wiki/Help:Two-factor_authentication).",
+    "If you don't have an EU Login account, please create one by clicking here (https://webgate.ec.europa.eu/cas/eim/external/register.cgi) .",
+    "In case you don't work for an EU institution, please also register your mobile phone by clicking here (https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi) ."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "I have an EU Login account. Do I need to register separately for EUSurvey?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/15_login_and_eu_login_registration__02_how_do_i_connect_to_eusurvey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Login and EU Login registration",
+    "eusurvey_area": "Login and EU Login registration",
+    "feature": "",
+    "user_intent": "15. How do I connect to EUSurvey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "connect",
+      "eusurvey",
+      "login",
+      "registration"
+    ],
+    "synonyms": [
+      "How do I connect to EUSurvey?",
+      "How can I connect to EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I connect to EUSurvey?",
+      "How can I connect to EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

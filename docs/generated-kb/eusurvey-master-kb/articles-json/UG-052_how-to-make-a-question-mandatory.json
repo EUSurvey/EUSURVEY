@@ -1,0 +1,83 @@
+{
+  "canonical_id": "UG-052_how-to-make-a-question-mandatory",
+  "title": "UG-052 \u2014 How to make a question mandatory",
+  "original_ids": {
+    "document_derived": [
+      "UG-052_how-to-make-a-question-mandatory"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-052_how-to-make-a-question-mandatory.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how mandatory questions are configured.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Select the question in the editor and enable the Mandatory checkbox in the Element properties pane. Mandatory questions are marked with a red asterisk in the questionnaire.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Use mandatory questions only where the answer is truly required."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-039 \u2014 Match question style to the data needed"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-052_how-to-make-a-question-mandatory.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-052 \u2014 How to make a question mandatory",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "mandatory question",
+      "required answer",
+      "red asterisk"
+    ],
+    "synonyms": [
+      "How do I make a question mandatory?",
+      "How are mandatory questions shown to participants?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I make a question mandatory?",
+      "How are mandatory questions shown to participants?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

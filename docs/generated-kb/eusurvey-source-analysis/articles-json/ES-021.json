@@ -1,0 +1,117 @@
+{
+  "article_id": "ES-021",
+  "title": "How do I manage survey translations?",
+  "intent": "This article explains how to manage translations of a survey into multiple languages.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner",
+      "Form Manager"
+    ],
+    "eusurvey_area": "Translations",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Translations page",
+    "backend_location": "TranslationController.translations"
+  },
+  "short_answer": "To manage translations, navigate to the survey's Translations page. Here you can add new languages, edit translations online, import/export translation files, request machine translations, and activate/deactivate translations. Each translation must be complete before the survey can be published with that language.",
+  "prerequisites": [
+    "FormManagement privilege or survey ownership",
+    "Survey must exist"
+  ],
+  "procedure": [
+    "Open the survey management area.",
+    "Navigate to the Translations page.",
+    "View existing translations and their status (complete/incomplete).",
+    "Edit translations by clicking on cells in the translation table.",
+    "Use the toolbar to add languages, import, export, or request machine translation.",
+    "Activate or deactivate translations as needed.",
+    "Ensure all active translations are complete before publishing."
+  ],
+  "important_conditions": [
+    "Translations must be complete before publishing (all labels filled in).",
+    "The main survey language cannot be deleted.",
+    "At least one complete translation must remain.",
+    "Translations can be edited online in a table interface.",
+    "Translations can be exported as XLS, ODS, or XML for offline editing.",
+    "Machine translation can be requested if configured.",
+    "Pivot language controls which language is shown as reference during editing."
+  ],
+  "troubleshooting": [
+    "'Translation is not complete' when publishing: Fill in all empty labels or deactivate the incomplete translation.",
+    "'You cannot delete the translation of the main language': The main language translation is required."
+  ],
+  "related_articles": [
+    "ES-022 \u2014 How do I add a new translation language?",
+    "ES-023 \u2014 How do I import a translation file?",
+    "ES-024 \u2014 How do I request machine translation?",
+    "ES-008 \u2014 How do I publish a survey?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/translations.js"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/TranslationController.java",
+      "src/main/java/com/ec/survey/service/TranslationService.java",
+      "src/main/java/com/ec/survey/tools/TranslationsHelper.java"
+    ],
+    "classes": [
+      "TranslationController",
+      "TranslationService",
+      "TranslationsHelper"
+    ],
+    "methods": [
+      "translations",
+      "savetranslations",
+      "activatetranslations",
+      "deactivatetranslations"
+    ],
+    "routes": [
+      "GET /{shortname}/management/translations"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.EditTranslations",
+      "info.KeepMainTranslation",
+      "info.KeepOneCompleteTranslation",
+      "error.MissingTranslation"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Translations",
+    "feature": "Manage Translations",
+    "user_intent": "How do I manage survey translations?",
+    "user_type": "Survey Owner, Form Manager",
+    "required_permission": "Survey Owner, Form Manager",
+    "survey_status": "Any",
+    "keywords": [
+      "translation",
+      "language",
+      "multilingual",
+      "localize",
+      "translate"
+    ],
+    "synonyms": [
+      "translate survey",
+      "add language",
+      "multilingual survey"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Translations",
+      "Survey"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "manage translations",
+      "translate survey",
+      "add language"
+    ],
+    "duplicate_status": "New"
+  }
+}

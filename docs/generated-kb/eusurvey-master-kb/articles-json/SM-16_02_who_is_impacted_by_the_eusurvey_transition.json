@@ -1,0 +1,88 @@
+{
+  "canonical_id": "SM-16_02_who_is_impacted_by_the_eusurvey_transition",
+  "title": "SM-16.02 - Who is impacted by the EUSurvey transition",
+  "original_ids": {
+    "document_derived": [
+      "SM-16_02_who_is_impacted_by_the_eusurvey_transition"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-16_02_who_is_impacted_by_the_eusurvey_transition.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-16.02 - Who is impacted by the EUSurvey transition",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "FAQ / policy",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The change affects external users with external EU Login accounts who create or manage surveys in the EUSurvey back office. From 31 August 2026, these users will no longer be able to create new surveys themselves unless the survey is created under EU institutional responsibility.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Examples of impacted users include citizens, businesses, consultants, researchers, NGOs, national public administrations and Member State authorities.",
+    "Existing surveys created by external users remain accessible during the transition period."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-16.04 - EUSurvey transition timeline for external users",
+    "SM-16.08 - How to transfer a survey to an EU institution",
+    "SM-16.10 - How external users can export survey data during the transition"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-16_02_who_is_impacted_by_the_eusurvey_transition.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-16.02 - Who is impacted by the EUSurvey transition",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "EUSurvey transition",
+      "external users",
+      "EU institutional use",
+      "survey creation restriction",
+      "read-only",
+      "closure",
+      "transfer ownership"
+    ],
+    "synonyms": [
+      "Who is impacted by the transition?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Who is impacted by the transition?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

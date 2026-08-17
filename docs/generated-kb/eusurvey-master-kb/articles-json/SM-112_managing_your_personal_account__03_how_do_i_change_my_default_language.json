@@ -1,0 +1,88 @@
+{
+  "canonical_id": "SM-112_managing_your_personal_account__03_how_do_i_change_my_default_language",
+  "title": "112. How do I change my default language?",
+  "original_ids": {
+    "document_derived": [
+      "SM-112_managing_your_personal_account__03_how_do_i_change_my_default_language"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/112_managing_your_personal_account__03_how_do_i_change_my_default_language.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I change my default language.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Managing your personal account",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "It is possible to change the default language for new surveys. Go to 'Settings' > 'My Account' and click on 'Language'.",
+  "prerequisites": [],
+  "procedure": [
+    "Once the update is saved, the system will propose the configured language as the primary language for any new surveys you create."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I change my password?",
+    "How do I change my email address?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/112_managing_your_personal_account__03_how_do_i_change_my_default_language.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Managing your personal account",
+    "eusurvey_area": "Managing your personal account",
+    "feature": "",
+    "user_intent": "112. How do I change my default language?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "account",
+      "change",
+      "default",
+      "language",
+      "managing",
+      "personal",
+      "your"
+    ],
+    "synonyms": [
+      "How do I change my default language?",
+      "How can I change my default language?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I change my default language?",
+      "How can I change my default language?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

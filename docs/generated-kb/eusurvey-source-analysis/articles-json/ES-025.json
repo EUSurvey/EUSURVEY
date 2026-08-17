@@ -1,0 +1,123 @@
+{
+  "article_id": "ES-025",
+  "title": "How do I create a guest list?",
+  "intent": "This article explains how to create a guest list for inviting participants to a survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner",
+      "Invitation Manager"
+    ],
+    "eusurvey_area": "Participants",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Participants page",
+    "backend_location": "ParticipantsController.participants"
+  },
+  "short_answer": "To create a guest list, navigate to the Participants page and click 'Create new guest list'. Choose the type: Contact list (from address book), EU list (EU Login users), or Token list (generated unique codes). Name the list, add members, and save.",
+  "prerequisites": [
+    "ManageInvitations privilege or survey ownership",
+    "Survey must exist",
+    "For contact lists: contacts must exist in the address book"
+  ],
+  "procedure": [
+    "Navigate to the Participants page.",
+    "Click 'Create new guest list'.",
+    "Choose the guest list type: Contact list, EU list, or Token list.",
+    "Enter a name for the guest list.",
+    "Add participants: select contacts from address book, search for EU Login users, or specify token count.",
+    "For token lists, specify the number of tokens to generate.",
+    "Save the guest list.",
+    "The list is created and available for sending invitations."
+  ],
+  "important_conditions": [
+    "Three types of guest lists: Contact list, EU list, Token list.",
+    "Contact lists use contacts from your address book.",
+    "EU lists use EU Login accounts (LDAP lookup).",
+    "Token lists generate unique access codes.",
+    "Maximum 1 million tokens per guest list.",
+    "Guest lists can be activated or deactivated.",
+    "Multiple guest lists can exist per survey.",
+    "The guest list name must be provided."
+  ],
+  "troubleshooting": [
+    "'You have to provide a name for the new guest list': Enter a name before saving.",
+    "'You exceeded the limit of 1 million tokens per guestlist': Reduce the number of tokens."
+  ],
+  "related_articles": [
+    "ES-026 \u2014 How do I send invitations to participants?",
+    "ES-027 \u2014 How do I send reminders?",
+    "ES-028 \u2014 How do I manage the address book?",
+    "ES-070 \u2014 How do token guest lists work?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/participants.js"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ParticipantsController.java",
+      "src/main/java/com/ec/survey/tools/GuestListCreator.java",
+      "src/main/java/com/ec/survey/service/ParticipationService.java"
+    ],
+    "classes": [
+      "ParticipantsController",
+      "GuestListCreator",
+      "ParticipationService"
+    ],
+    "methods": [
+      "participants",
+      "saveguestlist",
+      "createTokens"
+    ],
+    "routes": [
+      "GET /{shortname}/management/participants"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.GuestList",
+      "label.CreateNewContactGuestlist",
+      "label.CreateNewEUGuestlist",
+      "label.CreateNewTokenGuestlist",
+      "error.ParticipantsGroupNameMissing",
+      "error.MaxTokenNumberExceeded",
+      "info.GuestListCreatedNew"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Participants",
+    "feature": "Create Guest List",
+    "user_intent": "How do I create a guest list?",
+    "user_type": "Survey Owner, Invitation Manager",
+    "required_permission": "Survey Owner, Invitation Manager",
+    "survey_status": "Any",
+    "keywords": [
+      "guest list",
+      "create",
+      "participants",
+      "contacts",
+      "tokens",
+      "invitations"
+    ],
+    "synonyms": [
+      "create invitation list",
+      "add participants",
+      "make guest list"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "ParticipationGroup",
+      "Attendee"
+    ],
+    "security_privacy_relevance": "Guest lists contain personal data (emails)",
+    "search_boost_terms": [
+      "create guest list",
+      "add participants",
+      "invitation list"
+    ],
+    "duplicate_status": "New"
+  }
+}

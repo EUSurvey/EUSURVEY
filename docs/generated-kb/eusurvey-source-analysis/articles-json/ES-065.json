@@ -1,0 +1,100 @@
+{
+  "article_id": "ES-065",
+  "title": "How does local storage backup work?",
+  "intent": "This article explains how browser localStorage backs up in-progress survey answers.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Survey Runner",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "Runner page",
+    "backend_location": "runner.js (client-side)"
+  },
+  "short_answer": "EUSurvey automatically saves answer progress to browser localStorage. If the browser crashes, respondents can restore their answers when returning to the survey.",
+  "prerequisites": [
+    "Browser must support localStorage"
+  ],
+  "procedure": [
+    "Access the survey.",
+    "Answers are automatically backed up as you fill them in.",
+    "If the page crashes or closes, return to the survey URL.",
+    "A prompt offers to restore from backup.",
+    "Accept to restore previous answers."
+  ],
+  "important_conditions": [
+    "Saved automatically to browser localStorage.",
+    "Restore prompt appears if backup exists.",
+    "Can be disabled for shared computers.",
+    "Uploaded files cannot be restored from backup.",
+    "Backup cleared after successful submission."
+  ],
+  "troubleshooting": [
+    "Local storage disabled message: Enable localStorage in browser.",
+    "Files not restored: File uploads cannot be saved in localStorage."
+  ],
+  "related_articles": [
+    "ES-012 \u2014 How do respondents submit a contribution?",
+    "ES-013 \u2014 How do I save a survey as draft?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/runner.js"
+    ],
+    "backend_files": [],
+    "classes": [
+      "runner.js"
+    ],
+    "methods": [
+      "saveLocalBackup",
+      "restoreBackup",
+      "clearLocalBackup",
+      "checkLocalBackup"
+    ],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [
+      "info.DeactivateLocalStorage",
+      "info.LocalStorageDisabled",
+      "info.LocalBackupFiles",
+      "label.DeleteLocalBackup"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Runner",
+    "feature": "Local Backup",
+    "user_intent": "How does local storage backup work?",
+    "user_type": "Respondent",
+    "required_permission": "Respondent",
+    "survey_status": "Published",
+    "keywords": [
+      "backup",
+      "local storage",
+      "restore",
+      "crash",
+      "save"
+    ],
+    "synonyms": [
+      "auto-save",
+      "browser backup",
+      "recover answers"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "AnswerSet"
+    ],
+    "security_privacy_relevance": "Data stored in user browser",
+    "search_boost_terms": [
+      "local backup",
+      "auto-save",
+      "browser recovery"
+    ],
+    "duplicate_status": "New"
+  }
+}

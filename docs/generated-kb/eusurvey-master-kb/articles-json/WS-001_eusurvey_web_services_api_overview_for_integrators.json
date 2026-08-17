@@ -1,0 +1,96 @@
+{
+  "canonical_id": "WS-001_eusurvey_web_services_api_overview_for_integrators",
+  "title": "WS-001 - EUSurvey Web-services API overview for integrators",
+  "original_ids": {
+    "document_derived": [
+      "WS-001_eusurvey_web_services_api_overview_for_integrators"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-001_eusurvey_web_services_api_overview_for_integrators.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain what the EUSurvey Web-services API is, who it is for, and the main constraints that apply before integration work starts.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "EUSurvey provides a REST-style Web-services API that allows authenticated system users to automate advanced operations such as managing token invitations, preparing result exports, retrieving survey metadata, and acting on survey lifecycle operations. The API only supports specified URLs, requires the complete parameter list for each call, and returns HTTP error codes when parameters are missing or invalid.",
+  "prerequisites": [],
+  "procedure": [
+    "Identify the integration use case: invitations, prefilling, results export, or survey lifecycle automation.",
+    "Request or use a valid system user, because EU Login users are not supported for API access.",
+    "Confirm the required survey-level privileges before calling survey-specific endpoints.",
+    "Use the application base URL followed by the documented /webservice path and endpoint.",
+    "Handle asynchronous endpoints by polling getResults with the returned ticket."
+  ],
+  "important_conditions": [
+    "The API is intended for system-to-system integrations, not for normal EU Login interactive users.",
+    "Only documented endpoints are supported. Calling incomplete or unspecified URLs results in an error.",
+    "The production base URL example is https://ec.europa.eu/eusurvey/."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-002 - Authenticate to the EUSurvey Web-services API",
+    "WS-003 - Understand API permissions and privileges",
+    "WS-006 - Use asynchronous tickets and getResults"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-001_eusurvey_web_services_api_overview_for_integrators.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-001 - EUSurvey Web-services API overview for integrators",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "REST API",
+      "integration",
+      "webservice",
+      "system user",
+      "API overview"
+    ],
+    "synonyms": [
+      "What is the EUSurvey REST API?",
+      "Can I integrate another system with EUSurvey?",
+      "What should I know before calling the API?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What is the EUSurvey REST API?",
+      "Can I integrate another system with EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

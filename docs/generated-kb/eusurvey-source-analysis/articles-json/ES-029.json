@@ -1,0 +1,119 @@
+{
+  "article_id": "ES-029",
+  "title": "How do I import contacts?",
+  "intent": "This article explains how to bulk-import contacts into the address book from a file.",
+  "applies_to": {
+    "roles": [
+      "Registered User"
+    ],
+    "eusurvey_area": "Contacts",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Address Book page",
+    "backend_location": "AddressBookController.importAttendees"
+  },
+  "short_answer": "To import contacts in bulk, navigate to the Address Book and click 'Import'. Upload a file (XLS, XLSX, ODS, or CSV) containing contact data. Map the columns to contact fields (name, email, attributes) and confirm the import.",
+  "prerequisites": [
+    "Authenticated user",
+    "A properly formatted file with contact data"
+  ],
+  "procedure": [
+    "Navigate to the Address Book.",
+    "Click 'Import' button.",
+    "Select the file to upload (XLS, XLSX, ODS, or CSV).",
+    "Indicate if the document contains a header row.",
+    "Map file columns to contact fields (name, email, attributes).",
+    "Review the preview.",
+    "Click Import to confirm.",
+    "Contacts are added to your address book."
+  ],
+  "important_conditions": [
+    "Supported file formats: XLS, XLSX, ODS, CSV.",
+    "The file can contain a header row (configurable).",
+    "Each contact must have at least a name and email.",
+    "Contacts with existing email addresses are flagged.",
+    "Invalid contacts (missing email or name) are skipped with a warning.",
+    "Column delimiter can be specified for CSV files."
+  ],
+  "troubleshooting": [
+    "'Please check your file for invalid contacts': Some rows have missing or invalid data.",
+    "'Contact with an e-mail address that is too long': Email addresses are limited to 255 characters.",
+    "'Contact with a name that is too long': Names are limited to 255 characters."
+  ],
+  "related_articles": [
+    "ES-028 \u2014 How do I manage the address book?",
+    "ES-025 \u2014 How do I create a guest list?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/addressbook.js",
+      "src/main/webapp/WEB-INF/views/addressbook/addressbook-import.jsp"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/AddressBookController.java",
+      "src/main/java/com/ec/survey/service/AttendeeService.java"
+    ],
+    "classes": [
+      "AddressBookController",
+      "AttendeeService"
+    ],
+    "methods": [
+      "importAttendees",
+      "importAttendeesCheck",
+      "importAttendees2",
+      "validateImport1Parameters"
+    ],
+    "routes": [
+      "POST /addressbook/importAttendees"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.ImportContactsStep1",
+      "label.ImportContactsStep2",
+      "label.ImportContactsStep3",
+      "error.invalidContacts",
+      "error.ContactEmailTooLong",
+      "error.ContactNameTooLong",
+      "error.ContactWithoutEmail",
+      "error.ContactWithoutName"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Contacts",
+    "feature": "Import Contacts",
+    "user_intent": "How do I import contacts?",
+    "user_type": "Registered User",
+    "required_permission": "Registered User",
+    "survey_status": "N/A",
+    "keywords": [
+      "import",
+      "contacts",
+      "bulk",
+      "file",
+      "upload",
+      "CSV",
+      "XLS"
+    ],
+    "synonyms": [
+      "bulk import contacts",
+      "upload contact file",
+      "mass add contacts"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Attendee"
+    ],
+    "security_privacy_relevance": "Imported data contains personal information",
+    "search_boost_terms": [
+      "import contacts",
+      "bulk upload",
+      "add contacts from file"
+    ],
+    "duplicate_status": "New"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "article_id": "ES-069",
+  "title": "How does automatic deletion work?",
+  "intent": "This article explains how EUSurvey automatically archives and deletes inactive surveys.",
+  "applies_to": {
+    "roles": [
+      "System"
+    ],
+    "eusurvey_area": "Survey Lifecycle",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "Background",
+    "backend_location": "AutomaticSurveyDeleteWorker.java"
+  },
+  "short_answer": "EUSurvey auto-archives inactive surveys and deletes them after a grace period. Three warning emails are sent before permanent deletion. The Do Not Delete flag prevents this.",
+  "prerequisites": [
+    "System scheduled job (automatic)"
+  ],
+  "procedure": [],
+  "important_conditions": [
+    "Inactive surveys auto-archived after configured period.",
+    "Archived surveys deleted after further time.",
+    "Three warning emails before permanent deletion.",
+    "Do Not Delete flag prevents auto-deletion.",
+    "Flag auto-deactivated on copy/export.",
+    "Reactivated surveys excluded from deletion."
+  ],
+  "troubleshooting": [
+    "Survey deleted unexpectedly: Check notification emails. Enable Do Not Delete for important surveys."
+  ],
+  "related_articles": [
+    "ES-036 \u2014 How do I archive a survey?",
+    "ES-005 \u2014 How do I delete a survey?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/tools/AutomaticSurveyDeleteWorker.java",
+      "src/main/java/com/ec/survey/service/SchedulerService.java",
+      "src/main/java/com/ec/survey/service/SurveyService.java"
+    ],
+    "classes": [
+      "AutomaticSurveyDeleteWorker",
+      "SchedulerService",
+      "SurveyService"
+    ],
+    "methods": [
+      "run",
+      "sendNotificationEmail",
+      "getInactiveSurveys",
+      "setDeletionMessageDate"
+    ],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [
+      "label.DoNotDelete",
+      "info.DoNotDelete"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Lifecycle",
+    "feature": "Auto-Delete",
+    "user_intent": "How does automatic deletion work?",
+    "user_type": "System",
+    "required_permission": "System",
+    "survey_status": "Any",
+    "keywords": [
+      "automatic",
+      "deletion",
+      "inactive",
+      "archive",
+      "warning"
+    ],
+    "synonyms": [
+      "auto-delete",
+      "inactive survey cleanup",
+      "automatic removal"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "Permanently removes survey data",
+    "search_boost_terms": [
+      "automatic deletion",
+      "auto-cleanup",
+      "inactive survey removal"
+    ],
+    "duplicate_status": "New"
+  }
+}

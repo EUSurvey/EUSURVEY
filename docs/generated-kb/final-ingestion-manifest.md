@@ -1,0 +1,311 @@
+# Final Ingestion Manifest
+
+**Generated**: 2026-07-13
+**Total files**: 300
+
+---
+
+## Article Listing
+
+| # | Filename | Status | Source | Replaces |
+|---|----------|--------|--------|----------|
+| 1 | KB-EUSURVEY-ABUSE-001-report-spam-surveys.md | new (replaces retired) | new batch | PM-06_01 |
+| 2 | KB-EUSURVEY-ABUSE-002-report-phishing-emails.md | new | new batch | — |
+| 3 | KB-EUSURVEY-ABUSE-003-abuse-types.md | new | new batch | — |
+| 4 | KB-EUSURVEY-ABUSE-004-remove-malicious-survey.md | new | new batch | — |
+| 5 | KB-EUSURVEY-ABUSE-005-suspicious-emails-organisation.md | new | new batch | — |
+| 6 | KB-EUSURVEY-CONFIG-001-conditional-question-not-appearing.md | new | new batch | — |
+| 7 | KB-EUSURVEY-CONFIG-002-edit-survey-after-publishing.md | new (replaces de-prioritized) | new batch | SM-67 |
+| 8 | KB-EUSURVEY-CONTRIB-001-reset-respondent.md | new (split from SM-50) | new batch | SM-50 (partial) |
+| 9 | KB-EUSURVEY-CONTRIB-002-incomplete-contribution.md | new | new batch | — |
+| 10 | KB-EUSURVEY-CONTRIB-003-respondent-change-submitted-answer.md | new (replaces de-prioritized) | new batch | SM-48 + SM-50 |
+| 11 | KB-EUSURVEY-CONTRIB-004-respondent-submits-twice.md | new | new batch | — |
+| 12 | KB-EUSURVEY-DELETE-001-what-happens-delete-survey.md | new (replaces retired) | new batch | SM-23 |
+| 13 | KB-EUSURVEY-DELETE-002-undo-deletion.md | new (split companion) | new batch | SM-23 |
+| 14 | KB-EUSURVEY-DELETE-003-delete-contribution.md | new (end-user version) | new batch | — (WS-042 kept for API) |
+| 15 | KB-EUSURVEY-DELETE-004-delete-option-missing.md | new | new batch | — |
+| 16 | KB-EUSURVEY-INVITE-001-contacts-skipped-import.md | new | new batch | — |
+| 17 | KB-EUSURVEY-RESULTS-001-contributions-vs-results-count.md | new (replaces de-prioritized) | new batch | SM-87 |
+| 18 | KB-EUSURVEY-RESULTS-002-export-missing-latest-responses.md | new (replaces de-prioritized) | new batch | SM-87 |
+| 19 | KB-EUSURVEY-TECH-001-survey-freezes-submission.md | new | new batch | — |
+| 20 | KB-EUSURVEY-TECH-002-asked-login-again.md | new | new batch | — |
+| 21 | PM-01_01_eu-login-account-requirement-for-eusurvey-participants.md | kept | legacy | — |
+| 22 | PM-01_02_how-participants-connect-to-eusurvey.md | kept | legacy | — |
+| 23 | PM-02_01_how-to-contact-the-survey-owner.md | kept | legacy | — |
+| 24 | PM-03_01_meaning-of-the-url-you-entered-was-not-correct.md | kept | legacy | — |
+| 25 | PM-03_02_meaning-of-page-not-found-when-accessing-a-survey.md | kept | legacy | — |
+| 26 | PM-03_03_meaning-of-this-survey-has-not-yet-been-published-or-has-already-been-.md | kept | legacy | — |
+| 27 | PM-03_04_browsers-supported-by-eusurvey.md | kept | legacy | — |
+| 28 | PM-03_05_answering-a-survey-on-a-mobile-phone-or-tablet.md | kept | legacy | — |
+| 29 | PM-04_01_meaning-of-this-value-is-not-a-valid-number-date-or-email-address.md | kept | legacy | — |
+| 30 | PM-04_02_why-selected-answers-disappear-in-a-matrix-question.md | kept | legacy | — |
+| 31 | PM-05_01_view-or-print-a-contribution-after-submission.md | kept | legacy | — |
+| 32 | PM-05_02_save-a-pdf-copy-of-a-contribution.md | kept | legacy | — |
+| 33 | PM-05_03_edit-a-contribution-after-submission.md | kept | legacy | — |
+| 34 | PM-05_04_what-a-contribution-id-is.md | kept | legacy | — |
+| 35 | PM-05_05_where-to-find-a-contribution-id.md | kept | legacy | — |
+| 36 | PM-05_06_seeing-other-peoples-answers-after-contributing.md | kept | legacy | — |
+| 37 | PM-05_07_what-to-do-if-a-contribution-was-not-submitted-on-time.md | kept | legacy | — |
+| 38 | PM-05_08_pdf-viewer-error-insufficient-image-data.md | kept | legacy | — |
+| 39 | PM-05_09_little-boxes-shown-on-the-pdf-export-of-a-survey.md | kept | legacy | — |
+| 40 | PM-05_10_where-to-find-answers-saved-as-draft.md | kept | legacy | — |
+| 41 | PM-07_01_cookies-and-local-storage-used-by-eusurvey.md | kept | legacy | — |
+| 42 | SM-01_general_questions__01_what_is_eusurvey.md | kept | legacy | — |
+| 43 | SM-02_general_questions__02_when_do_i_use_eusurvey.md | kept | legacy | — |
+| 44 | SM-03_general_questions__03_what_are_the_limits_of_eusurvey.md | kept | legacy | — |
+| 45 | SM-04_20_how_to_use_regular_expressions_to_validate_answers_in_eusurvey.md | kept | legacy | — |
+| 46 | SM-04_general_questions__04_what_are_the_features_of_eusurvey.md | kept | legacy | — |
+| 47 | SM-05_08_how_to_allow_respondents_to_download_a_pdf_version_of_the_questionnaire.md | kept | legacy | — |
+| 48 | SM-05_general_questions__05_form_management.md | kept | legacy | — |
+| 49 | SM-06_general_questions__06_result_management.md | kept | legacy | — |
+| 50 | SM-07_general_questions__07_where_do_i_find_additional_information_about_eusurvey.md | kept | legacy | — |
+| 51 | SM-08_general_questions__08_whom_do_i_contact_if_there_are_technical_problems_with_eusurvey.md | kept | legacy | — |
+| 52 | SM-09_09_what_is_an_inactive_survey_in_eusurvey.md | kept | legacy | — |
+| 53 | SM-09_10_why_eusurvey_deletes_inactive_surveys.md | kept | legacy | — |
+| 54 | SM-09_11_how_the_inactive_survey_deletion_process_works.md | kept | legacy | — |
+| 55 | SM-09_12_who_receives_inactive_survey_deletion_notifications.md | kept | legacy | — |
+| 56 | SM-09_13_what_to_do_when_receiving_an_inactive_survey_notification.md | kept | legacy | — |
+| 57 | SM-09_14_where_to_get_help_with_the_automated_deletion_process.md | kept | legacy | — |
+| 58 | SM-09_15_what_the_email_report_feature_does.md | kept | legacy | — |
+| 59 | SM-09_16_how_to_enable_and_configure_email_reports.md | kept | legacy | — |
+| 60 | SM-09_17_email_report_frequency_options_and_delivery_times.md | kept | legacy | — |
+| 61 | SM-09_18_rules_for_email_report_recipients.md | kept | legacy | — |
+| 62 | SM-09_19_what_happens_to_email_reports_when_a_survey_is_unpublished_or_archived.md | kept | legacy | — |
+| 63 | SM-09_20_whether_email_reports_include_personal_data.md | kept | legacy | — |
+| 64 | SM-09_general_questions__09_whom_do_i_contact_if_i_have_new_ideas_for_improving_eusurvey.md | kept | legacy | — |
+| 65 | SM-100_managing_contacts_and_invitations__02_what_are_the_attributes_of_a_contact.md | kept | legacy | — |
+| 66 | SM-10_14_how_to_export_a_survey_and_its_data.md | kept | legacy | — |
+| 67 | SM-101_managing_contacts_and_invitations__03_how_do_i_add_new_contacts_to_my_address_book.md | kept | legacy | — |
+| 68 | SM-102_managing_contacts_and_invitations__04_what_is_a_registration_form.md | kept | legacy | — |
+| 69 | SM-103_managing_contacts_and_invitations__05_how_do_i_import_multiple_contacts_from_a_file_to_my_address_book.md | kept | legacy | — |
+| 70 | SM-104_managing_contacts_and_invitations__06_how_do_i_edit_an_attribute_for_multiple_contacts_at_a_time.md | kept | legacy | — |
+| 71 | SM-105_managing_contacts_and_invitations__07_can_i_export_contacts_from_my_address_book_to_my_computer.md | kept | legacy | — |
+| 72 | SM-106_inviting_participants__01_how_do_i_specify_a_set_of_possible_participants_what_is_a_guest_list.md | kept | legacy | — |
+| 73 | SM-107_inviting_participants__02_how_do_i_edit_remove_an_existing_guest_list.md | kept | legacy | — |
+| 74 | SM-108_inviting_participants__03_how_do_i_send_my_participants_an_invitation_email.md | kept | legacy | — |
+| 75 | SM-109_inviting_participants__04_how_to_use_tokens_to_create_a_link.md | kept | legacy | — |
+| 76 | SM-10_general_questions__10_which_browsers_are_supported_by_eusurvey.md | kept | legacy | — |
+| 77 | SM-110_managing_your_personal_account__01_how_do_i_change_my_password.md | kept | legacy | — |
+| 78 | SM-111_managing_your_personal_account__02_how_do_i_change_my_email_address.md | kept | legacy | — |
+| 79 | SM-112_managing_your_personal_account__03_how_do_i_change_my_default_language.md | kept | legacy | — |
+| 80 | SM-113_data_protection_and_privacy__01_this_system_uses_cookies_what_information_is_saved_there.md | kept | legacy | — |
+| 81 | SM-114_data_protection_and_privacy__02_what_information_is_stored_by_eusurvey_when_participants_submit_a_contribution.md | kept | legacy | — |
+| 82 | SM-115_data_protection_and_privacy__03_do_i_need_to_include_a_privacy_statement.md | kept | legacy | — |
+| 83 | SM-116_data_protection_and_privacy__04_we_need_a_data_processing_agreement_where_is_the_eusurvey_dpa.md | kept | legacy | — |
+| 84 | SM-117_data_protection_and_privacy__05_what_should_i_do_when_someone_asks_to_access_modify_or_delete_their_personal_dat.md | kept | legacy | — |
+| 85 | SM-118_data_protection_and_privacy__06_how_do_i_bulk_delete_answers_from_survey_results.md | kept | legacy | — |
+| 86 | SM-11_general_questions__11_eusurvey_disclaimer_for_non_eu_users_only.md | kept | legacy | — |
+| 87 | SM-12_general_questions__12_can_my_participants_answer_my_survey_from_a_mobile_device.md | kept | legacy | — |
+| 88 | SM-13_general_questions__13_is_there_a_minimum_screen_size.md | kept | legacy | — |
+| 89 | SM-14_login_and_eu_login_registration__01_i_have_an_eu_login_account_do_i_need_to_register_separately_for_eusurvey.md | kept | legacy | — |
+| 90 | SM-15_05_what_anonymous_survey_mode_does_and_when_to_use_it.md | kept | legacy | — |
+| 91 | SM-15_login_and_eu_login_registration__02_how_do_i_connect_to_eusurvey.md | kept | legacy | — |
+| 92 | SM-16_01_why_eusurvey_is_focusing_on_eu_institutional_use.md | kept | legacy | — |
+| 93 | SM-16_02_who_is_impacted_by_the_eusurvey_transition.md | kept | legacy | — |
+| 94 | SM-16_03_who_is_not_impacted_by_the_eusurvey_transition.md | kept | legacy | — |
+| 95 | SM-16_04_eusurvey_transition_timeline_for_external_users.md | kept | legacy | — |
+| 96 | SM-16_05_can_external_users_still_participate_in_surveys.md | kept | legacy | — |
+| 97 | SM-16_06_can_external_users_create_new_surveys_after_31_august_2026.md | kept | legacy | — |
+| 98 | SM-16_07_what_happens_to_existing_surveys_created_by_external_users.md | kept | legacy | — |
+| 99 | SM-16_08_how_to_transfer_a_survey_to_an_eu_institution.md | kept | legacy | — |
+| 100 | SM-16_09_what_ongoing_eu_funded_projects_should_do_during_the_transition.md | kept | legacy | — |
+| 101 | SM-16_10_how_external_users_can_export_survey_data_during_the_transition.md | kept | legacy | — |
+| 102 | SM-16_11_what_happens_when_external_user_surveys_become_read_only.md | kept | legacy | — |
+| 103 | SM-16_12_alternatives_for_external_users_after_the_eusurvey_transition.md | kept | legacy | — |
+| 104 | SM-16_13_can_exceptions_be_granted_for_external_users.md | kept | legacy | — |
+| 105 | SM-16_14_are_member_state_ministries_considered_eu_institutions_for_eusurvey_transition.md | kept | legacy | — |
+| 106 | SM-16_15_can_external_users_keep_creating_surveys_by_paying_a_fee.md | kept | legacy | — |
+| 107 | SM-16_16_where_to_ask_questions_about_the_eusurvey_transition.md | kept | legacy | — |
+| 108 | SM-16_creating_a_survey__01_how_do_i_create_a_new_survey.md | kept | legacy | — |
+| 109 | SM-17_creating_a_survey__02_what_type_of_surveys_can_i_create.md | kept | legacy | — |
+| 110 | SM-18_creating_a_survey__03_how_do_i_import_an_existing_survey_from_my_computer.md | kept | legacy | — |
+| 111 | SM-19_creating_a_survey__04_where_can_i_find_all_surveys_that_i_have_created.md | kept | legacy | — |
+| 112 | SM-20_creating_a_survey__05_how_do_i_open_an_existing_survey_for_editing_etc.md | kept | legacy | — |
+| 113 | SM-21_creating_a_survey__06_how_do_i_export_an_existing_survey.md | kept | legacy | — |
+| 114 | SM-22_creating_a_survey__07_how_do_i_copy_an_existing_survey.md | kept | legacy | — |
+| 115 | SM-24_creating_a_survey__09_how_do_i_create_wcag_compliant_questionnaires_with_eusurvey.md | kept | legacy | — |
+| 116 | SM-25_creating_a_survey__10_what_is_the_motivation_popup_and_how_to_use_it.md | kept | legacy | — |
+| 117 | SM-26_editing_a_survey__01_how_do_i_start_the_editor.md | kept | legacy | — |
+| 118 | SM-27_editing_a_survey__02_how_do_i_create_a_questionnaire_via_the_eusurvey_editor.md | kept | legacy | — |
+| 119 | SM-28_editing_a_survey__03_how_do_i_add_or_remove_questions_to_my_questionnaire.md | kept | legacy | — |
+| 120 | SM-29_editing_a_survey__04_how_do_i_edit_elements_in_my_questionnaire.md | kept | legacy | — |
+| 121 | SM-30_editing_a_survey__05_how_do_i_copy_items.md | kept | legacy | — |
+| 122 | SM-31_editing_a_survey__06_how_do_i_add_or_remove_possible_answers_in_choice_questions.md | kept | legacy | — |
+| 123 | SM-32_editing_a_survey__07_can_i_make_a_question_mandatory.md | kept | legacy | — |
+| 124 | SM-33_editing_a_survey__08_how_do_i_move_items_within_the_questionnaire.md | kept | legacy | — |
+| 125 | SM-34_editing_a_survey__09_how_do_i_use_the_visibility_feature_dependencies.md | kept | legacy | — |
+| 126 | SM-35_editing_a_survey__10_can_i_generate_the_order_of_answers_in_a_single_or_multiple_choice_question.md | kept | legacy | — |
+| 127 | SM-36_editing_a_survey__11_how_do_i_give_other_users_permission_to_edit_my_survey.md | kept | legacy | — |
+| 128 | SM-37_editing_a_survey__12_which_languages_are_supported_by_the_application.md | kept | legacy | — |
+| 129 | SM-38_editing_a_survey__13_so_why_utf_8_and_which_fonts_should_be_used.md | kept | legacy | — |
+| 130 | SM-39_editing_a_survey__14_complexity_indicator.md | kept | legacy | — |
+| 131 | SM-40_editing_a_survey__15_what_is_the_contribution_id.md | kept | legacy | — |
+| 132 | SM-41_editing_a_survey__16_how_can_i_find_a_contribution_from_the_results_using_a_contribution_id.md | kept | legacy | — |
+| 133 | SM-42_editing_a_survey__17_formula_field.md | kept | legacy | — |
+| 134 | SM-43_editing_a_survey__18_complex_table.md | kept | legacy | — |
+| 135 | SM-44_survey_security__01_how_do_i_restrict_access_to_my_survey.md | kept | legacy | — |
+| 136 | SM-45_survey_security__02_how_do_i_set_a_password_for_my_survey.md | kept | legacy | — |
+| 137 | SM-46_survey_security__03_how_do_i_ensure_that_a_user_does_not_submit_more_than_a_defined_number_of_contri.md | kept | legacy | — |
+| 138 | SM-47_survey_security__04_what_do_i_do_to_prevent_robots_from_submitting_multiple_contributions_to_my_surv.md | kept | legacy | — |
+| 139 | SM-49_survey_security__06_how_can_i_allow_participants_to_print_or_download_their_contribution.md | kept | legacy | — |
+| 140 | SM-51_testing_a_survey__01_can_i_see_how_my_survey_will_behave_after_it_has_been_published.md | kept | legacy | — |
+| 141 | SM-52_testing_a_survey__02_how_can_my_colleagues_test_my_survey_before_it_is_published.md | kept | legacy | — |
+| 142 | SM-53_translations__01_how_do_i_translate_a_survey.md | kept | legacy | — |
+| 143 | SM-54_translations__02_how_can_i_upload_an_existing_translation_to_my_survey.md | kept | legacy | — |
+| 144 | SM-55_translations__03_can_i_edit_an_existing_translation_online.md | kept | legacy | — |
+| 145 | SM-56_translations__04_can_i_create_my_translations_offline.md | kept | legacy | — |
+| 146 | SM-57_translations__05_how_do_i_publish_or_unpublish_translations_and_resolve_incomplete_translations.md | kept | legacy | — |
+| 147 | SM-58_translations__06_can_i_upload_a_translation_in_a_non_european_language.md | kept | legacy | — |
+| 148 | SM-59_translations__07_what_does_request_machine_translation_mean.md | kept | legacy | — |
+| 149 | SM-60_translations__08_instructions_for_eu_staff.md | kept | legacy | — |
+| 150 | SM-61_publishing_a_survey__01_how_do_i_publish_my_survey.md | kept | legacy | — |
+| 151 | SM-62_publishing_a_survey__02_can_i_customise_the_url_to_my_survey.md | kept | legacy | — |
+| 152 | SM-63_publishing_a_survey__03_can_i_link_directly_to_a_translation_of_my_survey.md | kept | legacy | — |
+| 153 | SM-64_publishing_a_survey__04_how_do_i_make_my_survey_publish_itself_while_i_am_on_holiday.md | kept | legacy | — |
+| 154 | SM-65_publishing_a_survey__05_can_i_receive_a_reminder_of_when_my_survey_will_end.md | kept | legacy | — |
+| 155 | SM-66_publishing_a_survey__06_for_eu_staff_what_are_the_official_requirements_for_launching_an_open_public_con.md | kept | legacy | — |
+| 156 | SM-68_managing_your_survey__02_will_i_lose_any_submitted_answers_when_i_change_my_form.md | kept | legacy | — |
+| 157 | SM-69_managing_your_survey__03_how_can_i_change_the_title_of_my_survey.md | kept | legacy | — |
+| 158 | SM-70_managing_your_survey__04_how_can_i_change_my_survey_s_contact_information.md | kept | legacy | — |
+| 159 | SM-71_managing_your_survey__05_how_do_i_adjust_the_default_confirmation_message.md | kept | legacy | — |
+| 160 | SM-72_managing_your_survey__06_how_do_i_adjust_the_default_escape_message.md | kept | legacy | — |
+| 161 | SM-73_managing_your_survey__07_archiving_feature.md | kept | legacy | — |
+| 162 | SM-74_managing_your_survey__08_how_do_i_give_other_users_access_to_my_survey.md | kept | legacy | — |
+| 163 | SM-75_managing_your_survey__09_what_are_activity_logs.md | kept | legacy | — |
+| 164 | SM-76_analysing_exporting_and_publishing_resul__01_where_can_i_find_the_contributions_submitted_by_my_respondents.md | kept | legacy | — |
+| 165 | SM-77_analysing_exporting_and_publishing_resul__02_how_can_i_download_submitted_contributions.md | kept | legacy | — |
+| 166 | SM-78_analysing_exporting_and_publishing_resul__03_how_can_i_extract_the_draft_answers.md | kept | legacy | — |
+| 167 | SM-79_analysing_exporting_and_publishing_resul__04_how_can_i_access_and_analyse_a_defined_subset_of_all_contributions.md | kept | legacy | — |
+| 168 | SM-80_analysing_exporting_and_publishing_resul__05_how_can_i_get_back_to_the_full_set_of_answers_after_defining_a_subset_of_contrib.md | kept | legacy | — |
+| 169 | SM-81_analysing_exporting_and_publishing_resul__06_how_can_i_publish_my_results.md | kept | legacy | — |
+| 170 | SM-82_analysing_exporting_and_publishing_resul__07_how_can_i_access_the_published_results.md | kept | legacy | — |
+| 171 | SM-83_analysing_exporting_and_publishing_resul__08_how_do_i_give_other_users_access_to_the_results_of_my_survey.md | kept | legacy | — |
+| 172 | SM-84_analysing_exporting_and_publishing_resul__09_i_cannot_unzip_my_exported_files.md | kept | legacy | — |
+| 173 | SM-85_analysing_exporting_and_publishing_resul__10_published_results_protection_of_personal_information_uploaded_by_participants.md | kept | legacy | — |
+| 174 | SM-86_analysing_exporting_and_publishing_resul__11_how_do_i_design_a_survey_to_publish_results_with_or_without_personal_information.md | kept | legacy | — |
+| 175 | SM-88_analysing_exporting_and_publishing_resul__13_how_can_i_retrieve_files_uploaded_by_contributors.md | kept | legacy | — |
+| 176 | SM-89_analysing_exporting_and_publishing_resul__14_how_are_ranking_question_scores_calculated.md | kept | legacy | — |
+| 177 | SM-90_analysing_exporting_and_publishing_resul__15_export_the_dataset_i_e_survey_s_answers.md | kept | legacy | — |
+| 178 | SM-91_design_and_layout__01_how_do_i_change_the_general_look_and_feel_of_my_survey.md | kept | legacy | — |
+| 179 | SM-92_design_and_layout__02_how_can_i_create_my_own_survey_themes.md | kept | legacy | — |
+| 180 | SM-93_design_and_layout__03_how_do_i_add_a_logo_to_my_survey.md | kept | legacy | — |
+| 181 | SM-94_design_and_layout__04_how_do_i_add_useful_links_to_my_survey.md | kept | legacy | — |
+| 182 | SM-95_design_and_layout__05_where_do_i_upload_background_documents_for_my_survey.md | kept | legacy | — |
+| 183 | SM-96_design_and_layout__06_how_do_i_create_a_multi_page_survey.md | kept | legacy | — |
+| 184 | SM-97_design_and_layout__07_how_do_i_enable_automatic_numbering_for_my_survey.md | kept | legacy | — |
+| 185 | SM-98_design_and_layout__08_can_i_create_a_customised_skin_for_my_survey.md | kept | legacy | — |
+| 186 | SM-99_managing_contacts_and_invitations__01_what_is_the_address_book.md | kept | legacy | — |
+| 187 | SRC-001.md | kept | legacy | — |
+| 188 | SRC-002.md | kept | legacy | — |
+| 189 | SRC-003.md | kept | legacy | — |
+| 190 | SRC-004.md | kept | legacy | — |
+| 191 | SRC-005.md | kept | legacy | — |
+| 192 | SRC-011.md | kept | legacy | — |
+| 193 | SRC-012.md | kept | legacy | — |
+| 194 | SRC-013.md | kept | legacy | — |
+| 195 | SRC-014.md | kept | legacy | — |
+| 196 | SRC-015.md | kept | legacy | — |
+| 197 | UG-001_what-is-a-quiz-survey-and-what-do-participants-see.md | kept | legacy | — |
+| 198 | UG-002_how-to-create-a-quiz-survey.md | kept | legacy | — |
+| 199 | UG-003_how-to-add-quiz-questions.md | kept | legacy | — |
+| 200 | UG-004_how-to-configure-free-text-quiz-questions.md | kept | legacy | — |
+| 201 | UG-005_how-to-configure-single-choice-quiz-questions.md | kept | legacy | — |
+| 202 | UG-006_how-to-configure-multiple-choice-quiz-questions.md | kept | legacy | — |
+| 203 | UG-007_how-to-configure-number-quiz-questions.md | kept | legacy | — |
+| 204 | UG-008_how-to-configure-date-quiz-questions.md | kept | legacy | — |
+| 205 | UG-009_how-to-configure-quiz-settings.md | kept | legacy | — |
+| 206 | UG-010_how-to-publish-a-quiz-survey.md | kept | legacy | — |
+| 207 | UG-011_how-to-plan-publication-of-survey-results-with-personal-information.md | kept | legacy | — |
+| 208 | UG-012_how-to-publish-only-selected-contributions-with-personal-information.md | kept | legacy | — |
+| 209 | UG-013_how-to-let-participants-choose-publication-with-full-details-anonymously-or-not-.md | kept | legacy | — |
+| 210 | UG-014_overview-of-translation-options-in-eusurvey.md | kept | legacy | — |
+| 211 | UG-015_how-to-translate-a-survey-with-the-built-in-translation-editor.md | kept | legacy | — |
+| 212 | UG-016_how-to-translate-a-survey-offline-with-xml-xls-or-ods.md | kept | legacy | — |
+| 213 | UG-017_how-ec-users-can-request-dgt-translation.md | kept | legacy | — |
+| 214 | UG-018_how-to-request-machine-translation.md | kept | legacy | — |
+| 215 | UG-019_what-is-the-url-prefill-feature.md | kept | legacy | — |
+| 216 | UG-020_which-survey-elements-support-url-prefill.md | kept | legacy | — |
+| 217 | UG-021_how-to-build-url-prefill-links.md | kept | legacy | — |
+| 218 | UG-022_how-to-use-regular-identifier-value-pairs-for-url-prefill.md | kept | legacy | — |
+| 219 | UG-023_how-to-prefill-matrix-questions-with-url-parameters.md | kept | legacy | — |
+| 220 | UG-024_how-to-prefill-multiple-choice-questions-with-url-parameters.md | kept | legacy | — |
+| 221 | UG-025_how-to-prefill-table-cells-with-url-parameters.md | kept | legacy | — |
+| 222 | UG-026_how-to-use-url-escape-codes-in-prefilled-values.md | kept | legacy | — |
+| 223 | UG-027_how-to-hide-prefilled-questions-from-participants.md | kept | legacy | — |
+| 224 | UG-028_where-to-find-question-and-answer-identifiers-for-url-prefill.md | kept | legacy | — |
+| 225 | UG-029_how-to-prevent-participants-from-changing-prefilled-answers.md | kept | legacy | — |
+| 226 | UG-030_what-wcag-means-for-eusurvey-questionnaires.md | kept | legacy | — |
+| 227 | UG-031_how-to-enable-wcag-compliant-mode-for-a-survey.md | kept | legacy | — |
+| 228 | UG-032_how-to-design-a-wcag-compliant-survey.md | kept | legacy | — |
+| 229 | UG-033_begin-survey-design-from-the-intended-results.md | kept | legacy | — |
+| 230 | UG-034_keep-surveys-short-and-simple.md | kept | legacy | — |
+| 231 | UG-035_provide-background-information-to-participants.md | kept | legacy | — |
+| 232 | UG-036_use-understandable-language.md | kept | legacy | — |
+| 233 | UG-037_order-questions-from-easy-to-sensitive.md | kept | legacy | — |
+| 234 | UG-038_inform-participants-about-privacy-and-personal-data.md | kept | legacy | — |
+| 235 | UG-039_match-the-question-style-to-the-data-needed.md | kept | legacy | — |
+| 236 | UG-040_limit-open-ended-questions.md | kept | legacy | — |
+| 237 | UG-041_use-dependencies-to-show-only-relevant-questions.md | kept | legacy | — |
+| 238 | UG-042_test-the-survey-before-publishing.md | kept | legacy | — |
+| 239 | UG-043_how-the-eusurvey-editor-workspace-is-organised.md | kept | legacy | — |
+| 240 | UG-044_how-to-use-the-navigation-pane-in-the-editor.md | kept | legacy | — |
+| 241 | UG-045_how-to-add-elements-using-the-toolbox-and-form-area.md | kept | legacy | — |
+| 242 | UG-046_how-to-edit-element-properties-and-text.md | kept | legacy | — |
+| 243 | UG-047_how-to-select-one-or-multiple-elements-in-the-editor.md | kept | legacy | — |
+| 244 | UG-048_how-to-use-the-editor-toolbar.md | kept | legacy | — |
+| 245 | UG-049_how-to-use-the-complexity-indicator.md | kept | legacy | — |
+| 246 | UG-050_how-to-copy-move-or-delete-elements-in-the-editor.md | kept | legacy | — |
+| 247 | UG-051_how-to-add-or-remove-possible-answers.md | kept | legacy | — |
+| 248 | UG-052_how-to-make-a-question-mandatory.md | kept | legacy | — |
+| 249 | UG-053_how-to-use-visibility-settings-and-dependencies.md | kept | legacy | — |
+| 250 | UG-054_quick-start-path-to-create-and-publish-a-first-survey.md | kept | legacy | — |
+| 251 | WS-001_eusurvey_web_services_api_overview_for_integrators.md | kept | legacy | — |
+| 252 | WS-002_authenticate_to_the_eusurvey_web_services_api.md | kept | legacy | — |
+| 253 | WS-003_understand_api_permissions_and_survey_privileges.md | kept | legacy | — |
+| 254 | WS-004_build_api_urls_and_requests.md | kept | legacy | — |
+| 255 | WS-005_handle_api_limits_and_common_http_errors.md | kept | legacy | — |
+| 256 | WS-006_use_asynchronous_tickets_and_getresults.md | kept | legacy | — |
+| 257 | WS-007_invitations_api_overview.md | kept | legacy | — |
+| 258 | WS-008_create_a_new_token_list.md | kept | legacy | — |
+| 259 | WS-009_create_tokens_asynchronously.md | kept | legacy | — |
+| 260 | WS-010_deactivate_a_token.md | kept | legacy | — |
+| 261 | WS-011_activate_a_token.md | kept | legacy | — |
+| 262 | WS-012_delete_a_token.md | kept | legacy | — |
+| 263 | WS-013_turn_a_contribution_back_into_draft.md | kept | legacy | — |
+| 264 | WS-014_prefilling_api_overview.md | kept | legacy | — |
+| 265 | WS-015_create_a_prefilled_draft_contribution.md | kept | legacy | — |
+| 266 | WS-016_handle_prefilling_api_special_cases.md | kept | legacy | — |
+| 267 | WS-017_troubleshoot_prefill_api_http_412_errors.md | kept | legacy | — |
+| 268 | WS-018_results_api_overview.md | kept | legacy | — |
+| 269 | WS-019_use_webhooks_for_result_export_completion.md | kept | legacy | — |
+| 270 | WS-020_prepare_xml_result_exports.md | kept | legacy | — |
+| 271 | WS-021_understand_xml_results_structure.md | kept | legacy | — |
+| 272 | WS-022_prepare_pdf_result_exports.md | kept | legacy | — |
+| 273 | WS-023_prepare_combined_result_exports.md | kept | legacy | — |
+| 274 | WS-024_prepare_a_result_export_for_one_token.md | kept | legacy | — |
+| 275 | WS-025_prepare_a_result_export_for_one_contribution_id.md | kept | legacy | — |
+| 276 | WS-026_avoid_deprecated_prepareresults_endpoint.md | kept | legacy | — |
+| 277 | WS-027_survey_api_overview.md | kept | legacy | — |
+| 278 | WS-028_retrieve_the_user_s_surveys.md | kept | legacy | — |
+| 279 | WS-029_retrieve_survey_metadata.md | kept | legacy | — |
+| 280 | WS-030_check_survey_publication_status.md | kept | legacy | — |
+| 281 | WS-031_publish_a_survey_or_schedule_automatic_publication.md | kept | legacy | — |
+| 282 | WS-032_unpublish_a_survey.md | kept | legacy | — |
+| 283 | WS-033_archive_or_restore_a_survey.md | kept | legacy | — |
+| 284 | WS-034_delete_a_survey.md | kept | legacy | — |
+| 285 | WS-035_retrieve_an_empty_pdf_copy_of_a_survey.md | kept | legacy | — |
+| 286 | WS-036_change_survey_title_or_contact_information.md | kept | legacy | — |
+| 287 | WS-037_manage_background_documents.md | kept | legacy | — |
+| 288 | WS-038_manage_useful_links.md | kept | legacy | — |
+| 289 | WS-039_apply_pending_survey_changes.md | kept | legacy | — |
+| 290 | WS-040_set_a_dashboard_link_for_a_survey.md | kept | legacy | — |
+| 291 | WS-041_retrieve_privileged_users_of_a_survey.md | kept | legacy | — |
+| 292 | WS-042_delete_a_contribution.md | kept | legacy | — |
+| 293 | WS-043_retrieve_deleted_contributions.md | kept | legacy | — |
+| 294 | WS-044_retrieve_an_organisations_report.md | kept | legacy | — |
+| 295 | WS-045_interpret_table_xml_in_result_exports.md | kept | legacy | — |
+| 296 | WS-046_interpret_matrix_xml_in_result_exports.md | kept | legacy | — |
+| 297 | WS-047_interpret_formula_xml_in_result_exports.md | kept | legacy | — |
+| 298 | WS-048_interpret_complex_table_xml_in_result_exports.md | kept | legacy | — |
+| 299 | WS-049_glossary_for_eusurvey_web_services_api_integrations.md | kept | legacy | — |
+| 300 | WS-050_integration_best_practices_for_the_eusurvey_web_services_api.md | kept | legacy | — |

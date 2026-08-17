@@ -1,0 +1,83 @@
+{
+  "canonical_id": "WS-028_retrieve_the_user_s_surveys",
+  "title": "WS-028 - Retrieve the user\u2019s surveys",
+  "original_ids": {
+    "document_derived": [
+      "WS-028_retrieve_the_user_s_surveys"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-028_retrieve_the_user_s_surveys.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to list surveys visible to the authenticated system user and filter the result.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use getMySurveys to return the survey UID, alias and title for surveys associated with the authenticated user. Optional query parameters can filter by survey type, publication state, creator/privileged relationship, dates, archived/deleted/frozen status, minimum reports, minimum contributions or title text. API summary Status Active Endpoint <base_url>/webservice/getMySurveys?param1=value1&param2=value2 Supported method(s) GET Required privilege Authenticated system user with access to the surveys Parameters and input surveyType all, standard, quiz, or brp. published 0 for unpublished surveys, 1 for published surveys. creator 1 to return only surveys created by the current user. privileged 1 to return only surveys where the user has local privileges. date filters createdFrom/To, firstPublicationFrom/To, endFrom/To, archivedFrom/To, deletedFrom/To in yyyy-MM-dd_HH-mm-ss. archived/deleted/frozen 1 to filter by that status. minReported/minContributions Integer greater than 0. title Search string contained in the title. Expected output Returns XML with Surveys user and Survey uid/alias/title entries. Main HTTP responses 200 OK Survey list returned. 412 Precondition Failed One or more parameters have the wrong format. 403 Forbidden Wrong username/password, missing required privilege, or user not allowed to perform the operation. 404 Not Found Unknown service or missing parameters. 412 Precondition Failed A prerequisite is not met, such as missing survey, wrong parameter format, archived survey, or invalid identifier. 429 Too Many Requests Daily API request limit exceeded.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-029 - Retrieve survey metadata"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-028_retrieve_the_user_s_surveys.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-028 - Retrieve the user\u2019s surveys",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "ws-028",
+      "retrieve",
+      "the",
+      "user\u2019s",
+      "surveys"
+    ],
+    "synonyms": [
+      "How do I get all my surveys through the API?",
+      "Can I filter API survey lists by publication status or date?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I get all my surveys through the API?",
+      "Can I filter API survey lists by publication status or date?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

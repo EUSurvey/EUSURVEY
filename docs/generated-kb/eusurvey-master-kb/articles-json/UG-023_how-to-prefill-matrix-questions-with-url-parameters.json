@@ -1,0 +1,83 @@
+{
+  "canonical_id": "UG-023_how-to-prefill-matrix-questions-with-url-parameters",
+  "title": "UG-023 \u2014 How to prefill matrix questions with URL parameters",
+  "original_ids": {
+    "document_derived": [
+      "UG-023_how-to-prefill-matrix-questions-with-url-parameters"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-023_how-to-prefill-matrix-questions-with-url-parameters.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the special syntax for matrix questions.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "For matrix questions, use the identifier of the relevant matrix row or sub-question, not the identifier of the entire matrix question. Assign the answer identifier to each matrix row identifier.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "The entire matrix identifier is not sufficient for selecting individual matrix answers."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-028 \u2014 Find identifiers for URL prefill"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-023_how-to-prefill-matrix-questions-with-url-parameters.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-023 \u2014 How to prefill matrix questions with URL parameters",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "matrix prefill",
+      "sub-question",
+      "row identifier"
+    ],
+    "synonyms": [
+      "How do I prefill a matrix question?",
+      "Why does the matrix question ID not work for prefill?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I prefill a matrix question?",
+      "Why does the matrix question ID not work for prefill?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

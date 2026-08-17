@@ -1,0 +1,83 @@
+{
+  "canonical_id": "WS-008_create_a_new_token_list",
+  "title": "WS-008 - Create a new token list",
+  "original_ids": {
+    "document_derived": [
+      "WS-008_create_a_new_token_list"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-008_create_a_new_token_list.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to create a token-based guest list through the EUSurvey API.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use createNewTokenList to create a new token list for a survey. The service returns a List ID that must be used by later token-management calls. API summary Status Active Endpoint <base_url>/webservice/createNewTokenList/[Alias]/[Active]/ Supported method(s) GET Required privilege Form Management RW Parameters and input Alias Alias of the survey for which the new guest list should be created. Active Boolean flag true/false indicating whether the guest list should be activated immediately. Expected output Returns the List ID of the newly created token list. Main HTTP responses 201 Created Token list created successfully. 412 Precondition Failed List ID does not exist, Active is not a valid boolean value, or the survey has been archived. 403 Forbidden Wrong username/password, missing required privilege, or user not allowed to perform the operation. 404 Not Found Unknown service or missing parameters. 412 Precondition Failed A prerequisite is not met, such as missing survey, wrong parameter format, archived survey, or invalid identifier. 429 Too Many Requests Daily API request limit exceeded.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-009 - Create tokens asynchronously"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-008_create_a_new_token_list.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-008 - Create a new token list",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "ws-008",
+      "create",
+      "new",
+      "token",
+      "list"
+    ],
+    "synonyms": [
+      "How do I create a token list with the API?",
+      "What does createNewTokenList return?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I create a token list with the API?",
+      "What does createNewTokenList return?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

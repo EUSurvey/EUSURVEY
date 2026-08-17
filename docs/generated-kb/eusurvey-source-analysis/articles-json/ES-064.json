@@ -1,0 +1,95 @@
+{
+  "article_id": "ES-064",
+  "title": "How do I recalculate quiz scores?",
+  "intent": "This article explains how to recalculate quiz scores after modifying scoring rules.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Quiz",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Results page",
+    "backend_location": "ManagementController.java"
+  },
+  "short_answer": "If scoring rules change after submissions exist, recalculate all scores from the Results page. This updates all contribution scores based on current configuration.",
+  "prerequisites": [
+    "Survey owner",
+    "Quiz mode enabled",
+    "Contributions must exist"
+  ],
+  "procedure": [
+    "Navigate to Results page.",
+    "Click Recalculate.",
+    "System recalculates all scores.",
+    "Updated scores appear in results."
+  ],
+  "important_conditions": [
+    "Uses current scoring configuration.",
+    "Previous scores are overwritten.",
+    "Runs asynchronously for large datasets.",
+    "Useful after changing correct answers or points."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "ES-033 \u2014 How do I enable quiz mode?",
+    "ES-016 \u2014 How do I view survey results?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/tools/RecalculateScoreExecutor.java",
+      "src/main/java/com/ec/survey/tools/QuizHelper.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "RecalculateScoreExecutor",
+      "QuizHelper"
+    ],
+    "methods": [
+      "recalculateScore"
+    ],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [
+      "label.Recalculate"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "Medium",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Quiz",
+    "feature": "Recalculate Score",
+    "user_intent": "How do I recalculate quiz scores?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Published",
+    "keywords": [
+      "recalculate",
+      "quiz",
+      "score",
+      "update",
+      "correct"
+    ],
+    "synonyms": [
+      "update quiz scores",
+      "recalculate points"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "AnswerSet",
+      "ScoringItem",
+      "QuizResult"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "recalculate quiz scores",
+      "update scoring"
+    ],
+    "duplicate_status": "New"
+  }
+}

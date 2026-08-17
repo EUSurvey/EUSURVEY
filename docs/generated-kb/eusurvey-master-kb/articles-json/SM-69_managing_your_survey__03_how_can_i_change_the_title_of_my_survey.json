@@ -1,0 +1,86 @@
+{
+  "canonical_id": "SM-69_managing_your_survey__03_how_can_i_change_the_title_of_my_survey",
+  "title": "69. How can I change the title of my survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-69_managing_your_survey__03_how_can_i_change_the_title_of_my_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/69_managing_your_survey__03_how_can_i_change_the_title_of_my_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How can I change the title of my survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Managing your survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Open the survey and go to the 'Properties' page. Change your survey's title under 'Basic' section. If you have already published your survey, go to the 'Overview' page and click 'Apply Changes'.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "If I discover an error in my survey, can I correct it?",
+    "Will I lose any submitted answers when I change my form?",
+    "How can I change my survey's contact information?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/69_managing_your_survey__03_how_can_i_change_the_title_of_my_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Managing your survey",
+    "eusurvey_area": "Managing your survey",
+    "feature": "",
+    "user_intent": "69. How can I change the title of my survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "change",
+      "managing",
+      "survey",
+      "title",
+      "your"
+    ],
+    "synonyms": [
+      "How can I change the title of my survey?",
+      "How do I change the title of my survey?",
+      "How can I change the title of my survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I change the title of my survey?",
+      "How do I change the title of my survey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

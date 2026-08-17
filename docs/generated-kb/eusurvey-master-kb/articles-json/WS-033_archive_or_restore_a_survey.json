@@ -1,0 +1,86 @@
+{
+  "canonical_id": "WS-033_archive_or_restore_a_survey",
+  "title": "WS-033 - Archive or restore a survey",
+  "original_ids": {
+    "document_derived": [
+      "WS-033_archive_or_restore_a_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-033_archive_or_restore_a_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to archive a survey and restore an archived survey through the API.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use archiveSurvey to start asynchronous archiving of a survey, and restoreSurvey to start asynchronous restoration of an archived survey. A survey generally must not be published when archiving. API summary Status Active Endpoint <base_url>/webservice/archiveSurvey/[Alias] and <base_url>/webservice/restoreSurvey/[Alias] Supported method(s) GET Required privilege Authenticated system user allowed for the survey Parameters and input Alias Survey alias. Expected output archiveSurvey returns 1 if the asynchronous archiving process was started. restoreSurvey returns 1 if the asynchronous restoring process was started. Main HTTP responses 200 OK Archive or restore process started. 412 Precondition Failed For archiving: survey does not exist, is already archived, or is still published. For restore: archive does not exist. 403 Forbidden Wrong username/password, missing required privilege, or user not allowed to perform the operation. 404 Not Found Unknown service or missing parameters. 412 Precondition Failed A prerequisite is not met, such as missing survey, wrong parameter format, archived survey, or invalid identifier. 429 Too Many Requests Daily API request limit exceeded.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Unpublish a survey before archiving it if required.",
+    "Archive/restore operations are asynchronous processes, but the endpoints return a simple success indicator rather than a standard ticket flow in the specification."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-032 - Unpublish a survey",
+    "WS-034 - Delete a survey"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-033_archive_or_restore_a_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-033 - Archive or restore a survey",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "ws-033",
+      "archive",
+      "restore",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I archive a survey through the API?",
+      "How do I restore an archived survey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I archive a survey through the API?",
+      "How do I restore an archived survey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

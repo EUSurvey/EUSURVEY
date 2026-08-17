@@ -1,0 +1,92 @@
+{
+  "canonical_id": "PM-06_01_report-abuse-in-a-survey",
+  "title": "06.01 - Report abuse in a survey",
+  "original_ids": {
+    "document_derived": [
+      "PM-06_01_report-abuse-in-a-survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/06_01_report-abuse-in-a-survey.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how participants can report a survey that contains illegal content or violates rights.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Report abuse",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "If a survey contains illegal content or violates the rights of others, use the Report Abuse link on the right-side panel of the survey.",
+  "prerequisites": [],
+  "procedure": [
+    "Open the survey page.",
+    "Look for the right-side panel.",
+    "Select Report Abuse.",
+    "Follow the reporting process.",
+    "Refer to the EUSurvey Terms of Service for more information: https://ec.europa.eu/eusurvey/home/tos."
+  ],
+  "important_conditions": [
+    "This applies to illegal content or content that violates rights, including intellectual property rights, competition law, or general law.",
+    "Use the survey owner contact option for ordinary survey-specific questions."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "02.01 - How to contact the survey owner"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/06_01_report-abuse-in-a-survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Report abuse",
+    "eusurvey_area": "Report abuse",
+    "feature": "",
+    "user_intent": "06.01 - Report abuse in a survey",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "06.01",
+      "report",
+      "abuse",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I report abuse in a survey?",
+      "What should I do if a survey contains illegal content?",
+      "How can I report a survey that violates rights?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I report abuse in a survey?",
+      "What should I do if a survey contains illegal content?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

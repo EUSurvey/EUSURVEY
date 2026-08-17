@@ -1,0 +1,96 @@
+{
+  "canonical_id": "WS-014_prefilling_api_overview",
+  "title": "WS-014 - Prefilling API overview",
+  "original_ids": {
+    "document_derived": [
+      "WS-014_prefilling_api_overview"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-014_prefilling_api_overview.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the Prefilling API, its prerequisites, and when to use it.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The Prefilling API creates draft contributions containing predefined answers so that individual participants can receive personalized questionnaires. The survey must be secured, the elements to prefill must have identifiers, and the survey must have been published at least once. The API cannot prefill questions that are dependent on a selection of another question.",
+  "prerequisites": [],
+  "procedure": [
+    "Secure the survey.",
+    "Set identifiers for the elements that must be prefilled.",
+    "Publish the survey at least once before calling the Prefilling API.",
+    "Call the prefill endpoint once per guest-list entry or token.",
+    "Send the generated prefilled draft link to the participant."
+  ],
+  "important_conditions": [
+    "Date answers must use DD/MM/YYYY format.",
+    "A successful call returns HTTP 204 and creates a draft; it does not return the full draft content.",
+    "Dependent questions cannot be prefilled through this API."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-015 - Create a prefilled draft contribution",
+    "WS-016 - Handle Prefilling API special cases",
+    "WS-017 - Troubleshoot Prefill API HTTP 412 errors"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-014_prefilling_api_overview.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-014 - Prefilling API overview",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "prefill",
+      "draft",
+      "personalized link",
+      "token",
+      "identifier"
+    ],
+    "synonyms": [
+      "How can I generate prefilled EUSurvey questionnaires?",
+      "What are the prerequisites for the Prefilling API?",
+      "Can I prefill dependent questions?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I generate prefilled EUSurvey questionnaires?",
+      "What are the prerequisites for the Prefilling API?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

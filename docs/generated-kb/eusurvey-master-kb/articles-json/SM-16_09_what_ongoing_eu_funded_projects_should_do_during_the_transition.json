@@ -1,0 +1,87 @@
+{
+  "canonical_id": "SM-16_09_what_ongoing_eu_funded_projects_should_do_during_the_transition",
+  "title": "SM-16.09 - What ongoing EU-funded projects should do during the transition",
+  "original_ids": {
+    "document_derived": [
+      "SM-16_09_what_ongoing_eu_funded_projects_should_do_during_the_transition"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-16_09_what_ongoing_eu_funded_projects_should_do_during_the_transition.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-16.09 - What ongoing EU-funded projects should do during the transition",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "FAQ / policy",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "EU-funded projects are not automatically exempt. If a survey is owned by an external user, it follows the same transition timeline. To continue using EUSurvey beyond the transition period, the survey should be transferred to an EU institutional account or created under EU institutional ownership with appropriate permissions for external project users.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Project coordinators should review ownership and permissions early."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-16.04 - EUSurvey transition timeline for external users",
+    "SM-16.08 - How to transfer a survey to an EU institution",
+    "SM-16.10 - How external users can export survey data during the transition"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-16_09_what_ongoing_eu_funded_projects_should_do_during_the_transition.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-16.09 - What ongoing EU-funded projects should do during the transition",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "EUSurvey transition",
+      "external users",
+      "EU institutional use",
+      "survey creation restriction",
+      "read-only",
+      "closure",
+      "transfer ownership"
+    ],
+    "synonyms": [
+      "What ongoing EU-funded projects should do during the transition?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What ongoing EU-funded projects should do during the transition?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

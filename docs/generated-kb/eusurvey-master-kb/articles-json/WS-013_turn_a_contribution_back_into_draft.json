@@ -1,0 +1,87 @@
+{
+  "canonical_id": "WS-013_turn_a_contribution_back_into_draft",
+  "title": "WS-013 - Turn a contribution back into draft",
+  "original_ids": {
+    "document_derived": [
+      "WS-013_turn_a_contribution_back_into_draft"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-013_turn_a_contribution_back_into_draft.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how to allow a participant to edit and resubmit a submitted contribution by returning it to draft state.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Use contributionToDraft with the unique contribution code. If successful, the service returns the unique code of the draft, which can be used by the participant to change and resubmit the contribution. API summary Status Active Endpoint <base_url>/webservice/contributionToDraft/[code] Supported method(s) GET Required privilege Right to change answers for the survey Parameters and input code Unique code of the submitted contribution. Expected output Returns the unique code of the draft. Main HTTP responses 200 OK Contribution converted to draft and draft code returned. 412 Precondition Failed The contribution code does not exist. 403 Forbidden Wrong username/password, missing required privilege, or user not allowed to perform the operation. 404 Not Found Unknown service or missing parameters. 412 Precondition Failed A prerequisite is not met, such as missing survey, wrong parameter format, archived survey, or invalid identifier. 429 Too Many Requests Daily API request limit exceeded.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "The user must be allowed to change answers for the survey related to the contribution.",
+    "This endpoint is useful for workflows where a respondent must correct a submitted answer."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-042 - Delete a contribution"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-013_turn_a_contribution_back_into_draft.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-013 - Turn a contribution back into draft",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "ws-013",
+      "turn",
+      "contribution",
+      "back",
+      "into",
+      "draft"
+    ],
+    "synonyms": [
+      "How can I reopen a submitted contribution as draft?",
+      "What does contributionToDraft return?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I reopen a submitted contribution as draft?",
+      "What does contributionToDraft return?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

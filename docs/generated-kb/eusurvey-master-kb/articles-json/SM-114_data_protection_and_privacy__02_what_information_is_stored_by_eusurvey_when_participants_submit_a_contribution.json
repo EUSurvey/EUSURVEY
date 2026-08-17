@@ -1,0 +1,111 @@
+{
+  "canonical_id": "SM-114_data_protection_and_privacy__02_what_information_is_stored_by_eusurvey_when_participants_submit_a_contribution",
+  "title": "114. What information is stored by EUSurvey when participants submit a contribution?",
+  "original_ids": {
+    "document_derived": [
+      "SM-114_data_protection_and_privacy__02_what_information_is_stored_by_eusurvey_when_participants_submit_a_contribution"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/114_data_protection_and_privacy__02_what_information_is_stored_by_eusurvey_when_participants_submit_a_contribution.docx"
+  ],
+  "source_files": [],
+  "intent": "This article explains an EUSurvey rule or privacy/data protection point related to: What information is stored by EUSurvey when participants submit a contribution.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Data Protection and Privacy",
+    "environment": "All",
+    "article_type": "Policy / rule",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The information that is saved by EUSurvey depends on the security settings of your survey as well as on the method you use to invite your participants to contribute to your survey.",
+  "prerequisites": [],
+  "procedure": [
+    "Publicly accessible open survey:",
+    "By default, if your survey is not secured, EUSurvey does not save any user-related information.",
+    "However, the IP of every connection is saved for security reasons for every server request (see privacy statement on the protection of personal data (https://ec.europa.eu/eusurvey/home/privacystatement) ).",
+    "Survey secured with a password:",
+    "If your survey is secured by a password only, EUSurvey does not save any user-related information.",
+    "However, the IP of every connection is saved for security reasons for every server request (see privacy statement on the protection of personal data (https://ec.europa.eu/eusurvey/home/privacystatement) ).",
+    "Survey secured with EU Login authentication:",
+    "If your survey is secured by EU Login authentication, EUSurvey will save the email address of the EU Login account.",
+    "In addition, the IP of every connection is saved for security reasons for every server request (see privacy statement on the protection of personal data (https://ec.europa.eu/eusurvey/home/privacystatement) ).",
+    "Sending invitations using EUSurvey:",
+    "If you use EUSurvey to send invitations to your participants on a guest list on the 'Participants' page, it will send an unique invitation link to each participant.",
+    "On submission, EUSurvey will save an invitation number that can be used to match the invited participant with the submitted contributions. This action is independent from your survey's security settings.",
+    "Furthermore, the IP of every connection is saved for security reasons for every server request (see privacy statement on the protection of personal data (https://ec.europa.eu/eusurvey/home/privacystatement) ).",
+    "Creating an anonymous survey:",
+    "You can choose to create an anonymous survey by using the 'Anonymous survey mode' option in the survey properties. If activated, contributions to your survey will be anonymous as EUSurvey will not save any personal data such as IP addresses. If you want your survey to be fully anonymous, do not include questions collecting personal data in your survey design."
+  ],
+  "important_conditions": [
+    "However, the IP of every connection is saved for security reasons for every server request (see privacy statement on the protection of personal data",
+    "In addition, the IP of every connection is saved for security reasons for every server request (see privacy statement on the protection of personal data",
+    "Furthermore, the IP of every connection is saved for security reasons for every server request (see privacy statement on the protection of personal data"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "This system uses cookies. What information is saved there?",
+    "Do I need to include a privacy statement?",
+    "We need a Data Processing Agreement, where is the EUSurvey DPA?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/114_data_protection_and_privacy__02_what_information_is_stored_by_eusurvey_when_participants_submit_a_contribution.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Data Protection and Privacy",
+    "eusurvey_area": "Data Protection and Privacy",
+    "feature": "",
+    "user_intent": "114. What information is stored by EUSurvey when participants submit a contribution?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "contribution",
+      "data",
+      "eusurvey",
+      "information",
+      "participants",
+      "privacy",
+      "protection",
+      "stored",
+      "submit",
+      "what",
+      "when"
+    ],
+    "synonyms": [
+      "What information is stored by EUSurvey when participants submit a contribution?",
+      "How do I manage participants or invitations?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What information is stored by EUSurvey when participants submit a contribution?",
+      "How do I manage participants or invitations?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

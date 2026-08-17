@@ -1,0 +1,90 @@
+{
+  "canonical_id": "SM-16_08_how_to_transfer_a_survey_to_an_eu_institution",
+  "title": "SM-16.08 - How to transfer a survey to an EU institution",
+  "original_ids": {
+    "document_derived": [
+      "SM-16_08_how_to_transfer_a_survey_to_an_eu_institution"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-16_08_how_to_transfer_a_survey_to_an_eu_institution.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-16.08 - How to transfer a survey to an EU institution",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "FAQ / policy",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "A survey can be transferred to an EU institution using the Change Owner feature. After transfer, the survey continues to function under institutional management.",
+  "prerequisites": [],
+  "procedure": [
+    "Identify a contact in the relevant EU institution.",
+    "Use the Change Owner option in EUSurvey.",
+    "Transfer the survey to the institutional account.",
+    "After transfer, ensure the external user has the appropriate permissions if they still need to manage the survey."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-16.04 - EUSurvey transition timeline for external users",
+    "SM-16.08 - How to transfer a survey to an EU institution",
+    "SM-16.10 - How external users can export survey data during the transition"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-16_08_how_to_transfer_a_survey_to_an_eu_institution.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-16.08 - How to transfer a survey to an EU institution",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "EUSurvey transition",
+      "external users",
+      "EU institutional use",
+      "survey creation restriction",
+      "read-only",
+      "closure",
+      "transfer ownership"
+    ],
+    "synonyms": [
+      "How do I transfer a survey to an EU institution?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I transfer a survey to an EU institution?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

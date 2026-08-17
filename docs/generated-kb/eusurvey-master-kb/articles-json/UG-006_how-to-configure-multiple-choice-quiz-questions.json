@@ -1,0 +1,83 @@
+{
+  "canonical_id": "UG-006_how-to-configure-multiple-choice-quiz-questions",
+  "title": "UG-006 \u2014 How to configure multiple choice quiz questions",
+  "original_ids": {
+    "document_derived": [
+      "UG-006_how-to-configure-multiple-choice-quiz-questions"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-006_how-to-configure-multiple-choice-quiz-questions.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain scoring options specific to multiple choice quiz questions.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Multiple choice quiz questions are configured like single choice quiz questions, with an additional option to prevent the score calculator from assigning a negative score for the question.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "The minimum-zero option is useful when incorrect answers have negative points."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-005 \u2014 Configure single choice quiz questions"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-006_how-to-configure-multiple-choice-quiz-questions.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-006 \u2014 How to configure multiple choice quiz questions",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "multiple choice quiz",
+      "negative points",
+      "minimum zero"
+    ],
+    "synonyms": [
+      "How do I score a multiple choice quiz question?",
+      "Can I prevent negative points in multiple choice quiz scoring?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I score a multiple choice quiz question?",
+      "Can I prevent negative points in multiple choice quiz scoring?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

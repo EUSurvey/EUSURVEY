@@ -1,0 +1,93 @@
+{
+  "canonical_id": "SM-79_analysing_exporting_and_publishing_resul__04_how_can_i_access_and_analyse_a_defined_subset_of_all_contributions",
+  "title": "79. How can I access and analyse a defined subset of all contributions?",
+  "original_ids": {
+    "document_derived": [
+      "SM-79_analysing_exporting_and_publishing_resul__04_how_can_i_access_and_analyse_a_defined_subset_of_all_contributions"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/79_analysing_exporting_and_publishing_resul__04_how_can_i_access_and_analyse_a_defined_subset_of_all_contributions.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How can I access and analyse a defined subset of all contributions.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "On the 'Results' page (see ' Where can I find the contributions submitted by my respondents? ') search for keywords in free-text answers or select individual answers from choice-questions in the filter bar. This limits the full set of answers to a subset of contributions. For performance reasons you can only set a maximum of 3 filters! At any point you can change the view mode, so you can carry out an advanced statistical analysis of the data collected. Note: to view and analyse results, you need certain privileges (see ' How do I give other users access to the results of my survey? '). To export a subset of contributions, please read 'How can I download submitted contributions?'.",
+  "prerequisites": [],
+  "procedure": [
+    "How can I get back to the full set of answers, after defining a subset of contributions?"
+  ],
+  "important_conditions": [
+    "maximum of 3 filters! At any point you can change the view mode, so you can carry out an advanced statistical analysis of the data collected. Note: to view and"
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "Where can I find the contributions submitted by my respondents?",
+    "How can I download submitted contributions?",
+    "How can I extract the Draft answers?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/79_analysing_exporting_and_publishing_resul__04_how_can_i_access_and_analyse_a_defined_subset_of_all_contributions.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Analysing, exporting and publishing results",
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "feature": "",
+    "user_intent": "79. How can I access and analyse a defined subset of all contributions?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "access",
+      "analyse",
+      "analysing",
+      "contributions",
+      "defined",
+      "exporting",
+      "publishing",
+      "results",
+      "subset"
+    ],
+    "synonyms": [
+      "How can I access and analyse a defined subset of all contributions?",
+      "How do I access and analyse a defined subset of all contributions?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I access and analyse a defined subset of all contributions?",
+      "How do I access and analyse a defined subset of all contributions?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

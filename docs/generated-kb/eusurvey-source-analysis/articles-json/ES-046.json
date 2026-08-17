@@ -1,0 +1,118 @@
+{
+  "article_id": "ES-046",
+  "title": "How do I use the Web Service API?",
+  "intent": "This article provides an overview of the EUSurvey Web Service API for programmatic access.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "Integration",
+    "environment": "All",
+    "article_type": "Reference",
+    "ui_location": "/webservice/*",
+    "backend_location": "WebServiceController"
+  },
+  "short_answer": "EUSurvey provides a REST-like Web Service API for programmatic access to surveys and contributions. The API supports operations like publishing/unpublishing surveys, managing tokens, exporting results, and retrieving survey metadata. Authentication uses HTTP Basic Auth with a valid EUSurvey login and password.",
+  "prerequisites": [
+    "Valid EUSurvey user account with API access",
+    "Knowledge of the survey UID or shortname"
+  ],
+  "procedure": [
+    "Authenticate using HTTP Basic Auth (login and password in the request).",
+    "Call the desired endpoint with appropriate parameters.",
+    "Handle the response (XML or JSON format depending on endpoint)."
+  ],
+  "important_conditions": [
+    "The API uses HTTP Basic Auth for authentication.",
+    "Rate limiting applies: maximum requests per day (default: 100, configurable via webservice.maxrequestsperday).",
+    "Available operations include: publish, unpublish, archive, restore, delete surveys; create/activate/deactivate tokens; export results (XML, PDF); get survey metadata and status.",
+    "Results can be exported with date filters.",
+    "Token management: create token lists, create individual tokens, activate/deactivate tokens.",
+    "The API returns XML responses for most endpoints.",
+    "Async operations (exports) return a task ID that can be polled for completion.",
+    "No OpenAPI/Swagger specification was found in the repository."
+  ],
+  "troubleshooting": [
+    "Authentication failed: Verify login credentials are correct.",
+    "Rate limit exceeded: Wait or contact admin to increase the limit.",
+    "Survey not found: Verify the survey UID or shortname."
+  ],
+  "related_articles": [
+    "ES-017 \u2014 How do I export survey results?",
+    "ES-008 \u2014 How do I publish a survey?",
+    "ES-070 \u2014 How do token guest lists work?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/WebServiceController.java",
+      "src/main/java/com/ec/survey/service/WebserviceService.java"
+    ],
+    "classes": [
+      "WebServiceController",
+      "WebserviceService"
+    ],
+    "methods": [
+      "getLoginAndPassword",
+      "publishSurvey",
+      "unpublishSurvey",
+      "createTokens",
+      "createResults",
+      "getSurveyInfo",
+      "getMySurveys"
+    ],
+    "routes": [
+      "GET /webservice/getMySurveys",
+      "GET /webservice/createTokens/{groupid}/{number}",
+      "GET /webservice/publishSurvey/{shortname}",
+      "GET /webservice/unpublishSurvey/{shortname}",
+      "GET /webservice/createResults/{shortname}",
+      "GET /webservice/getSurveyInfo/{shortname}"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "error.OperationFailed"
+    ],
+    "configuration_keys": [
+      "webservice.maxrequestsperday"
+    ],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Integration",
+    "feature": "API Usage",
+    "user_intent": "How do I use the Web Service API?",
+    "user_type": "API User",
+    "required_permission": "API User",
+    "survey_status": "N/A",
+    "keywords": [
+      "API",
+      "web service",
+      "REST",
+      "programmatic",
+      "integration",
+      "automation"
+    ],
+    "synonyms": [
+      "API access",
+      "programmatic control",
+      "automation",
+      "web service integration"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "WebserviceTask",
+      "Survey"
+    ],
+    "security_privacy_relevance": "API access exposes survey data programmatically",
+    "search_boost_terms": [
+      "web service API",
+      "REST API",
+      "programmatic access"
+    ],
+    "duplicate_status": "New"
+  }
+}

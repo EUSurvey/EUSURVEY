@@ -1,0 +1,85 @@
+{
+  "canonical_id": "SM-22_creating_a_survey__07_how_do_i_copy_an_existing_survey",
+  "title": "22. How do I copy an existing survey?",
+  "original_ids": {
+    "document_derived": [
+      "SM-22_creating_a_survey__07_how_do_i_copy_an_existing_survey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/22_creating_a_survey__07_how_do_i_copy_an_existing_survey.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I copy an existing survey.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Creating a survey",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "On the 'Surveys' page, open the survey you want and click on the 'Copy' icon. In the dialogue box that opens you can modify the necessary settings, and then click on 'Create'. Your survey will be added to the list on the 'Surveys' page. You can start editing right away.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "How do I create a new survey?",
+    "What type of surveys can I create?",
+    "How do I import an existing survey from my computer?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/22_creating_a_survey__07_how_do_i_copy_an_existing_survey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Creating a survey",
+    "eusurvey_area": "Creating a survey",
+    "feature": "",
+    "user_intent": "22. How do I copy an existing survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "copy",
+      "creating",
+      "existing",
+      "survey"
+    ],
+    "synonyms": [
+      "How do I copy an existing survey?",
+      "How can I copy an existing survey?",
+      "How do I copy an existing survey in EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I copy an existing survey?",
+      "How can I copy an existing survey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

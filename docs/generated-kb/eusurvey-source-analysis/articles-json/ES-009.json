@@ -1,0 +1,103 @@
+{
+  "article_id": "ES-009",
+  "title": "How do I unpublish a survey?",
+  "intent": "This article explains how to unpublish a survey to stop accepting new contributions.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Survey Lifecycle",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Overview page",
+    "backend_location": "ManagementController.unpublish()"
+  },
+  "short_answer": "To unpublish a survey, navigate to the survey Overview page and click 'Unpublish'. This makes the survey unavailable to respondents. The survey URL will show an unavailability page. Existing contributions are preserved and remain accessible to the survey owner.",
+  "prerequisites": [
+    "The user must be the survey owner",
+    "The survey must be currently published"
+  ],
+  "procedure": [
+    "Open the survey in the management area.",
+    "Navigate to the Overview page.",
+    "Click the 'Unpublish' button.",
+    "Confirm the action.",
+    "The survey is taken offline and respondents can no longer submit contributions."
+  ],
+  "important_conditions": [
+    "Unpublishing preserves all existing contributions.",
+    "The survey URL shows an unavailability page after unpublishing.",
+    "Background documents and PDF questionnaire can optionally remain available on the unavailability page.",
+    "The survey can be re-published later.",
+    "Unpublishing is required before deleting a published survey."
+  ],
+  "troubleshooting": [
+    "Survey still accessible after unpublishing: Clear browser cache or check if start/end dates override the status."
+  ],
+  "related_articles": [
+    "ES-008 \u2014 How do I publish a survey?",
+    "ES-005 \u2014 How do I delete a survey?",
+    "ES-010 \u2014 How do I apply changes after publication?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/service/SurveyService.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "SurveyService"
+    ],
+    "methods": [
+      "unpublish"
+    ],
+    "routes": [
+      "POST /{shortname}/management"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.PublishUnpublish",
+      "info.UnavailabilityPage",
+      "label.ShowDocsOnUnavailabilityPage",
+      "label.ShowPDFOnUnavailabilityPage"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Lifecycle",
+    "feature": "Unpublish Survey",
+    "user_intent": "How do I unpublish a survey?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Published",
+    "keywords": [
+      "unpublish",
+      "offline",
+      "stop",
+      "close",
+      "deactivate"
+    ],
+    "synonyms": [
+      "take offline",
+      "stop survey",
+      "close survey",
+      "deactivate survey"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "unpublish survey",
+      "take survey offline",
+      "stop survey"
+    ],
+    "duplicate_status": "New"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "canonical_id": "PM-03_04_browsers-supported-by-eusurvey",
+  "title": "03.04 - Browsers supported by EUSurvey",
+  "original_ids": {
+    "document_derived": [
+      "PM-03_04_browsers-supported-by-eusurvey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/03_04_browsers-supported-by-eusurvey.docx"
+  ],
+  "source_files": [],
+  "intent": "List the browsers supported by EUSurvey for participants.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Accessing a survey",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "EUSurvey supports the last two versions of Microsoft Edge and the latest versions of Mozilla Firefox and Google Chrome.",
+  "prerequisites": [],
+  "procedure": [
+    "Use a supported browser: Microsoft Edge, Mozilla Firefox, or Google Chrome.",
+    "Keep your browser updated.",
+    "If you experience compatibility issues, try again using one of the supported browsers."
+  ],
+  "important_conditions": [
+    "Using other browsers may cause compatibility issues.",
+    "Browser support may depend on the browser version used."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "03.05 - Answering a survey on a mobile phone or tablet"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/03_04_browsers-supported-by-eusurvey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Accessing a survey",
+    "eusurvey_area": "Accessing a survey",
+    "feature": "",
+    "user_intent": "03.04 - Browsers supported by EUSurvey",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "03.04",
+      "browsers",
+      "supported",
+      "eusurvey"
+    ],
+    "synonyms": [
+      "Which browsers are supported by EUSurvey?",
+      "Can I use EUSurvey with my browser?",
+      "Why does EUSurvey not work correctly in my browser?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Which browsers are supported by EUSurvey?",
+      "Can I use EUSurvey with my browser?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

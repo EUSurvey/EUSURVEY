@@ -1,0 +1,104 @@
+{
+  "article_id": "ES-061",
+  "title": "How do respondents download the survey as PDF?",
+  "intent": "This article explains how respondents download the empty survey questionnaire as a PDF.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Survey Runner",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Runner sidebar",
+    "backend_location": "PDFController.java"
+  },
+  "short_answer": "If enabled by the survey owner, respondents can download the empty questionnaire as a PDF for offline review. Look for the download link in the survey sidebar.",
+  "prerequisites": [
+    "Survey.allowQuestionnaireDownload must be enabled",
+    "Survey must be published"
+  ],
+  "procedure": [
+    "Access the survey page.",
+    "Look for Download empty questionnaire as PDF in the sidebar.",
+    "Click the link.",
+    "PDF is generated and downloaded."
+  ],
+  "important_conditions": [
+    "Downloads the EMPTY questionnaire, not answers.",
+    "Must be enabled by survey owner.",
+    "PDF generation is asynchronous.",
+    "PDF can remain available on unavailability page after unpublishing."
+  ],
+  "troubleshooting": [
+    "Link not visible: Owner has not enabled questionnaire download.",
+    "PDF not ready: Wait for async generation."
+  ],
+  "related_articles": [
+    "ES-015 \u2014 How do I download my contribution as PDF?",
+    "ES-012 \u2014 How do respondents submit a contribution?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/resources/js/menu.js"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/PDFController.java",
+      "src/main/java/com/ec/survey/service/PDFService.java"
+    ],
+    "classes": [
+      "PDFController",
+      "PDFService"
+    ],
+    "methods": [
+      "pubsurvey",
+      "survey",
+      "createSurveyPDF"
+    ],
+    "routes": [
+      "GET /pdf/pubsurvey/{id}",
+      "GET /pdf/survey/{id}"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.AllowQuestionnaireDownloadNew",
+      "label.DownloadEmptyPDFversion",
+      "info.AllowQuestionnaireDownload",
+      "label.ShowPDFOnUnavailabilityPage"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Survey Runner",
+    "feature": "Survey PDF",
+    "user_intent": "How do respondents download the survey as PDF?",
+    "user_type": "Respondent",
+    "required_permission": "Respondent",
+    "survey_status": "Published",
+    "keywords": [
+      "PDF",
+      "download",
+      "questionnaire",
+      "empty",
+      "print"
+    ],
+    "synonyms": [
+      "download questionnaire",
+      "print survey",
+      "get PDF form"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "download survey PDF",
+      "print questionnaire"
+    ],
+    "duplicate_status": "New"
+  }
+}

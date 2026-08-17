@@ -1,0 +1,105 @@
+{
+  "article_id": "ES-018",
+  "title": "How do I export statistics?",
+  "intent": "This article explains how to export aggregated statistics from survey results.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Results and Export",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Exports page",
+    "backend_location": "ExportsController.startExport"
+  },
+  "short_answer": "To export statistics, navigate to the Exports page and select 'Export Statistics'. Choose a format (XLS, XLSX, ODS, or PDF/DOCX). The export generates aggregated data showing response distributions, percentages, and charts for each question.",
+  "prerequisites": [
+    "AccessResults privilege or survey ownership",
+    "Survey must have contributions"
+  ],
+  "procedure": [
+    "Navigate to the Exports page.",
+    "Select 'Export Statistics' type.",
+    "Choose the output format.",
+    "Click Start.",
+    "Wait for the asynchronous export to complete.",
+    "Download the file."
+  ],
+  "important_conditions": [
+    "Statistics exports show aggregated response counts and percentages per question.",
+    "Available formats: XLS, XLSX, ODS, PDF (DOCX).",
+    "For quiz surveys, a separate 'Export Statistics Quiz' type is available with scoring data.",
+    "The export runs asynchronously.",
+    "Charts can be included in the export."
+  ],
+  "troubleshooting": [
+    "Export not completing: Large surveys may take longer. Wait for the timeout period."
+  ],
+  "related_articles": [
+    "ES-017 \u2014 How do I export survey results?",
+    "ES-016 \u2014 How do I view survey results?",
+    "ES-020 \u2014 How do I publish results publicly?"
+  ],
+  "evidence": {
+    "frontend_files": [
+      "src/main/webapp/WEB-INF/views/exports/"
+    ],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ExportsController.java",
+      "src/main/java/com/ec/survey/tools/export/StatisticsCreator.java"
+    ],
+    "classes": [
+      "ExportsController",
+      "StatisticsCreator"
+    ],
+    "methods": [
+      "startExport",
+      "exportStatistics"
+    ],
+    "routes": [
+      "POST /exports/start/Statistics/{format}"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.ExportStatistics",
+      "label.ExportCharts"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Results and Export",
+    "feature": "Export Statistics",
+    "user_intent": "How do I export statistics?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Published",
+    "keywords": [
+      "statistics",
+      "charts",
+      "aggregated",
+      "export",
+      "percentages"
+    ],
+    "synonyms": [
+      "download statistics",
+      "export charts",
+      "get aggregated data"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Export",
+      "Statistics"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "export statistics",
+      "download charts",
+      "aggregated results"
+    ],
+    "duplicate_status": "New"
+  }
+}

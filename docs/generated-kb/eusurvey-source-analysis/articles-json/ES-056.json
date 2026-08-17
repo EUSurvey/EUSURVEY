@@ -1,0 +1,102 @@
+{
+  "article_id": "ES-056",
+  "title": "How do I configure report emails?",
+  "intent": "This article explains how to configure periodic report emails about survey contributions.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Notifications",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Properties page",
+    "backend_location": "ManagementController.java"
+  },
+  "short_answer": "Report emails send periodic summaries of contribution counts to recipients. Enable in Properties by activating Automatic report per e-mail, setting frequency, and specifying recipients.",
+  "prerequisites": [
+    "Survey owner",
+    "SMTP server configured"
+  ],
+  "procedure": [
+    "Open survey Properties.",
+    "Enable Automatic report per e-mail.",
+    "Set frequency: daily, weekly, or monthly.",
+    "Enter recipient emails separated by semicolons.",
+    "Optionally enable send only if contributions exist.",
+    "Save."
+  ],
+  "important_conditions": [
+    "Frequency options: daily, weekly, monthly.",
+    "Multiple recipients separated by semicolons.",
+    "Can send only when new contributions exist.",
+    "Maximum report emails per survey is configurable."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "ES-057 \u2014 How do I enable confirmation emails?",
+    "ES-007 \u2014 How do I configure survey properties?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ManagementController.java",
+      "src/main/java/com/ec/survey/service/SchedulerService.java",
+      "src/main/java/com/ec/survey/service/SurveyService.java"
+    ],
+    "classes": [
+      "ManagementController",
+      "SchedulerService",
+      "SurveyService"
+    ],
+    "methods": [
+      "propertiesPost",
+      "sendStatisticalEmails"
+    ],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [
+      "label.AutomaticReportEmail",
+      "label.FrequencyReportEmails",
+      "info.AutomaticReportEmail",
+      "info.RecipientList",
+      "label.ReportEmailOnlyWhenContributionsExist"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Notifications",
+    "feature": "Report Email",
+    "user_intent": "How do I configure report emails?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Published",
+    "keywords": [
+      "report",
+      "email",
+      "notification",
+      "periodic",
+      "contributions",
+      "summary"
+    ],
+    "synonyms": [
+      "contribution report",
+      "periodic email",
+      "statistics email"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Survey"
+    ],
+    "security_privacy_relevance": "None",
+    "search_boost_terms": [
+      "report emails",
+      "periodic notifications",
+      "contribution summaries"
+    ],
+    "duplicate_status": "New"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "article_id": "ES-063",
+  "title": "How do I delete a contribution?",
+  "intent": "This article explains how to permanently delete a submitted contribution.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Results",
+    "environment": "All",
+    "article_type": "How-To",
+    "ui_location": "Results page",
+    "backend_location": "ContributionController.java"
+  },
+  "short_answer": "To delete a contribution, navigate to Results, select the contribution, and click Delete. Deletion is permanent. Only users with read/write AccessResults or survey owners can delete.",
+  "prerequisites": [
+    "AccessResults read/write privilege or survey owner",
+    "Contributions must exist"
+  ],
+  "procedure": [
+    "Navigate to the Results page.",
+    "Find the contribution.",
+    "Select it.",
+    "Click Delete.",
+    "Confirm.",
+    "Contribution is permanently removed."
+  ],
+  "important_conditions": [
+    "Deletion is permanent and cannot be undone.",
+    "eVote contributions may not be deletable.",
+    "Multiple contributions can be deleted at once.",
+    "Statistics need recalculation after deletion."
+  ],
+  "troubleshooting": [
+    "Delete button not visible: Need read/write AccessResults.",
+    "No contributions selected error: Select before clicking delete."
+  ],
+  "related_articles": [
+    "ES-016 \u2014 How do I view survey results?",
+    "ES-017 \u2014 How do I export survey results?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ContributionController.java",
+      "src/main/java/com/ec/survey/service/AnswerService.java"
+    ],
+    "classes": [
+      "ContributionController",
+      "AnswerService"
+    ],
+    "methods": [
+      "deleteContribution",
+      "deleteAnswer"
+    ],
+    "routes": [
+      "POST /{shortname}/management/deleteContribution"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.Delete",
+      "label.ConfirmDeletion",
+      "info.NoContributionsToDelete"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Results",
+    "feature": "Delete Contribution",
+    "user_intent": "How do I delete a contribution?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Published",
+    "keywords": [
+      "delete",
+      "contribution",
+      "remove",
+      "answer"
+    ],
+    "synonyms": [
+      "remove submission",
+      "delete answer",
+      "erase contribution"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "AnswerSet"
+    ],
+    "security_privacy_relevance": "Permanently removes respondent data",
+    "search_boost_terms": [
+      "delete contribution",
+      "remove submission"
+    ],
+    "duplicate_status": "New"
+  }
+}

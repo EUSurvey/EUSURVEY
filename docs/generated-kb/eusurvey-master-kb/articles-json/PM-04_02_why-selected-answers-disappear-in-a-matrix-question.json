@@ -1,0 +1,93 @@
+{
+  "canonical_id": "PM-04_02_why-selected-answers-disappear-in-a-matrix-question",
+  "title": "04.02 - Why selected answers disappear in a matrix question",
+  "original_ids": {
+    "document_derived": [
+      "PM-04_02_why-selected-answers-disappear-in-a-matrix-question"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/04_02_why-selected-answers-disappear-in-a-matrix-question.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain why a participant selection may disappear when answering a matrix question.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Submitting a contribution",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "This can happen when the matrix question is configured so that each possible answer can be selected only once. This feature is often used to create a ranking between answers.",
+  "prerequisites": [],
+  "procedure": [
+    "Review the matrix question instructions.",
+    "If the same answer cannot be used more than once, choose a different answer for each row or item.",
+    "Complete the matrix according to the allowed ranking or selection rules."
+  ],
+  "important_conditions": [
+    "This behaviour is controlled by the survey author.",
+    "It is not necessarily an error; it may be an intended feature of the question."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "04.01 - Meaning of This value is not a valid number date or email address"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/04_02_why-selected-answers-disappear-in-a-matrix-question.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Submitting a contribution",
+    "eusurvey_area": "Submitting a contribution",
+    "feature": "",
+    "user_intent": "04.02 - Why selected answers disappear in a matrix question",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "04.02",
+      "why",
+      "selected",
+      "answers",
+      "disappear",
+      "matrix",
+      "question"
+    ],
+    "synonyms": [
+      "Why does my selected answer disappear when answering a matrix question?",
+      "Why can I select an answer only once in a matrix question?",
+      "Why does EUSurvey remove my previous matrix answer?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Why does my selected answer disappear when answering a matrix question?",
+      "Why can I select an answer only once in a matrix question?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

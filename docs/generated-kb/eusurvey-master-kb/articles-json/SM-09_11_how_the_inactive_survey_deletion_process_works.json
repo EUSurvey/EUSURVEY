@@ -1,0 +1,95 @@
+{
+  "canonical_id": "SM-09_11_how_the_inactive_survey_deletion_process_works",
+  "title": "SM-09.11 - How the inactive survey deletion process works",
+  "original_ids": {
+    "document_derived": [
+      "SM-09_11_how_the_inactive_survey_deletion_process_works"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/SM-09_11_how_the_inactive_survey_deletion_process_works.docx"
+  ],
+  "source_files": [],
+  "intent": "This article answers: SM-09.11 - How the inactive survey deletion process works",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "FAQs_SurveyManager",
+    "environment": "All",
+    "article_type": "FAQ / policy / how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "When a survey has not received new contributions for one year, EUSurvey starts a notification process before deletion. If the survey remains inactive after the notifications, it is automatically deleted from the system.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "First notification: the survey owner and privileged management users are informed that the survey is inactive and subject to deletion.",
+    "Second notification: a reminder is sent if no action is taken.",
+    "Final notification: a last notification is sent before deletion.",
+    "The timing may change through configuration, but the initial schedule is 60 days, 45 days and 3 days before deletion."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "SM-10.14 - How to export a survey and its data",
+    "SM-09.07 - Archiving feature",
+    "SM-09.11 - How the inactive survey deletion process works"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/SM-09_11_how_the_inactive_survey_deletion_process_works.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "FAQs_SurveyManager",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "SM-09.11 - How the inactive survey deletion process works",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "inactive survey",
+      "automatic deletion",
+      "deletion notification",
+      "inactivity",
+      "365 days",
+      "Form Manager",
+      "export",
+      ".eus",
+      "archive"
+    ],
+    "synonyms": [
+      "How the inactive survey deletion process works?",
+      "Why did I receive an inactive survey notification?",
+      "How do I avoid losing an inactive survey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How the inactive survey deletion process works?",
+      "Why did I receive an inactive survey notification?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

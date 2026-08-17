@@ -1,0 +1,93 @@
+{
+  "canonical_id": "WS-045_interpret_table_xml_in_result_exports",
+  "title": "WS-045 - Interpret table XML in result exports",
+  "original_ids": {
+    "document_derived": [
+      "WS-045_interpret_table_xml_in_result_exports"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-045_interpret_table_xml_in_result_exports.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain how normal table question answers are represented in EUSurvey XML exports.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical reference",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "In XML result exports, a table is represented by a TableTitle, one TableQuestion for each row and one TableAnswer for each column. Each submitted cell answer is identified by qid for the row and aid for the column, and the answer text is contained inside the Answer element.",
+  "prerequisites": [],
+  "procedure": [
+    "Read the TableTitle element to identify the table.",
+    "Map each TableQuestion to a row.",
+    "Map each TableAnswer to a column.",
+    "For each Answer in the Answers section, combine qid and aid to identify the table cell.",
+    "Read the text content of the Answer element as the participant\u2019s input for that cell."
+  ],
+  "important_conditions": [
+    "The annex example shows a table with two columns and two rows and demonstrates the generated XML."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-021 - Understand XML results structure",
+    "WS-046 - Interpret matrix XML in result exports"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-045_interpret_table_xml_in_result_exports.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-045 - Interpret table XML in result exports",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "table XML",
+      "TableTitle",
+      "TableQuestion",
+      "TableAnswer",
+      "qid",
+      "aid"
+    ],
+    "synonyms": [
+      "How are table answers represented in XML?",
+      "What do qid and aid mean for table cells?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How are table answers represented in XML?",
+      "What do qid and aid mean for table cells?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

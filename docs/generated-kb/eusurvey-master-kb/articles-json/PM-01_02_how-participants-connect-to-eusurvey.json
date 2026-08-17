@@ -1,0 +1,94 @@
+{
+  "canonical_id": "PM-01_02_how-participants-connect-to-eusurvey",
+  "title": "01.02 - How participants connect to EUSurvey",
+  "original_ids": {
+    "document_derived": [
+      "PM-01_02_how-participants-connect-to-eusurvey"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/01_02_how-participants-connect-to-eusurvey.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain which login option participants should use when accessing EUSurvey.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "Logging in and creating an account",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "To connect to EUSurvey, select Login on the EUSurvey homepage. You will be redirected to the EUSurvey login screen, where you must choose the option that matches your situation.",
+  "prerequisites": [],
+  "procedure": [
+    "Open the EUSurvey homepage: https://ec.europa.eu/eusurvey/home/welcome.",
+    "Click Login.",
+    "On the EUSurvey login screen, choose the option that applies to you.",
+    "If you work for an EU institution, choose the EU institution option and connect with your EU Login username and password.",
+    "If you do not work for an EU institution, choose the external user option. External users must have an EU Login account and must have registered a mobile phone for two-factor authentication."
+  ],
+  "important_conditions": [
+    "External users may need to create an EU Login account: https://webgate.ec.europa.eu/cas/eim/external/register.cgi.",
+    "External users may need to register a mobile phone for two-factor authentication: https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi.",
+    "Two-factor authentication may be required for external participants."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "01.01 - EU Login account requirement for EUSurvey participants"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/01_02_how-participants-connect-to-eusurvey.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Logging in and creating an account",
+    "eusurvey_area": "Logging in and creating an account",
+    "feature": "",
+    "user_intent": "01.02 - How participants connect to EUSurvey",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "01.02",
+      "how",
+      "participants",
+      "connect",
+      "eusurvey"
+    ],
+    "synonyms": [
+      "How do I connect to EUSurvey?",
+      "Which login option should I choose in EUSurvey?",
+      "How do external users log in to EUSurvey?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I connect to EUSurvey?",
+      "Which login option should I choose in EUSurvey?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

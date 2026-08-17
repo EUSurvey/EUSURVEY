@@ -1,0 +1,89 @@
+{
+  "canonical_id": "SM-104_managing_contacts_and_invitations__06_how_do_i_edit_an_attribute_for_multiple_contacts_at_a_time",
+  "title": "104. How do I edit an attribute for multiple contacts at a time?",
+  "original_ids": {
+    "document_derived": [
+      "SM-104_managing_contacts_and_invitations__06_how_do_i_edit_an_attribute_for_multiple_contacts_at_a_time"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/104_managing_contacts_and_invitations__06_how_do_i_edit_an_attribute_for_multiple_contacts_at_a_time.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How do I edit an attribute for multiple contacts at a time.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Managing contacts and invitations",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "To edit an attribute value for multiple contacts:",
+  "prerequisites": [],
+  "procedure": [
+    "1. Search and select the contacts in your address book. 2. Select 'Bulk Edit' and click 'OK'. 3. In the pop-up, you can choose to keep, clear or set values for multiple contacts - by default, only the configured attributes will be shown. 4. Click on the green cross to view other attributes. 5. After clicking 'Update' and confirming the security message, the application will save your changes to your address book."
+  ],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "What is the 'Address Book'?",
+    "What are the 'Attributes' of a contact?",
+    "How do I add new contacts to my address book?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/104_managing_contacts_and_invitations__06_how_do_i_edit_an_attribute_for_multiple_contacts_at_a_time.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Managing contacts and invitations",
+    "eusurvey_area": "Managing contacts and invitations",
+    "feature": "",
+    "user_intent": "104. How do I edit an attribute for multiple contacts at a time?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "attribute",
+      "contacts",
+      "edit",
+      "invitations",
+      "managing",
+      "multiple",
+      "time"
+    ],
+    "synonyms": [
+      "How do I edit an attribute for multiple contacts at a time?",
+      "How can I edit an attribute for multiple contacts at a time?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How do I edit an attribute for multiple contacts at a time?",
+      "How can I edit an attribute for multiple contacts at a time?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

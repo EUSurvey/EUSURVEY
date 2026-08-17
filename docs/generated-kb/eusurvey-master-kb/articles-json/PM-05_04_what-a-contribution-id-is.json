@@ -1,0 +1,91 @@
+{
+  "canonical_id": "PM-05_04_what-a-contribution-id-is",
+  "title": "05.04 - What a contribution ID is",
+  "original_ids": {
+    "document_derived": [
+      "PM-05_04_what-a-contribution-id-is"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "01-FAQs_Participants/05_04_what-a-contribution-id-is.docx"
+  ],
+  "source_files": [],
+  "intent": "Define the contribution ID and explain why it is useful.",
+  "applies_to": {
+    "roles": [
+      "Respondent"
+    ],
+    "eusurvey_area": "After contributing",
+    "environment": "All",
+    "article_type": "Troubleshooting",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The contribution ID is the individual number automatically generated for your submitted answer. It is a unique identifier that allows EUSurvey to recognise your contribution.",
+  "prerequisites": [],
+  "procedure": [
+    "After submitting your contribution, check the Confirmation page.",
+    "Note or save the contribution ID displayed there.",
+    "If you save or receive a PDF copy, check the upper-left side of the PDF for the contribution ID.",
+    "Use the contribution ID when contacting EUSurvey support or the survey organisers about your contribution."
+  ],
+  "important_conditions": [
+    "The contribution ID is unique to your contribution.",
+    "It is useful for support requests and for actions related to your submitted answers."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "05.05 - Where to find a contribution ID",
+    "05.03 - Edit a contribution after submission"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "01-FAQs_Participants/05_04_what-a-contribution-id-is.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "After contributing",
+    "eusurvey_area": "After contributing",
+    "feature": "",
+    "user_intent": "05.04 - What a contribution ID is",
+    "user_type": "Respondent",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "05.04",
+      "what",
+      "contribution"
+    ],
+    "synonyms": [
+      "What is my contribution ID?",
+      "What is the individual number of my answer?",
+      "Why do I need a contribution ID?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What is my contribution ID?",
+      "What is the individual number of my answer?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

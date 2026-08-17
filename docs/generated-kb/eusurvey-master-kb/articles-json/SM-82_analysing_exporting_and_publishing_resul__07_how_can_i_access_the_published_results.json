@@ -1,0 +1,87 @@
+{
+  "canonical_id": "SM-82_analysing_exporting_and_publishing_resul__07_how_can_i_access_the_published_results",
+  "title": "82. How can I access the published results?",
+  "original_ids": {
+    "document_derived": [
+      "SM-82_analysing_exporting_and_publishing_resul__07_how_can_i_access_the_published_results"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "02-FAQs_SurveyManager/82_analysing_exporting_and_publishing_resul__07_how_can_i_access_the_published_results.docx"
+  ],
+  "source_files": [],
+  "intent": "This article helps EUSurvey survey managers understand or perform the task: How can I access the published results.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "environment": "All",
+    "article_type": "How-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "Open the 'Overview' page and click on the 'Published' hyperlink right next to the word 'Results'. This will direct you to the published results. Everybody who knows this address can access your results.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [],
+  "troubleshooting": [],
+  "related_articles": [
+    "Where can I find the contributions submitted by my respondents?",
+    "How can I download submitted contributions?",
+    "How can I extract the Draft answers?"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "02-FAQs_SurveyManager/82_analysing_exporting_and_publishing_resul__07_how_can_i_access_the_published_results.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Analysing, exporting and publishing results",
+    "eusurvey_area": "Analysing, exporting and publishing results",
+    "feature": "",
+    "user_intent": "82. How can I access the published results?",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "access",
+      "analysing",
+      "exporting",
+      "published",
+      "publishing",
+      "results"
+    ],
+    "synonyms": [
+      "How can I access the published results?",
+      "How do I access the published results?",
+      "Where do I manage or export survey results?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "How can I access the published results?",
+      "How do I access the published results?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

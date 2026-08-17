@@ -1,0 +1,90 @@
+{
+  "canonical_id": "WS-019_use_webhooks_for_result_export_completion",
+  "title": "WS-019 - Use webhooks for result export completion",
+  "original_ids": {
+    "document_derived": [
+      "WS-019_use_webhooks_for_result_export_completion"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "04-WebServices/WS-019_use_webhooks_for_result_export_completion.docx"
+  ],
+  "source_files": [],
+  "intent": "Explain the optional hook parameter available on results preparation endpoints.",
+  "applies_to": {
+    "roles": [
+      "API User"
+    ],
+    "eusurvey_area": "WebServices",
+    "environment": "All",
+    "article_type": "Technical how-to",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "All prepareResultsXXX actions can include an optional hook URL. When the asynchronous export finishes, EUSurvey calls the hook URL using a GET request. The placeholder TASKID in the hook URL is automatically replaced by the ticket ID, which can then be used to call getResults.",
+  "prerequisites": [],
+  "procedure": [
+    "<base_url>/webservice/prepareResultsXML/[Alias]/[IDs]?hook=https://myserver.example/myApp?task=TASKID",
+    "When finished, EUSurvey calls: https://myserver.example/myApp?task=<ticket>"
+  ],
+  "important_conditions": [
+    "The hook is optional; polling getResults remains supported.",
+    "The receiving system should validate and handle the ticket securely.",
+    "The hook URL should be reachable by EUSurvey."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "WS-018 - Results API overview",
+    "WS-006 - Use asynchronous tickets and getResults"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "04-WebServices/WS-019_use_webhooks_for_result_export_completion.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "WebServices",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "WS-019 - Use webhooks for result export completion",
+    "user_type": "API User",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "webhook",
+      "hook",
+      "TASKID",
+      "asynchronous export"
+    ],
+    "synonyms": [
+      "Can EUSurvey notify my system when a result export is ready?",
+      "How does the hook parameter work?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "Can EUSurvey notify my system when a result export is ready?",
+      "How does the hook parameter work?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

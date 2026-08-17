@@ -1,0 +1,87 @@
+{
+  "canonical_id": "UG-048_how-to-use-the-editor-toolbar",
+  "title": "UG-048 \u2014 How to use the editor toolbar",
+  "original_ids": {
+    "document_derived": [
+      "UG-048_how-to-use-the-editor-toolbar"
+    ],
+    "source_code_derived": []
+  },
+  "source_type": "document-derived",
+  "source_documents": [
+    "03-Users Guides/UG-048_how-to-use-the-editor-toolbar.docx"
+  ],
+  "source_files": [],
+  "intent": "Summarize the main toolbar actions.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Users Guides",
+    "environment": "All",
+    "article_type": "Reference",
+    "ui_location": "",
+    "backend_location": ""
+  },
+  "short_answer": "The toolbar provides common editing actions such as multiple selection, undo, redo, copy, cut, paste after, move up or down and delete. It also contains controls for showing or hiding editor panes and visualising dependencies.",
+  "prerequisites": [],
+  "procedure": [],
+  "important_conditions": [
+    "Use pane visibility buttons when you need more space to edit the questionnaire.",
+    "Use Visualise visibility to inspect dependency links."
+  ],
+  "troubleshooting": [],
+  "related_articles": [
+    "UG-050 \u2014 Copy, move and delete elements",
+    "UG-056 \u2014 Use dependencies"
+  ],
+  "support_escalation": "",
+  "source_traceability": {
+    "document_sources": [
+      "03-Users Guides/UG-048_how-to-use-the-editor-toolbar.docx"
+    ],
+    "frontend_files": [],
+    "backend_files": [],
+    "classes": [],
+    "methods": [],
+    "routes": [],
+    "endpoints": [],
+    "message_keys": [],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "High",
+  "review_status": "Complete",
+  "ingestion_status": "Ready for ingestion",
+  "metadata": {
+    "domain": "Users Guides",
+    "eusurvey_area": "",
+    "feature": "",
+    "user_intent": "UG-048 \u2014 How to use the editor toolbar",
+    "user_type": "Survey Owner",
+    "required_permission": "",
+    "survey_status": "",
+    "environment": "All",
+    "keywords": [
+      "toolbar",
+      "undo",
+      "copy",
+      "delete",
+      "visualise visibility"
+    ],
+    "synonyms": [
+      "What is the toolbar used for?",
+      "How do I show or hide editor panes?"
+    ],
+    "acronyms": [],
+    "related_entities": [],
+    "security_privacy_relevance": "",
+    "search_boost_terms": [
+      "What is the toolbar used for?",
+      "How do I show or hide editor panes?"
+    ],
+    "duplicate_status": "New",
+    "authority": "Document-derived guidance"
+  }
+}

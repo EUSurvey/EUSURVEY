@@ -1,0 +1,112 @@
+{
+  "article_id": "ES-047",
+  "title": "How does activity logging work?",
+  "intent": "This article explains how EUSurvey tracks and logs user activities on surveys.",
+  "applies_to": {
+    "roles": [
+      "Survey Owner"
+    ],
+    "eusurvey_area": "Audit",
+    "environment": "All",
+    "article_type": "Concept",
+    "ui_location": "Activity page",
+    "backend_location": "ActivityController.activity"
+  },
+  "short_answer": "EUSurvey can log user activities performed on surveys, such as edits, publications, deletions, and contribution management. Activity logging must be enabled per survey. Once enabled, the Activity page shows a chronological log of all actions with user, timestamp, and details.",
+  "prerequisites": [
+    "Survey owner",
+    "Activity logging must be enabled for the survey"
+  ],
+  "procedure": [
+    "Enable activity logging in survey settings (if not already enabled).",
+    "Navigate to the Activity page from the survey management menu.",
+    "View the chronological log of activities.",
+    "Use filters to narrow the activity view.",
+    "Export activities to a file if needed."
+  ],
+  "important_conditions": [
+    "Activity logging must be explicitly enabled per survey.",
+    "The system tracks: object (what was affected), event (what happened), property (what changed), old value, new value.",
+    "Activities can be exported via the Exports page.",
+    "The activity log includes user identification and timestamps.",
+    "Administrators can configure which activity types are logged system-wide.",
+    "Activity logging can be enabled/disabled from the administration panel."
+  ],
+  "troubleshooting": [
+    "No activities showing: Activity logging may not be enabled for this survey. Enable it in survey settings."
+  ],
+  "related_articles": [
+    "ES-006 \u2014 How do I edit a survey?",
+    "ES-017 \u2014 How do I export survey results?"
+  ],
+  "evidence": {
+    "frontend_files": [],
+    "backend_files": [
+      "src/main/java/com/ec/survey/controller/ActivityController.java",
+      "src/main/java/com/ec/survey/service/ActivityService.java",
+      "src/main/java/com/ec/survey/tools/activity/ActivityRegistry.java",
+      "src/main/java/com/ec/survey/model/Activity.java"
+    ],
+    "classes": [
+      "ActivityController",
+      "ActivityService",
+      "ActivityRegistry",
+      "Activity"
+    ],
+    "methods": [
+      "activity",
+      "log",
+      "isLogEnabled"
+    ],
+    "routes": [
+      "GET /{shortname}/management/activity"
+    ],
+    "endpoints": [],
+    "message_keys": [
+      "label.Activity",
+      "label.Activities",
+      "label.SurveyActivityLogging",
+      "label.EnableActivityLogging",
+      "label.DisableActivityLogging",
+      "label.ConfigureActivityLogging"
+    ],
+    "configuration_keys": [],
+    "tests": [],
+    "line_references": []
+  },
+  "confidence": "Medium",
+  "review_status": "Complete",
+  "metadata": {
+    "domain": "Audit",
+    "feature": "Activity Log",
+    "user_intent": "How does activity logging work?",
+    "user_type": "Survey Owner",
+    "required_permission": "Survey Owner",
+    "survey_status": "Any",
+    "keywords": [
+      "activity",
+      "log",
+      "audit",
+      "tracking",
+      "history",
+      "changes"
+    ],
+    "synonyms": [
+      "audit log",
+      "activity history",
+      "track changes"
+    ],
+    "acronyms": [],
+    "related_entities": [
+      "Activity",
+      "Survey"
+    ],
+    "security_privacy_relevance": "Activity log may contain user actions",
+    "search_boost_terms": [
+      "activity log",
+      "audit trail",
+      "track changes"
+    ],
+    "duplicate_status": "New"
+  }
+}
