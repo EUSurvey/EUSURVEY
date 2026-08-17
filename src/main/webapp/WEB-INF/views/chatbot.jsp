@@ -60,17 +60,38 @@
 <%-- Load the ec-chatbot web component --%>
 <script type="module" src="${chat_widget_url}"></script>
 
-<ec-chatbot
-    app-id="eusurvey"
-    api-url="${chat_api_url}"
-    mode="widget"
-    position="bottom-right"
-    locale="${chatbotLocale}"
-    user-role="${chatbotUserRole}"
-    page-context="${chatbotPageContext}"
-    <c:if test="${USER != null}">user-id="${USER.login}"</c:if>
-    <c:if test="${sessioninfo != null}">entity-type="survey" entity-id="${sessioninfo.shortname}"</c:if>
-></ec-chatbot>
+<%-- Determine optional attributes --%>
+<c:set var="chatbotUserId" value="" />
+<c:if test="${USER != null}">
+    <c:set var="chatbotUserId" value="${USER.login}" />
+</c:if>
+<c:set var="chatbotEntityType" value="" />
+<c:set var="chatbotEntityId" value="" />
+<c:if test="${sessioninfo != null}">
+    <c:set var="chatbotEntityType" value="survey" />
+    <c:set var="chatbotEntityId" value="${sessioninfo.shortname}" />
+</c:if>
+
+<div id="ec-chatbot-container"></div>
+<script type="module">
+    const container = document.getElementById('ec-chatbot-container');
+    const chatbot = document.createElement('ec-chatbot');
+    chatbot.setAttribute('app-id', 'eusurvey');
+    chatbot.setAttribute('api-url', '${chat_api_url}');
+    chatbot.setAttribute('mode', 'widget');
+    chatbot.setAttribute('position', 'bottom-right');
+    chatbot.setAttribute('locale', '${chatbotLocale}');
+    chatbot.setAttribute('user-role', '${chatbotUserRole}');
+    chatbot.setAttribute('page-context', '${chatbotPageContext}');
+    <c:if test="${not empty chatbotUserId}">
+    chatbot.setAttribute('user-id', '${chatbotUserId}');
+    </c:if>
+    <c:if test="${not empty chatbotEntityType}">
+    chatbot.setAttribute('entity-type', '${chatbotEntityType}');
+    chatbot.setAttribute('entity-id', '${chatbotEntityId}');
+    </c:if>
+    container.appendChild(chatbot);
+</script>
 
 <style>
     ec-chatbot {
