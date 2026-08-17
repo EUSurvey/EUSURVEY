@@ -125,7 +125,7 @@ public class SchemaService extends BasicService {
 		if (existing == null) {
 			Setting s = new Setting();
 			s.setKey(Setting.ChatbotWidgetURL);
-			s.setValue("http://ovishime.cc.cec.eu.int:8090/eusurvey/chatbot-demo/chat-widget.js");
+			s.setValue("http://ovishime.cc.cec.eu.int:8090/eusurvey/chatbot-demo/ec-chatbot.js");
 			s.setFormat("URL");
 			session.saveOrUpdate(s);
 		}
@@ -134,7 +134,7 @@ public class SchemaService extends BasicService {
 		if (existing == null) {
 			Setting s = new Setting();
 			s.setKey(Setting.ChatbotAPIURL);
-			s.setValue("http://ovishime.cc.cec.eu.int:8090/eusurvey/chatbot-api");
+			s.setValue("http://ovishime.cc.cec.eu.int:8090/eusurvey/chatbot-api/chatbot");
 			s.setFormat("URL");
 			session.saveOrUpdate(s);
 		}
