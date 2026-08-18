@@ -148,6 +148,7 @@ var Guestlist = function() {
 				_participants.Page(4);
 				break;
 			case "VoterFile":
+			case "VoterFileEmail":
 				_participants.Page(6);
 				break;
 		}		
@@ -540,7 +541,7 @@ var Participants = function() {
 		var result = [];
 		for (var i = 0; i < self.Guestlists().length; i++)
 		{
-			if (self.Guestlists()[i].type() == "VoterFile")
+			if (self.Guestlists()[i].type() == "VoterFile" || self.Guestlists()[i].type() == "VoterFileEmail")
 			{
 				result[result.length] = self.Guestlists()[i];
 			}

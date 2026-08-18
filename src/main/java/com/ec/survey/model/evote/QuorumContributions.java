@@ -3,7 +3,6 @@ package com.ec.survey.model.evote;
 import com.ec.survey.tools.JsonDateSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 import java.util.*;
 

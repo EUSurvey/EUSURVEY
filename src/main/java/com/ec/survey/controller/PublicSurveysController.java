@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.tools.Tools;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -40,12 +41,16 @@ public class PublicSurveysController extends BasicController {
 		
 		String filterowner = request.getParameter("filterowner");
 		if (filterowner == null) filterowner = (String) request.getSession().getAttribute("publicsurveysfilterowner");
-		
 		String filterrequestdatefrom = request.getParameter("filterrequestdatefrom");
 		if (filterrequestdatefrom == null) filterrequestdatefrom = (String) request.getSession().getAttribute("publicsurveysfilterrequestdatefrom");
 		
 		String filterrequestdateto = request.getParameter("filterrequestdateto");
 		if (filterrequestdateto == null) filterrequestdateto = (String) request.getSession().getAttribute("publicsurveysfilterrequestdateto");
+
+		if (filteralias != null) filteralias = Tools.encodeForHTML(filteralias);
+		if (filterowner != null) filterowner = Tools.encodeForHTML(filterowner);
+		if (filterrequestdatefrom != null) filterrequestdatefrom = Tools.encodeForHTML(filterrequestdatefrom);
+		if (filterrequestdateto != null) filterrequestdateto = Tools.encodeForHTML(filterrequestdateto);
 		
 		List<Survey> surveys = surveyService.getPublicSurveysForValidation(filteralias, filterowner, filterrequestdatefrom, filterrequestdateto);		
     	ModelAndView m =  new ModelAndView("administration/publicsurveys", "surveys", surveys);

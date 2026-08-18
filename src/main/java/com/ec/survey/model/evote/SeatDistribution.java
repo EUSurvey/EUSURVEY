@@ -14,7 +14,8 @@ public class SeatDistribution {
 	private double preferentialPercent;
 	private double preferentialPercentFinal;
 	private double listPercentWeighted;
-	
+	private boolean canHaveListVote;
+
 	public String getName() {
 		return name;
 	}
@@ -69,7 +70,7 @@ public class SeatDistribution {
 	public void setListPercentWeighted(double listPercentWeighted) {
 		this.listPercentWeighted = listPercentWeighted;
 	}
-	
+
 	public int getTotalWeighted() {
 		return listVotesWeighted + preferentialVotes;
 	}
@@ -92,5 +93,12 @@ public class SeatDistribution {
 	}
 	public void setLuxListVotes(int luxListVotes) {
 		this.luxListVotes = luxListVotes;
+	}
+	public boolean getCanHaveListVote() {
+		return canHaveListVote;
+	}
+
+	public void setCanHaveListVote(boolean canHaveListVote) {
+		this.canHaveListVote = canHaveListVote;
 	}
 }

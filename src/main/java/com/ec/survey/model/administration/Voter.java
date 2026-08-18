@@ -1,20 +1,26 @@
 package com.ec.survey.model.administration;
 
+import com.ec.survey.tools.ConversionTools;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "VOTERS", uniqueConstraints = {@UniqueConstraint(columnNames={"VOTER_ECMONIKER", "VOTER_SURVEY"}, name="VOTER_ECMONIKER_SURVEY")}, indexes = { @Index(name = "SURVEY_UID_IDX", columnList = "VOTER_SURVEY") })
+@Table(name = "VOTERS", uniqueConstraints = {@UniqueConstraint(columnNames={"VOTER_ECMONIKER", "VOTER_EMAIL", "VOTER_SURVEY"}, name="VOTER_ECMONIKER_EMAIL_SURVEY")}, indexes = { @Index(name = "SURVEY_UID_IDX", columnList = "VOTER_SURVEY") })
 public class Voter {
 	
 	private Integer id;	
 	private String givenName;
 	private String surname;
 	private String ecMoniker;
+	private String email;
 	private boolean voted;
 	private String surveyUid;
 	private Date created;
+	private Date invited;
+	private Date reminded;
 
 	@Id
 	@Column(name = "VOTER_ID")
@@ -61,6 +67,14 @@ public class Voter {
 		this.ecMoniker = ecMoniker;
 	}
 
+	@Column(name = "VOTER_EMAIL")
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	@Column(name = "USER_VOTED")
 	public boolean getVoted() {
 		return voted;
@@ -83,5 +97,35 @@ public class Voter {
 	}
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	@Column(name = "VOTER_INVITED")
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern="dd/MM/yyyy")
+	public Date getInvited()
+	{
+		return invited;
+	}
+	public void setInvited(Date invited)
+	{
+		this.invited = invited;
+	}
+
+	@Transient
+	public String getNiceInvited()
+	{
+		return ConversionTools.getFullString(invited);
+	}
+
+	@Column(name = "VOTER_REMINDED")
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern="dd/MM/yyyy")
+	public Date getReminded()
+	{
+		return reminded;
+	}
+	public void setReminded(Date reminded)
+	{
+		this.reminded = reminded;
 	}
 }

@@ -21,6 +21,7 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.exception.ECFException;
 import com.ec.survey.model.ECFProfile;
 import com.ec.survey.model.survey.ecf.ECFIndividualResult;
+import com.ec.survey.service.PDFService;
 import com.ec.survey.service.SelfAssessmentService;
 import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.*;
@@ -62,6 +63,9 @@ public class ContributionController extends BasicController {
 	
 	@Resource(name = "selfassessmentService")
 	protected SelfAssessmentService selfassessmentService;
+
+	@Resource(name = "pdfService")
+	protected PDFService pdfService;
 
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
@@ -201,6 +205,7 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparecontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparecontribution(@PathVariable String code, Locale locale, HttpServletRequest request)
 			throws Exception {
+
 		ModelAndView result = editContributionInner(code, locale, request, false, false, false);
 
 		Form f = (Form) result.getModel().get("form");
@@ -208,6 +213,12 @@ public class ContributionController extends BasicController {
 		f.setForPDF(true);
 
 		AnswerSet answerSet = this.answerService.get(code);
+
+		var pdfCode = request.getParameter("pdfcode");
+		if (!surveyService.validateAndDeletePDFCode(pdfCode, answerSet.getSurvey().getUniqueId(), answerSet.getId())) {
+			throw new MessageException("Invalid PDF code");
+		}
+
 		if (answerSet.getSurvey().getIsECF()) {
 			ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
 			List<String> base64ECFSpiderCharts = ecfService.spiderChartsB64ByECFType(individualResult);
@@ -224,6 +235,13 @@ public class ContributionController extends BasicController {
 	public ModelAndView preparedraft(@PathVariable String code, Locale locale, HttpServletRequest request)
             throws Exception {
 		ModelAndView result = editContributionInner(code, locale, request, false, false, true);
+
+		Draft draft = this.answerService.getDraft(code);
+
+		var pdfCode = request.getParameter("pdfcode");
+		if (!surveyService.validateAndDeletePDFCode(pdfCode, draft.getAnswerSet().getSurvey().getUniqueId(), draft.getAnswerSet().getId())) {
+			throw new MessageException("Invalid PDF code");
+		}
 
 		Form f = (Form) result.getModel().get("form");
 		SurveyHelper.calcTableWidths(f.getSurvey(), f);

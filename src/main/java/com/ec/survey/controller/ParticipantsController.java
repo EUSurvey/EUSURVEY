@@ -192,7 +192,7 @@ public class ParticipantsController extends BasicController {
 				activityService.log(ActivityRegistry.ID_GUEST_LIST_PAUSED, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
 				break;
 			case "delete":
-				if (g.getType() == ParticipationGroupType.VoterFile) {
+				if (g.getType() == ParticipationGroupType.VoterFile || g.getType() == ParticipationGroupType.VoterFileEmail) {
 					eVoteService.deleteAllVoters(survey.getUniqueId());
 				}
 				
@@ -666,24 +666,42 @@ public class ParticipantsController extends BasicController {
 				participationGroup.getTemplateSubject() != null ? participationGroup.getTemplateSubject()
 						: "Invitation");
 
-		Map<Integer, Invitation> invitationsByAttendee = attendeeService
-				.getInvitationsByAttendeeForParticipationGroup(participationGroup.getId());
+		if (participationGroup.getType() == ParticipationGroupType.VoterFileEmail || participationGroup.getType() == ParticipationGroupType.VoterFile) {
 
-		for (Attendee attendee : participationGroup.getAttendees()) {
-			if (invitationsByAttendee.containsKey(attendee.getId())) {
-				Invitation invitation = invitationsByAttendee.get(attendee.getId());
-				attendee.setInvited(invitation.getInvited());
-				attendee.setReminded(invitation.getReminded());
-				attendee.setAnswers(invitation.getAnswers());
+			List<Voter> voters = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 100000, null, null, null, null, null);
+			result.addObject("voters", voters);
+
+			for (Voter voter : voters) {
+				if (voter.getEmail() == null || voter.getEmail().equals("")) {
+					ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+					String message = resources.getMessage("error.VoterWithoutEmail", null,
+							"There are voters in your voter file that have no email address.", locale);
+					model.addObject(Constants.MESSAGE, message);
+					return model;
+				}
 			}
-		}
 
-		for (EcasUser ecasUser : participationGroup.getEcasUsers()) {
-			if (invitationsByAttendee.containsKey(ecasUser.getId())) {
-				Invitation invitation = invitationsByAttendee.get(ecasUser.getId());
-				ecasUser.setInvited(invitation.getInvited());
-				ecasUser.setReminded(invitation.getReminded());
-				ecasUser.setAnswers(invitation.getAnswers());
+		} else {
+
+			Map<Integer, Invitation> invitationsByAttendee = attendeeService
+					.getInvitationsByAttendeeForParticipationGroup(participationGroup.getId());
+
+			for (Attendee attendee : participationGroup.getAttendees()) {
+				if (invitationsByAttendee.containsKey(attendee.getId())) {
+					Invitation invitation = invitationsByAttendee.get(attendee.getId());
+					attendee.setInvited(invitation.getInvited());
+					attendee.setReminded(invitation.getReminded());
+					attendee.setAnswers(invitation.getAnswers());
+				}
+			}
+
+			for (EcasUser ecasUser : participationGroup.getEcasUsers()) {
+				if (invitationsByAttendee.containsKey(ecasUser.getId())) {
+					Invitation invitation = invitationsByAttendee.get(ecasUser.getId());
+					ecasUser.setInvited(invitation.getInvited());
+					ecasUser.setReminded(invitation.getReminded());
+					ecasUser.setAnswers(invitation.getAnswers());
+				}
 			}
 		}
 
@@ -889,7 +907,7 @@ public class ParticipantsController extends BasicController {
 			} else if (group.getType() == ParticipationGroupType.Static) {
 				group.setChildren(group.getAttendees().size());
 				group.setAttendees(null);
-			} else if (group.getType() == ParticipationGroupType.VoterFile) {
+			} else if (group.getType() == ParticipationGroupType.VoterFile ||  group.getType() == ParticipationGroupType.VoterFileEmail) {
 				group.setChildren((int) eVoteService.getVoterCount(survey.getUniqueId(), null));
 				group.setInvited((int) eVoteService.getVoterCount(survey.getUniqueId(), true));
 			} else {
@@ -1280,12 +1298,14 @@ public class ParticipantsController extends BasicController {
 			}
 			
 			String user = request.getParameter("user");
+			String email = request.getParameter("email");
 			String first = request.getParameter("first");
 			String last = request.getParameter("last");
 			String svoted = request.getParameter("voted");
 			Boolean voted = svoted == null ? null : Boolean.parseBoolean(svoted);
 			
 			request.getSession().setAttribute("VotersUserFilter", user);
+			request.getSession().setAttribute("VotersEmailFilter", email);
 			request.getSession().setAttribute("VotersFirstFilter", first);
 			request.getSession().setAttribute("VotersLastFilter", last);
 			request.getSession().setAttribute("VotersVotedFilter", voted);
@@ -1303,7 +1323,7 @@ public class ParticipantsController extends BasicController {
 
 			int itemsPerPage = 20;
 			
-			List<Voter> result = eVoteService.getVoters(form.getSurvey().getUniqueId(), Integer.parseInt(page), itemsPerPage, user, first, last, voted);
+			List<Voter> result = eVoteService.getVoters(form.getSurvey().getUniqueId(), Integer.parseInt(page), itemsPerPage, user, email, first, last, voted);
 			
 			return result;
 		} catch (Exception e) {
@@ -1328,12 +1348,13 @@ public class ParticipantsController extends BasicController {
 			}
 			
 			String user = request.getParameter("user");
+			String email = request.getParameter("email");
 			String first = request.getParameter("first");
 			String last = request.getParameter("last");
 			String svoted = request.getParameter("voted");
 			Boolean voted = svoted == null ? null : Boolean.parseBoolean(svoted);
 			
-			int result = (int) eVoteService.getVoterCount(form.getSurvey().getUniqueId(), user, first, last, voted);
+			int result = (int) eVoteService.getVoterCount(form.getSurvey().getUniqueId(), user, email, first, last, voted);
 			
 			return result;
 		} catch (Exception e) {
@@ -1367,10 +1388,10 @@ public class ParticipantsController extends BasicController {
 				throw new ForbiddenURLException();
 			}
 			
-			ArrayList<Voter> voters = eVoteService.importVoterFile(form.getSurvey().getUniqueId(), is);
+			ArrayList<Voter> voters = eVoteService.importVoterFile(form.getSurvey().getUniqueId(), is, form.getSurvey().geteVoteTemplate());
 			if (voters.size() > 0) {
 				eVoteService.addVoters(voters, u);
-				List<Voter> firstVoterPage = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 20, null, null, null, null);
+				List<Voter> firstVoterPage = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 20, null, null, null, null, null);
 				response.setStatus(HttpServletResponse.SC_OK);
 				return firstVoterPage;
 			}
@@ -1391,15 +1412,12 @@ public class ParticipantsController extends BasicController {
 		return null;
 	}
 
-	@RequestMapping(value = "/emptyvoterfile", method = { RequestMethod.GET, RequestMethod.HEAD })
-	@ResponseBody
-	public ResponseEntity<byte[]> emptyvoterfile(HttpServletRequest request, HttpServletResponse response) {
-
+	private ResponseEntity<byte[]> emptyvoterfile(HttpServletRequest request, HttpServletResponse response, boolean useEmailVariant) {
 		final HttpHeaders headers = new HttpHeaders();
 
 		try {
 
-			byte[] file = eVoteService.exportVoterFile(new LinkedList<>());
+			byte[] file = eVoteService.exportVoterFile(new LinkedList<>(), useEmailVariant);
 
 			response.setContentType("application/vnd.ms-excel");
 			response.setHeader("Content-Disposition", "attachment;filename=voterfile.xlsx");
@@ -1415,6 +1433,18 @@ public class ParticipantsController extends BasicController {
 		}
 
 		return null;
+	}
+
+	@RequestMapping(value = "/emptyvoterfilelogin", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@ResponseBody
+	public ResponseEntity<byte[]> emptyvoterfilelogin(HttpServletRequest request, HttpServletResponse response) {
+		return emptyvoterfile(request, response, false);
+	}
+
+	@RequestMapping(value = "/emptyvoterfileemail", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@ResponseBody
+	public ResponseEntity<byte[]> emptyvoterfileemail(HttpServletRequest request, HttpServletResponse response) {
+		return emptyvoterfile(request, response, true);
 	}
 	
 	@PostMapping(value = "/deleteVoter")
@@ -1507,7 +1537,7 @@ public class ParticipantsController extends BasicController {
 				if (!votersList.isEmpty()) {
 					eVoteService.addMoreVoters(votersList, u);
 				}
-				List<Voter> firstVoterPage = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 20, null, null, null, null);
+				List<Voter> firstVoterPage = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 20, null, null, null, null, null);
 				response.setStatus(HttpServletResponse.SC_OK);
 				return firstVoterPage;
 			}

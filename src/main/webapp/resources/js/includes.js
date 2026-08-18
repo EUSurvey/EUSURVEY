@@ -322,7 +322,7 @@ function initModals(item)
 			changeYear: true,
 			hideIfNoPrevNext: true,
 			showButtonPanel: showpanel,
-			
+
 			 onSelect: function(dateText, inst) {
 				 
 				if ($(this).attr("data-hidden"))
@@ -1503,11 +1503,11 @@ function initModals(item)
 		
 		$(parent).find(".hp").each(function(){
 
-			if ($(this).val().length > 0)
+			if ($(this).text().length > 0)
 		 	{
 		 		validationinfo +=  "honeypot ";
 		 		addValidationError.andFocus(this, honeypotError);
-		 		$("#btnSubmit").parent().append("<div id='exceptionlogdiv' class='validation-error'>Text '" + $(this).val() + "' in honeypot element found. Please remove it.</div>");
+		 		$("#btnSubmit").parent().append("<div id='exceptionlogdiv' class='validation-error'>Text in honeypot element found. Please remove it.</div>");
 		 		result = false;
 		 	}                      
 		});

@@ -3,9 +3,9 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.LocalPrivilege;
+import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
-import com.ec.survey.model.chargeback.OrganisationCharge;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
@@ -14,7 +14,7 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.MissingAnswersForReadonlyMandatoryQuestionException;
 import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Tools;
-import com.ec.survey.tools.Ucs2Utf8;
+import com.ec.survey.tools.activity.ActivityRegistry;
 import com.ec.survey.tools.export.XmlExportCreator;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
@@ -24,23 +24,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLDecoder;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/webservice")
@@ -1514,6 +1507,234 @@ public class WebServiceController extends BasicController {
 		}
 		return "";
 	}
+
+	@GetMapping(value = "/addPrivilegedUser/{alias}/{type}/{login}/{accessFormPreview}/{results}/{formManagement}/{manageInvitations}", produces = "text/html")
+	public @ResponseBody String addPrivilegedUser(@PathVariable String alias, @PathVariable String type, @PathVariable String login, @PathVariable String accessFormPreview,
+												  @PathVariable String results, @PathVariable String formManagement, @PathVariable String manageInvitations,
+												  HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			User currentUser = getUser(request, response, true);
+			if (currentUser == null)
+				return "";
+
+			Survey survey = getSurvey(alias, currentUser, request, response, true, false);
+			if (survey == null)
+				return "survey not found";
+
+			if (!type.equalsIgnoreCase("system") && !type.equalsIgnoreCase("EULogin")) {
+				response.setStatus(412);
+				return "invalid type";
+			}
+
+			boolean isEcasUser = type.equalsIgnoreCase("EULogin");
+
+			if (!"02".contains(accessFormPreview)) {
+				response.setStatus(412);
+				return "invalid value for AccessFormPreview";
+			}
+
+			if (!"012".contains(results)) {
+				response.setStatus(412);
+				return "invalid value for Results";
+			}
+
+			if (!"012".contains(formManagement)) {
+				response.setStatus(412);
+				return "invalid value for FormManagement";
+			}
+
+			if (!"012".contains(manageInvitations)) {
+				response.setStatus(412);
+				return "invalid value for ManageInvitations";
+			}
+
+			// find user
+			User user = null;
+			try {
+				user = administrationService.getUserForLogin(login, isEcasUser);
+			} catch (Exception e) {
+				// ignore
+			}
+
+			if (user == null && isEcasUser) {
+				user = new User();
+				user.setLogin(login);
+				user.setDisplayName(ldapService.getMoniker(login));
+				user.setEmail(ldapService.getEmail(login));
+				user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));
+				user.setType(User.ECAS);
+
+				Role ecRole = null;
+				for (Role role : administrationService.getAllRoles()) {
+					if (role.getName().equalsIgnoreCase("Form Manager (EC)"))
+						ecRole = role;
+				}
+
+				user.getRoles().add(ecRole);
+				try {
+					administrationService.createUser(user);
+				} catch (Exception e) {
+					logger.error(e.getLocalizedMessage(), e);
+					user = null;
+				}
+			}
+			if (user == null) {
+				response.setStatus(412);
+				return "invalid login";
+			}
+
+			// add access
+			List<Access> accesses = surveyService.getAccesses(survey.getId());
+			for (Access access : accesses) {
+				if (access.getUser() != null && access.getUser().getId().equals(user.getId())) {
+					response.setStatus(412);
+					return "privileges for this user already exist";
+				}
+			}
+
+			Access access = new Access();
+			access.setSurvey(survey);
+			access.setUser(user);
+
+			var privs = new HashMap<LocalPrivilege, Integer>();
+			privs.put(LocalPrivilege.AccessDraft, Integer.parseInt(accessFormPreview));
+			privs.put(LocalPrivilege.AccessResults, Integer.parseInt(results));
+			privs.put(LocalPrivilege.FormManagement, Integer.parseInt(formManagement));
+			privs.put(LocalPrivilege.ManageInvitations, Integer.parseInt(manageInvitations));
+			access.setLocalPrivileges(privs);
+
+			surveyService.saveAccess(access);
+			activityService.log(ActivityRegistry.ID_DELEGATE_MANAGER_ADD, null, currentUser.getName() + " - no privileges",
+					currentUser.getId(), survey.getUniqueId());
+
+			webserviceService.increaseServiceRequest(currentUser.getId());
+			response.setStatus(200);
+			return "";
+		} catch (NumberFormatException ne) {
+			logger.error(ne.getLocalizedMessage(), ne);
+			response.setStatus(412);
+			return "invalid parameter";
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			response.setStatus(500);
+			return "server error";
+		}
+	}
+
+	private Access getAccessForLogin(int surveyId, String login) {
+		List<Access> accesses = surveyService.getAccesses(surveyId);
+		for (Access access : accesses) {
+			if (access.getUser() != null && access.getUser().getLogin().equals(login)) {
+				return access;
+			}
+		}
+		return null;
+	}
+
+	@GetMapping(value = "/updatePrivilegedUser/{alias}/{login}/{accessFormPreview}/{results}/{formManagement}/{manageInvitations}", produces = "text/html")
+	public @ResponseBody String updatePrivilegedUser(@PathVariable String alias, @PathVariable String login, @PathVariable String accessFormPreview,
+	                                              @PathVariable String results, @PathVariable String formManagement, @PathVariable String manageInvitations,
+	                                              HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			User currentUser = getUser(request, response, true);
+			if (currentUser == null)
+				return "";
+
+			Survey survey = getSurvey(alias, currentUser, request, response, true, false);
+			if (survey == null)
+				return "survey not found";
+
+			if (!"02".contains(accessFormPreview)) {
+				response.setStatus(412);
+				return "invalid value for AccessFormPreview";
+			}
+
+			if (!"012".contains(results)) {
+				response.setStatus(412);
+				return "invalid value for Results";
+			}
+
+			if (!"012".contains(formManagement)) {
+				response.setStatus(412);
+				return "invalid value for FormManagement";
+			}
+
+			if (!"012".contains(manageInvitations)) {
+				response.setStatus(412);
+				return "invalid value for ManageInvitations";
+			}
+
+			// find access
+			Access access = getAccessForLogin(survey.getId(), login);
+			if (access == null) {
+				response.setStatus(412);
+				return "no privilege to update for this login";
+			}
+
+			String oldInfo = access.getInfo();
+
+			access.getLocalPrivileges().put(LocalPrivilege.AccessDraft, Integer.parseInt(accessFormPreview));
+			access.getLocalPrivileges().put(LocalPrivilege.AccessResults, Integer.parseInt(results));
+			access.getLocalPrivileges().put(LocalPrivilege.FormManagement, Integer.parseInt(formManagement));
+			access.getLocalPrivileges().put(LocalPrivilege.ManageInvitations, Integer.parseInt(manageInvitations));
+
+			surveyService.saveAccess(access);
+			activityService.log(ActivityRegistry.ID_PRIVILEGES_EDIT, oldInfo, access.getInfo(),
+					currentUser.getId(), survey.getUniqueId());
+
+			webserviceService.increaseServiceRequest(currentUser.getId());
+			response.setStatus(200);
+			return "";
+		} catch (NumberFormatException ne) {
+			logger.error(ne.getLocalizedMessage(), ne);
+			response.setStatus(412);
+			return "invalid parameter";
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			response.setStatus(500);
+			return "server error";
+		}
+	}
+
+	@GetMapping(value = "/deletePrivilegedUser/{alias}/{login}", produces = "text/html")
+	public @ResponseBody String deletePrivilegedUser(@PathVariable String alias, @PathVariable String login,
+	                                                 HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			User currentUser = getUser(request, response, true);
+			if (currentUser == null)
+				return "";
+
+			Survey survey = getSurvey(alias, currentUser, request, response, true, false);
+			if (survey == null)
+				return "survey not found";
+
+			// find access
+			Access access = getAccessForLogin(survey.getId(), login);
+			if (access == null) {
+				response.setStatus(412);
+				return "no privilege to update for this login";
+			}
+
+			surveyService.deleteAccess(access);
+			activityService.log(ActivityRegistry.ID_PRIVILEGES_DELETE, access.getInfo(), null, currentUser.getId(),
+					access.getSurvey().getUniqueId());
+
+			webserviceService.increaseServiceRequest(currentUser.getId());
+			response.setStatus(200);
+			return "";
+		} catch (NumberFormatException ne) {
+			logger.error(ne.getLocalizedMessage(), ne);
+			response.setStatus(412);
+			return "invalid parameter";
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			response.setStatus(500);
+			return "server error";
+		}
+	}
 	
 	@RequestMapping(value = "/publishSurvey/{alias}", method = { RequestMethod.GET,
 			RequestMethod.HEAD }, produces = "text/html")
@@ -2684,5 +2905,105 @@ public class WebServiceController extends BasicController {
 			return "";
 		}
 	}
-	
+
+	private final Pattern aliasPattern = Pattern.compile("^[a-zA-Z0-9-_]+$");
+
+	@GetMapping(value = "/copySurvey/{alias}", produces = "text/html")
+	public @ResponseBody String copySurvey(@PathVariable String alias, HttpServletRequest request,
+	                                              HttpServletResponse response) {
+
+		Survey copy = null;
+
+		try {
+			User user = getUser(request, response, true);
+			if (user == null)
+				return "";
+
+			Survey original = getSurvey(alias, user, request, response, true, true);
+			if (original == null)
+				return "survey not found";
+
+			var newAlias = request.getParameter("newalias");
+			if (newAlias == null)
+				newAlias = UUID.randomUUID().toString();
+
+			if (!aliasPattern.matcher(newAlias).matches()) {
+				response.setStatus(412);
+				return "Alias must be composed of lowercase and uppercase letters (a-z and A-Z), numbers (0-9), hyphens and underscores only.";
+			}
+
+			var newTitle = request.getParameter("newtitle");
+			if (newTitle == null)
+				newTitle = original.getTitle() + "_copy";
+
+			var copyPrivileges = Boolean.parseBoolean(request.getParameter("copyprivileges"));
+
+
+			// check if shortname already exists
+			Survey existingSurvey = surveyService.getSurvey(newAlias, true, false, false, false, null, true,
+					false);
+			if (existingSurvey != null && !existingSurvey.getIsDeleted()) {
+				response.setStatus(412);
+				return "A survey with this alias already exists.";
+			}
+
+			copy = original.copy(surveyService, original.getOwner(), fileDir, false, -1,
+					-1, false, false, false, newAlias, UUID.randomUUID().toString());
+
+			Map<String, String> convertedUIDs = surveyService.copyFiles(copy, new HashMap<>(), false, null, original.getUniqueId());
+
+			Map<String, String> oldToNewUniqueIds = new HashMap<>();
+			oldToNewUniqueIds.put("", ""); // leave blank for old surveys that have no uniqueIds
+
+			// recreate unique ids
+			for (Element elem : copy.getElementsRecursive(true)) {
+				String newUniqueId = UUID.randomUUID().toString();
+				if (!oldToNewUniqueIds.containsKey(elem.getUniqueId())) {
+					oldToNewUniqueIds.put(elem.getUniqueId(), newUniqueId);
+				}
+				elem.setUniqueId(newUniqueId);
+			}
+
+			copy.setNumberOfAnswerSets(0);
+			copy.setNumberOfAnswerSetsPublished(0);
+
+			copy.setTitle(Tools.filterHTML(newTitle));
+
+			copy.setAutomaticPublishing(false);
+			copy.setPreventGoingBack(false);
+			copy.setStart(null);
+			copy.setEnd(null);
+			copy.setNotificationValue(null);
+
+			copy.setSaveAsDraft(copy.getSaveAsDraft() && !copy.getIsDelphi() && !copy.getIsEVote());
+
+			if (copy.getIsSelfAssessment() && original.getIsSelfAssessment()) {
+				selfassessmentService.copyData(original.getUniqueId(), copy);
+			} else {
+				surveyService.update(copy, false, true, user.getId());
+			}
+
+			surveyService.copiedSurveyApplyTranslations(copy, original, oldToNewUniqueIds, convertedUIDs, true, user.getId());
+
+			if (copyPrivileges) {
+				surveyService.copiedSurveyApplyPrivileges(copy, original);
+			}
+
+			activityService.log(ActivityRegistry.ID_SURVEY_COPIED, original.getId().toString(), copy.getId().toString(), user.getId(),
+					copy.getUniqueId());
+
+			webserviceService.increaseServiceRequest(user.getId());
+			response.setStatus(200);
+			return copy.getId().toString() +  " (" + copy.getShortname() + ")";
+		} catch (Exception e) {
+
+			if (copy != null) {
+				surveyService.delete(copy);
+			}
+
+			logger.error(e.getLocalizedMessage(), e);
+			response.setStatus(500);
+			return "";
+		}
+	}
 }

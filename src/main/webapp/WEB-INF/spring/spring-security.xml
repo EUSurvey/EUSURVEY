@@ -56,6 +56,7 @@
 		<security:intercept-url pattern="/validate/**"	access="permitAll" />
 		<security:intercept-url pattern="/validateNewEmail/**"	access="permitAll" />		
 		<security:intercept-url pattern="/deleteaccount/**" access="permitAll" />
+		<security:intercept-url pattern="/runner/sendevote"	access="permitAll" />
 		<security:intercept-url pattern="/runner/**"	access="permitAll" />
 		<security:intercept-url pattern="/runner2/**"	access="permitAll" />
 		<security:intercept-url pattern="/publication/**"	access="permitAll" />

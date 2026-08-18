@@ -5,6 +5,7 @@ import com.ec.survey.model.ParticipationGroup;
 import com.ec.survey.model.ParticipationGroupType;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.administration.Voter;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Attribute;
 import com.ec.survey.model.attendees.Invitation;
@@ -53,6 +54,9 @@ public class InvitationMailCreator implements Runnable {
 	
 	@Resource(name = "activityService")
 	protected ActivityService activityService;
+
+	@Resource(name = "eVoteService")
+	protected EVoteService eVoteService;
 	
 	public @Autowired ServletContext servletContext;
 	
@@ -82,7 +86,19 @@ public class InvitationMailCreator implements Runnable {
 			
 			if (task.getSelectedAttendee() != null && task.getSelectedAttendee().trim().length() > 0)
 			{
-				if (participationGroup.getType() == ParticipationGroupType.ECMembers)
+				if (participationGroup.getType() == ParticipationGroupType.VoterFileEmail || participationGroup.getType() == ParticipationGroupType.VoterFile) {
+					Voter voter = eVoteService.getVoter(Integer.parseInt(task.getSelectedAttendee()));
+					try {
+						createAndSendInvitation(voter, sender, user.getFirstLastName(), task.getSenderAddress(), task.getSenderSubject(), survey, task.getText1(), task.getText2(), task.getMailtemplate());
+						message = new StringBuilder("Voter " + voter.getDisplayName() + " has been invited");
+						task.setMailsSent(1);
+						task.setState(MailTask.FINISHED);
+					} catch (MessagingException e) {
+						logger.error(e.getMessage(), e);
+						message = new StringBuilder("There was a problem during invitation of voter " + voter.getDisplayName() + ". Please contact your support.");
+						task.setState(MailTask.ERROR);
+					}
+				} else if (participationGroup.getType() == ParticipationGroupType.ECMembers)
 				{
 					EcasUser ecasUser = participationGroup.getEcasUser(Integer.parseInt(task.getSelectedAttendee())); 
 					try {
@@ -95,8 +111,7 @@ public class InvitationMailCreator implements Runnable {
 						message = new StringBuilder("There was a problem during invitation of attendee " + ecasUser.getName() + ". Please contact your support.");
 						task.setState(MailTask.ERROR);
 					}
-				} else {			
-				
+				} else {
 					Attendee attendee = participationGroup.getAttendee(Integer.parseInt(task.getSelectedAttendee()));			
 					try {
 						createAndSendInvitation(participationGroup, attendee, sender, user.getFirstLastName(), task.getSenderAddress(), task.getSenderSubject(), survey, task.getText1(), task.getText2(), task.getMailtemplate());
@@ -118,8 +133,20 @@ public class InvitationMailCreator implements Runnable {
 					if (key.startsWith("attendee"))
 					{
 						int intKey = Integer.parseInt(key.substring(8));
-											
-						if (participationGroup.getType() == ParticipationGroupType.ECMembers)
+
+						if (participationGroup.getType() == ParticipationGroupType.VoterFileEmail || participationGroup.getType() == ParticipationGroupType.VoterFile) {
+
+							Voter voter = eVoteService.getVoter(intKey);
+							try {
+								createAndSendInvitation(voter, sender, user.getFirstLastName(), task.getSenderAddress(), task.getSenderSubject(), survey, task.getText1(), task.getText2(), task.getMailtemplate());
+								successfullInvitations.add(voter.getDisplayName());
+							} catch (MessagingException e) {
+								logger.error(e.getMessage(), e);
+								message.append("There was a problem during invitation of voter ").append(voter.getDisplayName()).append("<br />");
+								task.setState(MailTask.ERROR);
+							}
+
+						} else if (participationGroup.getType() == ParticipationGroupType.ECMembers)
 						{
 							EcasUser ecasUser = participationGroup.getEcasUser(intKey); 
 							try {
@@ -204,6 +231,33 @@ public class InvitationMailCreator implements Runnable {
 		String text = getMailTemplate(mailtemplate).replace("[CONTENT]", body).replace("[HOST]", host);
 		
 		mailService.SendHtmlMail(ecasUser.getEmail(), senderAddress, reply, subject, text, invitation.getUniqueId());
+	}
+
+	private void createAndSendInvitation(Voter voter, String senderAddress, String sendername, String reply, String subject, Survey survey, String text1, String text2, String mailtemplate) throws Exception {
+		if (voter.getInvited() == null)
+		{
+			voter.setInvited(new Date());
+		} else {
+			voter.setReminded(new Date());
+		}
+		eVoteService.update(voter);
+
+		String middleText = host + "runner/" + survey.getShortname();
+
+		String body = text1;
+		if (!text1.endsWith("</p>")) {
+			body += "<br /><br />";
+		}
+		body += "<a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
+		body = body.replace("{Name}", voter.getDisplayName());
+		body = insertDisclaimer(survey, body);
+		body += "<br/><br/><span style=\"font-size: 9pt; color: #999\">This message was sent by " + sendername + " using EUSurvey's invitation service</span>";
+
+		subject = subject.replace("{Name}", voter.getDisplayName());
+
+		String text = getMailTemplate(mailtemplate).replace("[CONTENT]", body).replace("[HOST]", host);
+
+		mailService.SendHtmlMail(voter.getEmail(), senderAddress, reply, subject, text, null);
 	}
 	
 	private String getMailTemplate(String name)

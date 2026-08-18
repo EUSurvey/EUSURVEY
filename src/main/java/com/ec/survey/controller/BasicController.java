@@ -12,6 +12,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.model.*;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.tools.activity.ActivityRegistry;
 import org.apache.catalina.connector.ClientAbortException;
@@ -44,10 +45,6 @@ import com.ec.survey.exception.httpexception.ForbiddenException;
 import com.ec.survey.exception.httpexception.InternalServerErrorException;
 import com.ec.survey.exception.httpexception.NotFoundException;
 import com.ec.survey.exception.httpexception.UnauthorizedException;
-import com.ec.survey.model.AnswerSet;
-import com.ec.survey.model.Archive;
-import com.ec.survey.model.Draft;
-import com.ec.survey.model.Setting;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.chargeback.SubmittedContribution;
 import com.ec.survey.service.ActivityService;
@@ -455,13 +452,18 @@ public class BasicController implements BeanFactoryAware {
 		if (existingAnswerSet && answerSet.getSurvey().getIsDraft() && activityService.isLogEnabled(ActivityRegistry.ID_TEST_EDIT)) {
 			oldvalues = answerService.serializeOriginal(answerSet.getId());
 		}
-		
-		if (answerSet.getSurvey().getIsEVote()) {
+
+		if (surveyService.usesVoterFileEmail(answerSet.getSurvey())) {
+			String email = (String) request.getSession().getAttribute("USEREMAIL");
+			if (email == null || !eVoteService.checkVoterByEmail(answerSet.getSurvey().getUniqueId(), email)) {
+				throw new MessageException("Invalid voter");
+			}
+			eVoteService.setVotedByEmail(answerSet.getSurvey().getUniqueId(), email);
+		} else if (answerSet.getSurvey().getIsEVote()) {
 			String ecmoniker = (String) request.getSession().getAttribute("ECMONIKER");
 			if (ecmoniker == null || !eVoteService.checkVoter(answerSet.getSurvey().getUniqueId(), ecmoniker)) {
 				throw new MessageException("Invalid voter");
 			}
-			
 			eVoteService.setVoted(answerSet.getSurvey().getUniqueId(), ecmoniker);
 		}
 
@@ -516,14 +518,14 @@ public class BasicController implements BeanFactoryAware {
 		}
 	}
 
-	public Survey editSave(Survey survey, HttpServletRequest request)
+	public Survey editSave(Survey survey, HttpServletRequest request, int userId)
 			throws InvalidXHTMLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException,
 			IOException, InterruptedException {
 		int counter = 1;
 
 		while (true) {
 			try {
-				survey = surveyService.editSave(survey, request);
+				survey = surveyService.editSave(survey, request, userId);
 				return survey;
 			} catch (org.hibernate.exception.LockAcquisitionException
 					| org.springframework.dao.CannotAcquireLockException ex) {

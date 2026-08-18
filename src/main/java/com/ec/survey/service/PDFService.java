@@ -73,6 +73,7 @@ public class PDFService extends BasicService {
 		FileOutputStream os = null;
 		PDFRenderer renderer = null;
 		try {
+			var newPDFCode = surveyService.createNewPDFCode(survey.getUniqueId(), 0);
 
 			if (target == null) {
 				target = fileService.getSurveyPDFFile(survey.getUniqueId(), survey.getId(), lang);
@@ -85,7 +86,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + "runner/preparesurvey/" + survey.getId() + "?lang=" + lang, os);
+			renderer.createPDF(pdfhost + "runner/preparesurvey/" + survey.getId() + "?lang=" + lang + "&pdfcode=" + newPDFCode, os);
 			return target;
 		} catch (Exception ex) {
 			logger.error(String.format("PDF creation for survey %s could not be started.", shortname));
@@ -201,6 +202,8 @@ public class PDFService extends BasicService {
 		FileOutputStream os = null;
 		PDFRenderer renderer = null;
 		try {
+			var newPDFCode = surveyService.createNewPDFCode(surveyUid, answerSetId);
+
 			java.io.File target = null;
 			java.io.File folder = fileService.getSurveyExportsFolder(surveyUid);
 			target = new java.io.File(String.format("%s/%s%s.pdf", folder.getPath(), isDraft ? "draft" : Constants.ANSWER, uniqueCode));
@@ -211,7 +214,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target, false);
-			renderer.createPDF(pdfhost + (isDraft ? "preparedraft/" : "preparecontribution/") + uniqueCode, os);
+			renderer.createPDF(pdfhost + (isDraft ? "preparedraft/" : "preparecontribution/") + uniqueCode + "?pdfcode=" + newPDFCode, os);
 
 			return target;
 		} catch (Exception ex) {
@@ -461,7 +464,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + "preparesaresults/" + answerSet.getUniqueCode() + "/" + dataset + "?charts=" + chartsUID, os);
+			renderer.createPDF(pdfhost + "preparesaresults/" + answerSet.getUniqueCode() + "/" + dataset + ((charts != null && charts.length() > 0) ? ("?charts=" + chartsUID) : ""), os);
 
 			return target;
 		} catch (Exception ex) {

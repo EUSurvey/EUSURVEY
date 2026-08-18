@@ -1303,7 +1303,7 @@ qq.extend(qq.UploadHandlerForm.prototype, {
             if (innerHTML.slice(0, 5).toLowerCase() == '<pre>' && innerHTML.slice(-6).toLowerCase() == '</pre>') {
                 innerHTML = doc.body.firstChild.firstChild.nodeValue;
             }
-            response = eval("(" + innerHTML + ")");
+            response = JSON.parse(innerHTML);
         } catch(err){
             response = {success: false};
         }
@@ -1481,7 +1481,7 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
             var response;
 
             try {
-                response = eval("(" + xhr.responseText + ")");
+                response = JSON.parse(xhr.responseText);
             } catch(err){
                 response = {};
             }

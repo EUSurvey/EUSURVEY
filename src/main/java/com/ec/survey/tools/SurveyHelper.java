@@ -31,7 +31,7 @@ public class SurveyHelper {
 
 	private static final Logger logger = Logger.getLogger(SurveyHelper.class);
 
-	private static void gatherExplanationUploadsForQuestion(Survey survey, Question question, String uniqueCode, AnswerSet answerSet, AnswerSet.ExplanationData explanationData, FileService fileService) {
+	private static void gatherExplanationUploadsForQuestion(Survey survey, Question question, String uniqueCode, AnswerSet answerSet, AnswerSet.ExplanationData explanationData, FileService fileService) throws IOException {
 		// find temporary directory
 		java.io.File rootfolder = fileService.getSurveyExplanationUploadsFolder(survey.getUniqueId(), false);
 		java.io.File directory = new java.io.File(
@@ -42,7 +42,7 @@ public class SurveyHelper {
 		}
 	}
 
-	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode, boolean update, String languageCode, User user, FileService fileService) {
+	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode, boolean update, String languageCode, User user, FileService fileService) throws IOException {
 		Map<Integer, Question> questions = survey.getQuestionMap();
 		Map<Integer, Element> matrixQuestions = survey.getMatrixMap();
 
@@ -1434,7 +1434,7 @@ public class SurveyHelper {
 	}
 
 	private static Image getImage(Map<String, String[]> parameterMap, Element currentElement, String id,
-			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+			ServletContext servletContext, boolean log220, FileService fileService, String surveyUid, int userId) throws InvalidXHTMLException, IOException {
 		Image image;
 		String oldValues = "";
 		String newValues = "";
@@ -1509,7 +1509,19 @@ public class SurveyHelper {
 			oldValues += " url: " + image.getUrl();
 			newValues += " url: " + url;
 		}
+
 		image.setUrl(url);
+
+		if (url.contains(Constants.PATH_DELIMITER + "USER" +  Constants.PATH_DELIMITER)) {
+			String[] aurl = url.split("/");
+			String fileUID = aurl[aurl.length - 1];
+			if (!fileUID.equals("photo_scenery.png")) {
+				File fileCopy = fileService.copyFileFromUserFolder(fileUID, surveyUid, userId);
+				aurl[aurl.length - 1] = fileCopy.getUid();
+				aurl[aurl.length - 2] = surveyUid;
+				image.setUrl(String.join("/", aurl));
+			}
+		}
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
@@ -1586,7 +1598,7 @@ public class SurveyHelper {
 
 	private static GalleryQuestion getGallery(Map<String, String[]> parameterMap, Element currentElement,
 			String id, FileService fileService, ServletContext servletContext, boolean log220,
-			Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException {
+			Map<String, Integer> fileIDsByUID, String surveyUID, int userId) throws InvalidXHTMLException {
 		GalleryQuestion gallery;
 		String oldValues = "";
 		String newValues = "";
@@ -1696,6 +1708,9 @@ public class SurveyHelper {
 				file.setPosition(i);
 				file.setLongdesc(longdesc);
 				file.setDescription(desc);
+
+				checkFile(file, fileService, surveyUID, userId);
+
 				gallery.getFiles().add(file);
 				if (log220) {
 					newFiles.append(file.getName()).append("(").append(file.getComment()).append("),");
@@ -1789,9 +1804,23 @@ public class SurveyHelper {
 		return upload;
 	}
 
+	private static void checkFile(File file, FileService fileService, String surveyUID, int userId) throws IOException {
+		// in case the file is part of "my predefined" elements
+		String uid = file.getUid();
+		java.io.File surveyFile = fileService.getSurveyFile(surveyUID, uid);
+		if (surveyFile == null || !surveyFile.exists()) {
+			// copy file from user directory
+			java.io.File userFile = fileService.getUsersFile(userId, uid);
+			if (userFile.exists()) {
+				File copiedFile = fileService.copyFileFromUserFolder(uid, surveyUID, userId);
+				file.setUid(copiedFile.getUid());
+			}
+		}
+	}
+
 	private static Download getDownload(Map<String, String[]> parameterMap, Element currentElement,
 			String id, FileService fileService, ServletContext servletContext, boolean log220,
-			Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException {
+			Map<String, Integer> fileIDsByUID, String surveyUID, int userId) throws InvalidXHTMLException {
 		Download download;
 		String oldValues = "";
 		String newValues = "";
@@ -1848,6 +1877,9 @@ public class SurveyHelper {
 			for (String uid : files) {
 				try {
 					File file = fileService.get(uid, fileIDsByUID.get(uid));
+
+					checkFile(file, fileService, surveyUID, userId);
+
 					file.setPosition(counter++);
 					download.getFiles().add(file);
 					if (log220) {
@@ -1879,7 +1911,7 @@ public class SurveyHelper {
 	}
 
 	private static Confirmation getConfirmation(Map<String, String[]> parameterMap, Element currentElement,
-			Survey survey, String id, FileService fileService, ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID)
+			String id, FileService fileService, ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID, String surveyUID, int userId)
 			throws InvalidXHTMLException {
 		Confirmation confirmation;
 		String oldValues = "";
@@ -1961,6 +1993,9 @@ public class SurveyHelper {
 				try {
 					File file = fileService.get(uid, fileIDsByUID.get(uid));
 					file.setPosition(counter++);
+
+					checkFile(file, fileService, surveyUID, userId);
+
 					confirmation.getFiles().add(file);
 					if (log220) {
 						newFiles.append(file.getName()).append(",");
@@ -4180,8 +4215,8 @@ public class SurveyHelper {
 
 	private static Matrix getMatrix(Map<String, String[]> parameterMap, Element currentElement,
 			String id, Map<Integer, Element> elementsById, String[] dependenciesForAnswers,
-			HashMap<Matrix, HashMap<Integer, String>> matrixDependencies, ServletContext servletContext, boolean log220, boolean isQuiz)
-			throws InvalidXHTMLException {
+			HashMap<Matrix, HashMap<Integer, String>> matrixDependencies, ServletContext servletContext, boolean log220, boolean isQuiz, FileService fileService, String surveyUid, int userId)
+            throws InvalidXHTMLException, IOException {
 		String oldValues = "";
 		String newValues = "";
 		StringBuilder oldLabels = new StringBuilder();
@@ -4383,7 +4418,7 @@ public class SurveyHelper {
 					if (elementtype.equalsIgnoreCase("text")) {
 						child = getText(parameterMap, currentChild, elementid, servletContext, log220);
 					} else if (elementtype.equalsIgnoreCase("image")) {
-						child = getImage(parameterMap, currentChild, elementid, servletContext, log220);
+						child = getImage(parameterMap, currentChild, elementid, servletContext, log220, fileService, surveyUid, userId);
 					} else {
 						child = new EmptyElement();
 					}
@@ -4664,16 +4699,16 @@ public class SurveyHelper {
 	}
 
 	public static Element parseElement(HttpServletRequest request, FileService fileService, SelfAssessmentService selfassessmentService, String id, Survey survey,
-			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+			ServletContext servletContext, boolean log220, int userId) throws InvalidXHTMLException, IOException {
 		return parseElement(request, fileService, selfassessmentService, id, survey, new HashMap<>(), new HashMap<>(), new HashMap<>(),
-				servletContext, log220, new HashMap<>());
+				servletContext, log220, new HashMap<>(), userId);
 	}
 
 	private static Element parseElement(HttpServletRequest request, FileService fileService, SelfAssessmentService selfassessmentService, String id, Survey survey,
 			Map<Integer, Element> elementsById,
 			HashMap<PossibleAnswer, String> dependencies, HashMap<Matrix, HashMap<Integer, String>> matrixDependencies,
-			ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID)
-			throws InvalidXHTMLException {
+			ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID, int userId)
+            throws InvalidXHTMLException, IOException {
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
 		if (!parameterMap.containsKey("type" + id)) {
@@ -4698,29 +4733,29 @@ public class SurveyHelper {
 		} else if (type.equalsIgnoreCase("matrix")) {
 			String[] dependenciesForAnswers = parameterMap.get("dependencies" + id);
 			element = getMatrix(parameterMap, currentElement, id, elementsById, dependenciesForAnswers,
-					matrixDependencies, servletContext, log220 && currentElement != null, survey.getIsQuiz());
+					matrixDependencies, servletContext, log220 && currentElement != null, survey.getIsQuiz(), fileService, survey.getUniqueId(), userId);
 		} else if (type.equalsIgnoreCase("table")) {
 			element = getTable(parameterMap, currentElement, id, elementsById, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("text")) {
 			element = getText(parameterMap, currentElement, id, servletContext, log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("image")) {
-			element = getImage(parameterMap, currentElement, id, servletContext, log220 && currentElement != null);
+			element = getImage(parameterMap, currentElement, id, servletContext, log220 && currentElement != null, fileService, survey.getUniqueId(), userId);
 		} else if (type.equalsIgnoreCase("ruler")) {
 			element = getRuler(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("gallery")) {
 			element = getGallery(parameterMap, currentElement, id, fileService, servletContext,
-					log220 && currentElement != null, fileIDsByUID);
+					log220 && currentElement != null, fileIDsByUID, survey.getUniqueId(), userId);
 		} else if (type.equalsIgnoreCase("upload")) {
 			element = getUpload(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("download")) {
 			element = getDownload(parameterMap, currentElement, id, fileService, servletContext,
-					log220 && currentElement != null, fileIDsByUID);
+					log220 && currentElement != null, fileIDsByUID, survey.getUniqueId(), userId);
 		} else if (type.equalsIgnoreCase("confirmation")) {
-			element = getConfirmation(parameterMap, currentElement, survey, id, fileService, servletContext,
-					log220 && currentElement != null, fileIDsByUID);
+			element = getConfirmation(parameterMap, currentElement, id, fileService, servletContext,
+					log220 && currentElement != null, fileIDsByUID, survey.getUniqueId(), userId);
 		} else if (type.equalsIgnoreCase("freetext")) {
 			element = getFreeText(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
@@ -4950,7 +4985,7 @@ public class SurveyHelper {
 
 	public static Survey parseSurvey(HttpServletRequest request, SurveyService surveyService, 
 			FileService fileService, SelfAssessmentService selfassessmentService, ServletContext servletContext, boolean log217, boolean log220,
-			Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException {
+			Map<String, Integer> fileIDsByUID, int userId) throws InvalidXHTMLException, IOException {
 		Map<Integer, String[]> activitiesToLog = new HashMap<>();
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
@@ -4997,7 +5032,7 @@ public class SurveyHelper {
 				String id = ids[i];
 				if (!id.equalsIgnoreCase("undefined")) {
 					Element element = parseElement(request, fileService, selfassessmentService, id, survey, elementsById,
-							dependencies, matrixDependencies, servletContext, log220, fileIDsByUID);
+							dependencies, matrixDependencies, servletContext, log220, fileIDsByUID, userId);
 					if (element != null) {
 						if (element.getId() == null) {
 							// this is a new element

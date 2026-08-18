@@ -2,6 +2,7 @@ package com.ec.survey.tools;
 
 import com.ec.survey.model.Access;
 import com.ec.survey.model.Setting;
+import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
@@ -114,7 +115,7 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
 
     private void sendNotificationEmail(Survey survey, String sender, int inactiveSurveysDays, int daysUntilDeletion, int type) {
         StringBuilder body = new StringBuilder();
-        List<String> users = new ArrayList<>();
+        List<String> ccUsers = new ArrayList<>();
         String owner = null;
         String bcc = settingsService.get(Setting.InactiveSurveysBCC);
 
@@ -128,10 +129,11 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
             List<Access> accesses = surveyService.getAccesses(survey.getId());
             List<String> managers = new ArrayList<>();
             for (Access access : accesses) {
-                if (access.getUser() != null && EmailValidator.getInstance().isValid(access.getUser().getEmail())) {
+                var u = access.getUser();
+                if (u != null && EmailValidator.getInstance().isValid(u.getEmail())) {
                     managers.add(access.getUser().getFirstLastName());
-                    if (!users.contains(access.getUser().getEmail())) {
-                        users.add(access.getUser().getEmail());
+                    if (!ccUsers.contains(u.getEmail()) && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 0) {
+                        ccUsers.add(u.getEmail());
                     }
                 } else {
                     logger.info("invalid user for access " + access.getId());
@@ -233,8 +235,8 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
 
             String[] cc = null;
 
-            if (!users.isEmpty()) {
-                cc = users.toArray(new String[0]);
+            if (!ccUsers.isEmpty()) {
+                cc = ccUsers.toArray(new String[0]);
             }
 
             mailService.SendHtmlMail(owner, cc, bcc, sender, sender, title, text, "Automatic Delete Message");

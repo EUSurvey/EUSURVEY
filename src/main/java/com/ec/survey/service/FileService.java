@@ -12,7 +12,6 @@ import com.ec.survey.tools.MutableInteger;
 import com.ec.survey.tools.RecreateWorker;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.export.FileExportCreator;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -39,10 +38,10 @@ public class FileService extends BasicService {
 	@Resource(name = "pdfService")
 	protected PDFService pdfService;
 
-	public static final String[] filetypes = { "results", "statistics", "charts", "tokens", "contacts", "activities",
-			"uploaded file", "download", "image", "logo", "background document", Constants.SURVEY, "contribution" };
-	public static final String[] fileextensions = { "PDF", "XLS", "XLSX", "ODS", "DOC", "DOCX", "ODT", "XML", "CSV", "JPG", "PNG",
-			"ZIP", "OTHER" };
+	public static final String[] filetypes = {"results", "statistics", "charts", "tokens", "contacts", "activities",
+			"uploaded file", "download", "image", "logo", "background document", Constants.SURVEY, "contribution"};
+	public static final String[] fileextensions = {"PDF", "XLS", "XLSX", "ODS", "DOC", "DOCX", "ODT", "XML", "CSV", "JPG", "PNG",
+			"ZIP", "OTHER"};
 
 	public void logOldFileSystemUse(String path) {
 		logger.info("OLD FILESYSTEM ACCESS: " + path);
@@ -71,7 +70,7 @@ public class FileService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		return (File) session.get(File.class, id);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public File get(String uid, boolean throwExceptionIfNotFound) throws FileNotFoundException {
 
@@ -86,7 +85,7 @@ public class FileService extends BasicService {
 		List<File> list = query.list();
 		if (list.isEmpty()) {
 			if (!throwExceptionIfNotFound) return null;
-			
+
 			throw new FileNotFoundException("No file found for uid " + uid);
 		}
 
@@ -480,8 +479,7 @@ public class FileService extends BasicService {
 		return true;
 	}
 
-	private List<FileResult> getFilesForSurvey(FileFilter filter, int page, int itemsperpage, Path archivedir) throws Exception
-			 {
+	private List<FileResult> getFilesForSurvey(FileFilter filter, int page, int itemsperpage, Path archivedir) throws Exception {
 		List<Integer> ids = surveyService.getAllSurveyVersions(filter.getSurveyShortname(), filter.getSurveyUid());
 		Map<String, FileResult> result = new HashMap<>();
 
@@ -497,38 +495,38 @@ public class FileService extends BasicService {
 				for (Export export : exports) {
 					boolean skipexport = false;
 					switch (export.getType()) {
-					case Content:
-						if (!filter.isVisible("results")) {
-							skipexport = true;
-						}
-						break;
-					case Statistics:
-						if (!filter.isVisible("statistics")) {
-							skipexport = true;
-						}
-						break;
-					case Charts:
-						if (!filter.isVisible("charts")) {
-							skipexport = true;
-						}
-						break;
-					case Activity:
-						if (!filter.isVisible("activities")) {
-							skipexport = true;
-						}
-						break;
-					case AddressBook:
-						if (!filter.isVisible("contacts")) {
-							skipexport = true;
-						}
-						break;
-					case Tokens:
-						if (!filter.isVisible("tokens")) {
-							skipexport = true;
-						}
-						break;
-					default:
-						break;
+						case Content:
+							if (!filter.isVisible("results")) {
+								skipexport = true;
+							}
+							break;
+						case Statistics:
+							if (!filter.isVisible("statistics")) {
+								skipexport = true;
+							}
+							break;
+						case Charts:
+							if (!filter.isVisible("charts")) {
+								skipexport = true;
+							}
+							break;
+						case Activity:
+							if (!filter.isVisible("activities")) {
+								skipexport = true;
+							}
+							break;
+						case AddressBook:
+							if (!filter.isVisible("contacts")) {
+								skipexport = true;
+							}
+							break;
+						case Tokens:
+							if (!filter.isVisible("tokens")) {
+								skipexport = true;
+							}
+							break;
+						default:
+							break;
 					}
 					if (!skipexport) {
 						String filePath = exportService.getExportFilePath(export, null);
@@ -844,23 +842,23 @@ public class FileService extends BasicService {
 					}
 
 					switch (export.getType()) {
-					case Activity:
-						fileResult.setFileType("activities");
-						break;
-					case AddressBook:
-						fileResult.setFileType("contacts");
-						break;
-					case Statistics:
-						fileResult.setFileType("statistics");
-						break;
-					case Tokens:
-						fileResult.setFileType("tokens");
-						break;
-					case Content:
-						fileResult.setFileType("results");
-						break;
-					default:
-						break;
+						case Activity:
+							fileResult.setFileType("activities");
+							break;
+						case AddressBook:
+							fileResult.setFileType("contacts");
+							break;
+						case Statistics:
+							fileResult.setFileType("statistics");
+							break;
+						case Tokens:
+							fileResult.setFileType("tokens");
+							break;
+						case Content:
+							fileResult.setFileType("results");
+							break;
+						default:
+							break;
 					}
 
 				} else {
@@ -934,9 +932,8 @@ public class FileService extends BasicService {
 		c.init(options, pdfbefore, tempbefore, email);
 		getPool().execute(c);
 	}
-	
-	public Set<java.io.File> getPDFContributionFilesForSurvey(List<Integer> surveyIDs) throws Exception
-	{
+
+	public Set<java.io.File> getPDFContributionFilesForSurvey(List<Integer> surveyIDs) throws Exception {
 		Set<java.io.File> result = new HashSet<>();
 		for (int surveyID : surveyIDs) {
 			Survey survey = surveyService.getSurvey(surveyID);
@@ -963,7 +960,7 @@ public class FileService extends BasicService {
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -1003,7 +1000,7 @@ public class FileService extends BasicService {
 			}
 
 			// get contribution pdfs
-			result.addAll(getPDFContributionFilesForSurvey(surveyIDs));			
+			result.addAll(getPDFContributionFilesForSurvey(surveyIDs));
 		}
 
 		// get survey files
@@ -1082,7 +1079,7 @@ public class FileService extends BasicService {
 				if (question.isDelphiElement()) {
 					explanationFiles.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
 						if (questionUid.equalsIgnoreCase(question.getUniqueId())) {
-							
+
 							java.io.File file = fileService.getSurveyFile(survey.getUniqueId(), explanationFile.getUid());
 							result.add(file);
 						}
@@ -1117,16 +1114,16 @@ public class FileService extends BasicService {
 		return result;
 	}
 
-	public int deleteZombieExportFilesForSurvey(String surveyUID) {
+	public int deleteZombieExportFilesForSurvey(String surveyUID) throws IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MONTH, -1);
 		Date date = cal.getTime();
-		
+
 		int counter = 0;
-		
+
 		java.io.File dir = this.getSurveyExportsFolder(surveyUID);
 		if (dir.exists()) {
-			try {				
+			try {
 				//java.io.FileFilter fileFilter = new WildcardFileFilter("Export*.xls");
 				java.io.File[] files = dir.listFiles();
 				if (files != null) {
@@ -1139,8 +1136,8 @@ public class FileService extends BasicService {
 							}
 						}
 					}
-				}				
-				
+				}
+
 				return counter;
 			} catch (IOException e) {
 				logger.error(e.getLocalizedMessage(), e);
@@ -1148,8 +1145,8 @@ public class FileService extends BasicService {
 		}
 		return counter;
 	}
-	
-	public boolean deleteFilesForSurveys(String surveyUID) throws Exception {		
+
+	public boolean deleteFilesForSurveys(String surveyUID) throws Exception {
 		java.io.File folder = this.getSurveyFolder(surveyUID);
 		if (folder.exists()) {
 			try {
@@ -1172,7 +1169,7 @@ public class FileService extends BasicService {
 				counter++;
 			}
 		}
-		
+
 		return counter;
 	}
 
@@ -1215,7 +1212,7 @@ public class FileService extends BasicService {
 				if (file.exists()) {
 					Date modified = new Date(file.lastModified());
 					if (modified.before(pdfbefore)) {
-						Files.delete(file.toPath());						
+						Files.delete(file.toPath());
 					}
 				}
 			}
@@ -1275,7 +1272,7 @@ public class FileService extends BasicService {
 						if (!candidate.delete()) {
 							logger.error("not possible to delete folder " + candidate.getAbsolutePath());
 						}
-					}					
+					}
 				}
 				return FileVisitResult.CONTINUE;
 			}
@@ -1313,23 +1310,23 @@ public class FileService extends BasicService {
 		c.init(files, filter, user.getEmail());
 		getPool().execute(c);
 	}
-	
-	
+
+
 	public boolean validateFilesPath(String path) {
 		// black list for forbidden characters
 		if (path.contains("..")) return false;
 		if (path.contains("*")) return false;
-		
+
 		// workaround for Windows systems
 		java.io.File surveysDirFile = new java.io.File(surveysDir);
 		java.io.File usersDirFile = new java.io.File(usersDir);
-		java.io.File archiveDirFile = new java.io.File(archiveDir);		
-		
+		java.io.File archiveDirFile = new java.io.File(archiveDir);
+
 		// white list for allowed root folders
-		if (path.startsWith(surveysDirFile.getAbsolutePath())) return true;		
+		if (path.startsWith(surveysDirFile.getAbsolutePath())) return true;
 		if (path.startsWith(usersDirFile.getAbsolutePath())) return true;
 		if (path.startsWith(archiveDirFile.getAbsolutePath())) return true;
-		
+
 		return false;
 	}
 
@@ -1339,20 +1336,18 @@ public class FileService extends BasicService {
 		if (files == null) {
 			List<FileResult> fileresults = getFiles2(filter);
 			for (FileResult fileresult : fileresults) {
-				if (Files.deleteIfExists(Paths.get(fileresult.getFilePath())))
-				{
+				if (Files.deleteIfExists(Paths.get(fileresult.getFilePath()))) {
 					counter++;
 				}
 			}
 		} else {
 			for (String path : files) {
-				
+
 				if (!validateFilesPath(path)) {
 					throw new MessageException("Invalid path found");
 				}
-				
-				if (Files.deleteIfExists(Paths.get(path)))
-				{
+
+				if (Files.deleteIfExists(Paths.get(path))) {
 					counter++;
 				}
 			}
@@ -1369,21 +1364,19 @@ public class FileService extends BasicService {
 			String uid = name.substring(6).replace(".pdf", "");
 			Files.delete(file.toPath());
 			AnswerSet answerSet = answerService.get(uid);
-			if (answerSet != null)
-			{
+			if (answerSet != null) {
 				pdfService.createAnswerPDF(null, uid, answerSet.getSurvey().getUniqueId(), answerSet.getIsDraft());
 			}
-			return true;			
+			return true;
 		} else if (name.startsWith("draft") && name.endsWith(".pdf")) {
 			String uid = name.substring(5).replace(".pdf", "");
 			Files.delete(file.toPath());
 			Draft draft = answerService.getDraft(uid);
-			if (draft != null)
-			{
+			if (draft != null) {
 				pdfService.createAnswerPDF(null, uid, draft.getAnswerSet().getSurvey().getUniqueId(),
 						draft.getAnswerSet().getIsDraft());
 			}
-			return true;			
+			return true;
 		} else if (name.startsWith(Constants.SURVEY) && name.endsWith(".pdf")) {
 			String language = name.substring(name.length() - 6, name.length() - 4);
 			String id = name.substring(6);
@@ -1391,7 +1384,7 @@ public class FileService extends BasicService {
 			Files.delete(file.toPath());
 			Survey survey = surveyService.getSurvey(Integer.parseInt(id));
 			pdfService.createSurveyPDF(survey, language, file);
-			return true;			
+			return true;
 		} else if (name.startsWith("Export")) {
 			String exportid = file.getName().substring(6);
 			exportid = exportid.substring(0, exportid.indexOf('.'));
@@ -1426,12 +1419,12 @@ public class FileService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-		try {		
+		try {
 			java.io.File file = fileService.getSurveyFile(surveyuid, fileuid);
 			Files.deleteIfExists(file.toPath());
-			
+
 			file = new java.io.File(fileDir + fileuid);
-			Files.deleteIfExists(file.toPath());		
+			Files.deleteIfExists(file.toPath());
 		} catch (FileSystemException f) {
 			logger.error(f.getLocalizedMessage(), f);
 		}
@@ -1456,7 +1449,7 @@ public class FileService extends BasicService {
 
 	}
 
-	public File copyFile(String uid, String surveyUID) throws IOException {
+	public File copyFileToUserFolder(String uid, String surveyUID, int userID) throws IOException {
 		File file = fileService.get(uid);
 
 		java.io.File folder = getSurveyFilesFolder(surveyUID);
@@ -1470,11 +1463,26 @@ public class FileService extends BasicService {
 
 		java.io.File f = getSurveyFile(surveyUID, uid);
 
-		if (!f.exists()) {
-			f = new java.io.File(fileDir + uid);
-			if (f.exists())
-				fileService.logOldFileSystemUse(fileDir + uid);
+		if (f.exists()) {
+			Files.copy(f.toPath(), getUsersFile(userID, newuid).toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
+
+		return copy;
+	}
+
+	public File copyFileFromUserFolder(String uid, String surveyUID, int userID) throws IOException {
+		File file = fileService.get(uid);
+
+		java.io.File folder = getUsersFolder(userID);
+
+		File copy = file.copy(folder.getPath());
+
+		String newuid = UUID.randomUUID().toString();
+
+		copy.setUid(newuid);
+		fileService.add(copy);
+
+		java.io.File f = getUsersFile(userID, uid);
 
 		if (f.exists()) {
 			Files.copy(f.toPath(), getSurveyFile(surveyUID, newuid).toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -1483,7 +1491,7 @@ public class FileService extends BasicService {
 		return copy;
 	}
 
-	/////////////// new file system ///////////////////////////
+	/// //////////// new file system ///////////////////////////
 
 	public java.io.File getSurveyFolder(String surveyUID) {
 		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + Constants.PATH_DELIMITER);
@@ -1499,26 +1507,45 @@ public class FileService extends BasicService {
 		return folder;
 	}
 
-	public java.io.File getSurveyExportsFolder(String surveyUID) {
+	private void assertInsideSurveysDir(java.io.File folder) {
+		try {
+			if (!validateFilesPath(folder.getCanonicalPath())) {
+				throw new SecurityException("path traversal detected: " + folder.getPath());
+			}
+		} catch (java.io.IOException e) {
+			throw new SecurityException("cannot canonicalize path: " + folder.getPath(), e);
+		}
+	}
+
+	public java.io.File getSurveyExportsFolder(String surveyUID) throws IOException {
 		return getSurveyExportsFolder(surveyUID, true);
 	}
 
-	public java.io.File getSurveyExportsFolder(String surveyUID, boolean create) {
+	public java.io.File getSurveyExportsFolder(String surveyUID, boolean create) throws IOException {
 		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + "/EXPORTS/");
+
+		assertInsideSurveysDir(folder);
+
 		if (!folder.exists() && create)
 			folder.mkdirs();
 		return folder;
 	}
 
-	public java.io.File getSurveyUploadsFolder(String surveyUID, boolean create) {
+	public java.io.File getSurveyUploadsFolder(String surveyUID, boolean create) throws IOException {
 		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + "/UPLOADS/");
+
+		assertInsideSurveysDir(folder);
+
 		if (!folder.exists() && create)
 			folder.mkdirs();
 		return folder;
 	}
 
-	public java.io.File getSurveyExplanationUploadsFolder(String surveyUID, boolean create) {
+	public java.io.File getSurveyExplanationUploadsFolder(String surveyUID, boolean create) throws IOException {
 		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + "/EXPLANATION_UPLOADS/");
+
+		assertInsideSurveysDir(folder);
+
 		if (!folder.exists() && create)
 			folder.mkdirs();
 		return folder;
@@ -1529,26 +1556,26 @@ public class FileService extends BasicService {
 		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
 	}
 
-	public java.io.File getSurveyExportFile(String surveyUID, Integer id, String format) {
+	public java.io.File getSurveyExportFile(String surveyUID, Integer id, String format) throws IOException {
 		java.io.File folder = getSurveyExportsFolder(surveyUID);
 		return new java.io.File(String.format("%s/Export%s.%s", folder.getPath(), id, format));
 	}
 
-	public java.io.File getSurveyExportFile(String surveyUID, String fileUID) {
+	public java.io.File getSurveyExportFile(String surveyUID, String fileUID) throws IOException {
 		return getSurveyExportFile(surveyUID, fileUID, true);
 	}
 
-	public java.io.File getSurveyExportFile(String surveyUID, String fileUID, boolean create) {
+	public java.io.File getSurveyExportFile(String surveyUID, String fileUID, boolean create) throws IOException {
 		java.io.File folder = getSurveyExportsFolder(surveyUID, create);
 		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
 	}
 
-	public java.io.File getSurveyUploadFile(String surveyUID, String fileUID) {
+	public java.io.File getSurveyUploadFile(String surveyUID, String fileUID) throws IOException {
 		java.io.File folder = getSurveyUploadsFolder(surveyUID, false);
 		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
 	}
 
-	public java.io.File getSurveyPDFFile(String surveyUID, Integer surveyID, String lang) {
+	public java.io.File getSurveyPDFFile(String surveyUID, Integer surveyID, String lang) throws IOException {
 		java.io.File folder = fileService.getSurveyExportsFolder(surveyUID);
 		return new java.io.File(String.format("%s/survey%s%s.pdf", folder.getPath(), surveyID, lang));
 	}
@@ -1948,14 +1975,14 @@ public class FileService extends BasicService {
 		return deletecounter;
 	}
 
-	public void deleteUploadedAnswerFiles(final String surveyUid, final String answerSetUniqueCode) {
+	public void deleteUploadedAnswerFiles(final String surveyUid, final String answerSetUniqueCode) throws IOException {
 
 		final java.io.File rootFolder = getSurveyUploadsFolder(surveyUid,false);
 		deleteUploadedFilesDirectory(answerSetUniqueCode, rootFolder.getPath(), "");
 	}
 
 	public void deleteUploadedExplanationFiles(final String surveyUid, final String answerSetUniqueCode,
-			final String questionUid) {
+			final String questionUid) throws IOException {
 
 		final java.io.File rootFolder = getSurveyExplanationUploadsFolder(surveyUid, false);
 		final String suffix = Constants.PATH_DELIMITER + questionUid;
@@ -1976,7 +2003,7 @@ public class FileService extends BasicService {
 	}
 
 	public java.io.File deleteUploadedExplanationFileAndReturnParentDirectoryIfSuccessful(final String surveyUid,
-			final String answerSetUniqueCode, final String questionUid, final String fileName) {
+			final String answerSetUniqueCode, final String questionUid, final String fileName) throws IOException {
 
 		final java.io.File rootFolder = getSurveyExplanationUploadsFolder(surveyUid, false);
 		final String filePath = rootFolder + Constants.PATH_DELIMITER + answerSetUniqueCode

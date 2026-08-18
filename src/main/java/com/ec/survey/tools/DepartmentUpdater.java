@@ -4,8 +4,6 @@ package com.ec.survey.tools;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.util.*;
 
@@ -17,12 +15,10 @@ import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.Property;
 import com.ec.survey.service.LdapDBService;
 import com.ec.survey.service.PropertiesService;
 import com.ec.survey.service.SessionService;
-import com.sun.source.util.Trees;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -100,6 +96,12 @@ public class DepartmentUpdater implements Runnable {
 
 	private String getDepartments() throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		sessionService.initializeProxy();
 
@@ -249,6 +251,16 @@ public class DepartmentUpdater implements Runnable {
 
 	private TreeMap<String, String> getDomains() throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+		// Prevent expansion of entity references
+		factory.setXIncludeAware(false);
+		factory.setExpandEntityReferences(false);
+
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		sessionService.initializeProxy();
 

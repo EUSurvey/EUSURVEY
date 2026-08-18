@@ -91,9 +91,15 @@
 			<span data-toggle="tooltip" title="<spring:message code="label.MoveDown" />" id="moveDownButton" data-bind="click: moveElementDown, attr: {class: 'glyphicon glyphicon-triangle-bottom' + (MoveDownEnabled() ? '' : ' disabled')}"></span>
 			<span data-toggle="tooltip" title="<spring:message code="label.MoveUp" />" id="moveUpButton" data-bind="click: moveElementUp, attr: {class: 'glyphicon glyphicon-triangle-top' + (MoveUpEnabled() ? '' : ' disabled')}"></span>
 		</div>
-		<div class="actionbuttons">
+		<div class="actionbuttons" style="padding-right: 10px; border-right: 1px solid #ccc;">
 			<span data-toggle="tooltip" id="deleteButton" title="<spring:message code="label.Delete" />" data-bind="click: deleteElement, attr: {class: 'glyphicon glyphicon-trash' + (DeleteEnabled() && AllElementsLoaded() ? '' : ' disabled')}"></span>
 		</div>
+		<div class="actionbuttons" style="padding-top: 0; padding-left: 10px;">
+             <!--  ko if: _elementProperties.showAddToPredefined() && !_actions.SaveEnabled() -->
+            <button onclick="_actions.addToPredefinedElements()" class="btn btn-default"><spring:message code="label.AddToMyPredefinedElements" /></button>
+            <!-- /ko -->
+            <button data-bind="visible: _elementProperties.showAddToPredefined() && _actions.SaveEnabled()" class="btn btn-default disabled" data-toggle="tooltip" title="<spring:message code="message.PleaseSaveTheSurveyFirst" />"><spring:message code="label.AddToMyPredefinedElements" /></button>
+        </div>
 		
 		<div style="clear: both"></div>
 	</div>
@@ -260,6 +266,32 @@
 			</div>
 
 			<c:if test="${!form.survey.isEVote}">
+			    <c:if test="${!predefinedElements.isEmpty()}">
+                    <div class="toolboxgroup group-predefined disallowed" style="">
+                        <div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapseMyPredefined" aria-expanded="true"><spring:message code="label.MyPredefined" /></a></div>
+                        <div id="collapseMyPredefined" class="accordion-body collapse in">
+                            <ul>
+                                <c:forEach var="element" items="${predefinedElements}">
+                                    <li title="${element.getStrippedTitle()}" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem mypredefined draggable" data-id="${element.getId()}">
+                                        <c:choose>
+                                            <c:when test='${element.editorIcon() == "formula"}'>
+                                                  <span style="font-family: serif; font-style: italic; font-size: 13px; font-weight: bold; margin-right: 5px;">fx</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                  <span class="${element.editorIcon()}"></span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                         ${element.getStrippedTitleAtMost100()}
+                                        <div style="text-align: right">
+                                            <a onclick="_actions.confirmDeletePredefinedElement(${element.getId()})"><spring:message code="label.Delete" /></a>
+                                        </div>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                    </div>
+                </c:if>
+
 				<div class="toolboxgroup group-predefined disallowed" style="">
 					<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapsePredefined" aria-expanded="true"><spring:message code="label.Predefined" /></a></div>
 					<div id="collapsePredefined" class="accordion-body collapse in">

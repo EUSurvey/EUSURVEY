@@ -408,6 +408,57 @@ public class RunnerController extends BasicController {
 		return model;
 	}
 
+	@PostMapping(value = "/sendevote")
+	public @ResponseBody String emailAuthenticationPost(HttpServletRequest request)
+            throws InvalidURLException, MessageException, IOException {
+
+		String shortname = request.getParameter("shortname");
+		String email = request.getParameter("email");
+		String code = request.getParameter("code");
+
+		Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, true, true, true, true);
+
+		if (survey == null) {
+			survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, true);
+		}
+
+		if (survey == null) {
+			throw new InvalidURLException();
+		}
+
+		if (email == null || email.isEmpty()) {
+			throw new InvalidURLException();
+		}
+
+		// Check email
+		if (!eVoteService.checkVoterByEmail(survey.getUniqueId(), email)) {
+			return "invalidemail";
+		}
+
+		if (code.equals("-")) {
+			// Create token with expiration
+			surveyService.createEmailAuthenticationToken(survey, email);
+		} else {
+			// check code
+
+			AuthenticationNumber authenticationNumber = surveyService.getAuthenticationNumber(Integer.parseInt(code), email, survey.getUniqueId());
+			if (authenticationNumber == null) {
+				return "unknown";
+			}
+
+			if (authenticationNumber.isTooOld()) {
+				return "tooold";
+			}
+
+			String uniqueCode = UUID.randomUUID().toString();
+			validCodesService.add(uniqueCode, survey);
+			request.getSession().setAttribute(Constants.UNIQUECODE, uniqueCode);
+			request.getSession().setAttribute("USEREMAIL", email);
+		}
+
+		return "success";
+	}
+
 	@PostMapping(value = "/{shortname}/{token}")
 	public ModelAndView runnerTokenPost(@PathVariable String shortname, @PathVariable String token,
 			HttpServletRequest request, Locale locale, Device device)
@@ -808,11 +859,16 @@ public class RunnerController extends BasicController {
 	}
 
 	@RequestMapping(value = "/preparesurvey/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public ModelAndView preparesurvey(@PathVariable String id, HttpServletRequest request, Locale locale) {
+	public ModelAndView preparesurvey(@PathVariable String id, HttpServletRequest request, Locale locale) throws MessageException {
 
 		Survey survey = surveyService.getSurvey(Integer.parseInt(id), false, true);
 
 		if (survey != null) {
+
+			var pdfCode = request.getParameter("pdfcode");
+			if (!surveyService.validateAndDeletePDFCode(pdfCode, survey.getUniqueId(), 0)) {
+				throw new MessageException("Invalid PDF code");
+			}
 
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), false),
 					survey.getLanguage(), resources, contextpath);
@@ -874,22 +930,23 @@ public class RunnerController extends BasicController {
 			throw new InvalidURLException();
 		}
 
-		if (!checkCaptcha(request)) {
-			model.put("contactFormReason", request.getParameter("contactreason"));
-			model.put("contactFormName", request.getParameter("name"));
-			model.put("contactFormMail", request.getParameter(Constants.EMAIL));
-			model.put("contactFormSubject", request.getParameter("subject"));
-			model.put("contactFormMessage", request.getParameter(Constants.MESSAGE));
-			model.put("survey", survey);
-			model.put("wrongcaptcha", true);
-			return "runner/contactForm";
-		}
-
 		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true, false);
 		String name = ConversionTools.removeHTML(request.getParameter("name"), true, false);
 		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true, false);
 		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true, false);
 		String message = ConversionTools.removeHTML(request.getParameter(Constants.MESSAGE), true, false);
+
+		if (!checkCaptcha(request)) {
+			model.put("contactFormReason", reason);
+			model.put("contactFormName", name);
+			model.put("contactFormMail", email);
+			model.put("contactFormSubject", subject);
+			model.put("contactFormMessage", message);
+			model.put("survey", survey);
+			model.put("wrongcaptcha", true);
+			return "runner/contactForm";
+		}
+
 		String[] uploadedfiles = request.getParameterValues("uploadedfile");
 
 		StringBuilder body = new StringBuilder();
@@ -962,9 +1019,6 @@ public class RunnerController extends BasicController {
 			return modelReturn;
 		}
 
-		boolean isDraft = request.getParameter("draft") != null
-				&& request.getParameter("draft").equalsIgnoreCase("true");
-
 		String p = request.getParameter("readonly");
 		if (p != null && p.equalsIgnoreCase("true")) {
 			p = request.getParameter("draftid");
@@ -977,13 +1031,13 @@ public class RunnerController extends BasicController {
 		}
 		String lang = request.getParameter("surveylanguage");
 
-		Survey survey = surveyService.getSurvey(uidorshortname, isDraft, true, false, true, lang, true, true);
+		Survey survey = surveyService.getSurvey(uidorshortname, false, true, false, true, lang, true, true);
 
 		if (survey == null && readonlyMode) {
-			survey = surveyService.getSurvey(uidorshortname, isDraft, false, false, true, lang, true, true);
+			survey = surveyService.getSurvey(uidorshortname, false, false, false, true, lang, true, true);
 		}
 
-		if (survey == null && !isDraft) {
+		if (survey == null) {
 			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, true);
 			if (draft != null && !draft.getIsDeleted() && !draft.getArchived()) {
 				if (draft.getIsFrozen()) {
@@ -1023,6 +1077,14 @@ public class RunnerController extends BasicController {
 			}
 			
 			if (survey.getSecurity().startsWith("secured")) {
+				if (surveyService.usesVoterFileEmail(survey)) {
+					String uniqueCode = (String) request.getSession().getAttribute(Constants.UNIQUECODE);
+
+					if (uniqueCode != null && validCodesService.checkValid(uniqueCode, survey.getUniqueId())) {
+						return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
+					}
+				}
+
 				if (survey.getEcasSecurity()) {
 					try {
 						// if passwords are also permitted we have to keep the session due to CSRF
@@ -1125,6 +1187,10 @@ public class RunnerController extends BasicController {
 					}
 
 					String draftid = request.getParameter("draftid");
+
+					if (surveyService.usesVoterFileEmail(survey)) {
+						modelReturn.addObject("EmailVoterList", true);
+					}
 
 					if (survey.getEcasSecurity()) {
 						modelReturn.addObject("ecasurl", ecashost);
@@ -1516,6 +1582,10 @@ public class RunnerController extends BasicController {
 			}
 
 			String surveyuid = request.getParameter(Constants.SURVEY);
+
+			if (surveyuid != null && !Tools.isUUID(surveyuid)) {
+				throw new MessageException("invalid survey uid");
+			}
 
 			if (surveyuid == null) {
 				Survey survey = surveyService.getSurveyForQuestion(element.getUniqueId());
@@ -2340,7 +2410,7 @@ public class RunnerController extends BasicController {
 		try {
 			AnswerSet answerSet = answerService.get(code);
 
-			if ((answerSet == null || !answerSet.getSurvey().getCaptcha()) && !checkCaptcha(request)) {
+			if (!checkCaptcha(request)) {
 				return "errorcaptcha";
 			}
 
@@ -2494,25 +2564,19 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/elements/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request,
-			HttpServletResponse response)
+	@RequestMapping(value = "/predefinedelements", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody List<Element> predefinedelements(HttpServletRequest request,
+	                                           HttpServletResponse response)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
-		String ids = request.getParameter("ids");
+		User user = sessionService.getCurrentUser(request, false, false);
+		var elements = administrationService.getPredefinedElements(user.getId());
 
-		if (ids == null)
-			return null;
+		patchElements(elements, null, request);
 
-		List<Element> result = surveyService.getElements(ids.split("-"));
+		return elements;
+	}
 
-		String slang = request.getParameter("slang");
-		Survey survey = SurveyHelper.createTranslatedSurvey(Integer.parseInt(id), slang, surveyService,
-				translationService, false);
-
-		if (survey == null) {
-			return null;
-		}
-
+	private void patchElements(List<Element> elements, Form form, HttpServletRequest request) throws NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException {
 		boolean foreditor = request.getParameter("foreditor") != null
 				&& request.getParameter("foreditor").equalsIgnoreCase("true");
 		boolean hasGlobalAdminRights = false;
@@ -2524,23 +2588,22 @@ public class RunnerController extends BasicController {
 			}
 		}
 
-		Form form = new Form();
-		form.setSurvey(survey);
-
 		String maxFreeTextLengthString = settingsService.get(Setting.MaxFreeTextLength);
 		int maxFreeTextLength = maxFreeTextLengthString == null ? 10000 : ConversionTools.getInt(maxFreeTextLengthString, 10000);
 
-		for (Element element : result) {
+		for (Element element : elements) {
 			element.setOriginalTitle(element.getTitle());
 
 			if (element instanceof  Question) {
 				((Question)element).setMaxFreeTextLength(maxFreeTextLength);
 			}
 
-			if (element instanceof Section) {
-				element.setTitle(form.getSectionTitle((Section) element));
-			} else {
-				element.setTitle(form.getQuestionTitle(element));
+			if (form != null) {
+				if (element instanceof Section) {
+					element.setTitle(form.getSectionTitle((Section) element));
+				} else {
+					element.setTitle(form.getQuestionTitle(element));
+				}
 			}
 
 			if (element instanceof Matrix) {
@@ -2548,8 +2611,10 @@ public class RunnerController extends BasicController {
 
 				for (Element child : m.getQuestions()) {
 					child.setOriginalTitle(child.getTitle());
-					child.setTitle(form.getQuestionTitle(child));
-					child.presetIsDependentMatrixQuestion(survey);
+					if (form != null) {
+						child.setTitle(form.getQuestionTitle(child));
+						child.presetIsDependentMatrixQuestion(form.getSurvey());
+					}
 				}
 
 				m.getDependentElementsStrings();
@@ -2557,12 +2622,16 @@ public class RunnerController extends BasicController {
 				RatingQuestion r = (RatingQuestion) element;
 				for (Element child : r.getQuestions()) {
 					child.setOriginalTitle(child.getTitle());
-					child.setTitle(form.getQuestionTitle(child));
+					if (form != null) {
+						child.setTitle(form.getQuestionTitle(child));
+					}
 				}
 			} else if (element instanceof Table) {
 				for (Element child : ((Table) element).getQuestions()) {
 					child.setOriginalTitle(child.getTitle());
-					child.setTitle(form.getQuestionTitle(child));
+					if (form != null) {
+						child.setTitle(form.getQuestionTitle(child));
+					}
 				}
 				for (Element child : ((Table) element).getAnswers()) {
 					child.setOriginalTitle(child.getTitle());
@@ -2588,19 +2657,19 @@ public class RunnerController extends BasicController {
 					}
 				}
 			}
-			
+
 			//this can happen if a delphi survey is turned into a standard survey or the delphi extension is disabled
-			if (element.isDelphiElement() && !survey.getIsDelphi())
+			if (element.isDelphiElement() && form != null && !form.getSurvey().getIsDelphi())
 			{
 				((Question)element).setIsDelphiQuestion(false);
 			}
 		}
-		
-		if (survey.getIsSelfAssessment()) {
-			selfassessmentService.initializeElements(result, survey);
-		}		
-				
-		for (Element element : result) {
+
+		if (form != null && form.getSurvey().getIsSelfAssessment()) {
+			selfassessmentService.initializeElements(elements, form.getSurvey());
+		}
+
+		for (Element element : elements) {
 			if (foreditor && hasGlobalAdminRights) {
 				element.setLocked(false);
 			}
@@ -2618,7 +2687,7 @@ public class RunnerController extends BasicController {
 				if (foreditor) {
 					q.setForeditor(true);
 				}
-				
+
 				for (Element e : q.getPossibleAnswers()) {
 					PossibleAnswer a = (PossibleAnswer) e;
 					a.clearForJSON();
@@ -2629,7 +2698,30 @@ public class RunnerController extends BasicController {
 				}
 			}
 		}
+	}
 
+	@RequestMapping(value = "/elements/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request,
+			HttpServletResponse response)
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+		String ids = request.getParameter("ids");
+		if (ids == null)
+			return null;
+
+		List<Element> result = surveyService.getElements(ids.split("-"));
+
+		String slang = request.getParameter("slang");
+		Survey survey = SurveyHelper.createTranslatedSurvey(Integer.parseInt(id), slang, surveyService,
+				translationService, false);
+
+		if (survey == null) {
+			return null;
+		}
+
+		Form form = new Form();
+		form.setSurvey(survey);
+
+		patchElements(result, form, request);
 		
 		return result;
 	}

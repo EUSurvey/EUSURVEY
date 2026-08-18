@@ -33,6 +33,7 @@
 						<tr>
 							<th><spring:message code="label.Actions" /></th>
 							<th><spring:message code="label.UserName" /></th>
+							<th><spring:message code="label.Email" /></th>
 							<th><spring:message code="label.FirstName" /></th>
 							<th><spring:message code="label.Surname" /></th>
 							<th><spring:message code="label.HasVoted" /></th>
@@ -40,6 +41,7 @@
 						<tr class="table-styled-filter">
 							<th></th>
 							<th class="filtercell"><input id="voterUserName" onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" /></th>
+							<th class="filtercell"><input id="voterEmail" onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" /></th>
 							<th class="filtercell"><input id="voterFirstName" onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" /></th>
 							<th class="filtercell"><input id="voterLastName" onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" /></th>
 							<th class="filtercell">
@@ -66,6 +68,7 @@
 									<a data-bind="attr: {onclick: 'deleteVoter(' + id + ')'}" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>										
 								</td>
 								<td data-bind="text: ecMoniker"></td>
+								<td data-bind="text: email"></td>
 								<td data-bind="text: givenName"></td>
 								<td data-bind="text: surname"></td>
 								<td>
@@ -265,6 +268,9 @@
 		if ($("#voterUserName").val().length > 0) {
 			params += "&user=" + $("#voterUserName").val();
 		}
+		if ($("#voterEmail").val().length > 0) {
+            params += "&email=" + $("#voterEmail").val();
+        }
 		if ($("#voterFirstName").val().length > 0) {
 			params += "&first=" + $("#voterFirstName").val();
 		}
@@ -279,7 +285,7 @@
 
 
 	function resetVoterFilterHighlighting() {
-		let voterFilterfields = ["#voterUserName", "#voterFirstName", "#voterLastName", "#voterVoted"];
+		let voterFilterfields = ["#voterUserName", "#voterEmail","#voterFirstName", "#voterLastName", "#voterVoted"];
 		voterFilterfields.forEach((filterField) => {
 			if($(filterField).val().length <= 0){
 				$(filterField).parent().css("background-color","");

@@ -133,8 +133,20 @@ public class FileController extends BasicController {
 			try {
 
 				file = fileService.get(uid);
-				
-				java.io.File f = fileService.getSurveyFile(surveyuid, uid);
+
+				java.io.File f;
+
+				if (surveyuid.equals("USER")) {
+					User user = sessionService.getCurrentUser(request);
+					if (user == null)
+						throw new ForbiddenURLException();
+
+					f = fileService.getUsersFile(user.getId(), uid);
+					if (!f.exists())
+						return null;
+				} else {
+					f = fileService.getSurveyFile(surveyuid, uid);
+				}
 
 				if (!f.exists()) {
 					// might be an export file

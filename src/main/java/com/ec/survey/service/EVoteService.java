@@ -34,9 +34,6 @@ import com.ec.survey.model.survey.Question;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
 import com.ec.survey.model.survey.Survey;
 import com.mysql.cj.util.StringUtils;
-
-import edu.emory.mathcs.backport.java.util.Collections;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,34 +43,75 @@ import java.util.stream.Collectors;
 @Service("eVoteService")
 public class EVoteService extends BasicService {
 		
-	public ArrayList<Voter> importVoterFile(String surveyUid, InputStream file) throws IOException {
+	public ArrayList<Voter> importVoterFile(String surveyUid, InputStream file, String eVoteTemplate) throws IOException, MessageException {
 		 Workbook workbook = new XSSFWorkbook(file);
 		 Sheet sheet = workbook.getSheetAt(0);
 		 
 		 ArrayList<Voter> voters = new ArrayList<>();
 		 
-		 boolean usesHeader = true;
-		 
+		 boolean isHeader = true;
+		 boolean isEmailVariant = false;
+		 boolean hasEmailInLoginVariant = true;
+
+		 List<String> allIdentifiers = new ArrayList<>();
+
 		 //iterate rows
 		 Iterator<Row> rowIterator = sheet.iterator();
          while (rowIterator.hasNext()) 
          {
              Row row = rowIterator.next();
+			 int cellCounter = 0;
              
-             String login = row.getCell(0).getStringCellValue();
-             String firstName = row.getCell(1).getStringCellValue();
-             String surname = row.getCell(2).getStringCellValue();
+             String identifier = row.getCell(cellCounter++).getStringCellValue();
+			 if (isHeader) {
+				 isEmailVariant = identifier.equalsIgnoreCase("E-mail") || identifier.equalsIgnoreCase("email");
+				 if (isEmailVariant && !eVoteTemplate.equalsIgnoreCase("p")) {
+					 throw new MessageException("email voter file uploaded for a survey that does not use the standard template");
+				 }
+			 }
+
+			 String email = "";
+			 if (!isEmailVariant) {
+				 if (hasEmailInLoginVariant) {
+					 email = row.getCell(cellCounter++).getStringCellValue();
+					 if (isHeader && !email.equalsIgnoreCase("E-mail") && !email.equalsIgnoreCase("email")) {
+						 hasEmailInLoginVariant = false; // old voter files that do not contain the email addresses
+						 cellCounter--;
+					 }
+				 }
+			 }
+
+             String firstName = row.getCell(cellCounter++).getStringCellValue();
+             String surname = row.getCell(cellCounter++).getStringCellValue();
              
-             if (usesHeader) {
-            	 usesHeader = false;
+             if (isHeader) {
+				 isHeader = false;
              } else {
-            	 Voter voter = new Voter();
-            	 voter.setEcMoniker(login);
+
+				 if (allIdentifiers.contains(identifier)) {
+					 throw new MessageException("Duplicate identifier: " + identifier);
+				 }
+
+				 Voter voter = new Voter();
+				 if (isEmailVariant) {
+
+					 if (!MailService.isValidEmailAddress(identifier)) {
+						 throw new MessageException("Invalid email address: " + identifier);
+					 }
+
+					 voter.setEmail(identifier);
+				 } else {
+					 voter.setEcMoniker(identifier);
+					 voter.setEmail(email);
+				 }
             	 voter.setGivenName(firstName);
             	 voter.setSurname(surname);
             	 voter.setSurveyUid(surveyUid);
             	 voter.setCreated(new Date());
+
             	 voters.add(voter);
+
+				 allIdentifiers.add(identifier);
              }
          }
          workbook.close();
@@ -115,7 +153,11 @@ public class EVoteService extends BasicService {
             	// list votes
             	colCounter = 1;
             	for (eVoteListResult listResult : results.getLists().values()) {
-           			listResult.setListVotes((int) row.getCell(colCounter++).getNumericCellValue());
+					try {
+						listResult.setListVotes((int) row.getCell(colCounter++).getNumericCellValue());
+					} catch (NumberFormatException e) {
+						listResult.setListVotes(0);
+					}
             	}
             } else {
             	// candidate votes
@@ -150,7 +192,10 @@ public class EVoteService extends BasicService {
 		ParticipationGroup group = new ParticipationGroup(voters.get(0).getSurveyUid());
 		group.setActive(true);
 		group.setName("Voter File");
-		group.setType(ParticipationGroupType.VoterFile);
+
+		boolean isEmailVariant = voters.get(0).getEcMoniker() == null && voters.get(0).getEmail() != null;
+
+		group.setType(isEmailVariant ? ParticipationGroupType.VoterFileEmail : ParticipationGroupType.VoterFile);
 		group.setOwnerId(user.getId());
 		participationService.save(group);
 		
@@ -169,21 +214,27 @@ public class EVoteService extends BasicService {
 	}
 
 	@Transactional
-	public List<Voter> getVoters(String surveyUid, int page, int rowsPerPage, String user, String first, String last, Boolean voted) {
+	public Voter getVoter(int id) {
+		Session session = sessionFactory.getCurrentSession();
+		return session.get(Voter.class, id);
+	}
+
+	@Transactional
+	public List<Voter> getVoters(String surveyUid, int page, int rowsPerPage, String user, String email, String first, String last, Boolean voted) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		if (page == -1) {
 			// this means last page
-			long count = getVoterCount(surveyUid, user, first, last, voted);
+			long count = getVoterCount(surveyUid, user, email, first, last, voted);
 			page = (int) Math.floorDiv(count, 20l);
 		}
 		
-		String where = getWhere(user, first, last, voted);
+		String where = getWhere(user, email, first, last, voted);
 		
 		Query<Voter> query = session.createQuery("FROM Voter WHERE " + where + " ORDER BY id ASC", Voter.class);
 		query.setParameter("surveyUid", surveyUid).setFirstResult((page-1) * rowsPerPage).setMaxResults(rowsPerPage);
 		
-		addQueryParameters(query, surveyUid, user, first, last, voted);
+		addQueryParameters(query, surveyUid, user, email, first, last, voted);
 		
 		List<Voter> result = query.list();
 		return result;
@@ -191,26 +242,29 @@ public class EVoteService extends BasicService {
 
 	@Transactional
 	public long getVoterCount(String surveyUid, Boolean voted) {
-		return getVoterCount(surveyUid, null, null, null, voted);
+		return getVoterCount(surveyUid, null, null, null, null, voted);
 	}
 	
 	@Transactional
-	public long getVoterCount(String surveyUid, String user, String first, String last, Boolean voted) {
+	public long getVoterCount(String surveyUid, String user, String email, String first, String last, Boolean voted) {
 		Session session = sessionFactory.getCurrentSession();
-		String hql = "SELECT COUNT(voter) FROM Voter voter WHERE " + getWhere(user, first, last, voted);
+		String hql = "SELECT COUNT(voter) FROM Voter voter WHERE " + getWhere(user, email, first, last, voted);
 			
 		Query<Long> query = session.createQuery(hql, Long.class);
 		query.setParameter("surveyUid", surveyUid);
 		
-		addQueryParameters(query, surveyUid, user, first, last, voted);
+		addQueryParameters(query, surveyUid, user, email, first, last, voted);
 		
 		return query.uniqueResult();
 	}
 	
-	private String getWhere(String user, String first, String last, Boolean voted) {
+	private String getWhere(String user, String email, String first, String last, Boolean voted) {
 		String where = "surveyUid = :surveyUid";
 		if (!StringUtils.isNullOrEmpty(user)) {
 			where += " AND ecMoniker like :user";
+		}
+		if (!StringUtils.isNullOrEmpty(email)) {
+			where += " AND email like :email";
 		}
 		if (!StringUtils.isNullOrEmpty(first)) {
 			where += " AND givenName like :first";
@@ -224,10 +278,13 @@ public class EVoteService extends BasicService {
 		return where;
 	}
 	
-	private void addQueryParameters(@SuppressWarnings("rawtypes") Query query, String surveyUid, String user, String first, String last, Boolean voted) {
+	private void addQueryParameters(@SuppressWarnings("rawtypes") Query query, String surveyUid, String user, String email, String first, String last, Boolean voted) {
 		query.setParameter("surveyUid", surveyUid);
 		if (!StringUtils.isNullOrEmpty(user)) {
 			query.setParameter("user", '%' + user + '%');
+		}
+		if (!StringUtils.isNullOrEmpty(email)) {
+			query.setParameter("email", '%' + email + '%');
 		}
 		if (!StringUtils.isNullOrEmpty(first)) {
 			query.setParameter("first", '%' + first + '%');
@@ -283,6 +340,27 @@ public class EVoteService extends BasicService {
 	}
 
 	@Transactional
+	public boolean checkVoterByEmail(String surveyUid, String email) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query<Voter> queryVoter = session.createQuery("FROM Voter WHERE surveyUid = :surveyUid AND email = :email", Voter.class);
+		queryVoter.setParameter("surveyUid", surveyUid).setParameter("email", email);
+
+		List<Voter> result = queryVoter.list();
+
+		if (result.size() == 1 && !result.get(0).getVoted()) {
+			// make sure that voter file is not deactivated
+			Query<ParticipationGroup> queryGroup = session.createQuery("FROM ParticipationGroup WHERE surveyUid = :surveyUid", ParticipationGroup.class);
+			queryGroup.setParameter("surveyUid", surveyUid);
+			List<ParticipationGroup> result2 = queryGroup.list();
+
+			return result2.size() == 1 && result2.get(0).getActive();
+		}
+
+		return false;
+	}
+
+	@Transactional
 	public void setVoted(String surveyUid, String ecMoniker) {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("rawtypes")
@@ -291,26 +369,42 @@ public class EVoteService extends BasicService {
 		query.executeUpdate();
 	}
 
-	public byte[] exportVoterFile(String surveyUid, String user, String first, String last, Boolean voted) throws IOException {
-		List<Voter> voters = getVoters(surveyUid, 1, 100000, user, first, last, voted);
-
-		return exportVoterFile(voters);
+	@Transactional
+	public void setVotedByEmail(String surveyUid, String email) {
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("rawtypes")
+		Query query = session.createQuery("UPDATE Voter SET voted = true WHERE surveyUid = :surveyUid AND email = :email");
+		query.setParameter("surveyUid", surveyUid).setParameter("email", email);
+		query.executeUpdate();
 	}
 
-	public byte[] exportVoterFile(Collection<Voter> voters) throws IOException {
+	public byte[] exportVoterFile(String surveyUid, String user, String email, String first, String last, Boolean voted, Boolean useEmailVariant) throws IOException {
+		List<Voter> voters = getVoters(surveyUid, 1, 100000, user, email, first, last, voted);
+
+		return exportVoterFile(voters, useEmailVariant);
+	}
+
+	public byte[] exportVoterFile(Collection<Voter> voters, boolean useEmailVariant) throws IOException {
 		
 		Workbook workbook = new SXSSFWorkbook();
 		Sheet sheet = workbook.createSheet("Voters");
 		Row header = sheet.createRow(0);
-		
-		Cell headerCell = header.createCell(0);
-		headerCell.setCellValue("User name");
-		headerCell = header.createCell(1);
+		int cellCounter = 0;
+
+		if (!useEmailVariant) {
+			Cell headerCell = header.createCell(cellCounter++);
+			headerCell.setCellValue("User name");
+		}
+
+		Cell headerCell = header.createCell(cellCounter++);
+		headerCell.setCellValue("E-mail");
+
+		headerCell = header.createCell(cellCounter++);
 		headerCell.setCellValue("First name");
-		headerCell = header.createCell(2);
+		headerCell = header.createCell(cellCounter++);
 		headerCell.setCellValue("Surname");
 		if (voters.size() > 0) {
-			headerCell = header.createCell(3);
+			headerCell = header.createCell(cellCounter++);
 			headerCell.setCellValue("Has voted?");
 		}
 		
@@ -318,11 +412,17 @@ public class EVoteService extends BasicService {
 		int rowCounter = 1;
 		for (Voter voter: voters) {
 			row = sheet.createRow(rowCounter);
+
+			cellCounter = -1;
+
+			if (!useEmailVariant) {
+				row.createCell(cellCounter++).setCellValue(voter.getEcMoniker());
+			}
 			
-			row.createCell(0).setCellValue(voter.getEcMoniker());
-			row.createCell(1).setCellValue(voter.getGivenName());
-			row.createCell(2).setCellValue(voter.getSurname());
-			row.createCell(3).setCellValue(voter.getVoted() ? "Yes" : "No");
+			row.createCell(cellCounter++).setCellValue(voter.getEmail());
+			row.createCell(cellCounter++).setCellValue(voter.getGivenName());
+			row.createCell(cellCounter++).setCellValue(voter.getSurname());
+			row.createCell(cellCounter++).setCellValue(voter.getVoted() ? "Yes" : "No");
 			
 			rowCounter++;
 		}
@@ -366,11 +466,13 @@ public class EVoteService extends BasicService {
 			}
 			
 			if (question instanceof MultipleChoiceQuestion) {
+				MultipleChoiceQuestion mc = (MultipleChoiceQuestion)question;
+
 				SeatDistribution listSeats = new SeatDistribution();
 				listSeats.setName(question.getStrippedTitle());
+				listSeats.setCanHaveListVote(mc.getIsListVote());
 				result.getListSeatDistribution().add(listSeats);
 				
-				MultipleChoiceQuestion mc = (MultipleChoiceQuestion)question;
 				config.listSeatDistributions.put(mc, listSeats);
 
 				for (PossibleAnswer pa : mc.getPossibleAnswers()) {
@@ -433,6 +535,12 @@ public class EVoteService extends BasicService {
 		}
 
 		return true;
+	}
+
+	@Transactional
+	public void update(Voter voter) {
+		Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(voter);
 	}
 
 	private class EVoteConfiguration {
@@ -1322,7 +1430,7 @@ public class EVoteService extends BasicService {
 		}
 		
 		if (seats > 0 && seats < maxSeats) {
-			Collections.sort(rvs, Comparator.comparingDouble(RemainderValue::getFraction).reversed());
+			rvs.sort(Comparator.comparingDouble(RemainderValue::getFraction).reversed());
 			
 			for (int i = 0; i < rvs.size(); i++) {
 				if (candidatesPerList != null && rvs.get(i).getSeats() >= candidatesPerList[rvs.get(i).getIndex()]) {

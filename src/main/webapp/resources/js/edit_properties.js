@@ -178,7 +178,8 @@ var ElementProperties = function() {
 	this.Type = ko.observable("");
 	this.Id = ko.observable("");	
 	this.propertyRows = ko.observableArray();
-	
+	this.showAddToPredefined = ko.observable(false);
+
 	this.clear = function()
 	{
 		for (var i = tinymce.editors.length - 1 ; i > -1 ; i--) {
@@ -195,6 +196,7 @@ var ElementProperties = function() {
 		this.Id("");
 		this.propertyRows.removeAll();
 		this.selectedelement = null;
+		this.showAddToPredefined(false);
 		$(".properties").find(".areaheader").find(".glyphicon-chevron-right").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
 	}
 	
@@ -318,6 +320,10 @@ var ElementProperties = function() {
 		}
 		
 		_actions.ChildSelected(false);
+
+		if ($("#content").find(".selectedquestion").length == 1) {
+			this.showAddToPredefined(true);
+		}
 
 		let selection = $("#content").find(".selectedquestion");
 		let filteredSelection = selection.filter((i, el) => SurveyRuleEvaluator.isElementAllowed(el))

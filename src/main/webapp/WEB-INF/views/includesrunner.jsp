@@ -323,7 +323,10 @@
 	var version = versionfootersource.substring(versionfootersource.indexOf("(")+1);
 	version = version.substring(0, version.indexOf(" "));
 
-	var maxFreeTextLength = ${maxFreeTextLength};
+	var maxFreeTextLength = 10000;
+	<c:if test="${maxFreeTextLength != null}">
+		var maxFreeTextLength = ${maxFreeTextLength};
+	</c:if>
 
 	<c:if test="${surveyeditorsaved != null}">
 	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");

@@ -70,16 +70,14 @@ public class XHTMLValidator {
 			final InputStream is4 = servletContext.getResourceAsStream("/WEB-INF/Content/xhtml-symbol.ent");
 			
 			builder.setEntityResolver((publicId, systemId) -> {
-                if (systemId.contains("xhtml11.dtd")) {
-                    return new InputSource(is);
-                } else if (systemId.contains("xhtml-lat1.ent")) {
+               	if (systemId.contains("xhtml-lat1.ent")) {
                       return new InputSource(is2);
                 } else if (systemId.contains("xhtml-special.ent")) {
                       return new InputSource(is3);
                 } else if (systemId.contains("xhtml-symbol.ent")) {
                       return new InputSource(is4);
                 } else {
-                    return null;
+					return new InputSource(is); // defaults to xhtml11 for security reasons
                 }
             });
 			

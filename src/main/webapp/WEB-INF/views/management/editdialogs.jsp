@@ -205,6 +205,20 @@
 			 </div>
 		 </div>
 	 </div>
+
+	 <div class="modal" id="confirmDeletePredefinedElement" data-backdrop="static">
+     	<div class="modal-dialog modal-sm">
+        <div class="modal-content">
+     	<div class="modal-body">
+     	 	<spring:message code="question.DeletePredefinedElement" />
+     	</div>
+     	<div class="modal-footer">
+     		<a onclick="_actions.deletePredefinedElement(); $('#confirmDeletePredefinedElement').modal('hide')" class="btn btn-primary"><spring:message code="label.Yes" /></a>
+     		<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>
+     	</div>
+     	</div>
+     	</div>
+     </div>
 	 
 	 <script type="text/javascript">
 		var surveyLanguage = "${form.survey.language.code}";
@@ -346,6 +360,22 @@
 					}
 				});
 			} else {
+			    // load predefined elements
+			    $.ajax({
+                    type:'GET',
+                    dataType: 'json',
+                    url: "${contextpath}/runner/predefinedelements",
+                    data: s,
+                    cache: false,
+                    success: function( result ) {
+                        for (var i = 0; i < result.length; i++)
+                        {
+                            var model = getElementViewModel(result[i], true);
+                            _elements[model.id()] = model;
+                        }
+                    }
+                });
+
 				createNavigation(true);
 				updateDependenciesView();
 				_actions.AllElementsLoaded(true);
@@ -761,8 +791,14 @@
 		strings["EvaluationCriteria"] = "<spring:message code="label.EvaluationCriteria" />";
 		strings["ListVote"] = "<spring:message code="label.ListVote" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.ListVote" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 
-		const hiddenInfo = '<spring:message code="info.Hidden" />'
+		const hiddenInfo = '<spring:message code="info.Hidden" />';
 		strings["Hidden"] = "<spring:message code="label.Hidden" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + hiddenInfo + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
+
+		strings["ElementAdded"] = '<spring:message code="info.ElementAdded" />';
+		strings["ElementDeleted"] = '<spring:message code="info.ElementDeleted" />';
+		strings["error.PredefinedAdd"] = '<spring:message code="error.PredefinedAdd" />';
+		strings["error.PredefinedDelete"] = '<spring:message code="error.PredefinedDelete" />';
+		strings["error.PredefinedLimit"] = '<spring:message code="error.PredefinedLimit" />';
 
 	 	function getPropertyLabel(label)
 	 	{

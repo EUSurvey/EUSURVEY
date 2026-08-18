@@ -196,7 +196,7 @@ public class ExportService extends BasicService {
 		}
 	}
 
-	public String getExportFilePath(Export export, String uid) {
+	public String getExportFilePath(Export export, String uid) throws IOException {
 		
 		if (uid != null && uid.length() > 0 && !uid.equals("null"))
 		{
@@ -213,8 +213,7 @@ public class ExportService extends BasicService {
 		return getExportFilePath(export.getId(),export.getFormat());
 	}
 	
-	private String getExportFilePath(int id, ExportFormat format)
-	{
+	private String getExportFilePath(int id, ExportFormat format) throws IOException {
 		Export export = get(id,  false);
 
 		if (export.getSurvey() == null)

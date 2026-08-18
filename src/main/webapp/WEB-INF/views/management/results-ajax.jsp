@@ -43,19 +43,6 @@
 							  return;
 						  }
 
-						  //If there are no contributions, maxSectionScore is empty
-						  //Sections visibility is dependent on maxSectionScore, so if there are no quiz questions in the table
-						  // -> set maxSectionScore to 0
-						  if (JSON.stringify(statistics.maxSectionScore) === "{}"){
-							  $(".sectiontitle").each(function () {
-								  let section = $(this)
-								  let questionsTable = section.nextAll("table.table:first")
-								  if (questionsTable.find("tr").length <= 1){
-									  statistics.maxSectionScore[section.attr("data-id")] = 0
-								  }
-							  })
-						  }
-						  
 						  $(".deactivatedstatexports").hide();
 						  $(".activatedstatexports").show();	
 						  
@@ -140,19 +127,6 @@
 						  $(".statBestSectionScore").each(function(){
 							  var id = $(this).attr("data-id");							  
 							  $(this).html(roundToTwo(statistics.bestSectionScore[id]) + '&#x20;<spring:message code="label.of" />&#x20;' + statistics.maxSectionScore[id] + '&#x20;<spring:message code="label.points" /> (' + roundToTwo(statistics.maxSectionScore[id] == 0 ? 0 : statistics.bestSectionScore[id] / statistics.maxSectionScore[id] * 100) + '%)');
-
-							  if (statistics.maxSectionScore[id] == 0) {
-								  $(this).closest(".sectionwithratingquestions").hide();
-							  }
-						  });
-
-						  $(".sectiontitle").each(function () {
-							  var id = $(this).attr("data-id");
-							  if (statistics.maxSectionScore[id] == 0) {
-								  $(this).hide();
-								  $(this).next().hide();
-								  $(this).next().next().hide();
-							  }
 						  });
 
 						  if (publication) {

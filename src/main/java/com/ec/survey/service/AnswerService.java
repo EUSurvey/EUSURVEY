@@ -79,7 +79,7 @@ public class AnswerService extends BasicService {
 			boolean invalidateExportsAndStatistics, boolean createAttendees) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 
-		if (answerSet.getSurvey().getShortname().equalsIgnoreCase("NewSelfRegistrationSurvey")) {
+		if (!answerSet.getSurvey().getIsDraft() && answerSet.getSurvey().getShortname().equalsIgnoreCase("NewSelfRegistrationSurvey")) {
 			User user = new User();
 			user.setPasswordSalt(Tools.newSalt());
 			user.setValidated(false);
@@ -134,6 +134,10 @@ public class AnswerService extends BasicService {
 						}
 					}
 				}
+			}
+
+			if (!administrationService.checkAndLogAccountCreation(answerSet.getIP(), user.getEmail())) {
+				throw new MessageException("account creation limit exceeded");
 			}
 
 			List<Role> roles = administrationService.getAllRoles();
@@ -950,7 +954,7 @@ public class AnswerService extends BasicService {
 				this.deleteAnswer(answerSet, false);
 				deletedAnswerSets.add(answerSet.getUniqueCode());
 			} catch (IOException | MessageException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 

@@ -124,12 +124,14 @@ public class ExportsController extends BasicController {
 					export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
 
 					String user = (String) request.getSession().getAttribute("VotersUserFilter");
+					String email = (String) request.getSession().getAttribute("VotersEmailFilter");
 					String first = (String) request.getSession().getAttribute("VotersFirstFilter");
 					String last = (String) request.getSession().getAttribute("VotersLastFilter");
 					Boolean voted = (Boolean) request.getSession().getAttribute("VotersVotedFilter");
 
+					boolean useEmailVariant = surveyService.usesVoterFileEmail(voterForm.getSurvey());
 
-					byte[] file = eVoteService.exportVoterFile(voterForm.getSurvey().getUniqueId(), user, first, last, voted);
+					byte[] file = eVoteService.exportVoterFile(voterForm.getSurvey().getUniqueId(), user, email, first, last, voted, useEmailVariant);
 					export.setValid(true);
 					export.setState(ExportState.Finished);
 

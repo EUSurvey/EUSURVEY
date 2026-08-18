@@ -121,7 +121,7 @@
 				 						    	<c:when test="${invisibleElements != null && invisibleElements.contains(matrixQuestion.uniqueId)}">
 
                                             	</c:when>
-                                                <c:when test="${matrixQuestion.scoring > 0}">
+                                                <c:when test="${matrixQuestion.isQuizElement()}">
                                                     <tr>
                                                         <td colspan="4" style="padding-top: 20px">
                                                             <c:choose>
@@ -212,7 +212,7 @@
 				 						</c:forEach>
 				 					</c:when>				 					
 				 					<c:when test="${element.getType() == 'SingleChoiceQuestion' || element.getType() == 'MultipleChoiceQuestion' || element.getType() == 'FreeTextQuestion' || element.getType() == 'NumberQuestion' || element.getType() == 'DateQuestion'}">
-						 				<c:if test="${element.scoring > 0}">
+						 				<c:if test="${element.isQuizElement()}">
 						 					<tr>
 						 						<td colspan="4" style="padding-top: 20px">
 					 								<c:choose>

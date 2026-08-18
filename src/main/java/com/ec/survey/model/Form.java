@@ -646,6 +646,23 @@ public class Form implements java.io.Serializable {
 		return result;
 	}
 
+	public boolean doesSectionContainQuizElements(int sectionId) {
+		boolean insideSection = false;
+		for (Element element : survey.getElements()) {
+			if (element instanceof Section) {
+				if (insideSection) {
+					return false;
+				} else if (element.getId().equals(sectionId)) {
+					insideSection = true;
+					continue;
+				}
+			}
+			if (insideSection && element.isQuizElement())
+				return true;
+		}
+		return false;
+	}
+
 	public Statistics getStatistics() {
 		return statistics;
 	}

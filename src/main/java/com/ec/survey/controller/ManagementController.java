@@ -20,7 +20,6 @@ import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.evote.SeatCounting;
 import com.ec.survey.model.evote.eVoteListResult;
 import com.ec.survey.model.evote.eVoteResults;
-import com.ec.survey.model.selfassessment.SACriterion;
 import com.ec.survey.model.selfassessment.SAReportConfiguration;
 import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.*;
@@ -1458,7 +1457,7 @@ public class ManagementController extends BasicController {
 					continue;
 				}
 
-				if (invalid(tagname)) {
+				if (invalidCharactersFound(tagname)) {
 					String message = resources.getMessage("validation.tagsText", null,
 							"Tags may only contain alphanumeric characters (A-Z, a-z, 0-9), underscores and hyphens.",
 							locale);
@@ -1485,7 +1484,7 @@ public class ManagementController extends BasicController {
 			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
 
-		if (invalid(uploadedSurvey.getShortname())) {
+		if (invalidCharactersFound(uploadedSurvey.getShortname())) {
 			String message = resources.getMessage("validation.name2", null,
 					"Alias must be composed of lowercase and uppercase letters (a-z and A-Z), numbers (0-9), hyphens and underscores only.",
 					locale);
@@ -2547,7 +2546,7 @@ public class ManagementController extends BasicController {
 		}
 	}
 
-	private boolean invalid(String term) {
+	public static  boolean invalidCharactersFound(String term) {
 		Pattern p = Pattern.compile("^[a-zA-Z0-9-_]+$");
 		Matcher m = p.matcher(term);
 		return !m.find();
@@ -2585,7 +2584,6 @@ public class ManagementController extends BasicController {
 		
 		if (form.getSurvey().getIsSelfAssessment()) {
 
-
 			var criteria = selfassessmentService.getCriteria(form.getSurvey().getUniqueId());
 
 			var criteriaMaps = criteria.stream().map((saCriterion -> {
@@ -2610,6 +2608,17 @@ public class ManagementController extends BasicController {
 			result.addObject("SADatasetsJSON", objectMapper.writeValueAsString(datasetMaps));
 		}
 
+		List<Element> predefinedElements = administrationService.getPredefinedElements(u.getId());
+
+		predefinedElements.sort(
+				Comparator.comparing(
+						Element::getStrippedTitle,
+						Comparator.nullsLast(String::compareToIgnoreCase)
+				)
+		);
+
+		result.addObject("predefinedElements", predefinedElements);
+
 		return result;
 	}
 
@@ -2631,7 +2640,7 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		Survey survey = editSave(form.getSurvey(), request);
+		Survey survey = editSave(form.getSurvey(), request, u.getId());
 		answerService.deleteStatisticsForSurvey(survey.getId());
 		surveyService.updatePendingChanges(survey);
 
@@ -2664,6 +2673,7 @@ public class ManagementController extends BasicController {
 		Form form;
 		try {
 			form = sessionService.getForm(request, shortname, false, false);
+			User u = sessionService.getCurrentUser(request);
 
 			Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
@@ -2671,7 +2681,7 @@ public class ManagementController extends BasicController {
 			String id = Tools.escapeHTML(parameterMap.get("template-id")[0]);
 
 			Element element = SurveyHelper.parseElement(request, fileService, selfassessmentService, id, form.getSurvey(), servletContext,
-					activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED));
+					activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), u.getId());
 
 			Template template = new Template();
 			template.setName(name);
@@ -2773,9 +2783,9 @@ public class ManagementController extends BasicController {
 				fileService.add(f);
 
 				response.setStatus(HttpServletResponse.SC_OK);
-				writer.print("{\"success\": true, \"id\": '" + f.getUid() + "', \"uid\": '" + f.getUid()
-						+ "', \"longdesc\": '" + f.getLongdesc() + "', \"comment\": '" + f.getComment()
-						+ "', \"width\": '" + f.getWidth() + "', \"name\": '" + filename + "'}");
+				writer.print("{\"success\": true, \"id\": \"" + f.getUid() + "\", \"uid\": \"" + f.getUid()
+						+ "\", \"longdesc\": \"" + f.getLongdesc() + "\", \"comment\": \"" + f.getComment()
+						+ "\", \"width\": \"" + f.getWidth() + "\", \"name\": \"" + filename + "\"}");
 			}
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -2790,37 +2800,6 @@ public class ManagementController extends BasicController {
 			}
 		}
 
-		writer.flush();
-		writer.close();
-	}
-
-	@RequestMapping(value = "/copyfile", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public void copyfile(HttpServletRequest request, HttpServletResponse response) {
-		String uid = request.getParameter("uid");
-
-		PrintWriter writer = null;
-		try {
-			writer = response.getWriter();
-
-			Form form = sessionService.getForm(request, null, false, false);
-
-			User u = sessionService.getCurrentUser(request);
-			if (!u.getId().equals(form.getSurvey().getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
-				throw new ForbiddenURLException();
-			}
-
-			File copy = fileService.copyFile(uid, form.getSurvey().getUniqueId());
-
-			response.setStatus(HttpServletResponse.SC_OK);
-			writer.print("{\"success\": true, \"newuid\": \"" + copy.getUid() + "\"}");
-
-		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
-			response.setStatus(HttpServletResponse.SC_OK);
-			writer.print("{\"success\": false}");
-		}
 		writer.flush();
 		writer.close();
 	}
@@ -3831,8 +3810,28 @@ public class ManagementController extends BasicController {
 					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
 				throw new ForbiddenURLException();
 			}
+
+			var survey = form.getSurvey();
 			
-			eVoteResults results = eVoteService.importSeatTestSheet(form.getSurvey(), is);	
+			eVoteResults results = eVoteService.importSeatTestSheet(survey, is);
+
+			boolean isEeas = form.getSurvey().geteVoteTemplate().equals("e");
+			if (isEeas) {
+				var elements = survey.getElementsByUniqueId();
+				for (var list : results.getLists().values()) {
+					var el = (MultipleChoiceQuestion) elements.get(list.getUid());
+					if (list.getListVotes() > 0 && el.getIsListVote()) {
+						int i = 0;
+						var votes = list.getCandidateVotes();
+						for (var key : votes.keySet()) {
+							i++;
+							if (i > 5) break;
+							votes.put(key, votes.get(key) + list.getListVotes());
+						}
+					}
+				}
+			}
+
 			response.setStatus(HttpServletResponse.SC_OK);
 			return results;	
 		} catch (Exception ex) {
@@ -3947,7 +3946,10 @@ public class ManagementController extends BasicController {
 					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
 				throw new ForbiddenURLException();
 			}
-			
+
+			boolean isLux = form.getSurvey().geteVoteTemplate().equals("l");
+			boolean isEeas = form.getSurvey().geteVoteTemplate().equals("e");
+
 			eVoteResults results = eVoteService.getEmptyListResult(form.getSurvey());
 			results.setBlankVotes(getValue(request, "blankvotes"));
 			results.setSpoiltVotes(getValue(request, "spoiltvotes"));
@@ -3956,17 +3958,25 @@ public class ManagementController extends BasicController {
 			for (Entry<String, eVoteListResult> listResultEntry : results.getLists().entrySet()) { // key is uid of the question
 				eVoteListResult listResult = listResultEntry.getValue();
 				listResult.setListVotes(getValue(request, "listvotes" + listResultEntry.getKey()));
-				
+
+				//Ordered Set
 				Set<String> pauids = listResultEntry.getValue().getCandidateVotes().keySet();
 				int i = 1;
 				int luxListVotes = 0;
 				for (String pauid : pauids) {
-					int v = getValue(request, listResultEntry.getKey() + "-" + i++);
+					int v = getValue(request, listResultEntry.getKey() + "-" + i);
+
+					if (isLux) {
+						luxListVotes += v;
+					} else if (isEeas && i <= 5) {
+						v += listResult.getListVotes();
+					}
+
 					listResultEntry.getValue().getCandidateVotes().put(pauid, v);
-					luxListVotes += v;
+					i++;
 				}
 				
-				if (form.getSurvey().geteVoteTemplate().equals("l")) {
+				if (isLux) {
 					listResult.setLuxListVotes(luxListVotes);
 				}
 			}
@@ -5711,4 +5721,33 @@ public class ManagementController extends BasicController {
 
 		return false;
 	}
+
+	@PostMapping(value = "/addToMyPredefinedElements")
+	public @ResponseBody boolean addToMyPredefinedElements(HttpServletRequest request) throws Exception {
+		User user = sessionService.getCurrentUser(request);
+		Form form = sessionService.getFormFromSessionInfo(request);
+		sessionService.upgradePrivileges(form.getSurvey(), user, request);
+
+		if (!form.getSurvey().getOwner().getId().equals(user.getId())
+				&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+				&& user.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1) {
+			throw new ForbiddenURLException();
+		}
+
+		int id = Integer.parseInt(request.getParameter("id"));
+		return surveyService.addElementToPredefinedElements(id, form.getSurvey(), user.getId());
+	}
+
+	@PostMapping(value = "/deleteFromMyPredefinedElements")
+	public @ResponseBody boolean deleteFromMyPredefinedElements(HttpServletRequest request) throws Exception {
+		User user = sessionService.getCurrentUser(request);
+		int id = Integer.parseInt(request.getParameter("id"));
+
+		surveyService.removeElementFromPredefinedElements(id, user.getId());
+
+		return true;
+	}
+
+
+
 }

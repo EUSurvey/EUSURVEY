@@ -249,9 +249,9 @@ public class HomeController extends BasicController {
 		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true, false);
 		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true, false);
 		String message = ConversionTools.removeHTML(request.getParameter(Constants.MESSAGE), true, false);
-		String additionalinfo  = request.getParameter("additionalinfo");
-		String additionalsurveyinfotitle = request.getParameter("additionalsurveyinfotitle");
-		String additionalsurveyinfoalias = request.getParameter("additionalsurveyinfoalias");
+		String additionalinfo  = ConversionTools.removeHTML(request.getParameter("additionalinfo"), true, false);
+		String additionalsurveyinfotitle = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfotitle"), true, false);
+		String additionalsurveyinfoalias = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfoalias"), true, false);
 		String[] uploadedfiles = request.getParameterValues("uploadedfile");
 
 		StringBuilder body = new StringBuilder();
@@ -269,8 +269,7 @@ public class HomeController extends BasicController {
 			body.append("<tr><td>Survey Title:</td><td>").append(additionalsurveyinfotitle).append("</td></tr>");
 			additioninfo = true;
 		}
-		if (additionalsurveyinfoalias != null && additionalsurveyinfoalias.length() > 0) {
-
+		if (additionalsurveyinfoalias != null && additionalsurveyinfoalias.length() > 0 && !ManagementController.invalidCharactersFound(additionalsurveyinfoalias)) {
 			String link = host + "runner/" + additionalsurveyinfoalias;
 
 			body.append("<tr><td>Survey Alias:</td><td><a href='").append(link).append("'>").append(additionalsurveyinfoalias).append("</a></td></tr>");
@@ -328,6 +327,10 @@ public class HomeController extends BasicController {
 		String additionalsurveyinfotitle = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfotitle"), !useJSON, useJSON);
 		String additionalsurveyinfoalias = ConversionTools.removeHTML(request.getParameter("additionalsurveyinfoalias"), !useJSON, useJSON);
 		String login = "";
+
+		if (additionalsurveyinfoalias != null && !additionalsurveyinfoalias.isEmpty() && ManagementController.invalidCharactersFound(additionalsurveyinfoalias)) {
+			throw new MessageException("Invalid survey alias");
+		}
 
 		boolean external = !email.toLowerCase().endsWith("ec.europa.eu");
 		InputStream inputStreamXML = servletContext.getResourceAsStream("/WEB-INF/Content/EC/createIncident.xml");
@@ -844,9 +847,11 @@ public class HomeController extends BasicController {
 			model.addObject("casoss", true);
 
 		String code = request.getParameter("code");
+		if (code != null) code = Tools.encodeForHTML(code);
 		model.addObject("code", code);
 		
 		String email = request.getParameter("email");
+		if (email != null) email = Tools.encodeForHTML(email);
 		model.addObject("email", email);
 		
 		model.addObject("showDownloadPdfDialog", true);

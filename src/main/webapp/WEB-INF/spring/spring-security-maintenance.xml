@@ -17,6 +17,11 @@
 		<security:intercept-url pattern="/resources/images/**" access="permitAll" />
 		<security:intercept-url pattern="/**" access="hasRole('ROLE_IMPOSSIBLE')" />
 
+		<security:headers>
+			<security:frame-options disabled="true"></security:frame-options>
+			<security:content-security-policy policy-directives="frame-ancestors ${frameancestors:@null}"   />
+		</security:headers>
+
 		<security:logout invalidate-session="false" success-handler-ref="myLogoutSuccessHandler"
 			logout-url="/j_spring_security_logout" />
 

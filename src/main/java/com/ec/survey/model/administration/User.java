@@ -2,6 +2,7 @@ package com.ec.survey.model.administration;
 
 import com.ec.survey.model.ResultAccess;
 import com.ec.survey.model.attendees.AttributeName;
+import com.ec.survey.model.survey.Element;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -66,6 +67,7 @@ public class User implements java.io.Serializable {
 	private Date deleteDate;
 	private ResultAccess resultAccess;
 	private String organisation;
+	private List<Element> predefinedElements = new ArrayList<>();
 	
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
@@ -247,6 +249,21 @@ public class User implements java.io.Serializable {
 			}
 		}
 		return s.toString();
+	}
+
+	@OneToMany(targetEntity = Element.class, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT),
+			joinColumns = @JoinColumn(name = "USERS_USER_ID"),
+			inverseJoinColumns = @JoinColumn(name = "elements_ID"))
+	@Fetch(value = FetchMode.SELECT)
+	@OrderBy(value = "position asc")
+	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+	@JsonIgnore
+	public List<Element> getPredefinedElements() {
+		return predefinedElements;
+	}
+	public void setPredefinedElements(List<Element> predefinedElements) {
+		this.predefinedElements = predefinedElements;
 	}
 
 	@ManyToMany(targetEntity = AttributeName.class)

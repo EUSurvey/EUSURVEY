@@ -234,8 +234,9 @@
 								<input id="sysLoginFormSubmitButton" class="btn btn-default" type="submit" value="<spring:message code="label.DoLogin" />"/>
 								&nbsp;
 								<a id="sysCancel" class="btn btn-default" type="button" ><spring:message code="label.Cancel" /></a>
-								&#160;&#160;<spring:message code="label.or" />&#160;&#160;<a class="visiblelink disabled" href="${contextpath}/runner/NewSelfRegistrationSurvey"><spring:message code="label.Register" /></a>
-								
+								<c:if test="${showecas == null}">
+								    &#160;&#160;<spring:message code="label.or" />&#160;&#160;<a class="visiblelink disabled" href="${contextpath}/runner/NewSelfRegistrationSurvey"><spring:message code="label.Register" /></a>
+								</c:if>
 								<br />
 								<div style="margin-left: 200px"><a class="redlink"  onclick="$('#forgot-password-dialog').modal('show');"><spring:message code="label.ForgotYourPassword" /></a></div>
 							</div>

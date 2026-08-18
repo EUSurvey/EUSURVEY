@@ -3,7 +3,8 @@ package com.ec.survey.service;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.*;
-import com.ec.survey.model.survey.Survey;
+import com.ec.survey.model.survey.*;
+import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.LoginAlreadyExistsException;
@@ -15,6 +16,7 @@ import org.hibernate.query.Query;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -889,4 +891,103 @@ public class AdministrationService extends BasicService {
 		return count == 0;
 	}
 
+	@Transactional
+	public boolean addElementToPredefinedElements(int userId, Element element, String surveyUid) throws ValidationException, IOException {
+		Session session = sessionFactory.getCurrentSession();
+		User user = (User) session.get(User.class, userId);
+		session.refresh(user);
+
+		int max = Integer.parseInt(settingsService.get(Setting.MaxPredefinedElementsPerUser));
+		if (user.getPredefinedElements().size() >= max) {
+			return false;
+		}
+
+		Element copy = element.copy(surveyService.getFileDir());
+
+		if (copy instanceof Download) {
+			for (File file : ((Download) copy).getFiles()) {
+				File fileCopy = fileService.copyFileToUserFolder(file.getUid(), surveyUid, userId);
+				file.setUid(fileCopy.getUid());
+			}
+		} else if (copy instanceof GalleryQuestion) {
+			for (File file : ((GalleryQuestion) copy).getFiles()) {
+				File fileCopy = fileService.copyFileToUserFolder(file.getUid(), surveyUid, userId);
+				file.setUid(fileCopy.getUid());
+			}
+		} else if (copy instanceof Confirmation) {
+			for (File file : ((Confirmation) copy).getFiles()) {
+				File fileCopy = fileService.copyFileToUserFolder(file.getUid(), surveyUid, userId);
+				file.setUid(fileCopy.getUid());
+			}
+		} else if (copy instanceof Image) {
+			var image = (Image)copy;
+			String[] url = image.getUrl().split("/");
+			String fileUID = url[url.length - 1];
+			if (!fileUID.equals("photo_scenery.png")) {
+				File fileCopy = fileService.copyFileToUserFolder(fileUID, surveyUid, userId);
+				url[url.length - 1] = fileCopy.getUid();
+				url[url.length - 2] = "USER";
+				image.setUrl(String.join("/", url));
+			}
+		}
+
+		user.getPredefinedElements().add(copy);
+		session.saveOrUpdate(user);
+		return true;
+	}
+	@Transactional
+	public void removeElementFromPredefinedElements(int userId, int elementId) throws MessageException {
+		Session session = sessionFactory.getCurrentSession();
+		User user = (User) session.get(User.class, userId);
+		session.refresh(user);
+		var element = user.getPredefinedElements().stream().filter(e -> e.getId() == elementId).findFirst();
+		if (element.isEmpty()) throw new MessageException("unknown element");
+		user.getPredefinedElements().remove(element.get());
+		session.saveOrUpdate(user);
+	}
+
+	@Transactional
+	public List<Element> getPredefinedElements(int userId) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = (User) session.get(User.class, userId);
+		session.refresh(user);
+		return user.getPredefinedElements();
+	}
+
+	@Transactional
+    public boolean checkAndLogAccountCreation(String ip, String email) {
+		Session session = sessionFactory.getCurrentSession();
+		String domain = email.substring(email.indexOf("@")+1);
+
+		String blockedDomains = settingsService.get(Setting.BlockedDomainsForRegistration);
+		if (blockedDomains != null && !blockedDomains.isEmpty()) {
+			var domains = Arrays.asList(blockedDomains.toLowerCase().split(";"));
+			if (domains.contains(domain)) {
+				logger.error("account creation denied (blocked domain)");
+				return false;
+			}
+		}
+
+		NativeQuery query = session.createNativeQuery("SELECT COUNT(ACCOUNTCREATION_ID) FROM ACCOUNTCREATION WHERE ACCOUNTCREATION_IP = :ip AND ACCOUNTCREATION_DATE >= NOW() - INTERVAL 1 HOUR");
+		Object result = query.setParameter("ip", ip).uniqueResult();
+		if (ConversionTools.getValue(result) >= 3) {
+			logger.error("account creation denied (ip limit exceeded)");
+			return false;
+		}
+
+		query = session.createNativeQuery("SELECT COUNT(ACCOUNTCREATION_ID) FROM ACCOUNTCREATION WHERE ACCOUNTCREATION_DOMAIN = :domain AND ACCOUNTCREATION_DATE >= NOW() - INTERVAL 1 DAY");
+		result = query.setParameter("domain", domain).uniqueResult();
+		if (ConversionTools.getValue(result) >= 5) {
+			logger.error("account creation denied (domain limit exceeded)");
+			return false;
+		}
+
+		AccountCreationForIP entry = new AccountCreationForIP();
+		entry.setDate(new Date());
+		entry.setIp(ip);
+		entry.setDomain(domain);
+		session.saveOrUpdate(entry);
+
+		return true;
+    }
 }

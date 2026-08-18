@@ -1754,7 +1754,7 @@ function createImageUploader(instance)
 		{
 	    	$(row).find(".validationinfobutton").remove();	
 	    	$(row).removeClass("invalidinput");
-	    	
+
 	    	$(instance).parent().find(".validation-error").remove();
 	    	
 	    	if (responseJSON.success)

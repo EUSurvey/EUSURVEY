@@ -525,9 +525,14 @@ public class ResultFilter implements java.io.Serializable {
 	{
 		return visibleQuestions.contains(questionId);
 	}
-	
+
+
+	public boolean visibleSection(int sectionId, Survey survey) {
+		return visibleSection(sectionId, survey, false);
+	}
+
 	@Transient
-	public boolean visibleSection(int sectionId, Survey survey)
+	public boolean visibleSection(int sectionId, Survey survey, boolean forQuiz)
 	{
 		boolean correctSection = false;
 		int sectionLevel = 0;
@@ -540,28 +545,32 @@ public class ResultFilter implements java.io.Serializable {
 				sectionLevel = ((Section)element).getLevel();
 			} else if (correctSection) {
 				if (element instanceof Section) {
-					if (((Section)element).getLevel() <= sectionLevel) {
+					if (((Section)element).getLevel() <= sectionLevel || forQuiz) {
 						return false;
 					}
 				} else {
 					if (visibleQuestions.contains(element.getId().toString())) {
 						Element question = elementsById.get(element.getId());
-						if (question instanceof ChoiceQuestion || question instanceof Matrix || question instanceof RatingQuestion || question instanceof FreeTextQuestion) {
-							return true;
-						} else if (question instanceof GalleryQuestion) {
-							GalleryQuestion g = (GalleryQuestion)question;
-							if (g.getSelection()) {
+						if (forQuiz) {
+							if (element.isQuizElement()) return true;
+						} else {
+							if (question instanceof ChoiceQuestion || question instanceof Matrix || question instanceof RatingQuestion || question instanceof FreeTextQuestion) {
 								return true;
-							}
-						} else if (question instanceof NumberQuestion) {
-							NumberQuestion n = (NumberQuestion)question;
-							if (n.showStatisticsForNumberQuestion(false)) {
-								return true;
-							}
-						} else if (question instanceof Question) {
-							Question q = (Question)question;
-							if (q.isDelphiElement() && q.getDelphiChartType() != DelphiChartType.None) {
-								return true;
+							} else if (question instanceof GalleryQuestion) {
+								GalleryQuestion g = (GalleryQuestion)question;
+								if (g.getSelection()) {
+									return true;
+								}
+							} else if (question instanceof NumberQuestion) {
+								NumberQuestion n = (NumberQuestion)question;
+								if (n.showStatisticsForNumberQuestion(false)) {
+									return true;
+								}
+							} else if (question instanceof Question) {
+								Question q = (Question)question;
+								if (q.isDelphiElement() && q.getDelphiChartType() != DelphiChartType.None) {
+									return true;
+								}
 							}
 						}
 					}

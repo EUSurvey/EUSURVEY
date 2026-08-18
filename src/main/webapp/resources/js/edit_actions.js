@@ -28,6 +28,8 @@ var Actions = function() {
     this.cutElements = [];
     this.deletedElements = [];
     this.deletedModels = [];
+
+	this.predefinedElementToDelete = 0;
     
     this.toggleBackupEnabled= function () {
         this.BackupEnabled(!this.BackupEnabled());
@@ -187,13 +189,26 @@ var Actions = function() {
     	$("#askcopysectiondialog").modal("hide");
 		this.DialogOpen(false);
     }
+
+	this.copyElement = function(item) {
+		this.copyElementInner(item, this.copiedElements, false)
+
+		var newCopiedElements = [];
+		$(this.copiedElements).each(function(){
+			var oldid = this.id();
+			var originalmodel = _elements[oldid];
+			var copiedmodel = originalmodel.copy();
+			newCopiedElements[newCopiedElements.length] = copiedmodel;
+		});
+		this.copiedElements = newCopiedElements;
+	}
     
-    this.copyElement = function(item)
+    this.copyElementInner = function(item, copiedElements, fromMyPredefined)
     {
     	var ids = "";
     	var copiedItems = [];
     	var dict = {};
-    	$(this.copiedElements).each(function(){
+    	$(copiedElements).each(function(){
     		var copiedmodel = this;
     		dict[copiedmodel.originalId] = copiedmodel.id();
     		
@@ -233,6 +248,16 @@ var Actions = function() {
 	    		}
 	    		$(newitem).attr("data-triggers", original_data_triggers);
     		}
+
+			if (fromMyPredefined) {
+				if (copiedmodel.type == "GalleryQuestion")
+				{
+					for (var i = 0; i < copiedmodel.files().length; i++)
+					{
+						copiedmodel.files()[i].fromMyPredefined(true);
+					}
+				}
+			}
     		
     		var copy = addElement(copiedmodel, true, false);
     		
@@ -271,7 +296,7 @@ var Actions = function() {
 			addToNavigation(newitem, $(newitem).index());
     	});	    	
     	
-    	$(this.copiedElements).each(function(){
+    	$(copiedElements).each(function(){
     		this.replaceTriggers(dict);
     	});
     	
@@ -292,15 +317,6 @@ var Actions = function() {
     	
 		updateDependenciesView();
 		deactivateLinks();
-		
-		var newCopiedElements = [];
-		$(this.copiedElements).each(function(){
-			var oldid = this.id();
-			var originalmodel = _elements[oldid];
-			var copiedmodel = originalmodel.copy();
-			newCopiedElements[newCopiedElements.length] = copiedmodel;
-    	});
-		this.copiedElements = newCopiedElements;
     }
     
     this.cutSelectedElement = function()
@@ -902,6 +918,60 @@ var Actions = function() {
 
     	checkContent();
     }
+
+	this.addToPredefinedElements = function() {
+		const selectedElements = $("#content").find(".selectedquestion");
+		const id = $($(selectedElements)[0]).attr("id");
+
+		$.ajax({
+			type: "POST",
+			data: {id: id},
+			url: contextpath + "/noform/management/addToMyPredefinedElements",
+			async: false,
+			cache: false,
+			beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+			success: function(data)
+			{
+				if (data) {
+					showInfo(getPropertyLabel("ElementAdded"));
+					window.location.href = window.location.href;
+				} else {
+					showError(getPropertyLabel("error.PredefinedLimit"));
+				}
+			},
+			error: function(e)
+			{
+				console.log(e)
+				showError(getPropertyLabel("error.PredefinedAdd"));
+			}
+		});
+	}
+
+	this.confirmDeletePredefinedElement = function(id) {
+		this.predefinedElementToDelete = id;
+		$("#confirmDeletePredefinedElement").modal("show");
+	}
+
+	this.deletePredefinedElement = function() {
+		$.ajax({
+			type: "POST",
+			data: {id: this.predefinedElementToDelete},
+			url: contextpath + "/noform/management/deleteFromMyPredefinedElements",
+			async: false,
+			cache: false,
+			beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+			success: function(data)
+			{
+				showInfo(getPropertyLabel("ElementDeleted"));
+				window.location.href = window.location.href;
+			},
+			error: function(e)
+			{
+				console.log(e)
+				showError(getPropertyLabel("error.PredefinedDelete"));
+			}
+		});
+	}
 }
 
 var _actions = new Actions();

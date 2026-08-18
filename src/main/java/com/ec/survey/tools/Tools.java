@@ -222,6 +222,10 @@ public class Tools {
 		return ESAPI.encoder().encodeForLDAP(input);
 	}
 
+	public static String encodeForHTML(String input) {
+		return ESAPI.encoder().encodeForHTML(input);
+	}
+
 	public static String encodeForJavaScript(String input) {
 		return ESAPI.encoder().encodeForJavaScript(input);
 	}

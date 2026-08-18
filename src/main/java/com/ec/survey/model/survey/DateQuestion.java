@@ -109,5 +109,5 @@ public class DateQuestion extends Question {
 	{
 		return Tools.formatDate(max, ConversionTools.DateFormat);
 	}
-	
+
 }

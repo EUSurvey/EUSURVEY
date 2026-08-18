@@ -33,6 +33,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -2205,7 +2206,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-	public Survey editSave(Survey oldsurvey, HttpServletRequest request) throws InvalidXHTMLException,
+	public Survey editSave(Survey oldsurvey, HttpServletRequest request, int userId) throws InvalidXHTMLException,
 			NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, IOException {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -2245,7 +2246,7 @@ public class SurveyService extends BasicService {
 		session.update(oldsurvey);
 
 		Survey survey = SurveyHelper.parseSurvey(request, this, fileService, selfassessmentService, servletContext,
-				activityService.isEnabled(ActivityRegistry.ID_ELEMENT_ORDER), activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), fileIDsByUID);
+				activityService.isEnabled(ActivityRegistry.ID_ELEMENT_ORDER), activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), fileIDsByUID, userId);
 
 		//Map<Element, Integer> pendingChanges = surveyService.getPendingChanges(survey);
 
@@ -7269,4 +7270,98 @@ public class SurveyService extends BasicService {
         query.setParameter("date", new Date());
         query.executeUpdate();
     }
+
+	@Transactional
+	public boolean addElementToPredefinedElements(int id, Survey survey, int userId) throws MessageException, ValidationException, IOException {
+		Element element = survey.getElementsById().get(id);
+		if (element == null) throw new MessageException("unknown element");
+
+		return administrationService.addElementToPredefinedElements(userId, element, survey.getUniqueId());
+	}
+
+	@Transactional
+	public void removeElementFromPredefinedElements(int elementId, int userId) throws MessageException {
+		administrationService.removeElementFromPredefinedElements(userId, elementId);
+	}
+	private final Random random = new Random();
+
+	@Transactional
+    public int createEmailAuthenticationToken(Survey survey, String email) throws MessageException, IOException {
+		Session session = sessionFactory.getCurrentSession();
+
+		// Create token with expiration
+		int number = 100000 + random.nextInt(900000);
+
+		// Save token to database
+		var authenticationNumber = new AuthenticationNumber(number, email, survey.getUniqueId());
+		session.save(authenticationNumber);
+
+		// Send email to user
+
+		String body = "Dear user,<br /><br />" +
+				"To access EUSurvey we need to verify your email address.<br />" +
+				"Here's your one time password (OTP): " + number + "<br />" +
+				"Please enter this OTP within 5 minutes of receiving this email to complete your verification process.<br /><br />" +
+				"Thank you,<br />" +
+				"Your EUSurvey team";
+
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", serverPrefix);
+
+		mailService.SendHtmlMail(email, sender, sender, "EUSurvey Authentication Code", text, null);
+
+		return number;
+	}
+
+	@Transactional
+	public AuthenticationNumber getAuthenticationNumber(int number, String email, String surveyUid) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "FROM AuthenticationNumber s WHERE s.number = :number AND s.email = :email AND s.surveyUid = :surveyUid";
+		Query<AuthenticationNumber> query = session.createQuery(hql, AuthenticationNumber.class).setParameter("email", email).setParameter("number", number).setParameter("surveyUid", surveyUid);
+
+		List<AuthenticationNumber> list = query.setReadOnly(true).setMaxResults(1).list();
+		if (list.isEmpty()) return null;
+		return list.get(0);
+	}
+
+	@Transactional
+	public boolean usesVoterFileEmail(Survey survey) {
+		if (survey.getIsEVote() && survey.geteVoteTemplate().equalsIgnoreCase("p")) {
+			List<ParticipationGroup> groups = participationService.getAll(survey.getUniqueId());
+			if (groups != null && groups.size() == 1 && groups.get(0).getType() == ParticipationGroupType.VoterFileEmail) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Transactional
+	public String createNewPDFCode(String surveyUid, int answerSetId) {
+		Session session = sessionFactory.getCurrentSession();
+		var code = new OneTimePDFCode(surveyUid, answerSetId);
+		session.save(code);
+		return code.getCode();
+	}
+
+	@Transactional
+	public boolean validateAndDeletePDFCode(String code, String surveyUid, int answerSetId) throws MessageException {
+
+		if (code == null || code.isEmpty()) return false;
+
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "FROM OneTimePDFCode p WHERE p.code = :code AND p.surveyUid = :surveyUid and p.answerSetId = :answerSetId";
+
+		Query<OneTimePDFCode> query = session.createQuery(sql, OneTimePDFCode.class);
+		query.setParameter("code", code).setParameter("surveyUid", surveyUid).setParameter("answerSetId", answerSetId);
+
+		List<OneTimePDFCode> codes = query.setReadOnly(true).list();
+
+		if (codes.isEmpty()) return false;
+		if (codes.size() > 1) {
+			throw new MessageException("multiple entries for same code found");
+		}
+
+		session.delete(codes.get(0));
+		return true;
+	}
 }

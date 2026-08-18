@@ -54,9 +54,9 @@ public class LdapService extends BasicService {
     private @Value("${ldap.mapping.user.recordStatus:recordStatus}") String ldapMappingUserRecordStatus;
     private @Value("${ldap.mapping.user.modifyTimstamp:modifyTimstamp}") String ldapMappingUserModifyTimstamp;
     
-    //private @Value("${ldap.mapping.domain.o:o}") String ldapMappingDomainO;
+    private @Value("${ldap.mapping.domain.o:o}") String ldapMappingDomainO;
     private @Value("${ldap.mapping.domain.description:description}") String ldapMappingDomainDescription;
-    //private @Value("${ldap.search.domains.format:@null}") String ldapSearchDomainFormat;
+    private @Value("${ldap.search.domains.format:@null}") String ldapSearchDomainFormat;
         
     public @Value("${casoss:false}") String cassOss;
 
@@ -76,16 +76,17 @@ public class LdapService extends BasicService {
         env.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
         env.put(Context.SECURITY_PRINCIPAL, securityPrincipal);
         env.put(Context.SECURITY_CREDENTIALS, securityCredentials);
+		env.put(Context.REFERRAL, "follow");
             
         return new InitialDirContext(env);
     }
-      
-    public String getEmail(String userName) throws NamingException {
-    	
-    	userName = Tools.encodeForLDAP(userName);
-    	
-        String email = "";
-        DirContext ctx = initialize();
+
+	public String getEmail(String userName) throws NamingException {
+
+		userName = Tools.encodeForLDAP(userName);
+
+		String email = "";
+		DirContext ctx = initialize();
 //        try {
 //        	String searchValue= String.format(ldapSearchUserFormat, userName);
 //            Attributes attrs = ctx.getAttributes(searchValue);
@@ -114,14 +115,14 @@ public class LdapService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-        ctx.close();
-        return email;
-    }
-    
+		ctx.close();
+		return email;
+	}
+
 	public String getMoniker(String login) throws NamingException {
 		String moniker = "";
 		DirContext ctx = initialize();
-        try {
+		try {
 //        	login = Tools.encodeForLDAP(login);
 //        	String searchValue= String.format(ldapSearchUserFormat, login);
 //            Attributes attrs = ctx.getAttributes(searchValue);
@@ -146,11 +147,11 @@ public class LdapService extends BasicService {
 				logger.error(e.getLocalizedMessage(), e);
 			}
 
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-	    ctx.close();
-        return moniker;
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		ctx.close();
+		return moniker;
 	}
 	
 	public String getLoginForEmail(String email) throws NamingException {
@@ -222,15 +223,15 @@ public class LdapService extends BasicService {
 		ctx.close();
 		return organisations;
 	}
-   
-    public List<String> getUserLDAPGroups(String username) {
 
-        List<String> groups = new ArrayList<>();
-        try {
-        	DirContext ctx = initialize();
-            //username = Tools.encodeForLDAP(username);
-            //String searchValue= String.format(ldapSearchUserFormat, username);
-            //Attributes attrs = ctx.getAttributes(searchValue);
+	public List<String> getUserLDAPGroups(String username) {
+
+		List<String> groups = new ArrayList<>();
+		try {
+			DirContext ctx = initialize();
+			//username = Tools.encodeForLDAP(username);
+			//String searchValue= String.format(ldapSearchUserFormat, username);
+			//Attributes attrs = ctx.getAttributes(searchValue);
 
 			SearchControls sc = getSearchControls(LdapSearchTypeEnum.USER);
 			sc.setCountLimit(1);
@@ -250,62 +251,67 @@ public class LdapService extends BasicService {
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
 			}
-            
-            // get the attributes
-            String department="";
-            
-            if (isAttributeEligible(ldapMappingUserDepartmentNumber)){
-            	department= getAttributeValue(attrs, ldapMappingUserDepartmentNumber,true);
-            }else if(!StringUtils.isEmpty(ldapMappingUserDepartmentNumber) && ldapMappingUserDepartmentNumber.startsWith(LDAP_CONSTANT_PREFIX)){
-            	department=ldapMappingUserDepartmentNumber.replace(LDAP_CONSTANT_PREFIX, "");
-            }
-            	            	            
-            String employeeType="";
-            if (!isCasOss())
-            	employeeType = getAttributeValue(attrs, ldapMappingUserEmployeeType,true);
-            
-            String o ="";
-            if(isAttributeEligible(ldapMappingUserO)){
-            	o=getAttributeValue(attrs, "o",false); 
-            }else if(!StringUtils.isEmpty(ldapMappingUserO)&& ldapMappingUserO.startsWith(LDAP_CONSTANT_PREFIX)){
-            	o= ldapMappingUserO.replace(LDAP_CONSTANT_PREFIX, "");
-            }
-            
-            if (o != null && !o.isEmpty()) {
-            	groups.add(o.replace("eu.europa.", ""));
-            }
-            if (department != null) {
-                String[] tabDep = department.split("\\.");
-                if (tabDep[0].equals("ECA"))
-                	groups.add("ecaroot");
-                else
-                	groups.add("ALL-COM");
-                
-                groups.add(tabDep[0]);
-                
-                String prefix = tabDep[0];
-                for (int i = 1; i < tabDep.length; i++)
-                {
-                	prefix += "." + tabDep[i];
-                	groups.add(prefix);
-                }
-                
-            } else if (Objects.equals(employeeType, "f") || Objects.equals(employeeType, "x") || Objects.equals(employeeType, "i") || Objects.equals(employeeType, "xf") || Objects.equals(employeeType, "q")) {
-                //internal                
-            } else {
-            	groups.add("external");
-            }
-            
-            ctx.close();
-           
-        } catch (javax.naming.NameNotFoundException e1)
-        {
-        	//ignore, this just means the user was not found
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-        return groups;
-    }
+
+			if (attrs == null) {
+				ctx.close();
+				return groups;
+			}
+
+			// get the attributes
+			String department="";
+
+			if (isAttributeEligible(ldapMappingUserDepartmentNumber)){
+				department= getAttributeValue(attrs, ldapMappingUserDepartmentNumber,true);
+			}else if(!StringUtils.isEmpty(ldapMappingUserDepartmentNumber) && ldapMappingUserDepartmentNumber.startsWith(LDAP_CONSTANT_PREFIX)){
+				department=ldapMappingUserDepartmentNumber.replace(LDAP_CONSTANT_PREFIX, "");
+			}
+
+			String employeeType="";
+			if (!isCasOss())
+				employeeType = getAttributeValue(attrs, ldapMappingUserEmployeeType,true);
+
+			String o ="";
+			if(isAttributeEligible(ldapMappingUserO)){
+				o=getAttributeValue(attrs, "o",false);
+			}else if(!StringUtils.isEmpty(ldapMappingUserO)&& ldapMappingUserO.startsWith(LDAP_CONSTANT_PREFIX)){
+				o= ldapMappingUserO.replace(LDAP_CONSTANT_PREFIX, "");
+			}
+
+			if (o != null && !o.isEmpty()) {
+				groups.add(o.replace("eu.europa.", ""));
+			}
+			if (department != null) {
+				String[] tabDep = department.split("\\.");
+				if (tabDep[0].equals("ECA"))
+					groups.add("ecaroot");
+				else
+					groups.add("ALL-COM");
+
+				groups.add(tabDep[0]);
+
+				String prefix = tabDep[0];
+				for (int i = 1; i < tabDep.length; i++)
+				{
+					prefix += "." + tabDep[i];
+					groups.add(prefix);
+				}
+
+			} else if (Objects.equals(employeeType, "f") || Objects.equals(employeeType, "x") || Objects.equals(employeeType, "i") || Objects.equals(employeeType, "xf") || Objects.equals(employeeType, "q")) {
+				//internal
+			} else {
+				groups.add("external");
+			}
+
+			ctx.close();
+
+		} catch (javax.naming.NameNotFoundException e1)
+		{
+			//ignore, this just means the user was not found
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		return groups;
+	}
     
     private static String getAttributeValue(Attributes attrs, String name , boolean convertToUpper ) throws NamingException {
     	

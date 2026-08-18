@@ -69,6 +69,49 @@ public class SchemaService extends BasicService {
 	}
 
 	@Transactional
+	public void step142() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.BlockedDomainsForRegistration);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.BlockedDomainsForRegistration);
+			s.setValue("");
+			s.setFormat("email domains separated by ;");
+			session.saveOrUpdate(s);
+		}
+
+		status.setDbversion(142);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step141() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.MaxPredefinedElementsPerUser);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.MaxPredefinedElementsPerUser);
+			s.setValue("20");
+			s.setFormat("number");
+			session.saveOrUpdate(s);
+		}
+
+		try {
+			NativeQuery queryCreateIndex = session.createSQLQuery("ALTER TABLE VOTERS DROP INDEX VOTER_ECMONIKER_SURVEY;");
+			queryCreateIndex.executeUpdate();
+		} catch (Exception e) {
+			// the index only exists for older installations
+		}
+
+		status.setDbversion(141);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
 	public void step140() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
@@ -1744,8 +1787,12 @@ public class SchemaService extends BasicService {
 					administrationService.getUserForLogin(administrationService.getAdminUser(), false),
 					surveyService.getLanguage("EN"), surveyService.getLanguages());
 			surveyService.add(survey, -1);
-			surveyService.publish(survey, -1, -1, false, -1, false, false);
-			surveyService.activate(survey, false, -1);
+
+			// do not publish the self registration survey automatically for environments using EULogin / ECAS
+			if (showecas == null || !showecas.equalsIgnoreCase("true")) {
+				surveyService.publish(survey, -1, -1, false, -1, false, false);
+				surveyService.activate(survey, false, -1);
+			}
 
 			Session session = sessionFactory.getCurrentSession();
 			Status status = getStatus();

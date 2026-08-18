@@ -1,7 +1,7 @@
 function getNewElement(item)
 {
 	var element;
-	
+
 	if (item.hasClass("sectionitem"))
 	{
 		element = getBasicElement("Section", false, editLabels.section, item.attr("id"), false);

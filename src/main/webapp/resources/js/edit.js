@@ -19,8 +19,16 @@ $(function() {
 			}
 		},
 		stop: function(event, ui) {
-			
-			if (ui.item.hasClass("copy"))
+
+			if (ui.item.hasClass("mypredefined")) {
+				const templateid = ui.item.attr("data-id");
+				const template = _elements[templateid];
+				const copiedmodel = template.copy();
+				_actions.copyElementInner(ui.item, [copiedmodel], true);
+				checkContent();
+
+				return;
+			} else if (ui.item.hasClass("copy"))
 			{
 				_actions.copyElement(ui.item);
 				checkContent();	
