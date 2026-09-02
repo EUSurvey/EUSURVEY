@@ -258,14 +258,52 @@ public class ResultFilter implements java.io.Serializable {
 		exportedDiscussions.clear();
 	}
 
-	public void alignFilterWithVisible() {
+	public void alignFilterWithVisible(Survey survey) {
 		if (filterValues == null || visibleQuestions == null) return;
+
+		Map<Integer, Question> questionyById = survey.getQuestionMap();
+		var visibleQuestionsWithChildren = new ArrayList<String>();
+		visibleQuestionsWithChildren.addAll(visibleQuestions);
+		for (String questionId : visibleQuestions) {
+			Question q = questionyById.get(Integer.parseInt(questionId));
+
+			if (q instanceof ComplexTable) {
+				ComplexTable complexTable = (ComplexTable) q;
+				for (Element e : complexTable.getQuestionChildElements()) {
+					visibleQuestionsWithChildren.add(e.getId().toString());
+				}
+			} else if (q instanceof MatrixOrTable) {
+				MatrixOrTable t = (MatrixOrTable) q;
+				for (Element e : t.getQuestions()) {
+					visibleQuestionsWithChildren.add(e.getId().toString());
+				}
+			} else if (q instanceof RatingQuestion) {
+				RatingQuestion r = (RatingQuestion) q;
+				for (Element e : r.getQuestions()) {
+					visibleQuestionsWithChildren.add(e.getId().toString());
+				}
+			}
+		}
+
 		//For all Filters that act on invisible elements -> remove the filter
-		var invisibleQuestionFilters = filterValues.keySet().stream().filter(fK -> !visibleQuestions.contains(fK.split("\\|")[0])).collect(Collectors.toList());
+		var invisibleQuestionFilters = filterValues.keySet().stream().filter(fK -> !visibleQuestionsWithChildren.contains(getIDFromFilterKey(fK))).collect(Collectors.toList());
 
 		for (var qId: invisibleQuestionFilters) {
 			filterValues.remove(qId);
 		}
+	}
+
+	private String getIDFromFilterKey(String filterKey) {
+		String id = filterKey;
+		if (id.contains("|")) {
+			id = id.substring(0, id.indexOf("|"));
+		}
+
+		if (id.contains("-")) {
+			return id.substring(0, id.indexOf("-"));
+		}
+
+		return id;
 	}
 
 	@Id

@@ -2614,6 +2614,122 @@
 				</a>
 				une liste des événements enregistrés.
 			</p>
+            <h2>
+                Fonctionnalité de rapport par e-mail
+            </h2>
+            <h3>
+                Qu’est-ce que la fonctionnalité de rapport par e-mail ?
+            </h3>
+            <p>
+                La fonctionnalité de rapport par e-mail permet aux gestionnaires d’enquêtes de recevoir automatiquement des rapports indiquant le nombre de contributions (réponses) reçues pour leur enquête. Ces rapports peuvent être envoyés quotidiennement, hebdomadairement ou mensuellement à une liste de destinataires désignés.
+            </p>
+            <p>
+                Les rapports sont envoyés uniquement lorsque l’enquête est publiée. Ils s’arrêtent automatiquement si l’enquête est dépubliée, archivée, gelée ou supprimée.
+            </p>
+            <p>
+                Lorsque l’option est sélectionnée, les rapports sont envoyés uniquement si au moins une contribution a été reçue au cours de la période concernée. Cette fonctionnalité est particulièrement utile pour les enquêtes ayant un faible taux de participation.
+            </p>
+            <h3>
+                Comment activer et configurer les rapports par e-mail
+            </h3>
+            <h4>
+                Activation de la fonctionnalité
+            </h4>
+            <p>
+                Accédez aux paramètres de votre enquête et recherchez le bouton « Automatic report per email ». Activez-le (il est désactivé par défaut). Une nouvelle section apparaîtra, dans laquelle vous pourrez configurer la fréquence et les destinataires.
+            </p>
+            <h4>
+                Définition de la fréquence des rapports
+            </h4>
+            <p>
+                Vous pouvez choisir la fréquence à laquelle vous souhaitez recevoir les rapports :
+            </p>
+            <ul>
+                <li>
+                    <b>Jamais</b> (valeur par défaut lors de la première ouverture)
+                </li>
+                <li>
+                    <b>Quotidien</b> – Envoyé entre 00:00 et 07:00, avec les contributions reçues au cours de la journée précédente.
+                </li>
+                <li>
+                    <b>Hebdomadaire</b> – Envoyé chaque lundi entre 00:00 et 07:00, avec les contributions reçues au cours de la semaine civile précédente (du lundi au dimanche).
+                </li>
+                <li>
+                    <b>Mensuel</b> – Envoyé le 1er de chaque mois, avec les contributions reçues au cours du mois précédent.
+                </li>
+            </ul>
+            <p>
+                Remarque : après avoir sélectionné une fréquence, EUSurvey mémorisera votre choix.
+            </p>
+            <h4>
+                Ajout de destinataires
+            </h4>
+            <p>
+                Saisissez une ou plusieurs adresses e-mail dans le champ de saisie, en les séparant par un point-virgule (;), puis cliquez sur le bouton « Add » pour confirmer. Le système vérifiera chaque adresse e-mail afin de s’assurer :
+            </p>
+            <ul>
+                <li>
+                    qu’elle respecte le format correct (p. ex. username@domain.com) ;
+                </li>
+                <li>
+                    que le domaine ne figure pas sur une liste noire connue (afin de prévenir les spams ou les adresses malveillantes).
+                </li>
+            </ul>
+            <h4>
+                Règles relatives à la liste des destinataires
+            </h4>
+            <ul>
+                <li>
+                    Un maximum de 10 adresses e-mail est autorisé.
+                </li>
+                <li>
+                    Chaque adresse e-mail apparaît sur une ligne distincte.
+                </li>
+                <li>
+                    Pour supprimer une adresse e-mail, cliquez sur le bouton en forme de croix (×) situé à côté de celle-ci (aucune confirmation n’est requise).
+                </li>
+            </ul>
+            <h4>
+                Remarques importantes
+            </h4>
+            <ul>
+                <li>
+                    Le champ de saisie est limité à 255 caractères (conformément à la RFC 5321, la norme relative au formatage des e-mails).
+                </li>
+                <li>
+                    Si une adresse e-mail n’est pas valide, un message d’erreur s’affichera.
+                </li>
+            </ul>
+            <h3>
+                Quand recevrai-je le premier rapport ?
+            </h3>
+            <p>
+                Si vous activez les <b>rapports quotidiens</b>, le premier e-mail sera envoyé le lendemain (entre 00:00 et 07:00).
+            </p>
+            <p>
+                Si vous activez les <b>rapports hebdomadaires</b>, le premier e-mail sera envoyé le lundi suivant.
+            </p>
+            <p>
+                Si vous activez les <b>rapports mensuels</b>, le premier e-mail sera envoyé le 1er du mois suivant.
+            </p>
+            <h3>
+                Puis-je modifier la fréquence ultérieurement ?
+            </h3>
+            <p>
+                Oui, vous pouvez modifier la fréquence à tout moment dans les paramètres de l’enquête. Le système mémorisera votre dernière sélection.
+            </p>
+            <h3>
+                Que se passe-t-il si je dépublie ou archive mon enquête ?
+            </h3>
+            <p>
+                Les rapports par e-mail s’arrêtent immédiatement si l’enquête est dépubliée, archivée, gelée ou supprimée.
+            </p>
+            <h3>
+                Le rapport contiendra-t-il des données à caractère personnel ?
+            </h3>
+            <p>
+                Non, le rapport contient uniquement le nombre de contributions (réponses) et ne comprend aucune donnée à caractère personnel ou sensible concernant les répondants.
+            </p>
 			<h1>
 				Analyse, exportation et publication des résultats
 			</h1>

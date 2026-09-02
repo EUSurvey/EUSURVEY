@@ -321,6 +321,7 @@ function initModals(item)
 			changeMonth: true,
 			changeYear: true,
 			hideIfNoPrevNext: true,
+			yearRange: 'c-100:c+20',
 			showButtonPanel: showpanel,
 
 			 onSelect: function(dateText, inst) {

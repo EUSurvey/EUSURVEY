@@ -3441,7 +3441,7 @@ public class ManagementController extends BasicController {
 				}
 			}
 
-			filter.alignFilterWithVisible();
+			filter.alignFilterWithVisible(survey);
 		}
 		
 		if (user != null && user.getResultAccess() != null &&  user.getResultAccess().getResultFilter() != null)

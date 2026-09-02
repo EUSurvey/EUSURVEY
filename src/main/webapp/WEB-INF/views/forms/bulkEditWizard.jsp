@@ -789,7 +789,7 @@
         $(tr).append(td);
 
         if (fullAccess) {
-            for (const img of $(tr).find("img.roleBulletRed")) {
+            for (const img of $(tr).find(".icon-wrapper")) {
                 updatePrivilegeInBulkChangeDetails(img, 2)
             }
         }

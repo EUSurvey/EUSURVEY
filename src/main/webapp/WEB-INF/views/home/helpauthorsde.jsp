@@ -2579,6 +2579,123 @@
 				</a>
 				finden Sie eine Liste der protokollierten Ereignisse.
 			</p>
+            <h2>
+                E-Mail-Berichte-Funktion
+            </h2>
+            <h3>
+                Was ist die E-Mail-Berichte-Funktion?
+            </h3>
+            <p>
+                Mit der E-Mail-Berichte-Funktion können Umfrageverantwortliche automatisierte Berichte über die Anzahl der Beiträge (Antworten) erhalten, die ihre Umfrage erhalten hat.
+                Diese Berichte können täglich, wöchentlich oder monatlich an eine festgelegte Liste von Empfängern gesendet werden.
+            </p>
+            <p>
+                Berichte werden nur versendet, wenn die Umfrage veröffentlicht ist. Sie werden automatisch gestoppt, wenn die Umfrage nicht mehr veröffentlicht, archiviert, gesperrt oder gelöscht wird.
+            </p>
+            <p>
+                Wenn die Option ausgewählt ist, werden Berichte nur gesendet, wenn mindestens ein Beitrag während des angegebenen Zeitraums eingereicht wurde. Dies ist besonders nützlich für Umfragen mit geringer Teilnahme.
+            </p>
+            <h3>
+                Wie aktiviere und konfiguriere ich E-Mail-Berichte?
+            </h3>
+            <h4>
+                Aktivierung der Funktion
+            </h4>
+            <p>
+                Gehen Sie zu den Einstellungen Ihrer Umfrage und suchen Sie den Schalter „Automatische Berichte per E-Mail“. Aktivieren Sie diesen (standardmäßig ist er deaktiviert). Es erscheint ein neuer Abschnitt, in dem Sie Häufigkeit und Empfänger konfigurieren können.
+            </p>
+            <h4>
+                Festlegen der Berichts-Häufigkeit
+            </h4>
+            <p>
+                Sie können auswählen, wie oft Sie Berichte erhalten möchten:
+            </p>
+            <ul>
+                <li>
+                    <b>Nie</b> (Standard bei erstem Öffnen)
+                </li>
+                <li>
+                    <b>Täglich</b> – Wird zwischen 00:00 und 07:00 Uhr versendet und umfasst die Beiträge des Vortags.
+                </li>
+                <li>
+                    <b>Wöchentlich</b> – Wird jeden Montag zwischen 00:00 und 07:00 Uhr versendet und umfasst die Beiträge der vorherigen Kalenderwoche (Montag bis Sonntag).
+                </li>
+                <li>
+                    <b>Monatlich</b> – Wird am 1. jedes Monats versendet und umfasst die Beiträge des Vormonats.
+                </li>
+            </ul>
+            <p>
+                Hinweis: Nach der Auswahl einer Häufigkeit speichert EUSurvey Ihre Wahl.
+            </p>
+            <h4>
+                Hinzufügen von Empfängern
+            </h4>
+            <p>
+                Geben Sie eine oder mehrere E-Mail-Adressen in das Eingabefeld ein, getrennt durch ein Semikolon (;), und klicken Sie dann auf die Schaltfläche „Hinzufügen“, um zu bestätigen. Das System überprüft jede E-Mail-Adresse, um sicherzustellen, dass:
+            </p>
+            <ul>
+                <li>
+                    Das Format korrekt ist (z. B. benutzername@domain.de).
+                </li>
+                <li>
+                    Die Domain nicht auf einer bekannten Blacklist steht (um Spam oder schädliche Adressen zu verhindern).
+                </li>
+            </ul>
+            <h4>
+                Regeln für die Empfängerliste
+            </h4>
+            <ul>
+                <li>
+                    Es sind maximal 10 E-Mail-Adressen erlaubt.
+                </li>
+                <li>
+                    Jede E-Mail-Adresse wird in einer separaten Zeile angezeigt.
+                </li>
+                <li>
+                    Um eine E-Mail-Adresse zu entfernen, klicken Sie auf das Kreuz-Symbol daneben (ohne Bestätigung).
+                </li>
+            </ul>
+            <h4>
+                Wichtige Hinweise
+            </h4>
+            <ul>
+                <li>
+                    Das Eingabefeld hat eine Begrenzung von 255 Zeichen (gemäß RFC 5321, dem Standard für E-Mail-Formatierung).
+                </li>
+                <li>
+                    Falls eine E-Mail-Adresse ungültig ist, erhalten Sie eine Fehlermeldung.
+                </li>
+            </ul>
+            <h3>
+                Wann erhalte ich den ersten Bericht?
+            </h3>
+            <p>
+                Wenn Sie <b>tägliche Berichte</b> aktivieren, erhalten Sie die erste E-Mail am nächsten Tag (zwischen 00:00 und 07:00 Uhr).
+            </p>
+            <p>
+                Wenn Sie <b>wöchentliche Berichte</b> aktivieren, erhalten Sie die erste E-Mail am folgenden Montag.
+            </p>
+            <p>
+                Wenn Sie <b>monatliche Berichte</b> aktivieren, erhalten Sie die erste E-Mail am 1. des nächsten Monats.
+            </p>
+            <h3>
+                Kann ich die Häufigkeit später ändern?
+            </h3>
+            <p>
+                Ja, Sie können die Häufigkeit jederzeit in den Umfrageeinstellungen anpassen. Das System speichert Ihre letzte Auswahl.
+            </p>
+            <h3>
+                Was passiert, wenn ich meine Umfrage nicht mehr veröffentliche oder archiviere?
+            </h3>
+            <p>
+                E-Mail-Berichte werden sofort gestoppt, wenn die Umfrage nicht mehr veröffentlicht, archiviert, gesperrt oder gelöscht wird.
+            </p>
+            <h3>
+                Enthält der Bericht persönliche Daten?
+            </h3>
+            <p>
+                Nein, der Bericht enthält nur die Anzahl der Beiträge (Antworten) und keine persönlichen oder sensiblen Daten der Teilnehmer.
+            </p>
 			<h1>
 				Ergebnisse analysieren, exportieren und veröffentlichen
 			</h1>

@@ -1268,6 +1268,7 @@ function createDatePickerForEditor(instance, othervalue)
 		changeMonth: true,
 		changeYear: true,
 		showButtonPanel: true,
+		yearRange: 'c-100:c+20',
 		
 		 onSelect: function(dateText, inst) {
 			update(this);

@@ -1305,6 +1305,7 @@ qq.extend(qq.UploadHandlerForm.prototype, {
             }
             response = JSON.parse(innerHTML);
         } catch(err){
+            console.log(err);
             response = {success: false};
         }
 
@@ -1483,6 +1484,7 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
             try {
                 response = JSON.parse(xhr.responseText);
             } catch(err){
+                console.log(err);
                 response = {};
             }
 

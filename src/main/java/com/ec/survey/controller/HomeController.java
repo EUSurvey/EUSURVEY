@@ -518,7 +518,7 @@ public class HomeController extends BasicController {
             IOUtils.copy(is, fos);
                                   
         	response.setStatus(HttpServletResponse.SC_OK);
-        	writer.print("{\"success\": true, \"id\": '" + uid + "', \"uid\": '" + uid + "', \"longdesc\": '', \"comment\": '', \"width\": '', \"name\": '" + filename + "'}");
+        	writer.print("{\"success\": true, \"id\": \"" + uid + "\", \"uid\": \"" + uid + "\", \"longdesc\": \"\", \"comment\": \"\", \"width\": \"\", \"name\": \"" + filename + "\"}");
         } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             writer.print("{\"success\": false}");
