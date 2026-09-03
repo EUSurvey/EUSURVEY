@@ -265,22 +265,24 @@ public class ResultFilter implements java.io.Serializable {
 		var visibleQuestionsWithChildren = new ArrayList<String>();
 		visibleQuestionsWithChildren.addAll(visibleQuestions);
 		for (String questionId : visibleQuestions) {
-			Question q = questionyById.get(Integer.parseInt(questionId));
+			if (Tools.isInteger(questionId)) { // ignore meta data columns as they are filtered differently
+				Question q = questionyById.get(Integer.parseInt(questionId));
 
-			if (q instanceof ComplexTable) {
-				ComplexTable complexTable = (ComplexTable) q;
-				for (Element e : complexTable.getQuestionChildElements()) {
-					visibleQuestionsWithChildren.add(e.getId().toString());
-				}
-			} else if (q instanceof MatrixOrTable) {
-				MatrixOrTable t = (MatrixOrTable) q;
-				for (Element e : t.getQuestions()) {
-					visibleQuestionsWithChildren.add(e.getId().toString());
-				}
-			} else if (q instanceof RatingQuestion) {
-				RatingQuestion r = (RatingQuestion) q;
-				for (Element e : r.getQuestions()) {
-					visibleQuestionsWithChildren.add(e.getId().toString());
+				if (q instanceof ComplexTable) {
+					ComplexTable complexTable = (ComplexTable) q;
+					for (Element e : complexTable.getQuestionChildElements()) {
+						visibleQuestionsWithChildren.add(e.getId().toString());
+					}
+				} else if (q instanceof MatrixOrTable) {
+					MatrixOrTable t = (MatrixOrTable) q;
+					for (Element e : t.getQuestions()) {
+						visibleQuestionsWithChildren.add(e.getId().toString());
+					}
+				} else if (q instanceof RatingQuestion) {
+					RatingQuestion r = (RatingQuestion) q;
+					for (Element e : r.getQuestions()) {
+						visibleQuestionsWithChildren.add(e.getId().toString());
+					}
 				}
 			}
 		}
