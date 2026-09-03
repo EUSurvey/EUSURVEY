@@ -1634,6 +1634,55 @@
 				unpublished survey does not have to be replaced by your current working draft but can be republished if
 				necessary.
 			</p>
+            <h2>
+				Understanding Pending Changes in EUSurvey
+			</h2>
+			<p>
+				After a survey has been published for the first time, any modifications you make are not immediately
+				applied to the live survey. Instead, they are saved as '<b>Pending changes</b>' in a draft version of
+				the survey. This allows you to prepare and review updates without affecting the version currently
+				available to respondents.
+			</p>
+			<p>
+				EUSurvey manages two separate versions:
+				<ul>
+					<li>
+						The <b>published version</b>, which respondents can access.
+					</li>
+					<li>
+						The <b>draft version</b>, where new changes are stored.
+					</li>
+				</ul>
+			</p>
+			<p>
+				Because of this separation, users may sometimes be surprised that their edits do not appear in the
+				published survey. This is expected behaviour. Changes made after publication only affect the draft
+				version until they are explicitly published.
+			</p>
+			<p>
+				You can easily check whether your survey contains unpublished changes. On the survey overview page,
+				under the green '<b>Published</b>' status, a '<b>Pending changes</b>' marker is displayed whenever the
+				draft version contains modifications that have not yet been applied to the published survey.
+			</p>
+			<p>
+				To make pending changes visible to respondents, open the survey overview page and click
+				'<b>Show pending changes</b>'. A popup window will display the changes waiting to be published.
+				To apply them, click '<b>Apply Changes</b>'.
+			</p>
+			<p>
+				When pending changes are applied, the current draft version replaces the published version and becomes
+				the new live survey. At the same time, EUSurvey automatically creates a new draft version, allowing you
+				to continue making changes without affecting the newly published survey.
+			</p>
+			<p>
+				This system provides greater control over survey updates and helps prevent accidental changes to surveys
+				that are already collecting responses.
+			</p>
+			<p>
+				In summary, after the first publication, EUSurvey always maintains a published version and a draft
+				version of your survey. Any edits are stored as pending changes until you choose to apply them,
+				ensuring that updates are published only when you are ready.
+			</p>
 			<h2>
 				Can I customise the URL to my survey?    
 			</h2>

@@ -2121,6 +2121,59 @@
 				par votre brouillon en cours, mais que vous pourrez la republier telle
 				quelle si nécessaire.
 			</p>
+            <h2>
+				Comprendre les modifications en attente dans EUSurvey
+			</h2>
+			<p>
+				Après la première publication d'une enquête, toutes les modifications que vous apportez ne sont pas
+				immédiatement appliquées à l'enquête en ligne. Elles sont enregistrées comme des « <b>Modifications en
+				attente</b> » dans une version brouillon de l'enquête. Cela vous permet de préparer et de vérifier les
+				mises à jour sans affecter la version actuellement accessible aux répondants.
+			</p>
+			<p>
+				EUSurvey gère deux versions distinctes:
+				<ul>
+					<li>
+						La <b>version lancée</b>, à laquelle les répondants ont accès.
+					</li>
+					<li>
+						La <b>version brouillon</b>, dans laquelle les nouvelles modifications sont enregistrées.
+					</li>
+				</ul>
+			</p>
+			<p>
+				En raison de cette séparation, les utilisateurs peuvent parfois être surpris de constater que leurs
+				modifications n'apparaissent pas dans l'enquête publiée. Il s'agit d'un comportement normal. Les
+				modifications effectuées après la publication n'affectent que la version brouillon jusqu'à ce qu'elles
+				soient explicitement publiées.
+			</p>
+			<p>
+				Vous pouvez facilement vérifier si votre enquête contient des modifications non publiées. Sur la page
+				d'aperçu de l'enquête, sous le statut vert « <b>Lancée</b> », un indicateur « <b>Modifications en attente</b> »
+				s'affiche chaque fois que la version brouillon contient des modifications qui n'ont pas encore été
+				appliquées à la version publiée.
+			</p>
+			<p>
+				Pour rendre les modifications en attente visibles aux répondants, ouvrez la page d'aperçu de l'enquête
+				et cliquez sur « <b>Afficher les modifications en attente</b> ». Une fenêtre contextuelle affichera les
+				modifications en attente de publication. Pour les appliquer, cliquez sur « <b>Appliquer les modifications</b> ».
+			</p>
+			<p>
+				Lorsque les modifications en attente sont appliquées, la version brouillon actuelle remplace la version
+				publiée et devient la nouvelle enquête en ligne. Dans le même temps, EUSurvey crée automatiquement une
+				nouvelle version brouillon, vous permettant de continuer à effectuer des modifications sans affecter
+				l'enquête nouvellement publiée.
+			</p>
+			<p>
+				Ce système offre un meilleur contrôle des mises à jour de l'enquête et permet d'éviter que des
+				modifications accidentelles n'affectent des enquêtes qui collectent déjà des réponses.
+			</p>
+			<p>
+				En résumé, après la première publication, EUSurvey conserve toujours une version publiée et une version
+				brouillon de votre enquête. Toutes les modifications sont enregistrées comme des modifications en
+				attente jusqu'à ce que vous choisissiez de les appliquer, garantissant ainsi que les mises à jour ne
+				sont publiées que lorsque vous êtes prêt à le faire.
+			</p>
 			<h2>
 				Est-il possible de personnaliser l’URL d’une enquête?
 			</h2>

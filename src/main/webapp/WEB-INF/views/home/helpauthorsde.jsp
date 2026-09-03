@@ -2100,6 +2100,61 @@
 				veröffentlicht werden kann.
 			</p>
 			<h2>
+                Verstehen ausstehender Änderungen in EUSurvey
+            </h2>
+            <p>
+                Nachdem eine Umfrage zum ersten Mal veröffentlicht wurde, werden alle weiteren von Ihnen vorgenommenen
+                Änderungen nicht sofort auf die aktive Umfrage angewandt. Stattdessen werden sie als
+                „<b>Änderungen</b>“ in einer Entwurfsversion der Umfrage gespeichert. So können Sie Updates
+                vorbereiten und überprüfen, ohne die Version zu beeinträchtigen, die derzeit für die Umfrageteilnehmer
+                verfügbar ist.
+            </p>
+            <p>
+                EUSurvey verwaltet zwei separate Versionen:
+                <ul>
+                    <li>
+                        Die <b>veröffentlichte Version</b>, auf die die Umfrageteilnehmer zugreifen können.
+                    </li>
+                    <li>
+                        Die <b>Entwurfsversion</b>, in der neue Änderungen gespeichert werden.
+                    </li>
+                </ul>
+            </p>
+            <p>
+                Aufgrund dieser Aufteilung kann es vorkommen, dass Nutzer überrascht sein können, Ihre Bearbeitungen
+                nicht in der veröffentlichten Umfrage zu sehen. Dies ist das erwartete Verhalten. Änderungen, die nach
+                der Veröffentlichung vorgenommen werden, wirken sich zunächst nur auf die Entwurfsversion aus, bis
+                diese explizit veröffentlicht werden.
+            </p>
+            <p>
+                Sie können leicht prüfen, ob Ihre Umfrage unveröffentlichte Änderungen enthält. Auf der Übersichtsseite
+                der Umfrage wird unter dem grünen Status „<b>Veröffentlicht</b>“ eine Kennzeichnung
+                „<b>Anstehende Änderungen</b>“ angezeigt, sobald die Entwurfsversion Änderungen enthält, die noch nicht
+                auf die veröffentlichte Umfrage angewandt wurden.
+            </p>
+            <p>
+                Um ausstehende Änderungen für die Befragten sichtbar zu machen, öffnen Sie die Übersichtsseite der
+                Umfrage und klicken Sie auf „<b>Ausstehende Änderungen anzeigen</b>“. In einem Popup-Fenster werden die
+                Änderungen angezeigt, die auf die Veröffentlichung warten. Um sie zu übernehmen, klicken Sie auf
+                „<b>Änderungen anwenden</b>“.
+            </p>
+            <p>
+                Wenn ausstehende Änderungen übernommen werden, ersetzt die aktuelle Entwurfsversion die veröffentlichte
+                Version und wird zur neuen aktiven Umfrage. Gleichzeitig erstellt EUSurvey automatisch eine neue
+                Entwurfsversion, sodass Sie weiterhin Änderungen vornehmen können, ohne die neu veröffentlichte Umfrage
+                zu beeinträchtigen.
+            </p>
+            <p>
+                Dieses System bietet eine bessere Kontrolle über Umfrage-Updates und hilft versehentliche Änderungen an
+                Umfragen zu vermeiden, die bereits Antworten sammeln.
+            </p>
+            <p>
+                Zusammenfassend lässt sich sagen: Nach der ersten Veröffentlichung pflegt EUSurvey immer eine
+                veröffentlichte Version und eine Entwurfsversion Ihrer Umfrage. Alle Bearbeitungen werden als
+                ausstehende Änderungen gespeichert, bis Sie sie übernehmen möchten. So stellen Sie sicher, dass Updates
+                nur dann veröffentlicht werden, wenn Sie bereit sind.
+            </p>
+			<h2>
 				Kann ich die URL anpassen, die zu meiner Umfrage führt?
 			</h2>
 			<p>
