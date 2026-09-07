@@ -458,6 +458,7 @@ public class LdapService extends BasicService {
 				}
 			} catch (javax.naming.SizeLimitExceededException se) {
 				//this one is thrown when the configured limit is reached, so everything is as expected
+				logger.info(se.getMessage(), se);
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
 			}
@@ -466,25 +467,40 @@ public class LdapService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-		if (order.equalsIgnoreCase("first"))
-		{
-			ldqpUsers.sort(LdapSearchResult.Comparators.FIRST);
-		} else if (order.equalsIgnoreCase("last"))
-		{
-			ldqpUsers.sort(LdapSearchResult.Comparators.LAST);
-		} else if (order.equalsIgnoreCase("department"))
-		{
-			ldqpUsers.sort(LdapSearchResult.Comparators.GROUP);
-		} else if (order.equalsIgnoreCase("mail")) {
-			ldqpUsers.sort(LdapSearchResult.Comparators.MAIL);
-		} else {
-			ldqpUsers.sort(LdapSearchResult.Comparators.DISPLAYNAME);
+		if (order == null) {
+			order = "displayName";
 		}
+
+//		if (order.equalsIgnoreCase("first"))
+//		{
+//			ldqpUsers.sort(LdapSearchResult.Comparators.FIRST);
+//		} else if (order.equalsIgnoreCase("last"))
+//		{
+//			ldqpUsers.sort(LdapSearchResult.Comparators.LAST);
+//		} else if (order.equalsIgnoreCase("department"))
+//		{
+//			ldqpUsers.sort(LdapSearchResult.Comparators.GROUP);
+//		} else if (order.equalsIgnoreCase("mail")) {
+//			ldqpUsers.sort(LdapSearchResult.Comparators.MAIL);
+//		} else {
+//			ldqpUsers.sort(LdapSearchResult.Comparators.DISPLAYNAME);
+//		}
 
 		ctx.close();
 
 		return ldqpUsers;
 	}
+
+//	public static class Comparators {
+//		public static final Comparator<LdapSearchResult> FIRST = Comparator.comparing(o -> o.fname);
+//		public static final Comparator<LdapSearchResult> LAST = Comparator.comparing(o -> o.lname);
+//		public static final Comparator<LdapSearchResult> GROUP = (o1, o2) -> {
+//			Comparator<String> comp = new NullSafeComparator<>(String.CASE_INSENSITIVE_ORDER, false);
+//			return comp.compare(o1.group,o2.group);
+//		};
+//		public static final Comparator<LdapSearchResult> DISPLAYNAME = Comparator.comparing(o -> o.displayName);
+//		public static final Comparator<LdapSearchResult> MAIL = Comparator.comparing(o -> o.mail);
+//	}
 	
 	private String getFilterContains(final String key, final String search) {
 		String result="";

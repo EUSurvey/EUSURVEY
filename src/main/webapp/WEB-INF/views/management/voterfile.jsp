@@ -480,7 +480,7 @@
 			return;
 		}
 
-		if (!($("#voters-email").val() != '' || $("#voters-department").val() != '' || $("#voters-firstname").val() != '' || $("#voters-surname").val() != '')) {
+		if (!($("#voters-email").val() != '' || $("#voters-department").val() != '' || $("#voters-firstname").val() != '' || $("#voters-surname").val() != '' || $("#voters-login").val() != '')) {
             $("#noEmptySearchIconAccess").show();
             $("#noEmptySearchTextAccess").show();
             return;
