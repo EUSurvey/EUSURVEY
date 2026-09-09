@@ -104,6 +104,16 @@ public class DepartmentUpdater implements Runnable {
 
 	private String getDepartments() throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+		// Prevent expansion of entity references
+		factory.setXIncludeAware(false);
+		factory.setExpandEntityReferences(false);
+
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		sessionService.initializeProxy();
 
@@ -248,138 +258,6 @@ public class DepartmentUpdater implements Runnable {
 		return sbuilder.toString();
 	}
 
-	private String getDepartmentsNew() throws Exception {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		sessionService.initializeProxy();
-
-		if (comrefURL == null) {
-			throw new Exception("comref url is null");
-		}
-		if (certificatepath == null) {
-			throw new Exception("comref certificatepath is null");
-		}
-		if (keystorepassword == null) {
-			throw new Exception("comref keystorepassword is null");
-		}
-		if (keypassword == null) {
-			throw new Exception("comref keypassword is null");
-		}
-
-		// Step 1: Load the PKCS12 keystore
-		KeyStore keyStore = KeyStore.getInstance("PKCS12");
-		InputStream keyStoreInput = servletContext.getResourceAsStream(certificatepath);
-
-		keyStore.load(keyStoreInput, keystorepassword.toCharArray());
-
-		// Step 2: Initialize SSL Context with the keystore
-		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-		kmf.init(keyStore, keypassword.toCharArray());
-
-		SSLContext sslContext = SSLContext.getInstance("TLS");
-		sslContext.init(kmf.getKeyManagers(), null, null);
-
-		// Step 3: Set the default SSL context
-		SSLContext.setDefault(sslContext);
-
-		// Step 4: Create a connection
-		int start = 0;
-		boolean stop = false;
-
-		Map<Long, Set<DepartmentsEntry>> map = new HashMap<>();
-		Set<DepartmentsEntry> roots = new HashSet<>();
-		Set<Long> handledIds = new HashSet<>();
-
-		while (!stop) {
-			logger.info("calling comref, start = " + start);
-
-			URL url = new URL(comrefURL + "&length=1000&start=" + start);
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-			connection.setRequestMethod("GET");
-			int responseCode = connection.getResponseCode();
-
-			if (responseCode != 200) {
-				throw new Exception("responseCode "  + responseCode);
-			}
-
-			String departments = readData(connection);
-
-			Document document = builder.parse(new InputSource(new StringReader(departments)));
-
-			Node recordCount = document.getElementsByTagName("recordCount").item(0);
-			if (!recordCount.getTextContent().equals("1000")) {
-				stop = true; // we reached the last call
-			}
-
-			NodeList nodeList = document.getElementsByTagName("_");
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				Node node = nodeList.item(i);
-
-				DepartmentsEntry departmentsEntry = new DepartmentsEntry();
-
-				for (int j = 0; j < node.getChildNodes().getLength(); j++) {
-					Node child = node.getChildNodes().item(j);
-					switch (child.getNodeName()) {
-						case "orgcd":
-							departmentsEntry.orgcd = child.getTextContent();
-							break;
-						case "orgid":
-							departmentsEntry.orgid = Long.parseLong(child.getTextContent());
-							break;
-						case "orgidparent":
-							departmentsEntry.orgidparent = Long.parseLong(child.getTextContent());
-							break;
-						case "dtfin":
-							if (!child.getTextContent().equals("31/12/9999 00:00:00")) {
-								departmentsEntry.deleted = true;
-							}
-					}
-				}
-
-				if (!departmentsEntry.deleted && departmentsEntry.orgcd != null && !departmentsEntry.orgcd.trim().isEmpty()) {
-					if (departmentsEntry.orgidparent == 0) {
-						roots.add(departmentsEntry);
-					}
-
-					if (!map.containsKey(departmentsEntry.orgidparent)) {
-						map.put(departmentsEntry.orgidparent, new HashSet<>());
-					}
-
-					map.get(departmentsEntry.orgidparent).add(departmentsEntry);
-				}
-			}
-
-			start+=1000;
-
-			if (start > 20000) {
-				throw new Exception("too many calls");
-			}
-		}
-
-		DepartmentsEntry main = new DepartmentsEntry();
-		for (DepartmentsEntry root : roots) {
-			main.children.add(root);
-			handledIds.add(root.orgid);
-			recursiveAddChildren(root, map, handledIds);
-		}
-
-		StringBuilder sbuilder = new StringBuilder();
-
-		sbuilder.append("<nodes>");
-		for (DepartmentsEntry root : roots) {
-			recursivePrintChildren(root, 0, sbuilder);
-		}
-		sbuilder.append("</nodes>");
-
-        return sbuilder.toString();
-	}
-
 	private void recursivePrintChildren(DepartmentsEntry element, int indent, StringBuilder builder) throws IOException {
 		builder.append("<node name='").append(element.orgcd).append("'>");
 		Collections.sort(element.children);
@@ -405,6 +283,16 @@ public class DepartmentUpdater implements Runnable {
 
 	private TreeMap<String, String> getDomains() throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+		// Prevent expansion of entity references
+		factory.setXIncludeAware(false);
+		factory.setExpandEntityReferences(false);
+
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		sessionService.initializeProxy();
 
@@ -474,100 +362,6 @@ public class DepartmentUpdater implements Runnable {
 		}
 
 		logger.info(sdomains);
-
-		Document document = builder.parse(new InputSource(new StringReader(sdomains)));
-
-		NodeList nodeList = document.getElementsByTagName("_");
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node node = nodeList.item(i);
-
-			String domaine = null;
-			String nomen = null;
-			boolean deleted = false;
-
-			for (int j = 0; j < node.getChildNodes().getLength(); j++) {
-				Node child = node.getChildNodes().item(j);
-				switch (child.getNodeName()) {
-					case "domaine":
-						domaine = child.getTextContent();
-						break;
-					case "nomen":
-						nomen = child.getTextContent();
-						break;
-					case "dtfin":
-						if (!child.getTextContent().equals("31/12/9999 00:00:00")) {
-							deleted = true;
-						}
-				}
-			}
-
-			if (!deleted && domaine != null && !domaine.trim().isEmpty()) {
-				domains.put(domaine, nomen);
-			}
-		}
-
-		return domains;
-	}
-
-	private TreeMap<String, String> getDomainsNew() throws Exception {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
-		// Prevent expansion of entity references
-		factory.setXIncludeAware(false);
-		factory.setExpandEntityReferences(false);
-
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		sessionService.initializeProxy();
-
-		if (comrefURLDomains == null) {
-			throw new Exception("comref domains url is null");
-		}
-		if (certificatepath == null) {
-			throw new Exception("comref certificatepath is null");
-		}
-		if (keystorepassword == null) {
-			throw new Exception("comref keystorepassword is null");
-		}
-		if (keypassword == null) {
-			throw new Exception("comref keypassword is null");
-		}
-
-		// Step 1: Load the PKCS12 keystore
-		KeyStore keyStore = KeyStore.getInstance("PKCS12");
-		InputStream keyStoreInput = servletContext.getResourceAsStream(certificatepath);
-
-		keyStore.load(keyStoreInput, keystorepassword.toCharArray());
-
-		// Step 2: Initialize SSL Context with the keystore
-		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-		kmf.init(keyStore, keypassword.toCharArray());
-
-		SSLContext sslContext = SSLContext.getInstance("TLS");
-		sslContext.init(kmf.getKeyManagers(), null, null);
-
-		// Step 3: Set the default SSL context
-		SSLContext.setDefault(sslContext);
-
-		// Step 4: Create a connection
-		TreeMap<String, String> domains = new TreeMap<>();
-
-		logger.info("calling comref domains");
-
-		URL url = new URL(comrefURLDomains);
-		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-		connection.setRequestMethod("GET");
-		int responseCode = connection.getResponseCode();
-
-		if (responseCode != 200) {
-			throw new Exception("responseCode " + responseCode);
-		}
-
-		String sdomains = readData(connection);
 
 		Document document = builder.parse(new InputSource(new StringReader(sdomains)));
 
