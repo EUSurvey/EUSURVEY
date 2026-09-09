@@ -405,6 +405,112 @@ public class DepartmentUpdater implements Runnable {
 
 	private TreeMap<String, String> getDomains() throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		sessionService.initializeProxy();
+
+		if (comrefURLDomains == null) {
+			throw new Exception("comref domains url is null");
+		}
+		if (certificatepath == null) {
+			throw new Exception("comref certificatepath is null");
+		}
+		if (keystorepassword == null) {
+			throw new Exception("comref keystorepassword is null");
+		}
+		if (keypassword == null) {
+			throw new Exception("comref keypassword is null");
+		}
+
+		KeyStore keyStore = KeyStore.getInstance("PKCS12");
+		InputStream keyStoreInput = servletContext.getResourceAsStream(certificatepath);
+
+		keyStore.load(keyStoreInput, keystorepassword.toCharArray());
+
+		// Trust own CA and all self-signed certs
+		SSLContext sslcontext = SSLContexts.custom()
+				.loadKeyMaterial(keyStore, keypassword.toCharArray())
+				//.loadTrustMaterial(trustStore, new TrustSelfSignedStrategy())
+				.build();
+		// Allow TLSv1 protocol only
+		SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+				sslcontext,
+				SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		CloseableHttpClient httpclient = HttpClients.custom()
+				.setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER)
+				.setSSLSocketFactory(sslsf)
+				.build();
+
+		TreeMap<String, String> domains = new TreeMap<>();
+
+		logger.info("calling comref domains");
+
+		String sdomains = "";
+
+		try {
+
+			HttpGet httpget = new HttpGet(comrefURLDomains);
+			httpget.addHeader("Accept", "application/xml");
+
+			CloseableHttpResponse response = httpclient.execute(httpget);
+
+			try {
+
+				logger.info(response.getStatusLine());
+
+				if (response.getStatusLine().getStatusCode() != 200) {
+					throw new Exception("responseCode " + response.getStatusLine().getStatusCode() );
+				}
+
+				HttpEntity entity = response.getEntity();
+
+				sdomains = EntityUtils.toString(entity, "UTF-8");
+
+			} finally {
+				response.close();
+			}
+
+		} finally {
+			httpclient.close();
+		}
+
+		logger.info(sdomains);
+
+		Document document = builder.parse(new InputSource(new StringReader(sdomains)));
+
+		NodeList nodeList = document.getElementsByTagName("_");
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+
+			String domaine = null;
+			String nomen = null;
+			boolean deleted = false;
+
+			for (int j = 0; j < node.getChildNodes().getLength(); j++) {
+				Node child = node.getChildNodes().item(j);
+				switch (child.getNodeName()) {
+					case "domaine":
+						domaine = child.getTextContent();
+						break;
+					case "nomen":
+						nomen = child.getTextContent();
+						break;
+					case "dtfin":
+						if (!child.getTextContent().equals("31/12/9999 00:00:00")) {
+							deleted = true;
+						}
+				}
+			}
+
+			if (!deleted && domaine != null && !domaine.trim().isEmpty()) {
+				domains.put(domaine, nomen);
+			}
+		}
+
+		return domains;
+	}
+
+	private TreeMap<String, String> getDomainsNew() throws Exception {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
 		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
