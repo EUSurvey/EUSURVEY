@@ -17,7 +17,7 @@ import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import com.ec.survey.tools.activity.ActivityRegistry;
-import org.apache.maven.surefire.shade.org.apache.maven.shared.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -282,7 +282,7 @@ public class ExportsController extends BasicController {
 	public @ResponseBody String checkNew(@RequestParam("uid") String uid, HttpServletRequest request,
 			HttpServletResponse response) {
 
-		if (uid == null || !StringUtils.isNumeric(uid)) {
+		if (!StringUtils.isNumeric(uid)) {
 			return "{\"newnames\": [],\"checkExport\":false}";
 		}
 
