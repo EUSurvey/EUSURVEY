@@ -2,6 +2,7 @@ package com.ec.survey.tools;
 
 import com.ec.survey.model.Access;
 import com.ec.survey.model.Setting;
+import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
@@ -23,7 +24,7 @@ import java.util.List;
 @Scope("singleton")
 public class AutomaticSurveyDeleteWorker implements Runnable {
 
-    protected static final Logger logger = Logger.getLogger(AutomaticSurveyDeleteWorker.class);
+	protected static final Logger logger = Logger.getLogger(AutomaticSurveyDeleteWorker.class);
 
     @Resource(name = "surveyService")
     private SurveyService surveyService;
@@ -44,9 +45,9 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
 
     private @Value("${server.prefix}") String host;
 
-    @Override
-    public void run() {
-        try {
+	@Override
+	public void run() {
+		try {
             logger.info("AutomaticSurveyDeleteWorker started");
             String sender = settingsService.get(Setting.InactiveSurveysSender);
             int inactiveSurveysDays = Integer.parseInt(settingsService.get(Setting.InactiveSurveysDays));
@@ -107,14 +108,14 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
             }
 
             logger.info("AutomaticSurveyDeleteWorker finished");
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
-    }
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+	}
 
     private void sendNotificationEmail(Survey survey, String sender, int inactiveSurveysDays, int daysUntilDeletion, int type) {
         StringBuilder body = new StringBuilder();
-        List<String> users = new ArrayList<>();
+        List<String> ccUsers = new ArrayList<>();
         String owner = null;
         String bcc = settingsService.get(Setting.InactiveSurveysBCC);
 
@@ -128,10 +129,11 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
             List<Access> accesses = surveyService.getAccesses(survey.getId());
             List<String> managers = new ArrayList<>();
             for (Access access : accesses) {
-                if (access.getUser() != null && EmailValidator.getInstance().isValid(access.getUser().getEmail())) {
+                var u = access.getUser();
+                if (u != null && EmailValidator.getInstance().isValid(u.getEmail())) {
                     managers.add(access.getUser().getFirstLastName());
-                    if (!users.contains(access.getUser().getEmail())) {
-                        users.add(access.getUser().getEmail());
+                    if (!ccUsers.contains(u.getEmail()) && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 0) {
+                        ccUsers.add(u.getEmail());
                     }
                 } else {
                     logger.info("invalid user for access " + access.getId());
@@ -233,8 +235,8 @@ public class AutomaticSurveyDeleteWorker implements Runnable {
 
             String[] cc = null;
 
-            if (!users.isEmpty()) {
-                cc = users.toArray(new String[0]);
+            if (!ccUsers.isEmpty()) {
+                cc = ccUsers.toArray(new String[0]);
             }
 
             mailService.SendHtmlMail(owner, cc, bcc, sender, sender, title, text, "Automatic Delete Message");

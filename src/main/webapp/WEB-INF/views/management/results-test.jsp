@@ -107,7 +107,15 @@
 				<c:if test="${form.survey.geteVoteTemplate() != 'l' && form.survey.geteVoteTemplate() != 'p' && form.survey.geteVoteTemplate() != 'o'}">
 					//list votes not for Luxembourg templates
 					for (let i = 0; i < listUids.length; i++) {
-						$('#listvotes' + listUids[i]).val(result.lists[listUids[i]].listVotes);
+						const listVotes = result.lists[listUids[i]].listVotes
+						if (listVotes > 0) {
+							const lvEl = $('#listvotes' + listUids[i])
+							if (lvEl.length === 0) {
+								showInfo("<spring:message code="error.EVoteTestInvalidListVote" />")
+							} else {
+								lvEl.val(listVotes)
+							}
+						}
 					}
 				</c:if>
 				
@@ -130,7 +138,7 @@
 		$(".qq-uploader").css("display", "inline");
 		$(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 		$(".qq-upload-list").hide();
-		$(".qq-upload-drop-area").css("margin-left", "-1000px");
+		$(".qq-upload-drop-area").css("margin-left", "-10000px");
 		$("input[type=file]").attr("aria-label", "<spring:message code="info.uploadbutton" />");
 		$("input[type=file]").css("width", "100%");
 		$("input[type=file]").css("height", "100%");
@@ -181,7 +189,9 @@
 			<c:forEach var="question" items="${form.survey.questions}">
 				<c:if test="${question.getType() == 'MultipleChoiceQuestion'}">
 				<td>
-					<input type="number" id="listvotes${question.getUniqueId()}" />
+					<c:if test="${question.getIsListVote()}">
+						<input type="number" id="listvotes${question.getUniqueId()}" />
+					</c:if>
 				</td>
 				</c:if>
 			</c:forEach>

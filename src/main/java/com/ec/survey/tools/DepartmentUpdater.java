@@ -4,26 +4,21 @@ package com.ec.survey.tools;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.util.*;
 
 import javax.annotation.Resource;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.Property;
 import com.ec.survey.service.LdapDBService;
 import com.ec.survey.service.PropertiesService;
 import com.ec.survey.service.SessionService;
-import com.sun.source.util.Trees;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -97,8 +92,28 @@ public class DepartmentUpdater implements Runnable {
 		}
 	}
 
+	private String readData(HttpURLConnection conn) throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		StringBuilder sb = new StringBuilder();
+		for (int c; (c = in.read()) >= 0;) {
+			sb.append((char)c);
+		}
+		in.close();
+		return sb.toString();
+	}
+
 	private String getDepartments() throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+		// Prevent expansion of entity references
+		factory.setXIncludeAware(false);
+		factory.setExpandEntityReferences(false);
+
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		sessionService.initializeProxy();
 
@@ -240,7 +255,7 @@ public class DepartmentUpdater implements Runnable {
 		}
 		sbuilder.append("</nodes>");
 
-        return sbuilder.toString();
+		return sbuilder.toString();
 	}
 
 	private void recursivePrintChildren(DepartmentsEntry element, int indent, StringBuilder builder) throws IOException {
@@ -268,6 +283,16 @@ public class DepartmentUpdater implements Runnable {
 
 	private TreeMap<String, String> getDomains() throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+		// Prevent expansion of entity references
+		factory.setXIncludeAware(false);
+		factory.setExpandEntityReferences(false);
+
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		sessionService.initializeProxy();
 

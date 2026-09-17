@@ -84,53 +84,43 @@
 				<c:choose>
 					<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
 						<td style="text-align: center">
-							<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 2}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('AccessDraft',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 1}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('AccessDraft',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 0}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('AccessDraft',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-							</c:if>
+						    <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('AccessDraft',${access.id});">
+						        <jsp:include page="../management/access-icon.jsp">
+						            <jsp:param name="value" value="${access.getLocalPrivilegeValue('AccessDraft')}" />
+						        </jsp:include>
+							 </div>
 						</td>
 						<td style="text-align: center">
-							<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 2}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('AccessResults',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 1}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('AccessResults',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 0}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('AccessResults',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-							</c:if>	
+						    <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('AccessResults',${access.id});">
+                                <jsp:include page="../management/access-icon.jsp">
+                                    <jsp:param name="value" value="${access.getLocalPrivilegeValue('AccessResults')}" />
+                                </jsp:include>
+							</div>
+						</td>
+						<td style="text-align: center;">
+                            <c:choose>
+                                <c:when test="${access.user.formPrivilege < 1}">
+                                    <div class="icon-wrapper">
+                                        <jsp:include page="../management/access-icon.jsp">
+                                            <jsp:param name="value" value="-1" />
+                                        </jsp:include>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                 <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('FormManagement',${access.id});">
+                                     <jsp:include page="../management/access-icon.jsp">
+                                        <jsp:param name="value" value="${access.getLocalPrivilegeValue('FormManagement')}" />
+                                     </jsp:include>
+                                 </div>
+                                </c:otherwise>
+                            </c:choose>
 						</td>
 						<td style="text-align: center">
-							<c:choose>
-								<c:when test="${access.user.formPrivilege < 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGrey" src="${contextpath}/resources/images/bullet_ball_glass_gray.png" alt="none" />
-								</c:when>
-								<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 2}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('FormManagement',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-								</c:when>
-								<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('FormManagement',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-								</c:when>
-								<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 0}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('FormManagement',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-								</c:when>		
-							</c:choose>
-						</td>
-						<td style="text-align: center">
-							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 2}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('ManageInvitations',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 1}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('ManageInvitations',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 0}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('ManageInvitations',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-							</c:if>	
+						    <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('ManageInvitations',${access.id});">
+                                <jsp:include page="../management/access-icon.jsp">
+                                    <jsp:param name="value" value="${access.getLocalPrivilegeValue('ManageInvitations')}" />
+                                </jsp:include>
+							</div>
 						</td>
 						<td style="vertical-align: middle; text-align: center">
 							<c:if test="${!access.readonly}">
@@ -140,53 +130,43 @@
 					</c:when>
 					<c:otherwise>
 						<td style="text-align: center">
-							<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 2}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 1}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 0}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-							</c:if>
+							<div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>">
+                                <jsp:include page="../management/access-icon.jsp">
+                                    <jsp:param name="value" value="${access.getLocalPrivilegeValue('AccessDraft')}" />
+                                </jsp:include>
+                             </div>
 						</td>
 						<td style="text-align: center">
-							<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 2}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 1}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 0}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-							</c:if>	
+							<div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('AccessResults',${access.id});">
+                                <jsp:include page="../management/access-icon.jsp">
+                                    <jsp:param name="value" value="${access.getLocalPrivilegeValue('AccessResults')}" />
+                                </jsp:include>
+                            </div>
 						</td>
 						<td style="text-align: center">
 							<c:choose>
 								<c:when test="${access.user.formPrivilege < 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGrey"  src="${contextpath}/resources/images/bullet_ball_glass_gray.png" alt="none" />
+								     <div class="icon-wrapper">
+                                         <jsp:include page="../management/access-icon.jsp">
+                                            <jsp:param name="value" value="-1" />
+                                         </jsp:include>
+                                     </div>
 								</c:when>
-								<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 2}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-								</c:when>
-								<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 1}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-								</c:when>
-								<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 0}">
-									<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-								</c:when>		
+								<c:otherwise>
+								    <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>">
+                                         <jsp:include page="../management/access-icon.jsp">
+                                            <jsp:param name="value" value="${access.getLocalPrivilegeValue('FormManagement')}" />
+                                         </jsp:include>
+                                     </div>
+								</c:otherwise>
 							</c:choose>
 						</td>
 						<td style="text-align: center">
-							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 2}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 1}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-							</c:if>
-							<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 0}">
-								<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-							</c:if>	
+							 <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>">
+                                <jsp:include page="../management/access-icon.jsp">
+                                    <jsp:param name="value" value="${access.getLocalPrivilegeValue('ManageInvitations')}" />
+                                 </jsp:include>
+                            </div>
 						</td>
 						<td style="vertical-align: middle; text-align: center">
 							<c:if test="${!access.readonly}">

@@ -466,4 +466,100 @@ public abstract class Element implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	@Transient
+	public boolean isQuizElement() {
+		return false;
+	}
+	public String editorIcon() {
+		if (this instanceof FreeTextQuestion) {
+			return "glyphicon glyphicon-pencil";
+		}
+
+		if (this instanceof SingleChoiceQuestion) {
+			return "glyphicon glyphicon-ok-circle";
+		}
+
+		if (this instanceof MultipleChoiceQuestion) {
+			return "glyphicon glyphicon-check";
+		}
+
+		if (this instanceof NumberQuestion) {
+			return "glyphicon  glyphicon-sound-5-1";
+		}
+
+		if (this instanceof DateQuestion) {
+			return "glyphicon  glyphicon-calendar";
+		}
+
+		if (this instanceof TimeQuestion) {
+			return "glyphicon glyphicon-time";
+		}
+
+		if (this instanceof RankingQuestion) {
+			return "glyphicon glyphicon-sort";
+		}
+
+		if (this instanceof Matrix) {
+			return "glyphicon glyphicon-list-alt";
+		}
+
+		if (this instanceof Table) {
+			return "glyphicon glyphicon-list";
+		}
+
+		if (this instanceof Text) {
+			return "glyphicon glyphicon-font";
+		}
+
+		if (this instanceof Image) {
+			return "glyphicon glyphicon-picture";
+		}
+
+		if (this instanceof Ruler) {
+			return "glyphicon glyphicon-minus";
+		}
+
+		if (this instanceof Upload) {
+			return "glyphicon glyphicon-arrow-up";
+		}
+
+		if (this instanceof Download) {
+			return "glyphicon glyphicon-arrow-down";
+		}
+
+		if (this instanceof EmailQuestion) {
+			return "glyphicon glyphicon-envelope";
+		}
+
+		if (this instanceof RegExQuestion) {
+			return "glyphicon glyphicon-asterisk";
+		}
+
+		if (this instanceof FormulaQuestion) {
+			return "formula"; // formula uses a special icon
+		}
+
+		if (this instanceof GalleryQuestion) {
+			return "glyphicon glyphicon-th";
+		}
+
+		if (this instanceof Confirmation) {
+			return "glyphicon glyphicon-ok";
+		}
+
+		if (this instanceof RatingQuestion) {
+			return "glyphicon glyphicon-star";
+		}
+
+		if (this instanceof ComplexTable) {
+			return "glyphicon glyphicon-th-large";
+		}
+
+		if (this instanceof Section) {
+			return "glyphicon glyphicon-folder-open";
+		}
+
+		return "unknown";
+	}
 }

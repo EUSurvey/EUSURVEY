@@ -48,7 +48,7 @@ public class EmailQuestion extends Question {
 	@Override
 	public String getCss()
 	{
-		String css = super.getCss();		
+		String css = super.getCss();
 		css += " email";			
 		return css;
 	}

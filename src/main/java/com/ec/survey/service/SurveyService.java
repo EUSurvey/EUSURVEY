@@ -33,6 +33,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -138,6 +139,7 @@ public class SurveyService extends BasicService {
 				" ,s.ECF" +
 				" ,s.EVOTE" +
 				" ,s.SELFASSESSMENT" +
+				" ,s.EVOTETEMPLATE" +
 				" ,GROUP_CONCAT(t.TAG_NAME SEPARATOR ' ')" +
 				" from SURVEYS s" +
 				" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID" +
@@ -195,6 +197,7 @@ public class SurveyService extends BasicService {
 			survey.setIsECF((Boolean) row[rowIndex++]);
 			survey.setIsEVote((Boolean) row[rowIndex++]);	
 			survey.setIsSelfAssessment((Boolean) row[rowIndex++]);
+			survey.seteVoteTemplate((String) row[rowIndex++]);
 
 			String tags = (String) row[rowIndex];
 			if (tags != null && tags.length() > 1) {
@@ -227,6 +230,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" ,s.ISPUBLISHED");
 		stringBuilder.append(" ,s.LANGUAGE");
 		stringBuilder.append(" ,s.EVOTE");
+		stringBuilder.append(" ,s.EVOTETEMPLATE");
 		
 		if (!this.isReportingDatabaseEnabled() || filter.getSortKey().equalsIgnoreCase("REPLIES")) {
 			stringBuilder.append(" ,npa.PUBLISHEDANSWERS as replies");
@@ -265,6 +269,7 @@ public class SurveyService extends BasicService {
 			survey.setIsPublished((Boolean) row[rowIndex++]);
 			survey.setLanguage(languageMap.get(ConversionTools.getValue(row[rowIndex++])));// 8
 			survey.setIsEVote((Boolean) row[rowIndex++]);
+			survey.seteVoteTemplate((String) row[rowIndex++]);
 			
 			if (this.isReportingDatabaseEnabled() && !filter.getSortKey().equalsIgnoreCase("REPLIES")) {				
 				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(false, survey.getUniqueId()));				
@@ -633,9 +638,10 @@ public class SurveyService extends BasicService {
 		}
 
 		if (filter.getOrganisations() != null && !filter.getOrganisations().isEmpty()) {			
-			boolean firstLoop = true;			
+			boolean firstLoop = true;
+			var orgIndex = 0;
 			for (String organisation : filter.getOrganisations()) {
-				
+				var orgKey = "org" + orgIndex++;
 				if (firstLoop) {
 					sql.append(" AND (");
 					firstLoop = false;
@@ -644,14 +650,15 @@ public class SurveyService extends BasicService {
 				}
 								
 				if (organisation.startsWith("deleted")) {
-					sql.append(" s.ORGANISATION = '" + organisation.replace("deleted", "") + "'");
+					oQueryParameters.put(orgKey, organisation.replace("deleted", ""));
 				} else if (organisation.startsWith("frozen")) {
-					sql.append(" s.ORGANISATION = '" + organisation.replace("frozen", "") + "'");
+					oQueryParameters.put(orgKey, organisation.replace("frozen", ""));
 				} else if (organisation.startsWith("reported")) {
-					sql.append(" s.ORGANISATION = '" + organisation.replace("reported", "") + "'");
+					oQueryParameters.put(orgKey, organisation.replace("reported", ""));
 				} else {
-					sql.append(" s.ORGANISATION = '" + organisation + "'");
+					oQueryParameters.put(orgKey, organisation);
 				}
+				sql.append(" s.ORGANISATION = :").append(orgKey);
 			};
 			
 			sql.append(")");
@@ -671,8 +678,13 @@ public class SurveyService extends BasicService {
 					case "standard":
 						sql.append(" (s.QUIZ = 0 AND s.ECF = 0 AND s.EVOTE = 0 AND s.OPC = 0 AND s.DELPHI = 0 AND s.SELFASSESSMENT = 0) ");
 						break;
-					default:
-						sql.append(" s." + type.toUpperCase() + " = 1");
+					case "opc":
+					case "quiz":
+					case "delphi":
+					case "evote":
+					case "ecf":
+					case "selfassessment":
+						sql.append(" s.").append(type.toUpperCase()).append(" = 1");
 						break;
 				}
 			}
@@ -837,6 +849,8 @@ public class SurveyService extends BasicService {
 			oQueryParameters.put("replies", filter.getMinContributions());
 		}
 
+		sql.append(" GROUP BY s.SURVEY_ID");
+
 		boolean having = false;
 		if (filter.getPublishedFrom() != null) {
 			sql.append(
@@ -877,8 +891,6 @@ public class SurveyService extends BasicService {
 			oQueryParameters.put("firstPublishedTo", Tools.getFollowingDay(filter.getFirstPublishedTo()));
 		}
 
-		sql.append(" GROUP BY s.SURVEY_ID");
-
 		if (filter.getTags() != null && !filter.getTags().isEmpty()) {
 			sql.append(" HAVING");
 
@@ -898,44 +910,39 @@ public class SurveyService extends BasicService {
 		}
 
 		if (filter.getSortKey() != null && filter.getSortKey().length() > 0) {
-			if (filter.getSortKey().equalsIgnoreCase("replies")) {
-				sql.append(" ORDER BY npa.PUBLISHEDANSWERS");
+			var sortKey = filter.getSortKey().toLowerCase();
+			var valid = true;
+			switch (sortKey) {
+				case "replies":
+					sql.append(" ORDER BY npa.PUBLISHEDANSWERS");
+					break;
+				case "created":
+					sql.append(" ORDER BY s.SURVEY_CREATED");
+					break;
+				case "firstpublished":
+					sql.append(" ORDER BY firstPublished");
+					break;
+				case "published":
+					sql.append(" ORDER BY published");
+					break;
+				case "reported":
+					sql.append(" ORDER BY reported");
+					break;
+				case "survey_created":
+				case "survey_end_date":
+				case "survey_start_date":
+				case "surveyname":
+				case "titlesort":
+				case "archived":
+					sql.append(" ORDER BY s.").append(sortKey);
+					break;
+				default:
+					valid = false;
+			}
 
-				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
-					sql.append(" ").append(filter.getSortOrder().toUpperCase());
-				}
-			} else if (filter.getSortKey().equalsIgnoreCase("created")) {
-				sql.append(" ORDER BY s.SURVEY_CREATED");
-
-				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
-					sql.append(" ").append(filter.getSortOrder().toUpperCase());
-				}
-			} else if (filter.getSortKey().equalsIgnoreCase("firstPublished")) {
-				sql.append(" ORDER BY firstPublished");
-
-				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
-					sql.append(" ").append(filter.getSortOrder().toUpperCase());
-				}
-			} else if (filter.getSortKey().equalsIgnoreCase("published")) {
-				sql.append(" ORDER BY published");
-
-				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
-					sql.append(" ").append(filter.getSortOrder().toUpperCase());
-				}
-			} else if (filter.getSortKey().equalsIgnoreCase("reported")) {
-				sql.append(" ORDER BY reported");
-
-				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
-					sql.append(" ").append(filter.getSortOrder().toUpperCase());
-				}
-			} else {
-				sql.append(" ORDER BY s.").append(filter.getSortKey());
-
-				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
-					sql.append(" ").append(filter.getSortOrder().toUpperCase());
-				} else {
-					sql.append(" DESC");
-				}
+			if (valid) {
+				var sortOrder = "ASC".equalsIgnoreCase(filter.getSortOrder()) ? "ASC" : "DESC";
+				sql.append(" ").append(sortOrder);
 			}
 		}
 
@@ -2199,7 +2206,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-	public Survey editSave(Survey oldsurvey, HttpServletRequest request) throws InvalidXHTMLException,
+	public Survey editSave(Survey oldsurvey, HttpServletRequest request, int userId) throws InvalidXHTMLException,
 			NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, IOException {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -2239,7 +2246,7 @@ public class SurveyService extends BasicService {
 		session.update(oldsurvey);
 
 		Survey survey = SurveyHelper.parseSurvey(request, this, fileService, selfassessmentService, servletContext,
-				activityService.isEnabled(ActivityRegistry.ID_ELEMENT_ORDER), activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), fileIDsByUID);
+				activityService.isEnabled(ActivityRegistry.ID_ELEMENT_ORDER), activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), fileIDsByUID, userId);
 
 		//Map<Element, Integer> pendingChanges = surveyService.getPendingChanges(survey);
 
@@ -6770,7 +6777,7 @@ public class SurveyService extends BasicService {
 			numberOfResultsInPeriod.put((String)a[0], ConversionTools.getValue(a[1]));
 		}		
 		
-		String surveys = "SELECT s.SURVEY_UID, s.ORGANISATION, s.SURVEYNAME, s.TITLESORT, s.ACTIVE, s.DELETED, s.ARCHIVED, u.USER_LOGIN, u.USER_EMAIL, s.VALIDATOR, s.ECF, s.EVOTE, s.OPC, s.QUIZ, s.DELPHI, s.SELFASSESSMENT FROM SURVEYS s JOIN USERS u ON u.USER_ID = s.OWNER WHERE ISDRAFT = 1 AND SURVEY_UID IN (:uids)";		
+		String surveys = "SELECT s.SURVEY_UID, s.ORGANISATION, s.SURVEYNAME, s.TITLESORT, s.ACTIVE, s.DELETED, s.ARCHIVED, u.USER_LOGIN, u.USER_EMAIL, s.VALIDATOR, s.ECF, s.EVOTE, s.OPC, s.QUIZ, s.DELPHI, s.SELFASSESSMENT FROM SURVEYS s JOIN USERS u ON u.USER_ID = s.OWNER WHERE ISDRAFT = 1 AND SURVEY_UID IN (:uids)";
 		
 		query = session.createSQLQuery(surveys);
 		query.setParameter("uids", firstPublishedDates.keySet());
@@ -7263,4 +7270,98 @@ public class SurveyService extends BasicService {
         query.setParameter("date", new Date());
         query.executeUpdate();
     }
+
+	@Transactional
+	public boolean addElementToPredefinedElements(int id, Survey survey, int userId) throws MessageException, ValidationException, IOException {
+		Element element = survey.getElementsById().get(id);
+		if (element == null) throw new MessageException("unknown element");
+
+		return administrationService.addElementToPredefinedElements(userId, element, survey.getUniqueId());
+	}
+
+	@Transactional
+	public void removeElementFromPredefinedElements(int elementId, int userId) throws MessageException {
+		administrationService.removeElementFromPredefinedElements(userId, elementId);
+	}
+	private final Random random = new Random();
+
+	@Transactional
+    public int createEmailAuthenticationToken(Survey survey, String email) throws MessageException, IOException {
+		Session session = sessionFactory.getCurrentSession();
+
+		// Create token with expiration
+		int number = 100000 + random.nextInt(900000);
+
+		// Save token to database
+		var authenticationNumber = new AuthenticationNumber(number, email, survey.getUniqueId());
+		session.save(authenticationNumber);
+
+		// Send email to user
+
+		String body = "Dear user,<br /><br />" +
+				"To access EUSurvey we need to verify your email address.<br />" +
+				"Here's your one time password (OTP): " + number + "<br />" +
+				"Please enter this OTP within 5 minutes of receiving this email to complete your verification process.<br /><br />" +
+				"Thank you,<br />" +
+				"Your EUSurvey team";
+
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", serverPrefix);
+
+		mailService.SendHtmlMail(email, sender, sender, "EUSurvey Authentication Code", text, null);
+
+		return number;
+	}
+
+	@Transactional
+	public AuthenticationNumber getAuthenticationNumber(int number, String email, String surveyUid) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "FROM AuthenticationNumber s WHERE s.number = :number AND s.email = :email AND s.surveyUid = :surveyUid";
+		Query<AuthenticationNumber> query = session.createQuery(hql, AuthenticationNumber.class).setParameter("email", email).setParameter("number", number).setParameter("surveyUid", surveyUid);
+
+		List<AuthenticationNumber> list = query.setReadOnly(true).setMaxResults(1).list();
+		if (list.isEmpty()) return null;
+		return list.get(0);
+	}
+
+	@Transactional
+	public boolean usesVoterFileEmail(Survey survey) {
+		if (survey.getIsEVote() && survey.geteVoteTemplate().equalsIgnoreCase("p")) {
+			List<ParticipationGroup> groups = participationService.getAll(survey.getUniqueId());
+			if (groups != null && groups.size() == 1 && groups.get(0).getType() == ParticipationGroupType.VoterFileEmail) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Transactional
+	public String createNewPDFCode(String surveyUid, int answerSetId) {
+		Session session = sessionFactory.getCurrentSession();
+		var code = new OneTimePDFCode(surveyUid, answerSetId);
+		session.save(code);
+		return code.getCode();
+	}
+
+	@Transactional
+	public boolean validateAndDeletePDFCode(String code, String surveyUid, int answerSetId) throws MessageException {
+
+		if (code == null || code.isEmpty()) return false;
+
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "FROM OneTimePDFCode p WHERE p.code = :code AND p.surveyUid = :surveyUid and p.answerSetId = :answerSetId";
+
+		Query<OneTimePDFCode> query = session.createQuery(sql, OneTimePDFCode.class);
+		query.setParameter("code", code).setParameter("surveyUid", surveyUid).setParameter("answerSetId", answerSetId);
+
+		List<OneTimePDFCode> codes = query.setReadOnly(true).list();
+
+		if (codes.isEmpty()) return false;
+		if (codes.size() > 1) {
+			throw new MessageException("multiple entries for same code found");
+		}
+
+		session.delete(codes.get(0));
+		return true;
+	}
 }

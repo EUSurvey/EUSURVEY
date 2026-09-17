@@ -1,9 +1,5 @@
 package com.ec.survey.model;
 
-import org.springframework.util.comparator.NullSafeComparator;
-
-import java.util.Comparator;
-
 public class LdapSearchResult {
 
 	public LdapSearchResult(String login, String displayName, String organisation, String group, String fname, String lname, String mail, boolean isExternal) {
@@ -74,17 +70,6 @@ public class LdapSearchResult {
 	private String lname ;
 	private String mail;
 	private boolean isExternal;
-
-	public static class Comparators {
-        public static final Comparator<LdapSearchResult> FIRST = Comparator.comparing(o -> o.fname);
-        public static final Comparator<LdapSearchResult> LAST = Comparator.comparing(o -> o.lname);
-        public static final Comparator<LdapSearchResult> GROUP = (o1, o2) -> {
-            Comparator<String> comp = new NullSafeComparator<>(String.CASE_INSENSITIVE_ORDER, false);
-            return comp.compare(o1.group,o2.group);
-        };
-        public static final Comparator<LdapSearchResult> DISPLAYNAME = Comparator.comparing(o -> o.displayName);
-		public static final Comparator<LdapSearchResult> MAIL = Comparator.comparing(o -> o.mail);
-    }
 	
 }
 

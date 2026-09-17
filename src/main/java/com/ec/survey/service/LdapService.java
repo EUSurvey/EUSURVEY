@@ -76,7 +76,7 @@ public class LdapService extends BasicService {
         env.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
         env.put(Context.SECURITY_PRINCIPAL, securityPrincipal);
         env.put(Context.SECURITY_CREDENTIALS, securityCredentials);
-        env.put(Context.REFERRAL, "follow");
+		env.put(Context.REFERRAL, "follow");
             
         return new InitialDirContext(env);
     }
@@ -328,66 +328,99 @@ public class LdapService extends BasicService {
 
 	public String[] getECASLogins(String name, String department, String type, String first, String last, String email, String order, int limit) throws NamingException {
 		
+		List<LdapSearchResult> ldqpUsers = getECASLoginsAsList(name, department, type, first, last, email, order, limit);
+
+		List<String> resultString = new ArrayList<>(ldqpUsers.size());
+		
+		for (LdapSearchResult ldapSearchResult : ldqpUsers) {
+			String displayName =ldapSearchResult.getDisplayName() ;
+			String login = ldapSearchResult.getLogin();
+			String organisation = ldapSearchResult.getOrganisation();
+			String group=  ldapSearchResult.getGroup();
+			String fname =  ldapSearchResult.getFname();
+			String lname =  ldapSearchResult.getLname();
+			String mail = ldapSearchResult.getMail();
+			boolean external = ldapSearchResult.getIsExternal();
+			
+			if ( displayName == null || displayName.length() == 0) displayName = login;
+			
+			if (organisation.equalsIgnoreCase("external"))
+			{
+				displayName += " (EXT)";				
+			} else {
+				displayName += " (" +  organisation.replace("eu.europa.", "").toUpperCase() + ")"   ;	
+			}
+			
+			if (group == null || group.equals("null")) group = "";
+			
+			resultString.add("<tr id='" + login + "' " + (external ? "class='externaluser'" : "") + "><td>" + mail + "</td><td>" + displayName + "</td><td>" + fname + "</td><td>" + lname + "</td><td>" + group + "</td></tr>");
+		}
+		
+		return resultString.toArray(new String[resultString.size()]);
+	}
+
+	public List<LdapSearchResult> getECASLoginsAsList(String name, String department, String type, String first, String last, String email, String order, int limit) throws NamingException {
+
 		name = Tools.encodeForLDAP(name);
 		department = Tools.encodeForLDAP(department);
 		type = Tools.encodeForLDAP(type);
 		first = Tools.encodeForLDAP(first);
 		last = Tools.encodeForLDAP(last);
-		email = Tools.encodeForLDAP(email);		
-		
+		email = Tools.encodeForLDAP(email);
+
 		List<LdapSearchResult> ldqpUsers = new ArrayList<>();
-		
+
 		DirContext ctx = initialize();
-		
+
 		try {
 			SearchControls sc = getSearchControls(LdapSearchTypeEnum.LOGIN);
-			
+
 			sc.setCountLimit(limit);
 			sc.setTimeLimit(60000);
-			
-			NamingEnumeration<SearchResult> ne = null; 
+
+			NamingEnumeration<SearchResult> ne = null;
 			Attributes set_att;
 
 			String searchString = "(&";
-						
+
 			if (name != null && name.length() > 0){
-				searchString += getFilterContainsOr("uid", ldapMappingUserEcMoniker, name);			
+				searchString += getFilterContainsOr("uid", ldapMappingUserEcMoniker, name);
 			}
-			
+
 			if (isAttributeEligible(ldapMappingUserGivenName) && first != null && first.length() > 0){
-				searchString += getFilterContains(ldapMappingUserGivenName, first);			
+				searchString += getFilterContains(ldapMappingUserGivenName, first);
 			}
-			
+
 			if (isAttributeEligible(ldapMappingUserSn) && last != null && last.length() > 0){
 				searchString += getFilterContains(ldapMappingUserSn, last);
 			}
-			
+
 			if (isAttributeEligible(ldapMappingUserMail) && email != null && email.length() > 0){
-				searchString += getFilterContains(ldapMappingUserMail, email);			
-			}			
-			
+				searchString += getFilterContains(ldapMappingUserMail, email);
+			}
+
 			if (isAttributeEligible(ldapMappingUserDepartmentNumber) && department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined")){
-				searchString += getFilterStartsWith(ldapMappingUserDepartmentNumber, department);			
-			}			
+				searchString += getFilterStartsWith(ldapMappingUserDepartmentNumber, department);
+			}
 
 			if(isAttributeEligible(ldapMappingUserO) && type != null && type.length() > 0){
-				searchString += getFilterEquals(ldapMappingUserO, type); 			
+				searchString += getFilterEquals(ldapMappingUserO, type);
 			}
-			
+
 			if(!isCasOss()){
-				searchString += getFilterNotEquals("recordStatus", "d");			
-				searchString += getFilterNotEquals("employeeType", "g");			
-			}			
-			
+				searchString += getFilterNotEquals("recordStatus", "d");
+				searchString += getFilterNotEquals("employeeType", "g");
+			}
+
 			searchString += " )";
-			
+
 			try{
 				// ou=People
 				ne = ctx.search(ldapSearchFormat,searchString,sc);
-				
+
 				while(ne.hasMore()){
-					SearchResult sr = ne.next();  
-					set_att = sr.getAttributes();					
+					SearchResult sr = ne.next();
+					set_att = sr.getAttributes();
 
 					String login = getAttributeValue(set_att, "uid",false) ;
 					String displayName="";
@@ -425,59 +458,49 @@ public class LdapService extends BasicService {
 				}
 			} catch (javax.naming.SizeLimitExceededException se) {
 				//this one is thrown when the configured limit is reached, so everything is as expected
+				logger.info(se.getMessage(), se);
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
-			}	
-			
+			}
+
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-		}		
+		}
 
-		if (order.equalsIgnoreCase("first"))
-		{
-			ldqpUsers.sort(LdapSearchResult.Comparators.FIRST);
-		} else if (order.equalsIgnoreCase("last"))
-		{
-			ldqpUsers.sort(LdapSearchResult.Comparators.LAST);
-		} else if (order.equalsIgnoreCase("department"))
-		{
-			ldqpUsers.sort(LdapSearchResult.Comparators.GROUP);
-		} else if (order.equalsIgnoreCase("mail")) {
-			ldqpUsers.sort(LdapSearchResult.Comparators.MAIL);
-		} else {
-			ldqpUsers.sort(LdapSearchResult.Comparators.DISPLAYNAME);
-		}		
-		
-		List<String> resultString = new ArrayList<>(ldqpUsers.size());
-		
-		for (LdapSearchResult ldapSearchResult : ldqpUsers) {
-			String displayName =ldapSearchResult.getDisplayName() ;
-			String login = ldapSearchResult.getLogin();
-			String organisation = ldapSearchResult.getOrganisation();
-			String group=  ldapSearchResult.getGroup();
-			String fname =  ldapSearchResult.getFname();
-			String lname =  ldapSearchResult.getLname();
-			String mail = ldapSearchResult.getMail();
-			boolean external = ldapSearchResult.getIsExternal();
-			
-			if ( displayName == null || displayName.length() == 0) displayName = login;
-			
-			if (organisation.equalsIgnoreCase("external"))
-			{
-				displayName += " (EXT)";				
-			} else {
-				displayName += " (" +  organisation.replace("eu.europa.", "").toUpperCase() + ")"   ;	
-			}
-			
-			if (group == null || group.equals("null")) group = "";
-			
-			resultString.add("<tr id='" + login + "' " + (external ? "class='externaluser'" : "") + "><td>" + mail + "</td><td>" + displayName + "</td><td>" + fname + "</td><td>" + lname + "</td><td>" + group + "</td></tr>");
-		}		
-		
+		if (order == null) {
+			order = "displayName";
+		}
+
+//		if (order.equalsIgnoreCase("first"))
+//		{
+//			ldqpUsers.sort(LdapSearchResult.Comparators.FIRST);
+//		} else if (order.equalsIgnoreCase("last"))
+//		{
+//			ldqpUsers.sort(LdapSearchResult.Comparators.LAST);
+//		} else if (order.equalsIgnoreCase("department"))
+//		{
+//			ldqpUsers.sort(LdapSearchResult.Comparators.GROUP);
+//		} else if (order.equalsIgnoreCase("mail")) {
+//			ldqpUsers.sort(LdapSearchResult.Comparators.MAIL);
+//		} else {
+//			ldqpUsers.sort(LdapSearchResult.Comparators.DISPLAYNAME);
+//		}
+
 		ctx.close();
-		
-		return resultString.toArray(new String[resultString.size()]);
+
+		return ldqpUsers;
 	}
+
+//	public static class Comparators {
+//		public static final Comparator<LdapSearchResult> FIRST = Comparator.comparing(o -> o.fname);
+//		public static final Comparator<LdapSearchResult> LAST = Comparator.comparing(o -> o.lname);
+//		public static final Comparator<LdapSearchResult> GROUP = (o1, o2) -> {
+//			Comparator<String> comp = new NullSafeComparator<>(String.CASE_INSENSITIVE_ORDER, false);
+//			return comp.compare(o1.group,o2.group);
+//		};
+//		public static final Comparator<LdapSearchResult> DISPLAYNAME = Comparator.comparing(o -> o.displayName);
+//		public static final Comparator<LdapSearchResult> MAIL = Comparator.comparing(o -> o.mail);
+//	}
 	
 	private String getFilterContains(final String key, final String search) {
 		String result="";

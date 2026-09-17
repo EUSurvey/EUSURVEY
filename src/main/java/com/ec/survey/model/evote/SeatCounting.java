@@ -20,7 +20,7 @@ public class SeatCounting {
 	private int spoiltVotes;
 	private int total;
 	private int maxSeats;
-	private int minListPercent;
+	private double minListPercent;
 	private int maxCandidatesInLists;
 	private int listVotesSeats;
 	private int preferentialVotesSeats;
@@ -161,10 +161,10 @@ public class SeatCounting {
 	public void setCandidateVotes(List<List<ElectedCandidate>> candidateVotes) {
 		this.candidateVotes = candidateVotes;
 	}
-	public int getMinListPercent() {
+	public double getMinListPercent() {
 		return minListPercent;
 	}
-	public void setMinListPercent(int minListPercent) {
+	public void setMinListPercent(double minListPercent) {
 		this.minListPercent = minListPercent;
 	}
 	

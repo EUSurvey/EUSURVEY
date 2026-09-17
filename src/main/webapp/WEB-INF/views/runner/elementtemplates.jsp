@@ -1338,7 +1338,7 @@
 								<span data-bind='text: name(), attr: {id: "answerlabel" + $parents[1].id() + $index(), class:"answerlabel"}'></span>
 							</div>
 							<a onclick="showGalleryBrowser($(this).parent())">																	
-								<img class="gallery-image" alt="${form.getMessage("form.GalleryImageItem")}" data-bind="attr: {'alt': (desc() != '' ? desc() : 'Gallery Image' + $index()) + (longdesc != '' ? '; URL ' + longdesc() : ''), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px'}"  style="max-width: 100%;" />
+								<img class="gallery-image" alt="${form.getMessage("form.GalleryImageItem")}" data-bind="attr: {'alt': (desc() != '' ? desc() : 'Gallery Image' + $index()) + (longdesc != '' ? '; URL ' + longdesc() : ''), 'src': '${contextpath}/files/' + (fromMyPredefined() ? 'USER' : '${form.survey.uniqueId}') + '/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px'}"  style="max-width: 100%;" />
 							</a>
 							<div class="comment" data-bind="html: comment"></div>	
 							<!-- ko if: $parents[1].foreditor -->

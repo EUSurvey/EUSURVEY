@@ -7,17 +7,29 @@
     	<div class="modal-content">
 		<div class="modal-body">
 			<a onclick="updatePrivilege(0);" id="btnNoAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-		  		<img src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="read/write" />
+		  		<div class="icon-wrapper">
+                    <jsp:include page="../management/access-icon.jsp">
+                        <jsp:param name="value" value="0" />
+                    </jsp:include>
+                </div>
 		  	</a>
 		  	<spring:message code="label.NoAccess" /><br />
 		  	<span id="yellowArea">
 			  	<a onclick="updatePrivilege(1);" id="btnROAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-			  		<img src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read/write" />
+			  		<div class="icon-wrapper">
+                        <jsp:include page="../management/access-icon.jsp">
+                            <jsp:param name="value" value="1" />
+                        </jsp:include>
+                    </div>
 			  	</a>
 			  	<spring:message code="label.ReadingAccess" /><br />
 		  	</span>
 		  	<a onclick="updatePrivilege(2);" id="btnRWAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-		  		<img src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
+		  		<div class="icon-wrapper">
+                    <jsp:include page="../management/access-icon.jsp">
+                        <jsp:param name="value" value="2" />
+                    </jsp:include>
+                </div>
 		  	</a>
 		  	<spring:message code="label.ReadWriteAccess" />
 		</div>

@@ -955,6 +955,11 @@ function update(input)
 				var file = gallery.files()[i];
 				if (file.uid() == uid)
 				{
+					if (text.length > 255) {
+						addValidationInfo(input, "textTooLongAndLimit");
+						return;
+					}
+
 					var oldtext = file.name();
 					file.name(text);
 					if (oldtext != text)_undoProcessor.addUndoStep(["Title", galleryid, uid, oldtext, text]);
@@ -1486,7 +1491,7 @@ function update(input)
 					success: function (result) {
 						const pas = []
 						$.each(result, function (key, data) {
-							const pa = newPossibleAnswerViewModel(getNewId(), getNewId(), key, "", data, false);
+							const pa = newPossibleAnswerViewModel(getNewId(), getNewId(), key, "", data, null);
 							pas.push(pa)
 						});
 						newState.answers = pas

@@ -655,8 +655,9 @@ function addValidationInfo(input, type)
 	if (type == "mininvalid" || type == "maxinvalid" || type == "numberinvalid")
 	{
 		label = getPropertyLabel("invalidNumber");
-	}  else if (type == "mininvalid5k" || type == "maxinvalid5k") {
-		label = getPropertyLabel("invalidNumber5k");
+	}  else if (type == "mininvalidX" || type == "maxinvalidX") {
+		let max = getMaxInputClassInt(_elementProperties.selectedelement)
+		label = getPropertyLabel("invalidNumberX").replace("#", max.toString());
 	} else if (type == "mindateinvalid" || type == "maxdateinvalid") {
 		label = getPropertyLabel("invalidDate");
 	} else if (type == "mintimeinvalid" || type == "maxtimeinvalid") {
@@ -799,9 +800,9 @@ function checkMinMax(input, hasInputError, globalmax, showrulehint)
 				return false;
 			}
 			
-			if (el.hasClass("freetextitem") && min > 5000)
+			if ((el.hasClass("freetextitem") || el.is(".cell[data-type=2]")) && min > getMaxInputClassInt(el))
 			{
-				addValidationInfo(input, "mininvalid5k");
+				addValidationInfo(input, "mininvalidX");
 				return false;
 			}
 			
@@ -860,9 +861,9 @@ function checkMinMax(input, hasInputError, globalmax, showrulehint)
 				return false;
 			}
 			
-			if ($(_elementProperties.selectedelement).hasClass("freetextitem") && max > 5000)
+			if ($(_elementProperties.selectedelement).hasClass("freetextitem") && max > getMaxInputClassInt(_elementProperties.selectedelement))
 			{
-				addValidationInfo(input, "maxinvalid5k");
+				addValidationInfo(input, "maxinvalidX");
 				return false;
 			}
 			

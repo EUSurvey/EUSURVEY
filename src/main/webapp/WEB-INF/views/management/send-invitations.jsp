@@ -301,9 +301,11 @@
 			
 			<div id="dialog-step1" data-bind="visible: Step() == 1">
 				<div class="fullpageform" style="padding-top: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
-			  		
-					<input id="checkAllUnInvited" type="checkbox" checked="checked" onchange="checkUninvited();" /> <spring:message code="label.SelectUninvitedContacts" /><br />
-					<input id="checkAllUnAnswered" type="checkbox" onchange="checkUnanswered();" /> <spring:message code="label.SelectInvited" />
+
+			  		<c:if test="${participationGroup.type != 'VoterFile' && participationGroup.type != 'VoterFileEmail'}">
+                        <input id="checkAllUnInvited" type="checkbox" checked="checked" onchange="checkUninvited();" /> <spring:message code="label.SelectUninvitedContacts" /><br />
+                        <input id="checkAllUnAnswered" type="checkbox" onchange="checkUnanswered();" /> <spring:message code="label.SelectInvited" />
+					</c:if>
 					
 					<div class="tabletitle" style="margin-top: 20px;">
 						${participationGroup.name}
@@ -319,65 +321,92 @@
 								<th><spring:message code="label.Email" /></th>
 								<th><spring:message code="label.InvitationDate" /></th>
 								<th><spring:message code="label.ReminderDate" /></th>
-								<th><spring:message code="label.Answers" /></th>
+								<c:if test="${participationGroup.type != 'VoterFile' && participationGroup.type != 'VoterFileEmail'}">
+								    <th><spring:message code="label.Answers" /></th>
+								</c:if>
 							</tr>
 						</thead>
-						<tbody>					
-							<c:choose>
-								<c:when test="${participationGroup.type == 'ECMembers'}">
-									<c:set var="attendees" value="${participationGroup.ecasUsers}" />
-								</c:when>
-								<c:otherwise>
-									<c:set var="attendees" value="${participationGroup.attendees}" />
-								</c:otherwise>
-							</c:choose>						
-							<c:forEach items="${attendees}" var="attendee">					
-								<tr>		
-									<td>
-										<c:choose>
-											<c:when test="${attendee.invited == null}">
-												<c:choose>
-													<c:when test="${attendee.answers > 0}">
-														<input class="uninvited answered" name="attendee${attendee.id}" type="checkbox" checked="checked" />
-													</c:when>
-													<c:otherwise>
-														<input class="uninvited" name="attendee${attendee.id}" type="checkbox" checked="checked" />
-													</c:otherwise>
-												</c:choose>
-											</c:when>
-											<c:otherwise>
-												<c:choose>
-													<c:when test="${attendee.answers > 0}">
-														<input class="invited answered" name="attendee${attendee.id}" type="checkbox" />
-													</c:when>
-													<c:otherwise>
-														<input class="invited unanswered" name="attendee${attendee.id}" type="checkbox" />
-													</c:otherwise>
-												</c:choose>
-											</c:otherwise>
-										</c:choose>
-										<c:if test="${participationGroup.type != 'ECMembers'}">	
-											<c:forEach items="${attendee.attributes}" var="attribute">
-												<span class="hideme" data-id="{${attribute.attributeName.name}}">${attribute.value}</span>
-											</c:forEach>
-										</c:if>
-									</td>
-									<td data-class="name"><esapi:encodeForHTML>${attendee.getDisplayName()}</esapi:encodeForHTML></td>
-									<td data-class="email"><esapi:encodeForHTML>${attendee.email}</esapi:encodeForHTML></td>
-									<td><spring:eval expression="attendee.invited" /></td>
-									<td><spring:eval expression="attendee.reminded" /></td>
-									<td>
-										<c:choose>
-											<c:when test="${attendee.answers > 0}">
-												<esapi:encodeForHTML>${attendee.answers}</esapi:encodeForHTML>
-											</c:when>
-											<c:otherwise>&#160;</c:otherwise>			
-										</c:choose>
-									</td>
-								</tr>						
-							</c:forEach>					
-						</tbody>
-					</table>	
+						<tbody>
+						    <c:choose>
+						        <c:when test="${participationGroup.type == 'VoterFile' || participationGroup.type == 'VoterFileEmail'}">
+						            <c:forEach items="${voters}" var="voter">
+                                        <tr>
+                                            <td>
+                                                 <c:choose>
+                                                    <c:when test="${voter.invited == null}">
+                                                        <input class="uninvited" name="attendee${voter.id}" type="checkbox" checked="checked" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                         <input class="invited" name="attendee${voter.id}" type="checkbox" />
+                                                    </c:otherwise>
+                                                 </c:choose>
+                                            </td>
+                                            <td data-class="name"><esapi:encodeForHTML>${voter.getDisplayName()}</esapi:encodeForHTML></td>
+                                            <td data-class="email"><esapi:encodeForHTML>${voter.email}</esapi:encodeForHTML></td>
+                                            <td><spring:eval expression="voter.invited" /></td>
+                                            <td><spring:eval expression="voter.reminded" /></td>
+                                        </tr>
+                                    </c:forEach>
+						        </c:when>
+						        <c:otherwise>
+						            <c:choose>
+                                        <c:when test="${participationGroup.type == 'ECMembers'}">
+                                            <c:set var="attendees" value="${participationGroup.ecasUsers}" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:set var="attendees" value="${participationGroup.attendees}" />
+                                        </c:otherwise>
+                                    </c:choose>
+
+                                    <c:forEach items="${attendees}" var="attendee">
+                                        <tr>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${attendee.invited == null}">
+                                                        <c:choose>
+                                                            <c:when test="${attendee.answers > 0}">
+                                                                <input class="uninvited answered" name="attendee${attendee.id}" type="checkbox" checked="checked" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <input class="uninvited" name="attendee${attendee.id}" type="checkbox" checked="checked" />
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:choose>
+                                                            <c:when test="${attendee.answers > 0}">
+                                                                <input class="invited answered" name="attendee${attendee.id}" type="checkbox" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <input class="invited unanswered" name="attendee${attendee.id}" type="checkbox" />
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                <c:if test="${participationGroup.type != 'ECMembers'}">
+                                                    <c:forEach items="${attendee.attributes}" var="attribute">
+                                                        <span class="hideme" data-id="{${attribute.attributeName.name}}">${attribute.value}</span>
+                                                    </c:forEach>
+                                                </c:if>
+                                            </td>
+                                            <td data-class="name"><esapi:encodeForHTML>${attendee.getDisplayName()}</esapi:encodeForHTML></td>
+                                            <td data-class="email"><esapi:encodeForHTML>${attendee.email}</esapi:encodeForHTML></td>
+                                            <td><spring:eval expression="attendee.invited" /></td>
+                                            <td><spring:eval expression="attendee.reminded" /></td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${attendee.answers > 0}">
+                                                        <esapi:encodeForHTML>${attendee.answers}</esapi:encodeForHTML>
+                                                    </c:when>
+                                                    <c:otherwise>&#160;</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
+                        </tbody>
+                    </table>
 				
 					<div style="float: right">
 						<a id="btnCancelFromSendInvitationStep2" href="<c:url value="/${sessioninfo.shortname}/management/participants" />" class="btn btn-default"><spring:message code="label.Cancel" /></a>
@@ -439,7 +468,7 @@
 						</textarea>
 						
 						<textarea id="text2default" style="display:none">
-						    <c:if test="${!form.survey.security.equalsIgnoreCase('openanonymous') && participationGroup.authenticationMethod != 1}">
+						    <c:if test="${!form.survey.security.equalsIgnoreCase('openanonymous') && participationGroup.authenticationMethod != 1 && !form.survey.getIsEVote()}">
 							Note that this is a unique personal link.<br />
 							<b>Please do not share it.</b><br /><br />
 							</c:if>
@@ -469,6 +498,9 @@
 								<c:when test="${form.survey.security.equalsIgnoreCase('openanonymous') || participationGroup.authenticationMethod == 1}">
 									{host}/runner/${form.survey.uniqueId}
 								</c:when>
+								<c:when test="${participationGroup.type == 'VoterFile' || participationGroup.type == 'VoterFileEmail'}">
+                                    {host}/runner/${form.survey.uniqueId}
+								</c:when>
 								<c:otherwise>
 									{host}/runner/invited/${participationGroup.id}/{UniqueAccessLink}
 								</c:otherwise>
@@ -482,7 +514,7 @@
 								<c:when test="${participationGroup.template2 != null}">
 									${participationGroup.template2}
 								</c:when>
-								<c:when test="${form.survey.security.equalsIgnoreCase('openanonymous') || participationGroup.authenticationMethod == 1}">
+								<c:when test="${form.survey.security.equalsIgnoreCase('openanonymous') || participationGroup.authenticationMethod == 1 || form.survey.getIsEVote()}">
                                     Best regards,<br />
                                     <esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
                                 </c:when>

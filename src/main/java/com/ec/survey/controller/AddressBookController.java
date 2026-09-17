@@ -445,7 +445,7 @@ public class AddressBookController extends BasicController {
 				}
 
 				response.setStatus(HttpServletResponse.SC_OK);
-				writer.print("{\"success\": true, \"uid\": '" + uid + "', \"delimiter\": '" + delimiter + "', \"name\": '" + Tools.encodeForJavaScript(filename) + "'}");
+				writer.print("{\"success\": true, \"uid\": \"" + uid + "\", \"delimiter\": \"" + delimiter + "\", \"name\": \"" + Tools.encodeForJavaScript(filename) + "\"}");
 			} catch (Exception ex) {
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				writer.print("{\"success\": false}");

@@ -1,18 +1,11 @@
 package com.ec.survey.model.survey.dashboard;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import com.ec.survey.tools.JsonDateSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class Contributions {
 	

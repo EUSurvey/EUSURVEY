@@ -549,6 +549,12 @@
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
 														<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 													<!-- /ko -->
+													<!-- ko if: sendEnabled() -->
+                                                        <a id="btnSendEnabledFromVoterlist" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/sendInvitations/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
+                                                    <!-- /ko -->
+													<!-- ko if: !sendEnabled() -->
+                                                        <a id="btnSendDisabledFromVoterlist" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+                                                    <!-- /ko -->
 													<!-- ko if: deleteEnabled() && !published -->
 														<a id="btnDeleteEnabledFromParticipant" data-bind="click: deleteList" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>										
 													<!-- /ko -->
@@ -575,6 +581,12 @@
 													<!-- ko if: exportEnabled() && type() == 'Token' -->
 														<a id="startExportTokensxlsx" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxlsx" />" data-bind="click: exportxlsx"><img src='${contextpath}/resources/images/file_extension_xlsx_small.png' /></a>
 													<!-- /ko -->
+													<!-- ko if: sendEnabled() -->
+                                                        <a id="btnSendEnabledFromVoterlist" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '${contextpath}/${form.survey.shortname}/management/sendInvitations/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
+                                                    <!-- /ko -->
+                                                    <!-- ko if: !sendEnabled() -->
+                                                        <a id="btnSendDisabledFromVoterlist" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+                                                    <!-- /ko -->
 													<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
 												<!-- /ko -->
 												<!-- ko if: $parent.Access() == 0 -->
@@ -585,7 +597,8 @@
 														<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
 													<!-- /ko -->
 													<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>		
-													
+										            <a id="btnSendDisabledFromVoterlist" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+
 													<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
 												<!-- /ko -->
 											</td>
@@ -608,9 +621,14 @@
 								<span class="glyphicon glyphicon-file"></span>
 								<spring:message code="label.ImportVoterFile" />
 							</a>
-							<a href="${contextpath}/noform/management/emptyvoterfile" class="btn btn-default">
-								<spring:message code="label.DownloadTemplateFile" />
+							<a href="${contextpath}/noform/management/emptyvoterfilelogin" class="btn btn-default">
+								<spring:message code="label.DownloadLoginVoterTemplateFile" />
 							</a>
+							<c:if test="${form.survey.geteVoteTemplate() == 'p'}">
+                                <a href="${contextpath}/noform/management/emptyvoterfileemail" class="btn btn-default">
+                                    <spring:message code="label.DownloadEmailVoterTemplateFile" />
+                                </a>
+                            </c:if>
 						</c:if>
 					</c:when>
 					<c:otherwise>

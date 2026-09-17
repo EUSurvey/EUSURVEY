@@ -3,6 +3,7 @@ package com.ec.survey.service;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.ec.survey.model.Property;
@@ -32,6 +33,10 @@ public class ECService extends BasicService {
 	private static class DepartmentNode {
 		public String name;
 		public List<DepartmentNode> children = new ArrayList<>();
+
+		public String getName() {
+			return name;
+		}
 	}
 
 	private void parse() {
@@ -40,6 +45,12 @@ public class ECService extends BasicService {
 		try {
 
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.parse(new InputSource(new StringReader(departmentsXML)));
 
@@ -52,6 +63,8 @@ public class ECService extends BasicService {
 				Node node = nodeList.item(i);
 				this.departmentNodes.add(recursiveLoadNodes(node));
 			}
+
+			this.departmentNodes.sort(Comparator.comparing(DepartmentNode::getName));
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

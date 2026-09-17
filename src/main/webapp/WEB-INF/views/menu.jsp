@@ -129,13 +129,13 @@
 	function checkSurveyTypes(){
 		let surveyType = $("[name='new-survey-type']:checked").val()
 		if (surveyType == "opc" || surveyType == "evote"){
-			$("#new-survey-security-secured").prop("checked", "checked");
-			$("#new-survey-security-secured").attr("disabled", "disabled");
-			$("#new-survey-security-open").attr("disabled", "disabled");
+			$("#new-survey-security-secured").prop("checked", true);
+			$("#new-survey-security-secured").prop("disabled", true);
+			$("#new-survey-security-open").prop("disabled", true);
 		} else {
-			$("#new-survey-security-open").prop("checked", "checked");
-			$("#new-survey-security-secured").removeAttr("disabled");
-			$("#new-survey-security-open").removeAttr("disabled");
+			$("#new-survey-security-open").prop("checked", true);
+			$("#new-survey-security-secured").prop("disabled", false);
+			$("#new-survey-security-open").prop("disabled", false);
 		}
 
 		if (surveyType == "opc"){
@@ -278,52 +278,48 @@
 		
 		if (security.indexOf("open") == -1)
 		{
-			$('#new-survey-security-secured').attr('checked','checked');
+			$('#new-survey-security-secured').prop('checked', true);
 		} else {
-			$('#new-survey-security-open').attr('checked','checked');
+			$('#new-survey-security-open').prop('checked', true);
 		}
-		
+
+		//Reset all survey types
+		$("input[type=radio][name='new-survey-type']").each((i, el) => {
+			el.checked = false
+			el.closest("label").classList.remove("active")
+		})
+
+		$("#evote-template input:checked").prop("checked", false);
+		$("#evote-template input").first().prop("checked", true);
+
 		if (isQuiz == 'true')
 		{
-			$("#new-survey-type-selfassessment").closest("label").removeClass("active");
-			$("#new-survey-type-normal").closest("label").removeClass("active");
-			$("#new-survey-type-delphi").closest("label").removeClass("active");
-			$("#new-survey-type-evote").closest("label").removeClass("active");
 			$("#new-survey-type-quiz").closest("label").addClass("active");
-			$("#new-survey-type-quiz").attr("checked", "checked");
+			$("#new-survey-type-quiz").prop("checked", true);
+			$("#evote-template").hide();
 		} else  if (isDelphi == 'true') {
-			$("#new-survey-type-selfassessment").closest("label").removeClass("active");
-			$("#new-survey-type-normal").closest("label").removeClass("active");
-			$("#new-survey-type-quiz").closest("label").removeClass("active");
-			$("#new-survey-type-evote").closest("label").removeClass("active");
 			$("#new-survey-type-delphi").closest("label").addClass("active");
-			$("#new-survey-type-delphi").attr("checked", "checked");
+			$("#new-survey-type-delphi").prop("checked", true);
+			$("#evote-template").hide();
 		} else  if (isSelfAssessment == 'true') {
-			$("#new-survey-type-normal").closest("label").removeClass("active");
-			$("#new-survey-type-quiz").closest("label").removeClass("active");
-			$("#new-survey-type-evote").closest("label").removeClass("active");
-			$("#new-survey-type-delphi").closest("label").removeClass("active");
 			$("#new-survey-type-selfassessment").closest("label").addClass("active");
-			$("#new-survey-type-selfassessment").attr("checked", "checked");
+			$("#new-survey-type-selfassessment").prop("checked", true);
+			$("#evote-template").hide();
 		} else if (isEVote == "true") {
-			$("#new-survey-type-selfassessment").closest("label").removeClass("active");
-			$("#new-survey-type-normal").closest("label").removeClass("active");
-			$("#new-survey-type-quiz").closest("label").removeClass("active");
-			$("#new-survey-type-delphi").closest("label").removeClass("active");
 			$("#new-survey-type-evote").closest("label").addClass("active");
-			$("#new-survey-type-evote").attr("checked", "checked");
-			$("#evote-template input[value='" + eVoteTemplate +"']").attr("checked", "checked");
-			$("#new-survey-security-secured").prop("checked", "checked");
-			$("#new-survey-security-secured").attr("disabled", "disabled");
-			$("#new-survey-security-open").attr("disabled", "disabled");
+			$("#new-survey-type-evote").prop("checked", true);
+			const evoteTemplateInput = $("#evote-template input[value='" + eVoteTemplate +"']")
+			if (evoteTemplateInput.length == 1) {
+				evoteTemplateInput.prop("checked", true);
+			}
+			$("#new-survey-security-secured").prop("checked", true);
+			$("#new-survey-security-secured").prop("disabled", true);
+			$("#new-survey-security-open").prop("disabled", true);
 			$("#evote-template").show();
 		} else {
-			$("#new-survey-type-selfassessment").closest("label").removeClass("active");
-			$("#new-survey-type-quiz").closest("label").removeClass("active");
-			$("#new-survey-type-delphi").closest("label").removeClass("active");
-			$("#new-survey-type-evote").closest("label").removeClass("active");
 			$("#new-survey-type-normal").closest("label").addClass("active");
-			$("#new-survey-type-normal").attr("checked", "checked");
+			$("#new-survey-type-normal").prop("checked", true);
+			$("#evote-template").hide();
 		}
 
 		$('#add-survey-dialog').modal();

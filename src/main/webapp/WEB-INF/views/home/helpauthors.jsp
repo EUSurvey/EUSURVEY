@@ -34,6 +34,10 @@
 			font-size: 13px;
 			font-weight: normal;
 			text-decoration: none;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 3px;
+			padding-bottom: 2px;
 		}
 		
 		.anchorlink {
@@ -73,6 +77,13 @@
 			font-size: 19px !important;
 		}
 
+		.pageheader a,
+		#ulContainer a {
+			display: inline-block;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 2px;
+		}
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -1387,6 +1398,15 @@
 				</ol>
 				<img alt="screenshot change contribution" src="${contextpath}/resources/images/documentation/changecontribution.png" />
 			</p>
+			<h2>
+				How can respondents download a PDF version of the questionnaire?
+			</h2>
+			<p>
+				To make a blank PDF copy of the questionnaire available to respondents, first enable the option 'Enable PDF download of the survey questionnaire' in 'Properties' > 'Survey Security'.
+			</p>
+			<p>
+				Once this setting is activated, respondents will be able to access the 'Download PDF version' option from the right-hand panel of the survey.
+			</p>
 			<h1>
 				Testing a survey
 			</h1>
@@ -1613,6 +1633,55 @@
 				to you in the form in which it was published, along with your current working draft. This means that the
 				unpublished survey does not have to be replaced by your current working draft but can be republished if
 				necessary.
+			</p>
+            <h2>
+				Understanding Pending Changes in EUSurvey
+			</h2>
+			<p>
+				After a survey has been published for the first time, any modifications you make are not immediately
+				applied to the live survey. Instead, they are saved as '<b>Pending changes</b>' in a draft version of
+				the survey. This allows you to prepare and review updates without affecting the version currently
+				available to respondents.
+			</p>
+			<p>
+				EUSurvey manages two separate versions:
+				<ul>
+					<li>
+						The <b>published version</b>, which respondents can access.
+					</li>
+					<li>
+						The <b>draft version</b>, where new changes are stored.
+					</li>
+				</ul>
+			</p>
+			<p>
+				Because of this separation, users may sometimes be surprised that their edits do not appear in the
+				published survey. This is expected behaviour. Changes made after publication only affect the draft
+				version until they are explicitly published.
+			</p>
+			<p>
+				You can easily check whether your survey contains unpublished changes. On the survey overview page,
+				under the green '<b>Published</b>' status, a '<b>Pending changes</b>' marker is displayed whenever the
+				draft version contains modifications that have not yet been applied to the published survey.
+			</p>
+			<p>
+				To make pending changes visible to respondents, open the survey overview page and click
+				'<b>Show pending changes</b>'. A popup window will display the changes waiting to be published.
+				To apply them, click '<b>Apply Changes</b>'.
+			</p>
+			<p>
+				When pending changes are applied, the current draft version replaces the published version and becomes
+				the new live survey. At the same time, EUSurvey automatically creates a new draft version, allowing you
+				to continue making changes without affecting the newly published survey.
+			</p>
+			<p>
+				This system provides greater control over survey updates and helps prevent accidental changes to surveys
+				that are already collecting responses.
+			</p>
+			<p>
+				In summary, after the first publication, EUSurvey always maintains a published version and a draft
+				version of your survey. Any edits are stored as pending changes until you choose to apply them,
+				ensuring that updates are published only when you are ready.
 			</p>
 			<h2>
 				Can I customise the URL to my survey?    
@@ -1909,6 +1978,123 @@
 					href="https://ec.europa.eu/eusurvey/resources/documents/ActivityLogEvents.xlsx">
 					here </a> a list of the logged events.
 			</p>
+			<h2>
+				Email Report Feature
+			</h2>
+			<h3>
+                What is the Email Report Feature?
+			</h3>
+			<p>
+                The Email Report feature allows survey managers to receive automated reports on the number of contributions (responses) their survey has received.
+                These reports can be sent daily, weekly, or monthly to a designated list of recipients.
+			</p>
+			<p>
+                Reports are only sent when the survey is published. They stop automatically if the survey is unpublished, archived, frozen, or deleted.
+            </p>
+            <p>
+                When the option is selected, reports will be sent only if at least one contribution has been received during the specified period. This is particularly useful for surveys with low participation.
+            </p>
+            <h3>
+                How to Enable and Configure Email Reports
+            </h3>
+            <h4>
+                Enabling the Feature
+            </h4>
+            <p>
+                Go to your survey's settings and locate the "Automatic report per email" switch. Turn it on (the default is off). A new section will appear where you can configure the frequency and recipients.
+            </p>
+            <h4>
+                Setting the Report Frequency
+            </h4>
+            <p>
+                You can choose how often you receive reports:
+            </p>
+            <ul>
+                <li>
+                    <b>Never</b> (default on first opening)
+                </li>
+                <li>
+                    <b>Daily</b> - Sent between 00:00 and 07:00, covering the previous day's contributions.
+                </li>
+                <li>
+                    <b>Weekly</b> - Sent every Monday between 00:00 and 07:00, covering the previous calendar week (Monday to Sunday).
+                </li>
+                <li>
+                    <b>Monthly</b> - Sent on the 1st of each month, covering the previous month's contributions.
+                </li>
+            </ul>
+            <p>
+                Note: After selecting a frequency, EUSurvey will remember your choice.
+            </p>
+            <h4>
+                Adding Recipients
+            </h4>
+            <p>
+                Enter one or more email addresses in the input field, separated by a semicolon (;), then click the "Add" button to confirm. The system will validate each email to ensure:
+            </p>
+            <ul>
+                <li>
+                    Correct format (e.g., username@domain.com).
+                </li>
+                <li>
+                    The domain is not on a known blacklist (to prevent spam or malicious addresses).
+                </li>
+            </ul>
+            <h4>
+                Recipient List Rules
+            </h4>
+            <ul>
+                <li>
+                    A maximum of 10 email addresses is allowed.
+                </li>
+                <li>
+                    Each email appears on a separate line.
+                </li>
+                <li>
+                    To remove an email, click the cross button next to it (no confirmation required).
+                </li>
+            </ul>
+            <h4>
+                Important Notes
+            </h4>
+            <ul>
+                <li>
+                    The input field has a 255-character limit (per RFC 5321, the standard for email formatting).
+                </li>
+                <li>
+                    If an email is invalid, you will see an error message.
+                </li>
+            </ul>
+            <h3>
+                When will I receive the first report?
+            </h3>
+            <p>
+                If you enable <b>daily reports</b>, the first email will arrive the next day (between 00:00 and 07:00).
+            </p>
+            <p>
+                If you enable <b>weekly reports</b>, the first email will arrive on the following Monday.
+            </p>
+            <p>
+                If you enable <b>monthly reports</b>, the first email will arrive on the 1st of the next month.
+            </p>
+            <h3>
+                Can I change the frequency later?
+            </h3>
+            <p>
+                Yes, you can update the frequency at any time in the survey settings. The system will save your last selection.
+            </p>
+            <h3>
+                What happens if I unpublish or archive my survey?
+            </h3>
+            <p>
+                Email reports stop immediately if the survey is unpublished, archived, frozen, or deleted.
+            </p>
+            <h3>
+                Will the report include personal data?
+            </h3>
+            <p>
+                No, the report only contains the number of contributions (responses) and does not include any personal or sensitive data from respondents.
+            </p>
 			<h1>
 				Analysing, exporting and publishing results
 			</h1>

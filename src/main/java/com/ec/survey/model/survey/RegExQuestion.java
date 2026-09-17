@@ -104,7 +104,7 @@ public class RegExQuestion extends Question {
 	{
 		String css = super.getCss();
 		
-		css += " freetext regex";
+		css += " freetext regex max" + getMaxFreeTextLength();
 				
 		if (isComparable)
 		{

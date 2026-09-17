@@ -13,12 +13,13 @@ padding: 0;
 
 .treeview li{ /*Style for LI elements in general (excludes an LI that contains sub lists)*/
 list-style-type: none;
-padding-left: 22px;
+padding-left: 24px;
 margin-bottom: 6px;
 }
 
 .treeview li.submenu{ /* Style for LI that contains sub lists (other ULs). */
 background: white url("plus-white.png") no-repeat left 1px;
+background-position-y: 4px;
 cursor: hand !important;
 cursor: pointer !important;
 }

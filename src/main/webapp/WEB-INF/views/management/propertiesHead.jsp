@@ -91,6 +91,16 @@
 				$(link).parent().parent().remove();
 				this.self.showUsefulLinks($("#usefullinkstable").find("tr").length > 1);
 			}
+
+			this.checkUploadedDocuments = function(contributionsCheckbox)
+			{
+				if ($(contributionsCheckbox).is(":checked")) {
+					$("#showUploadedDocuments").removeAttr("disabled");
+				} else {
+					$("#showUploadedDocuments").removeAttr("checked");
+					$("#showUploadedDocuments").attr("disabled", true);
+				}
+			}
 			
 			this.addDocRow = function()
 			{
@@ -139,7 +149,7 @@
 				
 				$(div).find(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 				$(".qq-upload-list").hide();
-				$(".qq-upload-drop-area").css("margin-left", "-1000px");			
+				$(".qq-upload-drop-area").css("margin-left", "-10000px");
 				
 				$(tr).append(td);
 				

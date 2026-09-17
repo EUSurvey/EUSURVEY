@@ -73,6 +73,7 @@ public class PDFService extends BasicService {
 		FileOutputStream os = null;
 		PDFRenderer renderer = null;
 		try {
+			var newPDFCode = surveyService.createNewPDFCode(survey.getUniqueId(), 0);
 
 			if (target == null) {
 				target = fileService.getSurveyPDFFile(survey.getUniqueId(), survey.getId(), lang);
@@ -85,46 +86,10 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + "runner/preparesurvey/" + survey.getId() + "?lang=" + lang, os);
+			renderer.createPDF(pdfhost + "runner/preparesurvey/" + survey.getId() + "?lang=" + lang + "&pdfcode=" + newPDFCode, os);
 			return target;
 		} catch (Exception ex) {
 			logger.error(String.format("PDF creation for survey %s could not be started.", shortname));
-			logger.error(ex.getLocalizedMessage(), ex);
-		} finally {
-			if (os != null)
-				os.close();
-			if (renderer != null)
-				try {
-					PDFRendererPoolFactory.getInstance(max, sessionService).checkIn(renderer);
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage(), e);
-				}
-		}
-
-		return null;
-	}
-
-	public java.io.File createPublishedAnswerPDF(AnswerSet answerSet) throws IOException {
-		sessionService.initializeProxy();
-		logger.info("Starting PDF creation for published answer set " + answerSet.getId());
-		FileOutputStream os = null;
-		PDFRenderer renderer = null;
-		try {
-			java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
-			java.io.File target = new java.io.File(String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
-
-			if (!target.exists() || target.length() < 1024) {
-				renderer = getRenderer();
-				if (renderer == null) {
-					throw new MessageException("Not possible to obtain PDFRenderer from pool");
-				}
-				os = new FileOutputStream(target);
-				renderer.createPDF(pdfhost + "preparepublishedcontribution/" + answerSet.getId(), os);
-			}
-
-			return target;
-		} catch (Exception ex) {
-			logger.error(String.format("PDF creation for published answer %s could not be started.", answerSet.getUniqueCode()));
 			logger.error(ex.getLocalizedMessage(), ex);
 		} finally {
 			if (os != null)
@@ -237,6 +202,8 @@ public class PDFService extends BasicService {
 		FileOutputStream os = null;
 		PDFRenderer renderer = null;
 		try {
+			var newPDFCode = surveyService.createNewPDFCode(surveyUid, answerSetId);
+
 			java.io.File target = null;
 			java.io.File folder = fileService.getSurveyExportsFolder(surveyUid);
 			target = new java.io.File(String.format("%s/%s%s.pdf", folder.getPath(), isDraft ? "draft" : Constants.ANSWER, uniqueCode));
@@ -247,7 +214,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target, false);
-			renderer.createPDF(pdfhost + (isDraft ? "preparedraft/" : "preparecontribution/") + uniqueCode, os);
+			renderer.createPDF(pdfhost + (isDraft ? "preparedraft/" : "preparecontribution/") + uniqueCode + "?pdfcode=" + newPDFCode, os);
 
 			return target;
 		} catch (Exception ex) {
@@ -264,32 +231,6 @@ public class PDFService extends BasicService {
 				}
 		}
 
-		return null;
-	}
-
-	public java.io.File createAllIndividualResultsPDF(Survey survey, ResultFilter filter, String uid) {
-		try {
-			Set<Integer> answerSets = answerService.getAllAnswerIds(survey.getId(), filter, 1, Integer.MAX_VALUE);
-
-			java.io.File folder = fileService.getSurveyExportsFolder(survey.getUniqueId());
-			java.io.File target = new java.io.File(String.format("%s/%s", folder.getPath(), uid));
-
-			final OutputStream out = new FileOutputStream(target);
-			final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("zip", out);
-
-			for (int answerSetId : answerSets) {
-				AnswerSet answerSet = answerService.get(answerSetId);
-				java.io.File result = createPublishedAnswerPDF(answerSet);
-
-				os.putArchiveEntry(new ZipArchiveEntry(answerSet.getId() + ".pdf"));
-				IOUtils.copy(new FileInputStream(result), os);
-				os.closeArchiveEntry();
-			}
-
-			os.close();
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-		}
 		return null;
 	}
 
@@ -523,7 +464,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + "preparesaresults/" + answerSet.getUniqueCode() + "/" + dataset + "?charts=" + chartsUID, os);
+			renderer.createPDF(pdfhost + "preparesaresults/" + answerSet.getUniqueCode() + "/" + dataset + ((charts != null && charts.length() > 0) ? ("?charts=" + chartsUID) : ""), os);
 
 			return target;
 		} catch (Exception ex) {

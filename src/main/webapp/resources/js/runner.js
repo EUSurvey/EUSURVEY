@@ -509,7 +509,7 @@ $(function() {
 	});
 
 	$(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
-	$(".qq-upload-drop-area").css("margin-left", "-1000px");
+	$(".qq-upload-drop-area").css("margin-left", "-10000px");
 	$(".qq-upload-list").hide();
 	
 	$(".matrixtable").each(function(){

@@ -84,7 +84,7 @@ public class Table extends MatrixOrTable {
 	{
 		String css = super.getCss();
 		
-		css += " freetext max5000";
+		css += " freetext max" + getMaxFreeTextLength();
 	
 		return css;
 	}

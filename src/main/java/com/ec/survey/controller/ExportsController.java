@@ -17,7 +17,7 @@ import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import com.ec.survey.tools.activity.ActivityRegistry;
-import org.apache.maven.surefire.shade.org.apache.maven.shared.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -124,11 +124,14 @@ public class ExportsController extends BasicController {
 					export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
 
 					String user = (String) request.getSession().getAttribute("VotersUserFilter");
+					String email = (String) request.getSession().getAttribute("VotersEmailFilter");
 					String first = (String) request.getSession().getAttribute("VotersFirstFilter");
 					String last = (String) request.getSession().getAttribute("VotersLastFilter");
 					Boolean voted = (Boolean) request.getSession().getAttribute("VotersVotedFilter");
 
-					byte[] file = eVoteService.exportVoterFile(voterForm.getSurvey().getUniqueId(), user, first, last, voted);
+					boolean useEmailVariant = surveyService.usesVoterFileEmail(voterForm.getSurvey());
+
+					byte[] file = eVoteService.exportVoterFile(voterForm.getSurvey().getUniqueId(), user, email, first, last, voted, useEmailVariant);
 					export.setValid(true);
 					export.setState(ExportState.Finished);
 
@@ -139,6 +142,8 @@ public class ExportsController extends BasicController {
 						fos.write(file);
 					}
 					sessionService.setCheckExport(request, "true");
+
+					activityService.log(ActivityRegistry.ID_GUEST_LIST_VOTER_FILE_EXPORT, null, export.getId() != null ? export.getId().toString() : "", export.getUserId(), export.getSurvey().getUniqueId(), "VoterFile");
 
 					return "success";
 				}
@@ -277,7 +282,7 @@ public class ExportsController extends BasicController {
 	public @ResponseBody String checkNew(@RequestParam("uid") String uid, HttpServletRequest request,
 			HttpServletResponse response) {
 
-		if (uid == null || !StringUtils.isNumeric(uid)) {
+		if (!StringUtils.isNumeric(uid)) {
 			return "{\"newnames\": [],\"checkExport\":false}";
 		}
 

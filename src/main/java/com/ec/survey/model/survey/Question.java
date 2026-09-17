@@ -32,7 +32,7 @@ public abstract class Question extends Element {
 	private boolean attribute;
 	private String attributeName;
 	private boolean isUnique;
-	private int scoring;
+	private int scoring; //0 == no Quiz Element, 1 == Points for whole question, 2 == Points for each answer
 	private int quizPoints = 0;
 	private List<ScoringItem> scoringItems;
 	private boolean delphiQuestion;
@@ -43,6 +43,7 @@ public abstract class Question extends Element {
 	private boolean listVote;
 
 	private boolean hidden;
+	private int maxFreeTextLength;
 
 	public Question() {
 	}
@@ -366,5 +367,19 @@ public abstract class Question extends Element {
 
 		return false;
 	}
-		
+
+	@Transient
+    public int getMaxFreeTextLength() {
+        return maxFreeTextLength;
+    }
+
+    public void setMaxFreeTextLength(int maxFreeTextLength) {
+        this.maxFreeTextLength = maxFreeTextLength;
+    }
+
+	@Override
+	@Transient
+	public boolean isQuizElement() {
+		return getScoring() > 0;
+	}
 }

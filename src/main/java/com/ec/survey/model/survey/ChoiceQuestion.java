@@ -183,5 +183,5 @@ public abstract class ChoiceQuestion extends Question {
 	public void setForeditor(boolean foreditor) {
 		this.foreditor = foreditor;
 	}
-	
+
 }

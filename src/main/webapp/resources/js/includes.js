@@ -321,8 +321,9 @@ function initModals(item)
 			changeMonth: true,
 			changeYear: true,
 			hideIfNoPrevNext: true,
+			yearRange: 'c-100:c+20',
 			showButtonPanel: showpanel,
-			
+
 			 onSelect: function(dateText, inst) {
 				 
 				if ($(this).attr("data-hidden"))
@@ -622,7 +623,8 @@ function initModals(item)
 
                     const dateFilter = jqEl.closest(".datefilter")
 
-                    if (!jqEl.closest("th").hasClass("yellowfilter"))
+					var optionVerticalButtonsOrInsideIt = jqEl.closest("div").hasClass("overlaymenu") || jqEl.find("span").hasClass("glyphicon-option-vertical");
+                    if (!jqEl.closest("th").hasClass("yellowfilter") && !optionVerticalButtonsOrInsideIt)
                     {
                         jqEl.addClass("disabled");
                     } else if (dateFilter.length > 0) {
@@ -654,7 +656,10 @@ function initModals(item)
 					});
 
 					$(this).find("button").each(function(){
-						$(this).addClass("disabled");
+						var optionVerticalButtonsOrInsideIt = $(this).closest("div").hasClass("overlaymenu") || $(this).find("span").hasClass("glyphicon-option-vertical");
+						if (!optionVerticalButtonsOrInsideIt) {
+							$(this).addClass("disabled");
+						}
 					});
 				});
 				$(".checkDelete").each(function() {
@@ -1499,11 +1504,11 @@ function initModals(item)
 		
 		$(parent).find(".hp").each(function(){
 
-			if ($(this).val().length > 0)
+			if ($(this).text().length > 0)
 		 	{
 		 		validationinfo +=  "honeypot ";
 		 		addValidationError.andFocus(this, honeypotError);
-		 		$("#btnSubmit").parent().append("<div id='exceptionlogdiv' class='validation-error'>Text '" + $(this).val() + "' in honeypot element found. Please remove it.</div>");
+		 		$("#btnSubmit").parent().append("<div id='exceptionlogdiv' class='validation-error'>Text in honeypot element found. Please remove it.</div>");
 		 		result = false;
 		 	}                      
 		});
@@ -1562,10 +1567,11 @@ function initModals(item)
 
 			var count = getCharacterCount(this);
 
-			if (count > 5000)
+			let max = getMaxInputClassInt(this)
+			if (count > max)
 			{
 				validationinfo += $(this).attr("name") + " (MaxFT) ";
-				addValidationError.andFocus(this, texttoolong5000Text);
+				addValidationError.andFocus(this, textTooLongX.replace("#", max.toString()));
 
 				result = false;
 			}
@@ -1881,13 +1887,8 @@ function initModals(item)
 					 		if (count > parseInt(max))
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MaxFT) ";
-					 			if (max == "5000")
-					 			{
-					 				addValidationError.andFocus(this, texttoolong5000Text);
-						 		} else {
-						 			addValidationError.andFocus(this, texttoolongText);
-						 		}
-					 			
+								addValidationError.andFocus(this, textTooLongX.replace("#", max));
+
 					 			result = false;
 					 		};
 					 	};
@@ -2200,6 +2201,15 @@ function initModals(item)
 				enableDelphiSaveButtons(div);
 			}			
 		}
+	}
+
+	function getMaxInputClassInt(el) {
+		for (const cl of $(el).prop("classList").values()) {
+			if (/max\d+/.test(cl)) {
+				return parseInt(cl.substring(3))
+			}
+		}
+		return maxFreeTextLength ?? 10000
 	}
 	
 	function disableDelphiSaveButtons(parent) {

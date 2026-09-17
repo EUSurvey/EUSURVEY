@@ -65,13 +65,20 @@ public class XlsxExportCreator extends CommonExcelExportCreator {
 			cell = row.createCell(colCounter++);
 			cell.setCellValue(ConversionTools.removeHTMLNoEscape(list.getName()));
 		}
-		if (!result.getTemplate().equals("l") && !result.getTemplate().equals("p") && !result.getTemplate().equals("o")) {
+
+		boolean showListVotes = !result.getTemplate().equals("l") && !result.getTemplate().equals("p") && !result.getTemplate().equals("o");
+
+		if (showListVotes) {
 			row = sheet.createRow(rowCounter++);
 			cell = row.createCell(0);
 			cell.setCellValue("List votes");
 			for (int i = 1; i <= listCount; i++) {
 				cell = row.createCell(i);
-				cell.setCellValue(0);
+				if (result.getListSeatDistribution().get(i - 1).getCanHaveListVote()) {
+					cell.setCellValue(0);
+				} else {
+					cell.setCellValue("-");
+				}
 			}
 		}
 		

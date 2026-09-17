@@ -63,5 +63,5 @@ src/main/java/com/ec/survey/config/RedisSessionBrowser.java
 docker/update.sh
 helm/clean.sh
 
-
-
+### Documentation ###
+/docs/

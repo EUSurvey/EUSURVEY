@@ -826,7 +826,7 @@ public class OdfExportCreator extends ExportCreator {
 							}
 
 							if (answerSet == null) {
-								String v = answerrow.get(answerrowcounter++);
+								String v = answerrow.get(answerrowcounter++).trim();
 								if (NumberUtils.isParsable(v)) {
 									double cellValue = Double.parseDouble(v);
 									cell.setDoubleValue(cellValue);
@@ -839,7 +839,7 @@ public class OdfExportCreator extends ExportCreator {
 								double cellValue;
 
 								if (!answers.isEmpty()) {
-									var answer = answers.get(0).getValue();
+									var answer = answers.get(0).getValue().trim();
 									if (NumberUtils.isParsable(answer)) {
 										cellValue = Double.parseDouble(answer);
 										cell.setDoubleValue(cellValue);

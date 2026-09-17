@@ -35,6 +35,8 @@
 			font-size: 13px;
 			font-weight: normal;
 			text-decoration: none;
+			padding-top: 3px;
+			padding-bottom: 2px;
 		}
 		
 		.anchorlink {
@@ -74,6 +76,13 @@
 			font-size: 19px !important;
 		}
 
+		.pageheader a,
+		#ulContainer a {
+			display: inline-block;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 2px;
+		}
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -1682,6 +1691,15 @@
 				</ol>
 			<img alt="Screenshot" src="${contextpath}/resources/images/documentation/changecontributionDE.png" />
 			</p>
+			<h2>
+				Wie können die Umfrageteilnehmer eine PDF-Version des Fragebogens herunterladen?
+			</h2>
+			<p>
+				Um den Umfrageteilnehmern eine leere PDF-Kopie des Fragebogens zur Verfügung zu stellen, aktivieren Sie zunächst die Option „Herunterladen des PDF Fragebogen aktivieren“ unter „Eigenschaften“ → „Survey Security“.
+			</p>
+			<p>
+				Sobald diese Einstellung aktiviert ist, können die Umfrageteilnehmer im rechten Bereich der Umfrage auf die Option „PDF-Version herunterladen“ zugreifen.
+			</p>
 			<h1>
 				Umfrage testen
 			</h1>
@@ -2081,6 +2099,61 @@
 				aktuellen Arbeitsentwurf ersetzt werden muss, sondern bei Bedarf erneut
 				veröffentlicht werden kann.
 			</p>
+			<h2>
+                Verstehen ausstehender Änderungen in EUSurvey
+            </h2>
+            <p>
+                Nachdem eine Umfrage zum ersten Mal veröffentlicht wurde, werden alle weiteren von Ihnen vorgenommenen
+                Änderungen nicht sofort auf die aktive Umfrage angewandt. Stattdessen werden sie als
+                „<b>Änderungen</b>“ in einer Entwurfsversion der Umfrage gespeichert. So können Sie Updates
+                vorbereiten und überprüfen, ohne die Version zu beeinträchtigen, die derzeit für die Umfrageteilnehmer
+                verfügbar ist.
+            </p>
+            <p>
+                EUSurvey verwaltet zwei separate Versionen:
+                <ul>
+                    <li>
+                        Die <b>veröffentlichte Version</b>, auf die die Umfrageteilnehmer zugreifen können.
+                    </li>
+                    <li>
+                        Die <b>Entwurfsversion</b>, in der neue Änderungen gespeichert werden.
+                    </li>
+                </ul>
+            </p>
+            <p>
+                Aufgrund dieser Aufteilung kann es vorkommen, dass Nutzer überrascht sein können, Ihre Bearbeitungen
+                nicht in der veröffentlichten Umfrage zu sehen. Dies ist das erwartete Verhalten. Änderungen, die nach
+                der Veröffentlichung vorgenommen werden, wirken sich zunächst nur auf die Entwurfsversion aus, bis
+                diese explizit veröffentlicht werden.
+            </p>
+            <p>
+                Sie können leicht prüfen, ob Ihre Umfrage unveröffentlichte Änderungen enthält. Auf der Übersichtsseite
+                der Umfrage wird unter dem grünen Status „<b>Veröffentlicht</b>“ eine Kennzeichnung
+                „<b>Anstehende Änderungen</b>“ angezeigt, sobald die Entwurfsversion Änderungen enthält, die noch nicht
+                auf die veröffentlichte Umfrage angewandt wurden.
+            </p>
+            <p>
+                Um ausstehende Änderungen für die Befragten sichtbar zu machen, öffnen Sie die Übersichtsseite der
+                Umfrage und klicken Sie auf „<b>Ausstehende Änderungen anzeigen</b>“. In einem Popup-Fenster werden die
+                Änderungen angezeigt, die auf die Veröffentlichung warten. Um sie zu übernehmen, klicken Sie auf
+                „<b>Änderungen anwenden</b>“.
+            </p>
+            <p>
+                Wenn ausstehende Änderungen übernommen werden, ersetzt die aktuelle Entwurfsversion die veröffentlichte
+                Version und wird zur neuen aktiven Umfrage. Gleichzeitig erstellt EUSurvey automatisch eine neue
+                Entwurfsversion, sodass Sie weiterhin Änderungen vornehmen können, ohne die neu veröffentlichte Umfrage
+                zu beeinträchtigen.
+            </p>
+            <p>
+                Dieses System bietet eine bessere Kontrolle über Umfrage-Updates und hilft versehentliche Änderungen an
+                Umfragen zu vermeiden, die bereits Antworten sammeln.
+            </p>
+            <p>
+                Zusammenfassend lässt sich sagen: Nach der ersten Veröffentlichung pflegt EUSurvey immer eine
+                veröffentlichte Version und eine Entwurfsversion Ihrer Umfrage. Alle Bearbeitungen werden als
+                ausstehende Änderungen gespeichert, bis Sie sie übernehmen möchten. So stellen Sie sicher, dass Updates
+                nur dann veröffentlicht werden, wenn Sie bereit sind.
+            </p>
 			<h2>
 				Kann ich die URL anpassen, die zu meiner Umfrage führt?
 			</h2>
@@ -2561,6 +2634,123 @@
 				</a>
 				finden Sie eine Liste der protokollierten Ereignisse.
 			</p>
+            <h2>
+                E-Mail-Berichte-Funktion
+            </h2>
+            <h3>
+                Was ist die E-Mail-Berichte-Funktion?
+            </h3>
+            <p>
+                Mit der E-Mail-Berichte-Funktion können Umfrageverantwortliche automatisierte Berichte über die Anzahl der Beiträge (Antworten) erhalten, die ihre Umfrage erhalten hat.
+                Diese Berichte können täglich, wöchentlich oder monatlich an eine festgelegte Liste von Empfängern gesendet werden.
+            </p>
+            <p>
+                Berichte werden nur versendet, wenn die Umfrage veröffentlicht ist. Sie werden automatisch gestoppt, wenn die Umfrage nicht mehr veröffentlicht, archiviert, gesperrt oder gelöscht wird.
+            </p>
+            <p>
+                Wenn die Option ausgewählt ist, werden Berichte nur gesendet, wenn mindestens ein Beitrag während des angegebenen Zeitraums eingereicht wurde. Dies ist besonders nützlich für Umfragen mit geringer Teilnahme.
+            </p>
+            <h3>
+                Wie aktiviere und konfiguriere ich E-Mail-Berichte?
+            </h3>
+            <h4>
+                Aktivierung der Funktion
+            </h4>
+            <p>
+                Gehen Sie zu den Einstellungen Ihrer Umfrage und suchen Sie den Schalter „Automatische Berichte per E-Mail“. Aktivieren Sie diesen (standardmäßig ist er deaktiviert). Es erscheint ein neuer Abschnitt, in dem Sie Häufigkeit und Empfänger konfigurieren können.
+            </p>
+            <h4>
+                Festlegen der Berichts-Häufigkeit
+            </h4>
+            <p>
+                Sie können auswählen, wie oft Sie Berichte erhalten möchten:
+            </p>
+            <ul>
+                <li>
+                    <b>Nie</b> (Standard bei erstem Öffnen)
+                </li>
+                <li>
+                    <b>Täglich</b> – Wird zwischen 00:00 und 07:00 Uhr versendet und umfasst die Beiträge des Vortags.
+                </li>
+                <li>
+                    <b>Wöchentlich</b> – Wird jeden Montag zwischen 00:00 und 07:00 Uhr versendet und umfasst die Beiträge der vorherigen Kalenderwoche (Montag bis Sonntag).
+                </li>
+                <li>
+                    <b>Monatlich</b> – Wird am 1. jedes Monats versendet und umfasst die Beiträge des Vormonats.
+                </li>
+            </ul>
+            <p>
+                Hinweis: Nach der Auswahl einer Häufigkeit speichert EUSurvey Ihre Wahl.
+            </p>
+            <h4>
+                Hinzufügen von Empfängern
+            </h4>
+            <p>
+                Geben Sie eine oder mehrere E-Mail-Adressen in das Eingabefeld ein, getrennt durch ein Semikolon (;), und klicken Sie dann auf die Schaltfläche „Hinzufügen“, um zu bestätigen. Das System überprüft jede E-Mail-Adresse, um sicherzustellen, dass:
+            </p>
+            <ul>
+                <li>
+                    Das Format korrekt ist (z. B. benutzername@domain.de).
+                </li>
+                <li>
+                    Die Domain nicht auf einer bekannten Blacklist steht (um Spam oder schädliche Adressen zu verhindern).
+                </li>
+            </ul>
+            <h4>
+                Regeln für die Empfängerliste
+            </h4>
+            <ul>
+                <li>
+                    Es sind maximal 10 E-Mail-Adressen erlaubt.
+                </li>
+                <li>
+                    Jede E-Mail-Adresse wird in einer separaten Zeile angezeigt.
+                </li>
+                <li>
+                    Um eine E-Mail-Adresse zu entfernen, klicken Sie auf das Kreuz-Symbol daneben (ohne Bestätigung).
+                </li>
+            </ul>
+            <h4>
+                Wichtige Hinweise
+            </h4>
+            <ul>
+                <li>
+                    Das Eingabefeld hat eine Begrenzung von 255 Zeichen (gemäß RFC 5321, dem Standard für E-Mail-Formatierung).
+                </li>
+                <li>
+                    Falls eine E-Mail-Adresse ungültig ist, erhalten Sie eine Fehlermeldung.
+                </li>
+            </ul>
+            <h3>
+                Wann erhalte ich den ersten Bericht?
+            </h3>
+            <p>
+                Wenn Sie <b>tägliche Berichte</b> aktivieren, erhalten Sie die erste E-Mail am nächsten Tag (zwischen 00:00 und 07:00 Uhr).
+            </p>
+            <p>
+                Wenn Sie <b>wöchentliche Berichte</b> aktivieren, erhalten Sie die erste E-Mail am folgenden Montag.
+            </p>
+            <p>
+                Wenn Sie <b>monatliche Berichte</b> aktivieren, erhalten Sie die erste E-Mail am 1. des nächsten Monats.
+            </p>
+            <h3>
+                Kann ich die Häufigkeit später ändern?
+            </h3>
+            <p>
+                Ja, Sie können die Häufigkeit jederzeit in den Umfrageeinstellungen anpassen. Das System speichert Ihre letzte Auswahl.
+            </p>
+            <h3>
+                Was passiert, wenn ich meine Umfrage nicht mehr veröffentliche oder archiviere?
+            </h3>
+            <p>
+                E-Mail-Berichte werden sofort gestoppt, wenn die Umfrage nicht mehr veröffentlicht, archiviert, gesperrt oder gelöscht wird.
+            </p>
+            <h3>
+                Enthält der Bericht persönliche Daten?
+            </h3>
+            <p>
+                Nein, der Bericht enthält nur die Anzahl der Beiträge (Antworten) und keine persönlichen oder sensiblen Daten der Teilnehmer.
+            </p>
 			<h1>
 				Ergebnisse analysieren, exportieren und veröffentlichen
 			</h1>

@@ -69,11 +69,85 @@ public class SchemaService extends BasicService {
 	}
 
 	@Transactional
-	public void step138() {
+	public void step142() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		String existing = settingsService.get(Setting.InactiveSurveysBCC);
+		String existing = settingsService.get(Setting.BlockedDomainsForRegistration);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.BlockedDomainsForRegistration);
+			s.setValue("");
+			s.setFormat("email domains separated by ;");
+			session.saveOrUpdate(s);
+		}
+
+		status.setDbversion(142);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step141() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get(Setting.MaxPredefinedElementsPerUser);
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey(Setting.MaxPredefinedElementsPerUser);
+			s.setValue("20");
+			s.setFormat("number");
+			session.saveOrUpdate(s);
+		}
+
+		try {
+			NativeQuery queryCreateIndex = session.createSQLQuery("ALTER TABLE VOTERS DROP INDEX VOTER_ECMONIKER_SURVEY;");
+			queryCreateIndex.executeUpdate();
+		} catch (Exception e) {
+			// the index only exists for older installations
+		}
+
+		status.setDbversion(141);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step140() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		ensureActivities(session, ActivityRegistry.ID_GUEST_LIST_VOTER_FILE_EXPORT);
+
+		status.setDbversion(140);
+		session.saveOrUpdate(status);
+	}
+
+	@Transactional
+	public void step139() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		session.createNativeQuery("ALTER TABLE SURVEYS MODIFY COLUMN MINLISTPER DOUBLE").executeUpdate();
+
+		status.setDbversion(139);
+		session.saveOrUpdate(status);
+	}
+
+    @Transactional
+    public void step138() {
+        Session session = sessionFactory.getCurrentSession();
+        Status status = getStatus();
+
+        String existing = settingsService.get(Setting.MaxFreeTextLength);
+        if (existing == null) {
+            Setting s = new Setting();
+            s.setKey(Setting.MaxFreeTextLength);
+            s.setValue("10000");
+            s.setFormat("characters");
+            session.saveOrUpdate(s);
+        }
+
+		existing = settingsService.get(Setting.InactiveSurveysBCC);
 		if (existing == null) {
 			Setting s = new Setting();
 			s.setKey(Setting.InactiveSurveysBCC);
@@ -81,7 +155,6 @@ public class SchemaService extends BasicService {
 			s.setFormat("email");
 			session.saveOrUpdate(s);
 		}
-
 		status.setDbversion(138);
 		session.saveOrUpdate(status);
 	}
@@ -95,7 +168,7 @@ public class SchemaService extends BasicService {
 		if (existing == null) {
 			Setting s = new Setting();
 			s.setKey(Setting.ChatbotWidgetURL);
-			s.setValue("http://ovishime.cc.cec.eu.int:8090/eusurvey/chatbot-demo/chat-widget.js");
+			s.setValue("http://jecuse.cc.cec.eu.int:8090/eusurvey/chatbot-widget/ec-chatbot.js");
 			s.setFormat("URL");
 			session.saveOrUpdate(s);
 		}
@@ -104,7 +177,7 @@ public class SchemaService extends BasicService {
 		if (existing == null) {
 			Setting s = new Setting();
 			s.setKey(Setting.ChatbotAPIURL);
-			s.setValue("http://ovishime.cc.cec.eu.int:8090/eusurvey/chatbot-api");
+			s.setValue("http://jecuse.cc.cec.eu.int:8090/eusurvey/chatbot-api/api/chatbot");
 			s.setFormat("URL");
 			session.saveOrUpdate(s);
 		}
@@ -1714,8 +1787,12 @@ public class SchemaService extends BasicService {
 					administrationService.getUserForLogin(administrationService.getAdminUser(), false),
 					surveyService.getLanguage("EN"), surveyService.getLanguages());
 			surveyService.add(survey, -1);
-			surveyService.publish(survey, -1, -1, false, -1, false, false);
-			surveyService.activate(survey, false, -1);
+
+			// do not publish the self registration survey automatically for environments using EULogin / ECAS
+			if (showecas == null || !showecas.equalsIgnoreCase("true")) {
+				surveyService.publish(survey, -1, -1, false, -1, false, false);
+				surveyService.activate(survey, false, -1);
+			}
 
 			Session session = sessionFactory.getCurrentSession();
 			Status status = getStatus();

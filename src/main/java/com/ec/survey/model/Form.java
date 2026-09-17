@@ -646,6 +646,23 @@ public class Form implements java.io.Serializable {
 		return result;
 	}
 
+	public boolean doesSectionContainQuizElements(int sectionId) {
+		boolean insideSection = false;
+		for (Element element : survey.getElements()) {
+			if (element instanceof Section) {
+				if (insideSection) {
+					return false;
+				} else if (element.getId().equals(sectionId)) {
+					insideSection = true;
+					continue;
+				}
+			}
+			if (insideSection && element.isQuizElement())
+				return true;
+		}
+		return false;
+	}
+
 	public Statistics getStatistics() {
 		return statistics;
 	}
@@ -1042,5 +1059,12 @@ public class Form implements java.io.Serializable {
 		}
 		
 		return 0;
+	}
+
+	public String max190(String... values) {
+		String text = String.join("", values);
+		if (text.length() < 190) { return text; }
+
+		return text.substring(0, 190);
 	}
 }

@@ -65,11 +65,11 @@
 			<c:set var="tableOpen" value="false"/>
 
 			<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="element" varStatus="loop">
-				<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id) || publication.isSectionSelected(form.getSurvey(), element.id)}">
+				<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id) || publication.isSectionSelectedQuiz(form.getSurvey(), element.id)}">
 					<c:choose>
 						<c:when test="${element.getType() == 'Section'}">
 
-							<c:if test='${statistics == null || statistics.maxSectionScore[element.uniqueId] > 0}'>
+							<c:if test='${form.doesSectionContainQuizElements(element.id)}'>
 								<c:if test="${openSection eq true}">
 									</table>
 									<c:set var="openSection" value="false"/>
@@ -139,7 +139,7 @@
 							<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">
 								<c:if test="${element.getType() == 'Matrix'}">
 									<c:forEach var="matrixQuestion" items="${element.questions}">									
-										<c:if test="${matrixQuestion.getScoring() > 0 && (filter == null || filter.visibleQuestions.contains(element.id.toString()))}">
+										<c:if test="${matrixQuestion.isQuizElement() && (filter == null || filter.visibleQuestions.contains(element.id.toString()))}">
 											<tr>
 												<td>${element.getStrippedTitleNoEscape()}: ${matrixQuestion.getStrippedTitleNoEscape()}</td>
 		
@@ -164,7 +164,7 @@
 									</c:forEach>
 								</c:if>
 														
-								<c:if test="${element.getScoring() > 0 && (filter == null || filter.visibleQuestions.contains(element.id.toString()))}">
+								<c:if test="${element.isQuizElement() && (filter == null || filter.visibleQuestions.contains(element.id.toString()))}">
 									<tr>
 										<td>${element.getStrippedTitleNoEscape()}</td>
 

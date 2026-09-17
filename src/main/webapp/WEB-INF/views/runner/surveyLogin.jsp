@@ -15,6 +15,10 @@
 		.authenticationdiv {
 			width: 220px; margin-left: auto; margin-right: auto;
 		}
+
+		.authenticationdivemail {
+            width: 400px; margin-left: auto; margin-right: auto; text-align: center;
+        }
 				
 		input[type=password] {
 			width: 100%;
@@ -58,73 +62,107 @@
 		 	</c:if> 
 			
 			<br /><br />
+
+			<c:choose>
+			    <c:when test="${EmailVoterList != null}">
+			        <div class="authenticationdivemail" style="text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
+                        <spring:message code="label.PleaseEnterYourEmail" /><br />
+                        <input type="text" id="evote-email" class="form-control" />
+
+                        <div tabindex="-1" id="eVote-error-invalidemail" class="validation-error hideme">
+                            <spring:message code="error.InvalidEmail" />
+                        </div>
+
+                        <div id="eVote-code" class="hideme" style="margin-top: 20px; margin-bottom: 10px;">
+                            <spring:message code="label.eVote_EmailSent" />
+                            <input class="form-control" id="eVote-code-input" style="margin-top: 10px;" />
+                        </div>
+
+                        <div id="eVote-error-server" class="hideme validation-error">
+                            <spring:message code="error.eVote_EmailVoterList" />
+                        </div>
+
+                        <div id="eVote-error-server-unknown" class="hideme validation-error">
+                            <spring:message code="error.eVote_EmailVoterList_unknown" />
+                        </div>
+
+                        <div id="eVote-error-server-tooold" class="hideme validation-error">
+                            <spring:message code="error.eVote_EmailVoterList_tooold" />
+                        </div>
+
+                        <button id="eVote-send-code-button" class="btn btn-primary" style="margin-top: 20px; width: auto;" onclick="postEVote(false)"><spring:message code="label.SendCode" /></button>
+                        <button id="eVote-check-code-button" class="btn btn-primary" style="margin-top: 20px; width: auto; display: none;" onclick="postEVote(true)"><spring:message code="label.CheckCode" /></button>
+                    </div>
+			    </c:when>
+			    <c:otherwise>
 			
-			<c:if test="${ecassecurity != null}">
-				<div id="ecasPanel" class="authenticationdiv" style="margin-bottom: 20px;">
-					<div id="ecasPanelContent">
-						<form:form action="${ecasurl}">
-							<input type="hidden" name="service" value="${serviceurl}"/>
-							<c:if test="${require2fa}">
-								<input type="hidden" name="acceptStrength" value="PASSWORD_SMS" />
-							</c:if>
-							
-							<c:choose>
-								<c:when test="${casoss !=null}">
-									<a href="javascript:;" onclick="$(this).closest('form').submit()">
-										<img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
-									</a>
-								</c:when>
-								<c:otherwise>
-									<a href="javascript:;" class="btn btn-primary" onclick="$(this).closest('form').submit()">
-										<spring:message code="login.AccessViaEULogin" />
-									</a><br />
-									<a target="_blank" href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi"><spring:message code="label.Register" /></a>
-								</c:otherwise>
-							</c:choose>								
-						</form:form>
-					</div>
-				</div>		
-			</c:if>
-			
-			<c:if test="${ecassecurity != null && hidepassword == null}">
-				<div style="text-align: center; color: #999; margin-bottom: 25px;">
-					<hr />
-					<spring:message code="label.OR" />
-					<hr />
-				</div>
-			</c:if>
-			
-			<c:if test="${hidepassword == null}">
-				<div class="authenticationdiv">
-				 	<form:form action="${shortname}?surveylanguage=${lang}&draftid=${draftid}" method="post" >
-				 		<fieldset>
-							<legend style="display: none"><spring:message code="message.SurveyPassword" /></legend>
-				 			<input type="hidden" name="redirectFromCheckPassword" value="true" />
-							<input type="hidden" name="shortname" value="<esapi:encodeForHTMLAttribute>${shortname}</esapi:encodeForHTMLAttribute>" />
-							<input type="hidden" name="draftid" value="<esapi:encodeForHTMLAttribute>${draftid}</esapi:encodeForHTMLAttribute>" />
-												
-							<div class="form-group">
-								<label class="control-label" for="j_password"><spring:message code="label.Password" /></label>
-								<div class="input-group">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
-		   							<input class="form-control" id="j_password" name="password" autocomplete="off" type="password" />
-		 						</div>
-		 						
-		 						<c:if test="${error != null}">
-									<div id="login-error" aria-live="polite" class="validation-error" tabindex="0">
-								 		<esapi:encodeForHTML>${error}</esapi:encodeForHTML>
-								 	</div>
-							 	</c:if>
-		 						
-							</div>
-							
-							<div style="margin-top: 10px;">
-								<input class="btn btn-primary" type="submit" id="btnLogin2SecureSurvey" value="<spring:message code="label.Access" />"/>
-							</div>
-				 		</fieldset>
-					</form:form>
-				</div>
-			</c:if>
+                    <c:if test="${ecassecurity != null}">
+                       <div id="ecasPanel" class="authenticationdiv" style="margin-bottom: 20px;">
+                           <div id="ecasPanelContent">
+                               <form:form action="${ecasurl}">
+                                   <input type="hidden" name="service" value="${serviceurl}"/>
+                                   <c:if test="${require2fa}">
+                                       <input type="hidden" name="acceptStrength" value="PASSWORD_SMS" />
+                                   </c:if>
+
+                                   <c:choose>
+                                       <c:when test="${casoss !=null}">
+                                           <a href="javascript:;" onclick="$(this).closest('form').submit()">
+                                               <img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
+                                           </a>
+                                       </c:when>
+                                       <c:otherwise>
+                                           <a href="javascript:;" class="btn btn-primary" onclick="$(this).closest('form').submit()">
+                                               <spring:message code="login.AccessViaEULogin" />
+                                           </a><br />
+                                           <a target="_blank" href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi"><spring:message code="label.Register" /></a>
+                                       </c:otherwise>
+                                   </c:choose>
+                               </form:form>
+                           </div>
+                       </div>
+                   </c:if>
+
+                   <c:if test="${ecassecurity != null && hidepassword == null}">
+                       <div style="text-align: center; color: #999; margin-bottom: 25px;">
+                           <hr />
+                           <spring:message code="label.OR" />
+                           <hr />
+                       </div>
+                   </c:if>
+
+                   <c:if test="${hidepassword == null}">
+                       <div class="authenticationdiv">
+                           <form:form action="${shortname}?surveylanguage=${lang}&draftid=${draftid}" method="post" >
+                               <fieldset>
+                                   <legend style="display: none"><spring:message code="message.SurveyPassword" /></legend>
+                                   <input type="hidden" name="redirectFromCheckPassword" value="true" />
+                                   <input type="hidden" name="shortname" value="<esapi:encodeForHTMLAttribute>${shortname}</esapi:encodeForHTMLAttribute>" />
+                                   <input type="hidden" name="draftid" value="<esapi:encodeForHTMLAttribute>${draftid}</esapi:encodeForHTMLAttribute>" />
+
+                                   <div class="form-group">
+                                       <label class="control-label" for="j_password"><spring:message code="label.Password" /></label>
+                                       <div class="input-group">
+                                           <span class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+                                           <input class="form-control" id="j_password" name="password" autocomplete="off" type="password" />
+                                       </div>
+
+                                       <c:if test="${error != null}">
+                                           <div id="login-error" aria-live="polite" class="validation-error" tabindex="0">
+                                               <esapi:encodeForHTML>${error}</esapi:encodeForHTML>
+                                           </div>
+                                       </c:if>
+                                   </div>
+
+                                   <div style="margin-top: 10px;">
+                                       <input class="btn btn-primary" type="submit" id="btnLogin2SecureSurvey" value="<spring:message code="label.Access" />"/>
+                                   </div>
+                               </fieldset>
+                           </form:form>
+                       </div>
+                   </c:if>
+                </c:otherwise>
+            </c:choose>
 			
 			<c:if test="${contact != null}">
 				<div style="margin-top: 40px; margin-bottom: 20px; text-align: center">
@@ -158,6 +196,55 @@
 			$("#j_password").attr("aria-invalid", "true").attr("aria-describedby", "login-error");
 			$(".validation-error").first().focus();
 		</c:if>
+
+		function postEVote(check) {
+            const email = $('#evote-email').val();
+            if (!validateEmail(email)) {
+                $('#eVote-error-invalidemail').show().focus();
+                return false;
+            }
+            $('#eVote-error-invalidemail').hide();
+
+            let code = "-";
+            if (check) {
+                code = $('#eVote-code-input').val();
+            }
+
+            $('#eVote-error-server').hide();
+            $('#eVote-error-server-unknown').hide();
+            $('#eVote-error-server-tooold').hide();
+
+            $.ajax({
+               type: "POST",
+               async: false,
+               cache: false,
+               url: "${contextpath}/runner/sendevote",
+               data: {email: email, shortname: "${shortname}", code: code},
+               beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+               success: function(data)	           {
+                   if (data == "success") {
+                        if (check) {
+                            window.location.href = window.location.href;
+                            return;
+                        }
+
+                        $('#eVote-code').show();
+                        $('#eVote-send-code-button').hide();
+                        $('#eVote-check-code-button').show();
+                   } else if (data == "unknown") {
+                        $('#eVote-error-server-unknown').show();
+                   } else if (data == "tooold") {
+                        $('#eVote-error-server-tooold').show();
+                   } else {
+                        $('#eVote-error-server').show();
+                   }
+               },
+               error: function(jqXHR) {
+                   console.error('Error:', jqXHR);
+                   $('#eVote-error-server').show();
+               }
+            });
+		}
 	</script>
 	
 	<c:if test="${internalUsersOnly != null}">

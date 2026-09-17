@@ -239,14 +239,16 @@
 				  
 				  $("#participants").find("tbody").find("tr").each(function(){$(this).remove();});
 				  
-				  for (var i = 0; i < paging.items.length; i++ )
+				  for (let i = 0; i < paging.items.length; i++ )
 				  {
-					var tr = document.createElement("tr");
-					var td = document.createElement("td");
-					$(td).html(paging.items[i].name);
+					const attendee = paging.items[i]
+
+					const tr = document.createElement("tr");
+					let td = document.createElement("td");
+					$(td).html(attendee.name ?? "");
 					$(tr).append(td);
 					td = document.createElement("td");
-					$(td).html(paging.items[i].email);
+					$(td).html(attendee.email ?? "");
 					$(tr).append(td);					
 					
 //					for (var j = 0; j < paging.items[i].attributes.length; j++ )
@@ -256,15 +258,17 @@
 //						$(tr).append(td);
 //					}					
 					
-					for (var j = 0; j < attributeNames.length; j++ )
+					for (let j = 0; j < attributeNames.length; j++ )
 					{
 						td = document.createElement("td");
-						
-						for (var k = 0; k < paging.items[i].attributes.length; k++)
+
+						const attributes = attendee.attributes ?? []
+
+						for (let k = 0; k < attributes.length; k++)
 						{
-							if (paging.items[i].attributes[k].attributeName.id == attributeNames[j])
+							if (attributes[k].attributeName.id == attributeNames[j])
 							{
-								$(td).html(paging.items[i].attributes[k].value);
+								$(td).html(attributes[k].value);
 								break;
 							}
 						}
@@ -352,13 +356,14 @@
 				  
 				  if (reset) $("#participantsstatic").find("tbody").find("tr").each(function(){$(this).remove();});
 				  
-				  for (var i = 0; i < paging.items.length; i++ )
+				  for (let i = 0; i < paging.items.length; i++ )
 				  {
-					var tr = document.createElement("tr");
-					var td = document.createElement("td");
+					const attendee = paging.items[i]
+					const tr = document.createElement("tr");
+					let td = document.createElement("td");
 					
-					var check = document.createElement("input");
-					$(check).attr("type","checkbox").attr("data-id",paging.items[i].id).addClass("check").addClass("search-result").attr("id","searched-" + paging.items[i].id);
+					const check = document.createElement("input");
+					$(check).attr("type","checkbox").attr("data-id",attendee.id).addClass("check").addClass("search-result").attr("id","searched-" + attendee.id);
 					
 					if(selectAll){
 						$(check).attr("checked", "checked");
@@ -369,29 +374,30 @@
 					$(tr).append(td);		
 					
 					td = document.createElement("td");
-					$(td).html(paging.items[i].name.stripHtml());
+					$(td).html(attendee.name?.stripHtml() ?? "");
 					$(tr).append(td);
 					
 					td = document.createElement("td");
-					$(td).html(paging.items[i].email.stripHtml());
+					$(td).html(attendee.email?.stripHtml() ?? "");
 					$(tr).append(td);
 					
 					$("#participantsstaticheader").find("thead").first().find(".attribute").each(function(){
 						if ($(this).text() === "Owner") {
 							td = document.createElement("td");
-							$(td).text(paging.items[i].owner);
+							$(td).text(attendee.owner ?? "");
 						} else {
 							var id = $(this).attr("data-id");
 
 							td = document.createElement("td");
-
-							for (var j = 0; j < paging.items[i].attributes.length; j++)
+							const attributes = attendee.attributes
+							for (let j = 0; j < attributes.length; j++)
 							{
-								if (paging.items[i].attributes[j].attributeName.id == parseInt(id))
+								const attr = attributes[j]
+								if (attr.attributeName.id == parseInt(id))
 								{
-									if (paging.items[i].attributes[j].value != null)
+									if (attr.value != null)
 									{
-										$(td).html(paging.items[i].attributes[j].value.stripHtml());
+										$(td).html(attr.value?.stripHtml() ?? "");
 									}
 									break;
 								}
@@ -531,20 +537,21 @@
 					  cache: false,
 					  success: function( paging ) {
 					  
-					  for (var i = 0; i < paging.items.length; i++ )
+					  for (let i = 0; i < paging.items.length; i++ )
 					  {
-						  var id = paging.items[i].id;
+						  const attendee = paging.items[i]
+						  const id = attendee.id;
 						  if ($("#selectedparticipantsstatic").find("input[name='" + id + "']").length == 0)
 							{
-							  var tr = document.createElement("tr");
-								var td = document.createElement("td");
-								var input = document.createElement("input");
-								$(input).attr("type","checkbox").attr("name",paging.items[i].id).val("true");
+							    const tr = document.createElement("tr");
+								let td = document.createElement("td");
+								const input = document.createElement("input");
+								$(input).attr("type","checkbox").attr("name",id).val("true");
 								$(td).append(input);
 								$(tr).append(td);
 								
 								td = document.createElement("td");
-								$(td).css("max-width","180px").html(paging.items[i].name.stripHtml() + " (" + paging.items[i].email.stripHtml() + ")");
+								$(td).css("max-width","180px").html((attendee.name?.stripHtml() ?? "") + " (" + (attendee.email?.stripHtml() ?? "") + ")");
 								$(tr).append(td);
 								$("#selectedparticipantsstatic").find("tbody").append(tr);
 							};

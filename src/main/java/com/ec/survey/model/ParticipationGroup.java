@@ -89,6 +89,7 @@ public class ParticipationGroup {
 		case Token:
 			return "Token";
 		case VoterFile:
+		case VoterFileEmail:
 			return "VoterFile";
 		}
 		

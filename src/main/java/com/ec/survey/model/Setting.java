@@ -1,11 +1,6 @@
 package com.ec.survey.model;
 
-import com.ec.survey.tools.activity.ActivityRegistry;
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "SETTINGS")
@@ -93,6 +88,9 @@ public class Setting {
 	public static final String Chatbot = "Chatbot";
 	public static final String ChatbotWidgetURL = "ChatbotWidgetURL";
 	public static final String ChatbotAPIURL = "ChatbotAPIURL";
+	public static final String MaxFreeTextLength = "MaxFreeTextLength";
+	public static final String MaxPredefinedElementsPerUser = "MaxPredefinedElementsPerUser";
+	public static final String BlockedDomainsForRegistration = "BlockedDomainsForRegistration";
 
 	@Id
 	@Column(name = "SETTINGS_ID")

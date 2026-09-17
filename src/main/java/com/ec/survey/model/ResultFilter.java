@@ -13,6 +13,7 @@ import javax.persistence.*;
 import javax.persistence.Table;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Defines the results we want to extract from the database. Hence, gives options to filter but also to order by.
@@ -255,6 +256,56 @@ public class ResultFilter implements java.io.Serializable {
 		exportedExplanations.clear();
 		visibleDiscussions.clear();
 		exportedDiscussions.clear();
+	}
+
+	public void alignFilterWithVisible(Survey survey) {
+		if (filterValues == null || visibleQuestions == null) return;
+
+		Map<Integer, Question> questionyById = survey.getQuestionMap();
+		var visibleQuestionsWithChildren = new ArrayList<String>();
+		visibleQuestionsWithChildren.addAll(visibleQuestions);
+		for (String questionId : visibleQuestions) {
+			if (Tools.isInteger(questionId)) { // ignore meta data columns as they are filtered differently
+				Question q = questionyById.get(Integer.parseInt(questionId));
+
+				if (q instanceof ComplexTable) {
+					ComplexTable complexTable = (ComplexTable) q;
+					for (Element e : complexTable.getQuestionChildElements()) {
+						visibleQuestionsWithChildren.add(e.getId().toString());
+					}
+				} else if (q instanceof MatrixOrTable) {
+					MatrixOrTable t = (MatrixOrTable) q;
+					for (Element e : t.getQuestions()) {
+						visibleQuestionsWithChildren.add(e.getId().toString());
+					}
+				} else if (q instanceof RatingQuestion) {
+					RatingQuestion r = (RatingQuestion) q;
+					for (Element e : r.getQuestions()) {
+						visibleQuestionsWithChildren.add(e.getId().toString());
+					}
+				}
+			}
+		}
+
+		//For all Filters that act on invisible elements -> remove the filter
+		var invisibleQuestionFilters = filterValues.keySet().stream().filter(fK -> !visibleQuestionsWithChildren.contains(getIDFromFilterKey(fK))).collect(Collectors.toList());
+
+		for (var qId: invisibleQuestionFilters) {
+			filterValues.remove(qId);
+		}
+	}
+
+	private String getIDFromFilterKey(String filterKey) {
+		String id = filterKey;
+		if (id.contains("|")) {
+			id = id.substring(0, id.indexOf("|"));
+		}
+
+		if (id.contains("-")) {
+			return id.substring(0, id.indexOf("-"));
+		}
+
+		return id;
 	}
 
 	@Id
@@ -514,9 +565,14 @@ public class ResultFilter implements java.io.Serializable {
 	{
 		return visibleQuestions.contains(questionId);
 	}
-	
+
+
+	public boolean visibleSection(int sectionId, Survey survey) {
+		return visibleSection(sectionId, survey, false);
+	}
+
 	@Transient
-	public boolean visibleSection(int sectionId, Survey survey)
+	public boolean visibleSection(int sectionId, Survey survey, boolean forQuiz)
 	{
 		boolean correctSection = false;
 		int sectionLevel = 0;
@@ -529,28 +585,32 @@ public class ResultFilter implements java.io.Serializable {
 				sectionLevel = ((Section)element).getLevel();
 			} else if (correctSection) {
 				if (element instanceof Section) {
-					if (((Section)element).getLevel() <= sectionLevel) {
+					if (((Section)element).getLevel() <= sectionLevel || forQuiz) {
 						return false;
 					}
 				} else {
 					if (visibleQuestions.contains(element.getId().toString())) {
 						Element question = elementsById.get(element.getId());
-						if (question instanceof ChoiceQuestion || question instanceof Matrix || question instanceof RatingQuestion || question instanceof FreeTextQuestion) {
-							return true;
-						} else if (question instanceof GalleryQuestion) {
-							GalleryQuestion g = (GalleryQuestion)question;
-							if (g.getSelection()) {
+						if (forQuiz) {
+							if (element.isQuizElement()) return true;
+						} else {
+							if (question instanceof ChoiceQuestion || question instanceof Matrix || question instanceof RatingQuestion || question instanceof FreeTextQuestion) {
 								return true;
-							}
-						} else if (question instanceof NumberQuestion) {
-							NumberQuestion n = (NumberQuestion)question;
-							if (n.showStatisticsForNumberQuestion(false)) {
-								return true;
-							}
-						} else if (question instanceof Question) {
-							Question q = (Question)question;
-							if (q.isDelphiElement() && q.getDelphiChartType() != DelphiChartType.None) {
-								return true;
+							} else if (question instanceof GalleryQuestion) {
+								GalleryQuestion g = (GalleryQuestion)question;
+								if (g.getSelection()) {
+									return true;
+								}
+							} else if (question instanceof NumberQuestion) {
+								NumberQuestion n = (NumberQuestion)question;
+								if (n.showStatisticsForNumberQuestion(false)) {
+									return true;
+								}
+							} else if (question instanceof Question) {
+								Question q = (Question)question;
+								if (q.isDelphiElement() && q.getDelphiChartType() != DelphiChartType.None) {
+									return true;
+								}
 							}
 						}
 					}

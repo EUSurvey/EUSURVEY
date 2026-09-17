@@ -986,6 +986,30 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			schemaService.step138();
 			status = schemaService.getStatus();
 		}
+
+		if (status.getDbversion() < 139){
+			logger.info("starting upgrade step 139");
+			schemaService.step139();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 140){
+			logger.info("starting upgrade step 140");
+			schemaService.step140();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 141){
+			logger.info("starting upgrade step 141");
+			schemaService.step141();
+			status = schemaService.getStatus();
+		}
+
+		if (status.getDbversion() < 142){
+			logger.info("starting upgrade step 142");
+			schemaService.step142();
+			status = schemaService.getStatus();
+		}
 	}
 
     private static Date getDateInPast(int days) {

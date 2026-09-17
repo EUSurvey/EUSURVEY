@@ -101,8 +101,8 @@ public class Publication implements java.io.Serializable {
 	}
 
 	@Transient
-	public boolean isSectionSelected(Survey survey, int sectionId) {
-		return filter != null && filter.visibleSection(sectionId, survey);
+	public boolean isSectionSelectedQuiz(Survey survey, int sectionId) {
+		return filter != null && filter.visibleSection(sectionId, survey, true);
 	}
 	
 	@Transient

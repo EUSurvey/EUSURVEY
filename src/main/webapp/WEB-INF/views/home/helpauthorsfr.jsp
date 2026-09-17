@@ -35,6 +35,8 @@
 			font-size: 13px;
 			font-weight: normal;
 			text-decoration: none;
+			padding-top: 3px;
+			padding-bottom: 2px;
 		}
 		
 		.anchorlink {
@@ -74,6 +76,13 @@
 			font-size: 19px !important;
 		}
 
+		.pageheader a,
+		#ulContainer a {
+			display: inline-block;
+			min-width: 24px;
+			min-height: 24px;
+			padding-top: 2px;
+		}
 	</style>
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
@@ -1713,6 +1722,15 @@
 				</ol>
 				<img alt="Screenshot" src="${contextpath}/resources/images/documentation/changecontributionFR.png" />
 			</p>
+			<h2>
+				Comment les participants peuvent-ils télécharger une version PDF du questionnaire ?
+			</h2>
+			<p>
+				Pour mettre à la disposition des participants une copie PDF vierge du questionnaire, activez d'abord l'option « Activer le téléchargement PDF du questionnaire » dans « Propriétés » → « Survey Security ».
+			</p>
+			<p>
+				Une fois ce parameter activé, les participants pourront accéder à l'option « Télécharger la version PDF » depuis le panneau de droite de l'enquête.
+			</p>
 			<h1>
 				Tester une enquête
 			</h1>
@@ -2102,6 +2120,59 @@
 				Cela signifie que l’enquête dépubliée ne sera pas automatiquement remplacée
 				par votre brouillon en cours, mais que vous pourrez la republier telle
 				quelle si nécessaire.
+			</p>
+            <h2>
+				Comprendre les modifications en attente dans EUSurvey
+			</h2>
+			<p>
+				Après la première publication d'une enquête, toutes les modifications que vous apportez ne sont pas
+				immédiatement appliquées à l'enquête en ligne. Elles sont enregistrées comme des « <b>Modifications en
+				attente</b> » dans une version brouillon de l'enquête. Cela vous permet de préparer et de vérifier les
+				mises à jour sans affecter la version actuellement accessible aux répondants.
+			</p>
+			<p>
+				EUSurvey gère deux versions distinctes:
+				<ul>
+					<li>
+						La <b>version lancée</b>, à laquelle les répondants ont accès.
+					</li>
+					<li>
+						La <b>version brouillon</b>, dans laquelle les nouvelles modifications sont enregistrées.
+					</li>
+				</ul>
+			</p>
+			<p>
+				En raison de cette séparation, les utilisateurs peuvent parfois être surpris de constater que leurs
+				modifications n'apparaissent pas dans l'enquête publiée. Il s'agit d'un comportement normal. Les
+				modifications effectuées après la publication n'affectent que la version brouillon jusqu'à ce qu'elles
+				soient explicitement publiées.
+			</p>
+			<p>
+				Vous pouvez facilement vérifier si votre enquête contient des modifications non publiées. Sur la page
+				d'aperçu de l'enquête, sous le statut vert « <b>Lancée</b> », un indicateur « <b>Modifications en attente</b> »
+				s'affiche chaque fois que la version brouillon contient des modifications qui n'ont pas encore été
+				appliquées à la version publiée.
+			</p>
+			<p>
+				Pour rendre les modifications en attente visibles aux répondants, ouvrez la page d'aperçu de l'enquête
+				et cliquez sur « <b>Afficher les modifications en attente</b> ». Une fenêtre contextuelle affichera les
+				modifications en attente de publication. Pour les appliquer, cliquez sur « <b>Appliquer les modifications</b> ».
+			</p>
+			<p>
+				Lorsque les modifications en attente sont appliquées, la version brouillon actuelle remplace la version
+				publiée et devient la nouvelle enquête en ligne. Dans le même temps, EUSurvey crée automatiquement une
+				nouvelle version brouillon, vous permettant de continuer à effectuer des modifications sans affecter
+				l'enquête nouvellement publiée.
+			</p>
+			<p>
+				Ce système offre un meilleur contrôle des mises à jour de l'enquête et permet d'éviter que des
+				modifications accidentelles n'affectent des enquêtes qui collectent déjà des réponses.
+			</p>
+			<p>
+				En résumé, après la première publication, EUSurvey conserve toujours une version publiée et une version
+				brouillon de votre enquête. Toutes les modifications sont enregistrées comme des modifications en
+				attente jusqu'à ce que vous choisissiez de les appliquer, garantissant ainsi que les mises à jour ne
+				sont publiées que lorsque vous êtes prêt à le faire.
 			</p>
 			<h2>
 				Est-il possible de personnaliser l’URL d’une enquête?
@@ -2596,6 +2667,122 @@
 				</a>
 				une liste des événements enregistrés.
 			</p>
+            <h2>
+                Fonctionnalité de rapport par e-mail
+            </h2>
+            <h3>
+                Qu’est-ce que la fonctionnalité de rapport par e-mail ?
+            </h3>
+            <p>
+                La fonctionnalité de rapport par e-mail permet aux gestionnaires d’enquêtes de recevoir automatiquement des rapports indiquant le nombre de contributions (réponses) reçues pour leur enquête. Ces rapports peuvent être envoyés quotidiennement, hebdomadairement ou mensuellement à une liste de destinataires désignés.
+            </p>
+            <p>
+                Les rapports sont envoyés uniquement lorsque l’enquête est publiée. Ils s’arrêtent automatiquement si l’enquête est dépubliée, archivée, gelée ou supprimée.
+            </p>
+            <p>
+                Lorsque l’option est sélectionnée, les rapports sont envoyés uniquement si au moins une contribution a été reçue au cours de la période concernée. Cette fonctionnalité est particulièrement utile pour les enquêtes ayant un faible taux de participation.
+            </p>
+            <h3>
+                Comment activer et configurer les rapports par e-mail
+            </h3>
+            <h4>
+                Activation de la fonctionnalité
+            </h4>
+            <p>
+                Accédez aux paramètres de votre enquête et recherchez le bouton « Automatic report per email ». Activez-le (il est désactivé par défaut). Une nouvelle section apparaîtra, dans laquelle vous pourrez configurer la fréquence et les destinataires.
+            </p>
+            <h4>
+                Définition de la fréquence des rapports
+            </h4>
+            <p>
+                Vous pouvez choisir la fréquence à laquelle vous souhaitez recevoir les rapports :
+            </p>
+            <ul>
+                <li>
+                    <b>Jamais</b> (valeur par défaut lors de la première ouverture)
+                </li>
+                <li>
+                    <b>Quotidien</b> – Envoyé entre 00:00 et 07:00, avec les contributions reçues au cours de la journée précédente.
+                </li>
+                <li>
+                    <b>Hebdomadaire</b> – Envoyé chaque lundi entre 00:00 et 07:00, avec les contributions reçues au cours de la semaine civile précédente (du lundi au dimanche).
+                </li>
+                <li>
+                    <b>Mensuel</b> – Envoyé le 1er de chaque mois, avec les contributions reçues au cours du mois précédent.
+                </li>
+            </ul>
+            <p>
+                Remarque : après avoir sélectionné une fréquence, EUSurvey mémorisera votre choix.
+            </p>
+            <h4>
+                Ajout de destinataires
+            </h4>
+            <p>
+                Saisissez une ou plusieurs adresses e-mail dans le champ de saisie, en les séparant par un point-virgule (;), puis cliquez sur le bouton « Add » pour confirmer. Le système vérifiera chaque adresse e-mail afin de s’assurer :
+            </p>
+            <ul>
+                <li>
+                    qu’elle respecte le format correct (p. ex. username@domain.com) ;
+                </li>
+                <li>
+                    que le domaine ne figure pas sur une liste noire connue (afin de prévenir les spams ou les adresses malveillantes).
+                </li>
+            </ul>
+            <h4>
+                Règles relatives à la liste des destinataires
+            </h4>
+            <ul>
+                <li>
+                    Un maximum de 10 adresses e-mail est autorisé.
+                </li>
+                <li>
+                    Chaque adresse e-mail apparaît sur une ligne distincte.
+                </li>
+                <li>
+                    Pour supprimer une adresse e-mail, cliquez sur le bouton en forme de croix (×) situé à côté de celle-ci (aucune confirmation n’est requise).
+                </li>
+            </ul>
+            <h4>
+                Remarques importantes
+            </h4>
+            <ul>
+                <li>
+                    Le champ de saisie est limité à 255 caractères (conformément à la RFC 5321, la norme relative au formatage des e-mails).
+                </li>
+                <li>
+                    Si une adresse e-mail n’est pas valide, un message d’erreur s’affichera.
+                </li>
+            </ul>
+            <h3>
+                Quand recevrai-je le premier rapport ?
+            </h3>
+            <p>
+                Si vous activez les <b>rapports quotidiens</b>, le premier e-mail sera envoyé le lendemain (entre 00:00 et 07:00).
+            </p>
+            <p>
+                Si vous activez les <b>rapports hebdomadaires</b>, le premier e-mail sera envoyé le lundi suivant.
+            </p>
+            <p>
+                Si vous activez les <b>rapports mensuels</b>, le premier e-mail sera envoyé le 1er du mois suivant.
+            </p>
+            <h3>
+                Puis-je modifier la fréquence ultérieurement ?
+            </h3>
+            <p>
+                Oui, vous pouvez modifier la fréquence à tout moment dans les paramètres de l’enquête. Le système mémorisera votre dernière sélection.
+            </p>
+            <h3>
+                Que se passe-t-il si je dépublie ou archive mon enquête ?
+            </h3>
+            <p>
+                Les rapports par e-mail s’arrêtent immédiatement si l’enquête est dépubliée, archivée, gelée ou supprimée.
+            </p>
+            <h3>
+                Le rapport contiendra-t-il des données à caractère personnel ?
+            </h3>
+            <p>
+                Non, le rapport contient uniquement le nombre de contributions (réponses) et ne comprend aucune donnée à caractère personnel ou sensible concernant les répondants.
+            </p>
 			<h1>
 				Analyse, exportation et publication des résultats
 			</h1>
