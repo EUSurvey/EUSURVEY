@@ -115,7 +115,6 @@
                                            <a href="javascript:;" class="btn btn-primary" onclick="$(this).closest('form').submit()">
                                                <spring:message code="login.AccessViaEULogin" />
                                            </a><br />
-                                           <a target="_blank" href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi"><spring:message code="label.Register" /></a>
                                        </c:otherwise>
                                    </c:choose>
                                </form:form>
