@@ -176,11 +176,6 @@
 												<a id="loginInternalLinkFromWelcome" class="bigLinkBoxHighlighted" href="<c:url value="/auth/login"/>"><spring:message code="label.DoLogin" /></a>												
 											</td>
 										</tr>
-										<tr >
-											<td id="selfRegLinkFromWelcome" style="padding-top:40px; text-align:left;">
-												<a id="linkSelfRegA" style="" target="_blank" href="<c:url value="/runner/NewSelfRegistrationSurvey"/>"><spring:message code="label.Register" /></a>	  																			
-											</td>
-										<tr>
 									</tbody>
 								</table>
 							</div>
