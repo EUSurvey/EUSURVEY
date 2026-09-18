@@ -131,7 +131,7 @@ public class DelphiController extends BasicController {
 			final String questionUid = request.getParameter("questionUid");
 			final Survey survey = surveyService.getSurvey(surveyIdParsed);
 			
-			if (survey == null || !survey.getIsDelphi()) {
+			if (survey == null || !survey.getIsDelphi() || !survey.getIsActive()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 			
