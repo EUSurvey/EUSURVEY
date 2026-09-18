@@ -223,7 +223,7 @@ public class SurveyHelper {
 					AnswerSet.ExplanationData explanationData = new AnswerSet.ExplanationData();
 					boolean doUpdateAnswerSet = false;
 					if (explanationText != null && explanationText.length > 0) {
-						explanationData.text = explanationText[0];
+						explanationData.text = Tools.filterHTML(explanationText[0]);
 						doUpdateAnswerSet = true;
 					}
 					gatherExplanationUploadsForQuestion(survey, question, uniqueCode, answerSet, explanationData, fileService);
