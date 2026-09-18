@@ -80,6 +80,22 @@
 	</div>
 </div>
 
+<div class="modal" id="showexternalaccessinfo-dialog" role="dialog">
+	<div class="modal-dialog" role="document">
+    <div class="modal-content">
+    	<div class="modal-header">
+    	    <spring:message code="info.showexternalaccessinfoheader" />
+    	</div>
+        <div class="modal-body">
+            <spring:message code="info.showexternalaccessinfobody" /></span>
+        </div>
+        <div class="modal-footer">
+            <a onclick="localStorage.setItem('externalaccessinfoshown', true); $('#showexternalaccessinfo-dialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.IUnderstand" /></a>
+        </div>
+	</div>
+	</div>
+</div>
+
 <script type="text/javascript" src="${contextpath}/resources/js/menu.js?version=<%@include file="version.txt" %>"></script>
 
 <script type="text/javascript">
@@ -107,6 +123,13 @@
 			
 			$("#import-survey-dialog-2").modal("show");
 		</c:if>
+
+        <c:if test="${showexternalaccessinfo != null}">
+            const alreadyshown = localStorage.getItem('externalaccessinfoshown');
+            if (alreadyshown == null) {
+                $('#showexternalaccessinfo-dialog').modal("show");
+            }
+        </c:if>
 	});
 	
 	function goToSurvey()

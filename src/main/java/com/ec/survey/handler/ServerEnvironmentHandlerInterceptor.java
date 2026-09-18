@@ -7,6 +7,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.model.administration.User;
+import com.ec.survey.service.SessionService;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -104,6 +106,9 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	
 	@Resource(name="surveyService")
 	private SurveyService surveyService;
+
+	@Resource(name = "sessionService")
+	protected SessionService sessionService;
 	
 	public boolean isByPassCaptcha(){
 		return captchaBypass !=null && captchaBypass.equalsIgnoreCase("true");
@@ -228,6 +233,11 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             	 modelAndView.getModelMap().addAttribute("surveyeditorsaved", id);
             	 request.getSession().removeAttribute("surveyeditorsaved");
             }
+
+			User u = sessionService.getCurrentUser(request);
+			if (u != null && u.getType().equalsIgnoreCase("ECAS") && u.isExternal()) {
+				modelAndView.getModelMap().addAttribute("showexternalaccessinfo", true);
+			}
 		}
     }	
 	
