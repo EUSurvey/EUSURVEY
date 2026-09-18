@@ -344,9 +344,9 @@ public class SettingsController extends BasicController {
 		} else {
 
 			if (!share.getOwner().getId().equals(user.getId())
-					&& user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2
-					&& !(share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))
-					&& (share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))) {
+				&& user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2
+				&& (share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))) {
+
 				result.addObject(Constants.MESSAGE, resources.getMessage("error.ShareUnauthorized", null,
 						"You are not authorized to edit this share.", locale));
 				return result;
@@ -355,7 +355,6 @@ public class SettingsController extends BasicController {
 			result.addObject("shareToEdit", share);
 			result.addObject("readonly", !share.getOwner().getId().equals(user.getId())
 					&& user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2 && share.getReadonly());
-
 		}
 
 		return result;
@@ -454,7 +453,6 @@ public class SettingsController extends BasicController {
 
 			if (!share.getOwner().getId().equals(user.getId())
 					&& user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2
-					&& !(share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))
 					&& (share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))) {
 
 				ModelAndView result = shares(request, locale);
