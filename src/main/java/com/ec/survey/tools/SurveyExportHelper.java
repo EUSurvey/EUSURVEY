@@ -1,7 +1,6 @@
 package com.ec.survey.tools;
 
 import com.ec.survey.model.*;
-import com.ec.survey.model.administration.User;
 import com.ec.survey.model.delphi.DelphiCommentLike;
 import com.ec.survey.model.delphi.DelphiExplanationLike;
 import com.ec.survey.model.selfassessment.SACriterion;
@@ -18,16 +17,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.servlet.ServletContext;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.beans.XMLDecoder;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.URL;
@@ -742,6 +732,10 @@ public class SurveyExportHelper {
 				} else if (name.endsWith("fil"))
 	        	{
 					String fileUID = name.replace(".fil", "");
+					if (!Tools.isUUID(fileUID)) {
+						throw new IOException("Invalid survey file identifier");
+					}
+
 					java.io.File target = fileService.getSurveyFile(uid, fileUID);
 	        		saveFile(zipFile, zipEntry, target.getPath());
 	        	} else if (name.endsWith("file"))
