@@ -990,4 +990,15 @@ public class AdministrationService extends BasicService {
 
 		return true;
     }
+
+	@Transactional
+    public void updatePasswordAndRemoveResetCode(OneTimePasswordResetCode codeItem, String password) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, codeItem.getUserId());
+		user.setPasswordSalt(Tools.newSalt());
+		user.setPassword(Tools.hash(password + user.getPasswordSalt()));
+		session.update(user);
+
+		session.delete(codeItem);
+    }
 }
