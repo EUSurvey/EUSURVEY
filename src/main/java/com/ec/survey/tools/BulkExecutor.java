@@ -1,7 +1,9 @@
 package com.ec.survey.tools;
 
+import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -47,6 +48,9 @@ public class BulkExecutor implements Runnable {
 
     @Resource(name = "activityService")
     protected ActivityService activityService;
+
+    @Resource(name = "sessionService")
+    protected SessionService sessionService;
 
     protected @Autowired ServletContext servletContext;
 
@@ -84,6 +88,19 @@ public class BulkExecutor implements Runnable {
         logger.info("bulk change started");
 
         try {
+
+            User user = administrationService.getUser(this.change.getUserId());
+            for (int surveyId : this.change.getSurveyIDs()) {
+                Survey survey = surveyService.getSurvey(surveyId);
+
+                sessionService.upgradePrivileges(survey, user, null);
+
+                if (!user.getId().equals(survey.getOwner().getId())
+                        && user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+                        && user.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+                    throw new ForbiddenURLException();
+                }
+            }
 
             switch (this.change.getOperation()) {
                 case AddRemovePrivilegedUsers:
