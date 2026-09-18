@@ -208,25 +208,30 @@ public class PublicationController extends BasicController {
 
 		for (Entry<String, String[]> entry : parameters.entrySet()) {
 			if (entry.getKey().startsWith(Constants.FILTER)) {
+
 				String questionId = entry.getKey().substring(6);
+
 				String[] values = entry.getValue();
 				String value = StringUtils.arrayToDelimitedString(values, ";");
 
 				if (value.replace(";", "").trim().length() > 0) {
 					String uid = questionId.substring(questionId.indexOf('|') + 1);
 
-					boolean found = false;
-					for (var key : presetKeys) {
-						if (key.endsWith(uid)) {
-							found = true;
-							break;
-						}
-					}
-					if (!found) {
-						filterValues.put(questionId, value);
-					}
+					if (Tools.isUUID(uid)) {
 
-					filtered = true;
+						boolean found = false;
+						for (var key : presetKeys) {
+							if (key.endsWith(uid)) {
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							filterValues.put(questionId, value);
+						}
+
+						filtered = true;
+					}
 				}
 			}
 		}
