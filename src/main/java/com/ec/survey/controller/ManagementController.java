@@ -4461,6 +4461,21 @@ public class ManagementController extends BasicController {
 			String publicationmode = request.getParameter("publicationmode");
 			String statisticsrequestid = request.getParameter("statisticsrequestid");
 
+			Survey survey = null;
+			if (filter == null || filter.getSurveyId() == 0) {
+				// can only happen in case of published results
+				survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, false);
+				if (survey != null && survey.getPublication() != null && survey.getIsActive()
+						&& survey.getPublication().isActive()) {
+					filter = survey.getPublication().getFilter();
+					filter.setSurveyId(survey.getId());
+				} else {
+					return null;
+				}
+			} else {
+				survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
+			}
+
 			if (statisticsrequestid == null) {
 				if (publicationmode != null && publicationmode.equalsIgnoreCase("true")) {
 					filter = null;
@@ -4468,21 +4483,6 @@ public class ManagementController extends BasicController {
 							.getAttribute("lastPublishedFilter" + shortname);
 					if (userFilter != null)
 						filter = userFilter;
-				}
-
-				Survey survey = null;
-				if (filter == null || filter.getSurveyId() == 0) {
-					// can only happen in case of published results
-					survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, false);
-					if (survey != null && survey.getPublication() != null && survey.getIsActive()
-							&& survey.getPublication().isActive()) {
-						filter = survey.getPublication().getFilter();
-						filter.setSurveyId(survey.getId());
-					} else {
-						return null;
-					}
-				} else {
-					survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
 				}
 
 				if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false")) {
@@ -4530,7 +4530,7 @@ public class ManagementController extends BasicController {
 						active.equalsIgnoreCase("true") && allanswers.equalsIgnoreCase("true"), true);
 
 			} else {
-				return answerService.getStatistics(Integer.parseInt(statisticsrequestid));
+				return answerService.getStatistics(Integer.parseInt(statisticsrequestid), survey.getId());
 			}
 
 		} catch (Exception e) {
