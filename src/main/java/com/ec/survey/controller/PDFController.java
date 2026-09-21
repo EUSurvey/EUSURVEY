@@ -130,7 +130,7 @@ public class PDFController extends BasicController {
 
 						ParticipationGroup participationGroup = participationService
 								.get(invitation.getParticipationGroupId());
-						if (participationGroup == null || !participationGroup.getActive()) {
+						if (participationGroup == null || !participationGroup.getActive() || !participationGroup.getSurveyUid().equals(survey.getUniqueId())) {
 							throw new ForbiddenURLException();
 						}
 					}
