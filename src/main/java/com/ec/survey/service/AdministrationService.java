@@ -550,7 +550,11 @@ public class AdministrationService extends BasicService {
 	public OneTimePasswordResetCode createOneTimePasswordResetCode(User user) {
 		OneTimePasswordResetCode code = new OneTimePasswordResetCode(user);
 		Session session = sessionFactory.getCurrentSession();
+
+		session.createQuery("DELETE FROM OneTimePasswordResetCode c WHERE userId = :userId").setParameter("userId", user.getId()).executeUpdate();
+
 		session.save(code);
+
 		return code;
 	}
 
