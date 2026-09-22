@@ -367,12 +367,18 @@ public class SurveyController extends BasicController {
     }
 
     @GetMapping("/checkBulkChange/{id}")
-    public @ResponseBody CheckBulkChangeResult checkBulkChange(@PathVariable int id) throws MessageException {
+    public @ResponseBody CheckBulkChangeResult checkBulkChange(@PathVariable int id, HttpServletRequest request) throws MessageException, NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException {
         if (id < 1) throw new MessageException("invalid change id: " + id);
 
         var result = new CheckBulkChangeResult();
 
         BulkChange change = surveyService.getBulkChange(id);
+
+        User u = sessionService.getCurrentUser(request);
+        if (change.getUserId() != u.getId()) {
+            throw new MessageException("invalid change id: " + id);
+        }
+
         result.error = change.getError() != null;
         result.finished = change.getFinished();
 
