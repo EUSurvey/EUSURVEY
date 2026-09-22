@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
@@ -42,6 +43,9 @@ public class DelphiController extends BasicController {
 
 	@Resource(name = "mailService")
 	private MailService mailService;
+
+	@Resource(name = "validCodesService")
+	private ValidCodesService validCodesService;
 	
 	private final Map<String, Map<String, String>> uniqueCodeToUser = new HashMap<>();	
 	private static List<String> stopWords = null;	
@@ -139,7 +143,11 @@ public class DelphiController extends BasicController {
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String invitationId = request.getParameter("invitation");
 			final User user = sessionService.getCurrentUser(request, false, false);
-			
+
+			if (survey.getSecurity().startsWith("secured") && !validCodesService.checkValid(answerSetUniqueCode, survey.getUniqueId())) {
+				return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.NoInvitation", null, locale)), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
 			Element element = survey.getElementsByUniqueId().get(questionUid);
 
 			AnswerSet answerSet;
