@@ -279,27 +279,27 @@ public class ExportsController extends BasicController {
 	}
 
 	@RequestMapping(value = "/checkNew", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody String checkNew(@RequestParam("uid") String uid, HttpServletRequest request,
-			HttpServletResponse response) {
+	public @ResponseBody String checkNew(HttpServletRequest request,
+			HttpServletResponse response) throws NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException {
 
-		if (!StringUtils.isNumeric(uid)) {
+		User user = sessionService.getCurrentUser(request);
+		if (user == null) {
 			return "{\"newnames\": [],\"checkExport\":false}";
 		}
 
-		int userID = Integer.parseInt(uid);
-		Boolean hasPendingExports = exportService.hasPendingExports(userID);
+		Boolean hasPendingExports = exportService.hasPendingExports(user.getId());
 		String checkExport = hasPendingExports.toString().toLowerCase();
 		try {
 			if (hasPendingExports) {
 				String newnames = "{\"newnames\": [";
-				List<Export> exports = exportService.getExports(userID, "name", true, false, true);
+				List<Export> exports = exportService.getExports(user.getId(), "name", true, false, true);
 				for (Export export : exports) {
 					if (!newnames.equals("{\"newnames\": [")) {
 						newnames += ", ";
 					}
 					sessionService.setCheckExport(request, checkExport);
 					exportService.setNotified(export.getId());
-					hasPendingExports = exportService.hasPendingExports(userID);
+					hasPendingExports = exportService.hasPendingExports(user.getId());
 					checkExport = hasPendingExports.toString().toLowerCase();
 					newnames += "{\"newname\": \"" + export.getName() + "\"}";
 				}

@@ -1738,8 +1738,22 @@ public class RunnerController extends BasicController {
 
 				if (draft == null && invitationId != null && invitationId.trim().length() > 0) {
 					Invitation invitation = attendeeService.getInvitation(Integer.parseInt(invitationId));
+
+					if (!invitation.getParticipationGroupId().toString().equals(participationGroupId)) {
+						throw new MessageException("invitation id and participationGroupId do not match");
+					}
+
+					ParticipationGroup group = participationService.get(Integer.parseInt(participationGroupId));
+					if (group == null || !group.getActive() || !group.getSurveyUid().equals(survey.getUniqueId())) {
+						throw new MessageException("invalid participationGroupId");
+					}
+
 					draft = answerService.getDraftForInvitation(invitation.getUniqueId());
 					if (draft != null) {
+						if (!draft.getAnswerSet().getSurvey().getUniqueId().equals(survey.getUniqueId())) {
+							throw new MessageException("invitation id and survey id do not match");
+						}
+
 						SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, draft.getAnswerSet(),
 								lang, user, fileService, true);
 						draft.getAnswerSet().setIsDraft(true);

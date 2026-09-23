@@ -1619,11 +1619,15 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public Statistics getStatistics(int requestid) {
+	public Statistics getStatistics(int requestid, int surveyid) throws MessageException {
 		StatisticsRequest statisticsRequest = getStatisticRequest(requestid);
 
 		if (statisticsRequest == null)
 			return null;
+
+		if (statisticsRequest.getSurveyId() != surveyid) {
+			throw new MessageException("this request id does not match the survey id");
+		}
 
 		if (statisticsRequest.isAllanswers()) {
 			Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId(), false, true);

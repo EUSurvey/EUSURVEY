@@ -1,14 +1,14 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.GlobalPrivilege;
+import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
-import org.joda.time.DateTime;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -222,7 +222,7 @@ public class SurveyController extends BasicController {
 	}
 
     @PostMapping("/bulkchange")
-    public @ResponseBody int bulkchange(@RequestBody Map json, HttpServletRequest request) throws NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException {
+    public @ResponseBody int bulkchange(@RequestBody Map json, HttpServletRequest request) throws NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException, ForbiddenURLException {
         String operation = (String) json.get("operation");
         BulkExecutor bulk = (BulkExecutor) context.getBean("bulkExecutor");
 
@@ -231,6 +231,18 @@ public class SurveyController extends BasicController {
         ArrayList<Integer> surveyIds = (ArrayList<Integer>) json.get("surveys");
         int[] sids = surveyIds.stream().mapToInt(i -> i).toArray();
         List<Integer> sidslist = Arrays.stream(sids).boxed().collect(Collectors.toList());
+
+        for (int id : sids) {
+            Survey survey = surveyService.getSurvey(id);
+
+            sessionService.upgradePrivileges(survey, user, request);
+
+            if (!user.getId().equals(survey.getOwner().getId())
+                    && user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+                    && user.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+                throw new ForbiddenURLException();
+            }
+        }
 
         BulkChange change = new BulkChange();
         change.setSurveyIDs(sidslist);
@@ -355,12 +367,18 @@ public class SurveyController extends BasicController {
     }
 
     @GetMapping("/checkBulkChange/{id}")
-    public @ResponseBody CheckBulkChangeResult checkBulkChange(@PathVariable int id) throws MessageException {
+    public @ResponseBody CheckBulkChangeResult checkBulkChange(@PathVariable int id, HttpServletRequest request) throws MessageException, NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException {
         if (id < 1) throw new MessageException("invalid change id: " + id);
 
         var result = new CheckBulkChangeResult();
 
         BulkChange change = surveyService.getBulkChange(id);
+
+        User u = sessionService.getCurrentUser(request);
+        if (change.getUserId() != u.getId()) {
+            throw new MessageException("invalid change id: " + id);
+        }
+
         result.error = change.getError() != null;
         result.finished = change.getFinished();
 

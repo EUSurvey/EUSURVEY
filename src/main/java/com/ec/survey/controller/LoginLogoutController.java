@@ -412,12 +412,9 @@ public class LoginLogoutController extends BasicController {
 				model.put(Constants.ERROR, resources.getMessage("error.PasswordWeak", null, "This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).", locale));
 				return "auth/reset";
 			}
-			
-			User user = administrationService.getUser(codeItem.getUserId());
-			user.setPasswordSalt(Tools.newSalt());
-			user.setPassword(Tools.hash(password + user.getPasswordSalt()));
-			
-			administrationService.updateUser(user);
+
+			administrationService.updatePasswordAndRemoveResetCode(codeItem, password);
+
 			return "redirect:/auth/login?passwordsaved";
 
 		} catch (Exception e) {

@@ -307,7 +307,11 @@ public class ReportingService extends BasicService {
 					String questionIdAndUid = item.getKey();
 					String questionId = questionIdAndUid.substring(0, questionIdAndUid.indexOf('|'));
 					String questionUid = questionIdAndUid.substring(questionIdAndUid.indexOf('|')+1).replace("from", "").replace("to", "");
-					
+
+					if (!Tools.isUUID(questionUid)) {
+						continue;
+					}
+
 					Element question = elementsByUniqueID.get(questionUid);
 					
 					String columnname = "Q" + questionUid.replace("-", "");

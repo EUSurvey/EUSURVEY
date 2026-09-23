@@ -1553,7 +1553,14 @@ public class FileService extends BasicService {
 
 	public java.io.File getSurveyFile(String surveyUID, String fileUID) {
 		java.io.File folder = getSurveyFilesFolder(surveyUID);
-		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
+
+		String path = folder.getPath() + Constants.PATH_DELIMITER + fileUID;
+
+		if (!validateFilesPath(path)) {
+			throw new SecurityException("invalid path detected: " + path);
+		}
+
+		return new java.io.File(path);
 	}
 
 	public java.io.File getSurveyExportFile(String surveyUID, Integer id, String format) throws IOException {
