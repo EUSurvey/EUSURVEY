@@ -239,7 +239,6 @@
 			
 			var request = $.ajax({
 			  url: "${contextpath}/exports/checkNew",
-			  data: {uid : "${USER.id}"},
 			  dataType: "json",
 			  cache: false,
 			  success: function(data)

@@ -439,6 +439,10 @@ public class ContributionController extends BasicController {
 			String answerSetId = request.getParameter("IdAnswerSet");
 			AnswerSet oldAnswerSet = answerService.get(Integer.parseInt(answerSetId));
 
+			if (oldAnswerSet == null || !oldAnswerSet.getUniqueCode().equals(code) || !oldAnswerSet.getSurvey().getUniqueId().equals(origsurvey.getUniqueId())) {
+				throw new MessageException("invalid code");
+			}
+
 			boolean dialogmode = request.getParameter("dialogmode") != null
 					&& request.getParameter("dialogmode").equalsIgnoreCase("true");
 

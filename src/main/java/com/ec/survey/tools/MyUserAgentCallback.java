@@ -1,6 +1,8 @@
 package com.ec.survey.tools;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -31,8 +33,21 @@ public class MyUserAgentCallback extends ITextUserAgent
 	        java.io.InputStream is = null;
 	        uri = resolveURI(uri);
 	        try {
-	            URL url = new URL(uri);		            
+	            URL url = new URL(uri);
+
+				if (!"https".equalsIgnoreCase(url.getProtocol())) {
+					throw new IOException("Unsupported PDF resource scheme");
+				}
+				InetAddress address = InetAddress.getByName(url.getHost());
+				if (address.isAnyLocalAddress() || address.isLoopbackAddress()
+						|| address.isLinkLocalAddress() || address.isSiteLocalAddress()
+						|| address.isMulticastAddress()) {
+					throw new IOException("Unsafe PDF resource destination");
+				}
+
 	            URLConnection uc = url.openConnection();
+				uc.setConnectTimeout(3000);
+				uc.setReadTimeout(5000);
 	            is = uc.getInputStream();
 	        }
 	        catch (Exception e) {

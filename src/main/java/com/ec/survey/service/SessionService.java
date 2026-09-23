@@ -385,7 +385,9 @@ public class SessionService extends BasicService {
 					throw new ForbiddenURLException();
 				}
 
-				this.setCurrentUser(request, user);
+				if (request != null) {
+					this.setCurrentUser(request, user);
+				}
 			}
 		} else {
 			// owner has full local privileges
@@ -394,7 +396,9 @@ public class SessionService extends BasicService {
 			user.getLocalPrivileges().put(LocalPrivilege.AccessDraft, 2);
 		}
 
-		updateSessionInfo(survey, user, request);
+		if (request != null) {
+			updateSessionInfo(survey, user, request);
+		}
 	}
 
 	private Form checkSurvey(Survey survey, User user, HttpServletRequest request) throws Exception {

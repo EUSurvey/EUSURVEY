@@ -550,7 +550,11 @@ public class AdministrationService extends BasicService {
 	public OneTimePasswordResetCode createOneTimePasswordResetCode(User user) {
 		OneTimePasswordResetCode code = new OneTimePasswordResetCode(user);
 		Session session = sessionFactory.getCurrentSession();
+
+		session.createQuery("DELETE FROM OneTimePasswordResetCode c WHERE userId = :userId").setParameter("userId", user.getId()).executeUpdate();
+
 		session.save(code);
+
 		return code;
 	}
 
@@ -989,5 +993,16 @@ public class AdministrationService extends BasicService {
 		session.saveOrUpdate(entry);
 
 		return true;
+    }
+
+	@Transactional
+    public void updatePasswordAndRemoveResetCode(OneTimePasswordResetCode codeItem, String password) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, codeItem.getUserId());
+		user.setPasswordSalt(Tools.newSalt());
+		user.setPassword(Tools.hash(password + user.getPasswordSalt()));
+		session.update(user);
+
+		session.delete(codeItem);
     }
 }
