@@ -343,9 +343,9 @@ public class SettingsController extends BasicController {
 			result.addObject(Constants.MESSAGE, resources.getMessage("message.ShareNotFound", null, "Share not found", locale));
 		} else {
 
-			if (!share.getOwner().getId().equals(user.getId())
-				&& user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2
-				&& (share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))) {
+			if (!share.getOwner().getId().equals(user.getId()) // user is not the owner
+				&& user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2 // user has no admin privileges
+				&& (!share.getRecipient().getId().equals(user.getId()))) { // user is not the recipient
 
 				result.addObject(Constants.MESSAGE, resources.getMessage("error.ShareUnauthorized", null,
 						"You are not authorized to edit this share.", locale));
