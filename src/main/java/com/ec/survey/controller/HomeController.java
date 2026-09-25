@@ -466,7 +466,11 @@ public class HomeController extends BasicController {
 	public @ResponseBody String deletefile(HttpServletRequest request, HttpServletResponse response) {
 		
 		try {
-			String uid = request.getParameter("uid");	
+			String uid = request.getParameter("uid");
+
+			if (!Tools.isUUID(uid)) {
+				throw new MessageException("invalid unique code");
+			}
 			
 			java.io.File file = fileService.getTemporaryFile(uid);
 			
