@@ -2810,6 +2810,21 @@ public class ManagementController extends BasicController {
 		try {
 			String uid = request.getParameter("uid");
 			String suid = request.getParameter("suid");
+
+			if (!Tools.isUUID(uid) || !Tools.isUUID(suid)) {
+				return "{\"success\": false}";
+			}
+
+			Survey survey = surveyService.getSurveyByUniqueId(suid, false, true);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(survey, u, request);
+
+			if (!u.getId().equals(survey.getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+				throw new ForbiddenURLException();
+			}
+
 			fileService.deleteIfNotReferenced(uid, suid);
 			return "{\"success\": true}";
 
@@ -2828,6 +2843,21 @@ public class ManagementController extends BasicController {
 			String uid = request.getParameter("uid");
 			String suid = request.getParameter("suid");
 			String eid = request.getParameter("eid");
+
+			if (!Tools.isUUID(uid) || !Tools.isUUID(suid)) {
+				return "{\"success\": false}";
+			}
+
+			Survey survey = surveyService.getSurveyByUniqueId(suid, false, true);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(survey, u, request);
+
+			if (!u.getId().equals(survey.getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+				throw new ForbiddenURLException();
+			}
+
 			File file = fileService.get(uid);
 
 			try {
