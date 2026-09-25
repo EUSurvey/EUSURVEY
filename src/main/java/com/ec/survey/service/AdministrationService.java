@@ -202,22 +202,6 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional
-	public boolean checkUserPassword(User user, String rawPassword) {
-		String md5hash = Tools.md5hash(rawPassword);
-
-		if (user.getPassword().equals(md5hash)) {
-			// replace md5 hash by salted SHA-512 hash
-			Session session = sessionFactory.getCurrentSession();
-			user.setPasswordSalt(Tools.newSalt());
-			user.setPassword(Tools.hash(rawPassword + user.getPasswordSalt()));
-			session.update(user);
-			return true;
-		}
-
-		return false;
-	}
-	
-	@Transactional
 	public String setUserDeleteRequested(int id) throws IOException, MessageException {
 		Session session = sessionFactory.getCurrentSession();
 		User user = (User) session.get(User.class, id);
