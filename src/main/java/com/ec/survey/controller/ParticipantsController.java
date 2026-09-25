@@ -344,6 +344,10 @@ public class ParticipantsController extends BasicController {
 
 			if (id > 0) {
 				participationGroup = participationService.get(id);
+
+				if (!participationGroup.getSurveyUid().equals(form.getSurvey().getUniqueId())) {
+					throw new ForbiddenURLException();
+				}
 			} else {
 				participationGroup.setActive(true);
 				participationGroup.setSurveyId(form.getSurvey().getId());
@@ -661,6 +665,9 @@ public class ParticipantsController extends BasicController {
 		ModelAndView result = new ModelAndView("management/send-invitations", "form", form);
 
 		ParticipationGroup participationGroup = participationService.get(Integer.parseInt(id));
+		if (!participationGroup.getSurveyUid().equals(form.getSurvey().getUniqueId())) {
+			throw new ForbiddenURLException();
+		}
 
 		result.addObject("senderSubject",
 				participationGroup.getTemplateSubject() != null ? participationGroup.getTemplateSubject()
@@ -850,6 +857,11 @@ public class ParticipantsController extends BasicController {
 			return model;
 		}
 
+		ParticipationGroup group = participationService.get(participationGroupId);
+		if (!group.getSurveyUid().equals(form.getSurvey().getUniqueId())) {
+			throw new ForbiddenURLException();
+		}
+
 		MailTask task = new MailTask();
 		task.setLocale(locale.getLanguage());
 		task.setSelectedAttendee(selectedAttendee);
@@ -868,7 +880,6 @@ public class ParticipantsController extends BasicController {
 
 		if (mailtext != null && mailtext.length() > 0) {
 			int templateid = Integer.parseInt(mailtext);
-			ParticipationGroup group = participationService.get(task.getParticipationGroupId());
 			group.setLastUsedTemplateID(templateid);
 			participationService.update(group);
 		}
