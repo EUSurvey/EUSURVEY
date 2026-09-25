@@ -2836,56 +2836,6 @@ public class ManagementController extends BasicController {
 		return "{\"success\": false}";
 	}
 
-	@RequestMapping(value = "/deleteDownloadFile", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody String deleteDownloadFile(HttpServletRequest request, HttpServletResponse response) {
-
-		try {
-			String uid = request.getParameter("uid");
-			String suid = request.getParameter("suid");
-			String eid = request.getParameter("eid");
-
-			if (!Tools.isUUID(uid) || !Tools.isUUID(suid)) {
-				return "{\"success\": false}";
-			}
-
-			Survey survey = surveyService.getSurveyByUniqueId(suid, false, true);
-			User u = sessionService.getCurrentUser(request);
-			sessionService.upgradePrivileges(survey, u, request);
-
-			if (!u.getId().equals(survey.getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
-				throw new ForbiddenURLException();
-			}
-
-			File file = fileService.get(uid);
-
-			try {
-				Element element = surveyService.getElement(Integer.parseInt(eid));
-				if (element instanceof Download) {
-					Download download = (Download) element;
-					download.getFiles().remove(file);
-				} else if (element instanceof Confirmation) {
-					Confirmation confirmation = (Confirmation) element;
-					confirmation.getFiles().remove(file);
-				}
-				surveyService.update(element);
-			} catch (NumberFormatException e) {
-				// ignore, this happens if the element was never saved to the database
-			}
-
-			fileService.delete(file);
-			fileService.deleteIfNotReferenced(uid, suid);
-			return "{\"success\": true}";
-
-		} catch (Exception ex) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			logger.error(ex.getMessage(), ex);
-		}
-
-		return "{\"success\": false}";
-	}
-
 	@RequestMapping(value = "/test", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView test(@PathVariable String shortname, HttpServletRequest request, Locale locale)
 			throws InvalidURLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException,

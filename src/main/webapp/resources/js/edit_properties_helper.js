@@ -1709,33 +1709,6 @@ function deleteDownloadFile(uid, button, eid, noundo)
 	if (!noundo)
 		_actions.SaveEnabled(true);
 
-	//No Network request for deletion is required. Everything is handled on save
-
-	/*
-	var request = $.ajax({
-	  url: contextpath + "/noform/management/deleteDownloadFile",
-	  data: {uid : uid, eid: eid, suid : surveyUniqueId},
-	  cache: false,
-	  async: false,
-	  dataType: "json",
-	  success: function(data)
-	  {
-		  if (data.success)
-		  {
-			  if (button != null)
-			  $(button).closest("tr").remove();
-			  
-			  var id = $(_elementProperties.selectedelement).attr("data-id");
-			  var element = _elements[id];
-			  element.files.remove( function (item) { return item.uid() == uid; } ) 
-			  
-			  if (!noundo)
-			  _actions.SaveEnabled(true);
-//			  _undoProcessor.addUndoStep(["FileDeleted", $(_elementProperties.selectedelement).attr("id"), uid]);
-		  }				
-	  }
-	});
-	*/
 }
 
 function createImageUploader(instance)
