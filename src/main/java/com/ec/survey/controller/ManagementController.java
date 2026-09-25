@@ -5084,7 +5084,7 @@ public class ManagementController extends BasicController {
 		if (access != null) {
 			Form form = sessionService.getForm(request, shortname, false, false);
 			User u = sessionService.getCurrentUser(request);
-			if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request)) {
+			if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request) || !access.getSurvey().getUniqueId().equals(form.getSurvey().getUniqueId())) {
 				throw new ForbiddenURLException();
 			}
 
@@ -5431,7 +5431,7 @@ public class ManagementController extends BasicController {
 			
 			if (access != null) {
 				
-				if (!userIsFormAdmin && !u.getId().equals(access.getOwner())) {
+				if (!userIsFormAdmin && !u.getId().equals(access.getOwner()) || !access.getSurveyUID().equals(form.getSurvey().getUniqueId())) {
 					throw new ForbiddenURLException();
 				}
 				
@@ -5446,6 +5446,10 @@ public class ManagementController extends BasicController {
 			Access access = surveyService.getAccess(Integer.parseInt(id));
 	
 			if (access != null) {
+
+				if (!access.getSurvey().getUniqueId().equals(form.getSurvey().getUniqueId())) {
+					throw new ForbiddenURLException();
+				}
 					
 				surveyService.deleteAccess(access);
 				activityService.log(ActivityRegistry.ID_PRIVILEGES_DELETE, access.getInfo(), null, sessionService.getCurrentUser(request).getId(),
