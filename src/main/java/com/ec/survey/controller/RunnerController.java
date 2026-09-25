@@ -379,6 +379,8 @@ public class RunnerController extends BasicController {
 					model.addObject(Constants.UNIQUECODE, uniqueCode);
 					request.getSession().setAttribute(Constants.UNIQUECODE, uniqueCode);
 
+					validCodesService.add(uniqueCode, survey);
+
 					return model;
 				} else {
 					Survey draft = surveyService.getSurveyByUniqueId(participationGroup.getSurveyUid(), false, true);
@@ -525,6 +527,14 @@ public class RunnerController extends BasicController {
 				survey = surveyService.getSurvey(participationGroup.getSurveyId(), false, true);
 				// this is the base/draft survey, but we need the active one
 				survey = surveyService.getSurvey(survey.getShortname(), false, true, false, false, null, true, true);
+			}
+
+			if (!invitation.getParticipationGroupId().equals(participationGroup.getId())
+					|| !participationGroup.getSurveyUid().equals(survey.getUniqueId())
+					|| !participationGroup.getActive()
+					|| (invitation.getDeactivated() != null && invitation.getDeactivated())
+					|| !invitation.getUniqueId().equals(uniqueCode)) {
+				return new ModelAndView("redirect:/errors/500.html");
 			}
 
 			Attendee attendee = attendeeService.get(invitation.getAttendeeId());
