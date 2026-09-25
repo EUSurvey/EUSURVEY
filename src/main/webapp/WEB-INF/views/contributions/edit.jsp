@@ -112,7 +112,7 @@
 						}
 					})	
 					 
-					 var s = "ids=" + ids + "&survey=${form.survey.id}&slang=${form.language.code}&as=${answerSet}";
+					 var s = "ids=" + ids + "&survey=${form.survey.id}&slang=${form.language.code}&as=${answerSet}&uniquecode=${uniqueCode}";
 						
 						$.ajax({
 							type:'GET',
