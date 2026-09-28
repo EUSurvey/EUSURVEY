@@ -1,6 +1,7 @@
 package com.ec.survey.service;
 
 import com.ec.survey.exception.MessageException;
+import com.ec.survey.exception.NoAdminPasswordException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.*;
 import com.ec.survey.model.survey.*;
@@ -52,7 +53,11 @@ public class AdministrationService extends BasicService {
 		return adminuser;
 	}
 
-	public String getAdminPassword() {
+	public String getAdminPassword() throws NoAdminPasswordException {
+		if (adminpassword == null || adminpassword.isEmpty()) {
+			throw new NoAdminPasswordException();
+		}
+
 		return adminpassword;
 	}
 
