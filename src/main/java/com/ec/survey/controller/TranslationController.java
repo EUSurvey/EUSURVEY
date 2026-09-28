@@ -167,6 +167,11 @@ public class TranslationController extends BasicController {
 				surveyService.update(form.getSurvey(), true, true, u.getId());
 			} else {
 				Translations translations = translationService.getTranslations(id);
+
+				if (!translations.getSurveyUid().equals(form.getSurvey().getUniqueId())) {
+					throw new ForbiddenURLException();
+				}
+
 				if (form.getSurvey().getLanguage().getCode().equalsIgnoreCase(translations.getLanguage().getCode())) {
 					SurveyHelper.replace(form.getSurvey(), search, replace);
 					surveyService.update(form.getSurvey(), false, true, u.getId());
@@ -411,11 +416,24 @@ public class TranslationController extends BasicController {
 	}
 
 	@GetMapping(value = "/canceltranslation")
-	public void cancelTranslation(HttpServletRequest request, Locale locale, HttpServletResponse response) {
+	public void cancelTranslation(@PathVariable String shortname, HttpServletRequest request, Locale locale, HttpServletResponse response) throws Exception {
+
+		Form form;
+		form = sessionService.getForm(request, shortname, false, false);
+		User u = sessionService.getCurrentUser(request);
+		if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request)) {
+			throw new ForbiddenURLException();
+		}
+
 		String idString = request.getParameter("translationId");
 		if (idString != null) {
 			Integer id = Integer.valueOf(idString);
 			Translations translations = translationService.getTranslations(id);
+
+			if (!translations.getSurveyUid().equals(form.getSurvey().getUniqueId())) {
+				throw new ForbiddenURLException();
+			}
+
 			if (translations.getRequested()) {
 				translations.setRequested(false);
 				translationService.save(translations);
@@ -1062,12 +1080,21 @@ public class TranslationController extends BasicController {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 
+		User u = sessionService.getCurrentUser(request);
+		if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request)) {
+			throw new ForbiddenURLException();
+		}
+
 		Translations translations = null;
 		if (id.equalsIgnoreCase("0")) {
 			// export survey itself
 			translations = TranslationsHelper.getTranslations(form.getSurvey(), false);
 		} else {
 			translations = translationService.getTranslations(Integer.parseInt(id));
+
+			if (!translations.getSurveyUid().equals(form.getSurvey().getUniqueId())) {
+				throw new ForbiddenURLException();
+			}
 		}
 
 		if (translations != null) {
