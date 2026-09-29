@@ -1815,7 +1815,7 @@ public class ManagementController extends BasicController {
 				if (uploadedSurvey.getPassword() != null
 						&& !uploadedSurvey.getPassword().equalsIgnoreCase("********")) {
 					if (!uploadedSurvey.getPassword().equals(survey.getPassword())) {
-						String[] oldnew = { survey.getPassword(), uploadedSurvey.getPassword() };
+						String[] oldnew = { "********", "********" };
 						activitiesToLog.put(ActivityRegistry.ID_GLOBAL_PASSWORD, oldnew);
 					}
 

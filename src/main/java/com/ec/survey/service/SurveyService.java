@@ -5948,9 +5948,6 @@ public class SurveyService extends BasicService {
 			s.append("open");
 		} else {
 			s.append("secured");
-			if (survey.getPassword() != null && survey.getPassword().length() > 0) {
-				s.append(";PW:").append(encoder.encodeForXML(survey.getPassword()));
-			}
 			if (survey.getEcasSecurity()) {
 				if (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("all")) {
 					s.append(";EULogin_all");
