@@ -42,6 +42,7 @@ Either download EUSurvey's source code as a ZIP archive and extract its content 
 Modify the spring properties from src/main/config file to match your requirements.
 For the standard OSS version please modify src/main/config/oss.
 If you want to use docker, please modify src/main/config/ossdocker.
+Make sure to set a safe password in the *admin.password* property.
 
 ### Run the application
 Build EUSurvey's war using the following command:

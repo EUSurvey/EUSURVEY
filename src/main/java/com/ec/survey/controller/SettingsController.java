@@ -320,7 +320,7 @@ public class SettingsController extends BasicController {
 
 	@PostMapping(value = "/shares")
 	public ModelAndView sharesPOST(HttpServletRequest request, Locale locale)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+            throws Exception {
 
 		String target = request.getParameter("target");
 		if (target != null && target.equals("createStaticShare")) {
@@ -400,7 +400,7 @@ public class SettingsController extends BasicController {
 	}
 
 	public ModelAndView createStaticShare(HttpServletRequest request, Locale locale)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+            throws Exception {
 
 		User user = sessionService.getCurrentUser(request);
 
@@ -427,12 +427,17 @@ public class SettingsController extends BasicController {
 
 		List<Attendee> attendees = new ArrayList<>();
 
+		var allAttendeeIdsOfUser = attendeeService.getAccessibleAttendees(user.getId(), null);
+
 		for (String key : parameters.keySet()) {
 			if (key.startsWith("att")) {
 				int intKey = Integer.parseInt(key.substring(3));
 
-				Attendee attendee = attendeeService.get(intKey);
-				attendees.add(attendee);
+				// make sure that the attendee is visible by the current user
+				if (allAttendeeIdsOfUser.contains(intKey)) {
+					Attendee attendee = attendeeService.get(intKey);
+					attendees.add(attendee);
+				}
 			}
 		}
 

@@ -86,9 +86,7 @@ public class WebServiceController extends BasicController {
 				return null;
 			}
 
-			if (administrationService.checkUserPassword(user, credentials.getValue())) {
-				// md5 hash replaced
-			} else if (!Tools.isPasswordValid(user.getPassword(), credentials.getValue() + user.getPasswordSalt())) {
+			if (!Tools.isPasswordValid(user.getPassword(), credentials.getValue() + user.getPasswordSalt())) {
 				response.setStatus(403);
 				return null;
 			}

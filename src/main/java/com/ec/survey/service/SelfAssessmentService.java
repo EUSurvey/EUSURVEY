@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.ForbiddenException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
@@ -427,13 +428,18 @@ public class SelfAssessmentService extends BasicService {
 		surveyService.update(surveyCopy, true, true, surveyCopy.getOwner().getId());
 	}
 
-	public SAResult getSAResult(int datasetid, String contributionuid) {
+	public SAResult getSAResult(int datasetid, String contributionuid) throws ForbiddenException {
 		SAResult result = new SAResult();
 		
 		AnswerSet answerSet = answerService.get(contributionuid);
 		
 		SATargetDataset dataset = datasetid > 0 ? getTargetDataset(datasetid) : null;
 		result.setComparisonDataset(dataset);
+
+		// verify that target dataset and contribution belong to the same survey
+		if (dataset != null && !dataset.getSurveyUID().equals(answerSet.getSurvey().getUniqueId())) {
+			throw new ForbiddenException();
+		}
 		
 		SAReportConfiguration config = getReportConfiguration(answerSet.getSurvey().getUniqueId());
 		result.setConfiguration(config);		

@@ -2,6 +2,7 @@ package com.ec.survey.tools;
 
 import java.util.List;
 
+import com.ec.survey.exception.NoAdminPasswordException;
 import org.apache.log4j.Logger;
 
 import com.ec.survey.model.administration.Role;
@@ -12,7 +13,7 @@ public class UsersCreator {
 	private static final Logger logger = Logger.getLogger(UsersCreator.class);
 
 	public static void createDefaultUsers(AdministrationService administrationService, boolean createStressTestData,
-			String sender) throws LoginAlreadyExistsException {
+			String sender) throws LoginAlreadyExistsException, NoAdminPasswordException {
 
 		List<Role> roles = administrationService.getAllRoles();
 		Role adminRole = null;

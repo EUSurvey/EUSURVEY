@@ -1,6 +1,7 @@
 package com.ec.survey.tools;
 
 import com.ec.survey.controller.HomeController;
+import com.ec.survey.exception.NoAdminPasswordException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
@@ -59,9 +60,12 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 		if (result.isEmpty()) {
 			logger.info("InitializeDatabase No Roles create basic rule with showecas " + showecas);
 			RolesCreator.createBasicRoles(administrationService, showecas);
+
 			try {
 				UsersCreator.createDefaultUsers(administrationService, createStressTestData || createNewStressTestData, sender);
-			} catch (Exception e1) {
+			} catch (NoAdminPasswordException e) {
+                throw new RuntimeException(e);
+            } catch (Exception e1) {
 				logger.error(e1);
 			}
 			
