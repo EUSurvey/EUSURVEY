@@ -1,6 +1,7 @@
 package com.ec.survey.service;
 
 import com.ec.survey.exception.MessageException;
+import com.ec.survey.exception.NoAdminPasswordException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.*;
 import com.ec.survey.model.survey.*;
@@ -52,7 +53,11 @@ public class AdministrationService extends BasicService {
 		return adminuser;
 	}
 
-	public String getAdminPassword() {
+	public String getAdminPassword() throws NoAdminPasswordException {
+		if (adminpassword == null || adminpassword.isEmpty()) {
+			throw new NoAdminPasswordException();
+		}
+
 		return adminpassword;
 	}
 
@@ -201,22 +206,6 @@ public class AdministrationService extends BasicService {
 		session.update(user);
 	}
 
-	@Transactional
-	public boolean checkUserPassword(User user, String rawPassword) {
-		String md5hash = Tools.md5hash(rawPassword);
-
-		if (user.getPassword().equals(md5hash)) {
-			// replace md5 hash by salted SHA-512 hash
-			Session session = sessionFactory.getCurrentSession();
-			user.setPasswordSalt(Tools.newSalt());
-			user.setPassword(Tools.hash(rawPassword + user.getPasswordSalt()));
-			session.update(user);
-			return true;
-		}
-
-		return false;
-	}
-	
 	@Transactional
 	public String setUserDeleteRequested(int id) throws IOException, MessageException {
 		Session session = sessionFactory.getCurrentSession();

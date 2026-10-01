@@ -1815,7 +1815,7 @@ public class ManagementController extends BasicController {
 				if (uploadedSurvey.getPassword() != null
 						&& !uploadedSurvey.getPassword().equalsIgnoreCase("********")) {
 					if (!uploadedSurvey.getPassword().equals(survey.getPassword())) {
-						String[] oldnew = { survey.getPassword(), uploadedSurvey.getPassword() };
+						String[] oldnew = { "********", "********" };
 						activitiesToLog.put(ActivityRegistry.ID_GLOBAL_PASSWORD, oldnew);
 					}
 
@@ -2810,41 +2810,21 @@ public class ManagementController extends BasicController {
 		try {
 			String uid = request.getParameter("uid");
 			String suid = request.getParameter("suid");
-			fileService.deleteIfNotReferenced(uid, suid);
-			return "{\"success\": true}";
 
-		} catch (Exception ex) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			logger.error(ex.getMessage(), ex);
-		}
-
-		return "{\"success\": false}";
-	}
-
-	@RequestMapping(value = "/deleteDownloadFile", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody String deleteDownloadFile(HttpServletRequest request, HttpServletResponse response) {
-
-		try {
-			String uid = request.getParameter("uid");
-			String suid = request.getParameter("suid");
-			String eid = request.getParameter("eid");
-			File file = fileService.get(uid);
-
-			try {
-				Element element = surveyService.getElement(Integer.parseInt(eid));
-				if (element instanceof Download) {
-					Download download = (Download) element;
-					download.getFiles().remove(file);
-				} else if (element instanceof Confirmation) {
-					Confirmation confirmation = (Confirmation) element;
-					confirmation.getFiles().remove(file);
-				}
-				surveyService.update(element);
-			} catch (NumberFormatException e) {
-				// ignore, this happens if the element was never saved to the database
+			if (!Tools.isUUID(uid) || !Tools.isUUID(suid)) {
+				return "{\"success\": false}";
 			}
 
-			fileService.delete(file);
+			Survey survey = surveyService.getSurveyByUniqueId(suid, false, true);
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(survey, u, request);
+
+			if (!u.getId().equals(survey.getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+				throw new ForbiddenURLException();
+			}
+
 			fileService.deleteIfNotReferenced(uid, suid);
 			return "{\"success\": true}";
 
@@ -5104,7 +5084,7 @@ public class ManagementController extends BasicController {
 		if (access != null) {
 			Form form = sessionService.getForm(request, shortname, false, false);
 			User u = sessionService.getCurrentUser(request);
-			if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request)) {
+			if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request) || !access.getSurvey().getUniqueId().equals(form.getSurvey().getUniqueId())) {
 				throw new ForbiddenURLException();
 			}
 
@@ -5451,7 +5431,7 @@ public class ManagementController extends BasicController {
 			
 			if (access != null) {
 				
-				if (!userIsFormAdmin && !u.getId().equals(access.getOwner())) {
+				if (!userIsFormAdmin && !u.getId().equals(access.getOwner()) || !access.getSurveyUID().equals(form.getSurvey().getUniqueId())) {
 					throw new ForbiddenURLException();
 				}
 				
@@ -5466,6 +5446,10 @@ public class ManagementController extends BasicController {
 			Access access = surveyService.getAccess(Integer.parseInt(id));
 	
 			if (access != null) {
+
+				if (!access.getSurvey().getUniqueId().equals(form.getSurvey().getUniqueId())) {
+					throw new ForbiddenURLException();
+				}
 					
 				surveyService.deleteAccess(access);
 				activityService.log(ActivityRegistry.ID_PRIVILEGES_DELETE, access.getInfo(), null, sessionService.getCurrentUser(request).getId(),

@@ -328,13 +328,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			throw new BadCredentialsException("User does not exists!");
 		}
 
-		// Compare passwords
-		// Make sure to encode the password first before comparing
-		//first check if old password hash (MD5)		
-		if (administrationService.checkUserPassword(user, (String) auth.getCredentials())) {
-			//replaced md5 hash by salted SHA-512 hash			
-		} else	if (!Tools.isPasswordValid(user.getPassword(), auth.getCredentials() + user.getPasswordSalt())) {
-			
+		if (!Tools.isPasswordValid(user.getPassword(), auth.getCredentials() + user.getPasswordSalt())) {
 			if (user.getBadLoginAttempts() >= 2)
 			{
 				throw new LockedException("More than two bad login attempts");

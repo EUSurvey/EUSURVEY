@@ -4,9 +4,11 @@ import com.ec.survey.exception.*;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
+import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.delphi.DelphiUpdateResult;
 import com.ec.survey.model.selfassessment.SAReportConfiguration;
 import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.*;
@@ -20,6 +22,8 @@ import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
 import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
@@ -375,6 +379,8 @@ public class RunnerController extends BasicController {
 					model.addObject(Constants.UNIQUECODE, uniqueCode);
 					request.getSession().setAttribute(Constants.UNIQUECODE, uniqueCode);
 
+					validCodesService.add(uniqueCode, survey);
+
 					return model;
 				} else {
 					Survey draft = surveyService.getSurveyByUniqueId(participationGroup.getSurveyUid(), false, true);
@@ -521,6 +527,14 @@ public class RunnerController extends BasicController {
 				survey = surveyService.getSurvey(participationGroup.getSurveyId(), false, true);
 				// this is the base/draft survey, but we need the active one
 				survey = surveyService.getSurvey(survey.getShortname(), false, true, false, false, null, true, true);
+			}
+
+			if (!invitation.getParticipationGroupId().equals(participationGroup.getId())
+					|| !participationGroup.getSurveyUid().equals(survey.getUniqueId())
+					|| !participationGroup.getActive()
+					|| (invitation.getDeactivated() != null && invitation.getDeactivated())
+					|| !invitation.getUniqueId().equals(uniqueCode)) {
+				return new ModelAndView("redirect:/errors/500.html");
 			}
 
 			Attendee attendee = attendeeService.get(invitation.getAttendeeId());
@@ -2715,21 +2729,44 @@ public class RunnerController extends BasicController {
 	}
 
 	@RequestMapping(value = "/elements/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request,
-			HttpServletResponse response)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request)
+            throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException {
 		String ids = request.getParameter("ids");
 		if (ids == null)
 			return null;
 
-		List<Element> result = surveyService.getElements(ids.split("-"));
+		List<Element> result = new ArrayList<>();
 
 		String slang = request.getParameter("slang");
 		Survey survey = SurveyHelper.createTranslatedSurvey(Integer.parseInt(id), slang, surveyService,
 				translationService, false);
 
-		if (survey == null) {
+		if (survey == null || (!survey.getIsDraft() && !survey.getIsActive())) {
 			return null;
+		}
+
+		if (survey.getIsDraft()) {
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(survey, u, request);
+			if (!u.getId().equals(survey.getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+				throw new ForbiddenURLException();
+			}
+		} else {
+			String answerSetUniqueCode = request.getParameter("uniquecode");
+			if (survey.getSecurity().startsWith("secured") && !validCodesService.checkValid(answerSetUniqueCode, survey.getUniqueId())) {
+				throw new ForbiddenURLException();
+			}
+		}
+
+		var allElements = survey.getElementsById();
+		var idArray = ids.split("-");
+		for (String elementIdString : idArray) {
+			int elementId = Integer.parseInt(elementIdString);
+			if (allElements.containsKey(elementId)) {
+				result.add(allElements.get(elementId));
+			}
 		}
 
 		Form form = new Form();

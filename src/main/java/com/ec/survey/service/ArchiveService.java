@@ -265,7 +265,9 @@ public class ArchiveService extends BasicService {
 		}
 
 		if (filter.getSortKey() != null && filter.getSortKey().length() > 0) {
-			hql += " ORDER BY a." + filter.getSortKey() + " " + filter.getSortOrder();
+			if (filter.getSortKey().equals("surveyShortname") || filter.getSortKey().equals("surveyTitle") || filter.getSortKey().equals("created") || filter.getSortKey().equals("archived") || filter.getSortKey().equals("replies")) {
+				hql += " ORDER BY a." + filter.getSortKey() + " " + ("ASC".equalsIgnoreCase(filter.getSortOrder()) ? "ASC" : "DESC");
+			}
 		}
 
 		Query query = session.createQuery(hql);

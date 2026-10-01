@@ -1,9 +1,7 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
-import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
-import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.selfassessment.SACriterion;
 import com.ec.survey.model.selfassessment.SAReportConfiguration;
 import com.ec.survey.model.selfassessment.SAResult;
@@ -13,7 +11,6 @@ import com.ec.survey.model.selfassessment.SATargetDataset;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.SelfAssessmentService;
 import com.ec.survey.service.SessionService;
-import com.ec.survey.tools.Constants;
 import com.mysql.cj.util.StringUtils;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -23,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -302,6 +298,10 @@ public class SelfAssessmentController extends BasicController {
 			}	
 			
 			int datasetId = Integer.parseInt(request.getParameter("dataset"));
+			var dataset = selfassessmentService.getTargetDataset(datasetId);
+			if (dataset == null || !dataset.getSurveyUID().equals(survey.getUniqueId())) {
+				throw new ForbiddenURLException();
+			}
 			
 			SAScoreCard result = selfassessmentService.getScoreCard(datasetId);
 			List<SACriterion> criteria = selfassessmentService.getCriteria(survey.getUniqueId());
@@ -365,6 +365,11 @@ public class SelfAssessmentController extends BasicController {
 			}	
 				
 			int datasetId = Integer.parseInt(request.getParameter("dataset"));
+			var dataset = selfassessmentService.getTargetDataset(datasetId);
+			if (dataset == null || !dataset.getSurveyUID().equals(survey.getUniqueId())) {
+				throw new ForbiddenURLException();
+			}
+
 			selfassessmentService.updateScoreCard(card, datasetId);
 			
 			return "OK";
@@ -432,10 +437,10 @@ public class SelfAssessmentController extends BasicController {
 	public @ResponseBody SAResult results(@PathVariable String shortname, HttpServletRequest request) throws Exception {
 		String datasetid = request.getParameter("dataset");		
 		int dataset = Integer.parseInt(datasetid);
-		
-		String contributionuid = request.getParameter("contribution");		
-		//TODO check
-		
+
+		String contributionuid = request.getParameter("contribution");
+
+		// this method checks that datasetid and contributionuid match
 		SAResult result = selfassessmentService.getSAResult(dataset, contributionuid);
 		return result;
 	}

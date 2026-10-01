@@ -338,7 +338,7 @@
 					}
 				})	
 					 
-			 	var s = "ids=" + ids.substring(0, ids.length-1) + "&survey=${form.survey.id}&slang=${form.language.code}&as=${answerSet}&foreditor=true";
+			 	var s = "ids=" + ids.substring(0, ids.length-1) + "&survey=${form.survey.id}&slang=${form.language.code}&as=${answerSet}&foreditor=true&uniquecode=${uniqueCode}";
 				
 				$.ajax({
 					type:'GET',
