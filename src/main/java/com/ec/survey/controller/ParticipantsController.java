@@ -1256,6 +1256,10 @@ public class ParticipantsController extends BasicController {
 			if (parameters.containsKey("id")) {
 				int id = Integer.parseInt(parameters.get("id")[0]);
 				g = participationService.get(id);
+
+				if (!g.getSurveyUid().equals(form.getSurvey().getUniqueId())) {
+					throw new ForbiddenURLException();
+				}
 			} else {
 				g.setActive(true);
 				g.setSurveyId(form.getSurvey().getId());
