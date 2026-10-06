@@ -234,7 +234,7 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             	 request.getSession().removeAttribute("surveyeditorsaved");
             }
 
-			User u = sessionService.getCurrentUser(request);
+			User u = sessionService.getCurrentUser(request, false);
 			if (u != null && u.getType().equalsIgnoreCase("ECAS") && u.isExternal()) {
 				modelAndView.getModelMap().addAttribute("showexternalaccessinfo", true);
 			}
