@@ -2750,7 +2750,8 @@ public class RunnerController extends BasicController {
 			sessionService.upgradePrivileges(survey, u, request);
 			if (!u.getId().equals(survey.getOwner().getId())
 					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 2) {
 				throw new ForbiddenURLException();
 			}
 		} else {
