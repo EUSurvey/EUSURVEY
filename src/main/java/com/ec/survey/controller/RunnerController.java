@@ -379,7 +379,7 @@ public class RunnerController extends BasicController {
 					model.addObject(Constants.UNIQUECODE, uniqueCode);
 					request.getSession().setAttribute(Constants.UNIQUECODE, uniqueCode);
 
-					validCodesService.add(uniqueCode, survey);
+					validCodesService.revalidate(uniqueCode, survey);
 
 					return model;
 				} else {
