@@ -85,7 +85,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 			if (ecas)
 			{
 				try {					
-					user = administrationService.getUserForLogin(securityContext.getAuthentication().getName(), true);
+					user = administrationService.getUserForLoginAndInitialize(securityContext.getAuthentication().getName(), true);
 				} catch (Exception e)
 		    	{
 					logger.error(e.getLocalizedMessage(), e);
@@ -113,7 +113,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 				//read data from ldap
 				EcasHelper.readData(user, ldapService);				
 			} else {
-				user = administrationService.getUserForLogin(securityContext.getAuthentication().getName(), ecas);
+				user = administrationService.getUserForLoginAndInitialize(securityContext.getAuthentication().getName(), ecas);
 			}
 			
 			request.getSession().setAttribute("USER", user);
