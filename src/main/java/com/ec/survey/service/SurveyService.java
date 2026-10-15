@@ -7332,7 +7332,7 @@ public class SurveyService extends BasicService {
 		return false;
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public String createNewPDFCode(String surveyUid, int answerSetId) {
 		Session session = sessionFactory.getCurrentSession();
 		var code = new OneTimePDFCode(surveyUid, answerSetId);
