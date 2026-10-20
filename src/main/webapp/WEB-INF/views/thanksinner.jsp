@@ -165,7 +165,7 @@
 				</c:otherwise>	
 			</c:choose>
 		</span>
-		<c:if test="${!form.survey.captcha}">
+
 			<div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">						
 				<c:if test="${captchaBypass !=true}">
 				<%@ include file="captcha.jsp" %>					
@@ -183,7 +183,7 @@
 				</c:choose>
 	       		</c:if>
 	       	</span>
-	    </c:if>
+
 	</div>
 	<div class="modal-footer">
 		<c:choose>
@@ -216,6 +216,7 @@
 
 	function startExport()
 	{
+
 		$("#ask-export-dialog").find(".validation-error").hide();
 		$("#ask-export-dialog").find(".validation-error-keep").hide();
 		
@@ -227,7 +228,7 @@
 		};	
 				
 		<c:choose>
-			<c:when test="${!captchaBypass && !form.survey.captcha}">
+			<c:when test="${!captchaBypass}">
 				var challenge = getChallenge();
 			    var uresponse = getResponse();
 			    
