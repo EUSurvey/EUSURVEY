@@ -2,6 +2,7 @@ package com.ec.survey.service;
 
 import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.Organisations;
+import com.ec.survey.model.administration.Organisation;
 import com.ec.survey.tools.Tools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,15 @@ public class UtilsService extends BasicService {
     protected LdapDBService ldapDBService;
 
     @Transactional(readOnly = true)
-    public Organisations getOrganisations(Locale locale) {
+    public Organisations getOrganisations(Locale locale, List<Organisation> organisations) {
         Organisations result = new Organisations();
+
+        if (organisations != null) {
+            for (Organisation organisation : organisations) {
+                result.getOrganisations().put(organisation.getOrganisation(), resources.getMessage("label.dgnew." + organisation.getOrganisation(), null, organisation.getOrganisation(), locale));
+            }
+            return result;
+        }
 
         String[] dgs = ecService.getDepartments(true, false);
         String[] aex = ecService.getDepartments(false, true);
@@ -67,8 +75,9 @@ public class UtilsService extends BasicService {
         return domain.substring(domain.lastIndexOf(".") + 1).toUpperCase();
     }
 
+    @Transactional(readOnly = true)
     public List<String> getAllOrganisationCodes(Locale locale) {
-        Organisations organisations = getOrganisations(locale);
+        Organisations organisations = getOrganisations(locale, null);
         List<String> org = new ArrayList(organisations.getDgs().keySet());
         org.addAll(organisations.getExecutiveAgencies().keySet());
         org.addAll(organisations.getOtherEUIs().keySet());
@@ -76,8 +85,9 @@ public class UtilsService extends BasicService {
         return org;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, String> getAllOrganisations(Locale locale) {
-        Organisations organisations = getOrganisations(locale);
+        Organisations organisations = getOrganisations(locale, null);
         Map<String, String> org = organisations.getDgs();
         org.putAll(organisations.getExecutiveAgencies());
         org.putAll(organisations.getOtherEUIs());

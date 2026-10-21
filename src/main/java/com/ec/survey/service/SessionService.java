@@ -39,6 +39,9 @@ public class SessionService extends BasicService {
 	@Resource(name = "ldapService")
 	private LdapService ldapService;
 
+	@Resource(name = "organisationService")
+	protected OrganisationService organisationService;
+
 	private @Value("${proxy.host:#{null}}") String proxyHost;
 	private @Value("${proxy.port:#{null}}") String proxyPort;
 	private @Value("${proxy.user:#{null}}") String proxyUser;
@@ -86,7 +89,11 @@ public class SessionService extends BasicService {
 			}
 
 			if (settingsService.isCreateSurveysForExternalsDisabled() && user.isExternal()) {
-				user.setCanCreateSurveys(false);
+				user.setWhitelisted(organisationService.isWhitelisted(user.getId()));
+
+				if (!user.isWhitelisted()) {
+					user.setCanCreateSurveys(false);
+				}
 			}
 		}
 
@@ -339,7 +346,8 @@ public class SessionService extends BasicService {
 		if (user == null)
 			throw new ForbiddenURLException();
 		
-		user.setResultAccess(null);	
+		user.setResultAccess(null);
+		user.setIsOrganisationManagerForCurrentSurvey(false);
 
 		Access access = null;
 		if (!survey.getOwner().getId().equals(user.getId())) {
@@ -378,6 +386,15 @@ public class SessionService extends BasicService {
 					if (resultAccess != null) {
 						user.setResultAccess(resultAccess);					
 						allowed = true;
+					}
+				}
+
+				// check organisation manager access
+				if (user.getOrganisationPrivilege() > 0 && survey.getOrganisation() != null && !survey.getOrganisation().isEmpty()) {
+					var organisation = organisationService.getOrganisation(survey.getOrganisation());
+					if (organisation != null && organisation.getManagers().stream().anyMatch(m -> m.getId().equals(user.getId()))) {
+						allowed = true;
+						user.setIsOrganisationManagerForCurrentSurvey(true);
 					}
 				}
 				
@@ -459,12 +476,14 @@ public class SessionService extends BasicService {
 			boolean filterPublished = request.getParameter("statusPublished") != null
 					&& request.getParameter("statusPublished").equalsIgnoreCase("Published");
 
-			boolean filterOwn = request.getParameter("surveysOwn") != null
-					&& request.getParameter("surveysOwn").equalsIgnoreCase("own");
-			boolean filterShared = request.getParameter("surveysShared") != null
-					&& request.getParameter("surveysShared").equalsIgnoreCase("shared");
-			boolean filterAny = request.getParameter("surveysShared") != null
-					&& request.getParameter("surveysShared").equalsIgnoreCase("any");
+			boolean filterOwn = request.getParameter("surveysSelector") != null
+					&& request.getParameter("surveysSelector").equalsIgnoreCase("own");
+			boolean filterShared = request.getParameter("surveysSelector") != null
+					&& request.getParameter("surveysSelector").equalsIgnoreCase("shared");
+			boolean filterOrg = request.getParameter("surveysSelector") != null
+					&& request.getParameter("surveysSelector").equalsIgnoreCase("org");
+			boolean filterAny = request.getParameter("surveysSelector") != null
+					&& request.getParameter("surveysSelector").equalsIgnoreCase("any");
 
 			boolean filterStandardSurvey = request.getParameter("surveyStandard") != null
 					&& request.getParameter("surveyStandard").equalsIgnoreCase("standard");
@@ -495,14 +514,18 @@ public class SessionService extends BasicService {
 
 			if (filterAny) {
 				filter.setSelector("any");
-			} else if (filterOwn && filterShared) {
-				filter.setSelector("all");
-			} else if (filterOwn) {
-				filter.setSelector("my");
+			} else if (filterOrg) {
+				filter.setSelector("org");
 			} else if (filterShared) {
 				filter.setSelector("shared");
 			} else {
-				filter.setSelector("all");
+				filter.setSelector("my");
+			}
+
+			String organisation = request.getParameter("organisation");
+			if (organisation != null && !filterOwn && !filterShared) {
+				filter.setOrganisations(new HashSet<>());
+				filter.getOrganisations().add(organisation);
 			}
 
 			if (filterStandardSurvey) {

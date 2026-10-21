@@ -231,6 +231,8 @@ public class BasicService implements BeanFactoryAware {
 		CloseableHttpClient httpclient = HttpClients.createSystem();	
 		
 		try {
+			surveyService.checkWebhook(hook);
+
 			logger.info("Calling webhook " + hook);
 			HttpGet httpget = new HttpGet(hook);
 			CloseableHttpResponse response = httpclient.execute(httpget);			

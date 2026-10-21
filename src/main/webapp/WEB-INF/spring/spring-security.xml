@@ -82,6 +82,7 @@
 		<security:intercept-url pattern="/administration/system/**" access="hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_SYSTEM_MANAGER')" />
 		<security:intercept-url pattern="/administration/publicsurveys/**" access="hasRole('ROLE_FORM_ADMIN')" />
 		<security:intercept-url pattern="/administration/**" access="hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_SYSTEM_MANAGER')" />
+		<security:intercept-url pattern="/organisationmanagement/**" access="hasAnyRole('ROLE_ORGANISATION_ADMIN','ROLE_ORGANISATION_MANAGER')" />
 		<security:intercept-url pattern="/ownership/accept/*" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/ownership/reject/*" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />

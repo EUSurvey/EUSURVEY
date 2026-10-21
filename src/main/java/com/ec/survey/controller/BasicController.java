@@ -218,7 +218,7 @@ public class BasicController implements BeanFactoryAware {
 		return enablereportingdatabase != null && enablereportingdatabase.equalsIgnoreCase("true");
 	}
 
-	public boolean isChargeBackeEnabled() {
+	public boolean isChargeBackEnabled() {
 		String enabled = settingsService.get(Setting.EnableChargeback);
 		return enabled != null && enabled.equalsIgnoreCase("true");
 	}

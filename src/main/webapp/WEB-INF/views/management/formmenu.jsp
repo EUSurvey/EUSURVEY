@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <div class="formmenu" id="divActionsFromMenu">
-	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 0}">
+	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 0  || USER.isOrganisationManagerForCurrentSurvey() }">
 		<div id="overview-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/overview"/>"><spring:message code="label.Overview" /></a></div>
 	</c:if>
 	
@@ -37,6 +37,10 @@
 		
 		<c:when test="${USER.getResultAccess() != null}">
 			<div id="access-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/access"/>"><spring:message code="label.Privileges" /></a></div>
+		</c:when>
+
+		<c:when test="${USER.isOrganisationManagerForCurrentSurvey()}">
+			<div id="properties-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/properties"/>"><spring:message code="label.Properties" /></a></div>
 		</c:when>
 	
 	</c:choose>

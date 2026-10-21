@@ -1634,7 +1634,7 @@
 				unpublished survey does not have to be replaced by your current working draft but can be republished if
 				necessary.
 			</p>
-            <h2>
+			<h2>
 				Understanding Pending Changes in EUSurvey
 			</h2>
 			<p>

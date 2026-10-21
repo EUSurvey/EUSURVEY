@@ -51,8 +51,10 @@ import javax.xml.parsers.DocumentBuilder;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
-import java.time.Duration;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -140,6 +142,7 @@ public class SurveyService extends BasicService {
 				" ,s.EVOTE" +
 				" ,s.SELFASSESSMENT" +
 				" ,s.EVOTETEMPLATE" +
+				" ,s.ORGANISATION" +
 				" ,GROUP_CONCAT(t.TAG_NAME SEPARATOR ' ')" +
 				" from SURVEYS s" +
 				" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID" +
@@ -198,6 +201,7 @@ public class SurveyService extends BasicService {
 			survey.setIsEVote((Boolean) row[rowIndex++]);	
 			survey.setIsSelfAssessment((Boolean) row[rowIndex++]);
 			survey.seteVoteTemplate((String) row[rowIndex++]);
+			survey.setOrganisation((String) row[rowIndex++]);
 
 			String tags = (String) row[rowIndex];
 			if (tags != null && tags.length() > 1) {
@@ -397,7 +401,7 @@ public class SurveyService extends BasicService {
 				organisation = organisation.replace("eu.europa.", "").toUpperCase();
 			}
 
-			survey.setOrganisation(utilsService.getAllOrganisations(locale).get(organisation));
+			survey.setOrganisation(utilsService.getAllOrganisations(locale).getOrDefault(organisation, organisation));
 
 			survey.setIsOPC((Boolean) row[columnNum++]);
 			survey.setIsQuiz((Boolean) row[columnNum++]);
@@ -591,7 +595,7 @@ public class SurveyService extends BasicService {
 		return getSurveys(filter, sqlPagination, false);
 	}
 
-	private String getSql(SurveyFilter filter, HashMap<String, Object> oQueryParameters) {
+	private String getSql(SurveyFilter filter, HashMap<String, Object> oQueryParameters) throws MessageException {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -759,10 +763,11 @@ public class SurveyService extends BasicService {
 
 			if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("any") && filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) > 1) {
 				// form administrators can see all surveys
-			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("my")) {
-				// Overriding owner with current user
-				sql.append(" AND (s.OWNER = :ownerId)");
-				oQueryParameters.put("ownerId", filter.getUser().getId());
+			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("org") && filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.OrganisationManagement) > 0) {
+				// organisation managers can see all surveys of their organisation
+				if (filter.getOrganisations() == null || filter.getOrganisations().isEmpty()) {
+					throw new MessageException("No organization set");
+				}
 			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("shared")) {
 				// Overriding condition by sharing condition
 				var suraccessOr = "";
@@ -776,15 +781,7 @@ public class SurveyService extends BasicService {
 				sql.append(" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId ").append(suraccessOr).append(") AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 				oQueryParameters.put("ownerId", filter.getUser().getId());
 			} else {
-				var suraccessOr = "";
-				//Access departments can be from ecas or just all from "SYSTEM"
-				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
-					suraccessOr = "OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))";
-					oQueryParameters.put("login", filter.getUser().getLogin());
-				} else if (filter.getUser().getType().equalsIgnoreCase("SYSTEM")) {
-					suraccessOr = "OR lower(a.ACCESS_DEPARTMENT) = \"system\"";
-				}
-				sql.append(" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId ").append(suraccessOr).append(") AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
+				sql.append(" AND (s.OWNER = :ownerId)");
 				oQueryParameters.put("ownerId", filter.getUser().getId());
 			}
 		}
@@ -2245,12 +2242,15 @@ public class SurveyService extends BasicService {
 		oldsurvey = (Survey) session.merge(oldsurvey);
 		session.update(oldsurvey);
 
+		var user = sessionService.getCurrentUser(request);
+		var canUnlock = SurveyHelper.canUserUnlockElements(user, oldsurvey);
+
 		Survey survey = SurveyHelper.parseSurvey(request, this, fileService, selfassessmentService, servletContext,
-				activityService.isEnabled(ActivityRegistry.ID_ELEMENT_ORDER), activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), fileIDsByUID, userId);
+				activityService.isEnabled(ActivityRegistry.ID_ELEMENT_ORDER), activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), fileIDsByUID, userId, canUnlock);
 
 		//Map<Element, Integer> pendingChanges = surveyService.getPendingChanges(survey);
 
-		update(survey, true, false, sessionService.getCurrentUser(request).getId());
+		update(survey, true, false, user.getId());
 
 		Map<String, Integer> referencedFilesNew = survey.getReferencedFileUIDs(contextpath);
 
@@ -2261,7 +2261,7 @@ public class SurveyService extends BasicService {
 			}
 		}
 
-		activityService.log(survey.getActivitiesToLog(), sessionService.getCurrentUser(request).getId(),
+		activityService.log(survey.getActivitiesToLog(), user.getId(),
 				survey.getUniqueId());
 
 		survey = getSurvey(survey.getId(), false, false);
@@ -6059,9 +6059,21 @@ public class SurveyService extends BasicService {
 				survey.setAccessResultsRights(
 						access != null && (access.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0
 								|| access.getLocalPrivileges().get(LocalPrivilege.AccessDraft) > 0));
+
+				if (user.getOrganisationPrivilege() > 0) {
+                    try {
+                        sessionService.upgradePrivileges(survey, user, null);
+						if (user.isOrganisationManagerForCurrentSurvey()) {
+							survey.setFullFormManagementRights(true);
+							survey.setFormManagementRights(true);
+						}
+                    } catch (ForbiddenURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 			}
 
-			if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
+			if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0 && !user.isWhitelisted()) {
 				survey.setCanCreateSurveys(false);
 			}
 		}
@@ -6089,6 +6101,14 @@ public class SurveyService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "SELECT COUNT(DISTINCT SURVEY_UID) FROM SURVEYS WHERE ISDRAFT = " + (draftSurveys ? "1" : "0");
 		Query query = session.createSQLQuery(sql);
+		return ConversionTools.getValue(query.uniqueResult());
+	}
+
+	@Transactional(readOnly = true)
+	public int getNumberOfSurveysByOwner(int userId) {
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "SELECT COUNT(DISTINCT SURVEY_UID) FROM SURVEYS WHERE OWNER = :userId";
+		Query query = session.createSQLQuery(sql).setParameter("userId", userId);
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 
@@ -7360,5 +7380,22 @@ public class SurveyService extends BasicService {
 
 		session.delete(codes.get(0));
 		return true;
+	}
+
+	public void checkWebhook(String hook) throws UnknownHostException {
+		if (hook == null || hook.isEmpty()) return;
+
+		URI uri = URI.create(hook);
+		if (!"https".equalsIgnoreCase(uri.getScheme()) || uri.getUserInfo() != null) {
+			throw new IllegalArgumentException("Unsupported webhook URL");
+		}
+		for (InetAddress address : InetAddress.getAllByName(uri.getHost())) {
+			// Add explicit IPv4 and IPv6 CIDR checks for private and metadata ranges.
+			if (address.isAnyLocalAddress() || address.isLoopbackAddress()
+					|| address.isLinkLocalAddress() || address.isSiteLocalAddress()
+					|| address.isMulticastAddress()) {
+				throw new IllegalArgumentException("Disallowed webhook destination");
+			}
+		}
 	}
 }

@@ -16,6 +16,7 @@ public class RolesCreator {
 		role.getGlobalPrivileges().put(GlobalPrivilege.FormManagement, 2);
 		role.getGlobalPrivileges().put(GlobalPrivilege.ContactManagement, 2);
 		role.getGlobalPrivileges().put(GlobalPrivilege.SystemManagement, 2);
+		role.getGlobalPrivileges().put(GlobalPrivilege.OrganisationManagement, 2);
 		if (showecas)
 		{
 			role.getGlobalPrivileges().put(GlobalPrivilege.ECAccess, 1);
@@ -29,6 +30,7 @@ public class RolesCreator {
 		role.getGlobalPrivileges().put(GlobalPrivilege.FormManagement, 1);
 		role.getGlobalPrivileges().put(GlobalPrivilege.ContactManagement, 1);
 		role.getGlobalPrivileges().put(GlobalPrivilege.ECAccess, 0);
+		role.getGlobalPrivileges().put(GlobalPrivilege.OrganisationManagement, 0);
 		administrationService.createRole(role);
 		
 		if (showecas)
@@ -40,6 +42,7 @@ public class RolesCreator {
 			role.getGlobalPrivileges().put(GlobalPrivilege.FormManagement, 1);
 			role.getGlobalPrivileges().put(GlobalPrivilege.ContactManagement, 1);
 			role.getGlobalPrivileges().put(GlobalPrivilege.ECAccess, 1);
+			role.getGlobalPrivileges().put(GlobalPrivilege.OrganisationManagement, 0);
 			administrationService.createRole(role);
 		}
 				

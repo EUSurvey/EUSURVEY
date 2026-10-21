@@ -300,12 +300,13 @@ public class CsvExportCreator extends ExportCreator {
 				
 				if (filter.exported("description"))
 				{
+					var label = activity.getLabel();
 					if (first)
 					{
-						writefirst(out, resources.getMessage("logging." + activity.getLogID(), null, Integer.toString(activity.getLogID()), locale));
+						writefirst(out, resources.getMessage(label, null, Integer.toString(activity.getLogID()), locale));
 						first = false;
 					} else {
-						write(out, resources.getMessage("logging." + activity.getLogID(), null, Integer.toString(activity.getLogID()), locale));
+						write(out, resources.getMessage(label, null, Integer.toString(activity.getLogID()), locale));
 					}
 				}
 				

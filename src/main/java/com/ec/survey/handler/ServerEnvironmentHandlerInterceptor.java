@@ -109,7 +109,7 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 
 	@Resource(name = "sessionService")
 	protected SessionService sessionService;
-	
+
 	public boolean isByPassCaptcha(){
 		return captchaBypass !=null && captchaBypass.equalsIgnoreCase("true");
 	}

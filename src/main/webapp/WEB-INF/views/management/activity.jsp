@@ -364,7 +364,7 @@
 								</c:if>
 								</td>
 							</c:if>
-							<c:if test='${filter.visible("description") == true}'><td><spring:message code="logging.${activity.logID}" /></td></c:if>
+							<c:if test='${filter.visible("description") == true}'><td><spring:message code="${activity.label}" /></td></c:if>
 							<c:if test='${filter.visible("oldvalue") == true}'><td><c:out value="${activity.oldValue}"/></td></c:if>
 							<c:if test='${filter.visible("newvalue") == true}'><td><c:out value="${activity.newValue}"/></td></c:if>
 						</tr>

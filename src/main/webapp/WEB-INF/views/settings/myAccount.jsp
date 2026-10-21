@@ -110,6 +110,12 @@
 					</td>
 				</tr>
 				<tr>
+                    <td style="width: 200px;"><label><b><spring:message code="label.Role" /></b></label></td>
+                    <td style="width: 500px;">
+                        <esapi:encodeForHTML>${USER.roles != null && !USER.roles.isEmpty() ? USER.roles[0].name : ""}</esapi:encodeForHTML>
+                    </td>
+                </tr>
+				<tr>
 					<td><label><b><spring:message code="label.Password" /></b></label></td>
 					<td id="change-password-dialog">
 						<span original">*******</span>

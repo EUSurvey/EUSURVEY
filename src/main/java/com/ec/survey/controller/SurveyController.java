@@ -4,9 +4,12 @@ import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.GlobalPrivilege;
-import com.ec.survey.model.administration.LocalPrivilege;
+import com.ec.survey.model.administration.Organisation;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.service.OrganisationService;
+import com.ec.survey.service.UtilsService;
+import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
 import org.springframework.core.task.TaskExecutor;
@@ -31,6 +34,12 @@ public class SurveyController extends BasicController {
 
     @Resource(name = "taskExecutor")
     private TaskExecutor taskExecutor;
+
+    @Resource(name = "utilsService")
+    protected UtilsService utilsService;
+
+    @Resource(name = "organisationService")
+    private OrganisationService organisationService;
 		
 	@RequestMapping()
 	public ModelAndView surveys(HttpServletRequest request, Locale locale) throws Exception {
@@ -54,7 +63,7 @@ public class SurveyController extends BasicController {
 			Survey survey = surveyService.getSurvey(Integer.parseInt(delete), false, true);
 			shortname = survey.getShortname();
 			
-			boolean allowed = sessionService.userIsFormAdmin(survey, user, request);
+			boolean allowed = sessionService.userIsFormAdmin(survey, user, request) || (user.isOrganisationManagerForCurrentSurvey());
 			
 			if (allowed)
 			{
@@ -99,8 +108,24 @@ public class SurveyController extends BasicController {
 
         List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
         result.addObject("domains", domains);
-    	
-    	if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null || filter.getStartFrom() != null || filter.getStartTo() != null || filter.getEndFrom() != null || filter.getEndTo() != null)
+
+        Map<String, String> allOrganisations =  utilsService.getAllOrganisations(locale);
+        if (user.getFormPrivilege() > 1) {
+            result.addObject("organisations", allOrganisations);
+        } else if (user.getOrganisationPrivilege() == 1) {
+            List<Organisation> lstOrganisations = organisationService.getOrganisationsForManager(user.getId());
+            Map<String, String> organisations = new HashMap<>();
+            for (Organisation organisation : lstOrganisations) {
+                if (allOrganisations.containsKey(organisation.getOrganisation())) {
+                    organisations.put(organisation.getOrganisation(), allOrganisations.get(organisation.getOrganisation()));
+                } else {
+                    organisations.put(organisation.getOrganisation(), organisation.getOrganisation());
+                }
+            }
+            result.addObject("organisations", organisations);
+        }
+
+        if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null || filter.getStartFrom() != null || filter.getStartTo() != null || filter.getEndFrom() != null || filter.getEndTo() != null)
     	{
     		result.addObject("showDates", true);
     	}
@@ -220,6 +245,24 @@ public class SurveyController extends BasicController {
 			return null;
 		}
 	}
+
+    @GetMapping("/whitelistlabels")
+    public @ResponseBody String[] getWhitelistLabelsJSON(HttpServletRequest request, Locale locale) {
+        try {
+            boolean createNewLabel = request.getParameter("createNewLabel") != null
+                    && request.getParameter("createNewLabel").equalsIgnoreCase("true");
+            String term = request.getParameter("term").replace(" ", "");
+
+            List<String> result = organisationService.getLabels(term);
+            if (createNewLabel && !result.contains(term) && term.length() > 2) {
+                result.add(0, term + " (" + resources.getMessage("label.NewLabel", null, "new label", locale) + ")");
+            }
+            return result.toArray(new String[0]);
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
 
     @PostMapping("/bulkchange")
     public @ResponseBody int bulkchange(@RequestBody Map json, HttpServletRequest request) throws NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException, ForbiddenURLException {
@@ -376,7 +419,7 @@ public class SurveyController extends BasicController {
 
         User u = sessionService.getCurrentUser(request);
         if (change.getUserId() != u.getId()) {
-            throw new MessageException("invalid change id: " + id);
+            throw new MessageException("invalid user id: " + id);
         }
 
         result.error = change.getError() != null;

@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.service.OrganisationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -17,7 +18,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.LocaleResolver;
 
-import com.ec.survey.model.Setting;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.AdministrationService;
@@ -34,7 +34,10 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 	private AdministrationService administrationService;	
 	
 	@Resource(name="settingsService")
-	protected SettingsService settingsService;	
+	protected SettingsService settingsService;
+
+	@Resource(name = "organisationService")
+	private OrganisationService organisationService;
 	
 	@Autowired private LocaleResolver localeResolver;
 	
@@ -104,16 +107,19 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 					user.setLanguage("EN");
 					user.setType(User.ECAS);				
 				}
-				
-				if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
-	    		{
-	    			user.setCanCreateSurveys(false);
-	    		}
-									
+
+				user.setWhitelisted(organisationService.isWhitelisted(user.getId()));
+
+				if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0 && !user.isWhitelisted()) {
+					user.setCanCreateSurveys(false);
+				}
+
 				//read data from ldap
 				EcasHelper.readData(user, ldapService);				
 			} else {
 				user = administrationService.getUserForLoginAndInitialize(securityContext.getAuthentication().getName(), ecas);
+
+				user.setWhitelisted(organisationService.isWhitelisted(user.getId()));
 			}
 			
 			request.getSession().setAttribute("USER", user);

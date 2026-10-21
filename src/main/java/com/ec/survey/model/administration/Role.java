@@ -28,7 +28,8 @@ public class Role implements java.io.Serializable {
 		globalPrivileges.put(GlobalPrivilege.ContactManagement, 0);
 		globalPrivileges.put(GlobalPrivilege.RightManagement, 0);	
 		globalPrivileges.put(GlobalPrivilege.ECAccess, 0);	
-		globalPrivileges.put(GlobalPrivilege.SystemManagement, 0);	
+		globalPrivileges.put(GlobalPrivilege.SystemManagement, 0);
+		globalPrivileges.put(GlobalPrivilege.OrganisationManagement, 0);
 	}
 
 	@Id

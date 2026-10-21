@@ -141,12 +141,16 @@ public class ECService extends BasicService {
 		
 		List<String> result = new ArrayList<>();
 
-		if (dgs) {
-			recursiveAddDepartments(this.departmentNodes.get(1), result);
-		}
+		if (this.departmentNodes != null && this.departmentNodes.size() > 0) {
 
-		if (aex) {
-			recursiveAddDepartments(this.departmentNodes.get(0), result);
+			if (dgs) {
+				recursiveAddDepartments(this.departmentNodes.get(1), result);
+			}
+
+			if (aex) {
+				recursiveAddDepartments(this.departmentNodes.get(0), result);
+			}
+
 		}
 
 		return result.toArray(new String[0]);

@@ -53,7 +53,7 @@ public class EVoteService extends BasicService {
 		 boolean isEmailVariant = false;
 		 boolean hasEmailInLoginVariant = true;
 
-		 List<String> allIdentifiers = new ArrayList<>();
+		 Set<String> allIdentifiers = new HashSet<>();
 
 		 //iterate rows
 		 Iterator<Row> rowIterator = sheet.iterator();
@@ -204,12 +204,21 @@ public class EVoteService extends BasicService {
 	}
 
 	@Transactional
-	public void addMoreVoters(List<Voter> voters, User user) {
+	public void addMoreVoters(List<Voter> voters, User user, String surveyUid) {
+		
+		var existingVoters = getAllVoterMonikers(surveyUid);
+		
+		var newVoters = voters.stream().filter(v -> !existingVoters.contains(v.getEcMoniker())).collect(Collectors.toList());
+		
+		if (newVoters.isEmpty()) {
+			return;
+		}
+		
 		Session session = sessionFactory.getCurrentSession();
-		for (Voter voter: voters) {
+		for (Voter voter: newVoters) {
 			session.save(voter);
 		}
-		String logValues = voters.stream().map(v -> v.getId() + "").collect(Collectors.joining(","));
+		String logValues = newVoters.stream().map(v -> v.getId() + "").collect(Collectors.joining(","));
 		activityService.log(ActivityRegistry.ID_GUEST_LIST_VOTER_ADDED, null, logValues, user.getId(), voters.get(0).getSurveyUid(), "VoterFile");
 	}
 
@@ -238,6 +247,16 @@ public class EVoteService extends BasicService {
 		
 		List<Voter> result = query.list();
 		return result;
+	}
+
+	@Transactional(readOnly = true)
+	public Set<String> getAllVoterMonikers(String surveyUid) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query<String> query = session.createQuery("SELECT ecMoniker FROM Voter WHERE surveyUid = :surveyUid ORDER BY id ASC", String.class);
+		query.setParameter("surveyUid", surveyUid);
+
+		return query.stream().collect(Collectors.toSet());
 	}
 
 	@Transactional
@@ -413,7 +432,7 @@ public class EVoteService extends BasicService {
 		for (Voter voter: voters) {
 			row = sheet.createRow(rowCounter);
 
-			cellCounter = -1;
+			cellCounter = 0;
 
 			if (!useEmailVariant) {
 				row.createCell(cellCounter++).setCellValue(voter.getEcMoniker());

@@ -362,6 +362,8 @@ public class ParticipantsController extends BasicController {
 			List<String> deactivatedTokens = null;
 			int size = 0;
 
+			var removedEntries = new ArrayList<String>();
+
 			if (participationGroup.getType() == ParticipationGroupType.Static) {
 				ArrayList<LinkedHashMap> attendees = (ArrayList) json.get("attendees");
 				attendeeIDs = new ArrayList<>();
@@ -389,9 +391,19 @@ public class ParticipantsController extends BasicController {
 					}
 				}
 
-				for (int i = 0; i < attendees.size(); i++) {
-					LinkedHashMap attendee = attendees.get(i);
-					attendeeIDs.add((int) attendee.get("id"));
+                for (LinkedHashMap attendee : attendees) {
+                    var newId = (int) attendee.get("id");
+                    attendeeIDs.add(newId);
+                }
+
+				var oldEntries = participationGroup.getAttendees();
+
+				if (oldEntries != null) {
+					for (Attendee oldAttendee : oldEntries) {
+						if (!attendeeIDs.contains(oldAttendee.getId())) {
+							removedEntries.add(oldAttendee.getName());
+						}
+					}
 				}
 
 				size = attendeeIDs.size();
@@ -400,22 +412,42 @@ public class ParticipantsController extends BasicController {
 				ArrayList<LinkedHashMap> invitations = (ArrayList) json.get("tokens");
 				tokens = new ArrayList<>();
 				deactivatedTokens = new ArrayList<>();
-				for (int i = 0; i < invitations.size(); i++) {
-					LinkedHashMap token = invitations.get(i);
-					tokens.add(token.get("uniqueId").toString());
-					
-					if (token.get("deactivated").toString().equalsIgnoreCase("true")) {
-						deactivatedTokens.add(token.get("uniqueId").toString());
+                for (LinkedHashMap token : invitations) {
+                    tokens.add(token.get("uniqueId").toString());
+
+                    if (token.get("deactivated").toString().equalsIgnoreCase("true")) {
+                        deactivatedTokens.add(token.get("uniqueId").toString());
+                    }
+                }
+
+				var oldTokens = attendeeService.getInvitationsForParticipationGroup(participationGroup.getId());
+
+				if (oldTokens != null) {
+					for (Invitation oldToken : oldTokens) {
+						if (!tokens.contains(oldToken.getUniqueId())) {
+							removedEntries.add(oldToken.getUniqueId());
+						}
 					}
 				}
+
 				size = tokens.size();
 			} else if (participationGroup.getType() == ParticipationGroupType.ECMembers) {
 				ArrayList<LinkedHashMap> users = (ArrayList) json.get("users");
 				userIDs = new ArrayList<>();
-				for (int i = 0; i < users.size(); i++) {
-					LinkedHashMap ecasuser = users.get(i);
-					userIDs.add((int) ecasuser.get("id"));
+                for (LinkedHashMap ecasuser : users) {
+                    userIDs.add((int) ecasuser.get("id"));
+                }
+
+				var oldUsers = participationGroup.getEcasUsers();
+
+				if (oldUsers != null) {
+					for (EcasUser oldUser : oldUsers) {
+						if (!userIDs.contains(oldUser.getId())) {
+							removedEntries.add(oldUser.getEcMoniker());
+						}
+					}
 				}
+
 				size = userIDs.size();
 			}
 			participationGroup.setOwnerId(user.getId());
@@ -459,6 +491,11 @@ public class ParticipantsController extends BasicController {
 			if (id > 0) {
 				activityService.log(ActivityRegistry.ID_GUEST_LIST_MODIFIED, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
 						participationGroup.getNiceType());
+
+				if (!removedEntries.isEmpty()) {
+					activityService.log(ActivityRegistry.ID_GUEST_LIST_ENTRY_REMOVED, String.join(",", removedEntries), null, user.getId(), participationGroup.getSurveyUid(), participationGroup.getNiceType());
+				}
+
 				return "successsaved";
 			} else {
 				activityService.log(ActivityRegistry.ID_GUEST_LIST_CREATED, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
@@ -1545,14 +1582,15 @@ public class ParticipantsController extends BasicController {
 						voter.setSurname(user.getSurName());
 						voter.setSurveyUid(uid);
 						voter.setCreated(new Date());
+						voter.setEmail(user.getEmail());
 						votersList.add(voter);
 					}
 				}
 
 				if (!votersList.isEmpty()) {
-					eVoteService.addMoreVoters(votersList, u);
+					eVoteService.addMoreVoters(votersList, u, uid);
 				}
-				List<Voter> firstVoterPage = eVoteService.getVoters(form.getSurvey().getUniqueId(), 1, 20, null, null, null, null, null);
+				List<Voter> firstVoterPage = eVoteService.getVoters(uid, 1, 20, null, null, null, null, null);
 				response.setStatus(HttpServletResponse.SC_OK);
 				return firstVoterPage;
 			}

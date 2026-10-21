@@ -1,5 +1,7 @@
 package com.ec.survey.model;
 
+import java.util.Map;
+
 public class OrganisationResult {
 
 	private int allSurveys;
@@ -8,6 +10,8 @@ public class OrganisationResult {
 	private int surveysLastYear;
 	private int contributionsThisYear;
 	private int contributionsLastYear;
+	private Map<Integer, String> managers;
+	private Map<Integer, String> whitelist;
 
 	public int getAllSurveys() {
 		return allSurveys;
@@ -56,6 +60,12 @@ public class OrganisationResult {
 	public void setContributionsLastYear(int contributionsLastYear) {
 		this.contributionsLastYear = contributionsLastYear;
 	}
-	
 
+    public Map<Integer, String> getManagers() { return managers; }
+
+    public void setManagers(Map<Integer, String> managers) { this.managers = managers; }
+
+    public Map<Integer, String> getWhitelist() { return whitelist;  }
+
+    public void setWhitelist(Map<Integer, String> whitelist) { this.whitelist = whitelist; }
 }

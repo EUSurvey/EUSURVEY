@@ -259,6 +259,7 @@ public abstract class Question extends Element {
 		copy.setQuizPoints(quizPoints);
 		copy.setScoring(scoring);
 		copy.setLocked(getLocked());
+		copy.setCopiesLocked(getCopiesLocked());
 		copy.setSubType(getSubType());
 		copy.setDisplayMode(getDisplayMode());
 		copy.setIsDelphiQuestion(getIsDelphiQuestion());
