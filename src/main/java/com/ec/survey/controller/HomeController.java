@@ -1121,7 +1121,7 @@ public class HomeController extends BasicController {
 
 	@PostMapping(value = "home/notifyError")
 	public void notifyError(@RequestBody Map json) {
-		String requestId = json.get("requestId").toString();
+		String uid = json.get("externalReference").toString();
 		ArrayList<String> targetLanguages = (ArrayList<String>) json.get("targetLanguages");
 		String targetLanguage = targetLanguages.get(0);
 		if (targetLanguage == null) {
@@ -1131,22 +1131,22 @@ public class HomeController extends BasicController {
 		String errorCode = json.get("errorCode").toString();
 		String errorMessage = json.get("errorMessage").toString();
 
-		logger.error("HomeController.notifyError called for the translation with request ID " + requestId);
-		machineTranslationService.saveErrorResponse(requestId,targetLanguage,errorCode,errorMessage);
+		logger.error("HomeController.notifyError called for the translation with request ID " + uid);
+		machineTranslationService.saveErrorResponse(uid,targetLanguage,errorCode,errorMessage);
 	}
 
 	@PostMapping(value = "home/returnTranslation")
 	public @ResponseBody String returnTranslation(@RequestBody Map json, HttpServletResponse response) throws IOException {
-		String requestId = json.get("requestId").toString();
+		String uid = json.get("externalReference").toString();
 
-		logger.info("HomeController.returnTranslation called for the translation with request ID " + requestId);
+		logger.info("HomeController.returnTranslation called for the translation with request ID " + uid);
 
 		//byte[] translationBytes = request.getInputStream().readAllBytes();
 		String encodedString = json.get("result").toString(); //new String(translationBytes);
 		byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 		String translationText = new String(decodedBytes);
 
-		machineTranslationService.saveSuccessResponse(requestId, translationText);
+		machineTranslationService.saveSuccessResponse(uid, translationText);
 
 		response.setStatus(200);
 		return "OK";

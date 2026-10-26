@@ -31,8 +31,8 @@ public class MachineTranslationService extends BasicService {
 	private MicrosoftTranslationService microsoftTranslationService;
 	
 	@Transactional
-	public void saveSuccessResponse(String requestId, String translatedText) {
-		Request request = getRequest(requestId);
+	public void saveSuccessResponse(String requestUid, String translatedText) {
+		Request request = getRequest(requestUid);
 		Response response = new Response();
 		response.setRequest(request);
 		response.setTargetLang(request.getTargetLangs());
