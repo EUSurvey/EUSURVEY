@@ -1122,7 +1122,8 @@ public class HomeController extends BasicController {
 	@PostMapping(value = "home/notifyError")
 	public void notifyError(@RequestBody Map json) {
 		String requestId = json.get("requestId").toString();
-		String targetLanguage = json.get("targetLanguage").toString();
+		ArrayList<String> targetLanguages = (ArrayList<String>) json.get("targetLanguages");
+		String targetLanguage = targetLanguages.get(0);
 		if (targetLanguage == null) {
 			targetLanguage = "";
 		}
