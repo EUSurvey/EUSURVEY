@@ -1142,7 +1142,7 @@ public class HomeController extends BasicController {
 		logger.info("HomeController.returnTranslation called for the translation with request ID " + requestId);
 
 		//byte[] translationBytes = request.getInputStream().readAllBytes();
-		String encodedString = json.get("content").toString(); //new String(translationBytes);
+		String encodedString = json.get("result").toString(); //new String(translationBytes);
 		byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 		String translationText = new String(decodedBytes);
 
