@@ -209,9 +209,11 @@ public class ManagementController extends BasicController {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		User u = sessionService.getCurrentUser(request);
+		sessionService.upgradePrivileges(form.getSurvey(), u, request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId())
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+				&& !(u.getOrganisationPrivilege() > 0 && u.isOrganisationManagerForCurrentSurvey())) {
 			throw new ForbiddenURLException();
 		}
 
@@ -247,7 +249,8 @@ public class ManagementController extends BasicController {
 
 		if (!form.getSurvey().getOwner().getId().equals(user.getId())
 				&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-				&& user.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1) {
+				&& user.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1
+				&& !(user.getOrganisationPrivilege() > 0 && user.isOrganisationManagerForCurrentSurvey())) {
 			if (user.getLocalPrivileges().get(LocalPrivilege.AccessDraft) > 0) {
 				return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/test");
 			}
@@ -350,7 +353,8 @@ public class ManagementController extends BasicController {
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
 				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
 				&& (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1
-						|| answers != null && answers.equalsIgnoreCase("true"))) {
+						|| answers != null && answers.equalsIgnoreCase("true"))
+				&& !(u.getOrganisationPrivilege() > 0 && u.isOrganisationManagerForCurrentSurvey())) {
 			throw new ForbiddenURLException();
 		}
 
@@ -394,7 +398,7 @@ public class ManagementController extends BasicController {
 			}
 
 			if (settingsService.isCreateSurveysForExternalsDisabled() && u.getType().equalsIgnoreCase(User.ECAS)
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0 && !u.isWhitelisted()) {
 				throw new ForbiddenURLException();
 			}
 
@@ -479,7 +483,8 @@ public class ManagementController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId())
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+				&& !(u.getOrganisationPrivilege() > 0 && u.isOrganisationManagerForCurrentSurvey())) {
 			throw new ForbiddenURLException();
 		}
 
@@ -519,7 +524,8 @@ public class ManagementController extends BasicController {
 			User u = sessionService.getCurrentUser(request);
 			if (!u.getId().equals(form.getSurvey().getOwner().getId())
 					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& !(u.getOrganisationPrivilege() > 0 && u.isOrganisationManagerForCurrentSurvey())) {
 				throw new ForbiddenURLException();
 			}
 
@@ -541,7 +547,8 @@ public class ManagementController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId())
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+				&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+				&& !(u.getOrganisationPrivilege() > 0 && u.isOrganisationManagerForCurrentSurvey())) {
 			throw new ForbiddenURLException();
 		}
 
@@ -559,7 +566,8 @@ public class ManagementController extends BasicController {
 			User u = sessionService.getCurrentUser(request);
 			if (!u.getId().equals(form.getSurvey().getOwner().getId())
 					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& !(u.getOrganisationPrivilege() > 0 && u.isOrganisationManagerForCurrentSurvey())) {
 				throw new ForbiddenURLException();
 			}
 			
@@ -648,7 +656,7 @@ public class ManagementController extends BasicController {
 		form.setSurveyHasEULoginContactList(groups.stream().anyMatch(g -> g.getType() == ParticipationGroupType.Static && g.getAuthenticationMethod() == 1));
 
 		User u = sessionService.getCurrentUser(request);
-		if (!sessionService.userIsFormManager(form.getSurvey(), u, request)) {
+		if (!sessionService.userIsFormManager(form.getSurvey(), u, request) && !u.isOrganisationManagerForCurrentSurvey()) {
 			throw new ForbiddenURLException();
 		}
 
@@ -849,7 +857,7 @@ public class ManagementController extends BasicController {
 	private boolean checkSendOrganisationValidationEmail(Survey survey, User user) throws NamingException, MessageException {
 		//check if validator belongs to correct domain
 		Set<String> externalOrganisations = new HashSet<String>(Arrays.asList("CITIZEN", "OTHER", "PRIVATEORGANISATION", "PUBLICADMINISTRATION"));
-		if (user.isExternal() || user.getType().equalsIgnoreCase(User.SYSTEM)) {
+		if ((user.isExternal() || user.getType().equalsIgnoreCase(User.SYSTEM)) && !user.isWhitelisted()) {
 			if (survey.getOrganisation().length() > 0 && !externalOrganisations.contains(survey.getOrganisation())) {
 				if (survey.getValidator() == null || survey.getValidator().length() == 0) {
 					throw new MessageException("no validator found");
@@ -880,7 +888,7 @@ public class ManagementController extends BasicController {
 		}
 
 		if (settingsService.isCreateSurveysForExternalsDisabled() && u.getType().equalsIgnoreCase(User.ECAS)
-				&& u.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
+				&& u.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0 && !u.isWhitelisted()) {
 			throw new ForbiddenURLException();
 		}
 
@@ -990,6 +998,8 @@ public class ManagementController extends BasicController {
 			Survey original = surveyService.getSurvey(surveyId, false, true);
 
 			if (original != null) {
+				sessionService.upgradePrivileges(original, u, request);
+
 				if (!original.getOwner().getId().equals(u.getId())
 						&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
 					Access access = surveyService.getAccess(original.getId(), u.getId());
@@ -1011,7 +1021,8 @@ public class ManagementController extends BasicController {
 
 				if (!u.getId().equals(original.getOwner().getId())
 						&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-						&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1) {
+						&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1
+						&& !(u.getOrganisationPrivilege() > 0 && u.isOrganisationManagerForCurrentSurvey())) {
 					throw new ForbiddenURLException();
 				}
 				Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
@@ -1333,7 +1344,7 @@ public class ManagementController extends BasicController {
 		boolean shortnameChanged = false;
 
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
-		Map<Integer, String[]> activitiesToLog = new HashMap<>();
+		ActivitiesToLog activitiesToLog = new ActivitiesToLog();
 		Map<String, String> oldBackgroundDocuments = new HashMap<>();
 
 		List<String> keyTranslationsToAdd = new LinkedList<>();
@@ -1407,6 +1418,8 @@ public class ManagementController extends BasicController {
 			uploadedSurvey = form.getSurvey();
 			survey = surveyService.getSurvey(form.getSurvey().getId(), false, false);
 
+			sessionService.upgradePrivileges(survey, u, request);
+
 			oldlogo = survey.getLogo();
 			
 			if (!survey.getOwner().getId().equals(u.getId())
@@ -1430,7 +1443,8 @@ public class ManagementController extends BasicController {
 
 			if (!u.getId().equals(survey.getOwner().getId())
 					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2
+					&& !(u.getOrganisationPrivilege() > 0 && u.isOrganisationManagerForCurrentSurvey())) {
 				throw new ForbiddenURLException();
 			}
 
@@ -1647,6 +1661,9 @@ public class ManagementController extends BasicController {
 		survey.setTitle(Tools.filterHTML(uploadedSurvey.getTitle()));
 		survey.setOrganisation(uploadedSurvey.getOrganisation());
 		survey.setValidator(uploadedSurvey.getValidator());
+
+		surveyService.checkWebhook(uploadedSurvey.getWebhook());
+
 		survey.setWebhook(uploadedSurvey.getWebhook());
 
 		boolean sendListFormMail = false;
@@ -2036,11 +2053,7 @@ public class ManagementController extends BasicController {
 					String[] oldnew = { null, label.contains("#") ? label.substring(label.indexOf('#') + 1)
 							: label + ":" + survey.getUsefulLinks().get(label) };
 
-					if (activitiesToLog.containsKey(ActivityRegistry.ID_USEFUL_LINK_ADD)) {
-						activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_ADD, ArrayUtils.addAll(activitiesToLog.get(ActivityRegistry.ID_USEFUL_LINK_ADD), oldnew));
-					} else {
-						activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_ADD, oldnew);
-					}
+					activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_ADD, oldnew);
 				}
 			}
 			for (Entry<String, String> entry : oldLinks.entrySet()) {
@@ -2049,11 +2062,7 @@ public class ManagementController extends BasicController {
 					String[] oldnew = { label.contains("#") ? label.substring(label.indexOf('#') + 1)
 							: label + ":" + entry.getValue(), null };
 
-					if (activitiesToLog.containsKey(ActivityRegistry.ID_USEFUL_LINK_REMOVE)) {
-						activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_REMOVE, ArrayUtils.addAll(activitiesToLog.get(ActivityRegistry.ID_USEFUL_LINK_REMOVE), oldnew));
-					} else {
-						activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_REMOVE, oldnew);
-					}
+					activitiesToLog.put(ActivityRegistry.ID_USEFUL_LINK_REMOVE, oldnew);
 				}
 			}
 
@@ -2101,21 +2110,13 @@ public class ManagementController extends BasicController {
 				if (!oldBackgroundDocuments.containsKey(label)) {
 					String[] oldnew = { null, label + ":" + survey.getBackgroundDocuments().get(label) };
 
-					if (activitiesToLog.containsKey(ActivityRegistry.ID_BACKGROUND_DOC_ADD)) {
-						activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_ADD, ArrayUtils.addAll(activitiesToLog.get(ActivityRegistry.ID_BACKGROUND_DOC_ADD), oldnew));
-					} else {
-						activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_ADD, oldnew);
-					}
+					activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_ADD, oldnew);
 				}
 			}
 			for (Entry<String, String> entry : oldBackgroundDocuments.entrySet()) {
 				if (!survey.getBackgroundDocuments().containsKey(entry.getKey())) {
 					String[] oldnew = { entry.getKey() + ":" + entry.getValue(), null };
-					if (activitiesToLog.containsKey(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE)) {
-						activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE, ArrayUtils.addAll(activitiesToLog.get(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE), oldnew));
-					} else {
-						activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE, oldnew);
-					}
+					activitiesToLog.put(ActivityRegistry.ID_BACKGROUND_DOC_REMOVE, oldnew);
 
 					fileService.deleteIfNotReferenced(entry.getValue(), survey.getUniqueId());
 				}
@@ -2571,6 +2572,8 @@ public class ManagementController extends BasicController {
 		result.addObject("activeTranslations",
 				translationService.getTranslationsForSurvey(form.getSurvey().getId(), true));
 
+		result.addObject("canUnlock", SurveyHelper.canUserUnlockElements(u, form.getSurvey()));
+
 		if (request.getParameter("saved") != null && request.getParameter("saved").equalsIgnoreCase("true")) {
 			result.addObject("saved", true);
 		}
@@ -2680,8 +2683,10 @@ public class ManagementController extends BasicController {
 			String name = Tools.escapeHTML(parameterMap.get("template-name")[0]);
 			String id = Tools.escapeHTML(parameterMap.get("template-id")[0]);
 
+			var canUnlock = SurveyHelper.canUserUnlockElements(u, form.getSurvey());
+
 			Element element = SurveyHelper.parseElement(request, fileService, selfassessmentService, id, form.getSurvey(), servletContext,
-					activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), u.getId());
+					activityService.isEnabled(ActivityRegistry.ID_ELEMENT_UPDATED), u.getId(), canUnlock);
 
 			Template template = new Template();
 			template.setName(name);
@@ -3165,9 +3170,17 @@ public class ManagementController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 
 		survey = surveyService.getSurvey(Integer.parseInt(id));
-		sessionService.upgradePrivileges(survey, u, request);
+		Survey draft = null;
 
-		if (!u.getId().equals(survey.getOwner().getId())
+		if (survey.getIsDraft()) {
+			draft = survey;
+		} else {
+			draft = surveyService.getSurveyByAlias(survey.getShortname(), true);
+		}
+
+		sessionService.upgradePrivileges(draft, u, request);
+
+		if (!u.getId().equals(draft.getOwner().getId())
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
 				&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
 				&& u.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 2) {

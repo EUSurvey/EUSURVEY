@@ -29,10 +29,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class CustomAuthenticationManager implements AuthenticationManager {
 
@@ -199,14 +196,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					}
 				} else {
 					String oldEmail = user.getEmail();
+					user.setLastConnected(new Date());
 					
 					try {
-						organisationSet = !Tools.isEqual(user.getOrganisation(),organisation);
 						user.setOrganisation(organisation);
-						if (organisationSet) {
-							administrationService.updateUser(user);
-						}
-						
+
 						user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
 						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
 						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
@@ -224,12 +218,10 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 						if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().startsWith("Contributor")) {
 							user.getRoles().clear();
 							user.getRoles().add(ecRole);
-							administrationService.updateUser(user);
 						} else if (surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().equals("Contributor")) {
 							// the user has the "Contributor" role although he is internal -> Upgrade to "Contributor (EC)"
 							user.getRoles().clear();
 							user.getRoles().add(contributorECRole);
-							administrationService.updateUser(user);
 						}
 					} else {
 						if (no2fa){
@@ -244,7 +236,6 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 							if (!surveyLoginMode && user.getRoles().size() == 1 && user.getRoles().get(0).getName().startsWith("Contributor")) {
 								user.getRoles().clear();
 								user.getRoles().add(intRole);
-								administrationService.updateUser(user);
 							}
 						}
 					}
@@ -262,9 +253,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 								user.setOtherEmail(user.getOtherEmail() + oldEmail);
 							}
 						}
-						administrationService.updateUser(user);
 					}
 				}
+
+				user.setLastConnected(new Date());
+				administrationService.updateUser(user);
 				
 				Collection<GrantedAuthority> authorities = getAuthorities(user, true, weakAuthentication, surveyLoginMode, organisationSet);
 				
@@ -346,7 +339,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 		}
 		
 		checkUserNotBanned(user);
-		
+		user.setLastConnected(new Date());
 		user.setBadLoginAttempts(0);
 		administrationService.updateUser(user);
 			
@@ -431,6 +424,16 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			if (user.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) >= 1)
 			{
 				authList.add(new SimpleGrantedAuthority("ROLE_SYSTEM_MANAGER"));
+			}
+
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.OrganisationManagement) == 2)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_ORGANISATION_ADMIN"));
+			}
+
+			if (user.getGlobalPrivileges().get(GlobalPrivilege.OrganisationManagement) >= 1)
+			{
+				authList.add(new SimpleGrantedAuthority("ROLE_ORGANISATION_MANAGER"));
 			}
 	
 			if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2)

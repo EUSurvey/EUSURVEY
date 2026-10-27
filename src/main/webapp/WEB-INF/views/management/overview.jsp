@@ -236,13 +236,13 @@
 								<c:when test="${form.survey.isFrozen}">
 									<button class="btn btn-default disabled" data-toggle="tooltip" title="<esapi:encodeForHTMLAttribute><spring:message code="info.SurveyFrozen" /></esapi:encodeForHTMLAttribute>"><spring:message code="label.Publish" /></button>
 								</c:when>
-								<c:when test="${form.survey.isPublished && form.survey.isActive && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+								<c:when test="${form.survey.isPublished && form.survey.isActive && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || USER.isOrganisationManagerForCurrentSurvey())}">
 									<a id="btnOverviewUnpublish" onclick="checkUnpublish();" class="btn btn-primary"><spring:message code="label.Unpublish" /></a>
 								</c:when>
 								<c:when test="${form.survey.isPublished && form.survey.isActive}">
 									<a class="btn disabled btn-default"><spring:message code="label.Unpublish" /></a>
 								</c:when>
-								<c:when test="${form.survey.isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+								<c:when test="${form.survey.isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || USER.isOrganisationManagerForCurrentSurvey())}">
 									<a id="btnOverviewPublish" onclick="checkPublish()" class="btn btn-primary"><spring:message code="label.Publish" /></a>
 									<br />
 									<span id="publish-error" class="validation-error hideme"><spring:message code="validation.PublishWithoutVoterFile" /></span>
@@ -250,7 +250,7 @@
 								<c:when test="${form.survey.isPublished}">
 									<a class="btn disabled btn-default"><spring:message code="label.Publish" /></a>
 								</c:when>
-								<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+								<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || USER.isOrganisationManagerForCurrentSurvey())}">
 									<a id="btnOverviewPublish" onclick="checkActivate();" class="btn btn-primary"><spring:message code="label.Publish" /></a>
 									<br />
 									<span id="publish-error" class="validation-error hideme"><spring:message code="validation.PublishWithoutVoterFile" /></span>
@@ -261,7 +261,7 @@
 							</c:choose>
 							<br id="placeholder" /><br />
 							<c:choose>
-								<c:when test="${form.survey.isPublished && form.survey.hasPendingChanges && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+								<c:when test="${form.survey.isPublished && form.survey.hasPendingChanges && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || USER.isOrganisationManagerForCurrentSurvey())}">
 									<a id="btnOverviewApplyEnabled" onclick="$('#pending-changes-dialog').modal('show');" class="btn btn-default btn-primary"><spring:message code="label.ShowPendingChanges" /></a>
 								</c:when>
 								<c:otherwise>
@@ -279,7 +279,7 @@
 							</c:choose>
 							&nbsp;
 							<c:choose>
-								<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+								<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || USER.isOrganisationManagerForCurrentSurvey()}">
 									<a href="properties?tab=5&editelem=autopub" class="visiblelink" rel="tooltip" title="<spring:message code="label.EditSettings" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
 								</c:when>
 								<c:otherwise>
@@ -315,7 +315,7 @@
 								</c:choose>
 								&nbsp;
 								<c:choose>
-									<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1) && !form.survey.getIsEVote()}">
+									<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || USER.isOrganisationManagerForCurrentSurvey()) && !form.survey.getIsEVote()}">
 										<a href="properties?tab=6&editelem=showContent" class="visiblelink" rel="tooltip" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
 									</c:when>
 									<c:otherwise>
@@ -347,7 +347,7 @@
 							<a class="actionRowAction" href="<c:url value="/${form.survey.shortname}/management/exportSurvey/false/${form.survey.shortname}"/>" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></span></a>
 														
 							<c:choose>
-								<c:when test="${form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+								<c:when test="${form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || USER.isOrganisationManagerForCurrentSurvey())}">
 									<a class="actionRowAction" id="deleteSurveyButtonOverview" onclick="showDeleteDialog('${form.survey.id}');" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />" ><span class="glyphicon glyphicon-remove"></span></a>
 								</c:when>
 								<c:when test="${form.survey.state != 'Running'}">
@@ -483,11 +483,11 @@
 	 	</table>
 	</div>
 	<div class="modal-footer">
-		<c:if test="${isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+		<c:if test="${isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || USER.isOrganisationManagerForCurrentSurvey())}">
 			<a id="btnClearPendingFromOverview"  class="btn btn-default" onclick="$('#pending-changes-dialog').modal('hide');$('#confirm-clear-changes-dialog').modal('show');"><spring:message code="label.UndoChanges" /></a>	
 		</c:if>
-		<a  id ="btnApplyChangesFromOverview" class="btn btn-default btn-primary" onclick="checkShowApplyChangesWaitDialog();"><spring:message code="label.ApplyChanges" /></a>
-		<a  id ="btnCancelChangesFromOverview" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+		<a id ="btnApplyChangesFromOverview" class="btn btn-default btn-primary" onclick="checkShowApplyChangesWaitDialog();"><spring:message code="label.ApplyChanges" /></a>
+		<a id ="btnCancelChangesFromOverview" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>
 	</div>

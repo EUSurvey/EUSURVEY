@@ -3,13 +3,10 @@ package com.ec.survey.tools;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.KeyStore;
 import java.util.*;
 
 import javax.annotation.Resource;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;

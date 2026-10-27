@@ -976,6 +976,7 @@ public class WebServiceController extends BasicController {
 					&& request.getParameter("xmlonly").equalsIgnoreCase("true");
 			
 			String webhook = request.getParameter("hook");
+			surveyService.checkWebhook(webhook);
 
 			WebserviceTask task = new WebserviceTask(WebserviceTaskType.CreateResults);
 			task.setSurveyId(publishedsurvey.getId());
@@ -1068,7 +1069,7 @@ public class WebServiceController extends BasicController {
 		return "";
 	}
 
-	private @ResponseBody String createResultFromTokenOrContributionId(boolean isToken, @PathVariable String formid, @PathVariable String tokenOrUniqueId, @PathVariable String showids,
+	private @ResponseBody String createResultFromTokenOrContributionId(boolean isToken, String formid, String tokenOrUniqueId, String showids,
 			HttpServletRequest request, HttpServletResponse response, Locale locale) {
 
 		try {
@@ -1126,6 +1127,7 @@ public class WebServiceController extends BasicController {
 			task.setUser(user);
 
 			task.setCreated(new Date());
+			task.setFileTypes("u");
 			webserviceService.save(task);
 			webserviceService.startTask(task, locale);
 

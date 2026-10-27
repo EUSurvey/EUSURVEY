@@ -225,16 +225,31 @@ public class Form implements java.io.Serializable {
 		return SurveyHelper.getAnswerTitle(survey, answer, publicationMode);
 	}
 
+	private Map<String, Element> elementsByUniqueId;
+
 	public String getAnswerShortname(Answer answer) {
 		String answerValue = answer.getValue();
 
 		try {
 
-			Element question = survey.getQuestionMapByUniqueId().get(answer.getQuestionUniqueId());
+			// compute map only once
+			if (elementsByUniqueId == null) {
+				elementsByUniqueId = survey.getElementsByUniqueId();
+			}
+
+			Element question = elementsByUniqueId.get(answer.getQuestionUniqueId());
 
 			if (question == null) {
 				question = survey.getMatrixMapByUid().get(answer.getQuestionUniqueId());
 			}
+
+			// first try to find child element by uid
+			if (question != null && answer.getPossibleAnswerUniqueId() != null && !answer.getPossibleAnswerUniqueId().isEmpty()) {
+				Element pa = elementsByUniqueId.get(answer.getPossibleAnswerUniqueId());
+				if (pa != null) return "(" + pa.getShortname() + ")";
+			}
+
+			// fallback
 
 			if (question instanceof FreeTextQuestion) {
 				return "";

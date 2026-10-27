@@ -439,7 +439,7 @@
 								<c:when test="${enabledActivityIds.contains(id)}">
 									<li class="selected-choice possible-answer trigger" id="trigger${id}">
 										<a onclick="selectMultipleChoiceAnswer(this);" >
-											<span class="answertext">${id} - ${activity.getObject(id)} - <spring:message code="logging.${id}" /></span>
+											<span class="answertext">${id} - ${activity.getObject(id)} - <spring:message code="${activity.getLabel(id)}" /></span>
 										</a>
 		 								<input id="${id}" checked="checked" value="${id}" style="display: none" type="checkbox" name="activity${id}" />
 									</li>	
@@ -447,7 +447,7 @@
 								<c:otherwise>
 									<li class="possible-answer trigger" id="trigger${id}">
 										<a onclick="selectMultipleChoiceAnswer(this);" >
-											<span class="answertext">${id} - ${activity.getObject(id)} - <spring:message code="logging.${id}" /></span>
+											<span class="answertext">${id} - ${activity.getObject(id)} - <spring:message code="${activity.getLabel(id)}" /></span>
 										</a>
 		 								<input id="${id}" value="${id}" style="display: none" type="checkbox" name="activity${id}" />
 									</li>	

@@ -128,6 +128,16 @@ public class CustomCasAuthenticationManager implements UserDetailsService {
 			authList.add(new SimpleGrantedAuthority("ROLE_SYSTEM_MANAGER"));
 		}
 
+		if (user.getGlobalPrivileges().get(GlobalPrivilege.OrganisationManagement) == 2)
+		{
+			authList.add(new SimpleGrantedAuthority("ROLE_ORGANISATION_ADMIN"));
+		}
+
+		if (user.getGlobalPrivileges().get(GlobalPrivilege.OrganisationManagement) >= 1)
+		{
+			authList.add(new SimpleGrantedAuthority("ROLE_ORGANISATION_MANAGER"));
+		}
+
 		if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2)
 		{
 			authList.add(new SimpleGrantedAuthority("ROLE_CONTACT_ADMIN"));

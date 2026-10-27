@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 	<div style="text-align: center; margin-top: 20px;">
-		<a class="btn btn-default" onclick="showAddUserDialog(true)"><spring:message code="label.AddUser" /></a>
+		<a class="btn btn-default" onclick="showAddUserDialog(true, false)"><spring:message code="label.AddUser" /></a>
 	</div>
 	
 	<table id="tblResultPrivileges" class="table table-bordered table-striped table-styled" style="margin-left: auto; margin-right: auto; margin-top: 20px; width: 700px;">

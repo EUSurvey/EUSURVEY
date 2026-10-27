@@ -230,6 +230,13 @@ function getTextPropertiesRow(label, content, usetinymce, unit, maxLength)
 	}
 }
 
+function getLockRows(copiesLockedValue) {
+	if (userCanUnlockElements && (isStandard || isQuiz || isOPC || isECF || isSelfAssessment)) {
+		getCheckPropertiesRow("Locked", false);
+	}
+	getCheckPropertiesRow("CopiesLocked", copiesLockedValue);
+}
+
 function InitNumberElements(row) {
 	let selectedQuestion = $("#content").find(".selectedquestion").first()
 	let selectedelementId = selectedQuestion.attr("id");

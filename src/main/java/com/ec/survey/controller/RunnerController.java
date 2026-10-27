@@ -2698,9 +2698,9 @@ public class RunnerController extends BasicController {
 		}
 
 		for (Element element : elements) {
-			if (foreditor && hasGlobalAdminRights) {
+			/* if (foreditor && hasGlobalAdminRights) {
 				element.setLocked(false);
-			}
+			} */
 
 			if (element instanceof Matrix) {
 				Matrix m = (Matrix) element;

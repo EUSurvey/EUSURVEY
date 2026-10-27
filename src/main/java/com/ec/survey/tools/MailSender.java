@@ -87,11 +87,11 @@ public class MailSender implements Runnable {
 				helper.setTo(to);
 			}
 
-			if (cc != null) {
+			if (cc != null && cc.length > 0) {
 				helper.setCc(cc);
 			}
 
-			if (bcc != null) {
+			if (bcc != null && !bcc.isEmpty()) {
 				helper.setBcc(bcc);
 			}
 

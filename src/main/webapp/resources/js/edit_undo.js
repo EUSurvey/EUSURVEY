@@ -988,6 +988,12 @@ var UndoProcessor = function() {
 				updateChoice(element, state.answers, false)
 				break
 			}
+			case "CopiesLocked":
+				element.copiesLocked(step[3]);
+				break;
+			case "Locked":
+				element.locked(step[3]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -1704,6 +1710,12 @@ var UndoProcessor = function() {
 				updateChoice(element, state.answers, false)
 				break
 			}
+			case "CopiesLocked":
+				element.copiesLocked(step[4]);
+				break;
+			case "Locked":
+				element.locked(step[4]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;

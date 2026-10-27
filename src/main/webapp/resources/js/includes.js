@@ -341,6 +341,11 @@ function initModals(item)
 			    		//$('#contributionsearchForm').submit();
 			    		$(this).parent().parent().find(".overlaybutton").first().html(dateText + "&nbsp;<span class='caret'></span>");
 			    		$(this).parent().hide();
+
+					} else if ($('#AuthorisedUsersTable').length > 0) {
+						$(this).parent().parent().find(".overlaybutton").first().html(dateText + "&nbsp;<span class='caret'></span>");
+						$(this).parent().hide();
+						loadOrganisation();
 			    	} else if ($('#resultsForm').length > 0) {
 			    		//$('#resultsForm').submit();
 			    		$(this).parent().parent().find(".overlaybutton").first().html(dateText + "&nbsp;<span class='caret'></span>");
@@ -678,16 +683,24 @@ function initModals(item)
 			if ($(this).val().length > 0)
 			{
 				text = true;	
-			};
+			}
 		 });	
 		 
 		 var hidden = false;
 		 $(cell).find("input[type=hidden]").each(function(){
 			if ($(this).val().length > 0)
 			{
-				text = true;	
-			};
+				hidden = true;
+			}
 		 });
+
+		var dropdown = false;
+		$(cell).find("select:not([class^='ui-datepicker'])").each(function(){
+			if ($(this).val() !== '')
+			{
+				dropdown = true;
+			}
+		});
 
 		if ($(cell).find("input[type='checkbox']").length > 0)
 		{
@@ -705,7 +718,7 @@ function initModals(item)
             $(cell).removeClass("yellowfilter");
         }
 		 
-		if ($(cell).find("input:checked").length > 0 || text || hidden)
+		if ($(cell).find("input:checked").length > 0 || text || hidden || dropdown)
 		{
 			if (background) {
 			    $(cell).addClass("yellowfilter");
@@ -913,6 +926,7 @@ function initModals(item)
 		let cell = $(link).closest('.filtercell');
 		cell.find(".check").removeAttr("checked");
 		cell.find("input[type='text']").val("");
+		cell.find("select").val("");
 		cell.find(".datepicker").each(function(){
 			removeDateSelection(this);
 		});
@@ -923,6 +937,11 @@ function initModals(item)
 		
 		if ($("#contributionsearchForm").length > 0 || $(".noautosubmitonclearfilter").length > 0){
 			//we do not automatically submit due to performance reasons			
+			return;
+		}
+
+		if ($("#AuthorisedUsersTableBody").length > 0) {
+			loadOrganisation();
 			return;
 		}
 		
