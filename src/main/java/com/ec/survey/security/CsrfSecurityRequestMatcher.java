@@ -13,8 +13,7 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
     private RegexRequestMatcher notifySuccessMatcher = new RegexRequestMatcher("/home/notifySuccess.*",  "POST");
     private RegexRequestMatcher notifyErrorMatcher = new RegexRequestMatcher("/home/notifyError.*",  "POST");
     private RegexRequestMatcher notifyTranslationMatcher = new RegexRequestMatcher("/home/returnTranslation.*",  "POST");
-
-
+    private RegexRequestMatcher sendevoteMatcher = new RegexRequestMatcher("/runner/sendevote.*",  "POST");
 
     @Override
     public boolean matches(HttpServletRequest request) {
@@ -22,7 +21,7 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
     	if(allowedMethods.matcher(request.getMethod()).matches()){
             return false;
         }
-        return !(notifySuccessMatcher.matches(request) || notifyErrorMatcher.matches(request) || notifyTranslationMatcher.matches(request));
+        return !(notifySuccessMatcher.matches(request) || notifyErrorMatcher.matches(request) || notifyTranslationMatcher.matches(request)  || sendevoteMatcher.matches(request));
     }
     	
 }
