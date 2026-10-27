@@ -199,19 +199,12 @@ public class AddressBookController extends BasicController {
 			User user = sessionService.getCurrentUser(request);		
 			for (String id : idsarray) {
 				Attendee newAttendee = attendeeService.get(Integer.parseInt(id));
-
-				Attendee originalAttendee = attendeeService.get(newAttendee.getOriginalId());
-				if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2)
-				{
-					int ownerId = user.getId();
-					if (originalAttendee.getOwnerId() != ownerId && !attendeeService.getAccessibleAttendees(ownerId, null).contains(originalAttendee.getId())) {
-						throw new ForbiddenURLException();
-					}
-				}
-
+				
 				if (newAttendee.getOriginalId().equals(newAttendee.getId()))
 				{
 					//delete
+					Attendee originalAttendee = attendeeService.get(newAttendee.getOriginalId());
+					
 					List<ParticipationGroup> groups = participationService.getGroupsForAttendee(originalAttendee.getId());
 					for (ParticipationGroup participationGroup : groups) {
 						
@@ -224,6 +217,8 @@ public class AddressBookController extends BasicController {
 					attendeeService.delete(newAttendee.getId());
 				} else {
 					//edit
+					Attendee originalAttendee = attendeeService.get(newAttendee.getOriginalId());
+					
 					List<ParticipationGroup> groups = participationService.getGroupsForAttendee(originalAttendee.getId());
 					for (ParticipationGroup participationGroup : groups) {
 						participationGroup.getAttendees().remove(originalAttendee);
@@ -450,7 +445,7 @@ public class AddressBookController extends BasicController {
 				}
 
 				response.setStatus(HttpServletResponse.SC_OK);
-				writer.print("{\"success\": true, \"uid\": \"" + uid + "\", \"delimiter\": \"" + delimiter + "\", \"name\": \"" + filename + "\"}");
+				writer.print("{\"success\": true, \"uid\": \"" + uid + "\", \"delimiter\": \"" + delimiter + "\", \"name\": \"" + Tools.encodeForJavaScript(filename) + "\"}");
 			} catch (Exception ex) {
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				writer.print("{\"success\": false}");
@@ -1305,19 +1300,9 @@ public class AddressBookController extends BasicController {
 	}	
 	
 	@PostMapping(value = "/deleteAttendee")
-	public ResponseEntity<String> delete(HttpServletRequest request) throws Exception {
-		User user = sessionService.getCurrentUser(request);
+	public ResponseEntity<String> delete(HttpServletRequest request) {
 		String id = request.getParameter("id");
 		Attendee attendee = attendeeService.get(Integer.parseInt(id));
-
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2)
-		{
-			int ownerId = user.getId();
-			if (attendee.getOwnerId() != ownerId && !attendeeService.getAccessibleAttendees(ownerId, null).contains(attendee.getId())) {
-				throw new ForbiddenURLException();
-			}
-		}
-
 		attendee.setOriginalId(attendee.getId());
 		attendee.setHidden(true);		
 		attendeeService.update(attendee, true);
@@ -1332,20 +1317,6 @@ public class AddressBookController extends BasicController {
 	public ResponseEntity<String> deleteMultiple(HttpServletRequest request) throws Exception {
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
-
-		for (Entry<String, String[]> entry : parameterMap.entrySet()) {
-			if (entry.getKey().startsWith("selectedAttendee")) {
-				Attendee attendee = attendeeService.get(Integer.parseInt(entry.getValue()[0]));
-
-				if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2)
-				{
-					int ownerId = user.getId();
-					if (attendee.getOwnerId() != ownerId && !attendeeService.getAccessibleAttendees(ownerId, null).contains(attendee.getId())) {
-						throw new ForbiddenURLException();
-					}
-				}
-			}
-		}
 
 		AttendeeUpdater updater = (AttendeeUpdater) context.getBean("attendeeUpdater");
 		updater.initForDelete(user, request.getParameter("checkAllCheckBox") != null && request.getParameter("checkAllCheckBox").equalsIgnoreCase("true"), (HashMap<String, String>) request.getSession().getAttribute("attendees-filter"), parameterMap);
@@ -1467,7 +1438,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@PostMapping( value = "/addAttendee")
-	public String add(HttpServletRequest request) throws Exception {
+	public String add(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, MessageException {			
 		
 		User user = sessionService.getCurrentUser(request);
 		
@@ -1481,15 +1452,6 @@ public class AddressBookController extends BasicController {
 		{
 			String id = parameterMap.get("id")[0];
 			originalAttendee = attendeeService.get(Integer.parseInt(id));
-
-			if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2)
-			{
-				int ownerId = user.getId();
-				if (originalAttendee.getOwnerId() != ownerId && !attendeeService.getAccessibleAttendees(ownerId, null).contains(originalAttendee.getId())) {
-					throw new ForbiddenURLException();
-				}
-			}
-
 			edit = true;
 			attendee.setOriginalId(originalAttendee.getId());
 			attendee.setOwnerId(originalAttendee.getOwnerId());

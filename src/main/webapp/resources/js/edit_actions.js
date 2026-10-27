@@ -117,8 +117,8 @@ var Actions = function() {
 			return;
 		}
 
-		//this.CopyEnabled(true);
-		//this.CutEnabled(true);
+		this.CopyEnabled(true);
+		this.CutEnabled(true);
 		this.PasteEnabled(this.copiedElements.length > 0);
 
 		if (this.PasteEnabled()){
@@ -971,19 +971,6 @@ var Actions = function() {
 				showError(getPropertyLabel("error.PredefinedDelete"));
 			}
 		});
-	}
-
-	this.unlockElement = function() {
-		const selectedElements = $("#content").find(".selectedquestion");
-		if (selectedElements.length != 1) return
-		const id = $($(selectedElements)[0]).attr("id");
-		_elements[id].locked(false)
-		_elementProperties.deselectAll()
-		_elementProperties.showProperties(selectedElements)
-
-		this.SaveEnabled(true);
-
-		_undoProcessor.addUndoStep(["Locked", id, null, true, false])
 	}
 }
 

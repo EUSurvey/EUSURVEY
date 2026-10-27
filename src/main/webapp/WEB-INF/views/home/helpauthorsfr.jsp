@@ -2121,7 +2121,7 @@
 				par votre brouillon en cours, mais que vous pourrez la republier telle
 				quelle si nécessaire.
 			</p>
-			<h2>
+            <h2>
 				Comprendre les modifications en attente dans EUSurvey
 			</h2>
 			<p>

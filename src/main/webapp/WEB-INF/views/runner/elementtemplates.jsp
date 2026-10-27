@@ -48,8 +48,6 @@
 			<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />	
 			<input type="hidden" data-bind="value: tabTitle, attr: {'name': 'tabtitle' + id()}" />	
 			<input type="hidden" data-bind="value: level, attr: {'name': 'level' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 		<!-- /ko -->
 	</div>
@@ -63,8 +61,6 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 		<!-- /ko -->
 	</div>
@@ -110,8 +106,6 @@
 			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
 			<input type="hidden" data-bind="value: decimalPlaces, attr: {'name': 'decimalplaces' + id()}" />
 			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 		<!-- /ko -->
@@ -136,8 +130,6 @@
 			<input type="hidden" data-bind="value: filename, attr: {'name': 'filename' + id()}" />	
 			<input type="hidden" data-bind="value: longdesc, attr: {'name': 'longdesc' + id()}" />	
 			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 		<!-- /ko -->
 	</div>
@@ -153,9 +145,7 @@
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<input type="hidden" data-bind="value: color, attr: {'name': 'color' + id()}" />
 			<input type="hidden" data-bind="value: height, attr: {'name': 'height' + id()}" />
-			<input type="hidden" data-bind="value: style, attr: {'name': 'style' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
+			<input type="hidden" data-bind="value: style, attr: {'name': 'style' + id()}" />			
 		<!-- /ko -->
 	</div>
 	
@@ -329,9 +319,6 @@
 				<input type="hidden" data-bind="value: displayAllQuestions, attr: {'name': 'displayAllQuestions' + id()}" />
 				<input type="hidden" data-bind="value: isSAQuestion(), attr: {'name': 'isSAQuestion' + id()}" />
 				<input type="hidden" data-bind="value: evaluationCriterion(), attr: {'name': 'evaluationCriterion' + id()}" />
-
-				<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-				<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 
 				<tr class="hideme">
 					<td>
@@ -533,8 +520,6 @@
 				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
 
 				<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
-				<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-				<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 
 				<!-- ko foreach: possibleAnswers() -->
 				<input type="hidden" data-bind="value: dependentElementsString(), attr: {'name': 'dependencies' + $parent.id(), 'data-id' : id()}" />
@@ -572,8 +557,6 @@
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
@@ -671,8 +654,6 @@
 			<input type="hidden" data-bind="value: isPassword, attr: {'name': 'password' + id()}" />
 			<input type="hidden" data-bind="value: isUnique, attr: {'name': 'unique' + id()}" />
 			<input type="hidden" data-bind="value: isComparable, attr: {'name': 'comparable' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 	
@@ -753,8 +734,6 @@
 			<input type="hidden" data-bind="value: isPassword, attr: {'name': 'password' + id()}" />
 			<input type="hidden" data-bind="value: isUnique, attr: {'name': 'unique' + id()}" />
 			<input type="hidden" data-bind="value: isComparable, attr: {'name': 'comparable' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			
@@ -836,8 +815,6 @@
 			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: usetext, attr: {'name': 'usetext' + id()}" />
 			<input type="hidden" data-bind="value: useupload, attr: {'name': 'useupload' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<label hidden><textarea data-bind="text: confirmationtext, attr: {'name': 'confirmationtext' + id()}" ></textarea>${form.getMessage("label.ConfirmationText")}</label>
@@ -864,8 +841,6 @@
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: iconType, attr: {'name': 'iconType' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<input type="hidden" data-bind="value: editorRowsLocked(), attr: {'name': 'editorRowsLocked' + id()}" />
@@ -1034,9 +1009,7 @@
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
-			<input type="hidden" data-bind="value: isUnique, attr: {'name': 'unique' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
+			<input type="hidden" data-bind="value: isUnique, attr: {'name': 'unique' + id()}" />	
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 
@@ -1093,9 +1066,7 @@
 			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
-			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
+			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 		<!-- /ko -->
@@ -1152,9 +1123,7 @@
 			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />	
-			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
+			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 
@@ -1220,9 +1189,7 @@
 			<input type="hidden" data-bind="value: isListVote, attr: {'name': 'listvote' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
-			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
+			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 		<!-- /ko -->		
@@ -1273,8 +1240,6 @@
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<input type="hidden" data-bind="value: extensions, attr: {'name': 'extensions' + id()}" />
 			<input type="hidden" data-bind="value: maxFileSize, attr: {'name': 'maxFileSize' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 		<!-- /ko -->
 	</div>
 	
@@ -1303,9 +1268,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
-			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 		<!-- /ko -->
@@ -1404,8 +1367,6 @@
 			<input type="hidden" data-bind="value: numbering, attr: {'name': 'numbering' + id()}" />
 			<input type="hidden" data-bind="value: limit, attr: {'name': 'limit' + id()}" />
 			<input type="hidden" data-bind="value: files().length, attr: {'name': 'count' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 		<!-- /ko -->
@@ -1465,8 +1426,6 @@
 			<input type="hidden" data-bind="value: minRows, attr: {'name': 'rowsmin' + id()}" />
 			<input type="hidden" data-bind="value: maxRows, attr: {'name': 'rowsmax' + id()}" />
 			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<input type="hidden" data-bind="value: editorColumnsLocked(), attr: {'name': 'editorColumnsLocked' + id()}" />
@@ -1599,8 +1558,6 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: hidden, attr: {'name': 'hidden' + id()}" />
 			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 		    <input type="hidden" data-bind="value: editorColumnsLocked(), attr: {'name': 'editorColumnsLocked' + id()}" />
@@ -2026,8 +1983,6 @@
 			<input type="hidden" data-bind="value: columns, attr: {'name': 'columns' + id()}" />
 			<input type="hidden" data-bind="value: size, attr: {'name': 'size' + id()}" />
 			<input type="hidden" data-bind="value: showHeadersAndBorders, attr: {'name': 'showHeadersAndBorders' + id()}" />
-			<input type="hidden" data-bind="value: locked, attr: {'name': 'locked' + id()}" />
-			<input type="hidden" data-bind="value: copiesLocked, attr: {'name': 'copiesLocked' + id()}" />
 			<label hidden><textarea data-bind="text: originalTitle, attr: {'name': 'text' + id()}" ></textarea>${form.getMessage("label.OriginalTitle")}</label>
 			<label hidden><textarea data-bind="text: help, attr: {'name': 'help' + id()}" ></textarea>${form.getMessage("label.Help")}</label>
 			<input type="hidden" data-bind="value: childIds(), attr: {'name': 'childelements' + id()}" />

@@ -142,7 +142,6 @@
 					<div class="tab-content" style="padding-top: 0px; border: 1px solid #ddd; margin-top: -6px; max-width: 1139px; margin-left: auto; margin-right: auto;">
 						<div role="tabpanel" class="tab-pane active" id="global">
 							<%@ include file="access-general.jsp" %>
-							<%@ include file="access-general-js.jsp" %>
 						</div>
 				
 						<div role="tabpanel" class="tab-pane" id="results">
@@ -153,13 +152,11 @@
 				<c:when test="${showFirstTab}">
 					<div style="padding-top: 130px;">
 						<%@ include file="access-general.jsp" %>
-						<%@ include file="access-general-js.jsp" %>
 					</div>
 				</c:when>
 				<c:when test="${showSecondTab}">
 					<div style="display: none">
 						<%@ include file="access-general.jsp" %>
-						<%@ include file="access-general-js.jsp" %>
 					</div>
 					<div style="padding-top: 130px;">
 						<%@ include file="access-results.jsp" %>

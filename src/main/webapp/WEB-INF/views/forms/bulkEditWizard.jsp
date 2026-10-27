@@ -93,7 +93,6 @@
                     <div style="padding: 10px;">
                         <div id="addRemoveUsersInfo" style="font-weight: bold; margin-bottom: 20px;"></div>
                         <%@ include file="../management/access-general.jsp" %>
-                        <%@ include file="../management/access-general-js.jsp" %>
 
                          <div style="padding: 30px;">
                             <div class="radio">

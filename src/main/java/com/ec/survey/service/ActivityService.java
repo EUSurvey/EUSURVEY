@@ -3,7 +3,6 @@ package com.ec.survey.service;
 import com.ec.survey.model.Activity;
 import com.ec.survey.model.ActivityFilter;
 import com.ec.survey.model.Setting;
-import com.ec.survey.tools.ActivitiesToLog;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.activity.ActivityRegistry;
@@ -35,32 +34,35 @@ public class ActivityService extends BasicService {
 	}
 	
 	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)
-	public void log(ActivitiesToLog activitiesToLog, Integer userId, String surveyUID) {
+	public void log(Map<Integer, String[]> activitiesToLog, Integer userId, String surveyUID) {
 		Session session = sessionFactory.getCurrentSession();
 		String loggingenabled = settingsService.get(Setting.ActivityLoggingEnabled);
 		if (loggingenabled.equalsIgnoreCase("true"))
 		{
-			for (var entry : activitiesToLog.getAll())
+			for (Entry<Integer, String[]> entry : activitiesToLog.entrySet())
 			{
-				int logId = entry.getLeft();
-				var oldVal = entry.getMiddle();
-				var newVal = entry.getRight();
-
+				int logId = entry.getKey();
+				String[] oldnew = activitiesToLog.get(logId);
 				String enabled = settingsService.get(logId + "ActivityEnabled");
 				
-				if (enabled.equalsIgnoreCase("true"))
+				int counter = 0;
+				
+				while (oldnew.length > counter)
 				{
-					Activity activity = new Activity();
-					activity.setDate(new Date());
-					activity.setLogID(logId);
-					activity.setOldValue(oldVal);
-					activity.setNewValue(newVal);
-
-					checkValueSizes(activity);
-
-					activity.setUserId(userId);
-					activity.setSurveyUID(surveyUID);
-					session.save(activity);
+					if (enabled.equalsIgnoreCase("true"))
+					{
+						Activity activity = new Activity();
+						activity.setDate(new Date());
+						activity.setLogID(logId);
+						activity.setOldValue(oldnew[counter++]);
+						activity.setNewValue(oldnew[counter++]);
+						
+						checkValueSizes(activity);
+						
+						activity.setUserId(userId);
+						activity.setSurveyUID(surveyUID);
+						session.save(activity);
+					}
 				}
 			}
 		}

@@ -234,7 +234,6 @@
 						<option value="highaudience" id="highaudienceoption"><spring:message code="support.HighAudience" /></option>
 						<option value="organisation" id="organisationoption"><spring:message code="support.Organisation" /></option>
 						<option value="automateddeletion" id="automateddeletionoption"><spring:message code="support.AutomatedDeletion" /></option>
-						<option value="erasmus" id="erasmusoption"><spring:message code="support.Erasmus" /></option>
 						<option value="otherreason"><spring:message code="support.otherreason" /></option>						
 					</select><br /><br />
 					<script>

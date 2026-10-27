@@ -139,15 +139,5 @@ public class Activity implements java.io.Serializable {
 	{		
 		return "";
 	}
-
-	@Transient
-	public String getLabel(int id) {
-		return ActivityRegistry.getLabelFromId(id);
-	}
-
-	@Transient
-	public String getLabel() {
-		return getLabel(logID);
-	}
 	
 }

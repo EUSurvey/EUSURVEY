@@ -25,7 +25,7 @@
 				$("#greenArea").show();
 			}
 			
-			if (privilege == 'FormManagement' || privilege == 'UserManagement' || privilege == 'ContactManagement' || privilege == 'OrganisationManagement')
+			if (privilege == 'FormManagement' || privilege == 'UserManagement' || privilege == 'ContactManagement')
 			{
 				$(".nororw").hide();
 				$(".noownall").show();
@@ -133,7 +133,6 @@
 							</c:if>
 						
 							<th><spring:message code="label.SystemManagement" /></th>
-							<th><spring:message code="label.OrganisationManagement" /></th>
 							<c:if test="${USER.getGlobalPrivilegeValue('RightManagement') > 1}">
 								<th>&#160;</th>
 							</c:if>
@@ -187,13 +186,6 @@
                                     </jsp:include>
                                  </div>
 							</td>
-							<td>
-                                 <div class="icon-wrapper" data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" onclick="changePrivilege('OrganisationManagement',${role.id});">
-                                    <jsp:include page="../management/access-icon.jsp">
-                                        <jsp:param name="value" value="${role.getPrivilegeValue('OrganisationManagement')}" />
-                                    </jsp:include>
-                                 </div>
-                            </td>
 							<c:if test="${USER.getGlobalPrivilegeValue('RightManagement') > 1}">
 								<td style="vertical-align: middle">
 									<a data-toggle="tooltip" title="<spring:message code="label.DeleteRole" />" class="iconbutton" onclick="showDeleteDialog(${role.id},'<esapi:encodeForHTMLAttribute>${role.name}</esapi:encodeForHTMLAttribute>');"><span class="glyphicon glyphicon-remove"></span></a>

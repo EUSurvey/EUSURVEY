@@ -7,8 +7,6 @@ public class ActivityRegistryEntry {
     private final String object;
     private final int id;
 
-    private String labelSuffix = "";
-
     public ActivityRegistryEntry(String property, String event, String object, int id){
         this.property = property;
         this.event = event;
@@ -30,13 +28,5 @@ public class ActivityRegistryEntry {
 
     public int getId() {
         return id;
-    }
-
-    public void setLabelSuffix(String suffix) {
-        labelSuffix = suffix;
-    }
-
-    public String getMessageLabel() {
-        return "logging." + id + labelSuffix;
     }
 }

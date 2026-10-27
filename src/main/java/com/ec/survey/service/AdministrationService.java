@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
@@ -39,9 +38,6 @@ public class AdministrationService extends BasicService {
 
 	@Autowired
 	private SqlQueryService sqlQueryService;
-
-	@Resource(name = "organisationService")
-	private OrganisationService organisationService;
 
 	private @Value("${admin.user}") String adminuser;
 	private @Value("${admin.password}") String adminpassword;
@@ -182,7 +178,7 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional
-	public User createUser(User user) throws LoginAlreadyExistsException {
+	public void createUser(User user) throws LoginAlreadyExistsException {
 		Session session = sessionFactory.getCurrentSession();
 
 		Query query = session.createQuery("FROM User u where u.login = :login").setString("login", user.getLogin());
@@ -195,7 +191,6 @@ public class AdministrationService extends BasicService {
 		}
 		
 		session.save(user);
-		return user;
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
@@ -203,7 +198,7 @@ public class AdministrationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		user = (User) session.merge(user);
 
-		if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0 && !organisationService.isWhitelisted(user.getId())) {
+		if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
 			user.setCanCreateSurveys(false);
 		}
 
@@ -803,7 +798,7 @@ public class AdministrationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		user = (User) session.merge(user);
 
-		if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0 && !organisationService.isWhitelisted(user.getId())) {
+		if (settingsService.isCreateSurveysForExternalsDisabled() && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0) {
 			user.setCanCreateSurveys(false);
 		}
 

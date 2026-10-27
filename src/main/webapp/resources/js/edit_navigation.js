@@ -582,34 +582,22 @@ function showHideElements(span)
 function collapseAll(close, button)
 {
 	var parent = $("#navigationcontent");
-	let isProperties = false;
 	if ($(button).closest(".toolbox").length > 0)
 	{
 		parent = $(".toolbox").first();
 	}
 	if ($(button).closest(".properties").length > 0)
 	{
-		parent = $(".properties").first();
-		isProperties = true;
+		parent = $(".properties").first();		
 	} 
 	if (close)
 	{
 		$(parent).find(".glyphicon-chevron-down").each(function(){
 			$(this).click();
 		});
-		if (isProperties) {
-			$(parent).find(".glyphicon-minus-sign").each(function(){
-				$(this).parent().click();
-			});
-		}
 	} else {
 		$(parent).find(".glyphicon-chevron-right").each(function(){
 			$(this).click();
 		});
-		if (isProperties) {
-			$(parent).find(".glyphicon-plus-sign").each(function(){
-				$(this).parent().click();
-			});
-		}
 	}
 }

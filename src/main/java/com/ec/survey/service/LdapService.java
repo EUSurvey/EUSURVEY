@@ -458,6 +458,7 @@ public class LdapService extends BasicService {
 				}
 			} catch (javax.naming.SizeLimitExceededException se) {
 				//this one is thrown when the configured limit is reached, so everything is as expected
+				logger.info(se.getMessage(), se);
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
 			}

@@ -45,7 +45,7 @@
 							<th class="filtercell"><input id="voterFirstName" onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" /></th>
 							<th class="filtercell"><input id="voterLastName" onkeyup="checkFilterCell($(this).closest('.filtercell'), true)" type="text" /></th>
 							<th class="filtercell">
-								<select id="voterVoted" onchange="firstVoterPage(); checkFilterCell($(this).closest('.filtercell'), true)">
+								<select id="voterVoted" onchange="firstVoterPage()">
 									<option value=""><spring:message code="label.All" /></option>
 									<option value="true"><spring:message code="label.Yes" /></option>
 									<option value="false"><spring:message code="label.No" /></option>

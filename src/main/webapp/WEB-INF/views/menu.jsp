@@ -4,22 +4,13 @@
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 <c:if test="${USER.agreedToToS}">
 	<div class="fulltitle">
-	    <c:choose>
-            <c:when test="${USER!= null && runnermode == null && USER.showAdmin}">
-                <div style="float: right">
-                    <ul class="nav nav-tabs" id="menutab3" style="font-size: 10pt; border-bottom: 0px; margin-top: 6px; margin-bottom: 0px; margin-right: 20px;">
-                        <li style="margin-left: 20px" id="administration-menu-tab"><a href="<c:url value="/administration/system"/>"><span class="glyphicon glyphicon-cog"></span> <spring:message code="label.Administration" /></a></li>
-                    </ul>
-                </div>
-            </c:when>
-            <c:when test="${USER!= null && runnermode == null && USER.showOrganisationManagement}">
-                <div style="float: right">
-                    <ul class="nav nav-tabs" id="menutab3" style="font-size: 10pt; border-bottom: 0px; margin-top: 6px; margin-bottom: 0px; margin-right: 20px;">
-                        <li style="margin-left: 20px" id="organisationmanagement-menu-tab"><a href="<c:url value="/organisationmanagement/whitelist"/>"><span class="glyphicon glyphicon-cog"></span> <spring:message code="label.OrganisationManagement" /></a></li>
-                    </ul>
-                </div>
-            </c:when>
-        </c:choose>
+		<c:if test="${USER!= null && runnermode == null && USER.showAdmin}">
+			<div style="float: right">
+				<ul class="nav nav-tabs" id="menutab3" style="font-size: 10pt; border-bottom: 0px; margin-top: 6px; margin-bottom: 0px; margin-right: 20px;">
+				  	<li style="margin-left: 20px" id="administration-menu-tab"><a href="<c:url value="/administration/system"/>"><span class="glyphicon glyphicon-cog"></span> <spring:message code="label.Administration" /></a></li>
+				</ul>
+			</div>
+	    </c:if>
 	
 		<table style="margin-left: auto; margin-right: auto;">
 			<tr>
@@ -133,7 +124,7 @@
 			$("#import-survey-dialog-2").modal("show");
 		</c:if>
 
-		 <c:if test="${showexternalaccessinfo != null}">
+        <c:if test="${showexternalaccessinfo != null}">
             const alreadyshown = localStorage.getItem('externalaccessinfoshown');
             if (alreadyshown == null) {
                 $('#showexternalaccessinfo-dialog').modal("show");
@@ -537,11 +528,8 @@
 						<td>					
 							<div>
 								<spring:message code="label.SurveyOnBehalf" /><span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.SurveyOnBehalf" />"><i class="glyphicon glyphicon-info-sign"></i></span>
-
+								
 								<c:choose>
-								    <c:when test="${(USER.isExternal() || USER.type == 'SYSTEM') && USER.isWhitelisted()}">
-                                        <select class="form-control new-survey-organisation required" id="new-survey-organisation" style="width: auto; min-width: 200px; max-width: 690px;" onchange="checkValidator()">
-                                    </c:when>
 									<c:when test="${USER.isExternal() || USER.type == 'SYSTEM'}">
 										<select class="form-control new-survey-organisation" id="new-survey-organisation" style="width: auto; min-width: 200px; max-width: 690px;" onchange="checkValidator()">
 									</c:when>
@@ -549,17 +537,17 @@
 										<input type="hidden" id="new-survey-organisation" class="new-survey-organisation" />
 										<select class="form-control new-survey-organisation" style="width: auto; min-width: 200px; max-width: 690px;" disabled="disabled" onchange="checkValidator()">
 									</c:otherwise>
-								</c:choose>
-
+								</c:choose>							
+								
 									  	<optgroup id="new-survey-organisation-dgs" label="<spring:message code="label.EuropeanCommission" />: <spring:message code="label.DGsAndServices" />">
 									    </optgroup>
-
+									
 									    <optgroup id="new-survey-organisation-aex" label="<spring:message code="label.EuropeanCommission" />: <spring:message code="label.ExecutiveAgencies" />">
 									    </optgroup>
-
+									    
 									    <optgroup id="new-survey-organisation-euis" label="<spring:message code="label.OtherEUIs" />">
 									    </optgroup>
-
+									    
 									    <optgroup id="new-survey-organisation-noneuis" label="<spring:message code="label.NonEUIentities" />">
 									    </optgroup>
 								</select>
@@ -569,7 +557,7 @@
 								<span style="vertical-align: top">
 									<b><spring:message code="label.Owner" /></b>: ${USER.getFirstLastName()} (${USER.email})
 								</span>
-								<c:if test="${(USER.isExternal() || USER.type == 'SYSTEM') && !USER.isWhitelisted()}">
+								<c:if test="${USER.isExternal() || USER.type == 'SYSTEM'}">
 									<div id="new-survey-validator-div" style="display: inline-block; margin-left: 40px"> 
 										<span>
 											<span class="mandatory">*</span><spring:message code="label.EmailValidator" /><span data-toggle="tooltip" class="iconbutton" rel="tooltip" data-html="true" data-placement="right" title="<spring:message code="info.EmailValidator" />"><i class="glyphicon glyphicon-info-sign"></i></span>
@@ -855,87 +843,66 @@
 			url: contextpath + url,
 			async: false,
 		    success :function(result)
-		    {
-		        if (Object.keys(result.organisations).length > 0) {
-		             $.each(result.organisations, function(key, data){
-                        var option = document.createElement("option");
-                        $(option).attr("value", key);
-                        if (data.length > 95) {
-                            $(option).append(data.substring(0, 95) + "...");
-                        } else {
-                            $(option).append(data);
-                        }
-                        if (userOrganisation == key) {
-                            $(option).attr("selected", "selected");
-                        }
-                        $(option).attr("title", data);
-                        $('#new-survey-organisation').append(option);
-                        $('#new-survey-organisation-dgs').hide();
-                        $('#new-survey-organisation-aex').hide();
-                        $('#new-survey-organisation-euis').hide();
-                        $('#new-survey-organisation-noneuis').hide();
-                    });
-		        } else {
-                    $.each(result.dgs, function(key, data){
-                        var option = document.createElement("option");
-                        $(option).attr("value", key);
-                        if (data.length > 95) {
-                            $(option).append(data.substring(0, 95) + "...");
-                        } else {
-                            $(option).append(data);
-                        }
-                        if (userOrganisation == key) {
-                            $(option).attr("selected", "selected");
-                        }
-                        $(option).attr("title", data);
-                        $('#new-survey-organisation-dgs').append(option);
-                    });
-
-                    $.each(result.executiveAgencies, function(key, data){
-                        var option = document.createElement("option");
-                        $(option).attr("value", key);
-                        if (data.length > 95) {
-                            $(option).append(data.substring(0, 95) + "...");
-                        } else {
-                            $(option).append(data);
-                        }
-                        if (userOrganisation == key) {
-                            $(option).attr("selected", "selected");
-                        }
-                        $(option).attr("title", data);
-                        $('#new-survey-organisation-aex').append(option);
-                    });
-
-                    $.each(result.otherEUIs, function(key, data){
-                        var option = document.createElement("option");
-                        $(option).attr("value", key);
-                        if (data.length > 95) {
-                            $(option).append(data.substring(0, 95) + "...");
-                        } else {
-                            $(option).append(data);
-                        }
-                        if (userOrganisation == key) {
-                            $(option).attr("selected", "selected");
-                        }
-                        $(option).attr("title", data);
-                        $('#new-survey-organisation-euis').append(option);
-                    });
-
-                    $.each(result.nonEUIs, function(key, data){
-                        var option = document.createElement("option");
-                        $(option).attr("value", key);
-                        if (data.length > 95) {
-                            $(option).append(data.substring(0, 95) + "...");
-                        } else {
-                            $(option).append(data);
-                        }
-                        if (userOrganisation == key) {
-                            $(option).attr("selected", "selected");
-                        }
-                        $(option).attr("title", data);
-                        $('#new-survey-organisation-noneuis').append(option);
-                    });
-                }
+		    {		    	
+		    	$.each(result.dgs, function(key, data){
+		    		var option = document.createElement("option");
+		    		$(option).attr("value", key);
+					if (data.length > 95) {
+						$(option).append(data.substring(0, 95) + "...");
+					} else {
+						$(option).append(data);
+					}
+		    		if (userOrganisation == key) {
+		    			$(option).attr("selected", "selected");
+		    		}
+					$(option).attr("title", data);
+		    		$('#new-survey-organisation-dgs').append(option);
+		    	});
+		    	
+		    	$.each(result.executiveAgencies, function(key, data){
+		    		var option = document.createElement("option");
+		    		$(option).attr("value", key);
+					if (data.length > 95) {
+						$(option).append(data.substring(0, 95) + "...");
+					} else {
+						$(option).append(data);
+					}
+		    		if (userOrganisation == key) {
+		    			$(option).attr("selected", "selected");
+		    		}
+					$(option).attr("title", data);
+		    		$('#new-survey-organisation-aex').append(option);
+		    	});	
+		    	
+		    	$.each(result.otherEUIs, function(key, data){
+		    		var option = document.createElement("option");
+		    		$(option).attr("value", key);
+					if (data.length > 95) {
+						$(option).append(data.substring(0, 95) + "...");
+					} else {
+						$(option).append(data);
+					}
+		    		if (userOrganisation == key) {
+		    			$(option).attr("selected", "selected");
+		    		}
+					$(option).attr("title", data);
+		    		$('#new-survey-organisation-euis').append(option);
+		    	});	
+		    	
+		    	$.each(result.nonEUIs, function(key, data){
+		    		var option = document.createElement("option");
+		    		$(option).attr("value", key);
+					if (data.length > 95) {
+						$(option).append(data.substring(0, 95) + "...");
+					} else {
+						$(option).append(data);
+					}
+		    		if (userOrganisation == key) {
+		    			$(option).attr("selected", "selected");
+		    		}
+					$(option).attr("title", data);
+		    		$('#new-survey-organisation-noneuis').append(option);
+		    	});	
 		    	
 		    	var organisation = "${USER.organisationCode}";
 		    	if (organisation.length == 0 || organisation == 'external') organisation = "OTHER";

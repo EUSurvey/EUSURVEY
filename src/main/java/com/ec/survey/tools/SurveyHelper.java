@@ -2,7 +2,6 @@ package com.ec.survey.tools;
 
 import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.selfassessment.SACriterion;
 import com.ec.survey.model.survey.*;
@@ -16,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -1351,7 +1351,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			section.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			section.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return section;
@@ -1427,7 +1427,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			text.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			text.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return text;
@@ -1525,7 +1525,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			image.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			image.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return image;
@@ -1590,7 +1590,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			ruler.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			ruler.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return ruler;
@@ -1727,7 +1727,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			gallery.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			gallery.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return gallery;
@@ -1798,7 +1798,7 @@ public class SurveyHelper {
 		
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			upload.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			upload.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return upload;
@@ -1904,7 +1904,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			download.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			download.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return download;
@@ -2013,7 +2013,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			confirmation.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			confirmation.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return confirmation;
@@ -2179,7 +2179,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			freetext.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			freetext.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return freetext;
@@ -2316,7 +2316,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			regex.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			regex.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return regex;
@@ -2400,7 +2400,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			email.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			email.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return email;
@@ -2601,7 +2601,7 @@ public class SurveyHelper {
 		
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			number.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			number.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return number;
@@ -2832,7 +2832,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			date.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			date.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return date;
@@ -2947,7 +2947,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			time.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			time.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return time;
@@ -3124,7 +3124,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			rating.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			rating.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return rating;
@@ -3228,7 +3228,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			table.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			table.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 		
 		return table;
@@ -3449,7 +3449,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			item.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			item.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return item;
@@ -3820,7 +3820,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			singlechoice.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			singlechoice.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return singlechoice;
@@ -4031,7 +4031,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			multiplechoice.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			multiplechoice.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return multiplechoice;
@@ -4207,7 +4207,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldNew = { oldValues, newValues };
-			rankingQuestion.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldNew);
+			rankingQuestion.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldNew);
 		}
 
 		return rankingQuestion;
@@ -4231,9 +4231,7 @@ public class SurveyHelper {
 
 			if (log220) {
 				for (Element child : matrix.getChildElements()) {
-					if (!(child instanceof EmptyElement)) { // skip first cell
-						oldLabels.append(child.getTitle()).append("(").append(child.getShortname()).append("),");
-					}
+					oldLabels.append(child.getTitle()).append("(").append(child.getShortname()).append("),");
 				}
 			}
 
@@ -4467,7 +4465,7 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			matrix.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			matrix.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 		
 		//quiz properties
@@ -4694,22 +4692,22 @@ public class SurveyHelper {
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
-			table.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
+			table.getActivitiesToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, oldnew);
 		}
 
 		return table;
 	}
 
 	public static Element parseElement(HttpServletRequest request, FileService fileService, SelfAssessmentService selfassessmentService, String id, Survey survey,
-			ServletContext servletContext, boolean log220, int userId, boolean canUnlock) throws InvalidXHTMLException, IOException {
+			ServletContext servletContext, boolean log220, int userId) throws InvalidXHTMLException, IOException {
 		return parseElement(request, fileService, selfassessmentService, id, survey, new HashMap<>(), new HashMap<>(), new HashMap<>(),
-				servletContext, log220, new HashMap<>(), userId, canUnlock);
+				servletContext, log220, new HashMap<>(), userId);
 	}
 
 	private static Element parseElement(HttpServletRequest request, FileService fileService, SelfAssessmentService selfassessmentService, String id, Survey survey,
 			Map<Integer, Element> elementsById,
 			HashMap<PossibleAnswer, String> dependencies, HashMap<Matrix, HashMap<Integer, String>> matrixDependencies,
-			ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID, int userId, boolean canUnlock)
+			ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID, int userId)
             throws InvalidXHTMLException, IOException {
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
@@ -4844,35 +4842,6 @@ public class SurveyHelper {
 			element.setEditorRowsLocked(BooleanUtils.toBooleanObject(rowsLocked[0]));
 			element.setEditorColumnsLocked(BooleanUtils.toBooleanObject(columnsLocked[0]));
 		}
-
-		if (element != null) {
-			var lockOld = "";
-			var lockNew = "";
-			var copiesLocked = getBoolean(parameterMap, "copiesLocked", id);
-			if (copiesLocked != element.getCopiesLocked()) {
-				element.setCopiesLocked(copiesLocked);
-				if (log220) {
-					lockOld += " copiesLocked: " + !copiesLocked;
-					lockNew += " copiesLocked: " + copiesLocked;
-				}
-			}
-
-			if (canUnlock) {
-				var locked = getBoolean(parameterMap, "locked", id);
-				if (locked != element.getLocked()) {
-					element.setLocked(locked);
-					if (log220) {
-						lockOld += " locked: " + !locked;
-						lockNew += " locked: " + locked;
-					}
-				}
-			}
-
-			if (log220 && !lockNew.isEmpty()) {
-				element.getActivitiesObjectToLog().put(ActivityRegistry.ID_ELEMENT_UPDATED, lockOld, lockNew);
-			}
-		}
-
 
 		if (survey.getIsQuiz() && element instanceof Question) {
 			String[] scoringitems = parameterMap.get("scoringitem" + id);
@@ -5016,8 +4985,8 @@ public class SurveyHelper {
 
 	public static Survey parseSurvey(HttpServletRequest request, SurveyService surveyService, 
 			FileService fileService, SelfAssessmentService selfassessmentService, ServletContext servletContext, boolean log217, boolean log220,
-			Map<String, Integer> fileIDsByUID, int userId, boolean canUnlock) throws InvalidXHTMLException, IOException {
-		ActivitiesToLog activitiesToLog = new ActivitiesToLog();
+			Map<String, Integer> fileIDsByUID, int userId) throws InvalidXHTMLException, IOException {
+		Map<Integer, String[]> activitiesToLog = new HashMap<>();
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
 		String surveyId = parameterMap.get("survey.id")[0];
@@ -5036,11 +5005,6 @@ public class SurveyHelper {
 			oldElements.add(element);
 		}
 
-		List<Integer> rootElementIds = new ArrayList<>();
-		for (Element element : survey.getElements()) {
-			rootElementIds.add(element.getId());
-		}
-
 		String idsAsString = parameterMap.get("elements")[0];
 		String[] ids = idsAsString.split(";");
 
@@ -5055,8 +5019,8 @@ public class SurveyHelper {
 				if (!(element instanceof EmptyElement || element instanceof PossibleAnswer)) {
 					surveyService.removeDependencies(element);
 				}
-				if (rootElementIds.contains(element.getId())) { // only log activity for elements, not for child elements
-					String[] oldnew = {element.getUniqueId(), null};
+				if (!(element instanceof PossibleAnswer)) {
+					String[] oldnew = { element.getUniqueId(), null };
 					activitiesToLog.put(ActivityRegistry.ID_ELEMENT_REMOVED, oldnew);
 				}
 			}
@@ -5068,14 +5032,14 @@ public class SurveyHelper {
 				String id = ids[i];
 				if (!id.equalsIgnoreCase("undefined")) {
 					Element element = parseElement(request, fileService, selfassessmentService, id, survey, elementsById,
-							dependencies, matrixDependencies, servletContext, log220, fileIDsByUID, userId, canUnlock);
+							dependencies, matrixDependencies, servletContext, log220, fileIDsByUID, userId);
 					if (element != null) {
 						if (element.getId() == null) {
 							// this is a new element
 							String[] oldnew = { null, element.getUniqueId() };
 							activitiesToLog.put(ActivityRegistry.ID_ELEMENT_ADDED, oldnew);
-						} else if (log220 && !element.getActivitiesObjectToLog().isEmpty()) {
-							activitiesToLog.putAll(element.getActivitiesObjectToLog());
+						} else if (log220 && element.getActivitiesToLog().size() > 0) {
+							activitiesToLog.putAll(element.getActivitiesToLog());
 						}
 
 						if (!id.contains("-") && elementsById.containsKey(Integer.parseInt(id))) {
@@ -5178,7 +5142,7 @@ public class SurveyHelper {
 			}
 		}
 
-		survey.setActivitiesObjectToLog(activitiesToLog);
+		survey.setActivitiesToLog(activitiesToLog);
 
 		return survey;
 	}
@@ -6027,17 +5991,5 @@ public class SurveyHelper {
 		}
 
 		return answerValue;
-	}
-
-	public static boolean canUserUnlockElements(User user, Survey survey) {
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
-			return true;
-		}
-
-		if (survey.getIsQuiz() || survey.getIsStandard()) {
-			return Objects.equals(survey.getOwner().getId(), user.getId());
-		}
-
-		return false;
 	}
 }

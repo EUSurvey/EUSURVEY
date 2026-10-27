@@ -69,39 +69,6 @@ public class SchemaService extends BasicService {
 	}
 
 	@Transactional
-	public void step143() {
-		Session session = sessionFactory.getCurrentSession();
-		Status status = getStatus();
-
-		Role role = new Role();
-		role.setName("Organisation Manager");
-		role.getGlobalPrivileges().put(GlobalPrivilege.RightManagement, 0);
-		role.getGlobalPrivileges().put(GlobalPrivilege.UserManagement, 1);
-		role.getGlobalPrivileges().put(GlobalPrivilege.FormManagement, 1);
-		role.getGlobalPrivileges().put(GlobalPrivilege.ContactManagement, 1);
-		role.getGlobalPrivileges().put(GlobalPrivilege.SystemManagement, 0);
-		if (showecas != null && showecas.equalsIgnoreCase("true")) {
-			role.getGlobalPrivileges().put(GlobalPrivilege.ECAccess, 1);
-		}
-		role.getGlobalPrivileges().put(GlobalPrivilege.OrganisationManagement, 1);
-		administrationService.createRole(role);
-
-		status.setDbversion(143);
-		session.saveOrUpdate(status);
-	}
-
-	@Transactional
-	public void step144() {
-		Session session = sessionFactory.getCurrentSession();
-		Status status = getStatus();
-
-		ensureActivities(session, ActivityRegistry.ID_GUEST_LIST_ENTRY_REMOVED);
-
-		status.setDbversion(144);
-		session.saveOrUpdate(status);
-	}
-
-	@Transactional
 	public void step142() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
@@ -471,7 +438,7 @@ public class SchemaService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
 
-		ensureActivity(ActivityRegistry.ID_DRAFT_CONTRIBUTION_SAVED, session);
+		ensureActivity(ActivityRegistry.ID_DRAFT_CONTRIBUTION_SUBMIT, session);
 
 		status.setDbversion(123);
 		session.saveOrUpdate(status);

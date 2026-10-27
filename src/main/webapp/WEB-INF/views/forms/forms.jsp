@@ -119,8 +119,8 @@
     			$("#import-survey-dialog-2").modal("show");
 			</c:if>
 			
-			$('[data-toggle="tooltip"]').tooltip();
-			checkOrgSurveySelected();
+			$('[data-toggle="tooltip"]').tooltip(); 
+			checkAnySurveySelected();
 		});	
 		
 		function showExportDialog(type, format)
@@ -485,14 +485,16 @@
 		{
 			//dummy
 		}
-
-		function checkOrgSurveySelected() {
-            if ($('#surveysOrg').is(":checked")) {
-                $('#organisationsArea').show();
-            } else {
-                $('#organisationsArea').hide();
-            }
-        }
+		
+		function checkAnySurveySelected() {
+			if ($('#surveysAny').is(":checked")) {
+				$('#surveysOwn').prop("checked", "checked").prop("disabled", true);
+				$('#surveysShared').prop("checked", "checked").prop("disabled", true);
+			} else {
+				$('#surveysOwn').prop("disabled", false);
+				$('#surveysShared').prop("disabled", false);
+			}
+		}
 
 		function addTag(tag) {
 			let storedTags = $("#txtTagsSearch").val().split(";").filter((element) => element);
@@ -567,82 +569,35 @@
 							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-primary" value="<spring:message code="label.Search" />" />
 							<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
 							
-							<h4 style="margin-top: 20px;"><spring:message code="label.Surveys" />: <a onclick="$(this).parent().next('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a></h4>
-							<div class="help" style="display: none; margin-top: 10px;">
-                                <spring:message code="info.Surveys" /><br />
-                                <ul>
-                                    <li> <spring:message code="info.Surveys_mySurveys" /></li>
-                                    <li> <spring:message code="info.Surveys_sharedSurveys" /></li>
-                                    <c:if test="${USER.organisationPrivilege > 0}">
-                                        <li> <spring:message code="info.Surveys_orgSurveys" /></li>
-                                    </c:if>
-                                </ul>
-                            </div>
-                  			<c:choose>
-								<c:when test='${filter.selector == "my"}'>
- 									<input class="check" checked="checked" value="own" type="radio" name="surveysSelector" id="surveysOwn" onclick="checkOrgSurveySelected()" /> <spring:message code="label.MySurveys" />
+							<h4 style="margin-top: 20px;"><spring:message code="label.Surveys" />:</h4>     
+ 							<c:choose>
+								<c:when test='${filter.selector == "all" || filter.selector == "my"}'>
+ 									<input class="check" checked="checked" value="own" type="checkbox" name="surveysOwn" id="surveysOwn" /> <spring:message code="label.MySurveys" />
 								</c:when>
 								<c:otherwise>                                                                                                                   
-									<input class="check" value="own" type="radio" name="surveysSelector" id="surveysOwn" onclick="checkOrgSurveySelected()" /> <spring:message code="label.MySurveys" />
+									<input class="check" value="own" type="checkbox" name="surveysOwn" id="surveysOwn" /> <spring:message code="label.MySurveys" />
 								</c:otherwise>                                                                                                          
 							</c:choose>                     
 							<br />
 							<c:choose>
-								<c:when test='${filter.selector == "shared"}'>
-									<input class="check" checked="checked" value="shared" type="radio" name="surveysSelector" id="surveysShared" onclick="checkOrgSurveySelected()" /> <spring:message code="label.SharedWithMe" />
+								<c:when test='${filter.selector == "all" || filter.selector == "shared"}'>
+									<input class="check" checked="checked" value="shared" type="checkbox" name="surveysShared" id="surveysShared" /> <spring:message code="label.SharedWithMe" />
 								</c:when>
 								<c:otherwise>                                                                                                                   
-									<input class="check" value="shared" type="radio" name="surveysSelector" id="surveysShared" onclick="checkOrgSurveySelected()" /> <spring:message code="label.SharedWithMe" />
+									<input class="check" value="shared" type="checkbox" name="surveysShared" id="surveysShared" /> <spring:message code="label.SharedWithMe" />      
 								</c:otherwise>                                                                                                          
 							</c:choose>
-							<c:if test="${USER.organisationPrivilege > 0 && USER.formPrivilege < 2}">
-                                <br />
-                                <c:choose>
-                                    <c:when test='${filter.selector == "org"}'>
-                                        <input class="check" checked="checked" value="org" type="radio" id="surveysOrg" name="surveysSelector" onclick="checkOrgSurveySelected()" /> <spring:message code="label.AllSurveysInMyOrganisation" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <input class="check" value="org" type="radio" name="surveysSelector" id="surveysOrg" onclick="checkOrgSurveySelected()" /> <spring:message code="label.AllSurveysInMyOrganisation" />
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:if>
 							<c:if test="${USER.formPrivilege > 1}">
 								<br />
 								<c:choose>
 									<c:when test='${filter.selector == "any"}'>
-										<input class="check" checked="checked" value="any" type="radio" id="surveysAny" name="surveysSelector" onclick="checkOrgSurveySelected()" /> <spring:message code="label.AllSurveysNew" />
+										<input class="check" checked="checked" value="any" type="checkbox" id="surveysAny" name="surveysShared" onclick="checkAnySurveySelected()" /> <spring:message code="label.AllSurveysNew" />
 									</c:when>
 									<c:otherwise>                                                                                                                   
-										<input class="check" value="any" type="radio" name="surveysSelector" id="surveysAny" onclick="checkOrgSurveySelected()" /> <spring:message code="label.AllSurveysNew" />
+										<input class="check" value="any" type="checkbox" name="surveysShared" id="surveysAny" onclick="checkAnySurveySelected()" /> <spring:message code="label.AllSurveysNew" />      
 									</c:otherwise>                                                                                                          
 								</c:choose>
 							</c:if>
-
-                            <c:if test="${USER.formPrivilege > 1 || USER.organisationPrivilege > 0}">
-                                 <c:if test="${USER.formPrivilege < 2}">
-                                    <div id="organisationsArea">
-                                 </c:if>
-
-                                <h4 style="margin-top: 20px;"><spring:message code="label.Organisation" />:</h4>
-                                <select class="form-control" name="organisation" id="organisation">
-                                    <c:if test="${USER.formPrivilege > 1}">
-                                        <option></option>
-                                    </c:if>
-                                    <c:forEach items="${organisations}" var="organisation">
-                                        <c:choose>
-                                            <c:when test="${filter.organisations.contains(organisation.key)}">
-                                                <option selected="selected" value="${organisation.key}">${organisation.value}</option>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <option value="${organisation.key}">${organisation.value}</option>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:forEach>
-                                </select>
-                                <c:if test="${USER.formPrivilege < 2}">
-                                   </div>
-                                </c:if>
-                            </c:if>
 									
 							<h4 style="margin-top: 20px;"><spring:message code="publicSurveys.order" />:</h4>
 							

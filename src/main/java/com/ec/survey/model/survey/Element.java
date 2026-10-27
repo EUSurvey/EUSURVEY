@@ -1,6 +1,5 @@
 package com.ec.survey.model.survey;
 
-import com.ec.survey.tools.ActivitiesToLog;
 import com.ec.survey.tools.ConversionTools;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -39,14 +38,13 @@ public abstract class Element implements java.io.Serializable {
 	private boolean hasPDFWidth = false;
 	private float pdfWidth = -1;
 	private Boolean locked;
-	private Boolean copiesLocked;
 	private String subType = "";
 	private Integer displayMode;
 	private Boolean useAndLogic = false;
 	private boolean editorRowsLocked = false; //Rows + Possible Answer
 	private boolean editorColumnsLocked = false; //Columns
 
-	private ActivitiesToLog activitiesObjectToLog = new ActivitiesToLog();
+	private Map<Integer, String[]> activitiesToLog = new HashMap<>();
 
 	@Id
 	@Column(name = "ID")
@@ -121,15 +119,6 @@ public abstract class Element implements java.io.Serializable {
 
 	public void setLocked(Boolean locked) {
 		this.locked = locked != null && locked;
-	}
-
-	@Column(name = "COPIESLOCKED")
-	public Boolean getCopiesLocked() {
-		return copiesLocked != null && copiesLocked;
-	}
-
-	public void setCopiesLocked(Boolean copiesLocked) {
-		this.copiesLocked = copiesLocked != null && copiesLocked;
 	}
 
 	@Column(name = "SUBTYPE")
@@ -436,8 +425,12 @@ public abstract class Element implements java.io.Serializable {
 	}
 
 	@Transient
-	public ActivitiesToLog getActivitiesObjectToLog() {
-		return this.activitiesObjectToLog;
+	public Map<Integer, String[]> getActivitiesToLog() {
+		return this.activitiesToLog;
+	}
+
+	public void setActivitiesToLog(Map<Integer, String[]> activitiesToLog) {
+		this.activitiesToLog = activitiesToLog;
 	}
 
 	@Transient

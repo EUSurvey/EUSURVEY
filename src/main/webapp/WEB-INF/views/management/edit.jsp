@@ -327,13 +327,7 @@
 		<div class="panecontent" style="width: 100%; min-width: 300px; top: 222px;">
 			<div id="lockedElementInfo" style="display: none; padding: 20px;">
 				<div style="float: right"><span class="glyphicon glyphicon-lock"></span></div>
-				<spring:message code="info.ElementLocked" />
-				<c:if test="${canUnlock}">
-					<div id="unlock-button">
-						<br>
-						<button class="btn btn-default" onclick="_actions.unlockElement();"><spring:message code="label.Unlock" /></button>
-					</div>
-				</c:if>
+				<spring:message code="info.ElementLocked" />				
 			</div>
 			<table id="properties">
 				<tr class="firstpropertyrow" data-bind="attr: {class: Type() != '' ? '' : 'hideme'}">
@@ -475,7 +469,6 @@
 
 		var showListVoteProperty = ${!form.survey.geteVoteTemplate().equals('l') && !form.survey.geteVoteTemplate().equals('p')};
 		var maxFreeTextLength = ${maxFreeTextLength};
-		var userCanUnlockElements = ${canUnlock};
 	</script>
 
 </body>

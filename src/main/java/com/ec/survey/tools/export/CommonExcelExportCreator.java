@@ -2242,7 +2242,8 @@ public abstract class CommonExcelExportCreator extends ExportCreator {
 
 				if (filter.exported("description")) {
 					cell = row.createCell(cellIndex++);
-					cell.setCellValue(resources.getMessage(activity.getLabel(), null, activity.getLabel(), locale));
+					cell.setCellValue(resources.getMessage("logging." + activity.getLogID(), null,
+							"logging." + activity.getLogID(), locale));
 				}
 
 				if (filter.exported("oldvalue")) {

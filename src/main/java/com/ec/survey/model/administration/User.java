@@ -68,10 +68,7 @@ public class User implements java.io.Serializable {
 	private ResultAccess resultAccess;
 	private String organisation;
 	private List<Element> predefinedElements = new ArrayList<>();
-	private boolean isOrganisationManagerForCurrentSurvey = false;
-	public Date lastConnected;
-	private boolean whitelisted = false;
-
+	
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
 
@@ -83,7 +80,6 @@ public class User implements java.io.Serializable {
 		globalPrivileges.put(GlobalPrivilege.RightManagement, 0);
 		globalPrivileges.put(GlobalPrivilege.ECAccess, 0);
 		globalPrivileges.put(GlobalPrivilege.SystemManagement, 0);
-		globalPrivileges.put(GlobalPrivilege.OrganisationManagement, 0);
 
 		localPrivileges = new HashMap<>();
 		localPrivileges.put(LocalPrivilege.AccessDraft, 0);
@@ -405,15 +401,6 @@ public class User implements java.io.Serializable {
 		this.agreedToPSDate = agreedToPSDate;
 	}
 
-	@Column(name = "USER_LASTCONNECT")
-	public Date getLastConnected() {
-		return lastConnected;
-	}
-
-	public void setLastConnected(Date lastConnected) {
-		this.lastConnected = lastConnected;
-	}
-
 	@Column(name = "USER_PSVERSION")
 	public String getAgreedToPSVersion() {
 		return agreedToPSVersion;
@@ -591,11 +578,6 @@ public class User implements java.io.Serializable {
 	}
 
 	@Transient
-	public boolean getShowOrganisationManagement() {
-		return getGlobalPrivileges().get(GlobalPrivilege.OrganisationManagement) > 0;
-	}
-
-	@Transient
 	public int getContactPrivilege() {
 		return getGlobalPrivileges().get(GlobalPrivilege.ContactManagement);
 	}
@@ -603,11 +585,6 @@ public class User implements java.io.Serializable {
 	@Transient
 	public int getFormPrivilege() {
 		return getGlobalPrivileges().get(GlobalPrivilege.FormManagement);
-	}
-
-	@Transient
-	public int getOrganisationPrivilege() {
-		return getGlobalPrivileges().get(GlobalPrivilege.OrganisationManagement);
 	}
 
 	@Transient
@@ -684,22 +661,4 @@ public class User implements java.io.Serializable {
 		return result;
 	}
 
-	@Transient
-	@JsonIgnore
-    public boolean isOrganisationManagerForCurrentSurvey() {
-        return isOrganisationManagerForCurrentSurvey;
-    }
-
-    public void setIsOrganisationManagerForCurrentSurvey(boolean organisationManagerForCurrentSurvey) {
-        isOrganisationManagerForCurrentSurvey = organisationManagerForCurrentSurvey;
-    }
-
-	@Transient
-    public boolean isWhitelisted() {
-        return whitelisted;
-    }
-
-    public void setWhitelisted(boolean whitelisted) {
-        this.whitelisted = whitelisted;
-    }
 }

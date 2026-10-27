@@ -2,12 +2,8 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
-import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.administration.Role;
-import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.OrganisationService;
 import com.ec.survey.service.ReportingService.ToDoItem;
 import com.ec.survey.tools.*;
 import org.apache.commons.lang.StringUtils;
@@ -30,13 +26,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/administration")
@@ -50,9 +48,6 @@ public class AdministrationController extends BasicController {
 	
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
-
-	@Resource(name = "organisationService")
-	private OrganisationService organisationService;
 	
 	@PostMapping(value = "/checkPasswordNotWeak")
 	public @ResponseBody String checkPasswordNotWeak(HttpServletRequest request, Locale locale) {	
@@ -431,136 +426,23 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/organisations", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView organisations(HttpServletRequest request, Locale locale) throws ForbiddenURLException {
-		if (!isChargeBackEnabled()) throw new ForbiddenURLException();
+	public ModelAndView organisations(HttpServletRequest request) throws ForbiddenURLException {
+		if (!isChargeBackeEnabled()) throw new ForbiddenURLException();
 		
-		var result = new ModelAndView("administration/organisations");
-
-		List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
-		result.addObject("domains", domains);
-
-		var organisation = request.getParameter("organisation");
-		if (organisation != null) {
-			result.addObject("organisation", organisation);
-		}
-
-		var error = request.getParameter("error");
-		if (error != null) {
-			result.addObject("error", error);
-		}
-
-		var success = request.getParameter("success");
-		if (success != null) {
-			result.addObject("success", success);
-		}
-
-		return result;
-	}
-
-	@PostMapping(value = "/addOrganisationManager")
-	public @ResponseBody boolean addOrganisationManager(HttpServletRequest request) throws NamingException, LoginAlreadyExistsException {
-		var organisation = request.getParameter("organisation");
-		var login = request.getParameter("login");
-		var ecas = request.getParameter("ecas");
-		boolean isEcasUser = ecas != null && ecas.equals("true");
-
-		User user = null;
-
-		try {
-			user = administrationService.getUserForLogin(login, isEcasUser);
-		} catch (Exception e) {
-			// ignore
-		}
-
-		Role omRole = null;
-		for (Role role : administrationService.getAllRoles()) {
-			if (role.getName().equalsIgnoreCase("Organisation Manager")) {
-				omRole = role;
-				break;
-			}
-		}
-
-		if (user == null && isEcasUser) {
-			user = new User();
-			user.setLogin(login);
-			user.setDisplayName(ldapService.getMoniker(login));
-			user.setEmail(ldapService.getEmail(login));
-			user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));
-			user.setType(User.ECAS);
-			user.getRoles().add(omRole);
-			administrationService.createUser(user);
-		} else {
-			if (!user.getRoles().contains(omRole)) {
-				user.getRoles().clear();
-				user.getRoles().add(omRole);
-			}
-			administrationService.updateUser(user);
-		}
-
-        return organisationService.addManager(organisation, user);
-	}
-
-	@PostMapping(value = "/deleteOrganisationManager")
-	public @ResponseBody boolean deleteOrganisationManager(HttpServletRequest request) throws MessageException {
-		String organisation = request.getParameter("organisation");
-		int id = Integer.parseInt(request.getParameter("id"));
-
-		return organisationService.deleteManager(organisation, id);
-	}
-
-	@PostMapping(value = "/addAuthorisedUser")
-	public @ResponseBody boolean addAuthorisedUser(HttpServletRequest request) throws NamingException, LoginAlreadyExistsException {
-		var organisation = request.getParameter("organisation");
-		var login = request.getParameter("login");
-		var ecas = request.getParameter("ecas");
-		boolean isEcasUser = ecas != null && ecas.equals("true");
-
-		User user = null;
-
-		try {
-			user = administrationService.getUserForLogin(login, isEcasUser);
-		} catch (Exception e) {
-			// ignore
-		}
-
-		user = organisationService.prepareAuthorizedUser(user, isEcasUser, login);
-		return organisationService.addAuthorisedUser(organisation, user.getId());
-	}
-
-	@PostMapping(value = "/deleteAuthorisedUser")
-	public @ResponseBody boolean deleteAuthorisedUser(HttpServletRequest request) throws MessageException {
-		String organisation = request.getParameter("organisation");
-		int id = Integer.parseInt(request.getParameter("id"));
-
-		return organisationService.deleteAuthorisedUser(organisation, id);
+		return new ModelAndView("administration/organisations");
 	}
 	
 	@RequestMapping(value = "/organisation/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody OrganisationResult organisation(HttpServletRequest request, @PathVariable String code) throws ForbiddenURLException {
-		if (!isChargeBackEnabled()) throw new ForbiddenURLException();
+		if (!isChargeBackeEnabled()) throw new ForbiddenURLException();
 		
-		var result = surveyService.getSurveysByOrganisation(code);
-
-		var organisation = organisationService.getOrganisation(code);
-		if (organisation != null && !organisation.getManagers().isEmpty()) {
-			result.setManagers(new HashMap<>());
-			for (User manager : organisation.getManagers()) {
-				result.getManagers().put(manager.getId(), manager.getFirstLastName());
-			}
-		}
-		if (organisation != null && !organisation.getWhitelist().isEmpty()) {
-			result.setWhitelist(new HashMap<>());
-			for (WhitelistedUser user : organisation.getWhitelist()) {
-				result.getWhitelist().put(user.getId(), user.getName());
-			}
-		}
-
-		return result;
+		return surveyService.getSurveysByOrganisation(code);
 	}
+	
 	
 	@RequestMapping(value = "/organisationreport/{code}/{format}/{year}/{month}/{monthEnd}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ResponseEntity<byte[]> organisationReport(HttpServletRequest request, HttpServletResponse response, @PathVariable String code, @PathVariable String format, @PathVariable int year, @PathVariable int month, @PathVariable int monthEnd) throws ForbiddenURLException, IOException {
-		if (!isChargeBackEnabled()) throw new ForbiddenURLException();
+		if (!isChargeBackeEnabled()) throw new ForbiddenURLException();
 		
 		if (format.equalsIgnoreCase("csv")) {
 			List<List<String>> surveys = surveyService.getSurveysByOrganisation(code, year, month);

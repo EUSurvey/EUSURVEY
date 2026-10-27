@@ -28,12 +28,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.ActivitiesToLog;
 import com.ec.survey.tools.Tools;
 
 import org.hibernate.annotations.*;
@@ -41,6 +41,7 @@ import org.hibernate.annotations.Cache;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.util.HtmlUtils;
 
 /**
@@ -149,7 +150,7 @@ final public class Survey implements java.io.Serializable {
 	private List<String> translations;
 	private List<Language> completeTranslations;
 	private Publication publication = new Publication();
-	private ActivitiesToLog activitiesObjectToLog = new ActivitiesToLog();
+	private Map<Integer, String[]> activitiesToLog = new HashMap<>();
 	private String audience;
 	private boolean wcagCompliance;
 	private boolean isArchived;
@@ -1549,11 +1550,6 @@ final public class Survey implements java.io.Serializable {
 		this.logoInInfo = logoInInfo;
 	}
 
-	@Transient
-	public boolean getIsStandard() {
-		return !(isQuiz || isDelphi || isECF || isOPC || isEVote || isSelfAssessment);
-	}
-
 	@Column(name = "QUIZ")
 	public Boolean getIsQuiz() {
 		return isQuiz;
@@ -2094,7 +2090,7 @@ final public class Survey implements java.io.Serializable {
 			throws ValidationException {
 		for (Element element : elements) {
 			Element copiedElement = element.copy(surveyService.getFileDir());
-			copiedElement.setLocked(element.getLocked() || element.getCopiesLocked() || makeQuestionsLocked);
+			copiedElement.setLocked(element.getLocked() || makeQuestionsLocked);
 			surveyCopy.elements.add(copiedElement);
 		}
 
@@ -2439,12 +2435,12 @@ final public class Survey implements java.io.Serializable {
 	}
 
 	@Transient
-	public ActivitiesToLog getActivitiesToLog() {
-		return this.activitiesObjectToLog;
+	public Map<Integer, String[]> getActivitiesToLog() {
+		return this.activitiesToLog;
 	}
 
-	public void setActivitiesObjectToLog(ActivitiesToLog activitiesObjectToLog) {
-		this.activitiesObjectToLog = activitiesObjectToLog;
+	public void setActivitiesToLog(Map<Integer, String[]> activitiesToLog) {
+		this.activitiesToLog = activitiesToLog;
 	}
 
 	@Transient

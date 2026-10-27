@@ -30,7 +30,7 @@ public class SurveyFilter implements Serializable  {
 	private Date endTo;
 	private String access;
 	private String status;
-	private String selector = "my";
+	private String selector = "all";
 	private String keywords;
 	private String[] languages;
 	private String sortKey = "survey_created";

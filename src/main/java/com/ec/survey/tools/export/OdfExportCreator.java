@@ -2713,7 +2713,8 @@ public class OdfExportCreator extends ExportCreator {
 
 				if (filter.exported("description")) {
 					cell = sheet.getCellByPosition(cellIndex++, rowIndex);
-					cell.setStringValue(resources.getMessage(activity.getLabel(), null, activity.getLabel(), locale));
+					cell.setStringValue(resources.getMessage("logging." + activity.getLogID(), null,
+							"logging." + activity.getLogID(), locale));
 				}
 
 				if (filter.exported("oldvalue")) {

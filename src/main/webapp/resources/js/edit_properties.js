@@ -209,7 +209,6 @@ var ElementProperties = function() {
 		_actions.MoveUpEnabled(false);
 		_actions.MoveDownEnabled(false);
 		_actions.DeleteEnabled(false);
-		$("#lockedElementInfo").hide();
 	}
 
 	this.deselectForPaste = function()
@@ -220,7 +219,6 @@ var ElementProperties = function() {
 		_actions.MoveUpEnabled(false);
 		_actions.MoveDownEnabled(false);
 		_actions.DeleteEnabled(false);
-		$("#lockedElementInfo").hide();
 	}
 	
 	this.showProperties = function(e, event, doubleclick)
@@ -311,7 +309,7 @@ var ElementProperties = function() {
 		}
 
 		_actions.CopyEnabled(true);
-
+		
 		if ($("#content").find(".selectedquestion").not(".locked").length > 0)
 		{
 			_actions.CutEnabled(true);
@@ -343,9 +341,7 @@ var ElementProperties = function() {
 		if (selection.length == 1)
 		{
 			e = selection.first();
-
-			$("#unlock-button").show()
-
+			
 			if (e.is(":visible"))
 			{
 				_actions.ElementSelected(true);				
@@ -364,12 +360,12 @@ var ElementProperties = function() {
 
 			var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
 
-			if (element != null && element.hasOwnProperty("locked") && element.locked())
+			if (isOPC && element != null && element.hasOwnProperty("locked") && element.locked())
 			{
 				_actions.CutEnabled(false);
 				_actions.DeleteEnabled(false);
 				$("#lockedElementInfo").show();
-			} else if (parent != null && parent.hasOwnProperty("locked") && parent.locked())
+			} else if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
 			{
 				_actions.CutEnabled(false);
 				_actions.DeleteEnabled(false);
@@ -390,7 +386,6 @@ var ElementProperties = function() {
 					getVisibilityRow(false);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getLockRows(element.copiesLocked())
 			} else if ($(e).hasClass("freetextitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
@@ -413,9 +408,6 @@ var ElementProperties = function() {
 				getCheckPropertiesRow("Unique", $(e).find("input[name^='unique']").val() == 'true');
 				getCheckPropertiesRow("Comparable", $(e).find("input[name^='comparable']").val() == 'true');
 				getCheckPropertiesRow("Password", $(e).find("input[name^='password']").val() == 'true');
-
-				getLockRows(element.copiesLocked())
-
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());	
 				
 				if (isQuiz)
@@ -469,7 +461,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 
 				if (isQuiz)
@@ -531,7 +522,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 				
 				if (isQuiz)
@@ -561,7 +551,7 @@ var ElementProperties = function() {
 
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getLockRows(element.copiesLocked())
+				
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);
@@ -657,8 +647,7 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
 				getCheckPropertiesRow("Unique", $(e).find("input[name^='unique']").val() == 'true');
-				getLockRows(element.copiesLocked())
-				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
+				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());	
 				
 				if (isQuiz)
 				{
@@ -701,7 +690,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 
 				if (isDelphi)
@@ -796,9 +784,8 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
-
+				
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);
@@ -861,8 +848,7 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
 				getVisibilityRow(false, true);
 				getAdvancedPropertiesRow();
-				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getLockRows(element.copiesLocked())
+				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);				
 			} else if ($(e).hasClass("headercell"))
 			{	
 				const id = $(e).attr("data-id");
@@ -927,7 +913,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 								
 				if (isQuiz)
@@ -956,7 +941,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 				
 				if (isDelphi)
@@ -967,8 +951,6 @@ var ElementProperties = function() {
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getVisibilityRow(false);
-				getAdvancedPropertiesRow();
-				getLockRows(element.copiesLocked())
 			} else if ($(e).hasClass("imageitem"))
 			{
 				getUploadRow("Image", null);
@@ -977,16 +959,12 @@ var ElementProperties = function() {
 				getTextPropertiesRow("DescriptiveText", $(e).find("textarea[name^='text']").first().text(), false);
 				getTextPropertiesRow("LongDescription", $(e).find("input[name^='longdesc']").first().val(), false);
 				getVisibilityRow(false);
-				getAdvancedPropertiesRow();
-				getLockRows(element.copiesLocked())
 			} else if ($(e).hasClass("ruleritem"))
 			{
 				getChoosePropertiesRow("Style", "solid,dashed,dotted", false, true, $(e).find("input[name^='style']").first().val());		
 				getChoosePropertiesRow("Height", "1,2,3,4,5,6,7,8,9,10", false, false, $(e).find("input[name^='height']").val());
 				getChooseColor("Color", $(e).find("input[name^='color']").val());
 				getVisibilityRow(false);
-				getAdvancedPropertiesRow();
-				getLockRows(element.copiesLocked())
 			} else if ($(e).hasClass("uploaditem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -1001,7 +979,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getTextPropertiesRow("FileType", $(e).find("input[name^='extensions']").first().val(), false);
-				getLockRows(element.copiesLocked())
 			} else if ($(e).hasClass("downloaditem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -1010,7 +987,6 @@ var ElementProperties = function() {
 				getVisibilityRow(false);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getLockRows(element.copiesLocked())
 			} else if ($(e).hasClass("emailitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -1020,7 +996,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 			} else if ($(e).hasClass("regexitem"))
 			{
@@ -1042,7 +1017,6 @@ var ElementProperties = function() {
 				getCheckPropertiesRow("Unique", $(e).find("input[name^='unique']").val() == 'true');
 				getCheckPropertiesRow("Comparable", $(e).find("input[name^='comparable']").val() == 'true');
 				getCheckPropertiesRow("Password", $(e).find("input[name^='password']").val() == 'true');
-				getLockRows(element.copiesLocked())
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
 				
 				if (isDelphi)
@@ -1060,7 +1034,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 
 				if (isDelphi)
 				{
@@ -1083,7 +1056,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
-				getLockRows(element.copiesLocked())
 
 				if (isDelphi)
 				{
@@ -1104,7 +1076,6 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getReadOnlyAndHiddenRow(e)
 				checkGalleryProperties(false);
-				getLockRows(element.copiesLocked())
 			} else if ($(e).hasClass("confirmationitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -1114,7 +1085,6 @@ var ElementProperties = function() {
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("LabelText", $(e).find("textarea[name^='confirmationlabel']").first().text(), false);
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getLockRows(element.copiesLocked())
 			} else if ($(e).hasClass("ratingitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
@@ -1137,7 +1107,6 @@ var ElementProperties = function() {
 				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				getLockRows(element.copiesLocked())
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);
@@ -1187,7 +1156,6 @@ var ElementProperties = function() {
 				_actions.DeleteEnabled(false);
 			}
 		} else {
-			$("#unlock-button").hide();
 			_actions.MoveUpEnabled(true);
 			_actions.MoveDownEnabled(true);
 			
@@ -1249,7 +1217,7 @@ var ElementProperties = function() {
 				
 				var element = _elements[$(this).attr("data-id")];
 				
-				if (element != null && element.hasOwnProperty("locked") && element.locked())
+				if (isOPC && element != null && element.hasOwnProperty("locked") && element.locked())
 				{
 					locked = true;
 				}

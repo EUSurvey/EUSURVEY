@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Files;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -1783,7 +1784,7 @@ public class AnswerService extends BasicService {
 					logger.error(e.getLocalizedMessage(), e);
 				}
 
-				activityService.log(ActivityRegistry.ID_DRAFT_CONTRIBUTION_SAVED, null, draft.getUniqueId(), -1, draft.getAnswerSet().getSurvey().getUniqueId());
+				activityService.log(ActivityRegistry.ID_DRAFT_CONTRIBUTION_SUBMIT, null, draft.getUniqueId(), -1, draft.getAnswerSet().getSurvey().getUniqueId());
 
 				saved = true;
 			} catch (org.hibernate.exception.LockAcquisitionException ex) {

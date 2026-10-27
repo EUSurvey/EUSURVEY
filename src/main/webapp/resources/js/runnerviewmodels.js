@@ -382,7 +382,6 @@ function newBasicViewModel(element)
 			viewModel.points = ko.observable(element.quizPoints());
 			viewModel.quizPoints = ko.observable(element.quizPoints());
 			viewModel.locked = ko.observable(element.locked());
-			viewModel.copiesLocked = ko.observable(element.copiesLocked());
 			viewModel.css = ko.observable(element.css());
 			viewModel.optional = ko.observable(element.optional());
 			viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion());
@@ -410,7 +409,6 @@ function newBasicViewModel(element)
 			viewModel.points = ko.observable(element.quizPoints);
 			viewModel.quizPoints = ko.observable(element.quizPoints);
 			viewModel.locked = ko.observable(element.locked);
-			viewModel.copiesLocked = ko.observable(element.copiesLocked);
 			viewModel.css = ko.observable(element.css);
 			viewModel.optional = ko.observable(element.optional);
 			viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);

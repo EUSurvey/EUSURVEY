@@ -263,7 +263,6 @@ public class ResultFilter implements java.io.Serializable {
 
 		Map<Integer, Question> questionyById = survey.getQuestionMap();
 		var visibleQuestionsWithChildren = new ArrayList<String>();
-
 		visibleQuestionsWithChildren.addAll(visibleQuestions);
 		for (String questionId : visibleQuestions) {
 			if (Tools.isInteger(questionId)) { // ignore meta data columns as they are filtered differently

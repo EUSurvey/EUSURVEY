@@ -205,7 +205,7 @@ public class ActivityRegistry {
             ID_TEST_SUBMIT = 404, // Test contribution has been submitted
             ID_TEST_DELETE = 405, // Test contribution has been deleted
             ID_TEST_EDIT = 406, // Test contribution has been modified
-            ID_DRAFT_CONTRIBUTION_SAVED = 407, // Draft Contribution has been saved
+            ID_DRAFT_CONTRIBUTION_SUBMIT = 407, // Draft Contribution has been submitted
             ID_CONTRIBUTION_PDF_SENT = 408, // Contribution PDF has been sent by email
             ID_DRAFT_CONTRIBUTION_PDF_SENT = 450, // Draft Contribution PDF has been sent by email
 
@@ -219,7 +219,6 @@ public class ActivityRegistry {
             ID_GUEST_LIST_VOTER_ADDED = 508, // A voter was added to the guestlist
             ID_GUEST_LIST_VOTER_REMOVED = 509, // A voter was removed from the guestlist
             ID_GUEST_LIST_VOTER_FILE_EXPORT = 510, // Start voter file export
-            ID_GUEST_LIST_ENTRY_REMOVED = 511, // Entries removed from the guestlist
 
             ID_DELEGATE_MANAGER_ADD = 601, // Delegate manager added
             ID_PRIVILEGES_EDIT = 602, // Existing privilege settings modified
@@ -379,11 +378,7 @@ public class ActivityRegistry {
 
         //Contributions and Test Contributions 400
         register(PROP_NA, EVT_DELETED, ID_CONTRIBUTION_DELETE, ID_TEST_DELETE);
-        register(PROP_NA, EVT_SUBMITTED, ID_CONTRIBUTION_SUBMIT, ID_TEST_SUBMIT);
-
-        register(PROP_NA, EVT_SAVED, ID_DRAFT_CONTRIBUTION_SAVED);
-        registerLabelSuffix(ID_DRAFT_CONTRIBUTION_SAVED, "new");
-
+        register(PROP_NA, EVT_SUBMITTED, ID_CONTRIBUTION_SUBMIT, ID_TEST_SUBMIT, ID_DRAFT_CONTRIBUTION_SUBMIT);
         register(PROP_NA, EVT_MODIFIED, ID_CONTRIBUTION_EDIT, ID_TEST_EDIT);
         register(PROP_EXPORT, EVT_SENT, ID_CONTRIBUTION_PDF_SENT, ID_DRAFT_CONTRIBUTION_PDF_SENT);
 
@@ -398,8 +393,8 @@ public class ActivityRegistry {
 
         register(PROP_TOKEN_CONTACTS_DEPARTMENT, EVT_ADDED, ID_GUEST_LIST_VOTER_ADDED);
         register(PROP_TOKEN_CONTACTS_DEPARTMENT, EVT_REMOVED, ID_GUEST_LIST_VOTER_REMOVED);
+
         register(PROP_TOKEN_CONTACTS_DEPARTMENT, EVT_STARTED, ID_GUEST_LIST_VOTER_FILE_EXPORT);
-        register(PROP_TOKEN_CONTACTS_DEPARTMENT, EVT_REMOVED, ID_GUEST_LIST_ENTRY_REMOVED);
 
         //Privileges 600
         register(PROP_NA, EVT_ADDED, ID_DELEGATE_MANAGER_ADD);
@@ -514,14 +509,6 @@ public class ActivityRegistry {
             ActivityRegistryEntry entry = new ActivityRegistryEntry(property, event, object, logId);
             mapEntry(entry);
         }
-    }
-
-    private static void registerLabelSuffix(int logId, String suffix) {
-        idToEntryMap.get(logId).setLabelSuffix(suffix);
-    }
-
-    public static String getLabelFromId(int logId) {
-        return idToEntryMap.get(logId).getMessageLabel();
     }
 
     private static void mapEntry(ActivityRegistryEntry entry){

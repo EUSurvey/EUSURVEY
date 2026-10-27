@@ -784,7 +784,7 @@
 
 		function isURLNotValid(select){
 			let value = $(select).val();
-			var urlregex = /https:\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+			var urlregex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 			return !urlregex.test( value  );
 		}
 

@@ -86,86 +86,65 @@
 				async: false,
 				success :function(result)
 				{
-				    if (Object.keys(result.organisations).length > 0) {
-                        $.each(result.organisations, function(key, data){
-                            var option = document.createElement("option");
-                            $(option).attr("value", key);
-                            if (data.length > 95) {
-                                $(option).append(data.substring(0, 95) + "...");
-                            } else {
-                                $(option).append(data);
-                            }
-                            if (userOrganisation == key) {
-                                $(option).attr("selected", "selected");
-                            }
-                            $(option).attr("title", data);
-                            $('#survey-organisation').append(option);
-                            $('#survey-organisation-dgs').hide();
-                            $('#survey-organisation-aex').hide();
-                            $('#survey-organisation-euis').hide();
-                            $('#survey-organisation-noneuis').hide();
-                        });
-                    } else {
-                        $.each(result.dgs, function(key, data){
-                            var option = document.createElement("option");
-                            $(option).attr("value", key);
-                            if (data.length > 95) {
-                                $(option).append(data.substring(0, 95) + "...");
-                            } else {
-                                $(option).append(data);
-                            }
-                            if (organisation == key) {
-                                $(option).attr("selected", "selected");
-                            }
-                            $(option).attr("title", data);
-                            $('#survey-organisation-dgs').append(option);
-                        });
+					$.each(result.dgs, function(key, data){
+						var option = document.createElement("option");
+						$(option).attr("value", key);
+						if (data.length > 95) {
+							$(option).append(data.substring(0, 95) + "...");
+						} else {
+							$(option).append(data);
+						}
+						if (organisation == key) {
+							$(option).attr("selected", "selected");
+						}
+						$(option).attr("title", data);
+						$('#survey-organisation-dgs').append(option);
+					});
 
-                        $.each(result.executiveAgencies, function(key, data){
-                            var option = document.createElement("option");
-                            $(option).attr("value", key);
-                            if (data.length > 95) {
-                                $(option).append(data.substring(0, 95) + "...");
-                            } else {
-                                $(option).append(data);
-                            }
-                            if (organisation == key) {
-                                $(option).attr("selected", "selected");
-                            }
-                            $(option).attr("title", data);
-                            $('#survey-organisation-aex').append(option);
-                        });
+					$.each(result.executiveAgencies, function(key, data){
+						var option = document.createElement("option");
+						$(option).attr("value", key);
+						if (data.length > 95) {
+							$(option).append(data.substring(0, 95) + "...");
+						} else {
+							$(option).append(data);
+						}
+						if (organisation == key) {
+							$(option).attr("selected", "selected");
+						}
+						$(option).attr("title", data);
+						$('#survey-organisation-aex').append(option);
+					});
 
-                        $.each(result.otherEUIs, function(key, data){
-                            var option = document.createElement("option");
-                            $(option).attr("value", key);
-                            if (data.length > 95) {
-                                $(option).append(data.substring(0, 95) + "...");
-                            } else {
-                                $(option).append(data);
-                            }
-                            if (organisation == key) {
-                                $(option).attr("selected", "selected");
-                            }
-                            $(option).attr("title", data);
-                            $('#survey-organisation-euis').append(option);
-                        });
+					$.each(result.otherEUIs, function(key, data){
+						var option = document.createElement("option");
+						$(option).attr("value", key);
+						if (data.length > 95) {
+							$(option).append(data.substring(0, 95) + "...");
+						} else {
+							$(option).append(data);
+						}
+						if (organisation == key) {
+							$(option).attr("selected", "selected");
+						}
+						$(option).attr("title", data);
+						$('#survey-organisation-euis').append(option);
+					});
 
-                        $.each(result.nonEUIs, function(key, data){
-                            var option = document.createElement("option");
-                            $(option).attr("value", key);
-                            if (data.length > 95) {
-                                $(option).append(data.substring(0, 95) + "...");
-                            } else {
-                                $(option).append(data);
-                            }
-                            if (organisation == key) {
-                                $(option).attr("selected", "selected");
-                            }
-                            $(option).attr("title", data);
-                            $('#survey-organisation-noneuis').append(option);
-                        });
-                    }
+					$.each(result.nonEUIs, function(key, data){
+						var option = document.createElement("option");
+						$(option).attr("value", key);
+						if (data.length > 95) {
+							$(option).append(data.substring(0, 95) + "...");
+						} else {
+							$(option).append(data);
+						}
+						if (organisation == key) {
+							$(option).attr("selected", "selected");
+						}
+						$(option).attr("title", data);
+						$('#survey-organisation-noneuis').append(option);
+					});
 
 					if (organisation.length == 0 || organisation == 'external') organisation = "OTHER";
 					$('#survey-organisation').val(organisation);

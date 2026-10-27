@@ -137,7 +137,7 @@ public class SurveySearchController extends BasicController {
 		List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
 		result.addObject("domains", domains);
 
-		Organisations organisations = utilsService.getOrganisations(locale, null);
+		Organisations organisations = utilsService.getOrganisations(locale);
 		result.addObject("organisationsDGS", organisations.getDgs());
 		result.addObject("organisationsEA", organisations.getExecutiveAgencies());
 		result.addObject("organisationsOtherEUIs", organisations.getOtherEUIs());
@@ -335,7 +335,7 @@ public class SurveySearchController extends BasicController {
 		result.addObject("reportedfilter", reportedFilter);
 		result.addObject("frozenfilter", frozenFilter);
 
-		Organisations organisations = utilsService.getOrganisations(locale, null);
+		Organisations organisations = utilsService.getOrganisations(locale);
 		result.addObject("organisationsDGS", organisations.getDgs());
 		result.addObject("organisationsEA", organisations.getExecutiveAgencies());
 		result.addObject("organisationsOtherEUIs", organisations.getOtherEUIs());

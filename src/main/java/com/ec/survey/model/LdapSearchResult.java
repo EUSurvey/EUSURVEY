@@ -70,6 +70,6 @@ public class LdapSearchResult {
 	private String lname ;
 	private String mail;
 	private boolean isExternal;
-
+	
 }
 

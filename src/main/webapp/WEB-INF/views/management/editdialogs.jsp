@@ -230,7 +230,6 @@
 		var isDelphi = ${form.survey.isDelphi};
 		var isEVote = ${form.survey.isEVote};
 		var isSelfAssessment = ${form.survey.isSelfAssessment};
-		var isStandard = ${form.survey.isStandard};
 		var eVoteTemplate = "${form.survey.eVoteTemplate}";
 		var automaticNumbering = ${form.survey.sectionNumbering != 0 || form.survey.questionNumbering != 0};
 		
@@ -794,13 +793,6 @@
 
 		const hiddenInfo = '<spring:message code="info.Hidden" />';
 		strings["Hidden"] = "<spring:message code="label.Hidden" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + hiddenInfo + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
-		let copiesLockedInfo = '<spring:message code="info.CopiesLocked" />';
-		if (isStandard || isQuiz) {
-			copiesLockedInfo = '<spring:message code="info.CopiesLocked2" />';
-		}
-		strings["CopiesLocked"] = "<spring:message code="label.CopiesLocked" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + copiesLockedInfo + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
-		const lockedInfo = '<spring:message code="info.Locked" />';
-		strings["Locked"] = "<spring:message code="label.Locked" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='" + lockedInfo + "'><span class='glyphicon glyphicon-question-sign'></span></a>";
 
 		strings["ElementAdded"] = '<spring:message code="info.ElementAdded" />';
 		strings["ElementDeleted"] = '<spring:message code="info.ElementDeleted" />';

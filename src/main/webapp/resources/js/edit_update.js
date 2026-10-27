@@ -1604,24 +1604,6 @@ function update(input)
 			$("#colpointsapply").hide();
 			showSuccess(OPERATION_EXECUTED);
 			break;
-		case "CopiesLocked": {
-			const checked = $(input).is(":checked");
-			element.copiesLocked(checked);
-			_undoProcessor.addUndoStep(["CopiesLocked", id, $(_elementProperties.selectedelement).index(), !checked, checked]);
-
-			break;
-		}
-		case "Locked": {
-			const checked = $(input).is(":checked");
-			const el = $(_elementProperties.selectedelement)
-			element.locked(checked);
-			_undoProcessor.addUndoStep(["Locked", id, el.index(), !checked, checked]);
-
-			_elementProperties.deselectAll()
-			_elementProperties.showProperties(el)
-
-			break;
-		}
 		default:
 			throw label + " not implemented"; 
 	}	

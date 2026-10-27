@@ -1,14 +1,10 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.Organisations;
-import com.ec.survey.model.administration.User;
 import com.ec.survey.service.ECService;
-import com.ec.survey.service.OrganisationService;
 import com.ec.survey.service.UtilsService;
-import com.ec.survey.tools.NotAgreedToPsException;
-import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
-import com.ec.survey.tools.WeakAuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -30,9 +27,6 @@ public class UtilsController extends BasicController {
 
 	@Resource(name = "utilsService")
 	private UtilsService utilsService;
-
-	@Resource(name = "organisationService")
-	private OrganisationService organisationService;
 	
 	@RequestMapping(value = "/euCountries", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody Map<String, String> getListOfCountries(HttpServletRequest request) {
@@ -314,16 +308,10 @@ public class UtilsController extends BasicController {
 	
 	
 	@RequestMapping(value = "/Organisations", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody Organisations getListOfDomains(HttpServletRequest request, Locale syslocale) throws NotAgreedToPsException, NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody Organisations getListOfDomains(HttpServletRequest request, Locale syslocale) {
 		Locale locale = request.getParameter("lang") != null ? new Locale(request.getParameter("lang")) : syslocale;
-
-		User user = sessionService.getCurrentUser(request);
-		if (user != null && user.isExternal()) {
-			var organisations = organisationService.getOrganisationsForWhitelistedUser(user.getId());
-			return utilsService.getOrganisations(locale, organisations);
-		}
 		
-		return utilsService.getOrganisations(locale, null);
+		return utilsService.getOrganisations(locale);
 	}
 	
 	@RequestMapping(value = "/euDGs", method = {RequestMethod.GET, RequestMethod.HEAD})

@@ -9,7 +9,6 @@ public class Organisations {
 	private Map<String, String> executiveAgencies = new HashMap<>();
 	private Map<String, String> otherEUIs = new HashMap<>();
 	private Map<String, String> nonEUIs = new HashMap<>();
-	private Map<String, String> organisations = new HashMap<>();
 
 	public Map<String, String> getDgs() {
 		return dgs;
@@ -43,7 +42,4 @@ public class Organisations {
 		this.nonEUIs = nonEUIs;
 	}
 
-    public Map<String, String> getOrganisations() { return organisations; }
-
-    public void setOrganisations(Map<String, String> organisations) { this.organisations = organisations; }
 }

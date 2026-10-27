@@ -165,23 +165,25 @@
 				</c:otherwise>	
 			</c:choose>
 		</span>
-        <div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
-            <c:if test="${captchaBypass !=true}">
-            <%@ include file="captcha.jsp" %>
-            </c:if>
-        </div>
-        <span id="ask-export-dialog-error-captcha" class="validation-error hideme">
-            <c:if test="${captchaBypass !=true}">
-            <c:choose>
-                <c:when test="${runnermode == true}">
-                    ${form.getMessage("message.captchawrongnew")}
-                </c:when>
-                <c:otherwise>
-                    <spring:message code="message.captchawrongnew" />
-                </c:otherwise>
-            </c:choose>
-            </c:if>
-        </span>
+
+			<div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">						
+				<c:if test="${captchaBypass !=true}">
+				<%@ include file="captcha.jsp" %>					
+				</c:if>
+	       	</div>
+	       	<span id="ask-export-dialog-error-captcha" class="validation-error hideme">       		
+	       		<c:if test="${captchaBypass !=true}">
+	       		<c:choose>
+					<c:when test="${runnermode == true}">
+						${form.getMessage("message.captchawrongnew")}
+					</c:when>
+					<c:otherwise>
+						<spring:message code="message.captchawrongnew" />
+					</c:otherwise>	
+				</c:choose>
+	       		</c:if>
+	       	</span>
+
 	</div>
 	<div class="modal-footer">
 		<c:choose>
@@ -214,6 +216,7 @@
 
 	function startExport()
 	{
+
 		$("#ask-export-dialog").find(".validation-error").hide();
 		$("#ask-export-dialog").find(".validation-error-keep").hide();
 		
