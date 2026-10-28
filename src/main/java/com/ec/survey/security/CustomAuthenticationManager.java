@@ -270,10 +270,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					}
 					Survey draft = surveyService.getSurvey(survey, true, false, false, false, null, true, false, false, false);
 					if (draft.getIsEVote()) {
-                        String ecmoniker = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:domainUsername");
-                        if (ecmoniker == null) {
-                            ecmoniker = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user"); // fallback if domainUsername is missing
-                        }
+                        String ecmoniker = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
 						if (!eVoteService.checkVoter(draft.getUniqueId(), ecmoniker)) {
 							throw new BadSurveyCredentialsException("VOTERREJECTED");
 						}
