@@ -65,6 +65,7 @@
 	</style>
 	
 	<script type="text/javascript">
+	    var noEmptySearch = '<spring:message code="label.NoEmptySearch" />';
 
 		$(function() {
 			$("#organisationmanagement-menu-tab").addClass("active");
