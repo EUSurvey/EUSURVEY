@@ -39,10 +39,9 @@ public class ETranslationService extends BasicService {
 
 	private static final Log logger = LogFactory.getLog(ETranslationService.class);
 
-	private static String createTranslationRequest(String applicationName,
-			String errorCallback, String externalReference, String institution,
-			int priority, String requesterCallback, String sourceLanguage, String targetLanguage,
-			String targetTranslationPath, String textToTranslate, String username) {
+	private static String createTranslationRequest(String errorCallback, String externalReference, String institution,
+												   int priority, String requesterCallback, String sourceLanguage, String targetLanguage,
+												   String targetTranslationPath, String textToTranslate, String username) {
 
 		String[] targetLanguages = targetLanguage.split(",");
 		JSONArray targetLanguagesJSON = new JSONArray();
@@ -52,16 +51,31 @@ public class ETranslationService extends BasicService {
 
 		String base64 = Base64.getEncoder().encodeToString(textToTranslate.getBytes());
 
-		return new JSONObject().put("priority", priority).put("externalReference", externalReference)
-				.put("callerInformation",
-						new JSONObject().put("application", applicationName).put("username", username)
-								.put("institution", institution))
-				.put("documentToTranslateBase64", new JSONObject().put("content", base64).put("format", "HTML").put("fileName", "doc.html")).put("sourceLanguage", sourceLanguage)
-				.put("targetLanguages", targetLanguagesJSON).put("domain", "SPD")
-				.put("destinations",
-						new JSONObject().put("httpDestinations", new JSONArray().put(0, targetTranslationPath)))
-				.put("requesterCallback", requesterCallback).put("errorCallback", errorCallback).toString();
-
+		return new JSONObject().put("priority", priority)
+			.put("callerInformation",
+				new JSONObject()
+					.put("username", username)
+					.put("institution", institution)
+					.put("externalReference", externalReference))
+			.put("documentToTranslate",
+				new JSONObject().put("document",
+					new JSONObject()
+						.put("content", base64)
+						.put("format", "HTML")
+						.put("filename", "doc.html")))
+			.put("sourceLanguage", sourceLanguage)
+			.put("targetLanguages", targetLanguagesJSON).put("domain", "SPD")
+			.put("deliveries",
+					new JSONObject().put("http", targetTranslationPath))
+			.put("notifications",
+					new JSONObject()
+						.put("success",
+							new JSONObject()
+								.put("http", requesterCallback))
+						.put("failure",
+							new JSONObject()
+								.put("http", errorCallback))
+			).toString();
 	}
 
 	public boolean sendMessage(RequestTranslationMessage rtm) throws MessageException {
@@ -102,7 +116,7 @@ public class ETranslationService extends BasicService {
 			HttpPost post = new HttpPost(this.url);
 			post.setHeader("Accept", "application/json");
 			post.setHeader("Content-type", "application/json");
-			String json = createTranslationRequest(applicationName,
+			String json = createTranslationRequest(
 					errorCallback, externalReference, institution, priority, requesterCallback, sourceLanguage,
 					targetLanguage, targetTranslationPath, textToTranslate, username);
 			if (logger.isInfoEnabled()) {

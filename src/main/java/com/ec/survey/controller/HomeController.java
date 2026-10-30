@@ -1114,49 +1114,41 @@ public class HomeController extends BasicController {
 			throw new MessageException(resources.getMessage("error.SurveyRejected", null, "The survey could not be rejected.", locale));
 		}		
 	}
-	 	
+
 	@PostMapping(value = "home/notifySuccess")
-	public void notifySuccess(HttpServletRequest request, Locale locale, HttpServletResponse response) {
-		String requestId = request.getParameter("requestId");
-		if (requestId == null) {
-			requestId = request.getParameter("request-id");
-		}
+	public void notifySuccess(@RequestBody Map json) {
+		String requestId = json.get("requestId").toString();
 		logger.info("HomeController.notifySuccess called with for request " + requestId); // the actual translation is handled in returnTranslation
 	}
 
 	@PostMapping(value = "home/notifyError")
-	public void notifyError(HttpServletRequest request) {
-		String requestId = request.getParameter("requestId");
-		if (requestId == null) {
-			requestId = request.getParameter("request-id");
-		  }
-		String targetLanguage = request.getParameter("target-language");
+	public void notifyError(@RequestBody Map json) {
+		String uid = json.get("externalReference").toString();
+		ArrayList<String> targetLanguages = (ArrayList<String>) json.get("targetLanguages");
+		String targetLanguage = targetLanguages.get(0);
 		if (targetLanguage == null) {
 			targetLanguage = "";
 		}
-		
-		String errorCode = request.getParameter("error-code");
-		String errorMessage = request.getParameter("error-message");
 
-		logger.error("HomeController.notifyError called for the translation with request ID " + requestId);
-		machineTranslationService.saveErrorResponse(requestId,targetLanguage,errorCode,errorMessage);
+		String errorCode = json.get("errorCode").toString();
+		String errorMessage = json.get("errorMessage").toString();
+
+		logger.error("HomeController.notifyError called for the translation with request ID " + uid);
+		machineTranslationService.saveErrorResponse(uid,targetLanguage,errorCode,errorMessage);
 	}
 
 	@PostMapping(value = "home/returnTranslation")
-	public @ResponseBody String returnTranslation(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String requestId = request.getParameter("requestId");
-		if (requestId == null) {
-			requestId = request.getParameter("request-id");
-		}
+	public @ResponseBody String returnTranslation(@RequestBody Map json, HttpServletResponse response) throws IOException {
+		String uid = json.get("externalReference").toString();
 
-		logger.info("HomeController.returnTranslation called for the translation with request ID " + requestId);
+		logger.info("HomeController.returnTranslation called for the translation with request ID " + uid);
 
-		byte[] translationBytes = request.getInputStream().readAllBytes();
-		String encodedString = new String(translationBytes);
+		//byte[] translationBytes = request.getInputStream().readAllBytes();
+		String encodedString = json.get("result").toString(); //new String(translationBytes);
 		byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 		String translationText = new String(decodedBytes);
 
-		machineTranslationService.saveSuccessResponse(requestId, translationText);
+		machineTranslationService.saveSuccessResponse(uid, translationText);
 
 		response.setStatus(200);
 		return "OK";
