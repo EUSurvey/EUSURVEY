@@ -661,11 +661,17 @@ public class BasicController implements BeanFactoryAware {
 					String id = request.getParameter("captcha_id");
 					String useaudio = request.getParameter("captcha_useaudio");
 					String originalcookies = request.getParameter("captcha_original_cookies");
-										
-					if (str == null || id == null) {
+
+					if (str == null) {
+						logger.info("no captcha response found");
 						return false;
 					}
-					
+
+					if (id == null) {
+						logger.info("no captcha id found");
+						return false;
+					}
+
 					sessionService.initializeProxy();
 					URL url = new URL(captchaserverprefixtarget + "validateCaptcha/" + id);
 					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -696,8 +702,14 @@ public class BasicController implements BeanFactoryAware {
 			        }
 			        String response = sb.toString();
 					in.close();
-					
-					return response.equalsIgnoreCase("{\"responseCaptcha\":\"success\"}");
+
+					boolean result = response.equalsIgnoreCase("{\"responseCaptcha\":\"success\"}");
+
+					if (!result) {
+						logger.info("captcha validation failed: " + response);
+					}
+
+					return result;
 				}
 				return false;
 			} else {

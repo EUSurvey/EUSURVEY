@@ -120,9 +120,18 @@
 						
 	  		<c:if test="${wrongcaptcha != null && wrongcaptcha == true }">
 	  			<script type="text/javascript">
-					$(function() {	
+					$(function() {
+					    // in case of multi-paging switch to last page
+                        const p = $(".single-page").last();
+                        const page = parseInt(p.attr("id").substring(4));
+                        selectPage(page);
+
 						$("#runner-captcha-error").show().attr("aria-live", "polite").focus();
 						$("#internal_captcha_response").attr("aria-invalid", "true").attr("aria-describedby", "runner-captcha-error");
+
+						$("html, body").animate({
+                            scrollTop : $("#runner-captcha-error").offset().top
+                        }, "fast");
 		  			});
 	  			</script>	  		
 	  		</c:if>
